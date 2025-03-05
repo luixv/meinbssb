@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Added const here
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _responseDisplay = '';
     });
 
-    final String apiUrl = 'http://localhost:3001';
+    final String apiUrl = 'http://172.23.48.1:3001/mock-register';
     final requestBody = {
       'vorname': 'Luis',
       'nachname': 'Mandel',
@@ -63,13 +63,18 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         setState(() {
-          _responseDisplay = 'Error: ${response.statusCode}';
+          _responseDisplay = 'Error: ${response.statusCode}\nBody: ${response.body}';
         });
+        // Log the error to the console
+        debugPrint('HTTP Error: ${response.statusCode}');
+        debugPrint('Response Body: ${response.body}');
       }
     } catch (e) {
       setState(() {
         _responseDisplay = 'Error: $e';
       });
+      // Log the exception to the console
+      debugPrint('Exception: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -81,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mein BSSB App'),
+        title: const Text('Mein BSSB App'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
