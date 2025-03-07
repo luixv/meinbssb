@@ -3,31 +3,44 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class ApiService {
-  static Future<String> sendPostRequest() async {
-    final String apiUrl = 'http://172.23.48.1:3001/mock-register';
-    final requestBody = {
-      'vorname': 'Luis',
-      'nachname': 'Mandel',
-      'email': 'luismandel@gmail.com',
-    };
+  static Future<Map<String, dynamic>> login(String email, String password) async {
+    final String apiUrl = 'http://172.23.48.1:3001/LoginMyBSSB';
+    final requestBody = jsonEncode({"email": email, "password": password});
 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
+        body: requestBody,
       );
 
       if (response.statusCode == 200) {
-        return 'Status Code: ${response.statusCode}\nBody: ${response.body}';
+        return jsonDecode(response.body);
       } else {
-        debugPrint('HTTP Error: ${response.statusCode}');
-        debugPrint('Response Body: ${response.body}');
-        return 'Error: ${response.statusCode}\nBody: ${response.body}';
+        debugPrint('Login Error: ${response.statusCode}');
+        return {"ResultType": 0, "ResultMessage": "Login fehlgeschlagen"};
       }
     } catch (e) {
       debugPrint('Exception: $e');
-      return 'Error: $e';
+      return {"ResultType": 0, "ResultMessage": "Netzwerkfehler"};
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+    final String apiUrl = 'http://172.23.48.1:3001/Passdaten/$personId';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        debugPrint('Passdaten Error: ${response.statusCode}');
+        return {};
+      }
+    } catch (e) {
+      debugPrint('Exception: $e');
+      return {};
     }
   }
 }
