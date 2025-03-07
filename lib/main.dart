@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'api_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,60 +25,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _requestBodyDisplay = '';
   String _responseDisplay = '';
   bool _isLoading = false;
 
-  Future<void> _sendPostRequest() async {
+  Future<void> _handleApiRequest() async {
     setState(() {
       _isLoading = true;
-      _requestBodyDisplay = '';
       _responseDisplay = '';
     });
 
-    final String apiUrl = 'http://172.23.48.1:3001/mock-register';
-    final requestBody = {
-      'vorname': 'Luis',
-      'nachname': 'Mandel',
-      'email': 'luismandel@gmail.com',
-    };
+    final response = await ApiService.sendPostRequest();
 
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
-      );
-
-      setState(() {
-        _requestBodyDisplay = requestBody.entries
-            .map((entry) => '${entry.key}: ${entry.value}')
-            .join('\n');
-      });
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _responseDisplay = 'Status Code: ${response.statusCode}\nBody: ${response.body}';
-        });
-      } else {
-        setState(() {
-          _responseDisplay = 'Error: ${response.statusCode}\nBody: ${response.body}';
-        });
-        // Log the error to the console
-        debugPrint('HTTP Error: ${response.statusCode}');
-        debugPrint('Response Body: ${response.body}');
-      }
-    } catch (e) {
-      setState(() {
-        _responseDisplay = 'Error: $e';
-      });
-      // Log the exception to the console
-      debugPrint('Exception: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _responseDisplay = response;
+      _isLoading = false;
+    });
   }
 
   @override
@@ -87,6 +47,22 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mein BSSB App'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'send_request') {
+                _handleApiRequest();
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'send_request',
+                child: Text('Send POST Request'),
+              ),
+            ],
+            icon: const Icon(Icons.menu), // Hamburger menu icon
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -94,14 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              ElevatedButton(
-                onPressed: _isLoading ? null : _sendPostRequest,
-                child: const Text('Send POST Request'),
-              ),
-              const SizedBox(height: 20),
-              const Text('Request Body:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(_requestBodyDisplay),
-              const SizedBox(height: 20),
               const Text('Response:', style: TextStyle(fontWeight: FontWeight.bold)),
               Text(_responseDisplay),
               if (_isLoading)
