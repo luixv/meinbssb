@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'app_menu.dart'; // Import the reusable menu
 
-class HomeScreen extends StatefulWidget {
+class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
-  const HomeScreen(this.userData, {super.key});
+  const StartScreen(this.userData, {super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _StartScreenState createState() => _StartScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
 
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Mein BSSB'),
         actions: [
-          AppMenu(context: context, userData: widget.userData), // Pass userData to AppMenu
+          AppMenu(context: context, userData: widget.userData), // Use the reusable menu
         ],
       ),
       body: Padding(

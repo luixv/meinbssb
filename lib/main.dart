@@ -1,7 +1,7 @@
 //main.dart
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'home_screen.dart';
+import 'start_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(), // Login screen route
         '/home': (context) {
           final userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return HomeScreen(userData); // Home screen route with arguments
+          return StartScreen(userData); // Home screen route with arguments
         },
       },
     );

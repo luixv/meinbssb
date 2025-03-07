@@ -1,7 +1,6 @@
-//login_screen.dart
 import 'package:flutter/material.dart';
 import 'api_service.dart';
-import 'home_screen.dart';
+import 'start_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -34,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(passdaten),
+            builder: (context) => StartScreen(passdaten),
           ),
         );
       } else {
@@ -77,6 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 ),
+                onSubmitted: (value) {
+                  // Trigger login when Enter is pressed
+                  _handleLogin();
+                },
               ),
               const SizedBox(height: 20),
               if (_errorMessage.isNotEmpty)
