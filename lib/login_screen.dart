@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
-import 'start_screen.dart';
+import 'start_screen.dart'; // Ensure this import is correct
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -53,8 +53,28 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Add the logo image
+              Center(
+                child: Image.asset(
+                  'assets/images/myBSSB-logo.png', // Path to the image
+                  height: 100, // Adjust the height as needed
+                  width: 100, // Adjust the width as needed
+                ),
+              ),
+              const SizedBox(height: 20), // Add some spacing
+              // Add the "Hier anmelden" message
+              const Text(
+                "Hier anmelden",
+                style: TextStyle(
+                  color: Color(0xFF006400), // Dark green color (hex value)
+                  fontSize: 24, // Adjust the font size as needed
+                  fontWeight: FontWeight.bold, // Make it bold
+                ),
+              ),
+              const SizedBox(height: 20), // Add some spacing
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -84,9 +104,17 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               if (_errorMessage.isNotEmpty)
                 Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _handleLogin,
-                child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
+              // Make the button full width and set color to light green
+              SizedBox(
+                width: double.infinity, // Make the button as wide as the form
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightGreen, // Set background color to light green
+                    padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
+                  ),
+                  child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
+                ),
               ),
             ],
           ),
