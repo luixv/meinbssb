@@ -43,4 +43,22 @@ class ApiService {
       return {};
     }
   }
+
+  static Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
+    final String apiUrl = 'http://172.23.48.1:3001/AngemeldeteSchulungen/$personId/$abDatum';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        debugPrint('AngemeldeteSchulungen Error: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      debugPrint('Exception: $e');
+      return [];
+    }
+  }
 }
