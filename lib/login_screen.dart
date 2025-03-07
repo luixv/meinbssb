@@ -56,13 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Add the logo image
-              Center(
-                child: Image.asset(
-                  'assets/images/myBSSB-logo.png', // Path to the image
-                  height: 100, // Adjust the height as needed
-                  width: 100, // Adjust the width as needed
-                ),
+              // Add the logo image (aligned to the left)
+              Image.asset(
+                'assets/images/myBSSB-logo.png', // Path to the image
+                height: 100, // Adjust the height as needed
+                width: 100, // Adjust the width as needed
               ),
               const SizedBox(height: 20), // Add some spacing
               // Add the "Hier anmelden" message
