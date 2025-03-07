@@ -51,71 +51,72 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Add the logo image (aligned to the left)
-              Image.asset(
-                'assets/images/myBSSB-logo.png', // Path to the image
-                height: 100, // Adjust the height as needed
-                width: 100, // Adjust the width as needed
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
+          mainAxisAlignment: MainAxisAlignment.start, // Align children to the top
+          children: [
+            const SizedBox(height: 20), // Reduced top margin
+            // Add the logo image (aligned to the left)
+            Image.asset(
+              'assets/images/myBSSB-logo.png', // Path to the image
+              height: 100, // Adjust the height as needed
+              width: 100, // Adjust the width as needed
+            ),
+            const SizedBox(height: 20), // Add some spacing
+            // Add the "Hier anmelden" message
+            const Text(
+              "Hier anmelden",
+              style: TextStyle(
+                color: Color(0xFF006400), // Dark green color (hex value)
+                fontSize: 24, // Adjust the font size as needed
+                fontWeight: FontWeight.bold, // Make it bold
               ),
-              const SizedBox(height: 20), // Add some spacing
-              // Add the "Hier anmelden" message
-              const Text(
-                "Hier anmelden",
-                style: TextStyle(
-                  color: Color(0xFF006400), // Dark green color (hex value)
-                  fontSize: 24, // Adjust the font size as needed
-                  fontWeight: FontWeight.bold, // Make it bold
-                ),
-              ),
-              const SizedBox(height: 20), // Add some spacing
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: "E-mail"),
-              ),
-              TextField(
-                controller: _passwordController,
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  labelText: "Passwort",
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+            ),
+            const SizedBox(height: 20), // Add some spacing
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: "E-mail"),
+            ),
+            TextField(
+              controller: _passwordController,
+              obscureText: !_isPasswordVisible,
+              decoration: InputDecoration(
+                labelText: "Passwort",
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
-                ),
-                onSubmitted: (value) {
-                  // Trigger login when Enter is pressed
-                  _handleLogin();
-                },
-              ),
-              const SizedBox(height: 20),
-              if (_errorMessage.isNotEmpty)
-                Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-              // Make the button full width and set color to light green
-              SizedBox(
-                width: double.infinity, // Make the button as wide as the form
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightGreen, // Set background color to light green
-                    padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
-                  ),
-                  child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
                 ),
               ),
-            ],
-          ),
+              onSubmitted: (value) {
+                // Trigger login when Enter is pressed
+                _handleLogin();
+              },
+            ),
+            const SizedBox(height: 20),
+            if (_errorMessage.isNotEmpty)
+              Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+            // Make the button full width and set color to light green
+            SizedBox(
+              width: double.infinity, // Make the button as wide as the form
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _handleLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightGreen, // Set background color to light green
+                  padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Anmelden"),
+              ),
+            ),
+          ],
         ),
       ),
     );
