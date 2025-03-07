@@ -50,12 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16, 60, 16, 16), // Adjust top padding to 40 (1 cm lower)
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
           mainAxisAlignment: MainAxisAlignment.start, // Align children to the top
           children: [
-            const SizedBox(height: 20), // Reduced top margin
             // Add the logo image (aligned to the left)
             Image.asset(
               'assets/images/myBSSB-logo.png', // Path to the image
@@ -111,9 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   backgroundColor: Colors.lightGreen, // Set background color to light green
                   padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
                 ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text("Anmelden"),
+                child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
               ),
             ),
           ],
