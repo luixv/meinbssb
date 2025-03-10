@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'start_screen.dart'; // Ensure this import is correct
 
@@ -46,75 +46,145 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
   }
 
+  void _navigateToDummyPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DummyPage(), // Replace this with your actual page later
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 60, 16, 16), // Adjust top padding to 40 (1 cm lower)
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align children to the left
-          mainAxisAlignment: MainAxisAlignment.start, // Align children to the top
-          children: [
-            // Add the logo image (aligned to the left)
-            Image.asset(
-              'assets/images/myBSSB-logo.png', // Path to the image
-              height: 100, // Adjust the height as needed
-              width: 100, // Adjust the width as needed
-            ),
-            const SizedBox(height: 20), // Add some spacing
-            // Add the "Hier anmelden" message
-            const Text(
-              "Hier anmelden",
-              style: TextStyle(
-                color: Color(0xFF006400), // Dark green color (hex value)
-                fontSize: 24, // Adjust the font size as needed
-                fontWeight: FontWeight.bold, // Make it bold
+      body: SingleChildScrollView( // Wrap the entire body in SingleChildScrollView
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/myBSSB-logo.png',
+                height: 100,
+                width: 100,
               ),
-            ),
-            const SizedBox(height: 20), // Add some spacing
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(labelText: "E-mail"),
-            ),
-            TextField(
-              controller: _passwordController,
-              obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                labelText: "Passwort",
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              const SizedBox(height: 20),
+              const Text(
+                "Hier anmelden",
+                style: TextStyle(
+                  color: Color(0xFF006400),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(labelText: "E-mail"),
+              ),
+              TextField(
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: "Passwort",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
+                ),
+                onSubmitted: (value) {
+                  _handleLogin();
+                },
+              ),
+              const SizedBox(height: 20),
+              if (_errorMessage.isNotEmpty)
+                Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
                 ),
               ),
-              onSubmitted: (value) {
-                // Trigger login when Enter is pressed
-                _handleLogin();
-              },
-            ),
-            const SizedBox(height: 20),
-            if (_errorMessage.isNotEmpty)
-              Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-            // Make the button full width and set color to light green
-            SizedBox(
-              width: double.infinity, // Make the button as wide as the form
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightGreen, // Set background color to light green
-                  padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
+              const SizedBox(height: 20), // Add spacing before the links
+              SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        _navigateToDummyPage(); // Future page for password recovery
+                      },
+                      child: const Text(
+                        "Passwort vergessen?",
+                        style: TextStyle(color: Color(0xFF006400), fontSize: 16), // Dark green color
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        children: [
+                          const TextSpan(text: "Bestehen Fragen zum Account oder wird "),
+                          TextSpan(
+                            text: "Hilfe",
+                            style: const TextStyle(color: Color(0xFF006400)), // Dark green color
+                            recognizer: TapGestureRecognizer()..onTap = () {
+                              _navigateToDummyPage(); // Future help page
+                            },
+                          ),
+                          const TextSpan(text: " benötigt?"),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        children: [
+                          const TextSpan(text: "Keinen Account? "),
+                          TextSpan(
+                            text: "Hier",
+                            style: const TextStyle(color: Color(0xFF006400)), // Dark green color
+                            recognizer: TapGestureRecognizer()..onTap = () {
+                              _navigateToDummyPage(); // Future registration page
+                            },
+                          ),
+                          const TextSpan(text: " Registrieren."),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+// Dummy page for demonstration purposes
+class DummyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Dummy Page")),
+      body: Center(
+        child: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
       ),
     );
   }
