@@ -129,7 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         "Passwort vergessen?",
-                        style: TextStyle(color: Color(0xFF006400), fontSize: 16), // Dark green color
+                        style: TextStyle(color: Color(0xFF006400), 
+                        decoration: TextDecoration.underline, fontSize: 16), // Dark green color
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -140,7 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           const TextSpan(text: "Bestehen Fragen zum Account oder wird "),
                           TextSpan(
                             text: "Hilfe",
-                            style: const TextStyle(color: Color(0xFF006400)), // Dark green color
+                            style: const TextStyle(color: Color(0xFF006400),
+                            decoration: TextDecoration.underline), // Dark green color
                             recognizer: TapGestureRecognizer()..onTap = () {
                               _navigateToDummyPage(); // Future help page
                             },
@@ -157,7 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           const TextSpan(text: "Keinen Account? "),
                           TextSpan(
                             text: "Hier",
-                            style: const TextStyle(color: Color(0xFF006400)), // Dark green color
+                            style: const TextStyle(color: Color(0xFF006400),
+                            decoration: TextDecoration.underline), // Dark green color
                             recognizer: TapGestureRecognizer()..onTap = () {
                               _navigateToDummyPage(); // Future registration page
                             },
