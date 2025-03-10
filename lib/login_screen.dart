@@ -152,8 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               MaterialPageRoute(builder: (context) => HelpPage()), // Navigate to HelpPage
                             );
                           },
-                        ),                          
-                        const TextSpan(text: " benötigt?"),
+                        ),                          const TextSpan(text: " benötigt?"),
                         ],
                       ),
                     ),
