@@ -31,7 +31,7 @@ class _StartScreenState extends State<StartScreen> {
       return;
     }
 
-    final today = DateTime.now();
+    final today = DateTime.now(); // Use the day of today.
     final abDatum = "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
 
     final result = await ApiService.fetchAngemeldeteSchulungen(personId, abDatum);
