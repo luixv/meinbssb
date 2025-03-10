@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'start_screen.dart';
+import 'localization_service.dart'; // Import the localization service
 
 void main() {
   runApp(const MyApp());
@@ -27,4 +28,10 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+
+  void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalizationService.load('assets/strings.json'); // Your existing localization
+  runApp(MyApp());
+}
 }

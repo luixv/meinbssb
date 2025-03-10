@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'start_screen.dart'; // Ensure this import is correct
+import 'help_page.dart'; // Import the new HelpPage
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -140,14 +141,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const TextSpan(text: "Bestehen Fragen zum Account oder wird "),
                           TextSpan(
-                            text: "Hilfe",
-                            style: const TextStyle(color: Color(0xFF006400),
-                            decoration: TextDecoration.underline), // Dark green color
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              _navigateToDummyPage(); // Future help page
-                            },
+                          text: "Hilfe",
+                          style: const TextStyle(
+                            color: Color(0xFF006400), // Dark green color
+                            decoration: TextDecoration.underline, // Underlined
                           ),
-                          const TextSpan(text: " benötigt?"),
+                          recognizer: TapGestureRecognizer()..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HelpPage()), // Navigate to HelpPage
+                            );
+                          },
+                        ),                          
+                        const TextSpan(text: " benötigt?"),
                         ],
                       ),
                     ),
