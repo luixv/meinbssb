@@ -3,7 +3,7 @@ import 'package:flutter_html/flutter_html.dart'; // Import this package
 import 'localization_service.dart'; // Make sure to import your localization service
 
 class HelpPage extends StatelessWidget {
-  const HelpPage({Key? key}) : super(key: key); // Add key parameter
+  const HelpPage({super.key}); // Use super.key directly
 
   @override
   Widget build(BuildContext context) {
