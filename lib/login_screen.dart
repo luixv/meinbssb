@@ -18,37 +18,47 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
   bool _isLoading = false;
   String _errorMessage = '';
 
-  Future<void> _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
+Future<void> _handleLogin() async {
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
 
-    final response = await ApiService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
+  // First, perform the login
+  final response = await ApiService.login(
+    _emailController.text,
+    _passwordController.text,
+  );
 
-    if (response["ResultType"] == 1) {
-      int personId = response["PersonID"];
-      var passdaten = await ApiService.fetchPassdaten(personId);
+  // Check if the widget is still mounted after the async call
+  if (!mounted) return;
 
-      if (passdaten.isNotEmpty) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StartScreen(passdaten),
-          ),
-        );
-      } else {
-        setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
-      }
+  if (response["ResultType"] == 1) {
+    int personId = response["PersonID"];
+    var passdaten = await ApiService.fetchPassdaten(personId);
+
+    // Check if the widget is still mounted after the second async call
+    if (!mounted) return;
+
+    if (passdaten.isNotEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StartScreen(passdaten),
+        ),
+      );
     } else {
-      setState(() => _errorMessage = response["ResultMessage"]);
+      setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
     }
+  } else {
+    setState(() => _errorMessage = response["ResultMessage"]);
+  }
 
+  // Final mounted check before setting loading state to false
+  if (mounted) {
     setState(() => _isLoading = false);
   }
+}
 
   void _navigateToDummyPage() {
     Navigator.push(

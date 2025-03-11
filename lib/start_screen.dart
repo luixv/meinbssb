@@ -8,10 +8,10 @@ class StartScreen extends StatefulWidget {
   const StartScreen(this.userData, {super.key});
 
   @override
-  _StartScreenState createState() => _StartScreenState();
+  StartScreenState createState() => StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
+class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
 

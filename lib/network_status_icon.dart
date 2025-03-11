@@ -19,36 +19,51 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
   String _errorMessage = '';
 
   Future<void> _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
 
-    final response = await ApiService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
+  final response = await ApiService.login(
+    _emailController.text,
+    _passwordController.text,
+  );
 
-    if (response["ResultType"] == 1) {
-      int personId = response["PersonID"];
-      var passdaten = await ApiService.fetchPassdaten(personId);
+  // Check if the widget is still mounted before proceeding
+  if (!mounted) return;
 
-      if (passdaten.isNotEmpty) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StartScreen(passdaten),
-          ),
-        );
-      } else {
-        setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
-      }
+  if (response["ResultType"] == 1) {
+    int personId = response["PersonID"];
+    var passdaten = await ApiService.fetchPassdaten(personId);
+
+    if (passdaten.isNotEmpty) {
+      // Another mounted check before navigation
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StartScreen(passdaten),
+        ),
+      );
     } else {
-      setState(() => _errorMessage = response["ResultMessage"]);
-    }
+      // One more mounted check before this state change
+      if (!mounted) return;
 
+      setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+    }
+  } else {
+    // Again, check if the widget is still mounted
+    if (!mounted) return;
+
+    setState(() => _errorMessage = response["ResultMessage"]);
+  }
+
+  // Final mounted check before changing loading state
+  if (mounted) {
     setState(() => _isLoading = false);
   }
+}
 
   void _navigateToDummyPage() {
     Navigator.push(
