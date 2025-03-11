@@ -108,7 +108,7 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
                   _handleLogin();
                 },
               ),
-              const SizedBox(height: 30), // Increased space between the password and submit button
+              const SizedBox(height: 45), // Increased space between the password and submit button
               if (_errorMessage.isNotEmpty)
                 Text(_errorMessage, style: const TextStyle(color: Colors.red)),
               
