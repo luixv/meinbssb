@@ -56,6 +56,21 @@ class ApiService {
     }
   }
 
+static Future<Map<String, dynamic>> getPersonId(String email) async {
+  final url = Uri.parse('$_baseUrl/GetPersonID?Email=$email'); 
+  try {
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      return {'ResultType': 0, 'ResultMessage': 'Failed to load data'};
+    }
+  } catch (e) {
+    return {'ResultType': 0, 'ResultMessage': 'Network error: $e'};
+  }
+}
+
+
   static Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
     final String apiUrl = '$_baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
 

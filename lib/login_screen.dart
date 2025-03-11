@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'start_screen.dart'; // Ensure this import is correct
 import 'help_page.dart'; // Import the new HelpPage
+import 'password_reset_screen.dart'; // Adjust the path if necessary
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key}); // Key as a super parameter
@@ -60,11 +62,25 @@ Future<void> _handleLogin() async {
   }
 }
 
-  void _navigateToDummyPage() {
+  Future<void> _navigateToPasswordReset() async {
+    String? personId;
+    if(_emailController.text.isNotEmpty){
+      final response = await ApiService.getPersonId(_emailController.text);
+      if(response['ResultType'] == 1){
+        personId = response['PersonID'].toString();
+      }else{
+        personId = null;
+      }
+    }else{
+      personId = null;
+    }
+
+    if (!mounted) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DummyPage(), // Replace this with your actual page later
+        builder: (context) => PasswordResetScreen(personId: personId ?? ""),//if personId is null, pass an empty string.
       ),
     );
   }
@@ -139,15 +155,19 @@ Future<void> _handleLogin() async {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        _navigateToDummyPage(); // Future page for password recovery
-                      },
-                      child: const Text(
-                        "Passwort vergessen?",
-                        style: TextStyle(color: Color(0xFF006400), 
-                        decoration: TextDecoration.underline, fontSize: 16), // Dark green color
-                      ),
-                    ),
+                            onTap: () {
+                              _navigateToPasswordReset();
+                            },
+                            child: const Text(
+                              "Passwort vergessen?",
+                              style: TextStyle(
+                                color: Color(0xFF006400),
+                                decoration: TextDecoration.underline,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+
                     const SizedBox(height: 10),
                     RichText(
                       text: TextSpan(
@@ -182,7 +202,7 @@ Future<void> _handleLogin() async {
                             style: const TextStyle(color: Color(0xFF006400),
                             decoration: TextDecoration.underline), // Dark green color
                             recognizer: TapGestureRecognizer()..onTap = () {
-                              _navigateToDummyPage(); // Future registration page
+                              _navigateToRegistrationPage(); // Future registration page
                             },
                           ),
                           const TextSpan(text: " Registrieren."),
@@ -198,7 +218,17 @@ Future<void> _handleLogin() async {
       ),
     );
   }
+  void _navigateToRegistrationPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DummyPage(), // Replace this with your actual Registration page later
+      ),
+    );
+  }
+
 }
+
 
 // Dummy page for demonstration purposes
 class DummyPage extends StatelessWidget {
