@@ -135,11 +135,13 @@ void _navigateToRegistrationPage() {
               ),
               const SizedBox(height: 20),
               TextField(
+                key: const Key('usernameField'), 
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(labelText: "E-mail"),
               ),
               TextField(
+                key: const Key('passwordField'), 
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
