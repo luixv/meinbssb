@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'schuetzenausweis_screen.dart';
+
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -12,6 +14,16 @@ class AppMenu extends StatelessWidget {
     super.key,
   });
 
+  Future<void> _displaySchuetzenausweis(int personId) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SchuetzenausweisScreen(personId: personId),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
@@ -24,6 +36,9 @@ class AppMenu extends StatelessWidget {
             '/home',
             arguments: userData,
           );
+        } 
+         else if (value == 'digitaler_schuetzenausweis') {
+          _displaySchuetzenausweis(userData['PERSONID']); // Call the download function
         }
         // Add more actions for other menu points here if needed
       },

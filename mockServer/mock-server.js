@@ -23,6 +23,7 @@ const passdatenRoutes = require('./routes/passdaten');
 const angemeldeteSchulungenRoutes = require('./routes/angemeldeteSchulungen');
 const registerRoutes = require('./routes/register');
 const schutzenausweisRoutes = require('./routes/schutzenausweis');
+const schuetzenausweisPdfJpgRoutes = require('./routes/schuetzenausweis_pdf_jpg'); 
 
 // Use route handlers
 app.use('/LoginMyBSSB', loginRoutes);
@@ -30,6 +31,8 @@ app.use('/Passdaten', passdatenRoutes);
 app.use('/AngemeldeteSchulungen', angemeldeteSchulungenRoutes);
 app.use('/mock-register', registerRoutes);
 app.use('/schutzenausweis', schutzenausweisRoutes);
+app.use('/Schuetzenausweis', schuetzenausweisPdfJpgRoutes); 
+
 
 app.listen(port, () => {
     console.log(`Mock server listening at http://localhost:${port}`);

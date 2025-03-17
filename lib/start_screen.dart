@@ -61,7 +61,7 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Mein BSSB Startseite'),
+        title: const Text('Angemeldete Schulungen'),
         actions: [
           AppMenu(context: context, userData: widget.userData),
         ],
