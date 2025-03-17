@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
-import 'app_menu.dart'; // Import the reusable menu
+import 'app_menu.dart';
+import 'localization_service.dart';
+import 'logo_widget.dart'; 
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -14,11 +16,23 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
+  Color _appColor = const Color(0xFF006400); // Declare _appColor here
 
   @override
   void initState() {
     super.initState();
     fetchSchulungen();
+    _loadLocalization(); // Load localization
+  }
+
+  Future<void> _loadLocalization() async {
+    await LocalizationService.load('assets/strings.json');
+    setState(() {
+      final colorString = LocalizationService.getString('appColor');
+      if (colorString.isNotEmpty) {
+        _appColor = Color(int.parse(colorString));
+      }
+    });
   }
 
   Future<void> fetchSchulungen() async {
@@ -31,8 +45,9 @@ class StartScreenState extends State<StartScreen> {
       return;
     }
 
-    final today = DateTime.now(); // Use the day of today.
-    final abDatum = "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
+    final today = DateTime.now();
+    final abDatum =
+        "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
 
     final result = await ApiService.fetchAngemeldeteSchulungen(personId, abDatum);
     setState(() {
@@ -45,9 +60,9 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mein BSSB'),
+        title: const Text('Mein BSSB Startseite'),
         actions: [
-          AppMenu(context: context, userData: widget.userData), // Use the reusable menu
+          AppMenu(context: context, userData: widget.userData),
         ],
       ),
       body: Padding(
@@ -55,24 +70,46 @@ class StartScreenState extends State<StartScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("${widget.userData['VORNAME']} ${widget.userData['NAMEN']}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            // Header UI (similar to login screen)
+            const LogoWidget(), // Use LogoWidget here
+            const SizedBox(height: 20),
+            Text(
+              "Mein BSSB", // Header title
+              style: TextStyle(
+                color: _appColor, // Use parameterized color
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Rest of the content
+            Text(
+                "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            Text(widget.userData['PASSNUMMER'], style: const TextStyle(fontSize: 18)),
-            const Text("Schützenpassnummer", style: TextStyle(color: Colors.grey)),
+            Text(widget.userData['PASSNUMMER'],
+                style: const TextStyle(fontSize: 18)),
+            const Text("Schützenpassnummer",
+                style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 10),
-            Text(widget.userData['VEREINNAME'], style: const TextStyle(fontSize: 18)),
+            Text(widget.userData['VEREINNAME'],
+                style: const TextStyle(fontSize: 18)),
             const Text("Erstverein", style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 20),
-            const Text("Angemeldete Schulungen:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("Angemeldete Schulungen:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             isLoading
                 ? const CircularProgressIndicator()
                 : schulungen.isEmpty
-                    ? const Text("Keine Schulungen gefunden.", style: TextStyle(color: Colors.grey))
+                    ? const Text("Keine Schulungen gefunden.",
+                        style: TextStyle(color: Colors.grey))
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: schulungen.map((schulung) {
                           final datum = DateTime.parse(schulung['DATUM']);
-                          final formattedDatum = "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
+                          final formattedDatum =
+                              "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
                           return ListTile(
                             title: Text(schulung['BEZEICHNUNG']),
                             subtitle: Text(formattedDatum),

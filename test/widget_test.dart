@@ -1,18 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/main.dart'; // Adjust this import according to your project name
+import 'package:meinbssb/main.dart';
+import 'package:meinbssb/login_screen.dart'; // Import your LoginScreen
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+  testWidgets('Login screen loads', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
 
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the login screen is displayed.
+    expect(find.byType(LoginScreen), findsOneWidget);
 
-    final Finder fab = find.byTooltip('Increment');
-    await tester.tap(fab);
-    await tester.pump();
-
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // You can add more specific tests for your login screen here,
+    // such as checking for specific widgets or input fields.
+    // For example:
+    expect(find.byKey(const Key('usernameField')), findsOneWidget);
+    expect(find.byKey(const Key('passwordField')), findsOneWidget);
   });
 }

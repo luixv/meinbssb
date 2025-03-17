@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'start_screen.dart'; 
+import 'registration_screen.dart';
 import 'help_page.dart';
 import 'password_reset_screen.dart'; 
 import 'logo_widget.dart'; 
@@ -79,6 +80,15 @@ Future<void> _handleLogin() async {
   if (mounted) {
     setState(() => _isLoading = false);
   }
+}
+
+void _navigateToRegistrationPage() {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const RegistrationScreen(),
+    ),
+  );
 }
 
   Future<void> _navigateToPasswordReset() async {
@@ -233,16 +243,9 @@ Future<void> _handleLogin() async {
       ),
     );
   }
-  void _navigateToRegistrationPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DummyPage(), // Replace this with your actual Registration page later
-      ),
-    );
-  }
-
+ 
 }
+
 
 
 // Dummy page for demonstration purposes
