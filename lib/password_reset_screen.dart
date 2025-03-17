@@ -88,7 +88,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             AppMenu(
               context: context,
               userData: userData,
-              isPasswordReset: true,
+              showSingleMenuItem: true,
             ),
         ],
       ),

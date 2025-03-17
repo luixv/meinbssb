@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class AppMenu extends StatelessWidget {
   final BuildContext context;
   final Map<String, dynamic> userData;
-  final bool isPasswordReset; // Add this flag
+  final bool showSingleMenuItem; // Add this flag
 
   const AppMenu({
     required this.context,
     required this.userData,
-    this.isPasswordReset = false, // Default to false
+    this.showSingleMenuItem = false, // Default to false
     super.key,
   });
 
@@ -28,7 +28,7 @@ class AppMenu extends StatelessWidget {
         // Add more actions for other menu points here if needed
       },
       itemBuilder: (BuildContext context) {
-        if (isPasswordReset) {
+        if (showSingleMenuItem) {
           // Display only "Back to Login"
           return [
             const PopupMenuItem<String>(

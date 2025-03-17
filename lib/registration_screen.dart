@@ -139,7 +139,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           AppMenu(
             context: context,
             userData: userData,
-            isPasswordReset: true,
+            showSingleMenuItem: true,
           ),
         ],
       ),
