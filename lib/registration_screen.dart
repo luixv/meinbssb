@@ -112,15 +112,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
       if (response['ResultType'] == 1) {
         // Registration successful
-        print("Registration successful: ${response['ResultMessage']}");
+        debugPrint("Registration successful: ${response['ResultMessage']}");
         // Navigate to the next screen or show a success message
       } else {
         // Registration failed
-        print("Registration failed: ${response['ResultMessage']}");
+        debugPrint("Registration failed: ${response['ResultMessage']}");
         // Show an error message
       }
     } catch (e) {
-      print("Error during registration: $e");
+      debugPrint("Error during registration: $e");
       // Handle network or other errors
     } finally {
       setState(() {
