@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
-import 'start_screen.dart'; // Ensure this import is correct
-import 'help_page.dart'; // Import the new HelpPage
-import 'password_reset_screen.dart'; // Adjust the path if necessary
+import 'start_screen.dart'; 
+import 'help_page.dart';
+import 'password_reset_screen.dart'; 
+import 'logo_widget.dart'; 
+import 'localization_service.dart'; 
 
 
 class LoginScreen extends StatefulWidget {
@@ -19,6 +21,23 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
+  Color _appColor = const Color(0xFF006400); // Default color
+
+@override
+  void initState() {
+    super.initState();
+    _loadLocalization();
+  }
+
+  Future<void> _loadLocalization() async {
+    await LocalizationService.load('assets/strings.json'); // Adjust the path if needed
+    setState(() {
+      final colorString = LocalizationService.getString('appColor');
+      if (colorString.isNotEmpty) {
+        _appColor = Color(int.parse(colorString));
+      }
+    });
+  }
 
 Future<void> _handleLogin() async {
   setState(() {
@@ -94,16 +113,12 @@ Future<void> _handleLogin() async {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                'assets/images/myBSSB-logo.png',
-                height: 100,
-                width: 100,
-              ),
+              const LogoWidget(), 
               const SizedBox(height: 20),
-              const Text(
+               Text(
                 "Hier anmelden",
                 style: TextStyle(
-                  color: Color(0xFF006400),
+                  color: _appColor,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),

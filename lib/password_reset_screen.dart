@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'app_menu.dart';
-import 'package:logging/logging.dart'; // Import the logging package
+import 'package:logging/logging.dart';
+import 'localization_service.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   final String personId;
@@ -15,12 +16,24 @@ class PasswordResetScreen extends StatefulWidget {
 class PasswordResetScreenState extends State<PasswordResetScreen> {
   Map<String, dynamic> userData = {};
   bool _isLoading = true;
-  final Logger _logger = Logger('PasswordResetScreen'); // Create a logger instance
+  final Logger _logger = Logger('PasswordResetScreen');
+  Color _appColor = const Color(0xFF006400); // Declare _appColor here
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
+    _loadLocalization();
+  }
+
+  Future<void> _loadLocalization() async {
+    await LocalizationService.load('assets/strings.json');
+    setState(() {
+      final colorString = LocalizationService.getString('appColor');
+      if (colorString.isNotEmpty) {
+        _appColor = Color(int.parse(colorString));
+      }
+    });
   }
 
   Future<void> _fetchUserData() async {
@@ -33,13 +46,13 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           _isLoading = false;
         });
       } else {
-        _logger.warning("Invalid personId format: ${widget.personId}"); // Use the logger
+        _logger.warning("Invalid personId format: ${widget.personId}");
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      _logger.severe("Error fetching user data: $e"); // Use the logger
+      _logger.severe("Error fetching user data: $e");
       setState(() {
         _isLoading = false;
       });
@@ -56,7 +69,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             AppMenu(
               context: context,
               userData: userData,
-              isPasswordReset: true, // Pass true here!
+              isPasswordReset: true,
             ),
         ],
       ),
@@ -81,10 +94,10 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       "Passwort zurücksetzen",
-                      style: TextStyle(
-                        color: Color(0xFF006400),
+                      style: TextStyle( // Removed 'const' here
+                        color: _appColor,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
