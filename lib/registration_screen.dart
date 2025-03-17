@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'localization_service.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
-import 'api_service.dart'; // Import api_service.dart
+import 'api_service.dart'; 
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -134,11 +134,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrierung'),
+        automaticallyImplyLeading: false,
         actions: [
           AppMenu(
             context: context,
             userData: userData,
-            isPasswordReset: false,
+            isPasswordReset: true,
           ),
         ],
       ),

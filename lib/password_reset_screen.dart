@@ -82,6 +82,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Passwort zurücksetzen"),
+        automaticallyImplyLeading: false,
         actions: [
           if (!_isLoading)
             AppMenu(
