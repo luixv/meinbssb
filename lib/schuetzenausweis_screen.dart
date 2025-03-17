@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'app_menu.dart';
+import 'app_menu.dart'; // Import the AppMenu
 
 class SchuetzenausweisScreen extends StatefulWidget {
   final int personId;
@@ -13,7 +13,7 @@ class SchuetzenausweisScreen extends StatefulWidget {
   });
 
   @override
-   SchuetzenausweisScreenState createState() => SchuetzenausweisScreenState();
+  SchuetzenausweisScreenState createState() => SchuetzenausweisScreenState();
 }
 
 class SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
@@ -43,7 +43,7 @@ class SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false, // Remove the back arrow
         title: const Text('Digitaler Schützenausweis'),
         actions: [
           // Add the AppMenu here
