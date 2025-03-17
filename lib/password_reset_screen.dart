@@ -3,12 +3,11 @@ import 'api_service.dart';
 import 'app_menu.dart';
 import 'package:logging/logging.dart';
 import 'localization_service.dart';
+import 'logo_widget.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   final String personId;
-
   const PasswordResetScreen({required this.personId, super.key});
-
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
 }
@@ -17,13 +16,19 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   Map<String, dynamic> userData = {};
   bool _isLoading = true;
   final Logger _logger = Logger('PasswordResetScreen');
-  Color _appColor = const Color(0xFF006400); // Declare _appColor here
+  Color _appColor = const Color(0xFF006400);
+  final TextEditingController _passNumberController = TextEditingController();
+  String _passNumberError = "";
+  bool _isPassNumberValid = true;
+  bool _hasInteracted = false; // Added this line
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
     _loadLocalization();
+    _passNumberController.text = widget.personId;
+    _isPassNumberValid = _validatePassNumber(widget.personId);
   }
 
   Future<void> _loadLocalization() async {
@@ -59,6 +64,19 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     }
   }
 
+  bool _validatePassNumber(String value) {
+    if (value.isEmpty) {
+      _passNumberError = "Schützenausweisnummer ist erforderlich.";
+      return false;
+    }
+    if (!RegExp(r'^\d{8}$').hasMatch(value)) {
+      _passNumberError = "Schützenausweisnummer muss 8 Ziffern enthalten.";
+      return false;
+    }
+    _passNumberError = "";
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,32 +99,38 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/images/myBSSB-logo.png',
-                      height: 100,
-                      width: 100,
-                    ),
-                    Text(
-                      "Passnummer: ${widget.personId}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    const LogoWidget(),
                     const SizedBox(height: 20),
                     Text(
                       "Passwort zurücksetzen",
-                      style: TextStyle( // Removed 'const' here
+                      style: TextStyle(
                         color: _appColor,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 20),
+                    TextField(
+                      controller: _passNumberController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: "Schützenausweisnummer",
+                        errorText: _hasInteracted && _passNumberError.isNotEmpty ? _passNumberError : null, // Modified here
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _hasInteracted = true; // Added this line
+                          _isPassNumberValid = _validatePassNumber(value);
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _isPassNumberValid ? () {
+                          // Implement password reset logic here
+                        } : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.lightGreen,
                           padding: const EdgeInsets.symmetric(vertical: 16),

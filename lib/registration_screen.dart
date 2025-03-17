@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'localization_service.dart';
 import 'logo_widget.dart';
+import 'app_menu.dart';
+import 'api_service.dart'; // Import api_service.dart
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -22,6 +24,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Color _appColor = const Color(0xFF006400);
   String zipCodeError = "";
   String passNumberError = "";
+  bool _isLoading = false; // Added loading state
+
+  Map<String, dynamic> userData = {}; // Add userData here
 
   @override
   void initState() {
@@ -80,10 +85,63 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return true;
   }
 
+  Future<void> _registerUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (_selectedDate == null) {
+      // Handle missing date error
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+    try {
+      final response = await ApiService.register(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        passNumber: _passNumberController.text,
+        email: _emailController.text,
+        birthDate: formattedDate,
+        zipCode: _zipCodeController.text,
+      );
+
+      if (response['ResultType'] == 1) {
+        // Registration successful
+        print("Registration successful: ${response['ResultMessage']}");
+        // Navigate to the next screen or show a success message
+      } else {
+        // Registration failed
+        print("Registration failed: ${response['ResultMessage']}");
+        // Show an error message
+      }
+    } catch (e) {
+      print("Error during registration: $e");
+      // Handle network or other errors
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Registrierung'),
+        actions: [
+          AppMenu(
+            context: context,
+            userData: userData,
+            isPasswordReset: false,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
         child: Column(
@@ -136,17 +194,14 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _privacyAccepted && zipCodeError.isEmpty && passNumberError.isEmpty ? () {
-                  if (_selectedDate != null) {
-                    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-                    print("Vorname: ${_firstNameController.text}, Nachname: ${_lastNameController.text}, Ausweisnummer: ${_passNumberController.text}, Email: ${_emailController.text}, Geburtsdatum: $formattedDate, PLZ: ${_zipCodeController.text}, Datenschutz: $_privacyAccepted");
-                  }
+                onPressed: _privacyAccepted && zipCodeError.isEmpty && passNumberError.isEmpty && !_isLoading ? () {
+                  _registerUser();
                 } : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightGreen,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text("Registrieren"),
+                child: _isLoading ? const CircularProgressIndicator() : const Text("Registrieren"),
               ),
             ),
           ],

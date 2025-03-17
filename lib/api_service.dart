@@ -21,7 +21,7 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
       ).timeout(Duration(seconds: 10), onTimeout: () {
-        throw TimeoutException("Server timeout"); // Now this will work
+        throw TimeoutException("Server timeout");
       });
 
       debugPrint('Response status: ${response.statusCode}');
@@ -56,20 +56,19 @@ class ApiService {
     }
   }
 
-static Future<Map<String, dynamic>> getPersonId(String email) async {
-  final url = Uri.parse('$_baseUrl/GetPersonID?Email=$email'); 
-  try {
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      return {'ResultType': 0, 'ResultMessage': 'Failed to load data'};
+  static Future<Map<String, dynamic>> getPersonId(String email) async {
+    final url = Uri.parse('$_baseUrl/GetPersonID?Email=$email');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {'ResultType': 0, 'ResultMessage': 'Failed to load data'};
+      }
+    } catch (e) {
+      return {'ResultType': 0, 'ResultMessage': 'Network error: $e'};
     }
-  } catch (e) {
-    return {'ResultType': 0, 'ResultMessage': 'Network error: $e'};
   }
-}
-
 
   static Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
     final String apiUrl = '$_baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
@@ -86,6 +85,50 @@ static Future<Map<String, dynamic>> getPersonId(String email) async {
     } catch (e) {
       debugPrint('Exception: $e');
       return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> register({
+    required String firstName,
+    required String lastName,
+    required String passNumber,
+    required String email,
+    required String birthDate,
+    required String zipCode,
+  }) async {
+    final String apiUrl = '$_baseUrl/RegisterMyBSSB'; // Replace with your actual registration endpoint
+    final requestBody = jsonEncode({
+      "firstName": firstName,
+      "lastName": lastName,
+      "passNumber": passNumber,
+      "email": email,
+      "birthDate": birthDate,
+      "zipCode": zipCode,
+    });
+
+    try {
+      debugPrint('Sending registration request to: $apiUrl');
+      debugPrint('Request body: $requestBody');
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      ).timeout(Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException("Server timeout");
+      });
+
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        return {"ResultType": 0, "ResultMessage": "Registrierung fehlgeschlagen"};
+      }
+    } catch (e) {
+      debugPrint('Exception: $e');
+      return {"ResultType": 0, "ResultMessage": "Netzwerkfehler"};
     }
   }
 }
