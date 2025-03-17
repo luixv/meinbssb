@@ -60,6 +60,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Mein BSSB Startseite'),
         actions: [
           AppMenu(context: context, userData: widget.userData),

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const data = require('../mock-data.json'); // Load the JSON file
 
 const registrations = []; // Corrected line
 

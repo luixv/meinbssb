@@ -1,37 +1,19 @@
 const express = require('express');
 const router = express.Router();
 
-const passdaten = {
-    "luis@mandel.pro": {
-        // Your passdaten object here
-    }
-};
-
-const zweitmitgliedschaften = {
-    "luis@mandel.pro": [
-        { "club": "Zweitverein A", "right": "Luftgewehr" },
-        { "club": "Zweitverein B", "right": "Pistole" }
-    ]
-};
-
-const passZweitvereinseintraege = {
-    "luis@mandel.pro": [
-        { "club": "Zweitverein A", "entry": "Eintrag 1" },
-        { "club": "Zweitverein B", "entry": "Eintrag 2" }
-    ]
-};
+const data = require('../mock-data.json'); // Load the JSON file
 
 router.get('/', async (req, res) => {
     const { username } = req.query;
 
     // Simulate Passdaten retrieval
-    const passdatenForUser = passdaten[username] || null;
+    const passdatenForUser = data.passdaten[username] || null;
 
     // Simulate Zweitmitgliedschaften retrieval
-    const zweitmitgliedschaftenForUser = zweitmitgliedschaften[username] || [];
+    const zweitmitgliedschaftenForUser = data.zweitmitgliedschaften[username] || [];
 
     // Simulate Pass-Zweitvereinseintraege retrieval
-    const passZweitvereinseintraegeForUser = passZweitvereinseintraege[username] || [];
+    const passZweitvereinseintraegeForUser = data.passZweitvereinseintraege[username] || [];
 
     // Combine the results into a single JSON object
     const combinedResult = {

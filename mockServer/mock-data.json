@@ -1,0 +1,79 @@
+{
+    "users": {
+        "luis@mandel.pro": {
+            "ResultType": 1,
+            "ResultMessage": "MyBSSB Login Erfolgreich",
+            "PersonID": 4711,
+            "WebLoginID": 27
+        },
+        "luismandel@gmail.com": {
+            "ResultType": 1,
+            "ResultMessage": "MyBSSB Login Erfolgreich",
+            "PersonID": 4711,
+            "WebLoginID": 27
+        }
+    },
+    "passdaten": {
+        "luis@mandel.pro": {
+            "PASSNUMMER": "41299999",
+            "VEREINNR": 412013,
+            "NAMEN": "Mandel",
+            "VORNAME": "Luis",
+            "TITEL": "Dr.",
+            "GEBURTSDATUM": "1961-03-18T00:00:00.000+01:00",
+            "GESCHLECHT": 1,
+            "EINTRITTBSSB": "1981-06-01T00:00:00.000+02:00",
+            "VEREINNAME": "KK Gut Schuss e.V.",
+            "STRASSE": "Musterstrasse 18",
+            "PLZ": 99999,
+            "ORT": "Musterhausen",
+            "LAND": "DEU",
+            "NATIONALITAET": "DEU",
+            "PASSSTATUS": 1,
+            "PASSDATENID": 2000010534,
+            "EINTRITTVEREIN": "2019-06-01T00:00:00.000+02:00",
+            "AUSTRITTVEREIN": "",
+            "MITGLIEDSCHAFTID": 1513000003034,
+            "TELEFON": "0999/55555",
+            "PERSONID": 4711,
+            "ERSTLANDESVERBANDID": 0,
+            "PRODUKTIONSDATUM": "2023-08-14T00:00:00.000+02:00",
+            "ERSTVEREINID": 1963,
+            "DIGITALERPASS": 1
+        }
+    },
+    "schulungen": [
+        {
+            "DATUM": "2025-04-12T00:00:00.000+02:00",
+            "BEZEICHNUNG": "Digitale Evolution 2.0: Deine Reise in die digitale Zukunft der neuen Medien",
+            "SCHULUNGENTEILNEHMERID": 27203,
+            "SCHULUNGENTERMINID": 1570,
+            "SCHULUNGSARTID": 2000000326,
+            "STATUS": 0,
+            "DATUMBIS": "",
+            "FUERVERLAENGERUNGEN": true
+        },
+        {
+            "DATUM": "2025-05-03T00:00:00.000+02:00",
+            "BEZEICHNUNG": "ZMI Client für Vereine",
+            "SCHULUNGENTEILNEHMERID": 27204,
+            "SCHULUNGENTERMINID": 1632,
+            "SCHULUNGSARTID": 2000000001,
+            "STATUS": 0,
+            "DATUMBIS": "",
+            "FUERVERLAENGERUNGEN": true
+        }
+    ],
+    "zweitmitgliedschaften": {
+        "luis@mandel.pro": [
+            { "club": "Zweitverein A", "right": "Luftgewehr" },
+            { "club": "Zweitverein B", "right": "Pistole" }
+        ]
+    },
+    "passZweitvereinseintraege": {
+        "luis@mandel.pro": [
+            { "club": "Zweitverein A", "entry": "Eintrag 1" },
+            { "club": "Zweitverein B", "entry": "Eintrag 2" }
+        ]
+    }
+}
