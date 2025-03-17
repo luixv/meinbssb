@@ -4,14 +4,19 @@ import 'app_menu.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
   final int personId;
+  final Map<String, dynamic> userData; // Add userData to pass to AppMenu
 
-  const SchuetzenausweisScreen({Key? key, required this.personId}) : super(key: key);
+  const SchuetzenausweisScreen({
+    super.key,
+    required this.personId,
+    required this.userData, // Add userData as a required parameter
+  });
 
   @override
-  _SchuetzenausweisScreenState createState() => _SchuetzenausweisScreenState();
+   SchuetzenausweisScreenState createState() => SchuetzenausweisScreenState();
 }
 
-class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
+class SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   late Future<Image> _imageFuture;
 
   @override
@@ -38,13 +43,15 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Digitaler Schützenausweis'),
-      ),
-      endDrawer: Drawer( // Corrected: Use Drawer instead of EndDrawer
-        child: AppMenu(
-          context: context,
-          userData: {'PERSONID': widget.personId},
-        ),
+        actions: [
+          // Add the AppMenu here
+          AppMenu(
+            context: context,
+            userData: widget.userData, // Pass userData to AppMenu
+          ),
+        ],
       ),
       body: Center(
         child: FutureBuilder<Image>(

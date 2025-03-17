@@ -15,13 +15,16 @@ class AppMenu extends StatelessWidget {
   });
 
   Future<void> _displaySchuetzenausweis(int personId) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SchuetzenausweisScreen(personId: personId),
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => SchuetzenausweisScreen(
+        personId: personId,
+        userData: userData, // Pass userData here
       ),
-    );
-  }
+    ),
+  );
+}
 
 
   @override
