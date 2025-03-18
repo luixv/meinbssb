@@ -1,26 +1,18 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:async'; // Add this import for TimeoutException
+import 'dart:async';
 
 class ApiService {
-  static const String _baseIp = '127.0.0.1';
+  static const String _baseIp = '127.0.0.1'; // Change to your server's IP if needed
   static const String _port = '3001';
   static const String _baseUrl = 'http://$_baseIp:$_port';
 
-  static Future<Map<String, dynamic>> login(String email, String password) async {
-    final String apiUrl = '$_baseUrl/LoginMyBSSB';
-    final requestBody = jsonEncode({"email": email, "password": password});
-
+  static Future<Map<String, dynamic>> _makeRequest(
+      Future<http.Response> request) async {
     try {
-      debugPrint('Sending login request to: $apiUrl');
-      debugPrint('Request body: $requestBody');
-
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: requestBody,
-      ).timeout(Duration(seconds: 10), onTimeout: () {
+      final response = await request.timeout(const Duration(seconds: 10),
+          onTimeout: () {
         throw TimeoutException("Server timeout");
       });
 
@@ -30,61 +22,57 @@ class ApiService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        return {"ResultType": 0, "ResultMessage": "Login fehlgeschlagen"};
+        return {
+          "ResultType": 0,
+          "ResultMessage": "Request failed: ${response.statusCode}"
+        };
       }
     } catch (e) {
       debugPrint('Exception: $e');
-      return {"ResultType": 0, "ResultMessage": "Netzwerkfehler"};
+      return {"ResultType": 0, "ResultMessage": "Network error: $e"};
     }
+  }
+
+  static Future<Map<String, dynamic>> login(String email, String password) async {
+    final String apiUrl = '$_baseUrl/LoginMyBSSB';
+    final requestBody = jsonEncode({"email": email, "password": password});
+
+    debugPrint('Sending login request to: $apiUrl');
+    debugPrint('Request body: $requestBody');
+
+    return _makeRequest(http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    ));
   }
 
   static Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
     final String apiUrl = '$_baseUrl/Passdaten/$personId';
 
-    try {
-      final response = await http.get(Uri.parse(apiUrl)).timeout(Duration(seconds: 10));
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        debugPrint('Passdaten Error: ${response.statusCode}');
-        return {};
-      }
-    } catch (e) {
-      debugPrint('Exception: $e');
-      return {};
-    }
+    return _makeRequest(http.get(Uri.parse(apiUrl)));
   }
 
   static Future<Map<String, dynamic>> getPersonId(String email) async {
     final url = Uri.parse('$_baseUrl/GetPersonID?Email=$email');
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        return {'ResultType': 0, 'ResultMessage': 'Failed to load data'};
-      }
-    } catch (e) {
-      return {'ResultType': 0, 'ResultMessage': 'Network error: $e'};
-    }
+    return _makeRequest(http.get(url));
   }
 
-  static Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
+  static Future<List<dynamic>> fetchAngemeldeteSchulungen(
+      int personId, String abDatum) async {
     final String apiUrl = '$_baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
 
-    try {
-      final response = await http.get(Uri.parse(apiUrl)).timeout(Duration(seconds: 10));
+    final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+    if (response['ResultType'] == 0) {
+      return []; // Return empty list on error
+    } else {
+      if (response.containsKey('schulungen') && response['schulungen'] is List) {
+        return List<dynamic>.from(response['schulungen']);
       } else {
-        debugPrint('AngemeldeteSchulungen Error: ${response.statusCode}');
-        return [];
+        debugPrint("Error: 'schulungen' key not found or not a list.");
+        return []; // Return empty list on unexpected structure
       }
-    } catch (e) {
-      debugPrint('Exception: $e');
-      return [];
     }
   }
 
@@ -96,7 +84,7 @@ class ApiService {
     required String birthDate,
     required String zipCode,
   }) async {
-    final String apiUrl = '$_baseUrl/RegisterMyBSSB'; // Replace with your actual registration endpoint
+    final String apiUrl = '$_baseUrl/RegisterMyBSSB';
     final requestBody = jsonEncode({
       "firstName": firstName,
       "lastName": lastName,
@@ -106,29 +94,36 @@ class ApiService {
       "zipCode": zipCode,
     });
 
-    try {
-      debugPrint('Sending registration request to: $apiUrl');
-      debugPrint('Request body: $requestBody');
+    debugPrint('Sending registration request to: $apiUrl');
+    debugPrint('Request body: $requestBody');
 
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: requestBody,
-      ).timeout(Duration(seconds: 10), onTimeout: () {
-        throw TimeoutException("Server timeout");
-      });
-
-      debugPrint('Response status: ${response.statusCode}');
-      debugPrint('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        return {"ResultType": 0, "ResultMessage": "Registrierung fehlgeschlagen"};
-      }
-    } catch (e) {
-      debugPrint('Exception: $e');
-      return {"ResultType": 0, "ResultMessage": "Netzwerkfehler"};
-    }
+    return _makeRequest(http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    ));
   }
+
+  static Future<Map<String, dynamic>> fetchPassdatenWithString(String passdaten) async {
+      final String apiUrl = '$_baseUrl/PassdatenString/$passdaten';
+
+      return _makeRequest(http.get(Uri.parse(apiUrl)));
+  }
+
+  
+
+
+static Future<Map<String, dynamic>> resetPassword(String passNumber) async {
+    final String apiUrl = '$_baseUrl/PasswordReset/$passNumber';
+    final requestBody = jsonEncode({
+      "passNumber": passNumber,
+    });
+    return _makeRequest(http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    ));
+  }
+
+
 }

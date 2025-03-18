@@ -64,16 +64,190 @@
             "FUERVERLAENGERUNGEN": true
         }
     ],
-    "zweitmitgliedschaften": {
-        "luis@mandel.pro": [
-            { "club": "Zweitverein A", "right": "Luftgewehr" },
-            { "club": "Zweitverein B", "right": "Pistole" }
-        ]
+	
+	"zweitmitgliedschaften":[
+			{ 
+			"VEREINID": 2092, 
+			"VEREINNR": 415010, 
+			"VEREINNAME": "SG Bussard Hartpenning e.V.", 
+			"EINTRITTVEREIN": "2002-08-24T00:00:00.000+02:00" 
+			}, 
+			{ 
+			"VEREINID": 2117, 
+			"VEREINNR": 415035, 
+			"VEREINNAME": "SG Oberland", 
+			"EINTRITTVEREIN": "1999-07-30T00:00:00.000+02:00" 
+			}, 
+			{ 
+			"VEREINID": 4823, 
+			"VEREINNR": 202033, 
+			"VEREINNAME": "BSSB Betriebssportgruppe Olympia e.V.", 
+			"EINTRITTVEREIN": "2018-07-01T00:00:00.000+02:00" 
+			}
+	],
+			
+	"passdatenZVE": [
+			{
+			"PASSDATENZVID": 2000026216,
+			"ZVEREINID": 1788,
+			"VVEREINNR": 409001,
+			"DISZIPLINNR": "1.10",
+			"GAUID": 46,
+			"BEZIRKID": 4,
+			"DISZIAUSBLENDEN": 0,
+			"ERSAETZENDURCHID": 0,
+			"ZVMITGLIEDSCHAFTID": 146000000238,
+			"VEREINNAME": "Forstschützen Ebersberg",
+			"DISZIPLIN": "Luftgewehr",
+			"DISZIPLINID": 1
+			},
+			{
+			"PASSDATENZVID": 2000026217,
+			"ZVEREINID": 1788,
+			"VVEREINNR": 409001,
+			"DISZIPLINNR": "1.12",
+			"GAUID": 46,
+			"BEZIRKID": 4,
+			"DISZIAUSBLENDEN": 0,
+			"ERSAETZENDURCHID": 0,
+			"ZVMITGLIEDSCHAFTID": 146000000238,
+			"VEREINNAME": "Forstschützen Ebersberg",
+			"DISZIPLIN": "Luftgewehr Mix Team",
+			"DISZIPLINID": 112
+			}
+		],
+		
+	"schulungstermine": [
+    {
+        "SCHULUNGENTERMINID": 1633,
+        "SCHULUNGSARTID": 1,
+        "DATUM": "2025-05-07T00:00:00.000+02:00",
+        "BEMERKUNG": "",
+        "KOSTEN": 20.0,
+        "ORT": "Online",
+        "LEHRGANGSLEITER": "Sabine Freitag",
+        "VERPFLEGUNGSKOSTEN": 0.0,
+        "UEBERNACHTUNGSKOSTEN": 0.0,
+        "LEHRMATERIALKOSTEN": 0.0,
+        "LEHRGANGSINHALT":"{text}",
+        "MAXTEILNEHMER": 130,
+        "WEBVEROEFFENTLICHENAM": "2024-11-27T00:00:00.000+01:00",
+        "ANMELDUNGENGESPERRT": false,
+        "STATUS": 0,
+        "DATUMBIS": "",
+        "LEHRGANGSINHALTHTML": "<span style=\"color:#333\"><b>Beschreibung:</b><br>In Ergänzung zu den Ausbildungen in unseren Gauen bietet der Bayerische Sportschützenbund eine Online-Ausbildung zur Standaufsicht an.<br><br><b>Lehrgangsinhalt:</b><br>·\tDie Schießstätte und ihre Zulassung<br>·\tAltersgrenzen im Waffengesetz<br>·\tAufgaben, Rechte und Pflichten der „verantwortlichen Aufsichtsperson“<br>·\tAufbewahrung von Schusswaffen und Munition auf der Schießstätte und im Schützenhaus, Erwerben von Waffen und Munition auf der Schießstätte<br>·\tVersicherungen für den Betreiber, Schützen und Gastschützen<br>·\tVerbotene Waffen und Munition / Verbotene Schießübungen<br>·\tSportordnung/Disziplinen des DSB bzw. zusätzliche Disziplinen des BSSB<br>·\tMunition und Ballistik in Bezug auf die Zulassung einer Schießstätte/Standordnung<br>·\tSichere Waffenhandhabung und Beseitigung von Waffenstörungen<br>·\tVerhalten bei Unfällen<br>·\tam Ende erfolgt ein Onlinetest über das Erlernte<br><b><br>Uhrzeit:<br></b>19:00 Uhr bis 22:00 Uhr<b><br><br>Wie funktioniert das Online-Seminar:</b><br>Nac</span><span style=\"color:#080000\">h der A</span><span style=\"color:#333\">nmeldung erhalten Sie zwei Tage vor Beginn des Seminars einen Link, über den Sie sich in das Seminar zuschalten. Die Installation einer separaten Software ist nicht erforderlich. </span>Sie benötigen eine stabile Internetverbindung. Zudem raten wir Ihnen zu einem Headset und einer Kamera.<br><br><span style=\"color:#333\"><b>Referent:</b><br>Gilbert Daniel <b>–</b> Spezialist für Waffenrecht<br><br><b>Teilnehmergebühr:</b><br>Die Gebühr wird nach Beendigung des Seminares von Ihrem Konto abgebucht.<br><br><b>Teilnehmerkreis:</b><br>engagierte und interessierte Sportschützen und Vereinsmitglieder</span><span style=\"color:#080000\"><br></span>",
+        "LEHRGANGSLEITER2": "",
+        "LEHRGANGSLEITER3": "",
+        "LEHRGANGSLEITER4": "",
+        "LEHRGANGSLEITERTEL": "089/316949-16",
+        "LEHRGANGSLEITER2TEL": "",
+        "LEHRGANGSLEITER3TEL": "",
+        "LEHRGANGSLEITER4TEL": "",
+        "LEHRGANGSLEITERMAIL": "sabine.freitag@bssb.bayern",
+        "LEHRGANGSLEITER2MAIL": "",
+        "LEHRGANGSLEITER3MAIL": "",
+        "LEHRGANGSLEITER4MAIL": "",
+        "ANMELDESTOPP": "",
+        "ABMELDESTOPP": "",
+        "GELOESCHT": false,
+        "STORNOGRUND": "",
+        "WEBGRUPPE": 3,
+        "VERANSTALTUNGSBEZIRK": 9,
+        "FUERVERLAENGERUNGEN": false,
+        "ANMELDENERLAUBT": 0,
+        "VERBANDSINTERNPASSWORT": "",
+        "WEBGRUPPE_1": 3,
+        "ANGEMELDETETEILNEHMER": 66
     },
-    "passZweitvereinseintraege": {
-        "luis@mandel.pro": [
-            { "club": "Zweitverein A", "entry": "Eintrag 1" },
-            { "club": "Zweitverein B", "entry": "Eintrag 2" }
-        ]
-    }
+    {
+        "SCHULUNGENTERMINID": 1596,
+        "SCHULUNGSARTID": 1,
+        "DATUM": "2025-07-23T00:00:00.000+02:00",
+        "BEMERKUNG": "",
+        "KOSTEN": 20.0,
+        "ORT": "Online",
+        "LEHRGANGSLEITER": "Sabine Freitag",
+        "VERPFLEGUNGSKOSTEN": 0.0,
+        "UEBERNACHTUNGSKOSTEN": 0.0,
+        "LEHRMATERIALKOSTEN": 0.0,
+        "LEHRGANGSINHALT":"{text}",
+        "MAXTEILNEHMER": 130,
+        "WEBVEROEFFENTLICHENAM": "",
+        "ANMELDUNGENGESPERRT": false,
+        "STATUS": 0,
+        "DATUMBIS": "",
+        "LEHRGANGSINHALTHTML": "<span style=\"color:#333\"><b>Beschreibung:</b><br>In Ergänzung zu den Ausbildungen in unseren Gauen bietet der Bayerische Sportschützenbund eine Online-Ausbildung zur Standaufsicht an.<br><br><b>Lehrgangsinhalt:</b><br>·\tDie Schießstätte und ihre Zulassung<br>·\tAltersgrenzen im Waffengesetz<br>·\tAufgaben, Rechte und Pflichten der „verantwortlichen Aufsichtsperson“<br>·\tAufbewahrung von Schusswaffen und Munition auf der Schießstätte und im Schützenhaus, Erwerben von Waffen und Munition auf der Schießstätte<br>·\tVersicherungen für den Betreiber, Schützen und Gastschützen<br>·\tVerbotene Waffen und Munition / Verbotene Schießübungen<br>·\tSportordnung/Disziplinen des DSB bzw. zusätzliche Disziplinen des BSSB<br>·\tMunition und Ballistik in Bezug auf die Zulassung einer Schießstätte/Standordnung<br>·\tSichere Waffenhandhabung und Beseitigung von Waffenstörungen<br>·\tVerhalten bei Unfällen<br>·\tam Ende erfolgt ein Onlinetest über das Erlernte<br><b><br>Uhrzeit:<br></b>19:00 Uhr bis 22:00 Uhr<b><br><br>Wie funktioniert das Online-Seminar:</b><br>Nac</span><span style=\"color:#080000\">h der A</span><span style=\"color:#333\">nmeldung erhalten Sie zwei Tage vor Beginn des Seminars einen Link, über den Sie sich in das Seminar zuschalten. Die Installation einer separaten Software ist nicht erforderlich. </span>Sie benötigen eine stabile Internetverbindung. Zudem raten wir Ihnen zu einem Headset und einer Kamera.<br><br><span style=\"color:#333\"><b>Referent:</b><br>Gilbert Daniel <b>–</b> Spezialist für Waffenrecht<br><br><b>Teilnehmergebühr:</b><br>Die Gebühr wird nach Beendigung des Seminares von Ihrem Konto abgebucht.<br><br><b>Teilnehmerkreis:</b><br>engagierte und interessierte Sportschützen und Vereinsmitglieder</span><span style=\"color:#080000\"><br></span>",
+        "LEHRGANGSLEITER2": "",
+        "LEHRGANGSLEITER3": "",
+        "LEHRGANGSLEITER4": "",
+        "LEHRGANGSLEITERTEL": "089/316949-16",
+        "LEHRGANGSLEITER2TEL": "",
+        "LEHRGANGSLEITER3TEL": "",
+        "LEHRGANGSLEITER4TEL": "",
+        "LEHRGANGSLEITERMAIL": "sabine.freitag@bssb.bayern",
+        "LEHRGANGSLEITER2MAIL": "",
+        "LEHRGANGSLEITER3MAIL": "",
+        "LEHRGANGSLEITER4MAIL": "",
+        "ANMELDESTOPP": "",
+        "ABMELDESTOPP": "",
+        "GELOESCHT": false,
+        "STORNOGRUND": "",
+        "WEBGRUPPE": 3,
+        "VERANSTALTUNGSBEZIRK": 9,
+        "FUERVERLAENGERUNGEN": false,
+        "ANMELDENERLAUBT": 0,
+        "VERBANDSINTERNPASSWORT": "",
+        "WEBGRUPPE_1": 3,
+        "ANGEMELDETETEILNEHMER": 2
+		}
+	],
+	"schulungenTeilnehmer" :  { 
+		"SchulungTerminID": 655, 
+		"PersonID": 1510000006011, 
+		"Namen": "Suter", 
+		"Vorname": "Andreas", 
+		"Titel": "Dr.", 
+		"Passnummer": "41208139", 
+		"Nummer": "", 
+		"Email": "Andreas.suter@hotmail.de", 
+		"Geschlecht": 1, 
+		"RechnungAn": 0, 
+		"Strasse": "Am Wasen 13", 
+		"PLZ": "91598", 
+		"Ort": "Colmberg", 
+		"Kosten": 1, 
+		"Verpflegung": 2, 
+		"Uebernachtung": 3, 
+		"Lehrmaterial": 4, 
+		"AngemeldetUeber ": "", 
+		"Bemerkung": "", 
+		"Bankdaten": { 
+		"Kontoinhaber": "", 
+		"Bankname": "BayernLB München", 
+		"IBAN": "DE27700500000007616944", 
+		"BIC": "BYLADEMMXXX", 
+		"MandatNr": "", 
+		"Mandatname": "", 
+		"MandatSeq": 2 }, 
+		"AngemeldetUeberEmail": "", 
+		"AngemeldetUeberTelefon": "", 
+		"Telefon":"0893169490", 
+		"VereinID":1960, 
+		"FelderArray":[ 
+			{ 
+			"SchulungenTermineFeldID": 36, 
+			"FeldWert": "Feld A-1" 
+			}, 
+			{ 
+			"SchulungenTermineFeldID": 37, 
+			"FeldWert": "Feld A-2" 
+			}, 
+			{ 
+			"SchulungenTermineFeldID": 38, 
+			"FeldWert": "Feld A-3" 
+			} 
+		] 
+	} 
+
+
 }

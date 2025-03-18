@@ -1,37 +1,36 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'api_service.dart';
-import 'start_screen.dart'; 
+import 'start_screen.dart';
 import 'registration_screen.dart';
 import 'help_page.dart';
-import 'password_reset_screen.dart'; 
-import 'logo_widget.dart'; 
-import 'localization_service.dart'; 
-
+import 'password_reset_screen.dart';
+import 'logo_widget.dart';
+import 'localization_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key}); // Key as a super parameter
+  const LoginScreen({super.key});
 
   @override
-  LoginScreenState createState() => LoginScreenState(); // Use the public class here
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> { // Make this public
+class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
-  Color _appColor = const Color(0xFF006400); // Default color
+  Color _appColor = const Color(0xFF006400);
 
-@override
+  @override
   void initState() {
     super.initState();
     _loadLocalization();
   }
 
   Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json'); // Adjust the path if needed
+    await LocalizationService.load('assets/strings.json');
     setState(() {
       final colorString = LocalizationService.getString('appColor');
       if (colorString.isNotEmpty) {
@@ -40,76 +39,60 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
     });
   }
 
-Future<void> _handleLogin() async {
-  setState(() {
-    _isLoading = true;
-    _errorMessage = '';
-  });
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
 
-  // First, perform the login
-  final response = await ApiService.login(
-    _emailController.text,
-    _passwordController.text,
-  );
+    final response = await ApiService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
 
-  // Check if the widget is still mounted after the async call
-  if (!mounted) return;
-
-  if (response["ResultType"] == 1) {
-    int personId = response["PersonID"];
-    var passdaten = await ApiService.fetchPassdaten(personId);
-
-    // Check if the widget is still mounted after the second async call
     if (!mounted) return;
 
-    if (passdaten.isNotEmpty) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StartScreen(passdaten),
-        ),
-      );
+    if (response["ResultType"] == 1) {
+      int personId = response["PersonID"];
+      var passdaten = await ApiService.fetchPassdaten(personId);
+
+      if (!mounted) return;
+
+      if (passdaten.isNotEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StartScreen(passdaten),
+          ),
+        );
+      } else {
+        setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+      }
     } else {
-      setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+      setState(() => _errorMessage = response["ResultMessage"]);
     }
-  } else {
-    setState(() => _errorMessage = response["ResultMessage"]);
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
-  // Final mounted check before setting loading state to false
-  if (mounted) {
-    setState(() => _isLoading = false);
+  void _navigateToRegistrationPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RegistrationScreen(),
+      ),
+    );
   }
-}
-
-void _navigateToRegistrationPage() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const RegistrationScreen(),
-    ),
-  );
-}
 
   Future<void> _navigateToPasswordReset() async {
-    String? personId;
-    if(_emailController.text.isNotEmpty){
-      final response = await ApiService.getPersonId(_emailController.text);
-      if(response['ResultType'] == 1){
-        personId = response['PersonID'].toString();
-      }else{
-        personId = null;
-      }
-    }else{
-      personId = null;
-    }
-
     if (!mounted) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PasswordResetScreen(personId: personId ?? ""),//if personId is null, pass an empty string.
+        builder: (context) => const PasswordResetScreen(), // Removed passdaten: ""
       ),
     );
   }
@@ -117,15 +100,15 @@ void _navigateToRegistrationPage() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // Wrap the entire body in SingleChildScrollView
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const LogoWidget(), 
+              const LogoWidget(),
               const SizedBox(height: 20),
-               Text(
+              Text(
                 "Hier anmelden",
                 style: TextStyle(
                   color: _appColor,
@@ -135,13 +118,13 @@ void _navigateToRegistrationPage() {
               ),
               const SizedBox(height: 20),
               TextField(
-                key: const Key('usernameField'), 
+                key: const Key('usernameField'),
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(labelText: "E-mail"),
               ),
               TextField(
-                key: const Key('passwordField'), 
+                key: const Key('passwordField'),
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
@@ -161,10 +144,9 @@ void _navigateToRegistrationPage() {
                   _handleLogin();
                 },
               ),
-              const SizedBox(height: 45), // Increased space between the password and submit button
+              const SizedBox(height: 45),
               if (_errorMessage.isNotEmpty)
                 Text(_errorMessage, style: const TextStyle(color: Colors.red)),
-              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -176,25 +158,24 @@ void _navigateToRegistrationPage() {
                   child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
                 ),
               ),
-              const SizedBox(height: 20), // Add spacing before the links
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: Column(
                   children: [
                     GestureDetector(
-                            onTap: () {
-                              _navigateToPasswordReset();
-                            },
-                            child: const Text(
-                              "Passwort vergessen?",
-                              style: TextStyle(
-                                color: Color(0xFF006400),
-                                decoration: TextDecoration.underline,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-
+                      onTap: () {
+                        _navigateToPasswordReset();
+                      },
+                      child: const Text(
+                        "Passwort vergessen?",
+                        style: TextStyle(
+                          color: Color(0xFF006400),
+                          decoration: TextDecoration.underline,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     RichText(
                       text: TextSpan(
@@ -202,19 +183,19 @@ void _navigateToRegistrationPage() {
                         children: [
                           const TextSpan(text: "Bestehen Fragen zum Account oder wird "),
                           TextSpan(
-                          text: "Hilfe",
-                          style: const TextStyle(
-                            color: Color(0xFF006400), // Dark green color
-                            decoration: TextDecoration.underline, // Underlined
+                            text: "Hilfe",
+                            style: const TextStyle(
+                              color: Color(0xFF006400),
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HelpPage()),
+                              );
+                            },
                           ),
-                          recognizer: TapGestureRecognizer()..onTap = () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HelpPage()), // Navigate to HelpPage
-                            );
-                          },
-                        ),                          
-                        const TextSpan(text: " benötigt?"),
+                          const TextSpan(text: " benötigt?"),
                         ],
                       ),
                     ),
@@ -226,10 +207,12 @@ void _navigateToRegistrationPage() {
                           const TextSpan(text: "Keinen Account? "),
                           TextSpan(
                             text: "Hier",
-                            style: const TextStyle(color: Color(0xFF006400),
-                            decoration: TextDecoration.underline), // Dark green color
+                            style: const TextStyle(
+                              color: Color(0xFF006400),
+                              decoration: TextDecoration.underline,
+                            ),
                             recognizer: TapGestureRecognizer()..onTap = () {
-                              _navigateToRegistrationPage(); // Future registration page
+                              _navigateToRegistrationPage();
                             },
                           ),
                           const TextSpan(text: " Registrieren."),
@@ -245,14 +228,10 @@ void _navigateToRegistrationPage() {
       ),
     );
   }
- 
 }
 
-
-
-// Dummy page for demonstration purposes
 class DummyPage extends StatelessWidget {
-  const DummyPage({super.key}); // Use super.key directly
+  const DummyPage({super.key});
 
   @override
   Widget build(BuildContext context) {

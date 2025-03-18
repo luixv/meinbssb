@@ -21,17 +21,23 @@ app.use(express.json());
 const loginRoutes = require('./routes/login');
 const passdatenRoutes = require('./routes/passdaten');
 const angemeldeteSchulungenRoutes = require('./routes/angemeldeteSchulungen');
-const registerRoutes = require('./routes/register');
+const registerMyBSSBRoutes = require('./routes/registerMyBSSB');
 const schutzenausweisRoutes = require('./routes/schutzenausweis');
-const schuetzenausweisPdfJpgRoutes = require('./routes/schuetzenausweis_pdf_jpg'); 
+const schuetzenausweisPdfJpgRoutes = require('./routes/schuetzenausweis_pdf_jpg');
+const zweitmitgliedschaftenRoutes = require('./routes/zweitmitgliedschaften');
+const passdatenZVERoutes = require('./routes/passdatenZVE');
+const passwordresetRoutes = require('./routes/PasswordReset');
 
 // Use route handlers
 app.use('/LoginMyBSSB', loginRoutes);
 app.use('/Passdaten', passdatenRoutes);
 app.use('/AngemeldeteSchulungen', angemeldeteSchulungenRoutes);
-app.use('/mock-register', registerRoutes);
+app.use('/RegisterMyBSSB', registerMyBSSBRoutes);
 app.use('/schutzenausweis', schutzenausweisRoutes);
 app.use('/Schuetzenausweis', schuetzenausweisPdfJpgRoutes); 
+app.use('/Zweitmitgliedschaften', zweitmitgliedschaftenRoutes); 
+app.use('/PassdatenZVE', passdatenZVERoutes); 
+app.use('/Passwordreset', passwordresetRoutes); 
 
 
 app.listen(port, () => {
