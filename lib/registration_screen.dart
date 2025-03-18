@@ -23,7 +23,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _zipCodeController = TextEditingController();
   DateTime? _selectedDate;
   bool _privacyAccepted = false;
-  String _privacyText = "";
   Color _appColor = const Color(0xFF006400);
   String zipCodeError = "";
   String passNumberError = "";
@@ -42,7 +41,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Future<void> _loadLocalization() async {
     await LocalizationService.load('assets/strings.json');
     setState(() {
-      _privacyText = LocalizationService.getString('privacyText');
       final colorString = LocalizationService.getString('appColor');
       if (colorString.isNotEmpty) {
         _appColor = Color(int.parse(colorString));
@@ -90,16 +88,20 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return true;
   }
 
-  Future<void> _registerUser() async {
+  
+Future<void> _registerUser() async {
   setState(() {
     _isLoading = true;
-    _successMessage = ""; // Reset success message
+    _successMessage = "";
   });
 
   if (_selectedDate == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please select a date.")),
-    );
+    if (mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a date.")),
+      );
+    }
+
     setState(() {
       _isLoading = false;
     });
@@ -120,32 +122,44 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     if (response['ResultType'] == 1) {
       debugPrint("Registration successful: ${response['ResultMessage']}");
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RegistrationSuccessScreen(
-            message: "Registration successful!",
-            userData: userData,
+      if (mounted){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegistrationSuccessScreen(
+              message: "Registration successful!",
+              userData: userData,
+            ),
           ),
-        ),
-      );
+        );
+      }
+
     } else {
       debugPrint("Registration failed: ${response['ResultMessage']}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response['ResultMessage'])),
-      );
+      if (mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['ResultMessage'])),
+        );
+      }
+
     }
   } catch (e) {
     debugPrint("Error during registration: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("An error occurred: $e")),
-    );
+    if (mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: $e")),
+      );
+    }
+
   } finally {
     setState(() {
       _isLoading = false;
     });
   }
 }
+
+
+
 
 @override
 Widget build(BuildContext context) {

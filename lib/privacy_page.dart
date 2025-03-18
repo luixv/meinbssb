@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'app_menu.dart'; //import the app menu to have the same header.
+import 'app_menu.dart'; // Import the app menu to have the same header.
 
 class PrivacyPage extends StatelessWidget {
   final Map<String, dynamic> userData;
 
-  PrivacyPage({required this.userData});
+  const PrivacyPage({super.key, required this.userData}); // Added const and super.key
 
   @override
   Widget build(BuildContext context) {

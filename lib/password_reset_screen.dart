@@ -49,42 +49,44 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   }
 
   Future<void> _resetPassword() async {
-  setState(() {
-    _isLoading = true;
-    _passNumberError = "";
-  });
+    setState(() {
+      _isLoading = true;
+      _passNumberError = "";
+    });
 
-  try {
-    final response = await ApiService.resetPassword(_passNumberController.text);
-    if (response['ResultType'] == 1) {
-      try{
-         final userData = await ApiService.fetchPassdatenWithString(_passNumberController.text);
-         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PasswordResetSuccessScreen(userData: userData),
-            ),
-          );
-      } catch(e){
+    try {
+      final response = await ApiService.resetPassword(_passNumberController.text);
+      if (response['ResultType'] == 1) {
+        try {
+          final userData = await ApiService.fetchPassdatenWithString(_passNumberController.text);
+          if (mounted) { // Add this check
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PasswordResetSuccessScreen(userData: userData),
+              ),
+            );
+          }
+        } catch (e) {
+          setState(() {
+            _passNumberError = "Ein Fehler ist aufgetreten: $e";
+          });
+        }
+      } else {
         setState(() {
-         _passNumberError = "Ein Fehler ist aufgetreten: $e";
+          _passNumberError = response['ResultMessage'];
         });
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _passNumberError = response['ResultMessage'];
+        _passNumberError = "Ein Fehler ist aufgetreten: $e";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
-  } catch (e) {
-    setState(() {
-      _passNumberError = "Ein Fehler ist aufgetreten: $e";
-    });
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -126,16 +128,12 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isPassNumberValid && !_isLoading
-                      ? _resetPassword
-                      : null,
+                  onPressed: _isPassNumberValid && !_isLoading ? _resetPassword : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Passwort zurücksetzen"),
+                  child: _isLoading ? const CircularProgressIndicator() : const Text("Passwort zurücksetzen"),
                 ),
               ),
             ],

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'app_menu.dart'; // Import your app menu
-import 'logo_widget.dart'; //import the logo widget
+import 'app_menu.dart';
+import 'logo_widget.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
   final String message;
   final Map<String, dynamic> userData;
 
-  RegistrationSuccessScreen({required this.message, required this.userData});
+  const RegistrationSuccessScreen({super.key, required this.message, required this.userData}); // Added const and super.key
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registrierung'), // Use the same title
-        automaticallyImplyLeading: false, // Keep the same behavior
+        title: const Text('Registrierung'),
+        automaticallyImplyLeading: false,
         actions: [
           AppMenu(
             context: context,
@@ -26,11 +26,11 @@ class RegistrationSuccessScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            LogoWidget(),
-            SizedBox(height: 20),
+            const LogoWidget(), // Added const here
+            const SizedBox(height: 20), //Added const here
             Text(
               message,
-              style: TextStyle(fontSize: 20, color: Colors.green),
+              style: const TextStyle(fontSize: 20, color: Colors.green), //Added const here
             ),
           ],
         ),
