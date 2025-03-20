@@ -1,0 +1,2 @@
+/Schuetzenausweis/PDF/{PersonID}
+/Schuetzenausweis/JPG/{PersonID}

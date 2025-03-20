@@ -27,6 +27,11 @@ const schuetzenausweisPdfJpgRoutes = require('./routes/schuetzenausweis_pdf_jpg'
 const zweitmitgliedschaftenRoutes = require('./routes/zweitmitgliedschaften');
 const passdatenZVERoutes = require('./routes/passdatenZVE');
 const passwordresetRoutes = require('./routes/PasswordReset');
+const kontakteRoutes = require('./routes/Kontakte');
+const schulungstermineRoutes = require('./routes/schulungstermine');
+const oktoberfestlandesschiessenRoutes = require('./routes/oktoberfestlandesschiessen');
+const gewinneAbrufenRoutes = require('./routes/gewinneAbrufen');
+
 
 // Use route handlers
 app.use('/LoginMyBSSB', loginRoutes);
@@ -38,6 +43,10 @@ app.use('/Schuetzenausweis', schuetzenausweisPdfJpgRoutes);
 app.use('/Zweitmitgliedschaften', zweitmitgliedschaftenRoutes); 
 app.use('/PassdatenZVE', passdatenZVERoutes); 
 app.use('/Passwordreset', passwordresetRoutes); 
+app.use('/Schulungstermine', schulungstermineRoutes); 
+app.use('/Oktoberfestlandesschiessen', oktoberfestlandesschiessenRoutes); 
+app.use('/GewinneAbrufen', gewinneAbrufenRoutes); 
+
 
 
 app.listen(port, () => {

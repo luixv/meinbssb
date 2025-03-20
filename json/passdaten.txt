@@ -1,0 +1,16 @@
+Mit PersonID die REST /Passdaten/{PersonID} abfragen
+PersonID ist persistent
+
+Alle diese daten mussen persistiert werden
+
+•	"PASSNUMMER": "41299999",
+•	"VEREINNR": 412013,
+•	"NAMEN": "Schütze",
+•	"VORNAME": "Treffsicher",
+•	"TITEL": "",
+•	"GEBURTSDATUM": "1967-03-14T00:00:00.000+01:00",
+•	"GESCHLECHT": 1,    
+•	"VEREINNAME": "KK Gut Schuss e.V.",
+•	"PASSDATENID": 2000010534,
+•	"MITGLIEDSCHAFTID": 1513000003034,
+•	"PERSONID": 4711,

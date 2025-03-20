@@ -1,0 +1,30 @@
+[
+    {
+        "PASSDATENZVID": 2000026216,
+        "ZVEREINID": 1788,
+        "VVEREINNR": 409001,
+        "DISZIPLINNR": "1.10",
+        "GAUID": 46,
+        "BEZIRKID": 4,
+        "DISZIAUSBLENDEN": 0,
+        "ERSAETZENDURCHID": 0,
+        "ZVMITGLIEDSCHAFTID": 146000000238,
+        "VEREINNAME": "Forstschützen Ebersberg",
+        "DISZIPLIN": "Luftgewehr",
+        "DISZIPLINID": 1
+    },
+    {
+        "PASSDATENZVID": 2000026217,
+        "ZVEREINID": 1788,
+        "VVEREINNR": 409001,
+        "DISZIPLINNR": "1.12",
+        "GAUID": 46,
+        "BEZIRKID": 4,
+        "DISZIAUSBLENDEN": 0,
+        "ERSAETZENDURCHID": 0,
+        "ZVMITGLIEDSCHAFTID": 146000000238,
+        "VEREINNAME": "Forstschützen Ebersberg",
+        "DISZIPLIN": "Luftgewehr Mix Team",
+        "DISZIPLINID": 112
+    },
+]

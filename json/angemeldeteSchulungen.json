@@ -1,0 +1,22 @@
+[
+    {
+        "DATUM": "2025-04-12T00:00:00.000+02:00",
+        "BEZEICHNUNG": "Digitale Evolution 2.0: Deine Reise in die digitale Zukunft der neuen Medien",
+        "SCHULUNGENTEILNEHMERID": 27203,
+        "SCHULUNGENTERMINID": 1570,
+        "SCHULUNGSARTID": 2000000326,
+        "STATUS": 0,
+        "DATUMBIS": "",
+        "FUERVERLAENGERUNGEN": true
+    },
+    {
+        "DATUM": "2025-05-03T00:00:00.000+02:00",
+        "BEZEICHNUNG": "ZMI Client für Vereine",
+        "SCHULUNGENTEILNEHMERID": 27204,
+        "SCHULUNGENTERMINID": 1632,
+        "SCHULUNGSARTID": 2000000001,
+        "STATUS": 0,
+        "DATUMBIS": "",
+        "FUERVERLAENGERUNGEN": true
+    }
+]

@@ -1,0 +1,4 @@
+
+Abfrage senden:
+https://webintern.bssb.bayern:50211/rest/zmi/api7/Gewinne/{Jahr}/{Passnummer}
+/Gewinne/2024/70100100
