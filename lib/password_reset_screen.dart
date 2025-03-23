@@ -63,10 +63,10 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     }
 
     try {
-      final response = await ApiService.resetPassword(_passNumberController.text);
+      final response = await ApiService().resetPassword(_passNumberController.text);
       if (response['ResultType'] == 1) {
         try {
-          final userData = await ApiService.fetchPassdatenWithString(_passNumberController.text);
+          final userData = await ApiService().fetchPassdatenWithString(_passNumberController.text);
           if (mounted) {
             Navigator.push(
               context,

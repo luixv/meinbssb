@@ -49,7 +49,7 @@ class StartScreenState extends State<StartScreen> {
     final abDatum =
         "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
 
-    final result = await ApiService.fetchAngemeldeteSchulungen(personId, abDatum);
+    final result = await ApiService().fetchAngemeldeteSchulungen(personId, abDatum);
     setState(() {
       schulungen = result;
       isLoading = false;

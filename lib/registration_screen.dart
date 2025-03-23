@@ -7,8 +7,8 @@ import 'api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server/gmail.dart';
+//import 'package:mailer/mailer.dart';
+//import 'package:mailer/smtp_server/gmail.dart';
 
 
 class RegistrationScreen extends StatefulWidget {
@@ -158,7 +158,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
     try {
-      final response = await ApiService.register(
+      final response = await ApiService().register(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,

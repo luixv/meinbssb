@@ -9,7 +9,9 @@ import 'logo_widget.dart';
 import 'localization_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final ApiService apiService;
+
+  LoginScreen({required this.apiService, super.key});
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -45,7 +47,7 @@ class LoginScreenState extends State<LoginScreen> {
       _errorMessage = '';
     });
 
-    final response = await ApiService.login(
+    final response = await widget.apiService.login(
       _emailController.text,
       _passwordController.text,
     );
@@ -54,7 +56,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     if (response["ResultType"] == 1) {
       int personId = response["PersonID"];
-      var passdaten = await ApiService.fetchPassdaten(personId);
+      var passdaten = await widget.apiService.fetchPassdaten(personId);
 
       if (!mounted) return;
 
@@ -92,7 +94,7 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const PasswordResetScreen(), // Removed passdaten: ""
+        builder: (context) => const PasswordResetScreen(),
       ),
     );
   }
@@ -188,12 +190,13 @@ class LoginScreenState extends State<LoginScreen> {
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => HelpPage()),
-                              );
-                            },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HelpPage()),
+                                );
+                              },
                           ),
                           const TextSpan(text: " benötigt?"),
                         ],
@@ -211,9 +214,10 @@ class LoginScreenState extends State<LoginScreen> {
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              _navigateToRegistrationPage();
-                            },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                _navigateToRegistrationPage();
+                              },
                           ),
                           const TextSpan(text: " Registrieren."),
                         ],

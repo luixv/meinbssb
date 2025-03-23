@@ -1,19 +1,22 @@
 // main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // Import for localization
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'login_screen.dart';
 import 'start_screen.dart';
-import 'localization_service.dart'; // Import the localization service
+import 'localization_service.dart';
+import 'api_service.dart'; // Import ApiService
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalizationService.load('assets/strings.json'); // Your existing localization
+  await LocalizationService.load('assets/strings.json');
 
-  runApp(const MyApp());
+  runApp(MyApp()); // Removed const
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget { // Removed const
+  final ApiService apiService = ApiService(); // Create ApiService instance here
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,21 +25,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      localizationsDelegates: const [ // Add localization delegates
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [ // Add supported locales
-        Locale('de', 'DE'), // German
-        Locale('en', 'US'), // Optional: English
+      supportedLocales: const [
+        Locale('de', 'DE'),
+        Locale('en', 'US'),
       ],
-      initialRoute: '/login', // Set the initial route
+      initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginScreen(), // Login screen route
+        '/login': (context) => LoginScreen(apiService: apiService), // Pass apiService
         '/home': (context) {
           final userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return StartScreen(userData); // Home screen route with arguments
+          return StartScreen(userData);
         },
       },
     );

@@ -24,7 +24,7 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
     _errorMessage = '';
   });
 
-  final response = await ApiService.login(
+  final response = await ApiService().login(
     _emailController.text,
     _passwordController.text,
   );
@@ -34,7 +34,7 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
 
   if (response["ResultType"] == 1) {
     int personId = response["PersonID"];
-    var passdaten = await ApiService.fetchPassdaten(personId);
+    var passdaten = await ApiService().fetchPassdaten(personId);
 
     if (passdaten.isNotEmpty) {
       // Another mounted check before navigation

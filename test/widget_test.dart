@@ -6,7 +6,7 @@ import 'package:meinbssb/login_screen.dart'; // Import your LoginScreen
 void main() {
   testWidgets('Login screen loads', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp());
 
     // Verify that the login screen is displayed.
     expect(find.byType(LoginScreen), findsOneWidget);
