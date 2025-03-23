@@ -158,9 +158,6 @@ Future<void> _registerUser() async {
   }
 }
 
-
-
-
 @override
 Widget build(BuildContext context) {
   return Scaffold(
