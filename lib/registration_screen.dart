@@ -7,6 +7,9 @@ import 'api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
+
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'logo_widget.dart';
-import 'app_menu.dart'; // Import AppMenu
+import 'app_menu.dart';
 import 'localization_service.dart';
 import 'password_reset_success_screen.dart';
 
@@ -15,7 +15,7 @@ class PasswordResetScreen extends StatefulWidget {
 class PasswordResetScreenState extends State<PasswordResetScreen> {
   final TextEditingController _passNumberController = TextEditingController();
   String _passNumberError = "";
-  bool _isPassNumberValid = true;
+  bool _isPassNumberValid = false; // Initialize to false
   bool _hasInteracted = false;
   bool _isLoading = false;
   Color _appColor = const Color(0xFF006400);
@@ -55,14 +55,19 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       _passNumberError = "";
     });
 
+    if (!_isPassNumberValid) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
       final response = await ApiService.resetPassword(_passNumberController.text);
       if (response['ResultType'] == 1) {
         try {
-          final userData =
-              await ApiService.fetchPassdatenWithString(_passNumberController.text);
+          final userData = await ApiService.fetchPassdatenWithString(_passNumberController.text);
           if (mounted) {
-            // Add this check
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -93,7 +98,6 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy userData for the menu, replace with actual data if needed
     Map<String, dynamic> userData = {};
 
     return Scaffold(
@@ -130,8 +134,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: "Passnummer",
-                  errorText:
-                      _hasInteracted && _passNumberError.isNotEmpty ? _passNumberError : null,
+                  errorText: _hasInteracted && _passNumberError.isNotEmpty ? _passNumberError : null,
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -149,9 +152,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Passwort zurücksetzen"),
+                  child: _isLoading ? const CircularProgressIndicator() : const Text("Passwort zurücksetzen"),
                 ),
               ),
             ],
