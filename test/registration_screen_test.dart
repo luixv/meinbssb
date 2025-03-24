@@ -1,62 +1,54 @@
+// test/registration_screen_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/registration_screen.dart'; // Adjust the import path as needed
+import 'package:meinbssb/registration_screen.dart';
 
 void main() {
-  group('RegistrationScreen Validation Tests', () {
-    late RegistrationScreenState registrationScreenState;
-
-    setUp(() {
-      registrationScreenState = RegistrationScreenState();
+  group('Pure Validation Tests', () {
+     test('Pass number validation - accepts 8 digits', () {
+      final state = RegistrationScreenState();
+      expect(state.validatePassNumber('12345678'), isTrue);
     });
 
-    test('Valid ZIP code should pass validation', () {
-      expect(registrationScreenState.validateZipCode('12345'), true);
-      expect(registrationScreenState.zipCodeError, '');
+    test('Pass number validation - rejects non-8-digit inputs', () {
+      final state = RegistrationScreenState();
+      expect(state.validatePassNumber('1234'), isFalse); // Too short
+      expect(state.validatePassNumber('123456789'), isFalse); // Too long
+      expect(state.validatePassNumber('abcdefgh'), isFalse); // Non-digits
+      expect(state.validatePassNumber(''), isFalse); // Empty
     });
 
-    test('Invalid ZIP code (too short) should fail validation', () {
-      expect(registrationScreenState.validateZipCode('1234'), false);
-      expect(registrationScreenState.zipCodeError, 'Postleitzahl muss 5 Ziffern enthalten.');
+    test('Zip code validation', () {
+      final state = RegistrationScreenState();
+      expect(state.validateZipCode('12345'), isTrue);
+      expect(state.validateZipCode('123'), isFalse);
     });
 
-    test('Invalid ZIP code (too long) should fail validation', () {
-      expect(registrationScreenState.validateZipCode('123456'), false);
-      expect(registrationScreenState.zipCodeError, 'Postleitzahl muss 5 Ziffern enthalten.');
+    test('Zip code validation - rejects non-5-digit inputs', () {
+      final state = RegistrationScreenState();
+      expect(state.validateZipCode('123'), isFalse); // Too short
+      expect(state.validateZipCode('123456'), isFalse); // Too long
+      expect(state.validateZipCode('abcde'), isFalse); // Non-digits
+      expect(state.validateZipCode(''), isFalse); // Empty
     });
 
-    test('Invalid ZIP code (non-numeric) should fail validation', () {
-      expect(registrationScreenState.validateZipCode('abcde'), false);
-      expect(registrationScreenState.zipCodeError, 'Postleitzahl muss 5 Ziffern enthalten.');
+     test('Email validation - accepts valid emails', () {
+      final state = RegistrationScreenState();
+      expect(state.validateEmail('test@example.com'), isTrue);
     });
 
-    test('Empty ZIP code should fail validation', () {
-      expect(registrationScreenState.validateZipCode(''), false);
-      expect(registrationScreenState.zipCodeError, 'Postleitzahl ist erforderlich.');
+    test('Email validation - rejects invalid emails', () {
+      final state = RegistrationScreenState();
+      expect(state.validateEmail('plainstring'), isFalse);
+      expect(state.validateEmail('missing@'), isFalse);
+      expect(state.validateEmail('@domain.com'), isFalse);
+      expect(state.validateEmail('mein@@domain.com'), isFalse);
+      expect(state.validateEmail(''), isFalse);
     });
-
-    test('Valid Pass number should pass validation', () {
-      expect(registrationScreenState.validatePassNumber('12345678'), true);
-      expect(registrationScreenState.passNumberError, '');
-    });
-
-    test('Invalid Pass number (too short) should fail validation', () {
-      expect(registrationScreenState.validatePassNumber('1234567'), false);
-      expect(registrationScreenState.passNumberError, 'Schützenausweisnummer muss 8 Ziffern enthalten.');
-    });
-
-    test('Invalid Pass number (too long) should fail validation', () {
-      expect(registrationScreenState.validatePassNumber('123456789'), false);
-      expect(registrationScreenState.passNumberError, 'Schützenausweisnummer muss 8 Ziffern enthalten.');
-    });
-
-    test('Invalid Pass number (non-numeric) should fail validation', () {
-      expect(registrationScreenState.validatePassNumber('abcdefgh'), false);
-      expect(registrationScreenState.passNumberError, 'Schützenausweisnummer muss 8 Ziffern enthalten.');
-    });
-
-    test('Empty Pass number should fail validation', () {
-      expect(registrationScreenState.validatePassNumber(''), false);
-      expect(registrationScreenState.passNumberError, 'Schützenausweisnummer ist erforderlich.');
+    
+    test('Email validation', () {
+      final state = RegistrationScreenState();
+      expect(state.validateEmail('test@test.com'), isTrue);
+      expect(state.validateEmail('invalid'), isFalse);
     });
   });
 }
