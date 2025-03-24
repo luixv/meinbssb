@@ -7,9 +7,6 @@ import 'api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
-//import 'package:mailer/mailer.dart';
-//import 'package:mailer/smtp_server/gmail.dart';
-
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -29,10 +26,25 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Color _appColor = const Color(0xFF006400);
   String? zipCodeError;
   String? passNumberError;
-  String? emailError; 
+  String? emailError;
   bool _isLoading = false;
   String _successMessage = "";
   Map<String, dynamic> userData = {};
+
+  // Getter methods for testing
+  TextEditingController get firstNameController => _firstNameController;
+
+  TextEditingController get lastNameController => _lastNameController;
+
+  TextEditingController get passNumberController => _passNumberController;
+
+  TextEditingController get emailController => _emailController;
+
+  TextEditingController get zipCodeController => _zipCodeController;
+
+  DateTime? get selectedDate => _selectedDate;
+
+  bool get privacyAccepted => _privacyAccepted;
 
   @override
   void initState() {
@@ -53,41 +65,41 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: _selectedDate ?? DateTime.now(),
-    firstDate: DateTime(1900),
-    lastDate: DateTime.now(),
-    locale: const Locale('de', 'DE'),
-    helpText: 'Geburtsdatum',
-    cancelText: 'Abbrechen',
-    confirmText: 'Auswählen',
-    fieldLabelText: 'Geburtsdatum eingeben',
-    fieldHintText: 'TT.MM.JJJJ',
-    errorFormatText: 'Ungültiges Datumsformat.',
-    errorInvalidText: 'Ungültiges Datum.',
-    builder: (BuildContext context, Widget? child) {
-      return Theme(
-        data: Theme.of(context).copyWith( 
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: _appColor, 
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              foregroundColor: _appColor, 
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('de', 'DE'),
+      helpText: 'Geburtsdatum',
+      cancelText: 'Abbrechen',
+      confirmText: 'Auswählen',
+      fieldLabelText: 'Geburtsdatum eingeben',
+      fieldHintText: 'TT.MM.JJJJ',
+      errorFormatText: 'Ungültiges Datumsformat.',
+      errorInvalidText: 'Ungültiges Datum.',
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: _appColor,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: _appColor,
+              ),
             ),
           ),
-        ),
-        child: child!,
-      );
-    },
-  );
-  if (picked != null && picked != _selectedDate) {
-    setState(() {
-      _selectedDate = picked;
-    });
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
-}
 
   bool validateEmail(String value) {
     if (value.isEmpty) {
@@ -104,9 +116,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
       zipCodeError = "Postleitzahl muss 5 Ziffern enthalten.";
     } else {
-      zipCodeError = null;
+      zipCodeError = '';
     }
-    return zipCodeError == null;
+    return zipCodeError == '';
   }
 
   bool validatePassNumber(String value) {
@@ -115,26 +127,27 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
       passNumberError = "Schützenausweisnummer muss 8 Ziffern enthalten.";
     } else {
-      passNumberError = null;
+      passNumberError = '';
     }
-    return passNumberError == null;
+    return passNumberError == '';
   }
 
-  bool _isFormValid() {
-  final isZipValid = _zipCodeController.text.isNotEmpty ? validateZipCode(_zipCodeController.text) : true;
-  final isPassValid = _passNumberController.text.isNotEmpty ? validatePassNumber(_passNumberController.text) : true;
-  final isDateValid = _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
-  final isEmailValid = validateEmail(_emailController.text);
+  bool isFormValid() {
+    final isZipValid =
+        _zipCodeController.text.isNotEmpty ? validateZipCode(_zipCodeController.text) : true;
+    final isPassValid =
+        _passNumberController.text.isNotEmpty ? validatePassNumber(_passNumberController.text) : true;
+    final isDateValid = _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
+    final isEmailValid = validateEmail(_emailController.text);
 
-  return _firstNameController.text.isNotEmpty &&
-      _lastNameController.text.isNotEmpty &&
-      isEmailValid &&
-      isZipValid &&
-      isPassValid &&
-      isDateValid &&
-      _privacyAccepted;
-}
-
+    return _firstNameController.text.isNotEmpty &&
+        _lastNameController.text.isNotEmpty &&
+        isEmailValid &&
+        isZipValid &&
+        isPassValid &&
+        isDateValid &&
+        _privacyAccepted;
+  }
 
   Future<void> _registerUser() async {
     setState(() {
@@ -258,55 +271,57 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  passNumberError = validatePassNumber(value) ? null : "Schützenausweisnummer muss 8 Ziffern enthalten.";                });
+                  passNumberError =
+                      validatePassNumber(value) ? null : "Schützenausweisnummer muss 8 Ziffern enthalten.";
+                });
               },
             ),
             TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: "E-mail",
-                  errorText: emailError, 
-                ),
-                onChanged: (_) {
-                  setState(() {
-                    emailError = validateEmail(_emailController.text) ? null : "Bitte geben Sie eine gültige E-Mail Adresse ein."; 
-                  });
-                },
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: "E-mail",
+                errorText: emailError,
               ),
-
-             InkWell(
-                onTap: () => _selectDate(context),
-                child: InputDecorator(
-                  decoration: const InputDecoration(labelText: "Geburtsdatum"),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        _selectedDate == null
-                            ? 'Wählen Sie Ihr Geburtsdatum'
-                            : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
-                        style: TextStyle(
-                          color: _selectedDate != null ? _appColor : Colors.black,
-                        ),
+              onChanged: (_) {
+                setState(() {
+                  emailError = validateEmail(_emailController.text)
+                      ? null
+                      : "Bitte geben Sie eine gültige E-Mail Adresse ein.";
+                });
+              },
+            ),
+            InkWell(
+              onTap: () => _selectDate(context),
+              child: InputDecorator(
+                decoration: const InputDecoration(labelText: "Geburtsdatum"),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      _selectedDate == null
+                          ? 'Wählen Sie Ihr Geburtsdatum'
+                          : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
+                      style: TextStyle(
+                        color: _selectedDate != null ? _appColor : Colors.black,
                       ),
-                      const Icon(Icons.calendar_today),
-                    ],
-                  ),
+                    ),
+                    const Icon(Icons.calendar_today),
+                  ],
                 ),
               ),
-              TextField(
-                controller: _zipCodeController,
-                decoration: InputDecoration(
-                  labelText: "Postleitzahl",
-                  errorText: zipCodeError,
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    zipCodeError = validateZipCode(value) ? null : "Postleitzahl muss 5 Ziffern enthalten.";
-                  });
-                },
+            ),
+            TextField(
+              controller: _zipCodeController,
+              decoration: InputDecoration(
+                labelText: "Postleitzahl",
+                errorText: zipCodeError,
               ),
-
+              onChanged: (value) {
+                setState(() {
+                  zipCodeError = validateZipCode(value) ? null : "Postleitzahl muss 5 Ziffern enthalten.";
+                });
+              },
+            ),
             Row(
               children: [
                 Checkbox(
@@ -341,8 +356,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      PrivacyPage(userData: userData),
+                                  builder: (context) => PrivacyPage(userData: userData),
                                 ),
                               );
                             },
@@ -361,7 +375,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isFormValid() && !_isLoading ? _registerUser : null,
+                onPressed: isFormValid() && !_isLoading ? _registerUser : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightGreen,
                   padding: const EdgeInsets.symmetric(vertical: 16),
