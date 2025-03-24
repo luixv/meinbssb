@@ -254,16 +254,19 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             TextField(
+              key: Key('firstNameField'),
               controller: _firstNameController,
               decoration: const InputDecoration(labelText: "Vorname"),
               onChanged: (_) => setState(() {}),
             ),
             TextField(
+              key: Key('lastNameField'),
               controller: _lastNameController,
               decoration: const InputDecoration(labelText: "Nachname"),
               onChanged: (_) => setState(() {}),
             ),
             TextField(
+              key: Key('passNumberField'),
               controller: _passNumberController,
               decoration: InputDecoration(
                 labelText: "Schützenausweisnummer",
@@ -277,6 +280,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               },
             ),
             TextField(
+              key: Key('emailField'),
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "E-mail",
@@ -311,6 +315,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             TextField(
+              key: Key('zipCodeField'),
               controller: _zipCodeController,
               decoration: InputDecoration(
                 labelText: "Postleitzahl",
