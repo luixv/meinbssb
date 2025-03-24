@@ -116,9 +116,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
       zipCodeError = "Postleitzahl muss 5 Ziffern enthalten.";
     } else {
-      zipCodeError = '';
+      zipCodeError = null;
     }
-    return zipCodeError == '';
+    return zipCodeError == null;
   }
 
   bool validatePassNumber(String value) {
@@ -127,9 +127,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
       passNumberError = "Schützenausweisnummer muss 8 Ziffern enthalten.";
     } else {
-      passNumberError = '';
+      passNumberError = null;
     }
-    return passNumberError == '';
+    return passNumberError == null;
   }
 
   bool isFormValid() {

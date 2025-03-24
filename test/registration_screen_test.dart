@@ -4,7 +4,7 @@ import 'package:meinbssb/registration_screen.dart';
 
 void main() {
   group('Pure Validation Tests', () {
-     test('Pass number validation - accepts 8 digits', () {
+    test('Pass number validation - accepts 8 digits', () {
       final state = RegistrationScreenState();
       expect(state.validatePassNumber('12345678'), isTrue);
     });
@@ -31,7 +31,7 @@ void main() {
       expect(state.validateZipCode(''), isFalse); // Empty
     });
 
-     test('Email validation - accepts valid emails', () {
+    test('Email validation - accepts valid emails', () {
       final state = RegistrationScreenState();
       expect(state.validateEmail('test@example.com'), isTrue);
     });
@@ -44,7 +44,7 @@ void main() {
       expect(state.validateEmail('mein@@domain.com'), isFalse);
       expect(state.validateEmail(''), isFalse);
     });
-    
+
     test('Email validation', () {
       final state = RegistrationScreenState();
       expect(state.validateEmail('test@test.com'), isTrue);
