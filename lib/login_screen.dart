@@ -11,7 +11,7 @@ import 'localization_service.dart';
 class LoginScreen extends StatefulWidget {
   final ApiService apiService;
 
-  LoginScreen({required this.apiService, super.key});
+  const LoginScreen({required this.apiService, super.key});
 
   @override
   LoginScreenState createState() => LoginScreenState();
