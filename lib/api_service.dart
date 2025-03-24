@@ -12,7 +12,7 @@ class ApiService {
     baseUrl = 'http://$baseIp:$port';
   }
 
-  Future<Map<String, dynamic>> _makeRequest(Future<http.Response> request) async {
+  Future<dynamic> _makeRequest(Future<http.Response> request) async {
     try {
       final response = await request.timeout(const Duration(seconds: 10), onTimeout: () {
         throw TimeoutException("Server timeout");
@@ -22,7 +22,7 @@ class ApiService {
       debugPrint('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return jsonDecode(response.body); // Return dynamic, can be List or Map
       } else {
         return {"ResultType": 0, "ResultMessage": "Request failed: ${response.statusCode}"};
       }
@@ -43,32 +43,38 @@ class ApiService {
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
-    ));
+    )).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
     final String apiUrl = '$baseUrl/Passdaten/$personId';
-    return _makeRequest(http.get(Uri.parse(apiUrl)));
+    return _makeRequest(http.get(Uri.parse(apiUrl))).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
   Future<Map<String, dynamic>> getPersonId(String email) async {
     final url = Uri.parse('$baseUrl/GetPersonID?Email=$email');
-    return _makeRequest(http.get(url));
+    return _makeRequest(http.get(url)).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
     final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
     final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
 
-    if (response['ResultType'] == 0) {
-      return [];
-    } else {
-      if (response.containsKey('schulungen') && response['schulungen'] is List) {
-        return List<dynamic>.from(response['schulungen']);
-      } else {
-        debugPrint("Error: 'schulungen' key not found or not a list.");
+    if (response is List<dynamic>) {
+      return response;
+    } else if (response is Map<String, dynamic>) {
+      if (response['ResultType'] == 0) {
         return [];
+      } else {
+        if (response.containsKey('schulungen') && response['schulungen'] is List) {
+          return List<dynamic>.from(response['schulungen']);
+        } else {
+          debugPrint("Error: 'schulungen' key not found or not a list.");
+          return [];
+        }
       }
+    } else {
+      return [];
     }
   }
 
@@ -97,12 +103,12 @@ class ApiService {
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
-    ));
+    )).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
   Future<Map<String, dynamic>> fetchPassdatenWithString(String passdaten) async {
     final String apiUrl = '$baseUrl/PassdatenString/$passdaten';
-    return _makeRequest(http.get(Uri.parse(apiUrl)));
+    return _makeRequest(http.get(Uri.parse(apiUrl))).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
@@ -112,6 +118,6 @@ class ApiService {
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
-    ));
+    )).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 }
