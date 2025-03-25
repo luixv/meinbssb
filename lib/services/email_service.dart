@@ -5,104 +5,116 @@ import 'package:mailer/smtp_server.dart';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class EmailService {
   final EmailQueueDB _emailQueueDB = EmailQueueDB();
 
- 
-Future<Map<String, dynamic>> sendEmail({
+  Future<Map<String, dynamic>> sendEmail({
     required String from,
     required String recipient,
     required String subject,
     String? body,
-}) async {
-    int queueResult = -1; // Define queueResult outside try block
-    try {
-        String smtpServerAddress = LocalizationService.getString('smtp');
-        String username = LocalizationService.getString('smtp_username');
-        String password = LocalizationService.getString('smtp_password');
+    int? emailId,
+  }) async {
+    int queueResult = -1;
 
-        // 1. Add email to the queue (before sending)
-        queueResult = await _emailQueueDB.addEmail(
-            recipient: recipient,
-            subject: subject,
-            body: body,
-        );
+    debugPrint("sendEmail called with emailId: $emailId");
 
-        final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
-
-        final message = Message()
-            ..from = Address(from)
-            ..recipients.add(recipient)
-            ..subject = subject
-            ..text = body;
-
-        final sendReport = await send(message, smtpServer);
-        debugPrint('Message sent: ${sendReport.toString()}');
-
-        // 2. Update the email status in the queue (after successful sending)
-        await _emailQueueDB.updateStatus(queueResult, 'sent');
-
-        return {
-            "ResultType": 1,
-            "ResultMessage": "Email sent successfully",
-        };
-    } catch (e) {
-        String errorMessage = "Error sending email: $e";
-        if (e is SocketException) {
-            errorMessage = "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
-        }
-
-        // 3. Increment the retry count and update the status (after failed sending)
-        if(queueResult != -1) {
-            await _emailQueueDB.updateStatus(queueResult, 'failed');
-            await _emailQueueDB.incrementRetry(queueResult);
-        }
-
-        debugPrint('Email sending failed: $errorMessage');
-        return {
-            "ResultType": 0,
-            "ResultMessage": errorMessage,
-        };
+    if (emailId == null) {
+      debugPrint("Inserting new email...");
+      queueResult = await this._emailQueueDB.addEmail(
+        recipient: recipient,
+        subject: subject,
+        body: body,
+      );
+    } else {
+      debugPrint("Skipping insertion. Using existing emailId: $emailId");
+      queueResult = emailId;
     }
-}
 
+    try {
+      String smtpServerAddress = LocalizationService.getString('smtp');
+      String username = LocalizationService.getString('smtp_username');
+      String password = LocalizationService.getString('smtp_password');
 
-  Future<void> sendEmailFromQueue() async {
-    final pendingEmails = await _emailQueueDB.getPendingEmails();
-    for (var email in pendingEmails) {
-      try {
-        String smtpServerAddress = LocalizationService.getString('smtp');
-        String username = LocalizationService.getString('smtp_username');
-        String password = LocalizationService.getString('smtp_password');
+      final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
 
-        final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
+      final message = Message()
+        ..from = Address(from)
+        ..recipients.add(recipient)
+        ..subject = subject
+        ..text = body;
 
-        final message = Message()
-          ..from = email['from']
-          ..recipients.add(email['recipient']) // Use recipient
-          ..subject = email['subject']
-          ..text = email['body']; // Use body
+      final sendReport = await send(message, smtpServer);
+      debugPrint('Message sent: ${sendReport.toString()}');
 
-        final sendReport = await send(message, smtpServer);
-        debugPrint('Message sent: ${sendReport.toString()}');
+      await this._emailQueueDB.updateStatus(queueResult, 'sent');
+      debugPrint("Updated status to 'sent' for id: $queueResult");
 
-        await _emailQueueDB.updateStatus(email['id'], 'sent');
-      } catch (e) {
-        String errorMessage = "Error sending email: $e";
-        if (e is SocketException) {
-          errorMessage = "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
-        }
-
-        await _emailQueueDB.updateStatus(email['id'], 'failed');
-        await _emailQueueDB.incrementRetry(email['id']);
-
-        debugPrint('Email sending failed: $errorMessage');
+      return {
+        "ResultType": 1,
+        "ResultMessage": "Email sent successfully",
+      };
+    } catch (e) {
+      String errorMessage = "Error sending email: $e";
+      if (e is SocketException) {
+        errorMessage = "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
       }
+
+      await this._emailQueueDB.updateStatus(queueResult, 'failed');
+      // Remove incrementRetry from here.
+      debugPrint("Updated status to 'failed' for id: $queueResult");
+
+      debugPrint('Email sending failed: $errorMessage');
+      return {
+        "ResultType": 0,
+        "ResultMessage": errorMessage,
+      };
     }
   }
 
-  Future<Map<String, dynamic>> getQueueStats() async {
-    return await _emailQueueDB.getQueueStats();
+  Future<Map<String, dynamic>> retryEmail(int emailId) async {
+    try {
+      final email = await _emailQueueDB.getAllEmails();
+      Map<String, dynamic>? emailData;
+
+      for (int i = 0; i < email.length; i++) {
+        if (email[i]['id'] == emailId) {
+          emailData = email[i];
+          break;
+        }
+      }
+
+      if (emailData == null) {
+        return {
+          "ResultType": 0,
+          "ResultMessage": "Email not found",
+        };
+      }
+
+      final sendResult = await sendEmail(
+        from: LocalizationService.getString('From'),
+        recipient: emailData['recipient'],
+        subject: emailData['subject'],
+        body: emailData['body'],
+        emailId: emailId,
+      );
+
+      if (sendResult['ResultType'] == 1) {
+        await _emailQueueDB.updateStatus(emailId, 'sent');
+        return sendResult;
+      } else {
+        await _emailQueueDB.incrementRetry(emailId); // Increment only here.
+        await _emailQueueDB.updateStatus(emailId, 'failed');
+        return sendResult;
+      }
+    } catch (e) {
+      debugPrint("Error retrying email: $e");
+      return {
+        "ResultType": 0,
+        "ResultMessage": "Error retrying email: $e",
+      };
+    }
   }
 }
