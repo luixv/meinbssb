@@ -33,17 +33,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   // Getter methods for testing
   TextEditingController get firstNameController => _firstNameController;
-
   TextEditingController get lastNameController => _lastNameController;
-
   TextEditingController get passNumberController => _passNumberController;
-
   TextEditingController get emailController => _emailController;
-
   TextEditingController get zipCodeController => _zipCodeController;
-
   DateTime? get selectedDate => _selectedDate;
-
   bool get privacyAccepted => _privacyAccepted;
 
   @override
@@ -149,71 +143,96 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         _privacyAccepted;
   }
 
+  
   Future<void> _registerUser() async {
-    setState(() {
-      _isLoading = true;
-      _successMessage = "";
-    });
+  setState(() {
+    _isLoading = true;
+    _successMessage = "";
+  });
 
-    if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please select a valid past date.")),
-        );
-      }
-
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-
-    try {
-      final response = await ApiService().register(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        passNumber: _passNumberController.text,
-        email: _emailController.text,
-        birthDate: formattedDate,
-        zipCode: _zipCodeController.text,
+  if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a valid past date.")),
       );
+    }
 
-      if (response['ResultType'] == 1) {
-        debugPrint("Registration successful: ${response['ResultMessage']}");
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RegistrationSuccessScreen(
-                message: "Registration successful!",
-                userData: userData,
-              ),
-            ),
-          );
-        }
-      } else {
-        debugPrint("Registration failed: ${response['ResultMessage']}");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response['ResultMessage'])),
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint("Error during registration: $e");
+    setState(() {
+      _isLoading = false;
+    });
+    return;
+  }
+
+  final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+  try {
+    final response = await ApiService().register(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      passNumber: _passNumberController.text,
+      email: _emailController.text,
+      birthDate: formattedDate,
+      zipCode: _zipCodeController.text,
+    );
+
+    if (response['ResultType'] == 1) {
+      debugPrint("Registration successful: ${response['ResultMessage']}");
+      await _sendRegistrationEmail(); // Call the new method to send email
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("An error occurred: $e")),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegistrationSuccessScreen(
+              message: "Registration successful!",
+              userData: userData,
+            ),
+          ),
         );
       }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    } else {
+      debugPrint("Registration failed: ${response['ResultMessage']}");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['ResultMessage'])),
+        );
+      }
     }
+  } catch (e) {
+    debugPrint("Error during registration: $e");
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: $e")),
+      );
+    }
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
+Future<void> _sendRegistrationEmail() async {
+  // Extract parameters from the strings.json
+  String from = LocalizationService.getString('From'); // From address
+  String subject = LocalizationService.getString('Subject');
+  String registrationContent = LocalizationService.getString('registrationContent');
+
+  // Send email
+  final emailResponse = await ApiService().sendEmail(
+    from: from,
+    to: _emailController.text,
+    subject: subject,
+    content: registrationContent,
+  );
+
+  if (emailResponse['ResultType'] == 1) {
+    debugPrint("Email sent successfully: ${emailResponse['ResultMessage']}");
+  } else {
+    debugPrint("Email sending failed: ${emailResponse['ResultMessage']}");
+  }
+}
+  
 
   @override
   Widget build(BuildContext context) {
@@ -395,4 +414,5 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+  
 }
