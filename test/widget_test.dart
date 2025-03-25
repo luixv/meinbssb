@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/main.dart';
-import 'package:meinbssb/login_screen.dart'; // Import your LoginScreen
+import 'package:meinbssb/screens/login_screen.dart'; 
 
 void main() {
   testWidgets('Login screen loads', (WidgetTester tester) async {
@@ -11,7 +11,7 @@ void main() {
     // Verify that the login screen is displayed.
     expect(find.byType(LoginScreen), findsOneWidget);
 
-    // You can add more specific tests for your login screen here,
+    // I might add more specific tests for your login screen here,
     // such as checking for specific widgets or input fields.
     // For example:
     expect(find.byKey(const Key('usernameField')), findsOneWidget);

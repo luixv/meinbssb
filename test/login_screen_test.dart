@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/login_screen.dart';
-import 'package:meinbssb/api_service.dart';
+import 'package:meinbssb/screens/login_screen.dart';
+import 'package:meinbssb/services/api_service.dart'; // moved 
 
 // Simple mock for ApiService
 class MockApiService extends ApiService {

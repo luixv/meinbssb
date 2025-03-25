@@ -4,7 +4,17 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a starting point for the Mein BSSB application
+
+For building the project:
+    flutter clean 
+    flutter pub get                                  
+    flutter run
+
+For generating mocks and testing:
+    flutter pub run build_runner build
+    flutter test
+
 
 A few resources to get you started if this is your first Flutter project:
 

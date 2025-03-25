@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/password_reset_screen.dart';
+import 'package:meinbssb/screens/password_reset_screen.dart'; // moved
 
 void main() {
   testWidgets('Displays password reset form', (tester) async {

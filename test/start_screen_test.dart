@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/start_screen.dart'; 
-import 'package:meinbssb/api_service.dart'; 
+import 'package:meinbssb/screens/start_screen.dart'; 
+import 'package:meinbssb/services/api_service.dart'; 
 import 'package:mockito/annotations.dart';
-import 'start_screen_test.mocks.dart'; // This will be generated from the @GenerateMocks
+import 'start_screen_test.mocks.dart'; 
 
 // Use the generated file annotation, with customMocks to avoid name conflict
 @GenerateMocks([ApiService], customMocks: [MockSpec<ApiService>(as: #CustomMockApiService)])

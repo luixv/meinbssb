@@ -1,7 +1,7 @@
 import 'package:mailer/mailer.dart';
 import 'email_queue_db.dart';
 import 'package:mailer/smtp_server.dart'; 
-import 'localization_service.dart';
+import 'package:meinbssb/services/localization_service.dart';
 
 class EmailService {
   final EmailQueueDB _db = EmailQueueDB();

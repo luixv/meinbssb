@@ -1,6 +1,6 @@
 // test/registration_screen_test.dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/registration_screen.dart';
+import 'package:meinbssb/screens/registration_screen.dart';
 
 void main() {
   group('Pure Validation Tests', () {
