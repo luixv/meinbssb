@@ -220,12 +220,13 @@ Future<void> _sendRegistrationEmail() async {
   String subject = LocalizationService.getString('Subject');
   String registrationContent = LocalizationService.getString('registrationContent');
 
+  debugPrint("Calling addEmail...");
   // Send email
   final emailResponse = await EmailService().sendEmail(
     from: from,
-    to: _emailController.text,
+    recipient: _emailController.text, // Change 'to' to 'recipient'
     subject: subject,
-    content: registrationContent,
+    body: registrationContent,
   );
 
   if (emailResponse['ResultType'] == 1) {

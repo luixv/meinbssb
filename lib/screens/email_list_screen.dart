@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/email_queue_db.dart';
+import 'package:meinbssb/data/email_queue_db.dart';
+
 
 class EmailListScreen extends StatefulWidget {
   const EmailListScreen({super.key}); // Corrected constructor

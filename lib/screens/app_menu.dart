@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'schuetzenausweis_screen.dart';
+import 'mail_monitoring_screen.dart'; // Import MailMonitoringScreen
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
   final Map<String, dynamic> userData;
-  final bool showSingleMenuItem; // Add this flag
+  final bool showSingleMenuItem;
+  final bool isLoggedIn; // Add this flag
 
   const AppMenu({
     required this.context,
     required this.userData,
-    this.showSingleMenuItem = false, // Default to false
+    this.showSingleMenuItem = false,
+    this.isLoggedIn = true, // Default to true, change as needed
     super.key,
   });
 
   Future<void> _displaySchuetzenausweis(int personId) async {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => SchuetzenausweisScreen(
-        personId: personId,
-        userData: userData, // Pass userData here
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SchuetzenausweisScreen(
+          personId: personId,
+          userData: userData,
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +40,18 @@ class AppMenu extends StatelessWidget {
             '/home',
             arguments: userData,
           );
-        } 
-         else if (value == 'digitaler_schuetzenausweis') {
-          _displaySchuetzenausweis(userData['PERSONID']); // Call the download function
+        } else if (value == 'digitaler_schuetzenausweis') {
+          _displaySchuetzenausweis(userData['PERSONID']);
+        } else if (value == 'mail_monitoring') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MailMonitoringScreen()),
+          );
         }
         // Add more actions for other menu points here if needed
       },
       itemBuilder: (BuildContext context) {
         if (showSingleMenuItem) {
-          // Display only "Back to Login"
           return [
             const PopupMenuItem<String>(
               value: 'back_to_login',
@@ -92,6 +97,10 @@ class AppMenu extends StatelessWidget {
               value: 'oktoberfestlandesschiessen',
               child: Text('Oktoberfestlandesschiessen'),
             ),
+            const PopupMenuItem<String>(
+                value: 'mail_monitoring',
+                child: Text('Mail Monitoring'),
+              ),
             const PopupMenuItem<String>(
               value: 'logout',
               child: Text('Abmelden'),
