@@ -2,9 +2,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
-import 'package:meinbssb/services/localization_service.dart'; // To be moved
 
 class ApiService {
   final String baseIp;
@@ -121,43 +118,6 @@ class ApiService {
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
-    )).then((value) => value is Map<String, dynamic> ? value : {}); 
+    )).then((value) => value is Map<String, dynamic> ? value : {});
   }
-
-Future<Map<String, dynamic>> sendEmail({
-    required String from,
-    required String to,
-    required String subject,
-    required String content,
-  }) async {
-    // Extract SMTP server credentials from your configuration
-    String smtpServerAddress = LocalizationService.getString('smtp'); 
-    String username = LocalizationService.getString('smtp_username'); 
-    String password = LocalizationService.getString('smtp_password'); 
-
-    // Create the SMTP server
-    final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
-
-    // Create the message
-    final message = Message()
-      ..from = Address(from)
-      ..recipients.add(to)
-      ..subject = subject
-      ..text = content;
-
-    try {
-      // Send the message
-      final sendReport = await send(message, smtpServer);
-      debugPrint('Message sent: ${sendReport.toString()}');
-
-      return {"ResultType": 1, "ResultMessage": "Email sent successfully"};
-    } catch (e) {
-      debugPrint('Error sending email: $e');
-      return {
-        "ResultType": 0,
-        "ResultMessage": "Error sending email: $e",
-      };
-    }
-  }
-
 }

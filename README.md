@@ -15,6 +15,16 @@ For generating mocks and testing:
     flutter pub run build_runner build
     flutter test
 
+Follow this structure: 
+lib/
+├── services/
+│   ├── email_manager.dart  # New file
+│   ├── api_service.dart
+│   └── localization_service.dart
+├── data/
+│   └── email_queue_db.dart
+└── screens/
+    └── *_screen
 
 A few resources to get you started if this is your first Flutter project:
 

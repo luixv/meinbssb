@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/services/localization_service.dart'; // moved
+import 'package:meinbssb/services/localization_service.dart'; 
 import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
+import 'package:meinbssb/services/email_service.dart'; // Import EmailService
+
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -219,7 +221,7 @@ Future<void> _sendRegistrationEmail() async {
   String registrationContent = LocalizationService.getString('registrationContent');
 
   // Send email
-  final emailResponse = await ApiService().sendEmail(
+  final emailResponse = await EmailService().sendEmail(
     from: from,
     to: _emailController.text,
     subject: subject,

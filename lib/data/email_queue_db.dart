@@ -63,7 +63,7 @@ class EmailQueueDB {
     final db = await database;
     return db.query(
       _tableName,
-      where: 'status = ?',
+      where: 'status = ? AND retries < 3', // Max 3 retries
       whereArgs: ['pending'],
     );
   }
@@ -79,7 +79,16 @@ class EmailQueueDB {
     );
   }
 
-  // Monitor queue stats
+  // Increment retry count
+  Future<void> incrementRetry(int id) async {
+    final db = await database;
+    await db.rawUpdate(
+      'UPDATE $_tableName SET retries = retries + 1 WHERE id = ?',
+      [id],
+    );
+  }
+
+  // Get queue stats
   Future<Map<String, dynamic>> getQueueStats() async {
     final db = await database;
     final pending = Sqflite.firstIntValue(
@@ -97,22 +106,9 @@ class EmailQueueDB {
     };
   }
 
-  Future<void> incrementRetryCount(int id) async {
-  final db = await database;
-  await db.rawUpdate(
-    'UPDATE $_tableName SET retries = retries + 1 WHERE id = ?',
-    [id],
-  );
-}
-
-// Add max retries check
-Future<List<Map<String, dynamic>>> getEmailsForRetry() async {
-  final db = await database;
-  return db.query(
-    _tableName,
-    where: 'status = ? AND retries < ?',
-    whereArgs: ['pending', 3], // Max 3 retries
-  );
-}
-
+   Future<List<Map<String, dynamic>>> getAllEmails() async {
+    final db = await database;
+    return db.query(_tableName); // Query all rows
+  }
+  
 }

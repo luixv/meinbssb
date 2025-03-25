@@ -153,26 +153,6 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
             ),
           )
           as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> sendEmail({
-    required String? from,
-    required String? to,
-    required String? subject,
-    required String? content,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#sendEmail, [], {
-              #from: from,
-              #to: to,
-              #subject: subject,
-              #content: content,
-            }),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [ApiService].
@@ -300,26 +280,6 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
   _i4.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [passNumber]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> sendEmail({
-    required String? from,
-    required String? to,
-    required String? subject,
-    required String? content,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#sendEmail, [], {
-              #from: from,
-              #to: to,
-              #subject: subject,
-              #content: content,
-            }),
             returnValue: _i4.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
