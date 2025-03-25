@@ -152,6 +152,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     _successMessage = "";
   });
 
+  await Future.delayed(const Duration(milliseconds: 100)); // wait for the DB creation.
+
+
   if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -220,8 +223,6 @@ Future<void> _sendRegistrationEmail() async {
   String subject = LocalizationService.getString('Subject');
   String registrationContent = LocalizationService.getString('registrationContent');
 
-  debugPrint("Calling addEmail...");
-  // Send email
   final emailResponse = await EmailService().sendEmail(
     from: from,
     recipient: _emailController.text, // Change 'to' to 'recipient'

@@ -29,8 +29,6 @@ Future<Map<String, dynamic>> sendEmail({
             body: body,
         );
 
-        debugPrint("_emailQueueDB.addEmail result: $queueResult");
-
         final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
 
         final message = Message()

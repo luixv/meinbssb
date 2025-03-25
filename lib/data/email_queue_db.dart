@@ -26,14 +26,19 @@ class EmailQueueDB {
   }
 
   Future<Database> _initDB() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final path = join(dir.path, _dbName);
-    debugPrint("Database path: $path");
-    return openDatabase(
-      path,
-      version: _dbVersion,
-      onCreate: _onCreate,
-    );
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final path = join(dir.path, _dbName);
+      debugPrint("Database path: $path");
+      return openDatabase(
+        path,
+        version: _dbVersion,
+        onCreate: _onCreate,
+      );
+    } catch (e) {
+      debugPrint("Error initializing database: $e");
+      return Future.error(e); // Propagate the error
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -60,14 +65,27 @@ class EmailQueueDB {
   }) async {
     final db = await database;
     debugPrint("Adding email: recipient=$recipient, subject=$subject");
-    final result = await db.insert(_tableName, {
-      'recipient': recipient,
-      'subject': subject,
-      'body': body,
-      'created_at': DateTime.now().toIso8601String(),
-    });
-    debugPrint("Email added with result: $result");
-    return result;
+
+    // Check if the emails table exists
+    final tables = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='emails'");
+    if (tables.isEmpty) {
+      debugPrint("emails table does not exist");
+      return 0;
+    }
+
+    try {
+      final result = await db.insert(_tableName, {
+        'recipient': recipient,
+        'subject': subject,
+        'body': body,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      debugPrint("Email added with result: $result");
+      return result;
+    } catch (e) {
+      debugPrint("Error inserting email: $e");
+      return 0; // Or handle the error appropriately
+    }
   }
 
   // Get pending emails
