@@ -5,8 +5,9 @@ import 'start_screen.dart'; // Ensure this import is correct
 import 'help_page.dart'; // Import the new HelpPage
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key}); // Key as a super parameter
-
+  final ApiService apiService;
+  const LoginScreen({required this.apiService, super.key}); // Constructor to take the ApiService
+  
   @override
   LoginScreenState createState() => LoginScreenState(); // Use the public class here
 }
@@ -43,7 +44,7 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => StartScreen(passdaten),
+          builder: (context) => StartScreen(passdaten, apiService: widget.apiService),
         ),
       );
     } else {

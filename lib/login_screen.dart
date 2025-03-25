@@ -1,9 +1,9 @@
-import 'package:flutter/gestures.dart';
+import 'package:flutter/gestures.dart'; 
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'start_screen.dart';
 import 'registration_screen.dart';
-import 'help_page.dart';
+import 'help_page.dart'; 
 import 'password_reset_screen.dart';
 import 'logo_widget.dart';
 import 'localization_service.dart';
@@ -64,7 +64,7 @@ class LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => StartScreen(passdaten),
+            builder: (context) => StartScreen(passdaten, apiService: widget.apiService), 
           ),
         );
       } else {

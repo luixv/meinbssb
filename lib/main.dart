@@ -37,9 +37,9 @@ class MyApp extends StatelessWidget { // Removed const
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(apiService: apiService), // Pass apiService
-        '/home': (context) {
+       '/home': (context) {
           final userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return StartScreen(userData);
+          return StartScreen(userData, apiService: apiService); // Pass apiService here
         },
       },
     );

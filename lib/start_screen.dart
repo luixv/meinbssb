@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
+import 'api_service.dart'; // Import the ApiService
 import 'app_menu.dart';
 import 'localization_service.dart';
 import 'logo_widget.dart'; 
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
+  final ApiService apiService; // Add ApiService as a parameter
 
-  const StartScreen(this.userData, {super.key});
+  const StartScreen(this.userData, {required this.apiService, super.key}); // Update constructor
 
   @override
   StartScreenState createState() => StartScreenState();
@@ -48,7 +49,7 @@ class StartScreenState extends State<StartScreen> {
     final today = DateTime.now();
     final abDatum =
         "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
-    final result = await ApiService().fetchAngemeldeteSchulungen(personId, abDatum);
+    final result = await widget.apiService.fetchAngemeldeteSchulungen(personId, abDatum); // Use the injected apiService
     setState(() {
       schulungen = result;
       isLoading = false;
