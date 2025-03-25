@@ -1,9 +1,0 @@
-The request is to the URL
-
-/LoginMyBSSB
-
-These 2 values must be persisted at the APP.
-
-•	"PersonID": 439287, 
-•	"WebLoginID": 27 
-

@@ -1,20 +1,20 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'login_screen.dart';
-import 'start_screen.dart';
-import 'localization_service.dart';
-import 'api_service.dart'; // Import ApiService
+import 'screens/login_screen.dart';
+import 'screens/start_screen.dart';
+import 'services/localization_service.dart';
+import 'package:meinbssb/services/api_service.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load('assets/strings.json');
 
-  runApp(MyApp()); // Removed const
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget { // Removed const
-  final ApiService apiService = ApiService(); // Create ApiService instance here
+class MyApp extends StatelessWidget { 
+  final ApiService apiService = ApiService(); 
 
   MyApp({super.key});
 
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget { // Removed const
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(apiService: apiService), // Pass apiService
-       '/home': (context) {
+        '/home': (context) {
           final userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return StartScreen(userData, apiService: apiService); // Pass apiService here
         },

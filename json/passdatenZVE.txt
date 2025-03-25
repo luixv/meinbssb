@@ -1,2 +1,0 @@
-Pass-Zweitvereinseinträge abrufen
-/PassdatenZVE/{PassdatenID}/{PersonID}
