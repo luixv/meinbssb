@@ -7,8 +7,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
-import 'package:meinbssb/services/email_service.dart'; // Import EmailService
-
+import 'package:meinbssb/services/email_service.dart'; 
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -145,23 +144,20 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         _privacyAccepted;
   }
 
-  
-  Future<void> _registerUser() async {
+Future<void> _registerUser() async {
   setState(() {
     _isLoading = true;
     _successMessage = "";
   });
 
-  await Future.delayed(const Duration(milliseconds: 100)); // wait for the DB creation.
-
+  await Future.delayed(const Duration(milliseconds: 100));
 
   if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select a valid past date.")),
+        const SnackBar(content: Text("Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.")),
       );
     }
-
     setState(() {
       _isLoading = false;
     });
@@ -182,14 +178,31 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     if (response['ResultType'] == 1) {
       debugPrint("Registration successful: ${response['ResultMessage']}");
-      await _sendRegistrationEmail(); // Call the new method to send email
+      bool emailSent = false;
+      
+      try {
+        await _sendRegistrationEmail();
+        emailSent = true;
+      } catch (e) {
+        debugPrint("Email sending error: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal."),
+              duration: Duration(seconds: 5),
+            ),
+          );
+        }
+      }
 
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RegistrationSuccessScreen(
-              message: "Registration successful!",
+              message: emailSent 
+                  ? "Registrierung erfolgreich!" 
+                  : "Registrierung nicht erfolgreich! versuches sie später nochmals",
               userData: userData,
             ),
           ),
@@ -199,7 +212,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       debugPrint("Registration failed: ${response['ResultMessage']}");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['ResultMessage'])),
+          SnackBar(content: Text(response['ResultMessage'] ?? "Registrierung fehlgeschlagen")),
         );
       }
     }
@@ -207,36 +220,42 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     debugPrint("Error during registration: $e");
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("An error occurred: $e")),
+        SnackBar(
+          content: Text("Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut."),
+          duration: Duration(seconds: 5),
+        ),
       );
     }
   } finally {
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
 
 Future<void> _sendRegistrationEmail() async {
-  // Extract parameters from the strings.json
-  String from = LocalizationService.getString('From'); // From address
-  String subject = LocalizationService.getString('Subject');
-  String registrationContent = LocalizationService.getString('registrationContent');
+  try {
+    String from = LocalizationService.getString('From');
+    String subject = LocalizationService.getString('Subject');
+    String registrationContent = LocalizationService.getString('registrationContent');
 
-  final emailResponse = await EmailService().sendEmail(
-    from: from,
-    recipient: _emailController.text, // Change 'to' to 'recipient'
-    subject: subject,
-    body: registrationContent,
-  );
+    final emailResponse = await EmailService().sendEmail(
+      from: from,
+      recipient: _emailController.text,
+      subject: subject,
+      body: registrationContent,
+    );
 
-  if (emailResponse['ResultType'] == 1) {
-    debugPrint("Email sent successfully: ${emailResponse['ResultMessage']}");
-  } else {
-    debugPrint("Email sending failed: ${emailResponse['ResultMessage']}");
+    if (emailResponse['ResultType'] != 1) {
+      throw Exception(emailResponse['ResultMessage']);
+    }
+  } catch (e) {
+    debugPrint("Error sending email: $e");
+    rethrow; // Re-throw the error to handle it in _registerUser
   }
 }
-  
 
   @override
   Widget build(BuildContext context) {
