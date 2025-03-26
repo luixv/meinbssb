@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/app_menu.dart';
-import 'dart:typed_data'; // For Uint8List
+import 'dart:typed_data';
 
 class SchuetzenausweisScreen extends StatelessWidget {
   final int personId;
@@ -38,7 +38,11 @@ class SchuetzenausweisScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            String errorMessage = snapshot.error.toString();
+            if (errorMessage.startsWith('Exception: ')) {
+              errorMessage = errorMessage.substring('Exception: '.length);
+            }
+            return Center(child: Text('Error: $errorMessage'));
           }
           if (snapshot.hasData) {
             return Center(
