@@ -202,7 +202,7 @@ Future<void> _registerUser() async {
             builder: (context) => RegistrationSuccessScreen(
               message: emailSent 
                   ? "Registrierung erfolgreich!" 
-                  : "Registrierung nicht erfolgreich! versuches sie später nochmals",
+                  : "Registrierung nicht erfolgreich! versuchen Sie es später erneut.",
               userData: userData,
             ),
           ),
@@ -267,7 +267,10 @@ Future<void> _sendRegistrationEmail() async {
           AppMenu(
             context: context,
             userData: userData,
-            showSingleMenuItem: true,
+            isLoggedIn: false, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

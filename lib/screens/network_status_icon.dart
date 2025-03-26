@@ -30,7 +30,6 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
     _passwordController.text,
   );
 
-  // Check if the widget is still mounted before proceeding
   if (!mounted) return;
 
   if (response["ResultType"] == 1) {
@@ -44,7 +43,14 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => StartScreen(passdaten, apiService: widget.apiService),
+          builder: (context) => StartScreen(
+            passdaten,
+            apiService: widget.apiService,
+            isLoggedIn: true, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
         ),
       );
     } else {
@@ -70,7 +76,7 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DummyPage(), // Replace this with your actual page later
+        builder: (context) => DummyPage(), // To be replaced with the actual page later
       ),
     );
   }

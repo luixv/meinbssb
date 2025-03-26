@@ -4,14 +4,14 @@ import 'schuetzenausweis_screen.dart';
 class AppMenu extends StatelessWidget {
   final BuildContext context;
   final Map<String, dynamic> userData;
-  final bool showSingleMenuItem;
-  final bool isLoggedIn; // Add this flag
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   const AppMenu({
     required this.context,
     required this.userData,
-    this.showSingleMenuItem = false,
-    this.isLoggedIn = true, // Default to true, change as needed
+    this.isLoggedIn = true,
+    required this.onLogout,
     super.key,
   });
 
@@ -37,15 +37,17 @@ class AppMenu extends StatelessWidget {
           Navigator.pushReplacementNamed(
             context,
             '/home',
-            arguments: userData,
+            arguments: {
+              'userData': userData,
+              'isLoggedIn': true, 
+            },
           );
         } else if (value == 'digitaler_schuetzenausweis') {
           _displaySchuetzenausweis(userData['PERSONID']);
-        } 
-        // Add more actions for other menu points here if needed
+        }
       },
       itemBuilder: (BuildContext context) {
-        if (showSingleMenuItem) {
+        if (!isLoggedIn) {
           return [
             const PopupMenuItem<String>(
               value: 'back_to_login',
@@ -53,7 +55,6 @@ class AppMenu extends StatelessWidget {
             ),
           ];
         } else {
-          // Display the full menu
           return [
             const PopupMenuItem<String>(
               value: 'startseite',
@@ -90,7 +91,7 @@ class AppMenu extends StatelessWidget {
             const PopupMenuItem<String>(
               value: 'oktoberfestlandesschiessen',
               child: Text('Oktoberfestlandesschiessen'),
-            ),          
+            ),
             const PopupMenuItem<String>(
               value: 'logout',
               child: Text('Abmelden'),

@@ -108,7 +108,10 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           AppMenu(
             context: context,
             userData: userData,
-            showSingleMenuItem: true,
+            isLoggedIn: false, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

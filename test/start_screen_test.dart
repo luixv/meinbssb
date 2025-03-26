@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/screens/start_screen.dart'; 
-import 'package:meinbssb/services/api_service.dart'; 
+import 'package:meinbssb/screens/start_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:mockito/annotations.dart';
-import 'start_screen_test.mocks.dart'; 
+import 'start_screen_test.mocks.dart';
 
 // Use the generated file annotation, with customMocks to avoid name conflict
 @GenerateMocks([ApiService], customMocks: [MockSpec<ApiService>(as: #CustomMockApiService)])
@@ -27,7 +27,9 @@ void main() {
         .thenAnswer((_) async => Future.delayed(Duration(seconds: 1), () => []));
 
     // Act
-    await tester.pumpWidget(MaterialApp(home: StartScreen(userData, apiService: mockApiService)));
+    await tester.pumpWidget(MaterialApp(
+        home: StartScreen(userData,
+            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
 
     // Initially, the loading indicator should be visible
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -54,7 +56,9 @@ void main() {
     when(mockApiService.fetchAngemeldeteSchulungen(any, any)).thenAnswer((_) async => []);
 
     // Act
-    await tester.pumpWidget(MaterialApp(home: StartScreen(userData, apiService: mockApiService)));
+    await tester.pumpWidget(MaterialApp(
+        home: StartScreen(userData,
+            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
 
     // Wait for the fetch to complete
     await tester.pumpAndSettle();
@@ -85,7 +89,9 @@ void main() {
         .thenAnswer((_) async => schulungList);
 
     // Act
-    await tester.pumpWidget(MaterialApp(home: StartScreen(userData, apiService: mockApiService)));
+    await tester.pumpWidget(MaterialApp(
+        home: StartScreen(userData,
+            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
 
     // Wait for the fetch to complete
     await tester.pumpAndSettle();

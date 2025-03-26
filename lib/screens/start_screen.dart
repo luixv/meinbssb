@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api_service.dart'; // moved
+import 'package:meinbssb/services/api_service.dart';
 import 'app_menu.dart';
-import 'package:meinbssb/services/localization_service.dart'; // moved
+import 'package:meinbssb/services/localization_service.dart'; 
 import 'logo_widget.dart'; 
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
   final ApiService apiService;
+  final bool isLoggedIn;
+  final Function() onLogout; // Correct parameter
 
-  const StartScreen(this.userData, {required this.apiService, super.key}); 
+  const StartScreen(this.userData, {required this.apiService, this.isLoggedIn = true, required this.onLogout, super.key});
 
   @override
   StartScreenState createState() => StartScreenState();
@@ -23,7 +25,7 @@ class StartScreenState extends State<StartScreen> {
   void initState() {
     super.initState();
     fetchSchulungen();
-    _loadLocalization(); // Load localization
+    _loadLocalization(); 
   }
 
   Future<void> _loadLocalization() async {
@@ -63,7 +65,12 @@ class StartScreenState extends State<StartScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Angemeldete Schulungen'),
         actions: [
-          AppMenu(context: context, userData: widget.userData),
+          AppMenu(
+            context: context,
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn, 
+            onLogout: widget.onLogout, 
+          )
         ],
       ),
       body: Padding(

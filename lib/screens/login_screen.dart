@@ -1,17 +1,22 @@
 import 'package:flutter/gestures.dart'; 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api_service.dart'; // moved
+import 'package:meinbssb/services/api_service.dart';
 import 'start_screen.dart';
 import 'registration_screen.dart';
 import 'help_page.dart'; 
 import 'password_reset_screen.dart';
 import 'logo_widget.dart';
-import 'package:meinbssb/services/localization_service.dart';  // moved
+import 'package:meinbssb/services/localization_service.dart'; 
 
 class LoginScreen extends StatefulWidget {
   final ApiService apiService;
+  final Function(Map<String, dynamic>) onLoginSuccess; 
 
-  const LoginScreen({required this.apiService, super.key});
+  const LoginScreen({
+    required this.apiService,
+    required this.onLoginSuccess, 
+    super.key,
+  });
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -64,7 +69,14 @@ class LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => StartScreen(passdaten, apiService: widget.apiService), 
+            builder: (context) => StartScreen(
+            passdaten,
+            apiService: widget.apiService,
+            isLoggedIn: true, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ), 
           ),
         );
       } else {

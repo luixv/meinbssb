@@ -3,7 +3,6 @@ import 'app_menu.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   final Map<String, dynamic> userData;
-
   const PasswordResetSuccessScreen({super.key, required this.userData});
 
   @override
@@ -15,7 +14,11 @@ class PasswordResetSuccessScreen extends StatelessWidget {
           AppMenu(
             context: context,
             userData: userData,
-            showSingleMenuItem: true,
+            isLoggedIn: false, 
+            onLogout: () {
+              // Navigate back to the login screen.
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

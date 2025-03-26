@@ -3,7 +3,6 @@ import 'app_menu.dart';
 
 class PrivacyPage extends StatelessWidget {
   final Map<String, dynamic> userData;
-
   const PrivacyPage({super.key, required this.userData}); 
 
   @override
@@ -15,7 +14,10 @@ class PrivacyPage extends StatelessWidget {
           AppMenu(
             context: context,
             userData: userData,
-            showSingleMenuItem: true,
+            isLoggedIn: false,
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

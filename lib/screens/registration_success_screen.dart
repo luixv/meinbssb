@@ -18,7 +18,10 @@ class RegistrationSuccessScreen extends StatelessWidget {
           AppMenu(
             context: context,
             userData: userData,
-            showSingleMenuItem: true,
+            isLoggedIn: false, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),
@@ -26,11 +29,11 @@ class RegistrationSuccessScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const LogoWidget(), // Added const here
-            const SizedBox(height: 20), //Added const here
+            const LogoWidget(), 
+            const SizedBox(height: 20), 
             Text(
               message,
-              style: const TextStyle(fontSize: 20, color: Colors.green), //Added const here
+              style: const TextStyle(fontSize: 20, color: Colors.green), 
             ),
           ],
         ),

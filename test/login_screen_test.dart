@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/login_screen.dart';
-import 'package:meinbssb/services/api_service.dart'; // moved 
+import 'package:meinbssb/services/api_service.dart';
 
 // Simple mock for ApiService
 class MockApiService extends ApiService {
@@ -23,7 +23,10 @@ void main() {
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(apiService: MockApiService()),
+        home: LoginScreen(
+          apiService: MockApiService(),
+          onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
+        ),
       ),
     );
 
@@ -36,7 +39,10 @@ void main() {
   testWidgets('Can toggle password visibility', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(apiService: MockApiService()),
+        home: LoginScreen(
+          apiService: MockApiService(),
+          onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
+        ),
       ),
     );
 
@@ -50,14 +56,18 @@ void main() {
     await tester.pump();
 
     // Password should be visible
-    final updatedPasswordField = tester.widget<TextField>(find.byType(TextField).last);
+    final updatedPasswordField =
+        tester.widget<TextField>(find.byType(TextField).last);
     expect(updatedPasswordField.obscureText, isFalse);
   });
 
   testWidgets('Shows error on invalid login', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(apiService: MockApiService()),
+        home: LoginScreen(
+          apiService: MockApiService(),
+          onLoginSuccess: (userData) {}, 
+        ),
       ),
     );
 

@@ -46,10 +46,13 @@ class SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         automaticallyImplyLeading: false, // Remove the back arrow
         title: const Text('Digitaler Schützenausweis'),
         actions: [
-          // Add the AppMenu here
           AppMenu(
             context: context,
-            userData: widget.userData, // Pass userData to AppMenu
+            userData: widget.userData,
+            isLoggedIn: true, 
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

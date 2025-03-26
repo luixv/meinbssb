@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/login_screen.dart';
@@ -13,10 +12,25 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final ApiService apiService = ApiService();
 
   MyApp({super.key});
+
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  bool _isLoggedIn = false;
+  Map<String, dynamic> _userData = {};
+
+  void _setLoggedIn(bool isLoggedIn, Map<String, dynamic> userData) {
+    setState(() {
+      _isLoggedIn = isLoggedIn;
+      _userData = userData;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +48,27 @@ class MyApp extends StatelessWidget {
         Locale('de', 'DE'),
         Locale('en', 'US'),
       ],
-      initialRoute: '/login',
+     initialRoute: _isLoggedIn ? '/home' : '/login',
       routes: {
-        '/login': (context) => LoginScreen(apiService: apiService),
-        '/home': (context) {
-          final userData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return StartScreen(userData, apiService: apiService);
-        },
-      },
+      '/login': (context) => LoginScreen(
+        apiService: widget.apiService,
+        onLoginSuccess: (userData) => _setLoggedIn(true, userData),
+      ),
+      '/home': (context) {
+        final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+        final userData = arguments?['userData'] as Map<String, dynamic>? ?? _userData;
+        final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
+
+        return StartScreen(
+          userData,
+          apiService: widget.apiService,
+          isLoggedIn: isLoggedIn, // Use the passed isLoggedIn value
+          onLogout: () => _setLoggedIn(false, {}),
+        );
+},
+    },
+
     );
   }
+  
 }
