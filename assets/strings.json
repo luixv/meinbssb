@@ -11,5 +11,5 @@
     "smtp": "smtp.dummyserver.com",
     "smtp_username": "mySmtpUsername",
     "smtp_password": "mySmtpPassword",
-    "cacheExpiration": 24
+    "cacheExpiration": "24"
 }

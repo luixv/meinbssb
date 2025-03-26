@@ -5,11 +5,20 @@ import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'; 
+import 'package:meinbssb/services/database_service.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load('assets/strings.json');
 
+ // Initialize sqflite_common_ffi if needed
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi; // Set the factory
+
+  final databaseService = DatabaseService();
+  await databaseService.database; // Await database initialization
+  
   runApp(
     MultiProvider(
       providers: [
