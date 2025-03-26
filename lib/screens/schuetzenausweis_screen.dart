@@ -1,74 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/app_menu.dart';
+import 'dart:typed_data'; // For Uint8List
 
-class SchuetzenausweisScreen extends StatefulWidget {
+class SchuetzenausweisScreen extends StatelessWidget {
   final int personId;
-  final Map<String, dynamic> userData; 
+  final Map<String, dynamic> userData;
 
   const SchuetzenausweisScreen({
     super.key,
     required this.personId,
-    required this.userData, 
+    required this.userData,
   });
 
   @override
-  SchuetzenausweisScreenState createState() => SchuetzenausweisScreenState();
-}
-
-class SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
-  late Future<Image> _imageFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _imageFuture = _loadImage();
-  }
-
-  Future<Image> _loadImage() async {
-    final String url = 'http://127.0.0.1:3001/Schuetzenausweis/JPG/${widget.personId}';
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return Image.memory(response.bodyBytes);
-      } else {
-        throw Exception('Failed to load image: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error loading image: $e');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final apiService = Provider.of<ApiService>(context);
+
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remove the back arrow
+        automaticallyImplyLeading: false,
         title: const Text('Digitaler Schützenausweis'),
         actions: [
           AppMenu(
             context: context,
-            userData: widget.userData,
-            isLoggedIn: true, 
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
+            userData: userData,
+            isLoggedIn: true,
+            onLogout: () => Navigator.pushReplacementNamed(context, '/login'),
           ),
         ],
       ),
-      body: Center(
-        child: FutureBuilder<Image>(
-          future: _imageFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return snapshot.data!;
-            }
-          },
-        ),
+      body: FutureBuilder<Uint8List>(
+        future: apiService.fetchSchuetzenausweis(personId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.hasData) {
+            return Center(
+              child: Image.memory(snapshot.data!),
+            );
+          }
+          return const Center(child: Text('No image data available'));
+        },
       ),
     );
   }

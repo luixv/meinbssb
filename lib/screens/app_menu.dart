@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'schuetzenausweis_screen.dart';
+import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -32,14 +32,14 @@ class AppMenu extends StatelessWidget {
     return PopupMenuButton<String>(
       onSelected: (value) {
         if (value == 'logout' || value == 'back_to_login') {
-          Navigator.pushReplacementNamed(context, '/login');
+          onLogout();
         } else if (value == 'startseite') {
           Navigator.pushReplacementNamed(
             context,
             '/home',
             arguments: {
               'userData': userData,
-              'isLoggedIn': true, 
+              'isLoggedIn': true,
             },
           );
         } else if (value == 'digitaler_schuetzenausweis') {

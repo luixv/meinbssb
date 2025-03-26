@@ -1,26 +1,25 @@
-import 'package:flutter/gestures.dart'; 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'start_screen.dart';
 import 'registration_screen.dart';
-import 'help_page.dart'; 
+import 'help_page.dart';
 import 'password_reset_screen.dart';
 import 'logo_widget.dart';
-import 'package:meinbssb/services/localization_service.dart'; 
+import 'package:meinbssb/services/localization_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  final ApiService apiService;
-  final Function(Map<String, dynamic>) onLoginSuccess; 
+  final Function(Map<String, dynamic>) onLoginSuccess;
 
   const LoginScreen({
-    required this.apiService,
-    required this.onLoginSuccess, 
+    required this.onLoginSuccess,
     super.key,
   });
 
   @override
   LoginScreenState createState() => LoginScreenState();
 }
+
 
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
@@ -46,38 +45,48 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
+Future<void> _handleLogin() async {
+  final apiService = Provider.of<ApiService>(context, listen: false);
+  
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
 
-    final response = await widget.apiService.login(
+  try {
+    final response = await apiService.login(
       _emailController.text,
       _passwordController.text,
     );
 
     if (!mounted) return;
 
+    debugPrint('Login response: $response'); // Debug print
+
     if (response["ResultType"] == 1) {
       int personId = response["PersonID"];
-      var passdaten = await widget.apiService.fetchPassdaten(personId);
+      var passdaten = await apiService.fetchPassdaten(personId);
+      debugPrint('User data: $passdaten'); // Debug print
 
       if (!mounted) return;
 
       if (passdaten.isNotEmpty) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StartScreen(
-            passdaten,
-            apiService: widget.apiService,
-            isLoggedIn: true, 
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ), 
-          ),
+        // Combine all user data
+        final completeUserData = {
+          ...passdaten,
+          'PERSONID': personId,
+        };
+
+        // Trigger both state update and direct navigation
+        widget.onLoginSuccess(completeUserData);
+        
+        // Immediate navigation as fallback
+        Navigator.of(context).pushReplacementNamed(
+          '/home',
+          arguments: {
+            'userData': completeUserData,
+            'isLoggedIn': true,
+          },
         );
       } else {
         setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
@@ -85,11 +94,14 @@ class LoginScreenState extends State<LoginScreen> {
     } else {
       setState(() => _errorMessage = response["ResultMessage"]);
     }
-
+  } catch (e) {
+    setState(() => _errorMessage = "Error: ${e.toString()}");
+  } finally {
     if (mounted) {
       setState(() => _isLoading = false);
     }
   }
+}
 
   void _navigateToRegistrationPage() {
     Navigator.push(
@@ -102,7 +114,6 @@ class LoginScreenState extends State<LoginScreen> {
 
   Future<void> _navigateToPasswordReset() async {
     if (!mounted) return;
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -178,9 +189,7 @@ class LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        _navigateToPasswordReset();
-                      },
+                      onTap: _navigateToPasswordReset,
                       child: const Text(
                         "Passwort vergessen?",
                         style: TextStyle(
@@ -227,9 +236,7 @@ class LoginScreenState extends State<LoginScreen> {
                               decoration: TextDecoration.underline,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                _navigateToRegistrationPage();
-                              },
+                              ..onTap = _navigateToRegistrationPage,
                           ),
                           const TextSpan(text: " Registrieren."),
                         ],
@@ -241,20 +248,6 @@ class LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class DummyPage extends StatelessWidget {
-  const DummyPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Dummy Page")),
-      body: const Center(
-        child: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
       ),
     );
   }

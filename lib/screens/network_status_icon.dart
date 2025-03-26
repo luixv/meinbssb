@@ -45,7 +45,6 @@ class LoginScreenState extends State<LoginScreen> { // Make this public
         MaterialPageRoute(
           builder: (context) => StartScreen(
             passdaten,
-            apiService: widget.apiService,
             isLoggedIn: true, 
             onLogout: () {
               Navigator.pushReplacementNamed(context, '/login');

@@ -28,8 +28,7 @@ void main() {
 
     // Act
     await tester.pumpWidget(MaterialApp(
-        home: StartScreen(userData,
-            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
+        home: StartScreen(userData, isLoggedIn: true, onLogout: () {})));
 
     // Initially, the loading indicator should be visible
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -57,8 +56,7 @@ void main() {
 
     // Act
     await tester.pumpWidget(MaterialApp(
-        home: StartScreen(userData,
-            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
+        home: StartScreen(userData,isLoggedIn: true, onLogout: () {})));
 
     // Wait for the fetch to complete
     await tester.pumpAndSettle();
@@ -90,8 +88,7 @@ void main() {
 
     // Act
     await tester.pumpWidget(MaterialApp(
-        home: StartScreen(userData,
-            apiService: mockApiService, isLoggedIn: true, onLogout: () {})));
+        home: StartScreen(userData, isLoggedIn: true, onLogout: () {})));
 
     // Wait for the fetch to complete
     await tester.pumpAndSettle();

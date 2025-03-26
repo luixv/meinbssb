@@ -24,7 +24,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: LoginScreen(
-          apiService: MockApiService(),
           onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
         ),
       ),
@@ -40,7 +39,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: LoginScreen(
-          apiService: MockApiService(),
           onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
         ),
       ),
@@ -65,7 +63,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: LoginScreen(
-          apiService: MockApiService(),
           onLoginSuccess: (userData) {}, 
         ),
       ),

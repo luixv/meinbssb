@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'services/localization_service.dart';
@@ -9,13 +10,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load('assets/strings.json');
 
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<ApiService>(create: (context) => ApiService()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
-  final ApiService apiService = ApiService();
-
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   MyAppState createState() => MyAppState();
@@ -48,27 +54,23 @@ class MyAppState extends State<MyApp> {
         Locale('de', 'DE'),
         Locale('en', 'US'),
       ],
-     initialRoute: _isLoggedIn ? '/home' : '/login',
+      initialRoute: _isLoggedIn ? '/home' : '/login',
       routes: {
-      '/login': (context) => LoginScreen(
-        apiService: widget.apiService,
-        onLoginSuccess: (userData) => _setLoggedIn(true, userData),
-      ),
-      '/home': (context) {
-        final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-        final userData = arguments?['userData'] as Map<String, dynamic>? ?? _userData;
-        final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
+        '/login': (context) => LoginScreen(
+          onLoginSuccess: (userData) => _setLoggedIn(true, userData),
+        ),
+        '/home': (context) {
+          final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+          final userData = arguments?['userData'] as Map<String, dynamic>? ?? _userData;
+          final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
 
-        return StartScreen(
-          userData,
-          apiService: widget.apiService,
-          isLoggedIn: isLoggedIn, // Use the passed isLoggedIn value
-          onLogout: () => _setLoggedIn(false, {}),
-        );
-},
-    },
-
+          return StartScreen(
+            userData,
+            isLoggedIn: isLoggedIn,
+            onLogout: () => _setLoggedIn(false, {}),
+          );
+        },
+      },
     );
   }
-  
 }
