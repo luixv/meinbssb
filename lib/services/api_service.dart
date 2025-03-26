@@ -116,21 +116,40 @@ Future<Map<String, dynamic>> fetchPassdatenWithString(String passdaten) async {
     return _makeRequest(http.get(Uri.parse(apiUrl))).then((value) => value is Map<String, dynamic> ? value : {}); // Ensure it's a Map
   }
 
+
 Future<Uint8List> fetchSchuetzenausweis(int personId) async {
-  final String apiUrl = '$baseUrl/Schuetzenausweis/JPG/$personId';
-  try {
-    final response = await http.get(Uri.parse(apiUrl))
-      .timeout(const Duration(seconds: 10));
-    
-    if (response.statusCode == 200) {
-      return response.bodyBytes;
+    final validityDuration = getCacheExpirationDuration();
+    try {
+      final cachedImage = await _databaseService.getCachedSchuetzenausweis(personId, validityDuration);
+      if (cachedImage != null) {
+        debugPrint('Using cached Schuetzenausweis');
+        return cachedImage;
+      }
+
+      final String apiUrl = '$baseUrl/Schuetzenausweis/JPG/$personId';
+      final response = await http.get(Uri.parse(apiUrl)).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final imageData = response.bodyBytes;
+        await _databaseService.cacheSchuetzenausweis(personId, imageData, DateTime.now().millisecondsSinceEpoch);
+        return imageData;
+      }
+      throw Exception('Failed to load image: ${response.statusCode}');
+    } catch (e) {
+      debugPrint('Error fetching Schuetzenausweis: $e');
+      try {
+        final cachedImage = await _databaseService.getCachedSchuetzenausweis(personId, validityDuration);
+        if (cachedImage != null){
+          return cachedImage;
+        }
+        throw Exception('Error loading cached image: $e');
+      } catch (cacheError) {
+        debugPrint('Cache error: $cacheError');
+        throw Exception('Error loading image: $e');
+      }
     }
-    throw Exception('Failed to load image: ${response.statusCode}');
-  } catch (e) {
-    debugPrint('Error fetching Schuetzenausweis: $e');
-    throw Exception('Error loading image: $e');
   }
-  }
+
 
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
@@ -167,16 +186,14 @@ Future<Uint8List> fetchSchuetzenausweis(int personId) async {
       final cachedResults = await _databaseService.getCachedSchulungen(personId, abDatum, validityDuration);
       List<dynamic> cachedData = [];
 
-      if(cachedResults != null){
-        cachedData = cachedResults.map((result){
-          final data = result['schulungenData'] as String?;
-          if(data != null){
-            return jsonDecode(data);
-          }
-          return null;
-        }).where((element) => element != null).expand((element) => element).toList();
-      }
-
+      cachedData = cachedResults.map((result){
+        final data = result['schulungenData'] as String?;
+        if(data != null){
+          return jsonDecode(data);
+        }
+        return null;
+      }).where((element) => element != null).expand((element) => element).toList();
+    
       debugPrint('Using ${cachedData.length} cached schulungen');
 
       return schulungen.isNotEmpty ? schulungen : cachedData;
@@ -187,16 +204,14 @@ Future<Uint8List> fetchSchuetzenausweis(int personId) async {
         final cachedResults = await _databaseService.getCachedSchulungen(personId, abDatum, validityDuration);
         List<dynamic> cachedData = [];
 
-        if(cachedResults != null){
-          cachedData = cachedResults.map((result){
-            final data = result['schulungenData'] as String?;
-            if(data != null){
-              return jsonDecode(data);
-            }
-            return null;
-          }).where((element) => element != null).expand((element) => element).toList();
-        }
-
+        cachedData = cachedResults.map((result){
+          final data = result['schulungenData'] as String?;
+          if(data != null){
+            return jsonDecode(data);
+          }
+          return null;
+        }).where((element) => element != null).expand((element) => element).toList();
+      
         debugPrint('Using ${cachedData.length} cached schulungen');
         return cachedData;
       } catch (cacheError) {
