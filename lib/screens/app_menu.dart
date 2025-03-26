@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'schuetzenausweis_screen.dart';
-import 'mail_monitoring_screen.dart'; // Import MailMonitoringScreen
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -42,12 +41,7 @@ class AppMenu extends StatelessWidget {
           );
         } else if (value == 'digitaler_schuetzenausweis') {
           _displaySchuetzenausweis(userData['PERSONID']);
-        } else if (value == 'mail_monitoring') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MailMonitoringScreen()),
-          );
-        }
+        } 
         // Add more actions for other menu points here if needed
       },
       itemBuilder: (BuildContext context) {
@@ -96,11 +90,7 @@ class AppMenu extends StatelessWidget {
             const PopupMenuItem<String>(
               value: 'oktoberfestlandesschiessen',
               child: Text('Oktoberfestlandesschiessen'),
-            ),
-            const PopupMenuItem<String>(
-                value: 'mail_monitoring',
-                child: Text('Mail Monitoring'),
-              ),
+            ),          
             const PopupMenuItem<String>(
               value: 'logout',
               child: Text('Abmelden'),

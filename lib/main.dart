@@ -5,18 +5,10 @@ import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'dart:io' show Platform;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load('assets/strings.json');
-
-  // Initialize sqflite_common_ffi if on desktop
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
 
   runApp(MyApp());
 }
