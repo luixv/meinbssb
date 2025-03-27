@@ -28,14 +28,7 @@ class DatabaseService {
             passdatenData TEXT,
             timestamp INTEGER
           )
-        ''');
-        await db.execute('''
-          CREATE TABLE IF NOT EXISTS cache (
-            key TEXT PRIMARY KEY,
-            value TEXT,
-            timestamp INTEGER
-          )
-        ''');
+        ''');       
         await db.execute('''
           CREATE TABLE IF NOT EXISTS user (
             email TEXT PRIMARY KEY,
@@ -60,6 +53,7 @@ class DatabaseService {
             PRIMARY KEY (personId, abDatum)
           )
         ''');
+        await db.execute('PRAGMA journal_mode=WAL;');
       },
     );
   }
