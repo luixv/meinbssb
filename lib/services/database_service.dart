@@ -91,8 +91,8 @@ class DatabaseService {
   final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
   final validityTimestamp = now - validity.inMilliseconds;
 
-  final query = 'SELECT * FROM schulungen WHERE personId = ? AND abDatum = ? AND timestamp > ?';
-  final whereArgs = [personId, abDatumTimestamp, validityTimestamp];
+  final query = 'SELECT * FROM schulungen WHERE personId = ? AND timestamp > ?';
+  final whereArgs = [personId, validityTimestamp];
 
   debugPrint('Executing SQL Query: $query');
   debugPrint('Where Args: $whereArgs');
@@ -109,16 +109,29 @@ Future<void> cacheSchulungen(int personId, DateTime abDatum, String schulungenDa
   final db = await database;
   final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
 
-  await db.insert(
+  final rowsUpdated = await db.update(
     'schulungen',
     {
-      'personId': personId,
       'abDatum': abDatumTimestamp,
       'schulungenData': schulungenData,
       'timestamp': timestamp,
     },
-    conflictAlgorithm: ConflictAlgorithm.replace,
+    where: 'personId = ?',
+    whereArgs: [personId],
   );
+
+  if (rowsUpdated == 0) {
+    // No record was updated, so insert a new one
+    await db.insert(
+      'schulungen',
+      {
+        'personId': personId,
+        'abDatum': abDatumTimestamp,
+        'schulungenData': schulungenData,
+        'timestamp': timestamp,
+      },
+    );
+  }
 }
 
   Future<Uint8List?> getCachedSchuetzenausweis(int personId, Duration validity) async {
