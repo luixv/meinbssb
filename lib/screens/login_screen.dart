@@ -11,15 +11,11 @@ import 'package:meinbssb/services/localization_service.dart';
 class LoginScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onLoginSuccess;
 
-  const LoginScreen({
-    required this.onLoginSuccess,
-    super.key,
-  });
+  const LoginScreen({required this.onLoginSuccess, super.key});
 
   @override
   LoginScreenState createState() => LoginScreenState();
 }
-
 
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
@@ -45,70 +41,62 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-Future<void> _handleLogin() async {
-  final apiService = Provider.of<ApiService>(context, listen: false);
-  
-  setState(() {
-    _isLoading = true;
-    _errorMessage = '';
-  });
+  Future<void> _handleLogin() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
-  try {
-    final response = await apiService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
 
-    if (!mounted) return;
-
-    debugPrint('Login response: $response'); // Debug print
-
-    if (response["ResultType"] == 1) {
-      int personId = response["PersonID"];
-      var passdaten = await apiService.fetchPassdaten(personId);
-      debugPrint('User data: $passdaten'); // Debug print
+    try {
+      final response = await apiService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
       if (!mounted) return;
 
-      if (passdaten.isNotEmpty) {
-        // Combine all user data
-        final completeUserData = {
-          ...passdaten,
-          'PERSONID': personId,
-        };
+      debugPrint('Login response: $response'); // Debug print
 
-        // Trigger both state update and direct navigation
-        widget.onLoginSuccess(completeUserData);
-        
-        // Immediate navigation as fallback
-        Navigator.of(context).pushReplacementNamed(
-          '/home',
-          arguments: {
-            'userData': completeUserData,
-            'isLoggedIn': true,
-          },
-        );
+      if (response["ResultType"] == 1) {
+        int personId = response["PersonID"];
+        var passdaten = await apiService.fetchPassdaten(personId);
+        debugPrint('User data: $passdaten'); // Debug print
+
+        if (!mounted) return;
+
+        if (passdaten.isNotEmpty) {
+          // Combine all user data
+          final completeUserData = {...passdaten, 'PERSONID': personId};
+
+          // Trigger both state update and direct navigation
+          widget.onLoginSuccess(completeUserData);
+
+          // Immediate navigation as fallback
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+            arguments: {'userData': completeUserData, 'isLoggedIn': true},
+          );
+        } else {
+          setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+        }
       } else {
-        setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+        setState(() => _errorMessage = response["ResultMessage"]);
       }
-    } else {
-      setState(() => _errorMessage = response["ResultMessage"]);
-    }
-  } catch (e) {
-    setState(() => _errorMessage = "Error: ${e.toString()}");
-  } finally {
-    if (mounted) {
-      setState(() => _isLoading = false);
+    } catch (e) {
+      setState(() => _errorMessage = "Error: ${e.toString()}");
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-}
 
   void _navigateToRegistrationPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const RegistrationScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const RegistrationScreen()),
     );
   }
 
@@ -116,9 +104,7 @@ Future<void> _handleLogin() async {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const PasswordResetScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const PasswordResetScreen()),
     );
   }
 
@@ -156,7 +142,9 @@ Future<void> _handleLogin() async {
                   labelText: "Passwort",
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: () {
                       setState(() {
@@ -180,7 +168,10 @@ Future<void> _handleLogin() async {
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: _isLoading ? const CircularProgressIndicator() : const Text("Anmelden"),
+                  child:
+                      _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text("Anmelden"),
                 ),
               ),
               const SizedBox(height: 20),
@@ -202,22 +193,30 @@ Future<void> _handleLogin() async {
                     const SizedBox(height: 10),
                     RichText(
                       text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
                         children: [
-                          const TextSpan(text: "Bestehen Fragen zum Account oder wird "),
+                          const TextSpan(
+                            text: "Bestehen Fragen zum Account oder wird ",
+                          ),
                           TextSpan(
                             text: "Hilfe",
                             style: const TextStyle(
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HelpPage()),
-                                );
-                              },
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HelpPage(),
+                                      ),
+                                    );
+                                  },
                           ),
                           const TextSpan(text: " benötigt?"),
                         ],
@@ -226,7 +225,10 @@ Future<void> _handleLogin() async {
                     const SizedBox(height: 10),
                     RichText(
                       text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
                         children: [
                           const TextSpan(text: "Keinen Account? "),
                           TextSpan(
@@ -235,8 +237,9 @@ Future<void> _handleLogin() async {
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = _navigateToRegistrationPage,
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = _navigateToRegistrationPage,
                           ),
                           const TextSpan(text: " Registrieren."),
                         ],
