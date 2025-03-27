@@ -46,11 +46,10 @@ class DatabaseService {
         ''');
         await db.execute('''
           CREATE TABLE IF NOT EXISTS schulungen (
-            personId INTEGER,
-            abDatum TEXT,
+            personId INTEGER PRIMARY KEY, 
+            abDatum INTEGER, // Store as INTEGER (Unix timestamp)
             schulungenData TEXT,
-            timestamp INTEGER,
-            PRIMARY KEY (personId, abDatum)
+            timestamp INTEGER
           )
         ''');
         await db.execute('PRAGMA journal_mode=WAL;');
@@ -86,30 +85,41 @@ class DatabaseService {
     );
   }
   
-  Future<List<Map<String, dynamic>>> getCachedSchulungen(int personId, String abDatum, Duration validity) async {
-    final db = await database;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final result = await db.query(
-      'schulungen',
-      where: 'personId = ? AND abDatum = ? AND timestamp > ?',
-      whereArgs: [personId, abDatum, now - validity.inMilliseconds],
-    );
-    return result;
-  }
+  Future<List<Map<String, dynamic>>> getCachedSchulungen(int personId, DateTime abDatum, Duration validity) async {
+  final db = await database;
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
+  final validityTimestamp = now - validity.inMilliseconds;
 
-  Future<void> cacheSchulungen(int personId, String abDatum, String schulungenData, int timestamp) async {
-    final db = await database;
-    await db.insert(
-      'schulungen',
-      {
-        'personId': personId,
-        'abDatum': abDatum,
-        'schulungenData': schulungenData,
-        'timestamp': timestamp,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
+  final query = 'SELECT * FROM schulungen WHERE personId = ? AND abDatum = ? AND timestamp > ?';
+  final whereArgs = [personId, abDatumTimestamp, validityTimestamp];
+
+  debugPrint('Executing SQL Query: $query');
+  debugPrint('Where Args: $whereArgs');
+
+  final result = await db.rawQuery(query, whereArgs);
+
+  debugPrint('Query Result: $result');
+
+  return result;
+}
+
+
+Future<void> cacheSchulungen(int personId, DateTime abDatum, String schulungenData, int timestamp) async {
+  final db = await database;
+  final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
+
+  await db.insert(
+    'schulungen',
+    {
+      'personId': personId,
+      'abDatum': abDatumTimestamp,
+      'schulungenData': schulungenData,
+      'timestamp': timestamp,
+    },
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
 
   Future<Uint8List?> getCachedSchuetzenausweis(int personId, Duration validity) async {
     final db = await database;

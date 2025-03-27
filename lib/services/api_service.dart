@@ -240,73 +240,86 @@ Future<Uint8List> fetchSchuetzenausweis(int personId) async {
 }
 
 
+Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
+  final validityDuration = getCacheExpirationDuration();
+  debugPrint('Using cache expiration: ${validityDuration.inHours} hours');
 
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
-    final validityDuration = getCacheExpirationDuration();
-    debugPrint('Using cache expiration: ${validityDuration.inHours} hours');
+  try {
+    final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
+    final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
+    debugPrint('API response type: ${response.runtimeType}');
 
+    List<dynamic> schulungen = [];
+
+    if (response is List) {
+      schulungen = response;
+    } else if (response is Map && response.containsKey('schulungen')) {
+      schulungen = List.from(response['schulungen']);
+    } else if (response is Map && response.containsKey('ResultType')) {
+      debugPrint('API error response: $response');
+      throw Exception(response['ResultMessage'] ?? 'Unknown error');
+    }
+
+    debugPrint('Parsed ${schulungen.length} schulungen');
+
+    if (schulungen.isNotEmpty) {
+      DateTime? dateTimeAbDatum = DateTime.tryParse(abDatum);
+      if(dateTimeAbDatum == null){
+        dateTimeAbDatum = DateTime.now();
+      }
+      await _databaseService.cacheSchulungen(
+        personId,
+        dateTimeAbDatum,
+        jsonEncode(schulungen),
+        DateTime.now().millisecondsSinceEpoch,
+      );
+    }
+
+    DateTime? cachedDateTimeAbDatum = DateTime.tryParse(abDatum);
+    if(cachedDateTimeAbDatum == null){
+        cachedDateTimeAbDatum = DateTime.now();
+    }
+    final cachedResults = await _databaseService.getCachedSchulungen(personId, cachedDateTimeAbDatum, validityDuration);
+    List<dynamic> cachedData = [];
+
+    cachedData = cachedResults.map((result) {
+      final data = result['schulungenData'] as String?;
+      if (data != null) {
+        return jsonDecode(data);
+      }
+      return null;
+    }).where((element) => element != null).expand((element) => element).toList();
+
+    debugPrint('Using ${cachedData.length} cached schulungen');
+
+    return schulungen.isNotEmpty ? schulungen : cachedData;
+
+  } catch (e) {
+    debugPrint('Network error: $e');
     try {
-      final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
-      final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
-      debugPrint('API response type: ${response.runtimeType}');
-
-      List<dynamic> schulungen = [];
-
-      if (response is List) {
-        schulungen = response;
-      } else if (response is Map && response.containsKey('schulungen')) {
-        schulungen = List.from(response['schulungen']);
-      } else if (response is Map && response.containsKey('ResultType')) {
-        debugPrint('API error response: $response');
-        throw Exception(response['ResultMessage'] ?? 'Unknown error');
+      DateTime? cachedDateTimeAbDatum = DateTime.tryParse(abDatum);
+      if(cachedDateTimeAbDatum == null){
+        cachedDateTimeAbDatum = DateTime.now();
       }
-
-      debugPrint('Parsed ${schulungen.length} schulungen');
-
-      if (schulungen.isNotEmpty) {
-        await _databaseService.cacheSchulungen(
-          personId,
-          abDatum,
-          jsonEncode(schulungen),
-          DateTime.now().millisecondsSinceEpoch,
-        );
-      }
-
-      final cachedResults = await _databaseService.getCachedSchulungen(personId, abDatum, validityDuration);
+      final cachedResults = await _databaseService.getCachedSchulungen(personId, cachedDateTimeAbDatum, validityDuration);
       List<dynamic> cachedData = [];
 
-      cachedData = cachedResults.map((result){
+      cachedData = cachedResults.map((result) {
         final data = result['schulungenData'] as String?;
-        if(data != null){
+        if (data != null) {
           return jsonDecode(data);
         }
         return null;
       }).where((element) => element != null).expand((element) => element).toList();
-    
+
       debugPrint('Using ${cachedData.length} cached schulungen');
-
-      return schulungen.isNotEmpty ? schulungen : cachedData;
-
-    } catch (e) {
-      debugPrint('Network error: $e');
-      try {
-        final cachedResults = await _databaseService.getCachedSchulungen(personId, abDatum, validityDuration);
-        List<dynamic> cachedData = [];
-
-        cachedData = cachedResults.map((result){
-          final data = result['schulungenData'] as String?;
-          if(data != null){
-            return jsonDecode(data);
-          }
-          return null;
-        }).where((element) => element != null).expand((element) => element).toList();
-      
-        debugPrint('Using ${cachedData.length} cached schulungen');
-        return cachedData;
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return [];
-      }
+      return cachedData;
+    } catch (cacheError) {
+      debugPrint('Cache error: $cacheError');
+      return [];
     }
   }
+}
+
+  
 }
