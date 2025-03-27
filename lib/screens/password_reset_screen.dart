@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api_service.dart';  
+import 'package:meinbssb/services/api_service.dart';
 import 'logo_widget.dart';
-import 'app_menu.dart'; 
+import 'app_menu.dart';
 import 'package:meinbssb/services/localization_service.dart'; // moved
-import 'password_reset_success_screen.dart'; 
+import 'password_reset_success_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({super.key});
@@ -63,15 +63,20 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     }
 
     try {
-      final response = await ApiService().resetPassword(_passNumberController.text);
+      final response = await ApiService().resetPassword(
+        _passNumberController.text,
+      );
       if (response['ResultType'] == 1) {
         try {
-          final userData = await ApiService().fetchPassdatenWithString(_passNumberController.text);
+          final userData = await ApiService().fetchPassdaten(
+            int.parse(_passNumberController.text),
+          );
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PasswordResetSuccessScreen(userData: userData),
+                builder:
+                    (context) => PasswordResetSuccessScreen(userData: userData),
               ),
             );
           }
@@ -108,7 +113,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           AppMenu(
             context: context,
             userData: userData,
-            isLoggedIn: false, 
+            isLoggedIn: false,
             onLogout: () {
               Navigator.pushReplacementNamed(context, '/login');
             },
@@ -137,7 +142,10 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: "Passnummer",
-                  errorText: _hasInteracted && _passNumberError.isNotEmpty ? _passNumberError : null,
+                  errorText:
+                      _hasInteracted && _passNumberError.isNotEmpty
+                          ? _passNumberError
+                          : null,
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -150,12 +158,16 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isPassNumberValid && !_isLoading ? _resetPassword : null,
+                  onPressed:
+                      _isPassNumberValid && !_isLoading ? _resetPassword : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: _isLoading ? const CircularProgressIndicator() : const Text("Passwort zurücksetzen"),
+                  child:
+                      _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text("Passwort zurücksetzen"),
                 ),
               ),
             ],

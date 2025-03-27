@@ -93,14 +93,29 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
+    Future<Map<String, dynamic>?> getCachedLogin(
+      String email,
+      String password,
+    ) async {
+      try {
+        final cachedUser = await _databaseService.getCachedUser(email);
+        if (cachedUser != null && cachedUser['password'] == password) {
+          debugPrint('Login from cache successful.');
+          return cachedUser;
+        }
+        return null;
+      } catch (cacheError) {
+        debugPrint('Cache error: $cacheError');
+        return null;
+      }
+    }
+
     try {
       final String apiUrl = '$baseUrl/LoginMyBSSB';
       final requestBody = jsonEncode({"email": email, "password": password});
 
       debugPrint('Sending login request to: $apiUrl');
       debugPrint('Request body: $requestBody');
-
-      // Separate network call
 
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -118,13 +133,11 @@ class ApiService {
             DateTime.now().millisecondsSinceEpoch,
           );
           debugPrint('User data cached successfully.');
-
           return decodedResponse;
         } else {
           debugPrint(
             'Login failed on server: ${decodedResponse['ResultMessage']}',
           );
-
           return decodedResponse;
         }
       } else {
@@ -134,35 +147,16 @@ class ApiService {
     } on http.ClientException catch (e) {
       if (e.message.contains('refused') ||
           e.message.contains('failed to connect')) {
-        // Check for connection refusal or failure
         debugPrint('ClientException contains SocketException: ${e.message}');
-        try {
-          final cachedUser = await _databaseService.getCachedUser(email);
-          debugPrint('Cached user data: $cachedUser');
-          debugPrint('Entered password: $password');
-          if (cachedUser != null) {
-            if (cachedUser['password'] == password) {
-              debugPrint('Login from cache successful.');
-              return cachedUser;
-            } else {
-              debugPrint('Login failed, password mismatch.');
-              return {
-                "ResultType": 0,
-                "ResultMessage": "Offline login failed, password mismatch",
-              };
-            }
-          } else {
-            debugPrint('Login failed, no cache found.');
-
-            return {
-              "ResultType": 0,
-              "ResultMessage": "Offline login failed, no cache",
-            };
-          }
-        } catch (cacheError) {
-          debugPrint('Cache error: $cacheError');
-          return {"ResultType": 0, "ResultMessage": "Network and cache error"};
+        final cachedUser = await getCachedLogin(email, password);
+        if (cachedUser != null) {
+          return cachedUser;
         }
+        return {
+          "ResultType": 0,
+          "ResultMessage":
+              "Offline login failed, no cache or password mismatch",
+        };
       } else {
         debugPrint('ClientException, not SocketException: ${e.message}');
         return {
@@ -191,10 +185,7 @@ class ApiService {
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
     final validityDuration = getCacheExpirationDuration();
 
-    if (!await hasInternet()) {
-      debugPrint(
-        'Device is offline. Attempting to retrieve passdaten from cache.',
-      );
+    Future<Map<String, dynamic>> getCachedPassdaten() async {
       try {
         final cachedPassdaten = await _databaseService.getCachedPassdaten(
           personId,
@@ -203,18 +194,24 @@ class ApiService {
         if (cachedPassdaten != null) {
           return cachedPassdaten;
         }
-        return {}; // return empty map if no cache found
+        return {};
       } catch (cacheError) {
         debugPrint('Cache error: $cacheError');
         return {};
       }
+    }
+
+    if (!await hasInternet()) {
+      debugPrint(
+        'Device is offline. Attempting to retrieve passdaten from cache.',
+      );
+      return getCachedPassdaten();
     } else {
       try {
         final String apiUrl = '$baseUrl/Passdaten/$personId';
         final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
 
         if (response is Map<String, dynamic>) {
-          // Only save valid data from server response
           await _databaseService.cachePassdaten(
             personId,
             response,
@@ -222,30 +219,35 @@ class ApiService {
           );
           return response;
         }
-        return {}; // return empty map if response is not map
+        return {};
       } catch (e) {
         debugPrint('API call error: $e');
-        return {};
+        debugPrint(
+          'Attempting to retrieve passdaten from cache as API fallback.',
+        );
+        return getCachedPassdaten();
       }
     }
   }
 
-  Future<Map<String, dynamic>> fetchPassdatenWithString(
-    String passdaten,
-  ) async {
-    final String apiUrl = '$baseUrl/PassdatenString/$passdaten';
-    return _makeRequest(http.get(Uri.parse(apiUrl))).then(
-      (value) => value is Map<String, dynamic> ? value : {},
-    ); // Ensure it's a Map
-  }
-
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     final validityDuration = getCacheExpirationDuration();
+
+    Future<Uint8List?> getCachedSchuetzenausweis() async {
+      try {
+        final cachedImage = await _databaseService.getCachedSchuetzenausweis(
+          personId,
+          validityDuration,
+        );
+        return cachedImage;
+      } catch (cacheError) {
+        debugPrint('Cache error: $cacheError');
+        return null;
+      }
+    }
+
     try {
-      final cachedImage = await _databaseService.getCachedSchuetzenausweis(
-        personId,
-        validityDuration,
-      );
+      final cachedImage = await getCachedSchuetzenausweis();
       if (cachedImage != null) {
         debugPrint('Using cached Schuetzenausweis');
         return cachedImage;
@@ -268,20 +270,12 @@ class ApiService {
       throw Exception('Failed to load image: ${response.statusCode}');
     } catch (e) {
       debugPrint('Error fetching Schuetzenausweis: $e');
-      try {
-        final cachedImage = await _databaseService.getCachedSchuetzenausweis(
-          personId,
-          validityDuration,
-        );
-        if (cachedImage != null) {
-          return cachedImage;
-        }
-        // If no cached image, throw a specific exception.
-        throw Exception('Schützenausweis ist nicht verfügbar');
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        throw Exception('Schützenausweis ist nicht verfügbar');
+      final cachedImage = await getCachedSchuetzenausweis();
+      if (cachedImage != null) {
+        return cachedImage;
       }
+      // If no cached image, throw a specific exception.
+      throw Exception('Schützenausweis ist nicht verfügbar');
     }
   }
 
@@ -291,6 +285,38 @@ class ApiService {
   ) async {
     final validityDuration = getCacheExpirationDuration();
     debugPrint('Using cache expiration: ${validityDuration.inHours} hours');
+
+    Future<List<dynamic>> getCachedSchulungen() async {
+      try {
+        DateTime? cachedDateTimeAbDatum = DateTime.tryParse(abDatum);
+        cachedDateTimeAbDatum ??= DateTime.now();
+        final cachedResults = await _databaseService.getCachedSchulungen(
+          personId,
+          cachedDateTimeAbDatum,
+          validityDuration,
+        );
+        List<dynamic> cachedData = [];
+
+        cachedData =
+            cachedResults
+                .map((result) {
+                  final data = result['schulungenData'] as String?;
+                  if (data != null) {
+                    return jsonDecode(data);
+                  }
+                  return null;
+                })
+                .where((element) => element != null)
+                .expand((element) => element)
+                .toList();
+
+        debugPrint('Using ${cachedData.length} cached schulungen');
+        return cachedData;
+      } catch (cacheError) {
+        debugPrint('Cache error: $cacheError');
+        return [];
+      }
+    }
 
     try {
       final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
@@ -321,62 +347,10 @@ class ApiService {
         );
       }
 
-      DateTime? cachedDateTimeAbDatum = DateTime.tryParse(abDatum);
-      cachedDateTimeAbDatum ??= DateTime.now();
-      final cachedResults = await _databaseService.getCachedSchulungen(
-        personId,
-        cachedDateTimeAbDatum,
-        validityDuration,
-      );
-      List<dynamic> cachedData = [];
-
-      cachedData =
-          cachedResults
-              .map((result) {
-                final data = result['schulungenData'] as String?;
-                if (data != null) {
-                  return jsonDecode(data);
-                }
-                return null;
-              })
-              .where((element) => element != null)
-              .expand((element) => element)
-              .toList();
-
-      debugPrint('Using ${cachedData.length} cached schulungen');
-
-      return schulungen.isNotEmpty ? schulungen : cachedData;
+      return schulungen.isNotEmpty ? schulungen : await getCachedSchulungen();
     } catch (e) {
       debugPrint('Network error: $e');
-      try {
-        DateTime? cachedDateTimeAbDatum = DateTime.tryParse(abDatum);
-        cachedDateTimeAbDatum ??= DateTime.now();
-        final cachedResults = await _databaseService.getCachedSchulungen(
-          personId,
-          cachedDateTimeAbDatum,
-          validityDuration,
-        );
-        List<dynamic> cachedData = [];
-
-        cachedData =
-            cachedResults
-                .map((result) {
-                  final data = result['schulungenData'] as String?;
-                  if (data != null) {
-                    return jsonDecode(data);
-                  }
-                  return null;
-                })
-                .where((element) => element != null)
-                .expand((element) => element)
-                .toList();
-
-        debugPrint('Using ${cachedData.length} cached schulungen');
-        return cachedData;
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return [];
-      }
+      return await getCachedSchulungen();
     }
   }
 }

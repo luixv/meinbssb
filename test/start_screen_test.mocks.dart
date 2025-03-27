@@ -74,14 +74,12 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
   );
 
   @override
-  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+  _i4.Future<bool> hasInternet() =>
       (super.noSuchMethod(
-            Invocation.method(#login, [email, password]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
+            Invocation.method(#hasInternet, []),
+            returnValue: _i4.Future<bool>.value(false),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i4.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() =>
@@ -119,6 +117,16 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
           as _i4.Future<Map<String, dynamic>>);
 
   @override
+  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+      (super.noSuchMethod(
+            Invocation.method(#login, [email, password]),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
+
+  @override
   _i4.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [passNumber]),
@@ -132,18 +140,6 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
   _i4.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchPassdaten, [personId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> fetchPassdatenWithString(
-    String? passdaten,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#fetchPassdatenWithString, [passdaten]),
             returnValue: _i4.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
@@ -215,14 +211,12 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
   );
 
   @override
-  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+  _i4.Future<bool> hasInternet() =>
       (super.noSuchMethod(
-            Invocation.method(#login, [email, password]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
+            Invocation.method(#hasInternet, []),
+            returnValue: _i4.Future<bool>.value(false),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i4.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() =>
@@ -260,6 +254,16 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           as _i4.Future<Map<String, dynamic>>);
 
   @override
+  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+      (super.noSuchMethod(
+            Invocation.method(#login, [email, password]),
+            returnValue: _i4.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i4.Future<Map<String, dynamic>>);
+
+  @override
   _i4.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [passNumber]),
@@ -273,18 +277,6 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
   _i4.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchPassdaten, [personId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> fetchPassdatenWithString(
-    String? passdaten,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#fetchPassdatenWithString, [passdaten]),
             returnValue: _i4.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
