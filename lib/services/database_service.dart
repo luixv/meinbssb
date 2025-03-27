@@ -91,8 +91,8 @@ class DatabaseService {
   final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
   final validityTimestamp = now - validity.inMilliseconds;
 
-  final query = 'SELECT * FROM schulungen WHERE personId = ? AND timestamp > ?';
-  final whereArgs = [personId, validityTimestamp];
+  final query = 'SELECT * FROM schulungen WHERE personId = ? AND abDatum < ? AND timestamp > ?';
+  final whereArgs = [personId, abDatumTimestamp, validityTimestamp];
 
   debugPrint('Executing SQL Query: $query');
   debugPrint('Where Args: $whereArgs');
