@@ -235,10 +235,9 @@ class ApiService {
         final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
 
         if (response is Map<String, dynamic>) {
-          // Directly use the response as passdaten
           final passdaten = response;
 
-          // Select fields to cache
+          // fields to cache
           final cachedData = {
             'PASSNUMMER': passdaten['PASSNUMMER'],
             'VEREINNR': passdaten['VEREINNR'],
@@ -251,16 +250,11 @@ class ApiService {
             'PASSDATENID': passdaten['PASSDATENID'],
             'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
             'PERSONID': passdaten['PERSONID'],
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
           };
 
           // Cache the selected fields with timestamp
-          await prefs.setString(
-            cacheKey,
-            jsonEncode({
-              'data': cachedData,
-              'timestamp': DateTime.now().millisecondsSinceEpoch,
-            }),
-          );
+          await prefs.setString(cacheKey, jsonEncode(cachedData));
 
           return cachedData;
         } else {
