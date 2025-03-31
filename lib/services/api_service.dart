@@ -6,6 +6,8 @@ import 'dart:typed_data';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/services/database_service.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; 
+import 'cache_service.dart';
 
 class ApiService {
   final String baseIp;
@@ -93,82 +95,72 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    Future<Map<String, dynamic>?> getCachedLogin(
-      String email,
-      String password,
-    ) async {
-      try {
-        final cachedUser = await _databaseService.getCachedUser(email);
-        if (cachedUser != null && cachedUser['password'] == password) {
-          debugPrint('Login from cache successful.');
-          return cachedUser;
-        }
-        return null;
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return null;
-      }
-    }
+  final secureStorage = const FlutterSecureStorage();
+  final cacheService = CacheService();
 
-    try {
-      final String apiUrl = '$baseUrl/LoginMyBSSB';
-      final requestBody = jsonEncode({"email": email, "password": password});
+  try {
+    final String apiUrl = '$baseUrl/LoginMyBSSB';
+    final requestBody = jsonEncode({"email": email, "password": password});
 
-      debugPrint('Sending login request to: $apiUrl');
-      debugPrint('Request body: $requestBody');
+    debugPrint('Sending login request to: $apiUrl');
+    debugPrint('Request body: $requestBody');
 
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: requestBody,
-      );
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    );
 
-      final decodedResponse = jsonDecode(response.body);
-      if (decodedResponse is Map<String, dynamic>) {
-        if (decodedResponse['ResultType'] == 1) {
-          await _databaseService.cacheUser(
-            email,
-            password,
-            decodedResponse,
-            DateTime.now().millisecondsSinceEpoch,
-          );
-          debugPrint('User data cached successfully.');
-          return decodedResponse;
-        } else {
-          debugPrint(
-            'Login failed on server: ${decodedResponse['ResultMessage']}',
-          );
-          return decodedResponse;
-        }
+    final decodedResponse = jsonDecode(response.body);
+    if (decodedResponse is Map<String, dynamic>) {
+      if (decodedResponse['ResultType'] == 1) {
+        await cacheService.setString('username', email);
+        await secureStorage.write(key: 'password', value: password);
+        await cacheService.setInt('personId', decodedResponse['PersonID']); // Cache PersonID
+        debugPrint('User data cached successfully.');
+        return decodedResponse;
       } else {
-        debugPrint('Invalid server response.');
-        return {};
+        debugPrint(
+          'Login failed on server: ${decodedResponse['ResultMessage']}',
+        );
+        return decodedResponse;
       }
-    } on http.ClientException catch (e) {
-      if (e.message.contains('refused') ||
-          e.message.contains('failed to connect')) {
-        debugPrint('ClientException contains SocketException: ${e.message}');
-        final cachedUser = await getCachedLogin(email, password);
-        if (cachedUser != null) {
-          return cachedUser;
-        }
-        return {
-          "ResultType": 0,
-          "ResultMessage":
-              "Offline login failed, no cache or password mismatch",
-        };
-      } else {
-        debugPrint('ClientException, not SocketException: ${e.message}');
-        return {
-          "ResultType": 0,
-          "ResultMessage": "ClientException, not SocketException",
-        };
-      }
-    } catch (e) {
-      debugPrint('Other Login error: $e');
-      return {"ResultType": 0, "ResultMessage": "Other login error"};
+    } else {
+      debugPrint('Invalid server response.');
+      return {};
     }
+  } on http.ClientException catch (e) {
+    if (e.message.contains('refused') ||
+        e.message.contains('failed to connect')) {
+      debugPrint('ClientException contains SocketException: ${e.message}');
+
+      final cachedUsername = await cacheService.getString('username');
+      final cachedPassword = await secureStorage.read(key: 'password');
+      final cachedPersonId = await cacheService.getInt('personId'); // Retrieve PersonID
+
+      if (cachedUsername == email && cachedPassword == password && cachedPersonId != null) {
+        debugPrint('Login from cache successful.');
+        // Return a JSON object with the cached PersonID.
+        return {"ResultType": 1, "PersonID": cachedPersonId};
+      }
+      return {
+        "ResultType": 0,
+        "ResultMessage":
+            "Offline login failed, no cache or password mismatch",
+      };
+    } else {
+      debugPrint('ClientException, not SocketException: ${e.message}');
+      return {
+        "ResultType": 0,
+        "ResultMessage": "ClientException, not SocketException",
+      };
+    }
+  } catch (e) {
+    debugPrint('Other Login error: $e');
+    return {"ResultType": 0, "ResultMessage": "Other login error"};
   }
+}
+
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     final String apiUrl = '$baseUrl/PasswordReset/$passNumber';

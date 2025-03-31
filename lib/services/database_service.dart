@@ -29,14 +29,7 @@ class DatabaseService {
             timestamp INTEGER
           )
         ''');       
-        await db.execute('''
-          CREATE TABLE IF NOT EXISTS user (
-            email TEXT PRIMARY KEY,
-            password TEXT,
-            userData TEXT,
-            timestamp INTEGER
-          )
-        ''');
+      
         await db.execute('''
           CREATE TABLE IF NOT EXISTS schuetzenausweis (
             personId INTEGER PRIMARY KEY,
@@ -162,45 +155,5 @@ Future<void> cacheSchulungen(int personId, DateTime abDatum, String schulungenDa
     );
   }
 
-Future<Map<String, dynamic>?> getCachedUser(String email) async {
-  try {
-    final db = await database;
-    final result = await db.query(
-      'user',
-      where: 'email = ?',
-      whereArgs: [email],
-    );
 
-    debugPrint('Query result for cached user: $result'); // Inspect query result
-
-    if (result.isNotEmpty) {
-      final userData = result.first['userData'] as String?;
-      final password = result.first['password'] as String?; //Retrieve password
-      if (userData != null) {
-        final decodedUserData = jsonDecode(userData) as Map<String, dynamic>;
-        decodedUserData['password'] = password; // Add password to the decoded user data
-        debugPrint('Decoded user data: $decodedUserData'); // Inspect decoded data
-        return decodedUserData;
-      }
-    }
-    return null;
-  } catch (e) {
-    debugPrint('Error getting cached user: $e');
-    return null;
-  }
-}
-
-  Future<void> cacheUser(String email, String password, Map<String, dynamic> userData, int timestamp) async {
-  final db = await database;
-  await db.insert(
-    'user',
-    {
-      'email': email,
-      'password': password, // Store password in the password field
-      'userData': jsonEncode(userData),
-      'timestamp': timestamp,
-    },
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
-}
 }
