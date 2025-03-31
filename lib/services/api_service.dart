@@ -94,7 +94,7 @@ class ApiService {
     ); // Ensure it's a Map
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+Future<Map<String, dynamic>> login(String email, String password) async {
   final secureStorage = const FlutterSecureStorage();
   final cacheService = CacheService();
 
@@ -116,7 +116,8 @@ class ApiService {
       if (decodedResponse['ResultType'] == 1) {
         await cacheService.setString('username', email);
         await secureStorage.write(key: 'password', value: password);
-        await cacheService.setInt('personId', decodedResponse['PersonID']); // Cache PersonID
+        await cacheService.setInt('personId', decodedResponse['PersonID']);
+        await cacheService.setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch); // Save timestamp
         debugPrint('User data cached successfully.');
         return decodedResponse;
       } else {
@@ -136,12 +137,23 @@ class ApiService {
 
       final cachedUsername = await cacheService.getString('username');
       final cachedPassword = await secureStorage.read(key: 'password');
-      final cachedPersonId = await cacheService.getInt('personId'); // Retrieve PersonID
+      final cachedPersonId = await cacheService.getInt('personId');
+      final cachedTimestamp = await cacheService.getInt('cacheTimestamp');
 
-      if (cachedUsername == email && cachedPassword == password && cachedPersonId != null) {
-        debugPrint('Login from cache successful.');
-        // Return a JSON object with the cached PersonID.
-        return {"ResultType": 1, "PersonID": cachedPersonId};
+      if (cachedUsername == email && cachedPassword == password && cachedPersonId != null && cachedTimestamp != null) {
+        final validityHours = int.parse(LocalizationService.getString('cacheExpiration'));
+        final expirationTime = DateTime.fromMillisecondsSinceEpoch(cachedTimestamp).add(Duration(hours: validityHours));
+
+        if (DateTime.now().isBefore(expirationTime)) {
+          debugPrint('Login from cache successful.');
+          return {"ResultType": 1, "PersonID": cachedPersonId};
+        } else {
+          debugPrint('Cached data expired.');
+          return {
+            "ResultType": 0,
+            "ResultMessage": "Cached data expired. Please log in again.",
+          };
+        }
       }
       return {
         "ResultType": 0,

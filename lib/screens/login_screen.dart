@@ -73,11 +73,17 @@ class LoginScreenState extends State<LoginScreen> {
           // Trigger both state update and direct navigation
           widget.onLoginSuccess(completeUserData);
 
+          // Fetch and cache Schuetzenausweis
+          await apiService.fetchSchuetzenausweis(personId);
+
           // Immediate navigation as fallback
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'userData': completeUserData, 'isLoggedIn': true},
-          );
+          if (mounted) {
+              // Immediate navigation as fallback
+              Navigator.of(context).pushReplacementNamed(
+                '/home',
+                arguments: {'userData': completeUserData, 'isLoggedIn': true},
+              );
+            }
         } else {
           setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
         }
