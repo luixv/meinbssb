@@ -20,7 +20,7 @@ class DatabaseService {
     return openDatabase(
       path,
       version: 1,
-      onCreate: (Database db, int version) async {      
+      onCreate: (Database db, int version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS schuetzenausweis (
             personId INTEGER PRIMARY KEY,
@@ -40,57 +40,66 @@ class DatabaseService {
       },
     );
   }
-  
-  Future<List<Map<String, dynamic>>> getCachedSchulungen(int personId, DateTime abDatum, Duration validity) async {
-  final db = await database;
-  final now = DateTime.now().millisecondsSinceEpoch;
-  final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
-  final validityTimestamp = now - validity.inMilliseconds;
 
-  final query = 'SELECT * FROM schulungen WHERE personId = ? AND abDatum < ? AND timestamp > ?';
-  final whereArgs = [personId, abDatumTimestamp, validityTimestamp];
+  Future<List<Map<String, dynamic>>> getCachedSchulungen(
+    int personId,
+    DateTime abDatum,
+    Duration validity,
+  ) async {
+    final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
+    final validityTimestamp = now - validity.inMilliseconds;
 
-  debugPrint('Executing SQL Query: $query');
-  debugPrint('Where Args: $whereArgs');
+    final query =
+        'SELECT * FROM schulungen WHERE personId = ? AND abDatum < ? AND timestamp > ?';
+    final whereArgs = [personId, abDatumTimestamp, validityTimestamp];
 
-  final result = await db.rawQuery(query, whereArgs);
+    debugPrint('Executing SQL Query: $query');
+    debugPrint('Where Args: $whereArgs');
 
-  debugPrint('Query Result: $result');
+    final result = await db.rawQuery(query, whereArgs);
 
-  return result;
-}
+    debugPrint('Query Result: $result');
 
+    return result;
+  }
 
-Future<void> cacheSchulungen(int personId, DateTime abDatum, String schulungenData, int timestamp) async {
-  final db = await database;
-  final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
+  Future<void> cacheSchulungen(
+    int personId,
+    DateTime abDatum,
+    String schulungenData,
+    int timestamp,
+  ) async {
+    final db = await database;
+    final abDatumTimestamp = abDatum.millisecondsSinceEpoch;
 
-  final rowsUpdated = await db.update(
-    'schulungen',
-    {
-      'abDatum': abDatumTimestamp,
-      'schulungenData': schulungenData,
-      'timestamp': timestamp,
-    },
-    where: 'personId = ?',
-    whereArgs: [personId],
-  );
-
-  if (rowsUpdated == 0) {
-    // No record was updated, so insert a new one
-    await db.insert(
+    final rowsUpdated = await db.update(
       'schulungen',
       {
-        'personId': personId,
         'abDatum': abDatumTimestamp,
         'schulungenData': schulungenData,
         'timestamp': timestamp,
       },
+      where: 'personId = ?',
+      whereArgs: [personId],
     );
-  }
-}
 
-  Future<Uint8List?> getCachedSchuetzenausweis(int personId, Duration validity) async {
+    if (rowsUpdated == 0) {
+      // No record was updated, so insert a new one
+      await db.insert('schulungen', {
+        'personId': personId,
+        'abDatum': abDatumTimestamp,
+        'schulungenData': schulungenData,
+        'timestamp': timestamp,
+      });
+    }
+  }
+
+  Future<Uint8List?> getCachedSchuetzenausweis(
+    int personId,
+    Duration validity,
+  ) async {
     final db = await database;
     final now = DateTime.now().millisecondsSinceEpoch;
     final result = await db.query(
@@ -105,18 +114,16 @@ Future<void> cacheSchulungen(int personId, DateTime abDatum, String schulungenDa
     return null;
   }
 
-  Future<void> cacheSchuetzenausweis(int personId, Uint8List imageData, int timestamp) async {
+  Future<void> cacheSchuetzenausweis(
+    int personId,
+    Uint8List imageData,
+    int timestamp,
+  ) async {
     final db = await database;
-    await db.insert(
-      'schuetzenausweis',
-      {
-        'personId': personId,
-        'imageData': imageData,
-        'timestamp': timestamp,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('schuetzenausweis', {
+      'personId': personId,
+      'imageData': imageData,
+      'timestamp': timestamp,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
-
-
 }
