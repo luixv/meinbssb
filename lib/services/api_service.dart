@@ -6,8 +6,9 @@ import 'dart:typed_data';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/services/database_service.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; 
-import 'cache_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:meinbssb/services/cache_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final String baseIp;
@@ -94,85 +95,94 @@ class ApiService {
     ); // Ensure it's a Map
   }
 
-Future<Map<String, dynamic>> login(String email, String password) async {
-  final secureStorage = const FlutterSecureStorage();
-  final cacheService = CacheService();
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final secureStorage = const FlutterSecureStorage();
+    final cacheService = CacheService();
 
-  try {
-    final String apiUrl = '$baseUrl/LoginMyBSSB';
-    final requestBody = jsonEncode({"email": email, "password": password});
+    try {
+      final String apiUrl = '$baseUrl/LoginMyBSSB';
+      final requestBody = jsonEncode({"email": email, "password": password});
 
-    debugPrint('Sending login request to: $apiUrl');
-    debugPrint('Request body: $requestBody');
+      debugPrint('Sending login request to: $apiUrl');
+      debugPrint('Request body: $requestBody');
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: requestBody,
-    );
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      );
 
-    final decodedResponse = jsonDecode(response.body);
-    if (decodedResponse is Map<String, dynamic>) {
-      if (decodedResponse['ResultType'] == 1) {
-        await cacheService.setString('username', email);
-        await secureStorage.write(key: 'password', value: password);
-        await cacheService.setInt('personId', decodedResponse['PersonID']);
-        await cacheService.setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch); // Save timestamp
-        debugPrint('User data cached successfully.');
-        return decodedResponse;
-      } else {
-        debugPrint(
-          'Login failed on server: ${decodedResponse['ResultMessage']}',
-        );
-        return decodedResponse;
-      }
-    } else {
-      debugPrint('Invalid server response.');
-      return {};
-    }
-  } on http.ClientException catch (e) {
-    if (e.message.contains('refused') ||
-        e.message.contains('failed to connect')) {
-      debugPrint('ClientException contains SocketException: ${e.message}');
-
-      final cachedUsername = await cacheService.getString('username');
-      final cachedPassword = await secureStorage.read(key: 'password');
-      final cachedPersonId = await cacheService.getInt('personId');
-      final cachedTimestamp = await cacheService.getInt('cacheTimestamp');
-
-      if (cachedUsername == email && cachedPassword == password && cachedPersonId != null && cachedTimestamp != null) {
-        final validityHours = int.parse(LocalizationService.getString('cacheExpiration'));
-        final expirationTime = DateTime.fromMillisecondsSinceEpoch(cachedTimestamp).add(Duration(hours: validityHours));
-
-        if (DateTime.now().isBefore(expirationTime)) {
-          debugPrint('Login from cache successful.');
-          return {"ResultType": 1, "PersonID": cachedPersonId};
+      final decodedResponse = jsonDecode(response.body);
+      if (decodedResponse is Map<String, dynamic>) {
+        if (decodedResponse['ResultType'] == 1) {
+          await cacheService.setString('username', email);
+          await secureStorage.write(key: 'password', value: password);
+          await cacheService.setInt('personId', decodedResponse['PersonID']);
+          await cacheService.setInt(
+            'cacheTimestamp',
+            DateTime.now().millisecondsSinceEpoch,
+          ); // Save timestamp
+          debugPrint('User data cached successfully.');
+          return decodedResponse;
         } else {
-          debugPrint('Cached data expired.');
-          return {
-            "ResultType": 0,
-            "ResultMessage": "Cached data expired. Please log in again.",
-          };
+          debugPrint(
+            'Login failed on server: ${decodedResponse['ResultMessage']}',
+          );
+          return decodedResponse;
         }
+      } else {
+        debugPrint('Invalid server response.');
+        return {};
       }
-      return {
-        "ResultType": 0,
-        "ResultMessage":
-            "Offline login failed, no cache or password mismatch",
-      };
-    } else {
-      debugPrint('ClientException, not SocketException: ${e.message}');
-      return {
-        "ResultType": 0,
-        "ResultMessage": "ClientException, not SocketException",
-      };
-    }
-  } catch (e) {
-    debugPrint('Other Login error: $e');
-    return {"ResultType": 0, "ResultMessage": "Other login error"};
-  }
-}
+    } on http.ClientException catch (e) {
+      if (e.message.contains('refused') ||
+          e.message.contains('failed to connect')) {
+        debugPrint('ClientException contains SocketException: ${e.message}');
 
+        final cachedUsername = await cacheService.getString('username');
+        final cachedPassword = await secureStorage.read(key: 'password');
+        final cachedPersonId = await cacheService.getInt('personId');
+        final cachedTimestamp = await cacheService.getInt('cacheTimestamp');
+
+        if (cachedUsername == email &&
+            cachedPassword == password &&
+            cachedPersonId != null &&
+            cachedTimestamp != null) {
+          final validityHours = int.parse(
+            LocalizationService.getString('cacheExpiration'),
+          );
+          final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+            cachedTimestamp,
+          ).add(Duration(hours: validityHours));
+
+          if (DateTime.now().isBefore(expirationTime)) {
+            debugPrint('Login from cache successful.');
+            return {"ResultType": 1, "PersonID": cachedPersonId};
+          } else {
+            debugPrint('Cached data expired.');
+            return {
+              "ResultType": 0,
+              "ResultMessage": "Cached data expired. Please log in again.",
+            };
+          }
+        }
+        return {
+          "ResultType": 0,
+          "ResultMessage":
+              "Offline login failed, no cache or password mismatch",
+        };
+      } else {
+        debugPrint('ClientException, not SocketException: ${e.message}');
+        return {
+          "ResultType": 0,
+          "ResultMessage": "ClientException, not SocketException",
+        };
+      }
+    } catch (e) {
+      debugPrint('Other Login error: $e');
+      return {"ResultType": 0, "ResultMessage": "Other login error"};
+    }
+  }
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     final String apiUrl = '$baseUrl/PasswordReset/$passNumber';
@@ -186,53 +196,83 @@ Future<Map<String, dynamic>> login(String email, String password) async {
     ).then((value) => value is Map<String, dynamic> ? value : {});
   }
 
-  Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
-    final validityDuration = getCacheExpirationDuration();
+ Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+  final validityDuration = getCacheExpirationDuration();
+  final prefs = await SharedPreferences.getInstance();
+  final cacheKey = 'passdaten_$personId';
 
-    Future<Map<String, dynamic>> getCachedPassdaten() async {
-      try {
-        final cachedPassdaten = await _databaseService.getCachedPassdaten(
-          personId,
-          validityDuration,
-        );
-        if (cachedPassdaten != null) {
-          return cachedPassdaten;
+  Future<Map<String, dynamic>> getCachedPassdaten() async {
+    try {
+      final cachedJson = prefs.getString(cacheKey);
+      if (cachedJson != null) {
+        final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
+        final cachedTimestamp = cachedData['timestamp'] as int?;
+        if (cachedTimestamp != null) {
+          final expirationTime = DateTime.fromMillisecondsSinceEpoch(cachedTimestamp).add(validityDuration);
+          if (DateTime.now().isBefore(expirationTime)) {
+            debugPrint('Using cached passdaten from SharedPreferences.');
+            return cachedData['data'] as Map<String, dynamic>;
+          } else {
+            debugPrint('Cached passdaten expired.');
+            return {};
+          }
         }
-        return {};
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return {};
       }
-    }
-
-    if (!await hasInternet()) {
-      debugPrint(
-        'Device is offline. Attempting to retrieve passdaten from cache.',
-      );
-      return getCachedPassdaten();
-    } else {
-      try {
-        final String apiUrl = '$baseUrl/Passdaten/$personId';
-        final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
-
-        if (response is Map<String, dynamic>) {
-          await _databaseService.cachePassdaten(
-            personId,
-            response,
-            DateTime.now().millisecondsSinceEpoch,
-          );
-          return response;
-        }
-        return {};
-      } catch (e) {
-        debugPrint('API call error: $e');
-        debugPrint(
-          'Attempting to retrieve passdaten from cache as API fallback.',
-        );
-        return getCachedPassdaten();
-      }
+      return {};
+    } catch (cacheError) {
+      debugPrint('Cache error: $cacheError');
+      return {};
     }
   }
+
+  if (!await hasInternet()) {
+    debugPrint('Device is offline. Attempting to retrieve passdaten from cache.');
+    return getCachedPassdaten();
+  } else {
+    try {
+      final String apiUrl = '$baseUrl/Passdaten/$personId';
+      final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
+
+      if (response is Map<String, dynamic>) {
+        // Directly use the response as passdaten
+        final passdaten = response;
+
+        // Select fields to cache
+        final cachedData = {
+          'PASSNUMMER': passdaten['PASSNUMMER'],
+          'VEREINNR': passdaten['VEREINNR'],
+          'NAMEN': passdaten['NAMEN'],
+          'VORNAME': passdaten['VORNAME'],
+          'TITEL': passdaten['TITEL'],
+          'GEBURTSDATUM': passdaten['GEBURTSDATUM'],
+          'GESCHLECHT': passdaten['GESCHLECHT'],
+          'VEREINNAME': passdaten['VEREINNAME'],
+          'PASSDATENID': passdaten['PASSDATENID'],
+          'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
+          'PERSONID': passdaten['PERSONID'],
+        };
+
+        // Cache the selected fields with timestamp
+        await prefs.setString(
+          cacheKey,
+          jsonEncode({
+            'data': cachedData,
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
+          }),
+        );
+
+        return cachedData;
+      } else {
+        debugPrint('Invalid response format.');
+        return {};
+      }
+    } catch (e) {
+      debugPrint('API call error: $e');
+      debugPrint('Attempting to retrieve passdaten from cache as API fallback.');
+      return getCachedPassdaten();
+    }
+  }
+}
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     final validityDuration = getCacheExpirationDuration();

@@ -21,15 +21,7 @@ class DatabaseService {
     return openDatabase(
       path,
       version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute('''
-            CREATE TABLE IF NOT EXISTS passdaten (
-            personId INTEGER PRIMARY KEY,
-            passdatenData TEXT,
-            timestamp INTEGER
-          )
-        ''');       
-      
+      onCreate: (Database db, int version) async {      
         await db.execute('''
           CREATE TABLE IF NOT EXISTS schuetzenausweis (
             personId INTEGER PRIMARY KEY,
@@ -47,34 +39,6 @@ class DatabaseService {
         ''');
         await db.execute('PRAGMA journal_mode=WAL;');
       },
-    );
-  }
-
-  Future<Map<String, dynamic>?> getCachedPassdaten(int personId, Duration validity) async {
-    final db = await database;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final result = await db.query(
-      'passdaten',
-      where: 'personId = ? AND timestamp > ?',
-      whereArgs: [personId, now - validity.inMilliseconds],
-    );
-
-    if (result.isNotEmpty) {
-      return jsonDecode(result.first['passdatenData'] as String) as Map<String, dynamic>;
-    }
-    return null;
-  }
-
-  Future<void> cachePassdaten(int personId, Map<String, dynamic> passdatenData, int timestamp) async {
-    final db = await database;
-    await db.insert(
-      'passdaten',
-      {
-        'personId': personId,
-        'passdatenData': jsonEncode(passdatenData),
-        'timestamp': timestamp,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
   
