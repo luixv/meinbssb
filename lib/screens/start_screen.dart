@@ -62,7 +62,6 @@ class StartScreenState extends State<StartScreen> {
   try {
     debugPrint('Fetching schulungen for $personId on $abDatum');
     final result = await apiService.fetchAngemeldeteSchulungen(personId, abDatum);
-    debugPrint('Received ${result.length} schulungen');
     
     if (mounted) {
       setState(() {
