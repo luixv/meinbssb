@@ -61,6 +61,8 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (response["ResultType"] == 1) {
         int personId = response["PersonID"];
+
+        debugPrint('Retrieving passdaten'); // Debug print
         var passdaten = await apiService.fetchPassdaten(personId);
         debugPrint('User data: $passdaten'); // Debug print
 

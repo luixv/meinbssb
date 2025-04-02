@@ -34,7 +34,7 @@ class ApiService {
       );
 
       debugPrint('Response status: ${response.statusCode}');
-      debugPrint('Response body: ${response.body}');
+      debugPrint('Response body api_service: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -193,83 +193,72 @@ class ApiService {
     ).then((value) => value is Map<String, dynamic> ? value : {});
   }
 
-  Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
-    final validityDuration = getCacheExpirationDuration();
-    final prefs = await SharedPreferences.getInstance();
-    final cacheKey = 'passdaten_$personId';
+Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+  final validityDuration = getCacheExpirationDuration();
+  final prefs = await SharedPreferences.getInstance();
+  final cacheKey = 'passdaten_$personId';
 
-    Future<Map<String, dynamic>> getCachedPassdaten() async {
-      try {
-        final cachedJson = prefs.getString(cacheKey);
-        if (cachedJson != null) {
-          final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
-          final cachedTimestamp = cachedData['timestamp'] as int?;
-          if (cachedTimestamp != null) {
-            final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-              cachedTimestamp,
-            ).add(validityDuration);
-            if (DateTime.now().isBefore(expirationTime)) {
-              debugPrint('Using cached passdaten from SharedPreferences.');
-              return cachedData['data'] as Map<String, dynamic>;
-            } else {
-              debugPrint('Cached passdaten expired.');
-              return {};
-            }
+  Future<Map<String, dynamic>> getCachedPassdaten() async {
+    try {
+      final cachedJson = prefs.getString(cacheKey);
+      if (cachedJson != null) {
+        final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
+        final cachedTimestamp = cachedData['timestamp'] as int?;
+        if (cachedTimestamp != null) {
+          final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+            cachedTimestamp,
+          ).add(validityDuration);
+          if (DateTime.now().isBefore(expirationTime)) {
+            debugPrint('Using cached passdaten from SharedPreferences.');
+            return cachedData;
+          } else {
+            debugPrint('Cached passdaten expired.');
+            return {};
           }
         }
-        return {};
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return {};
       }
-    }
-
-    if (!await hasInternet()) {
-      debugPrint(
-        'Device is offline. Attempting to retrieve passdaten from cache.',
-      );
-      return getCachedPassdaten();
-    } else {
-      try {
-        final String apiUrl = '$baseUrl/Passdaten/$personId';
-        final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
-
-        if (response is Map<String, dynamic>) {
-          final passdaten = response;
-
-          // fields to cache
-          final cachedData = {
-            'PASSNUMMER': passdaten['PASSNUMMER'],
-            'VEREINNR': passdaten['VEREINNR'],
-            'NAMEN': passdaten['NAMEN'],
-            'VORNAME': passdaten['VORNAME'],
-            'TITEL': passdaten['TITEL'],
-            'GEBURTSDATUM': passdaten['GEBURTSDATUM'],
-            'GESCHLECHT': passdaten['GESCHLECHT'],
-            'VEREINNAME': passdaten['VEREINNAME'],
-            'PASSDATENID': passdaten['PASSDATENID'],
-            'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
-            'PERSONID': passdaten['PERSONID'],
-            'timestamp': DateTime.now().millisecondsSinceEpoch,
-          };
-
-          // Cache the selected fields with timestamp
-          await prefs.setString(cacheKey, jsonEncode(cachedData));
-
-          return cachedData;
-        } else {
-          debugPrint('Invalid response format.');
-          return {};
-        }
-      } catch (e) {
-        debugPrint('API call error: $e');
-        debugPrint(
-          'Attempting to retrieve passdaten from cache as API fallback.',
-        );
-        return getCachedPassdaten();
-      }
+      return {};
+    } catch (cacheError) {
+      debugPrint('Cache error: $cacheError');
+      return {};
     }
   }
+
+  try {
+    final String apiUrl = '$baseUrl/Passdaten/$personId';
+    final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
+
+    if (response is Map<String, dynamic>) {
+      final passdaten = response;
+
+      final cachedData = {
+        'PASSNUMMER': passdaten['PASSNUMMER'],
+        'VEREINNR': passdaten['VEREINNR'],
+        'NAMEN': passdaten['NAMEN'],
+        'VORNAME': passdaten['VORNAME'],
+        'TITEL': passdaten['TITEL'],
+        'GEBURTSDATUM': passdaten['GEBURTSDATUM'],
+        'GESCHLECHT': passdaten['GESCHLECHT'],
+        'VEREINNAME': passdaten['VEREINNAME'],
+        'PASSDATENID': passdaten['PASSDATENID'],
+        'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
+        'PERSONID': passdaten['PERSONID'],
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      await prefs.setString(cacheKey, jsonEncode(cachedData));
+
+      return passdaten;
+    } else {
+      debugPrint('Invalid response format from API.');
+      return getCachedPassdaten();
+    }
+  } catch (e) {
+    debugPrint('API call error: $e. Attempting to retrieve passdaten from cache.');
+    return getCachedPassdaten();
+  }
+}
+
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     final validityDuration = getCacheExpirationDuration();

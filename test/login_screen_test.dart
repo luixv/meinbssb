@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:provider/provider.dart';
 
 // Simple mock for ApiService
 class MockApiService extends ApiService {
@@ -23,8 +24,11 @@ void main() {
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(
-          onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
+        home: Provider<ApiService>(
+          create: (_) => MockApiService(),
+          child: LoginScreen(
+            onLoginSuccess: (userData) {},
+          ),
         ),
       ),
     );
@@ -38,43 +42,43 @@ void main() {
   testWidgets('Can toggle password visibility', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(
-          onLoginSuccess: (userData) {}, // Add onLoginSuccess parameter
+        home: Provider<ApiService>(
+          create: (_) => MockApiService(),
+          child: LoginScreen(
+            onLoginSuccess: (userData) {},
+          ),
         ),
       ),
     );
 
-    // Password should be obscured initially
     expect(find.byType(TextField).last, findsOneWidget);
     final passwordField = tester.widget<TextField>(find.byType(TextField).last);
     expect(passwordField.obscureText, isTrue);
 
-    // Tap the visibility icon
     await tester.tap(find.byIcon(Icons.visibility_off));
     await tester.pump();
 
-    // Password should be visible
-    final updatedPasswordField =
-        tester.widget<TextField>(find.byType(TextField).last);
+    final updatedPasswordField = tester.widget<TextField>(find.byType(TextField).last);
     expect(updatedPasswordField.obscureText, isFalse);
   });
 
   testWidgets('Shows error on invalid login', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginScreen(
-          onLoginSuccess: (userData) {}, 
+        home: Provider<ApiService>(
+          create: (_) => MockApiService(),
+          child: LoginScreen(
+            onLoginSuccess: (userData) {},
+          ),
         ),
       ),
     );
 
-    // Enter invalid credentials
     await tester.enterText(find.byKey(const Key('usernameField')), 'wrong@test.com');
     await tester.enterText(find.byKey(const Key('passwordField')), 'wrong');
     await tester.tap(find.text('Anmelden'));
-    await tester.pump();
+    await tester.pumpAndSettle(); // Wait for async operations
 
-    // Should show error message
     expect(find.text('Invalid credentials'), findsOneWidget);
   });
 }
