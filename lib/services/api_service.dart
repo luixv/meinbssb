@@ -20,7 +20,7 @@ class ApiService {
   }
 
   Future<bool> hasInternet() async {
-    bool has = await InternetConnectionChecker().hasConnection;
+    bool has = await InternetConnectionChecker.createInstance().hasConnection;
     return has;
   }
 
@@ -392,8 +392,6 @@ class ApiService {
         debugPrint('API error response: $response');
         throw Exception(response['ResultMessage'] ?? 'Unknown error');
       }
-
-      debugPrint('Parsed ${schulungen.length} schulungen');
 
       if (schulungen.isNotEmpty) {
         final cachedSchulungen =
