@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
-import 'package:meinbssb/services/localization_service.dart'; // moved
+import 'package:meinbssb/services/localization_service.dart';
 import 'password_reset_success_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  const PasswordResetScreen({super.key});
+  final ApiService apiService;
+  const PasswordResetScreen({required this.apiService, super.key});
 
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
@@ -15,7 +16,7 @@ class PasswordResetScreen extends StatefulWidget {
 class PasswordResetScreenState extends State<PasswordResetScreen> {
   final TextEditingController _passNumberController = TextEditingController();
   String _passNumberError = "";
-  bool _isPassNumberValid = false; // Initialize to false
+  bool _isPassNumberValid = false;
   bool _hasInteracted = false;
   bool _isLoading = false;
   Color _appColor = const Color(0xFF006400);
@@ -63,20 +64,24 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     }
 
     try {
-      final response = await ApiService().resetPassword(
+      final response = await widget.apiService.resetPassword(
         _passNumberController.text,
       );
+      
       if (response['ResultType'] == 1) {
         try {
-          final userData = await ApiService().fetchPassdaten(
+          final userData = await widget.apiService.fetchPassdaten(
             int.parse(_passNumberController.text),
           );
+          
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder:
-                    (context) => PasswordResetSuccessScreen(userData: userData),
+                builder: (context) => PasswordResetSuccessScreen(
+                  userData: userData,
+                  // Temporarily removed apiService parameter
+                ),
               ),
             );
           }
@@ -142,10 +147,9 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: "Passnummer",
-                  errorText:
-                      _hasInteracted && _passNumberError.isNotEmpty
-                          ? _passNumberError
-                          : null,
+                  errorText: _hasInteracted && _passNumberError.isNotEmpty
+                      ? _passNumberError
+                      : null,
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -158,16 +162,14 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _isPassNumberValid && !_isLoading ? _resetPassword : null,
+                  onPressed: _isPassNumberValid && !_isLoading ? _resetPassword : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child:
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text("Passwort zurücksetzen"),
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Passwort zurücksetzen"),
                 ),
               ),
             ],

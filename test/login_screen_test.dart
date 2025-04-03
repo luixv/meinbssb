@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/email_service.dart';
 import 'package:provider/provider.dart';
 
-// Simple mock for ApiService
 class MockApiService extends ApiService {
+MockApiService() 
+    : super(
+        baseIp: 'test', 
+        port: '1234',
+        serverTimeout: 10, // Add this required parameter
+      );
+      
   @override
   Future<Map<String, dynamic>> login(String email, String password) async {
     if (email == 'test@test.com' && password == 'password') {
@@ -20,13 +27,29 @@ class MockApiService extends ApiService {
   }
 }
 
+class MockEmailService extends EmailService {
+  @override
+  Future<Map<String, dynamic>> sendEmail({
+    required String from,
+    required String recipient,
+    required String subject,
+    String? body,
+    int? emailId,
+  }) async {
+    return {'ResultType': 1, 'ResultMessage': 'Success'};
+  }
+}
+
 void main() {
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ApiService>(
-          create: (_) => MockApiService(),
-          child: LoginScreen(
+      MultiProvider(
+        providers: [
+          Provider<ApiService>(create: (_) => MockApiService()),
+          Provider<EmailService>(create: (_) => MockEmailService()),
+        ],
+        child: MaterialApp(
+          home: LoginScreen(
             onLoginSuccess: (userData) {},
           ),
         ),
@@ -41,10 +64,13 @@ void main() {
 
   testWidgets('Can toggle password visibility', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ApiService>(
-          create: (_) => MockApiService(),
-          child: LoginScreen(
+      MultiProvider(
+        providers: [
+          Provider<ApiService>(create: (_) => MockApiService()),
+          Provider<EmailService>(create: (_) => MockEmailService()),
+        ],
+        child: MaterialApp(
+          home: LoginScreen(
             onLoginSuccess: (userData) {},
           ),
         ),
@@ -64,10 +90,13 @@ void main() {
 
   testWidgets('Shows error on invalid login', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ApiService>(
-          create: (_) => MockApiService(),
-          child: LoginScreen(
+      MultiProvider(
+        providers: [
+          Provider<ApiService>(create: (_) => MockApiService()),
+          Provider<EmailService>(create: (_) => MockEmailService()),
+        ],
+        child: MaterialApp(
+          home: LoginScreen(
             onLoginSuccess: (userData) {},
           ),
         ),
@@ -77,7 +106,7 @@ void main() {
     await tester.enterText(find.byKey(const Key('usernameField')), 'wrong@test.com');
     await tester.enterText(find.byKey(const Key('passwordField')), 'wrong');
     await tester.tap(find.text('Anmelden'));
-    await tester.pumpAndSettle(); // Wait for async operations
+    await tester.pumpAndSettle();
 
     expect(find.text('Invalid credentials'), findsOneWidget);
   });

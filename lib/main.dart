@@ -5,12 +5,14 @@ import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/email_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart'; 
 import 'package:meinbssb/services/database_service.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load('assets/strings.json');
+  final serverTimeout = int.tryParse(LocalizationService.getString('ServerTimeout')) ?? 10;
 
  // Initialize sqflite_common_ffi if needed
   sqfliteFfiInit();
@@ -22,7 +24,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<ApiService>(create: (context) => ApiService()),
+        Provider<ApiService>(create: (context) => ApiService(serverTimeout: serverTimeout)),
+        Provider<EmailService>(create: (_) => EmailService()), // Add this line
+
       ],
       child: MyApp(),
     ),

@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/password_reset_screen.dart'; // moved
+import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
+
+// Simple mock for ApiService
+class MockApiService extends ApiService {
+  MockApiService() : super(baseIp: 'test', port: '1234', serverTimeout: 10);
+
+  @override
+  Future<Map<String, dynamic>> resetPassword(String passNumber) async {
+    return {'ResultType': 1, 'ResultMessage': 'Success'};
+  }
+}
 
 void main() {
   testWidgets('Displays password reset form', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: PasswordResetScreen(),
+          body: PasswordResetScreen(
+            apiService: MockApiService(), // Provide the mock service
+          ),
           appBar: AppBar(title: const Text('Test')),
         ),
       ),
@@ -31,7 +44,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: PasswordResetScreen(),
+          body: PasswordResetScreen(
+            apiService: MockApiService(), // Provide the mock service
+          ),
         ),
       ),
     );

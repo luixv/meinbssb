@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/email_service.dart';
 import 'registration_screen.dart';
 import 'help_page.dart';
 import 'password_reset_screen.dart';
@@ -80,12 +81,11 @@ class LoginScreenState extends State<LoginScreen> {
 
           // Immediate navigation as fallback
           if (mounted) {
-              // Immediate navigation as fallback
-              Navigator.of(context).pushReplacementNamed(
-                '/home',
-                arguments: {'userData': completeUserData, 'isLoggedIn': true},
-              );
-            }
+            Navigator.of(context).pushReplacementNamed(
+              '/home',
+              arguments: {'userData': completeUserData, 'isLoggedIn': true},
+            );
+          }
         } else {
           setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
         }
@@ -102,17 +102,31 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToRegistrationPage() {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final emailService = Provider.of<EmailService>(context, listen: false);
+    
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+      MaterialPageRoute(
+        builder: (context) => RegistrationScreen(
+          apiService: apiService,
+          emailService: emailService,
+        ),
+      ),
     );
   }
 
   Future<void> _navigateToPasswordReset() async {
     if (!mounted) return;
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PasswordResetScreen()),
+      MaterialPageRoute(
+        builder: (context) => PasswordResetScreen(
+          apiService: apiService,
+        ),
+      ),
     );
   }
 
@@ -176,10 +190,9 @@ class LoginScreenState extends State<LoginScreen> {
                     backgroundColor: Colors.lightGreen,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child:
-                      _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text("Anmelden"),
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Anmelden"),
                 ),
               ),
               const SizedBox(height: 20),
@@ -215,16 +228,15 @@ class LoginScreenState extends State<LoginScreen> {
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HelpPage(),
-                                      ),
-                                    );
-                                  },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const HelpPage(),
+                                  ),
+                                );
+                              },
                           ),
                           const TextSpan(text: " benötigt?"),
                         ],
@@ -245,9 +257,8 @@ class LoginScreenState extends State<LoginScreen> {
                               color: Color(0xFF006400),
                               decoration: TextDecoration.underline,
                             ),
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = _navigateToRegistrationPage,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = _navigateToRegistrationPage,
                           ),
                           const TextSpan(text: " Registrieren."),
                         ],

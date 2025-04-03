@@ -13,11 +13,16 @@ class ApiService {
   final String baseIp;
   final String port;
   late final String baseUrl;
+  final int serverTimeout; 
   final DatabaseService _databaseService = DatabaseService();
 
   // ApiService({this.baseIp = '127.0.0.1', this.port = '3001'}) {
 
-  ApiService({this.baseIp = '127.0.0.1', this.port = '3001'}) {
+  ApiService({
+    this.baseIp = '127.0.0.1', 
+    this.port = '3001',
+    required this.serverTimeout, 
+  }) {
     baseUrl = 'http://$baseIp:$port';
   }
 
