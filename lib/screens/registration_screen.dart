@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/services/localization_service.dart'; 
+import 'package:meinbssb/services/localization_service.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'registration_success_screen.dart';
 import 'privacy_page.dart';
 import 'package:flutter/gestures.dart';
-import 'package:meinbssb/services/email_service.dart'; 
+import 'package:meinbssb/services/email_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  final ApiService apiService;  // Add apiService parameter
-  final EmailService emailService;  // Add emailService parameter
-  
+  final ApiService apiService;
+  final EmailService emailService;
+
   const RegistrationScreen({
     required this.apiService,
     required this.emailService,
@@ -35,11 +35,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? zipCodeError;
   String? passNumberError;
   String? emailError;
-  bool _isLoading = false; 
+  bool _isLoading = false;
   String _successMessage = "";
   Map<String, dynamic> userData = {};
 
-  // Getter methods for testing
   TextEditingController get firstNameController => _firstNameController;
   TextEditingController get lastNameController => _lastNameController;
   TextEditingController get passNumberController => _passNumberController;
@@ -105,9 +104,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validateEmail(String value) {
     if (value.isEmpty) {
-      return false; // Email is required
+      return false;
     }
-    // Basic email regex
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
     return emailRegex.hasMatch(value);
   }
@@ -174,7 +172,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
     try {
-      // CHANGED: Use widget.apiService instead of ApiService()
       final response = await widget.apiService.register(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
@@ -187,16 +184,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       if (response['ResultType'] == 1) {
         debugPrint("Registration successful: ${response['ResultMessage']}");
         bool emailSent = false;
-        
+
         try {
-          // CHANGED: Use widget.emailService instead of EmailService()
           await _sendRegistrationEmail();
           emailSent = true;
         } catch (e) {
           debugPrint("Email sending error: $e");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text("Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal."),
                 duration: Duration(seconds: 5),
               ),
@@ -209,8 +205,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => RegistrationSuccessScreen(
-                message: emailSent 
-                    ? "Registrierung erfolgreich!" 
+                message: emailSent
+                    ? "Registrierung erfolgreich!"
                     : "Registrierung nicht erfolgreich! versuchen Sie es später erneut.",
                 userData: userData,
               ),
@@ -229,7 +225,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       debugPrint("Error during registration: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut."),
             duration: Duration(seconds: 5),
           ),
@@ -250,7 +246,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       String subject = LocalizationService.getString('Subject');
       String registrationContent = LocalizationService.getString('registrationContent');
 
-      // CHANGED: Use widget.emailService instead of EmailService()
       final emailResponse = await widget.emailService.sendEmail(
         from: from,
         recipient: _emailController.text,
@@ -277,7 +272,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           AppMenu(
             context: context,
             userData: userData,
-            isLoggedIn: false, 
+            isLoggedIn: false,
             onLogout: () {
               Navigator.pushReplacementNamed(context, '/login');
             },
@@ -309,19 +304,19 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             TextField(
-              key: Key('firstNameField'),
+              key: const Key('firstNameField'),
               controller: _firstNameController,
               decoration: const InputDecoration(labelText: "Vorname"),
               onChanged: (_) => setState(() {}),
             ),
             TextField(
-              key: Key('lastNameField'),
+              key: const Key('lastNameField'),
               controller: _lastNameController,
               decoration: const InputDecoration(labelText: "Nachname"),
               onChanged: (_) => setState(() {}),
             ),
             TextField(
-              key: Key('passNumberField'),
+              key: const Key('passNumberField'),
               controller: _passNumberController,
               decoration: InputDecoration(
                 labelText: "Schützenausweisnummer",
@@ -335,7 +330,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               },
             ),
             TextField(
-              key: Key('emailField'),
+              key: const Key('emailField'),
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "E-mail",
@@ -370,7 +365,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             TextField(
-              key: Key('zipCodeField'),
+              key: const Key('zipCodeField'),
               controller: _zipCodeController,
               decoration: InputDecoration(
                 labelText: "Postleitzahl",
@@ -405,8 +400,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         TextSpan(
                           text: 'Datenschutzbestimmungen',
-                          style: const TextStyle(
-                            color: Colors.green,
+                          style: TextStyle(
+                            color: _appColor,
                             decoration: TextDecoration.underline,
                             fontSize: 14.0,
                             fontWeight: FontWeight.normal,
@@ -437,7 +432,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               child: ElevatedButton(
                 onPressed: isFormValid() && !_isLoading ? _registerUser : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightGreen,
+                  backgroundColor: _appColor,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: _isLoading

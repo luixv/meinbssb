@@ -47,39 +47,40 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Future<void> fetchSchulungen() async {
-  final apiService = Provider.of<ApiService>(context, listen: false);
-  final personId = widget.userData['PERSONID'];
-  
-  if (personId == null) {
-    debugPrint('PERSONID is null');
-    if (mounted) setState(() => isLoading = false);
-    return;
-  }
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final personId = widget.userData['PERSONID'];
 
-  final today = DateTime.now();
-  final abDatum = "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
-  
-  try {
-    debugPrint('Fetching schulungen for $personId on $abDatum');
-    final result = await apiService.fetchAngemeldeteSchulungen(personId, abDatum);
-    
-    if (mounted) {
-      setState(() {
-        schulungen = result;
-        isLoading = false;
-      });
+    if (personId == null) {
+      debugPrint('PERSONID is null');
+      if (mounted) setState(() => isLoading = false);
+      return;
     }
-  } catch (e) {
-    debugPrint('Error fetching schulungen: $e');
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-        schulungen = []; // Ensure empty state is clear
-      });
+
+    final today = DateTime.now();
+    final abDatum =
+        "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
+
+    try {
+      debugPrint('Fetching schulungen for $personId on $abDatum');
+      final result =
+          await apiService.fetchAngemeldeteSchulungen(personId, abDatum);
+
+      if (mounted) {
+        setState(() {
+          schulungen = result;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching schulungen: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          schulungen = []; // Ensure empty state is clear
+        });
+      }
     }
   }
-}
-
 
   void _handleLogout() {
     debugPrint('Logging out user: ${widget.userData['VORNAME']}');
