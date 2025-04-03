@@ -195,76 +195,78 @@ class ApiService {
     ).then((value) => value is Map<String, dynamic> ? value : {});
   }
 
-  Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
-    final validityDuration = getCacheExpirationDuration();
-    final prefs = await SharedPreferences.getInstance();
-    final cacheKey = 'passdaten_$personId'; 
 
-    Future<Map<String, dynamic>> getCachedPassdaten() async {
-      try {
-        final cachedJson = prefs.getString(cacheKey);
-        if (cachedJson != null) {
-          final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
-          final cachedTimestamp = cachedData['timestamp'] as int?;
-          if (cachedTimestamp != null) {
-            final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-              cachedTimestamp,
-            ).add(validityDuration);
-            if (DateTime.now().isBefore(expirationTime)) {
-              debugPrint('Using cached passdaten from SharedPreferences.');
-              return cachedData;
-            } else {
-              debugPrint('Cached passdaten expired.');
-              return {};
-            }
+Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+  final validityDuration = getCacheExpirationDuration();
+  final prefs = await SharedPreferences.getInstance();
+  final cacheKey = 'passdaten_$personId';
+  final cacheService = CacheService(); // Instantiate CacheService
+
+  Future<Map<String, dynamic>> getCachedPassdaten() async {
+    try {
+      final cachedJson = prefs.getString(cacheKey);
+      if (cachedJson != null) {
+        final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
+        final globalTimestamp = await cacheService.getInt('cacheTimestamp'); // Get global timestamp
+
+        if (globalTimestamp != null) {
+          final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+            globalTimestamp,
+          ).add(validityDuration);
+          if (DateTime.now().isBefore(expirationTime)) {
+            debugPrint('Using cached passdaten from SharedPreferences.');
+            return cachedData;
+          } else {
+            debugPrint('Cached passdaten expired.');
+            return {};
           }
         }
-        return {};
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return {};
       }
-    }
-
-    try {
-      final String apiUrl = '$baseUrl/Passdaten/$personId';
-      final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
-
-      if (response is Map<String, dynamic>) {
-        final passdaten = response;
-
-        final cachedData = {
-          'PASSNUMMER': passdaten['PASSNUMMER'],
-          'VEREINNR': passdaten['VEREINNR'],
-          'NAMEN': passdaten['NAMEN'],
-          'VORNAME': passdaten['VORNAME'],
-          'TITEL': passdaten['TITEL'],
-          'GEBURTSDATUM': passdaten['GEBURTSDATUM'],
-          'GESCHLECHT': passdaten['GESCHLECHT'],
-          'VEREINNAME': passdaten['VEREINNAME'],
-          'PASSDATENID': passdaten['PASSDATENID'],
-          'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
-          'PERSONID': passdaten['PERSONID'],
-          'timestamp': DateTime.now().millisecondsSinceEpoch,
-        };
-
-        await prefs.setString(
-          cacheKey,
-          jsonEncode(cachedData),
-        ); 
-
-        return passdaten;
-      } else {
-        debugPrint('Invalid response format from API.');
-        return getCachedPassdaten();
-      }
-    } catch (e) {
-      debugPrint(
-        'API call error: $e. Attempting to retrieve passdaten from cache.',
-      );
-      return getCachedPassdaten();
+      return {};
+    } catch (cacheError) {
+      debugPrint('Cache error: $cacheError');
+      return {};
     }
   }
+
+  try {
+    final String apiUrl = '$baseUrl/Passdaten/$personId';
+    final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
+
+    if (response is Map<String, dynamic>) {
+      final passdaten = response;
+
+      final cachedData = {
+        'PASSNUMMER': passdaten['PASSNUMMER'],
+        'VEREINNR': passdaten['VEREINNR'],
+        'NAMEN': passdaten['NAMEN'],
+        'VORNAME': passdaten['VORNAME'],
+        'TITEL': passdaten['TITEL'],
+        'GEBURTSDATUM': passdaten['GEBURTSDATUM'],
+        'GESCHLECHT': passdaten['GESCHLECHT'],
+        'VEREINNAME': passdaten['VEREINNAME'],
+        'PASSDATENID': passdaten['PASSDATENID'],
+        'MITGLIEDSCHAFTID': passdaten['MITGLIEDSCHAFTID'],
+        'PERSONID': passdaten['PERSONID'],
+      };
+
+      await prefs.setString(
+        cacheKey,
+        jsonEncode(cachedData),
+      );
+      //update global timestamp
+      await cacheService.setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch); // Use CacheService
+
+      return passdaten;
+    } else {
+      debugPrint('Invalid response format from API.');
+      return getCachedPassdaten();
+    }
+  } catch (e) {
+    debugPrint('API call error: $e. Attempting to retrieve passdaten from cache.');
+    return getCachedPassdaten();
+  }
+}
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     final validityDuration = getCacheExpirationDuration();
@@ -323,88 +325,87 @@ class ApiService {
     await prefs.setString(cacheKey, jsonEncode(cachedSchulungen));
   }
 
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
-    int personId,
-    String abDatum,
-  ) async {
-    final validityDuration = getCacheExpirationDuration();
-    final prefs = await SharedPreferences.getInstance();
-    final cacheKey = 'schulungen_$personId';
+  Future<List<dynamic>> fetchAngemeldeteSchulungen(int personId, String abDatum) async {
+  final validityDuration = getCacheExpirationDuration();
+  final prefs = await SharedPreferences.getInstance();
+  final cacheKey = 'schulungen_$personId';
+  final cacheService = CacheService(); 
 
-    Future<List<dynamic>> getCachedSchulungen() async {
-      try {
-        final cachedJson = prefs.getString(cacheKey);
-        if (cachedJson != null) {
-          final cachedData = jsonDecode(cachedJson) as List<dynamic>;
-          final cachedTimestamp =
-              cachedData.isNotEmpty
-                  ? cachedData.first['timestamp'] as int?
-                  : null;
+      debugPrint('fetchAngemeldeteSchulungen called with personId: $personId, abDatum: $abDatum');
 
-          if (cachedTimestamp != null) {
-            final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-              cachedTimestamp,
-            ).add(validityDuration);
-            if (DateTime.now().isBefore(expirationTime)) {
-              debugPrint('Using cached schulungen from SharedPreferences.');
-              return cachedData.map((item) {
-                return {
-                  'DATUM': item['DATUM'],
-                  'BEZEICHNUNG': item['BEZEICHNUNG'],
-                  'SCHULUNGENTEILNEHMERID': 0,
-                  'SCHULUNGENTERMINID': 0,
-                  'SCHULUNGSARTID': 0,
-                  'STATUS': 0,
-                  'DATUMBIS': '',
-                  'FUERVERLAENGERUNGEN': false,
-                };
-              }).toList();
-            } else {
-              debugPrint('Cached schulungen expired.');
-              return [];
-            }
-          }
-        }
-        return [];
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return [];
-      }
-    }
 
+  Future<List<dynamic>> getCachedSchulungen() async {
     try {
-      final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
-      final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
-      debugPrint('API response type: ${response.runtimeType}');
+      final cachedJson = prefs.getString(cacheKey);
+      if (cachedJson != null) {
+        final cachedData = jsonDecode(cachedJson) as List<dynamic>;
+        final globalTimestamp = await cacheService.getInt('cacheTimestamp'); 
 
-      List<dynamic> schulungen = [];
-
-      if (response is List) {
-        schulungen = response;
-      } else if (response is Map && response.containsKey('schulungen')) {
-        schulungen = List.from(response['schulungen']);
-      } else if (response is Map && response.containsKey('ResultType')) {
-        debugPrint('API error response: $response');
-        throw Exception(response['ResultMessage'] ?? 'Unknown error');
-      }
-
-      if (schulungen.isNotEmpty) {
-        final cachedSchulungen =
-            schulungen.map((item) {
+        if (globalTimestamp != null) {
+          final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+            globalTimestamp,
+          ).add(validityDuration);
+          if (DateTime.now().isBefore(expirationTime)) {
+            debugPrint('Using cached schulungen from SharedPreferences.');
+            return cachedData.map((item) {
               return {
                 'DATUM': item['DATUM'],
                 'BEZEICHNUNG': item['BEZEICHNUNG'],
-                'timestamp': DateTime.now().millisecondsSinceEpoch,
+                'SCHULUNGENTEILNEHMERID': 0,
+                'SCHULUNGENTERMINID': 0,
+                'SCHULUNGSARTID': 0,
+                'STATUS': 0,
+                'DATUMBIS': '',
+                'FUERVERLAENGERUNGEN': false,
               };
             }).toList();
-
-        _cacheSchulungenInMainIsolate([cacheKey, cachedSchulungen]);
+          } else {
+            debugPrint('Cached schulungen expired.');
+            return [];
+          }
+        }
       }
-
-      return schulungen.isNotEmpty ? schulungen : await getCachedSchulungen();
-    } catch (e) {
-      debugPrint('Network error: $e');
-      return await getCachedSchulungen();
+      return [];
+    } catch (cacheError) {
+      debugPrint('Cache error: $cacheError');
+      return [];
     }
   }
+
+  try {
+    final String apiUrl = '$baseUrl/AngemeldeteSchulungen/$personId/$abDatum';
+    final response = await _makeRequest(http.get(Uri.parse(apiUrl)));
+    debugPrint('API response type: ${response.runtimeType}');
+
+    List<dynamic> schulungen = [];
+
+    if (response is List) {
+      schulungen = response;
+    } else if (response is Map && response.containsKey('schulungen')) {
+      schulungen = List.from(response['schulungen']);
+    } else if (response is Map && response.containsKey('ResultType')) {
+      debugPrint('API error response: $response');
+      throw Exception(response['ResultMessage'] ?? 'Unknown error');
+    }
+
+    if (schulungen.isNotEmpty) {
+      final cachedSchulungen = schulungen.map((item) {
+        return {
+          'DATUM': item['DATUM'],
+          'BEZEICHNUNG': item['BEZEICHNUNG'],
+        };
+      }).toList();
+
+      _cacheSchulungenInMainIsolate([cacheKey, cachedSchulungen]);
+      //update global timestamp
+      await cacheService.setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch); 
+    }
+
+    return schulungen.isNotEmpty ? schulungen : await getCachedSchulungen();
+  } catch (e) {
+    debugPrint('Network error: $e');
+    return await getCachedSchulungen();
+  }
+}
+
 }
