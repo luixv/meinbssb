@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class LocalizationService {
-  static Map<String, String> _localizedStrings = {}; // Initialize to an empty map
+  static Map<String, String> _localizedStrings = {}; 
 
   static Future<void> load(String filePath) async {
     String jsonString = await rootBundle.loadString(filePath);
@@ -10,6 +10,6 @@ class LocalizationService {
   }
 
   static String getString(String key) {
-    return _localizedStrings[key] ?? ''; // Return empty string if key does not exist
+    return _localizedStrings[key] ?? ''; 
   }
 }
