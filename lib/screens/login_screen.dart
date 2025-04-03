@@ -57,14 +57,14 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      debugPrint('Login response: $response'); // Debug print
+      debugPrint('Login response: $response'); 
 
       if (response["ResultType"] == 1) {
         int personId = response["PersonID"];
 
-        debugPrint('Retrieving passdaten'); // Debug print
+        debugPrint('Retrieving passdaten'); 
         var passdaten = await apiService.fetchPassdaten(personId);
-        debugPrint('User data: $passdaten'); // Debug print
+        debugPrint('User data: $passdaten');
 
         if (!mounted) return;
 
