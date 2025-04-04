@@ -3,12 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:typed_data' as _i5;
+import 'dart:async' as _i3;
+import 'dart:typed_data' as _i4;
 
 import 'package:meinbssb/services/api_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -38,48 +37,12 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
   }
 
   @override
-  String get baseIp =>
-      (super.noSuchMethod(
-            Invocation.getter(#baseIp),
-            returnValue: _i3.dummyValue<String>(
-              this,
-              Invocation.getter(#baseIp),
-            ),
-          )
-          as String);
-
-  @override
-  String get port =>
-      (super.noSuchMethod(
-            Invocation.getter(#port),
-            returnValue: _i3.dummyValue<String>(this, Invocation.getter(#port)),
-          )
-          as String);
-
-  @override
-  String get baseUrl =>
-      (super.noSuchMethod(
-            Invocation.getter(#baseUrl),
-            returnValue: _i3.dummyValue<String>(
-              this,
-              Invocation.getter(#baseUrl),
-            ),
-          )
-          as String);
-
-  @override
-  set baseUrl(String? _baseUrl) => super.noSuchMethod(
-    Invocation.setter(#baseUrl, _baseUrl),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  _i4.Future<bool> hasInternet() =>
+  _i3.Future<bool> hasInternet() =>
       (super.noSuchMethod(
             Invocation.method(#hasInternet, []),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() =>
@@ -93,7 +56,7 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
           as Duration);
 
   @override
-  _i4.Future<Map<String, dynamic>> register({
+  _i3.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -110,60 +73,60 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
               #birthDate: birthDate,
               #zipCode: zipCode,
             }),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+  _i3.Future<Map<String, dynamic>> login(String? email, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#login, [email, password]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
+  _i3.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [passNumber]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
+  _i3.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchPassdaten, [personId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<_i5.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i3.Future<_i4.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchSchuetzenausweis, [personId]),
-            returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+            returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
           )
-          as _i4.Future<_i5.Uint8List>);
+          as _i3.Future<_i4.Uint8List>);
 
   @override
-  _i4.Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#fetchAngemeldeteSchulungen, [personId, abDatum]),
-            returnValue: _i4.Future<List<dynamic>>.value(<dynamic>[]),
+            returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
           )
-          as _i4.Future<List<dynamic>>);
+          as _i3.Future<List<dynamic>>);
 }
 
 /// A class which mocks [ApiService].
@@ -175,48 +138,12 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
   }
 
   @override
-  String get baseIp =>
-      (super.noSuchMethod(
-            Invocation.getter(#baseIp),
-            returnValue: _i3.dummyValue<String>(
-              this,
-              Invocation.getter(#baseIp),
-            ),
-          )
-          as String);
-
-  @override
-  String get port =>
-      (super.noSuchMethod(
-            Invocation.getter(#port),
-            returnValue: _i3.dummyValue<String>(this, Invocation.getter(#port)),
-          )
-          as String);
-
-  @override
-  String get baseUrl =>
-      (super.noSuchMethod(
-            Invocation.getter(#baseUrl),
-            returnValue: _i3.dummyValue<String>(
-              this,
-              Invocation.getter(#baseUrl),
-            ),
-          )
-          as String);
-
-  @override
-  set baseUrl(String? _baseUrl) => super.noSuchMethod(
-    Invocation.setter(#baseUrl, _baseUrl),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  _i4.Future<bool> hasInternet() =>
+  _i3.Future<bool> hasInternet() =>
       (super.noSuchMethod(
             Invocation.method(#hasInternet, []),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() =>
@@ -230,7 +157,7 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           as Duration);
 
   @override
-  _i4.Future<Map<String, dynamic>> register({
+  _i3.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -247,58 +174,58 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
               #birthDate: birthDate,
               #zipCode: zipCode,
             }),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> login(String? email, String? password) =>
+  _i3.Future<Map<String, dynamic>> login(String? email, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#login, [email, password]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
+  _i3.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
             Invocation.method(#resetPassword, [passNumber]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
+  _i3.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchPassdaten, [personId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i3.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<_i5.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i3.Future<_i4.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchSchuetzenausweis, [personId]),
-            returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+            returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
           )
-          as _i4.Future<_i5.Uint8List>);
+          as _i3.Future<_i4.Uint8List>);
 
   @override
-  _i4.Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#fetchAngemeldeteSchulungen, [personId, abDatum]),
-            returnValue: _i4.Future<List<dynamic>>.value(<dynamic>[]),
+            returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
           )
-          as _i4.Future<List<dynamic>>);
+          as _i3.Future<List<dynamic>>);
 }
