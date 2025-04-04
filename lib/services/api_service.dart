@@ -11,22 +11,35 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+class NetworkException implements Exception {
+  final String message;
+
+  NetworkException(this.message);
+
+  @override
+  String toString() {
+    return 'NetworkException: $message';
+  }
+}
+
 class ApiService {
   final HttpClient _httpClient;
-  final DatabaseService _databaseService = DatabaseService();
+  final DatabaseService _databaseService;
+  final CacheService _cacheService;
 
   ApiService({
+    required HttpClient httpClient,
+    required DatabaseService databaseService,
+    required CacheService cacheService,
     required String baseIp,
     required String port,
     required int serverTimeout,
-  }) : _httpClient = HttpClient(
-         baseUrl: 'http://$baseIp:$port',
-         serverTimeout: serverTimeout,
-       );
+  }) : _httpClient = httpClient,
+       _databaseService = databaseService,
+       _cacheService = cacheService;
 
   Future<bool> hasInternet() async {
-    bool has = await InternetConnectionChecker.createInstance().hasConnection;
-    return has;
+    return await InternetConnectionChecker.createInstance().hasConnection;
   }
 
   Duration getCacheExpirationDuration() {
@@ -64,7 +77,6 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final secureStorage = const FlutterSecureStorage();
-    final cacheService = CacheService();
 
     try {
       final response = await _httpClient.post('LoginMyBSSB', {
@@ -74,13 +86,10 @@ class ApiService {
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
-          await cacheService.setString('username', email);
+          await _cacheService.setString('username', email);
           await secureStorage.write(key: 'password', value: password);
-          await cacheService.setInt('personId', response['PersonID']);
-          await cacheService.setInt(
-            'cacheTimestamp',
-            DateTime.now().millisecondsSinceEpoch,
-          );
+          await _cacheService.setInt('personId', response['PersonID']);
+          await _cacheService.setCacheTimestamp();
           debugPrint('User data cached successfully.');
           return response;
         } else {
@@ -97,10 +106,10 @@ class ApiService {
               e.message.contains('failed to connect'))) {
         debugPrint('ClientException contains SocketException: ${e.message}');
 
-        final cachedUsername = await cacheService.getString('username');
+        final cachedUsername = await _cacheService.getString('username');
         final cachedPassword = await secureStorage.read(key: 'password');
-        final cachedPersonId = await cacheService.getInt('personId');
-        final cachedTimestamp = await cacheService.getInt('cacheTimestamp');
+        final cachedPersonId = await _cacheService.getInt('personId');
+        final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
 
         if (cachedUsername == email &&
             cachedPassword == password &&
@@ -137,25 +146,28 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
-    return _httpClient
-        .post('PasswordReset/$passNumber', {"passNumber": passNumber})
-        .then(
-          (value) => value is Map<String, dynamic> ? value : {},
-        ); // Corrected line
+    try {
+      return _httpClient
+          .post('PasswordReset/$passNumber', {"passNumber": passNumber})
+          .then((value) => value is Map<String, dynamic> ? value : {});
+    } on http.ClientException catch (e) {
+      throw NetworkException('Network error: ${e.message}');
+    } catch (e) {
+      throw NetworkException('An unexpected error occurred: $e');
+    }
   }
 
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
     final validityDuration = getCacheExpirationDuration();
     final prefs = await SharedPreferences.getInstance();
     final cacheKey = 'passdaten_$personId';
-    final cacheService = CacheService();
 
     Future<Map<String, dynamic>> getCachedPassdaten() async {
-      try {
+      return _cacheService.getCachedData(cacheKey, () async {
         final cachedJson = prefs.getString(cacheKey);
         if (cachedJson != null) {
           final cachedData = jsonDecode(cachedJson) as Map<String, dynamic>;
-          final globalTimestamp = await cacheService.getInt('cacheTimestamp');
+          final globalTimestamp = await _cacheService.getInt('cacheTimestamp');
 
           if (globalTimestamp != null) {
             final expirationTime = DateTime.fromMillisecondsSinceEpoch(
@@ -171,10 +183,7 @@ class ApiService {
           }
         }
         return {};
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return {};
-      }
+      });
     }
 
     try {
@@ -198,21 +207,17 @@ class ApiService {
         };
 
         await prefs.setString(cacheKey, jsonEncode(cachedData));
-        await cacheService.setInt(
-          'cacheTimestamp',
-          DateTime.now().millisecondsSinceEpoch,
-        );
+        await _cacheService.setCacheTimestamp();
 
         return passdaten;
       } else {
         debugPrint('Invalid response format from API.');
-        return getCachedPassdaten();
+        return await getCachedPassdaten();
       }
+    } on http.ClientException catch (e) {
+      throw NetworkException('Network error: ${e.message}');
     } catch (e) {
-      debugPrint(
-        'API call error: $e. Attempting to retrieve passdaten from cache.',
-      );
-      return getCachedPassdaten();
+      throw NetworkException('An unexpected error occurred: $e');
     }
   }
 
@@ -221,11 +226,10 @@ class ApiService {
 
     Future<Uint8List?> getCachedSchuetzenausweis() async {
       try {
-        final cachedImage = await _databaseService.getCachedSchuetzenausweis(
+        return await _databaseService.getCachedSchuetzenausweis(
           personId,
           validityDuration,
         );
-        return cachedImage;
       } catch (cacheError) {
         debugPrint('Cache error: $cacheError');
         return null;
@@ -249,13 +253,10 @@ class ApiService {
         DateTime.now().millisecondsSinceEpoch,
       );
       return imageData;
+    } on http.ClientException catch (e) {
+      throw NetworkException('Network error: ${e.message}');
     } catch (e) {
-      debugPrint('Error fetching Schuetzenausweis: $e');
-      final cachedImage = await getCachedSchuetzenausweis();
-      if (cachedImage != null) {
-        return cachedImage;
-      }
-      throw Exception('Schützenausweis ist nicht verfügbar');
+      throw NetworkException('An unexpected error occurred: $e');
     }
   }
 
@@ -274,18 +275,17 @@ class ApiService {
     final validityDuration = getCacheExpirationDuration();
     final prefs = await SharedPreferences.getInstance();
     final cacheKey = 'schulungen_$personId';
-    final cacheService = CacheService();
 
     debugPrint(
       'fetchAngemeldeteSchulungen called with personId: $personId, abDatum: $abDatum',
     );
 
     Future<List<dynamic>> getCachedSchulungen() async {
-      try {
+      return _cacheService.getCachedData(cacheKey, () async {
         final cachedJson = prefs.getString(cacheKey);
         if (cachedJson != null) {
           final cachedData = jsonDecode(cachedJson) as List<dynamic>;
-          final globalTimestamp = await cacheService.getInt('cacheTimestamp');
+          final globalTimestamp = await _cacheService.getInt('cacheTimestamp');
 
           if (globalTimestamp != null) {
             final expirationTime = DateTime.fromMillisecondsSinceEpoch(
@@ -312,10 +312,7 @@ class ApiService {
           }
         }
         return [];
-      } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
-        return [];
-      }
+      });
     }
 
     try {
@@ -345,15 +342,19 @@ class ApiService {
             }).toList();
 
         _cacheSchulungenInMainIsolate([cacheKey, cachedSchulungen]);
-        await cacheService.setInt(
-          'cacheTimestamp',
-          DateTime.now().millisecondsSinceEpoch,
-        );
+        await _cacheService.setCacheTimestamp();
       }
 
       return schulungen.isNotEmpty ? schulungen : await getCachedSchulungen();
+    } on http.ClientException catch (e) {
+      debugPrint(
+        'Network error: $e. Attempting to retrieve schulungen from cache.',
+      );
+      return await getCachedSchulungen();
     } catch (e) {
-      debugPrint('Network error: $e');
+      debugPrint(
+        'An unexpected error occurred: $e. Attempting to retrieve schulungen from cache.',
+      );
       return await getCachedSchulungen();
     }
   }

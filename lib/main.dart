@@ -8,6 +8,8 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:meinbssb/services/database_service.dart';
+import 'package:meinbssb/services/http_client.dart';
+import 'package:meinbssb/services/cache_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,19 +23,26 @@ void main() async {
   databaseFactory = databaseFactoryFfi;
 
   final databaseService = DatabaseService();
-  await databaseService.database;
+  await databaseService.database; // Await database initialization
+  final cacheService = CacheService();
+  final httpClient = HttpClient(
+    baseUrl: 'http://$baseIp:$port',
+    serverTimeout: serverTimeout,
+  );
+
+  final apiService = ApiService(
+    httpClient: httpClient,
+    databaseService: databaseService,
+    cacheService: cacheService,
+    baseIp: baseIp,
+    port: port,
+    serverTimeout: serverTimeout,
+  );
 
   runApp(
     MultiProvider(
       providers: [
-        Provider<ApiService>(
-          create:
-              (context) => ApiService(
-                baseIp: baseIp,
-                port: port,
-                serverTimeout: serverTimeout,
-              ),
-        ),
+        Provider<ApiService>(create: (context) => apiService),
         Provider<EmailService>(create: (_) => EmailService()),
       ],
       child: MyApp(),
@@ -82,9 +91,8 @@ class MyAppState extends State<MyApp> {
                   as Map<String, dynamic>?;
 
           if (arguments == null) {
-            // Handle the case where arguments are null.
             return StartScreen(
-              _userData, // Use the existing userData if available.
+              _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
             );

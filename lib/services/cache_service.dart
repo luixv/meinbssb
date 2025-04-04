@@ -1,8 +1,9 @@
+// cache_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class CacheService {
-  static const String _cacheKeyPrefix = 'cache_';  
+  static const String _cacheKeyPrefix = 'cache_';
 
   Future<void> setString(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
@@ -66,5 +67,16 @@ class CacheService {
   Future<bool> containsKey(String key) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(_cacheKeyPrefix + key);
+  }
+
+  Future<void> setCacheTimestamp() async {
+    await setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch);
+  }
+
+  Future<T> getCachedData<T>(
+    String cacheKey,
+    Future<T> Function() getCachedData,
+  ) async {
+    return await getCachedData();
   }
 }
