@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
+import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -19,10 +20,22 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SchuetzenausweisScreen(
-          personId: personId,
-          userData: userData,
-        ),
+        builder:
+            (context) =>
+                SchuetzenausweisScreen(personId: personId, userData: userData),
+      ),
+    );
+  }
+
+  Future<void> _displayZweitmitgliedschaften(int personId) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => ZweitmitgliedschaftenScreen(
+              personId: personId,
+              userData: userData,
+            ),
       ),
     );
   }
@@ -37,13 +50,12 @@ class AppMenu extends StatelessWidget {
           Navigator.pushReplacementNamed(
             context,
             '/home',
-            arguments: {
-              'userData': userData,
-              'isLoggedIn': true,
-            },
+            arguments: {'userData': userData, 'isLoggedIn': true},
           );
         } else if (value == 'digitaler_schuetzenausweis') {
           _displaySchuetzenausweis(userData['PERSONID']);
+        } else if (value == 'zweitmitgliedschaften') {
+          _displayZweitmitgliedschaften(userData['PERSONID']);
         }
       },
       itemBuilder: (BuildContext context) {
@@ -60,9 +72,14 @@ class AppMenu extends StatelessWidget {
               value: 'startseite',
               child: Text('Startseite'),
             ),
+
             const PopupMenuItem<String>(
               value: 'digitaler_schuetzenausweis',
               child: Text('Digitaler Schützenausweis'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'zweitmitgliedschaften',
+              child: Text('Zweitmitgliedschaften'),
             ),
             const PopupMenuItem<String>(
               value: 'aenderung_schuetzenausweis',

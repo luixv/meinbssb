@@ -8,6 +8,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class NetworkException implements Exception {
   final String message;
@@ -262,5 +264,27 @@ class ApiService {
         return [];
       },
     );
+  }
+
+  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
+    try {
+      final response = await _httpClient.get('Zweitmitgliedschaften/$personId');
+      if (response is List) {
+        return response
+            .map(
+              (item) => {
+                'VEREINID': item['VEREINID'],
+                'VEREINNR': item['VEREINNR'],
+                'VEREINNAME': item['VEREINNAME'],
+                'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+              },
+            )
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint('Error fetching Zweitmitgliedschaften: $e');
+      throw NetworkException('Failed to fetch Zweitmitgliedschaften: $e');
+    }
   }
 }
