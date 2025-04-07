@@ -268,47 +268,62 @@ class ApiService {
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    try {
-      final response = await _httpClient.get('Zweitmitgliedschaften/$personId');
-      if (response is List) {
-        return response
-            .map(
-              (item) => {
-                'VEREINID': item['VEREINID'],
-                'VEREINNR': item['VEREINNR'],
-                'VEREINNAME': item['VEREINNAME'],
-                'EINTRITTVEREIN': item['EINTRITTVEREIN'],
-              },
-            )
-            .toList();
-      }
-      return [];
-    } catch (e) {
-      debugPrint('Error fetching Zweitmitgliedschaften: $e');
-      throw NetworkException('Failed to fetch Zweitmitgliedschaften: $e');
-    }
+    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      'zweitmitgliedschaften_$personId',
+      getCacheExpirationDuration(),
+      () async {
+        final response = await _httpClient.get('Zweitmitgliedschaften/$personId');
+        if (response is List) {
+          return response
+              .map(
+                (item) => {
+                  'VEREINID': item['VEREINID'],
+                  'VEREINNR': item['VEREINNR'],
+                  'VEREINNAME': item['VEREINNAME'],
+                  'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+                },
+              )
+              .toList();
+        }
+        return [];
+      },
+      (response) {
+        if (response is List) {
+          return response;
+        }
+        return [];
+      },
+    );
   }
 
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    try {
-      final response = await _httpClient.get(
-        'PassdatenZVE/$passdatenId/$personId',
-      );
-      if (response is List) {
-        return response
-            .map(
-              (item) => {
-                'DISZIPLINNR': item['DISZIPLINNR'],
-                'DISZIPLIN': item['DISZIPLIN'],
-                'VEREINNAME': item['VEREINNAME'],
-              },
-            )
-            .toList();
-      }
-      return [];
-    } catch (e) {
-      debugPrint('Error fetching PassdatenZVE: $e');
-      throw NetworkException('Failed to fetch PassdatenZVE: $e');
-    }
+    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      'passdatenzve_${passdatenId}_$personId',
+      getCacheExpirationDuration(),
+      () async {
+        final response = await _httpClient.get(
+          'PassdatenZVE/$passdatenId/$personId',
+        );
+        if (response is List) {
+          return response
+              .map(
+                (item) => {
+                  'DISZIPLINNR': item['DISZIPLINNR'],
+                  'VEREINNAME': item['VEREINNAME'],
+                  'DISZIPLIN': item['DISZIPLIN'],
+                  'DISZIPLINID': item['DISZIPLINID'],
+                },
+              )
+              .toList();
+        }
+        return [];
+      },
+      (response) {
+        if (response is List) {
+          return response;
+        }
+        return [];
+      },
+    );
   }
 }

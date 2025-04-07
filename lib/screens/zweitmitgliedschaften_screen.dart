@@ -138,23 +138,9 @@ class _ZweitmitgliedschaftenScreenState
                         ),
                         SizedBox(height: UIConstants.defaultSpacing),
                         Text(
-                          'Fehler beim Laden der Daten:\n${snapshot.error}',
+                          'Fehler beim Laden der Daten',
                           textAlign: TextAlign.center,
                           style: UIConstants.errorStyle,
-                        ),
-                        SizedBox(height: UIConstants.defaultSpacing),
-                        ElevatedButton(
-                          onPressed: () => setState(() => _loadData()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: UIConstants.lightGreen,
-                            padding: UIConstants.buttonPadding,
-                          ),
-                          child: Text(
-                            'Erneut versuchen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -222,23 +208,9 @@ class _ZweitmitgliedschaftenScreenState
                         ),
                         SizedBox(height: UIConstants.defaultSpacing),
                         Text(
-                          'Fehler beim Laden der Disziplinen:\n${snapshot.error}',
+                          'Fehler beim Laden der Disziplinen',
                           textAlign: TextAlign.center,
                           style: UIConstants.errorStyle,
-                        ),
-                        SizedBox(height: UIConstants.defaultSpacing),
-                        ElevatedButton(
-                          onPressed: () => setState(() => _loadData()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: UIConstants.lightGreen,
-                            padding: UIConstants.buttonPadding,
-                          ),
-                          child: Text(
-                            'Erneut versuchen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                            ),
-                          ),
                         ),
                       ],
                     ),
