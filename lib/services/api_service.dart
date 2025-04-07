@@ -8,8 +8,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class NetworkException implements Exception {
   final String message;
@@ -139,8 +137,11 @@ class ApiService {
               "Offline login failed, no cache or password mismatch",
         };
       } else {
-        debugPrint('Other Login error: $e');
-        return {"ResultType": 0, "ResultMessage": "Other login error"};
+        debugPrint('Username or Password is incorrect: $e');
+        return {
+          "ResultType": 0,
+          "ResultMessage": "Username or Password is incorrect",
+        };
       }
     }
   }
@@ -285,6 +286,29 @@ class ApiService {
     } catch (e) {
       debugPrint('Error fetching Zweitmitgliedschaften: $e');
       throw NetworkException('Failed to fetch Zweitmitgliedschaften: $e');
+    }
+  }
+
+  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
+    try {
+      final response = await _httpClient.get(
+        'PassdatenZVE/$passdatenId/$personId',
+      );
+      if (response is List) {
+        return response
+            .map(
+              (item) => {
+                'DISZIPLINNR': item['DISZIPLINNR'],
+                'DISZIPLIN': item['DISZIPLIN'],
+                'VEREINNAME': item['VEREINNAME'],
+              },
+            )
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint('Error fetching PassdatenZVE: $e');
+      throw NetworkException('Failed to fetch PassdatenZVE: $e');
     }
   }
 }

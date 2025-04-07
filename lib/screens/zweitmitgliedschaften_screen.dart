@@ -23,12 +23,13 @@ class ZweitmitgliedschaftenScreen extends StatefulWidget {
 class _ZweitmitgliedschaftenScreenState
     extends State<ZweitmitgliedschaftenScreen> {
   late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
+  late Future<List<dynamic>> _passdatenZVEFuture;
   Color _appColor = const Color(0xFF006400);
 
   @override
   void initState() {
     super.initState();
-    _loadZweitmitgliedschaften();
+    _loadData();
     _loadLocalization();
   }
 
@@ -44,9 +45,13 @@ class _ZweitmitgliedschaftenScreenState
     }
   }
 
-  void _loadZweitmitgliedschaften() {
+  void _loadData() {
     final apiService = Provider.of<ApiService>(context, listen: false);
     _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
+      widget.personId,
+    );
+    _passdatenZVEFuture = apiService.fetchPassdatenZVE(
+      widget.userData['PASSDATENID'],
       widget.personId,
     );
   }
@@ -66,7 +71,7 @@ class _ZweitmitgliedschaftenScreenState
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,73 +112,167 @@ class _ZweitmitgliedschaftenScreenState
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Expanded(
-              child: FutureBuilder<List<dynamic>>(
-                future: _zweitmitgliedschaftenFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+            // First FutureBuilder for Zweitmitgliedschaften
+            FutureBuilder<List<dynamic>>(
+              future: _zweitmitgliedschaftenFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 48,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Fehler beim Laden der Daten:\n${snapshot.error}',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _loadZweitmitgliedschaften();
-                              });
-                            },
-                            child: const Text('Erneut versuchen'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Fehler beim Laden der Daten:\n${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => setState(() => _loadData()),
+                          child: const Text('Erneut versuchen'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Keine Zweitmitgliedschaften gefunden.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    );
-                  }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Keine Zweitmitgliedschaften gefunden.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                }
 
-                  return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      final item = snapshot.data![index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 8.0),
-                        child: ListTile(
-                          title: Text(
-                            item['VEREINNAME'] ?? 'Unbekannter Verein',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final item = snapshot.data![index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      child: ListTile(
+                        title: Text(
+                          item['VEREINNAME'] ?? 'Unbekannter Verein',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Disziplinen:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            // Second FutureBuilder for PassdatenZVE
+            FutureBuilder<List<dynamic>>(
+              future: _passdatenZVEFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Fehler beim Laden der Disziplinen:\n${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => setState(() => _loadData()),
+                          child: const Text('Erneut versuchen'),
+                        ),
+                      ],
+                    ),
                   );
-                },
-              ),
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Keine Disziplinen gefunden.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final item = snapshot.data![index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 4.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 8.0,
+                        ),
+                        child: Row(
+                          children: [
+                            // DISZIPLINNR
+                            SizedBox(
+                              width: 60,
+                              child: Text(
+                                item['DISZIPLINNR'] ?? 'N/A',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            // DISZIPLIN
+                            SizedBox(
+                              width: 120,
+                              child: Text(
+                                item['DISZIPLIN'] ?? 'N/A',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            // VEREINNAME
+                            Expanded(
+                              child: Text(
+                                item['VEREINNAME'] ?? 'N/A',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),

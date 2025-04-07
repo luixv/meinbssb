@@ -1,3 +1,4 @@
+// lib/screens/start_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -62,8 +63,10 @@ class StartScreenState extends State<StartScreen> {
 
     try {
       debugPrint('Fetching schulungen for $personId on $abDatum');
-      final result =
-          await apiService.fetchAngemeldeteSchulungen(personId, abDatum);
+      final result = await apiService.fetchAngemeldeteSchulungen(
+        personId,
+        abDatum,
+      );
 
       if (mounted) {
         setState(() {
@@ -100,7 +103,7 @@ class StartScreenState extends State<StartScreen> {
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: _handleLogout,
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -137,10 +140,7 @@ class StartScreenState extends State<StartScreen> {
               widget.userData['VEREINNAME'],
               style: const TextStyle(fontSize: 18),
             ),
-            const Text(
-              "Erstverein",
-              style: TextStyle(color: Colors.grey),
-            ),
+            const Text("Erstverein", style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 20),
             const Text(
               "Angemeldete Schulungen:",
@@ -149,23 +149,50 @@ class StartScreenState extends State<StartScreen> {
             isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : schulungen.isEmpty
-                    ? const Text(
-                        "Keine Schulungen gefunden.",
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    : Expanded(
-                        child: ListView(
-                          children: schulungen.map((schulung) {
-                            final datum = DateTime.parse(schulung['DATUM']);
-                            final formattedDatum =
-                                "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
-                            return ListTile(
-                              title: Text(schulung['BEZEICHNUNG']),
-                              subtitle: Text(formattedDatum),
-                            );
-                          }).toList(),
+                ? const Text(
+                  "Keine Schulungen gefunden.",
+                  style: TextStyle(color: Colors.grey),
+                )
+                : Expanded(
+                  child: ListView.builder(
+                    itemCount: schulungen.length,
+                    itemBuilder: (context, index) {
+                      final schulung = schulungen[index];
+                      final datum = DateTime.parse(schulung['DATUM']);
+                      final formattedDatum =
+                          "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 4.0),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8.0,
+                            horizontal: 8.0,
+                          ),
+                          child: Row(
+                            children: [
+                              // Date
+                              SizedBox(
+                                width: 90, // Fixed width for date
+                                child: Text(
+                                  formattedDatum,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              const SizedBox(width: 8.0), // Small spacing
+                              // Schulung name
+                              Expanded(
+                                child: Text(
+                                  schulung['BEZEICHNUNG'] ?? 'N/A',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                ),
           ],
         ),
       ),
