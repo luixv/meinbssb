@@ -3,7 +3,7 @@ import 'app_menu.dart';
 
 class PrivacyPage extends StatelessWidget {
   final Map<String, dynamic> userData;
-  const PrivacyPage({super.key, required this.userData}); 
+  const PrivacyPage({super.key, required this.userData});
 
   @override
   Widget build(BuildContext context) {

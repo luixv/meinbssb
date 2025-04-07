@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meinbssb/services/localization_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -82,13 +83,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: _appColor,
-            ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: _appColor),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: _appColor,
-              ),
+              style: TextButton.styleFrom(foregroundColor: _appColor),
             ),
           ),
           child: child!,
@@ -134,10 +133,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool isFormValid() {
     final isZipValid =
-        _zipCodeController.text.isNotEmpty ? validateZipCode(_zipCodeController.text) : true;
+        _zipCodeController.text.isNotEmpty
+            ? validateZipCode(_zipCodeController.text)
+            : true;
     final isPassValid =
-        _passNumberController.text.isNotEmpty ? validatePassNumber(_passNumberController.text) : true;
-    final isDateValid = _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
+        _passNumberController.text.isNotEmpty
+            ? validatePassNumber(_passNumberController.text)
+            : true;
+    final isDateValid =
+        _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
     final isEmailValid = validateEmail(_emailController.text);
 
     return _firstNameController.text.isNotEmpty &&
@@ -160,7 +164,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.")),
+          const SnackBar(
+            content: Text(
+              "Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.",
+            ),
+          ),
         );
       }
       setState(() {
@@ -193,7 +201,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text("Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal."),
+                content: Text(
+                  "Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.",
+                ),
                 duration: Duration(seconds: 5),
               ),
             );
@@ -204,12 +214,14 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RegistrationSuccessScreen(
-                message: emailSent
-                    ? "Registrierung erfolgreich!"
-                    : "Registrierung nicht erfolgreich! versuchen Sie es später erneut.",
-                userData: userData,
-              ),
+              builder:
+                  (context) => RegistrationSuccessScreen(
+                    message:
+                        emailSent
+                            ? "Registrierung erfolgreich!"
+                            : "Registrierung nicht erfolgreich! versuchen Sie es später erneut.",
+                    userData: userData,
+                  ),
             ),
           );
         }
@@ -217,7 +229,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         debugPrint("Registration failed: ${response['ResultMessage']}");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response['ResultMessage'] ?? "Registrierung fehlgeschlagen")),
+            SnackBar(
+              content: Text(
+                response['ResultMessage'] ?? "Registrierung fehlgeschlagen",
+              ),
+            ),
           );
         }
       }
@@ -226,7 +242,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut."),
+            content: Text(
+              "Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.",
+            ),
             duration: Duration(seconds: 5),
           ),
         );
@@ -244,7 +262,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     try {
       String from = LocalizationService.getString('From');
       String subject = LocalizationService.getString('Subject');
-      String registrationContent = LocalizationService.getString('registrationContent');
+      String registrationContent = LocalizationService.getString(
+        'registrationContent',
+      );
 
       final emailResponse = await widget.emailService.sendEmail(
         from: from,
@@ -266,7 +286,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registrierung'),
+        title: Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
         actions: [
           AppMenu(
@@ -280,83 +300,97 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+        padding: UIConstants.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "Hier Registrieren",
-              style: TextStyle(
-                color: _appColor,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             if (_successMessage.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  _successMessage,
-                  style: const TextStyle(color: Colors.green),
+                padding: EdgeInsets.symmetric(
+                  vertical: UIConstants.smallSpacing,
                 ),
+                child: Text(_successMessage, style: UIConstants.successStyle),
               ),
             TextField(
               key: const Key('firstNameField'),
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: "Vorname"),
+              decoration: UIConstants.defaultInputDecoration.copyWith(
+                labelText: "Vorname",
+              ),
               onChanged: (_) => setState(() {}),
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('lastNameField'),
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: "Nachname"),
+              decoration: UIConstants.defaultInputDecoration.copyWith(
+                labelText: "Nachname",
+              ),
               onChanged: (_) => setState(() {}),
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('passNumberField'),
               controller: _passNumberController,
-              decoration: InputDecoration(
+              decoration: UIConstants.defaultInputDecoration.copyWith(
                 labelText: "Schützenausweisnummer",
                 errorText: passNumberError,
               ),
               onChanged: (value) {
                 setState(() {
                   passNumberError =
-                      validatePassNumber(value) ? null : "Schützenausweisnummer muss 8 Ziffern enthalten.";
+                      validatePassNumber(value)
+                          ? null
+                          : "Schützenausweisnummer muss 8 Ziffern enthalten.";
                 });
               },
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('emailField'),
               controller: _emailController,
-              decoration: InputDecoration(
+              decoration: UIConstants.defaultInputDecoration.copyWith(
                 labelText: "E-mail",
                 errorText: emailError,
               ),
               onChanged: (_) {
                 setState(() {
-                  emailError = validateEmail(_emailController.text)
-                      ? null
-                      : "Bitte geben Sie eine gültige E-Mail Adresse ein.";
+                  emailError =
+                      validateEmail(_emailController.text)
+                          ? null
+                          : "Bitte geben Sie eine gültige E-Mail Adresse ein.";
                 });
               },
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             InkWell(
               onTap: () => _selectDate(context),
               child: InputDecorator(
-                decoration: const InputDecoration(labelText: "Geburtsdatum"),
+                decoration: UIConstants.defaultInputDecoration.copyWith(
+                  labelText: "Geburtsdatum",
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       _selectedDate == null
                           ? 'Wählen Sie Ihr Geburtsdatum'
-                          : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
-                      style: TextStyle(
-                        color: _selectedDate != null ? _appColor : Colors.black,
+                          : DateFormat(
+                            'dd.MM.yyyy',
+                            'de_DE',
+                          ).format(_selectedDate!),
+                      style: UIConstants.bodyStyle.copyWith(
+                        color:
+                            _selectedDate != null
+                                ? _appColor
+                                : UIConstants.black,
                       ),
                     ),
                     const Icon(Icons.calendar_today),
@@ -364,61 +398,67 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('zipCodeField'),
               controller: _zipCodeController,
-              decoration: InputDecoration(
+              decoration: UIConstants.defaultInputDecoration.copyWith(
                 labelText: "Postleitzahl",
                 errorText: zipCodeError,
               ),
               onChanged: (value) {
                 setState(() {
-                  zipCodeError = validateZipCode(value) ? null : "Postleitzahl muss 5 Ziffern enthalten.";
+                  zipCodeError =
+                      validateZipCode(value)
+                          ? null
+                          : "Postleitzahl muss 5 Ziffern enthalten.";
                 });
               },
             ),
+            SizedBox(height: UIConstants.smallSpacing),
             Row(
               children: [
                 Checkbox(
                   value: _privacyAccepted,
-                  onChanged: (bool? value) => setState(() {
-                    _privacyAccepted = value!;
-                  }),
+                  onChanged:
+                      (bool? value) => setState(() {
+                        _privacyAccepted = value!;
+                      }),
                 ),
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: UIConstants.bodyStyle,
                       children: <TextSpan>[
                         TextSpan(
-                          text: LocalizationService.getString('privacyText')
-                              .split('Datenschutzbestimmungen')[0],
+                          text:
+                              LocalizationService.getString(
+                                'privacyText',
+                              ).split('Datenschutzbestimmungen')[0],
                         ),
                         TextSpan(
                           text: 'Datenschutzbestimmungen',
-                          style: TextStyle(
+                          style: UIConstants.linkStyle.copyWith(
                             color: _appColor,
-                            decoration: TextDecoration.underline,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PrivacyPage(userData: userData),
-                                ),
-                              );
-                            },
+                          recognizer:
+                              TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              PrivacyPage(userData: userData),
+                                    ),
+                                  );
+                                },
                         ),
                         TextSpan(
-                          text: LocalizationService.getString('privacyText')
-                              .split('Datenschutzbestimmungen')[1],
+                          text:
+                              LocalizationService.getString(
+                                'privacyText',
+                              ).split('Datenschutzbestimmungen')[1],
                         ),
                       ],
                     ),
@@ -426,18 +466,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: isFormValid() && !_isLoading ? _registerUser : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _appColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: UIConstants.buttonPadding,
                 ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text("Registrieren"),
+                child:
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : Text(
+                          "Registrieren",
+                          style: UIConstants.bodyStyle.copyWith(
+                            color: UIConstants.white,
+                          ),
+                        ),
               ),
             ),
           ],
