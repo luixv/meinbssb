@@ -5,6 +5,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/app_menu.dart';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -25,7 +26,7 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
-  Color _appColor = const Color(0xFF006400);
+  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
@@ -96,7 +97,7 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Angemeldete Schulungen'),
+        title: Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -107,51 +108,58 @@ class StartScreenState extends State<StartScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "Mein BSSB",
-              style: TextStyle(
-                color: _appColor,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: UIConstants.titleStyle,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['PASSNUMMER'],
-              style: const TextStyle(fontSize: 18),
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
             ),
-            const Text(
+            Text(
               "Schützenpassnummer",
-              style: TextStyle(color: Colors.grey),
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['VEREINNAME'],
-              style: const TextStyle(fontSize: 18),
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
             ),
-            const Text("Erstverein", style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 20),
-            const Text(
-              "Angemeldete Schulungen:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              "Erstverein",
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
+            SizedBox(height: UIConstants.defaultSpacing),
+            Text("Angemeldete Schulungen:", style: UIConstants.titleStyle),
             isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(
+                  child: CircularProgressIndicator(
+                    color: UIConstants.defaultAppColor,
+                    strokeWidth: 2.0,
+                  ),
+                )
                 : schulungen.isEmpty
-                ? const Text(
+                ? Text(
                   "Keine Schulungen gefunden.",
-                  style: TextStyle(color: Colors.grey),
+                  style: UIConstants.bodyStyle.copyWith(
+                    color: UIConstants.grey,
+                  ),
                 )
                 : Expanded(
                   child: ListView.builder(
@@ -162,11 +170,13 @@ class StartScreenState extends State<StartScreen> {
                       final formattedDatum =
                           "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
                       return Card(
-                        margin: const EdgeInsets.only(bottom: 4.0),
+                        margin: EdgeInsets.only(
+                          bottom: UIConstants.smallSpacing,
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 8.0,
+                          padding: EdgeInsets.symmetric(
+                            vertical: UIConstants.smallSpacing,
+                            horizontal: UIConstants.smallSpacing,
                           ),
                           child: Row(
                             children: [
@@ -175,15 +185,21 @@ class StartScreenState extends State<StartScreen> {
                                 width: 90, // Fixed width for date
                                 child: Text(
                                   formattedDatum,
-                                  style: const TextStyle(fontSize: 16),
+                                  style: UIConstants.bodyStyle.copyWith(
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 8.0), // Small spacing
+                              SizedBox(
+                                width: UIConstants.smallSpacing,
+                              ), // Small spacing
                               // Schulung name
                               Expanded(
                                 child: Text(
                                   schulung['BEZEICHNUNG'] ?? 'N/A',
-                                  style: const TextStyle(fontSize: 16),
+                                  style: UIConstants.bodyStyle.copyWith(
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
                                 ),
                               ),
                             ],

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/app_menu.dart';
 import 'package:meinbssb/services/localization_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   final int personId;
@@ -24,7 +25,7 @@ class _ZweitmitgliedschaftenScreenState
     extends State<ZweitmitgliedschaftenScreen> {
   late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
   late Future<List<dynamic>> _passdatenZVEFuture;
-  Color _appColor = const Color(0xFF006400);
+  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
@@ -61,7 +62,7 @@ class _ZweitmitgliedschaftenScreenState
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Zweitmitgliedschaften'),
+        title: Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -72,52 +73,57 @@ class _ZweitmitgliedschaftenScreenState
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "Mein BSSB",
-              style: TextStyle(
-                color: _appColor,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: UIConstants.titleStyle,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['PASSNUMMER'],
-              style: const TextStyle(fontSize: 18),
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
             ),
-            const Text(
+            Text(
               "Schützenpassnummer",
-              style: TextStyle(color: Colors.grey),
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['VEREINNAME'],
-              style: const TextStyle(fontSize: 18),
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
             ),
-            const Text("Erstverein", style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 20),
-            const Text(
-              "Zweitmitgliedschaften:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              "Erstverein",
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.defaultSpacing),
+            Text("Zweitmitgliedschaften:", style: UIConstants.titleStyle),
+            SizedBox(height: UIConstants.smallSpacing),
             // First FutureBuilder for Zweitmitgliedschaften
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -125,21 +131,30 @@ class _ZweitmitgliedschaftenScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
                           size: 48,
-                          color: Colors.red,
+                          color: UIConstants.red,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: UIConstants.defaultSpacing),
                         Text(
                           'Fehler beim Laden der Daten:\n${snapshot.error}',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
+                          style: UIConstants.errorStyle,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: UIConstants.defaultSpacing),
                         ElevatedButton(
                           onPressed: () => setState(() => _loadData()),
-                          child: const Text('Erneut versuchen'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: UIConstants.lightGreen,
+                            padding: UIConstants.buttonPadding,
+                          ),
+                          child: Text(
+                            'Erneut versuchen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -147,10 +162,12 @@ class _ZweitmitgliedschaftenScreenState
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'Keine Zweitmitgliedschaften gefunden.',
-                      style: TextStyle(fontSize: 16),
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
                     ),
                   );
                 }
@@ -162,12 +179,12 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 8.0),
+                      margin: EdgeInsets.only(bottom: UIConstants.smallSpacing),
                       child: ListTile(
                         title: Text(
                           item['VEREINNAME'] ?? 'Unbekannter Verein',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: UIConstants.bodyStyle.copyWith(
+                            fontSize: UIConstants.subtitleFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -177,18 +194,20 @@ class _ZweitmitgliedschaftenScreenState
                 );
               },
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Disziplinen:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+            SizedBox(height: UIConstants.defaultSpacing),
+            Text("Disziplinen:", style: UIConstants.titleStyle),
+            SizedBox(height: UIConstants.smallSpacing),
             // Second FutureBuilder for PassdatenZVE
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -196,21 +215,30 @@ class _ZweitmitgliedschaftenScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
                           size: 48,
-                          color: Colors.red,
+                          color: UIConstants.red,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: UIConstants.defaultSpacing),
                         Text(
                           'Fehler beim Laden der Disziplinen:\n${snapshot.error}',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
+                          style: UIConstants.errorStyle,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: UIConstants.defaultSpacing),
                         ElevatedButton(
                           onPressed: () => setState(() => _loadData()),
-                          child: const Text('Erneut versuchen'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: UIConstants.lightGreen,
+                            padding: UIConstants.buttonPadding,
+                          ),
+                          child: Text(
+                            'Erneut versuchen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -218,10 +246,12 @@ class _ZweitmitgliedschaftenScreenState
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'Keine Disziplinen gefunden.',
-                      style: TextStyle(fontSize: 16),
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
                     ),
                   );
                 }
@@ -233,11 +263,11 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 4.0),
+                      margin: EdgeInsets.only(bottom: UIConstants.smallSpacing),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 8.0,
+                        padding: EdgeInsets.symmetric(
+                          vertical: UIConstants.smallSpacing,
+                          horizontal: UIConstants.smallSpacing,
                         ),
                         child: Row(
                           children: [
@@ -246,24 +276,30 @@ class _ZweitmitgliedschaftenScreenState
                               width: 60,
                               child: Text(
                                 item['DISZIPLINNR'] ?? 'N/A',
-                                style: const TextStyle(fontSize: 16),
+                                style: UIConstants.bodyStyle.copyWith(
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 8.0),
+                            SizedBox(width: UIConstants.smallSpacing),
                             // DISZIPLIN
                             SizedBox(
                               width: 120,
                               child: Text(
                                 item['DISZIPLIN'] ?? 'N/A',
-                                style: const TextStyle(fontSize: 16),
+                                style: UIConstants.bodyStyle.copyWith(
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 8.0),
+                            SizedBox(width: UIConstants.smallSpacing),
                             // VEREINNAME
                             Expanded(
                               child: Text(
                                 item['VEREINNAME'] ?? 'N/A',
-                                style: const TextStyle(fontSize: 16),
+                                style: UIConstants.bodyStyle.copyWith(
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
                               ),
                             ),
                           ],

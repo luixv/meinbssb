@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/app_menu.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'dart:typed_data';
 
 class SchuetzenausweisScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class SchuetzenausweisScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Digitaler Schützenausweis'),
+        title: Text('Digitaler Schützenausweis', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -35,21 +36,34 @@ class SchuetzenausweisScreen extends StatelessWidget {
         future: apiService.fetchSchuetzenausweis(personId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: UIConstants.defaultAppColor,
+                strokeWidth: 2.0,
+              ),
+            );
           }
           if (snapshot.hasError) {
             String errorMessage = snapshot.error.toString();
             if (errorMessage.startsWith('Exception: ')) {
               errorMessage = errorMessage.substring('Exception: '.length);
             }
-            return Center(child: Text('Error: $errorMessage'));
-          }
-          if (snapshot.hasData) {
             return Center(
-              child: Image.memory(snapshot.data!),
+              child: Text(
+                'Error: $errorMessage',
+                style: UIConstants.errorStyle,
+              ),
             );
           }
-          return const Center(child: Text('No image data available'));
+          if (snapshot.hasData) {
+            return Center(child: Image.memory(snapshot.data!));
+          }
+          return Center(
+            child: Text(
+              'No image data available',
+              style: UIConstants.bodyStyle,
+            ),
+          );
         },
       ),
     );
