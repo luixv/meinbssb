@@ -32,7 +32,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _zipCodeController = TextEditingController();
   DateTime? _selectedDate;
   bool _privacyAccepted = false;
-  Color _appColor = UIConstants.defaultAppColor;
   String? zipCodeError;
   String? passNumberError;
   String? emailError;
@@ -58,12 +57,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   Future<void> _loadLocalization() async {
     await LocalizationService.load('assets/strings.json');
-    setState(() {
-      final colorString = LocalizationService.getString('appColor');
-      if (colorString.isNotEmpty) {
-        _appColor = Color(int.parse(colorString));
-      }
-    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -85,9 +78,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(
               context,
-            ).colorScheme.copyWith(primary: _appColor),
+            ).colorScheme.copyWith(primary: UIConstants.lightGreen),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: _appColor),
+              style: TextButton.styleFrom(
+                foregroundColor: UIConstants.lightGreen,
+              ),
             ),
           ),
           child: child!,
@@ -314,7 +309,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "Hier Registrieren",
-              style: UIConstants.headerStyle.copyWith(color: _appColor),
+              style: UIConstants.headerStyle.copyWith(
+                color: UIConstants.lightGreen,
+              ),
             ),
             SizedBox(height: UIConstants.defaultSpacing),
             if (_successMessage.isNotEmpty)
@@ -395,7 +392,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       style: UIConstants.bodyStyle.copyWith(
                         color:
                             _selectedDate != null
-                                ? _appColor
+                                ? UIConstants.lightGreen
                                 : UIConstants.black,
                       ),
                     ),
@@ -445,7 +442,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                         TextSpan(
                           text: 'Datenschutzbestimmungen',
                           style: UIConstants.linkStyle.copyWith(
-                            color: _appColor,
+                            color: UIConstants.lightGreen,
                           ),
                           recognizer:
                               TapGestureRecognizer()
@@ -478,7 +475,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               child: ElevatedButton(
                 onPressed: isFormValid() && !_isLoading ? _registerUser : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _appColor,
+                  backgroundColor: UIConstants.lightGreen,
                   padding: UIConstants.buttonPadding,
                 ),
                 child:
