@@ -202,12 +202,20 @@ class LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Noch kein Konto?", style: UIConstants.bodyStyle),
+            Text(
+              "Noch kein Konto?",
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
+            ),
             TextButton(
               onPressed: _navigateToRegistrationPage,
               child: Text(
                 "Registrieren",
-                style: UIConstants.linkStyle.copyWith(color: _appColor),
+                style: UIConstants.linkStyle.copyWith(
+                  color: _appColor,
+                  fontSize: UIConstants.subtitleFontSize,
+                ),
               ),
             ),
           ],
@@ -221,7 +229,10 @@ class LoginScreenState extends State<LoginScreen> {
           },
           child: Text(
             "Hilfe",
-            style: UIConstants.linkStyle.copyWith(color: _appColor),
+            style: UIConstants.linkStyle.copyWith(
+              color: _appColor,
+              fontSize: UIConstants.subtitleFontSize,
+            ),
           ),
         ),
       ],

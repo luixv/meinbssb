@@ -47,13 +47,42 @@ class _ZweitmitgliedschaftenScreenState
   }
 
   void _loadData() {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
-      widget.personId,
-    );
-    _passdatenZVEFuture = apiService.fetchPassdatenZVE(
-      widget.userData['PASSDATENID'],
-      widget.personId,
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final passDataId = widget.userData['PASSDATENID'];
+      
+      _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
+        widget.personId,
+      );
+      
+      _passdatenZVEFuture = passDataId != null
+          ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
+          : Future.value([]);
+    } catch (e) {
+      debugPrint('Error loading data: $e');
+      _zweitmitgliedschaftenFuture = Future.value([]);
+      _passdatenZVEFuture = Future.value([]);
+    }
+  }
+
+  Widget _buildErrorWidget(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: UIConstants.red,
+          ),
+          SizedBox(height: UIConstants.defaultSpacing),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: UIConstants.errorStyle,
+          ),
+        ],
+      ),
     );
   }
 
@@ -113,7 +142,6 @@ class _ZweitmitgliedschaftenScreenState
             SizedBox(height: UIConstants.defaultSpacing),
             Text("Zweitmitgliedschaften:", style: UIConstants.titleStyle),
             SizedBox(height: UIConstants.smallSpacing),
-            // First FutureBuilder for Zweitmitgliedschaften
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
               builder: (context, snapshot) {
@@ -127,24 +155,7 @@ class _ZweitmitgliedschaftenScreenState
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: UIConstants.red,
-                        ),
-                        SizedBox(height: UIConstants.defaultSpacing),
-                        Text(
-                          'Fehler beim Laden der Daten',
-                          textAlign: TextAlign.center,
-                          style: UIConstants.errorStyle,
-                        ),
-                      ],
-                    ),
-                  );
+                  return _buildErrorWidget('Fehler beim Laden der Daten');
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -167,12 +178,26 @@ class _ZweitmitgliedschaftenScreenState
                     return Card(
                       margin: EdgeInsets.only(bottom: UIConstants.smallSpacing),
                       child: ListTile(
-                        title: Text(
-                          item['VEREINNAME'] ?? 'Unbekannter Verein',
-                          style: UIConstants.bodyStyle.copyWith(
-                            fontSize: UIConstants.subtitleFontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        title: Row(
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              child: Text(
+                                '${item['VEREINID'] ?? 'N/A'}',
+                                style: UIConstants.bodyStyle.copyWith(
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                item['VEREINNAME'] ?? 'Unbekannter Verein',
+                                style: UIConstants.bodyStyle.copyWith(
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -183,7 +208,6 @@ class _ZweitmitgliedschaftenScreenState
             SizedBox(height: UIConstants.defaultSpacing),
             Text("Disziplinen:", style: UIConstants.titleStyle),
             SizedBox(height: UIConstants.smallSpacing),
-            // Second FutureBuilder for PassdatenZVE
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,
               builder: (context, snapshot) {
@@ -197,24 +221,7 @@ class _ZweitmitgliedschaftenScreenState
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: UIConstants.red,
-                        ),
-                        SizedBox(height: UIConstants.defaultSpacing),
-                        Text(
-                          'Fehler beim Laden der Disziplinen',
-                          textAlign: TextAlign.center,
-                          style: UIConstants.errorStyle,
-                        ),
-                      ],
-                    ),
-                  );
+                  return _buildErrorWidget('Fehler beim Laden der Disziplinen');
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -243,7 +250,6 @@ class _ZweitmitgliedschaftenScreenState
                         ),
                         child: Row(
                           children: [
-                            // DISZIPLINNR
                             SizedBox(
                               width: 60,
                               child: Text(
@@ -254,7 +260,6 @@ class _ZweitmitgliedschaftenScreenState
                               ),
                             ),
                             SizedBox(width: UIConstants.smallSpacing),
-                            // DISZIPLIN
                             SizedBox(
                               width: 120,
                               child: Text(
@@ -265,7 +270,6 @@ class _ZweitmitgliedschaftenScreenState
                               ),
                             ),
                             SizedBox(width: UIConstants.smallSpacing),
-                            // VEREINNAME
                             Expanded(
                               child: Text(
                                 item['VEREINNAME'] ?? 'N/A',
