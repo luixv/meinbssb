@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/services/error_service.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -98,17 +99,35 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validateEmail(String value) {
     if (value.isEmpty) {
+      emailError = ErrorService.handleValidationError(
+        "E-Mail",
+        "E-Mail ist erforderlich.",
+      );
       return false;
     }
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(value);
+    if (!emailRegex.hasMatch(value)) {
+      emailError = ErrorService.handleValidationError(
+        "E-Mail",
+        "Bitte geben Sie eine gültige E-Mail Adresse ein.",
+      );
+      return false;
+    }
+    emailError = null;
+    return true;
   }
 
   bool validateZipCode(String value) {
     if (value.isEmpty) {
-      zipCodeError = "Postleitzahl ist erforderlich.";
+      zipCodeError = ErrorService.handleValidationError(
+        "Postleitzahl",
+        "Postleitzahl ist erforderlich.",
+      );
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-      zipCodeError = "Postleitzahl muss 5 Ziffern enthalten.";
+      zipCodeError = ErrorService.handleValidationError(
+        "Postleitzahl",
+        "Postleitzahl muss 5 Ziffern enthalten.",
+      );
     } else {
       zipCodeError = null;
     }
@@ -117,9 +136,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validatePassNumber(String value) {
     if (value.isEmpty) {
-      passNumberError = "Schützenausweisnummer ist erforderlich.";
+      passNumberError = ErrorService.handleValidationError(
+        "Schützenausweisnummer",
+        "Schützenausweisnummer ist erforderlich.",
+      );
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
-      passNumberError = "Schützenausweisnummer muss 8 Ziffern enthalten.";
+      passNumberError = ErrorService.handleValidationError(
+        "Schützenausweisnummer",
+        "Schützenausweisnummer muss 8 Ziffern enthalten.",
+      );
     } else {
       passNumberError = null;
     }
@@ -158,14 +183,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.",
-              style: UIConstants.bodyStyle,
-            ),
-            duration: UIConstants.snackBarDuration,
-          ),
+        ErrorService.showErrorSnackBar(
+          context,
+          "Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.",
         );
       }
       setState(() {
@@ -196,14 +216,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         } catch (e) {
           debugPrint("Email sending error: $e");
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.",
-                  style: UIConstants.bodyStyle,
-                ),
-                duration: UIConstants.snackBarDuration,
-              ),
+            ErrorService.showErrorSnackBar(
+              context,
+              "Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.",
             );
           }
         }
@@ -226,28 +241,18 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       } else {
         debugPrint("Registration failed: ${response['ResultMessage']}");
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                response['ResultMessage'] ?? "Registrierung fehlgeschlagen",
-                style: UIConstants.bodyStyle,
-              ),
-              duration: UIConstants.snackBarDuration,
-            ),
+          ErrorService.showErrorSnackBar(
+            context,
+            ErrorService.formatApiError(response),
           );
         }
       }
     } catch (e) {
       debugPrint("Error during registration: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.",
-              style: UIConstants.bodyStyle,
-            ),
-            duration: UIConstants.snackBarDuration,
-          ),
+        ErrorService.showErrorSnackBar(
+          context,
+          ErrorService.handleNetworkError(e),
         );
       }
     } finally {
@@ -348,10 +353,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  passNumberError =
-                      validatePassNumber(value)
-                          ? null
-                          : "Schützenausweisnummer muss 8 Ziffern enthalten.";
+                  validatePassNumber(value);
                 });
               },
             ),
@@ -365,10 +367,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (_) {
                 setState(() {
-                  emailError =
-                      validateEmail(_emailController.text)
-                          ? null
-                          : "Bitte geben Sie eine gültige E-Mail Adresse ein.";
+                  validateEmail(_emailController.text);
                 });
               },
             ),
@@ -411,10 +410,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  zipCodeError =
-                      validateZipCode(value)
-                          ? null
-                          : "Postleitzahl muss 5 Ziffern enthalten.";
+                  validateZipCode(value);
                 });
               },
             ),

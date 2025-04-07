@@ -20,6 +20,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _isPassNumberValid = false;
   bool _hasInteracted = false;
   bool _isLoading = false;
+  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
@@ -29,6 +30,12 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   Future<void> _loadLocalization() async {
     await LocalizationService.load('assets/strings.json');
+    setState(() {
+      final colorString = LocalizationService.getString('appColor');
+      if (colorString.isNotEmpty) {
+        _appColor = Color(int.parse(colorString));
+      }
+    });
   }
 
   bool _validatePassNumber(String value) {
@@ -130,9 +137,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 "Passwort zurücksetzen",
-                style: UIConstants.headerStyle.copyWith(
-                  color: UIConstants.lightGreen,
-                ),
+                style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
               SizedBox(height: UIConstants.defaultSpacing),
               TextField(
