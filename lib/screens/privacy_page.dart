@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'app_menu.dart';
 
 class PrivacyPage extends StatelessWidget {
@@ -9,7 +10,7 @@ class PrivacyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Datenschutzbestimmungen'),
+        title: Text('Datenschutzbestimmungen', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -21,11 +22,11 @@ class PrivacyPage extends StatelessWidget {
           ),
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
+      body: Padding(
+        padding: EdgeInsets.all(UIConstants.defaultPadding),
         child: Text(
           'Hier stehen die Datenschutzbestimmungen des BSSB.',
-          style: TextStyle(fontSize: 16),
+          style: UIConstants.bodyStyle,
         ),
       ),
     );

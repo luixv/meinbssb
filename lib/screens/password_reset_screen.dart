@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/localization_service.dart';
@@ -19,7 +20,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _isPassNumberValid = false;
   bool _hasInteracted = false;
   bool _isLoading = false;
-  Color _appColor = const Color(0xFF006400);
+  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
@@ -67,21 +68,22 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       final response = await widget.apiService.resetPassword(
         _passNumberController.text,
       );
-      
+
       if (response['ResultType'] == 1) {
         try {
           final userData = await widget.apiService.fetchPassdaten(
             int.parse(_passNumberController.text),
           );
-          
+
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PasswordResetSuccessScreen(
-                  userData: userData,
-                  // Temporarily removed apiService parameter
-                ),
+                builder:
+                    (context) => PasswordResetSuccessScreen(
+                      userData: userData,
+                      // Temporarily removed apiService parameter
+                    ),
               ),
             );
           }
@@ -112,7 +114,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Passwort zurücksetzen'),
+        title: Text('Passwort zurücksetzen', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
         actions: [
           AppMenu(
@@ -127,29 +129,26 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+          padding: UIConstants.screenPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const LogoWidget(),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 "Passwort zurücksetzen",
-                style: TextStyle(
-                  color: _appColor,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               TextField(
                 controller: _passNumberController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: UIConstants.defaultInputDecoration.copyWith(
                   labelText: "Passnummer",
-                  errorText: _hasInteracted && _passNumberError.isNotEmpty
-                      ? _passNumberError
-                      : null,
+                  errorText:
+                      _hasInteracted && _passNumberError.isNotEmpty
+                          ? _passNumberError
+                          : null,
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -158,18 +157,28 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isPassNumberValid && !_isLoading ? _resetPassword : null,
+                  onPressed:
+                      _isPassNumberValid && !_isLoading ? _resetPassword : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: UIConstants.lightGreen,
+                    padding: UIConstants.buttonPadding,
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Passwort zurücksetzen"),
+                  child:
+                      _isLoading
+                          ? CircularProgressIndicator(
+                            color: UIConstants.white,
+                            strokeWidth: 2.0,
+                          )
+                          : Text(
+                            "Passwort zurücksetzen",
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                            ),
+                          ),
                 ),
               ),
             ],

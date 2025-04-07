@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_menu.dart'; 
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'app_menu.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   final Map<String, dynamic> userData;
@@ -9,12 +10,12 @@ class PasswordResetSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Passwort zurückgesetzt'),
+        title: Text('Passwort zurückgesetzt', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
             userData: userData,
-            isLoggedIn: false, 
+            isLoggedIn: false,
             onLogout: () {
               // Navigate back to the login screen.
               Navigator.pushReplacementNamed(context, '/login');
@@ -22,8 +23,11 @@ class PasswordResetSuccessScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text('Ihr Passwort wurde erfolgreich zurückgesetzt.'),
+      body: Center(
+        child: Text(
+          'Ihr Passwort wurde erfolgreich zurückgesetzt.',
+          style: UIConstants.bodyStyle,
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 class LogoWidget extends StatelessWidget {
   const LogoWidget({super.key});
@@ -7,8 +8,8 @@ class LogoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.asset(
       'assets/images/myBSSB-logo.png', // This should come from the strings.json
-      height: 100,
-      width: 100,
+      height: UIConstants.logoSize,
+      width: UIConstants.logoSize,
     );
   }
 }

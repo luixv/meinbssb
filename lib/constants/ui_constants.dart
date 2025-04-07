@@ -36,6 +36,9 @@ class UIConstants {
     defaultPadding, // bottom
   );
 
+  // Logo Size
+  static const double logoSize = 100.0;
+
   // Text Styles
   static const TextStyle headerStyle = TextStyle(
     fontSize: headerFontSize,

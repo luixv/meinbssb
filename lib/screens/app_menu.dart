@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
 import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
 
@@ -61,62 +62,83 @@ class AppMenu extends StatelessWidget {
       itemBuilder: (BuildContext context) {
         if (!isLoggedIn) {
           return [
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'back_to_login',
-              child: Text('Zurück zum Login'),
+              child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
           ];
         } else {
           return [
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'startseite',
-              child: Text('Startseite'),
+              child: Text('Startseite', style: UIConstants.bodyStyle),
             ),
 
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'digitaler_schuetzenausweis',
-              child: Text('Digitaler Schützenausweis'),
+              child: Text(
+                'Digitaler Schützenausweis',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'zweitmitgliedschaften',
-              child: Text('Zweitmitgliedschaften'),
+              child: Text(
+                'Zweitmitgliedschaften',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'aenderung_schuetzenausweis',
-              child: Text('Änderung Schützenausweis'),
+              child: Text(
+                'Änderung Schützenausweis',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'physischer_schuetzenausweis',
-              child: Text('Physischer Schützenausweis'),
+              child: Text(
+                'Physischer Schützenausweis',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'meine_stammdaten',
-              child: Text('Meine Stammdaten'),
+              child: Text('Meine Stammdaten', style: UIConstants.bodyStyle),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'meine_kontaktdaten',
-              child: Text('Meine Kontaktdaten'),
+              child: Text('Meine Kontaktdaten', style: UIConstants.bodyStyle),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'meine_seminare_buchen',
-              child: Text('Meine Seminare buchen'),
+              child: Text(
+                'Meine Seminare buchen',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'meine_seminare_absolviert',
-              child: Text('Meine Seminare absolviert'),
+              child: Text(
+                'Meine Seminare absolviert',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'oktoberfestlandesschiessen',
-              child: Text('Oktoberfestlandesschiessen'),
+              child: Text(
+                'Oktoberfestlandesschiessen',
+                style: UIConstants.bodyStyle,
+              ),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'logout',
-              child: Text('Abmelden'),
+              child: Text('Abmelden', style: UIConstants.bodyStyle),
             ),
           ];
         }
       },
-      icon: const Icon(Icons.menu),
+      icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );
   }
 }
