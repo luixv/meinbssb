@@ -32,7 +32,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _zipCodeController = TextEditingController();
   DateTime? _selectedDate;
   bool _privacyAccepted = false;
-  Color _appColor = const Color(0xFF006400);
+  Color _appColor = UIConstants.defaultAppColor;
   String? zipCodeError;
   String? passNumberError;
   String? emailError;
@@ -159,15 +159,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       _successMessage = "";
     });
 
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(UIConstants.loadingDelay);
 
     if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
               "Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.",
+              style: UIConstants.bodyStyle,
             ),
+            duration: UIConstants.snackBarDuration,
           ),
         );
       }
@@ -200,11 +202,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           debugPrint("Email sending error: $e");
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   "Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.",
+                  style: UIConstants.bodyStyle,
                 ),
-                duration: Duration(seconds: 5),
+                duration: UIConstants.snackBarDuration,
               ),
             );
           }
@@ -232,7 +235,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SnackBar(
               content: Text(
                 response['ResultMessage'] ?? "Registrierung fehlgeschlagen",
+                style: UIConstants.bodyStyle,
               ),
+              duration: UIConstants.snackBarDuration,
             ),
           );
         }
@@ -241,11 +246,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       debugPrint("Error during registration: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
               "Fehler bei der Registrierung. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.",
+              style: UIConstants.bodyStyle,
             ),
-            duration: Duration(seconds: 5),
+            duration: UIConstants.snackBarDuration,
           ),
         );
       }
@@ -477,7 +483,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 child:
                     _isLoading
-                        ? const CircularProgressIndicator()
+                        ? CircularProgressIndicator(
+                          color: UIConstants.white,
+                          strokeWidth: 2.0,
+                        )
                         : Text(
                           "Registrieren",
                           style: UIConstants.bodyStyle.copyWith(

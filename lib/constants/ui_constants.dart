@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class UIConstants {
   // Colors
   static const Color defaultAppColor = Color(0xFF006400); // Main green color
+  static const Color lightGreen = Colors.lightGreen;
   static const Color black = Colors.black;
   static const Color white = Colors.white;
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
+  static const Color red = Colors.red;
 
   // Font Properties
   static const String defaultFontFamily = 'Roboto';

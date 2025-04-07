@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'registration_screen.dart';
 import 'help_page.dart';
 import 'password_reset_screen.dart';
@@ -24,7 +25,7 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
-  Color _appColor = const Color(0xFF006400);
+  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
@@ -58,12 +59,12 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      debugPrint('Login response: $response'); 
+      debugPrint('Login response: $response');
 
       if (response["ResultType"] == 1) {
         int personId = response["PersonID"];
 
-        debugPrint('Retrieving passdaten'); 
+        debugPrint('Retrieving passdaten');
         var passdaten = await apiService.fetchPassdaten(personId);
         debugPrint('User data: $passdaten');
 
@@ -104,14 +105,15 @@ class LoginScreenState extends State<LoginScreen> {
   void _navigateToRegistrationPage() {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final emailService = Provider.of<EmailService>(context, listen: false);
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegistrationScreen(
-          apiService: apiService,
-          emailService: emailService,
-        ),
+        builder:
+            (context) => RegistrationScreen(
+              apiService: apiService,
+              emailService: emailService,
+            ),
       ),
     );
   }
@@ -119,13 +121,11 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> _navigateToPasswordReset() async {
     if (!mounted) return;
     final apiService = Provider.of<ApiService>(context, listen: false);
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PasswordResetScreen(
-          apiService: apiService,
-        ),
+        builder: (context) => PasswordResetScreen(apiService: apiService),
       ),
     );
   }
@@ -135,32 +135,31 @@ class LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+          padding: UIConstants.screenPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const LogoWidget(),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 "Hier anmelden",
-                style: TextStyle(
-                  color: _appColor,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               TextField(
                 key: const Key('usernameField'),
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: "E-mail"),
+                decoration: UIConstants.defaultInputDecoration.copyWith(
+                  labelText: "E-mail",
+                ),
               ),
+              SizedBox(height: UIConstants.smallSpacing),
               TextField(
                 key: const Key('passwordField'),
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
+                decoration: UIConstants.defaultInputDecoration.copyWith(
                   labelText: "Passwort",
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -179,86 +178,87 @@ class LoginScreenState extends State<LoginScreen> {
                   _handleLogin();
                 },
               ),
-              const SizedBox(height: 45),
+              SizedBox(height: UIConstants.defaultSpacing * 2),
               if (_errorMessage.isNotEmpty)
-                Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+                Text(_errorMessage, style: UIConstants.errorStyle),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: UIConstants.lightGreen,
+                    padding: UIConstants.buttonPadding,
                   ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Anmelden"),
+                  child:
+                      _isLoading
+                          ? CircularProgressIndicator(
+                            color: UIConstants.white,
+                            strokeWidth: 2.0,
+                          )
+                          : Text(
+                            "Anmelden",
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                            ),
+                          ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: UIConstants.defaultSpacing),
               SizedBox(
                 width: double.infinity,
                 child: Column(
                   children: [
                     GestureDetector(
                       onTap: _navigateToPasswordReset,
-                      child: const Text(
+                      child: Text(
                         "Passwort vergessen?",
-                        style: TextStyle(
-                          color: Color(0xFF006400),
-                          decoration: TextDecoration.underline,
-                          fontSize: 16,
+                        style: UIConstants.linkStyle.copyWith(
+                          color: UIConstants.defaultAppColor,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: UIConstants.smallSpacing),
                     RichText(
                       text: TextSpan(
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
+                        style: UIConstants.bodyStyle,
                         children: [
                           const TextSpan(
                             text: "Bestehen Fragen zum Account oder wird ",
                           ),
                           TextSpan(
                             text: "Hilfe",
-                            style: const TextStyle(
-                              color: Color(0xFF006400),
-                              decoration: TextDecoration.underline,
+                            style: UIConstants.linkStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const HelpPage(),
-                                  ),
-                                );
-                              },
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const HelpPage(),
+                                      ),
+                                    );
+                                  },
                           ),
                           const TextSpan(text: " benötigt?"),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: UIConstants.smallSpacing),
                     RichText(
                       text: TextSpan(
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
+                        style: UIConstants.bodyStyle,
                         children: [
                           const TextSpan(text: "Keinen Account? "),
                           TextSpan(
                             text: "Hier",
-                            style: const TextStyle(
-                              color: Color(0xFF006400),
-                              decoration: TextDecoration.underline,
+                            style: UIConstants.linkStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = _navigateToRegistrationPage,
+                            recognizer:
+                                TapGestureRecognizer()
+                                  ..onTap = _navigateToRegistrationPage,
                           ),
                           const TextSpan(text: " Registrieren."),
                         ],
