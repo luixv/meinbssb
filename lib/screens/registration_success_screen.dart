@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: registration_success_screen.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/screens/app_menu.dart';
