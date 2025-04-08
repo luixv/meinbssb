@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const port = 3001; // Or any port you choose
 
-const allowedOrigins = ['http://0.0.0.0:3000'];
+const allowedOrigins = ['http://0.0.0.0:3000', 'http://localhost:8080']; 
 
 app.use(cors({
     origin: function (origin, callback) {

@@ -10,6 +10,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:meinbssb/services/database_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
+import 'package:flutter/foundation.dart'; // for kIsWeb
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart'; // Web-specific import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +21,18 @@ void main() async {
   final baseIp = LocalizationService.getString('BaseIp');
   final port = LocalizationService.getString('Port');
 
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  // ✅ Set up platform-specific database factory
+  if (kIsWeb) {
+    // For the web, use sqflite_common_ffi_web
+    databaseFactory = databaseFactoryFfiWeb;
+  } else {
+    // For other platforms (e.g., Windows, macOS, Linux), use sqflite_common_ffi
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
 
   final databaseService = DatabaseService();
-  await databaseService.database; // Await database initialization
+  await databaseService.database;
   final cacheService = CacheService();
   final httpClient = HttpClient(
     baseUrl: 'http://$baseIp:$port',
