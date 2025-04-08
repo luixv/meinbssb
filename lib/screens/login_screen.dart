@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -196,7 +195,10 @@ class LoginScreenState extends State<LoginScreen> {
           onPressed: _navigateToPasswordReset,
           child: Text(
             "Passwort vergessen?",
-            style: UIConstants.linkStyle.copyWith(color: _appColor),
+            style: UIConstants.linkStyle.copyWith(
+              color: _appColor,
+              fontSize: UIConstants.subtitleFontSize,
+            ),
           ),
         ),
         Row(

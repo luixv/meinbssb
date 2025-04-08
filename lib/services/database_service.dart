@@ -1,7 +1,8 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart'; // For kIsWeb
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart' as sqflite_ffi_web; // Import with prefix for web
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'; // Import with prefix for desktop
 
 class DatabaseService {
   Database? _database;
@@ -12,12 +13,32 @@ class DatabaseService {
     return _database!;
   }
 
-  Future<Database> _initializeDatabase() async {
-    final documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'mein_bssb.db');
+Future<Database> _initializeDatabase() async {
+  String path;
+  DatabaseFactory databaseFactoryImpl;
 
-    return openDatabase(
-      path,
+  if (kIsWeb) {
+    // ✅ No need to call any init function on web
+    databaseFactoryImpl = sqflite_ffi_web.databaseFactoryFfiWeb;
+    path = 'mein_bssb.db';
+  } else if (defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux ||
+      defaultTargetPlatform == TargetPlatform.macOS) {
+    // ✅ Desktop platforms need init
+    sqfliteFfiInit();
+    databaseFactoryImpl = databaseFactoryFfi;
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    path = join(documentsDirectory.path, 'mein_bssb.db');
+  } else {
+    // ✅ Mobile: Android/iOS
+    databaseFactoryImpl = databaseFactory;
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    path = join(documentsDirectory.path, 'mein_bssb.db');
+  }
+
+  return await databaseFactoryImpl.openDatabase(
+    path,
+    options: OpenDatabaseOptions(
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute('''
@@ -29,8 +50,10 @@ class DatabaseService {
         ''');
         await db.execute('PRAGMA journal_mode=WAL;');
       },
-    );
-  }
+    ),
+  );
+}
+
 
   Future<Uint8List?> getCachedSchuetzenausweis(
     int personId,

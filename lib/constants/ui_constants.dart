@@ -11,7 +11,7 @@ class UIConstants {
   static const Color red = Colors.red;
 
   // Font Properties
-  static const String defaultFontFamily = 'Roboto';
+  static const String defaultFontFamily = 'Arial'; // Roboto
 
   // Font Sizes
   static const double headerFontSize = 24.0; // "Hier Registrieren"
