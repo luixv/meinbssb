@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: localization_service.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'dart:convert';
 import 'package:flutter/services.dart';
 

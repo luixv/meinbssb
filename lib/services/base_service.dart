@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: base_service.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/foundation.dart';
 
 /// Base service class that provides common functionality for all services

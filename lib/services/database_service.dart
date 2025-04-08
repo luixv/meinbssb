@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: database_service.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart'; // For kIsWeb

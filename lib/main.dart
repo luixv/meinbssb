@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: main.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';

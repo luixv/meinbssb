@@ -1,3 +1,6 @@
+// Project: Mein BSSB
+// Filename: iban_checker.dart
+// Author: Luis Mandel / NTT DATA
 
 bool validateIBAN(String iban) {
   iban = iban.toUpperCase().replaceAll(' ', ''); // Remove spaces and uppercase

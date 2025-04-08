@@ -1,4 +1,7 @@
-// email_service.dart
+// Project: Mein BSSB
+// Filename: email_service.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:meinbssb/services/localization_service.dart';

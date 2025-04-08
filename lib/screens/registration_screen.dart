@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: registration_screen.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meinbssb/services/localization_service.dart';

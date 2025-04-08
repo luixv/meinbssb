@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: help_page.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:meinbssb/services/localization_service.dart';

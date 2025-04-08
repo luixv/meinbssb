@@ -1,4 +1,7 @@
-// api_service.dart
+// Project: Mein BSSB
+// Filename: api_service.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:meinbssb/services/http_client.dart';
 import 'dart:async';
 import 'package:meinbssb/services/localization_service.dart';

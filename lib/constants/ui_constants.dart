@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: ui_constants.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 
 class UIConstants {

@@ -1,3 +1,7 @@
+// Project: Mein BSSB
+// Filename: logo_widget.dart
+// Author: Luis Mandel / NTT DATA
+
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 
