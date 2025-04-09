@@ -44,19 +44,18 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-void _openImpressumScreen() {
+  void _openImpressumScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ImpressumScreen(
-          userData: userData, // Pass the userData
-          isLoggedIn: isLoggedIn, // Pass the isLoggedIn state
-          onLogout: onLogout, // Pass the onLogout function
+          userData: userData,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
         ),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -79,17 +78,23 @@ void _openImpressumScreen() {
         }
       },
       itemBuilder: (BuildContext context) {
-        return [
-          if (!isLoggedIn)
+        final List<PopupMenuEntry<String>> items = [];
+
+        if (!isLoggedIn) {
+          items.add(
+            PopupMenuItem<String>(
+              value: 'impressum',
+              child: Text('Impressum', style: UIConstants.bodyStyle),
+            ),
+          );
+          items.add(
             PopupMenuItem<String>(
               value: 'back_to_login',
               child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
-          PopupMenuItem<String>(
-            value: 'impressum',
-            child: Text('Impressum', style: UIConstants.bodyStyle),
-          ),
-          if (isLoggedIn) ...[
+          );
+        } else {
+          items.addAll([
             PopupMenuItem<String>(
               value: 'startseite',
               child: Text('Startseite', style: UIConstants.bodyStyle),
@@ -152,11 +157,16 @@ void _openImpressumScreen() {
               ),
             ),
             PopupMenuItem<String>(
+              value: 'impressum',
+              child: Text('Impressum', style: UIConstants.bodyStyle),
+            ),
+            PopupMenuItem<String>(
               value: 'logout',
               child: Text('Abmelden', style: UIConstants.bodyStyle),
             ),
-          ],
-        ];
+          ]);
+        }
+        return items;
       },
       icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );

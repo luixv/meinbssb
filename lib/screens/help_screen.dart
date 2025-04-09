@@ -3,42 +3,70 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:meinbssb/services/localization_service.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/screens/app_menu.dart';
 
-class HelpScreen extends StatelessWidget {
-  const HelpScreen({super.key});
+class HelpScreen extends StatefulWidget {
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
+
+  const HelpScreen({
+    super.key,
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
+  });
+
+  @override
+  State<HelpScreen> createState() => _HelpScreenState();
+}
+
+class _HelpScreenState extends State<HelpScreen> {
+  String _htmlContent = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFaq();
+  }
+
+  Future<void> _loadFaq() async {
+    try {
+      final String content = await rootBundle.loadString('assets/html/faq.html');
+      setState(() {
+        _htmlContent = content;
+      });
+    } catch (e) {
+      setState(() {
+        _htmlContent = 'Failed to load FAQ: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          LocalizationService.getString("help_title"),
+          'FAQ', // You can hardcode the title or use a localization key
           style: UIConstants.titleStyle,
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Using Html widget to render the HTML content
-              Html(
-                data: LocalizationService.getString(
-                  "help_content",
-                ), // Fetch help content from properties file
-                style: {
-                  "body": Style(
-                    fontSize: FontSize(UIConstants.bodyFontSize),
-                    color: UIConstants.black,
-                  ),
-                },
-              ),
-            ],
+        actions: [
+          AppMenu( // Add your AppMenu widget if needed
+            context: context,
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
           ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        child: HtmlWidget(
+          _htmlContent,
         ),
       ),
     );

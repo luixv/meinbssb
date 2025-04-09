@@ -1,8 +1,6 @@
 {
     "logo_name": "myBSSB-logo.png",
-    "help_text": "Hilfe",
-    "help_title": "Hilfe und Unterstützung",
-    "help_content": "<h2>Hilfe und Unterstützung</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.</p><p>Aenean faucibus nulla non urna finibus, id sollicitudin orci molestie. Praesent euismod, lectus in bibendum faucibus, leo dolor pellentesque lectus, non tempor ligula lorem sit amet risus.</p>",
+    "about_us_content": "",
     "appColor": "0xFF006400",
     "privacyText": "Ich akzeptiere die Datenschutzbestimmungen des BSSB.",
     "From": "dummyemail@example.com",

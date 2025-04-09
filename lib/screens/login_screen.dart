@@ -85,7 +85,10 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _handleSuccessfulLogin(ApiService apiService, int personId) async {
+  Future<void> _handleSuccessfulLogin(
+    ApiService apiService,
+    int personId,
+  ) async {
     debugPrint('Retrieving passdaten');
     var passdaten = await apiService.fetchPassdaten(personId);
     debugPrint('User data: $passdaten');
@@ -115,10 +118,11 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegistrationScreen(
-          apiService: apiService,
-          emailService: emailService,
-        ),
+        builder:
+            (context) => RegistrationScreen(
+              apiService: apiService,
+              emailService: emailService,
+            ),
       ),
     );
   }
@@ -177,17 +181,18 @@ class LoginScreenState extends State<LoginScreen> {
           backgroundColor: UIConstants.lightGreen,
           padding: UIConstants.buttonPadding,
         ),
-        child: _isLoading
-            ? CircularProgressIndicator(
-                color: UIConstants.white,
-                strokeWidth: 2.0,
-              )
-            : Text(
-                "Anmelden",
-                style: UIConstants.bodyStyle.copyWith(
+        child:
+            _isLoading
+                ? CircularProgressIndicator(
                   color: UIConstants.white,
+                  strokeWidth: 2.0,
+                )
+                : Text(
+                  "Anmelden",
+                  style: UIConstants.bodyStyle.copyWith(
+                    color: UIConstants.white,
+                  ),
                 ),
-              ),
       ),
     );
   }
@@ -230,7 +235,17 @@ class LoginScreenState extends State<LoginScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HelpScreen()),
+              MaterialPageRoute(
+                builder:
+                    (context) => HelpScreen(
+                      userData: {}, 
+                      isLoggedIn:
+                          false, // User is not logged in on the login page
+                      onLogout: () {
+                        Navigator.of(context).pushReplacementNamed('/login');
+                      },
+                    ),
+              ),
             );
           },
           child: Text(

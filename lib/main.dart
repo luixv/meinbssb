@@ -122,12 +122,20 @@ class MyAppState extends State<MyApp> {
             );
           }
         },
-        '/help': (context) => HelpScreen(),
+
+        '/help':
+            (context) => HelpScreen(
+              userData: _userData, // Use your current user data
+              isLoggedIn: _isLoggedIn, // Use your current login status
+              onLogout:
+                  () => _setLoggedIn(false, {}), // Use your logout function
+            ),
+
         '/impressum':
             (context) => ImpressumScreen(
-              userData: _userData, 
-              isLoggedIn: _isLoggedIn, 
-              onLogout: () => _setLoggedIn(false, {}), 
+              userData: _userData,
+              isLoggedIn: _isLoggedIn,
+              onLogout: () => _setLoggedIn(false, {}),
             ),
       },
     );
