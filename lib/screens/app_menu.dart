@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
 import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
-import 'package:meinbssb/screens/impressum_screen.dart'; 
+import 'package:meinbssb/screens/impressum_screen.dart';
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -44,12 +44,19 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-  void _openImpressumScreen() {
+void _openImpressumScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ImpressumScreen()),
+      MaterialPageRoute(
+        builder: (context) => ImpressumScreen(
+          userData: userData, // Pass the userData
+          isLoggedIn: isLoggedIn, // Pass the isLoggedIn state
+          onLogout: onLogout, // Pass the onLogout function
+        ),
+      ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,25 +79,17 @@ class AppMenu extends StatelessWidget {
         }
       },
       itemBuilder: (BuildContext context) {
-        List<PopupMenuEntry<String>> items = [];
-
-        // Items available when NOT logged in
-        if (!isLoggedIn) {
-          items.add(
+        return [
+          if (!isLoggedIn)
             PopupMenuItem<String>(
               value: 'back_to_login',
               child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
-          );
-          items.add( // Add Impressum here for non-logged-in users
-            PopupMenuItem<String>(
-              value: 'impressum',
-              child: Text('Impressum', style: UIConstants.bodyStyle),
-            ),
-          );
-        } else {
-          // Items available when logged in
-          items.addAll([
+          PopupMenuItem<String>(
+            value: 'impressum',
+            child: Text('Impressum', style: UIConstants.bodyStyle),
+          ),
+          if (isLoggedIn) ...[
             PopupMenuItem<String>(
               value: 'startseite',
               child: Text('Startseite', style: UIConstants.bodyStyle),
@@ -156,15 +155,8 @@ class AppMenu extends StatelessWidget {
               value: 'logout',
               child: Text('Abmelden', style: UIConstants.bodyStyle),
             ),
-          ]);
-          items.add( // Add Impressum here for logged-in users as well
-            PopupMenuItem<String>(
-              value: 'impressum',
-              child: Text('Impressum', style: UIConstants.bodyStyle),
-            ),
-          );
-        }
-        return items;
+          ],
+        ];
       },
       icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );

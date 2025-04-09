@@ -123,7 +123,12 @@ class MyAppState extends State<MyApp> {
           }
         },
         '/help': (context) => HelpScreen(),
-        '/impressum': (context) => ImpressumScreen(),
+        '/impressum':
+            (context) => ImpressumScreen(
+              userData: _userData, 
+              isLoggedIn: _isLoggedIn, 
+              onLogout: () => _setLoggedIn(false, {}), 
+            ),
       },
     );
   }

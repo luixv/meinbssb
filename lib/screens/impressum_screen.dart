@@ -2,16 +2,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:meinbssb/screens/app_menu.dart';
 
 class ImpressumScreen extends StatefulWidget {
-  const ImpressumScreen({super.key});
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
+
+  const ImpressumScreen({
+    super.key,
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
+  });
 
   @override
   State<ImpressumScreen> createState() => _ImpressumScreenState();
 }
 
 class _ImpressumScreenState extends State<ImpressumScreen> {
-  String _htmlContent = 'Loading...';
+  String _htmlContent = 'Loading...'; // Define _htmlContent here
 
   @override
   void initState() {
@@ -37,11 +47,19 @@ class _ImpressumScreenState extends State<ImpressumScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Impressum'),
+        actions: [
+          AppMenu( // Add your AppMenu widget here
+            context: context,
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: HtmlWidget(
-          _htmlContent,
+          _htmlContent, // Use the defined _htmlContent
         ),
       ),
     );
