@@ -4,10 +4,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:meinbssb/screens/impressum_screen.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
-import 'screens/help_screen.dart'; 
+import 'screens/help_screen.dart';
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
@@ -121,7 +122,8 @@ class MyAppState extends State<MyApp> {
             );
           }
         },
-        '/hilfe-page': (context) => HelpScreen(), // Define the route for the help screen
+        '/help': (context) => HelpScreen(),
+        '/impressum': (context) => ImpressumScreen(),
       },
     );
   }

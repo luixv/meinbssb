@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
 import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
+import 'package:meinbssb/screens/impressum_screen.dart'; 
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -25,9 +26,8 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                SchuetzenausweisScreen(personId: personId, userData: userData),
+        builder: (context) =>
+            SchuetzenausweisScreen(personId: personId, userData: userData),
       ),
     );
   }
@@ -36,12 +36,18 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => ZweitmitgliedschaftenScreen(
-              personId: personId,
-              userData: userData,
-            ),
+        builder: (context) => ZweitmitgliedschaftenScreen(
+          personId: personId,
+          userData: userData,
+        ),
       ),
+    );
+  }
+
+  void _openImpressumScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ImpressumScreen()),
     );
   }
 
@@ -61,23 +67,34 @@ class AppMenu extends StatelessWidget {
           _displaySchuetzenausweis(userData['PERSONID']);
         } else if (value == 'zweitmitgliedschaften') {
           _displayZweitmitgliedschaften(userData['PERSONID']);
+        } else if (value == 'impressum') {
+          _openImpressumScreen();
         }
       },
       itemBuilder: (BuildContext context) {
+        List<PopupMenuEntry<String>> items = [];
+
+        // Items available when NOT logged in
         if (!isLoggedIn) {
-          return [
+          items.add(
             PopupMenuItem<String>(
               value: 'back_to_login',
               child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
-          ];
+          );
+          items.add( // Add Impressum here for non-logged-in users
+            PopupMenuItem<String>(
+              value: 'impressum',
+              child: Text('Impressum', style: UIConstants.bodyStyle),
+            ),
+          );
         } else {
-          return [
+          // Items available when logged in
+          items.addAll([
             PopupMenuItem<String>(
               value: 'startseite',
               child: Text('Startseite', style: UIConstants.bodyStyle),
             ),
-
             PopupMenuItem<String>(
               value: 'digitaler_schuetzenausweis',
               child: Text(
@@ -139,8 +156,15 @@ class AppMenu extends StatelessWidget {
               value: 'logout',
               child: Text('Abmelden', style: UIConstants.bodyStyle),
             ),
-          ];
+          ]);
+          items.add( // Add Impressum here for logged-in users as well
+            PopupMenuItem<String>(
+              value: 'impressum',
+              child: Text('Impressum', style: UIConstants.bodyStyle),
+            ),
+          );
         }
+        return items;
       },
       icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );

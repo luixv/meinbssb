@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_widget_from_html: 0.16.0 # Use the latest version
   connectivity_plus: ^6.1.3
   http: ^1.2.0 # Or the latest version
   logging: ^1.2.0 # Or the latest version
@@ -84,6 +85,7 @@ flutter:
   assets:
     - assets/images/myBSSB-logo.png
     - assets/strings.json
+    - assets/html/
 
 
   # To add assets to your application, add an assets section, like this:
