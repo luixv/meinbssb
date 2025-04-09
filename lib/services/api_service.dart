@@ -25,18 +25,18 @@ class NetworkException implements Exception {
 
 class ApiService {
   final HttpClient _httpClient;
-  final ImageService _databaseService;
+  final ImageService _imageService;
   final CacheService _cacheService;
 
   ApiService({
     required HttpClient httpClient,
-    required ImageService databaseService,
+    required ImageService imageService,
     required CacheService cacheService,
     required String baseIp,
     required String port,
     required int serverTimeout,
   }) : _httpClient = httpClient,
-       _databaseService = databaseService,
+       _imageService = imageService,
        _cacheService = cacheService;
 
   Future<bool> hasInternet() async {
@@ -193,7 +193,7 @@ class ApiService {
 
     Future<Uint8List?> getCachedSchuetzenausweis() async {
       try {
-        return await _databaseService.getCachedSchuetzenausweis(
+        return await _imageService.getCachedSchuetzenausweis(
           personId,
           validityDuration,
         );
@@ -214,7 +214,7 @@ class ApiService {
         'Schuetzenausweis/JPG/$personId',
       );
 
-      await _databaseService.cacheSchuetzenausweis(
+      await _imageService.cacheSchuetzenausweis(
         personId,
         imageData,
         DateTime.now().millisecondsSinceEpoch,

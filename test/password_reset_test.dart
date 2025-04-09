@@ -17,7 +17,7 @@ class MockCacheService extends Mock implements CacheService {}
 class MockApiService extends ApiService {
   MockApiService({
     required super.httpClient,
-    required super.databaseService,
+    required super.imageService,
     required super.cacheService,
     required super.baseIp,
     required super.port,
@@ -38,7 +38,7 @@ void main() {
           body: PasswordResetScreen(
             apiService: MockApiService(
               httpClient: MockHttpClient(),
-              databaseService: MockDatabaseService(),
+              imageService: MockDatabaseService(),
               cacheService: MockCacheService(),
               baseIp: 'test',
               port: '1234',
@@ -72,7 +72,7 @@ void main() {
           body: PasswordResetScreen(
             apiService: MockApiService(
               httpClient: MockHttpClient(),
-              databaseService: MockDatabaseService(),
+              imageService: MockDatabaseService(),
               cacheService: MockCacheService(),
               baseIp: 'test',
               port: '1234',

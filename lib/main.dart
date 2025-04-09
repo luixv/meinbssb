@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: main.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/impressum_screen.dart';
@@ -24,10 +20,8 @@ void main() async {
   final baseIp = LocalizationService.getString('BaseIp');
   final port = LocalizationService.getString('Port');
 
-  // ✅ Platform-specific database initialization happens here
-  final databaseService = ImageService();
-  await ImageService.database; // Automatically handles platform-specific initialization
-
+  // ✅ Platform-specific initialization
+  final imageService = ImageService();
   final cacheService = CacheService();
   final httpClient = HttpClient(
     baseUrl: 'http://$baseIp:$port',
@@ -36,7 +30,7 @@ void main() async {
 
   final apiService = ApiService(
     httpClient: httpClient,
-    databaseService: databaseService,
+    imageService: imageService,
     cacheService: cacheService,
     baseIp: baseIp,
     port: port,
@@ -53,7 +47,6 @@ void main() async {
     ),
   );
 }
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -83,7 +76,10 @@ class MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
+      supportedLocales: [
+        Locale('de', 'DE'),
+        Locale('en', 'US'),
+      ], // Removed 'const' to avoid non-constant issue
       initialRoute: _isLoggedIn ? '/home' : '/login',
       routes: {
         '/login':
