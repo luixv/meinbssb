@@ -1,14 +1,14 @@
 // Project: Mein BSSB
-// Filename: privacy_page.dart
+// Filename: privacy_screen.dart
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'app_menu.dart';
 
-class PrivacyPage extends StatelessWidget {
+class PrivacyScreen extends StatelessWidget {
   final Map<String, dynamic> userData;
-  const PrivacyPage({super.key, required this.userData});
+  const PrivacyScreen({super.key, required this.userData});
 
   @override
   Widget build(BuildContext context) {

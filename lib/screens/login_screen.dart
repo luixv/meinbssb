@@ -8,7 +8,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'registration_screen.dart';
-import 'help_page.dart';
+import 'help_screen.dart';
 import 'password_reset_screen.dart';
 import 'logo_widget.dart';
 import 'package:meinbssb/services/localization_service.dart';
@@ -230,7 +230,7 @@ class LoginScreenState extends State<LoginScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HelpPage()),
+              MaterialPageRoute(builder: (context) => const HelpScreen()),
             );
           },
           child: Text(

@@ -1,5 +1,5 @@
 // Project: Mein BSSB
-// Filename: help_page.dart
+// Filename: help_screen.dart
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
@@ -7,8 +7,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 
-class HelpPage extends StatelessWidget {
-  const HelpPage({super.key});
+class HelpScreen extends StatelessWidget {
+  const HelpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

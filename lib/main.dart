@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
+import 'screens/help_screen.dart'; 
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
@@ -14,8 +15,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:meinbssb/services/database_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
-import 'package:flutter/foundation.dart'; // for kIsWeb
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart'; // Web-specific import
+import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -120,6 +121,7 @@ class MyAppState extends State<MyApp> {
             );
           }
         },
+        '/hilfe-page': (context) => HelpScreen(), // Define the route for the help screen
       },
     );
   }

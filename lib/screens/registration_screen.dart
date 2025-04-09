@@ -11,7 +11,7 @@ import 'logo_widget.dart';
 import 'app_menu.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'registration_success_screen.dart';
-import 'privacy_page.dart';
+import 'privacy_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:meinbssb/services/email_service.dart';
 
@@ -452,7 +452,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                     MaterialPageRoute(
                                       builder:
                                           (context) =>
-                                              PrivacyPage(userData: userData),
+                                              PrivacyScreen(userData: userData),
                                     ),
                                   );
                                 },

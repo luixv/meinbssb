@@ -22,10 +22,10 @@ Future<Database> _initializeDatabase() async {
   DatabaseFactory databaseFactoryImpl;
 
   if (kIsWeb) {
-    // ✅ No need to call any init function on web
     databaseFactoryImpl = sqflite_ffi_web.databaseFactoryFfiWeb;
     path = 'mein_bssb.db';
-  } else if (defaultTargetPlatform == TargetPlatform.windows ||
+  } else if (
+      defaultTargetPlatform == TargetPlatform.windows ||
       defaultTargetPlatform == TargetPlatform.linux ||
       defaultTargetPlatform == TargetPlatform.macOS) {
     // ✅ Desktop platforms need init
