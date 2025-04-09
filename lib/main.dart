@@ -12,12 +12,9 @@ import 'screens/help_screen.dart';
 import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:meinbssb/services/database_service.dart';
+import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
-import 'package:flutter/foundation.dart';
-import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,18 +24,10 @@ void main() async {
   final baseIp = LocalizationService.getString('BaseIp');
   final port = LocalizationService.getString('Port');
 
-  // ✅ Set up platform-specific database factory
-  if (kIsWeb) {
-    // For the web, use sqflite_common_ffi_web
-    databaseFactory = databaseFactoryFfiWeb;
-  } else {
-    // For other platforms (e.g., Windows, macOS, Linux), use sqflite_common_ffi
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+  // ✅ Platform-specific database initialization happens here
+  final databaseService = ImageService();
+  await ImageService.database; // Automatically handles platform-specific initialization
 
-  final databaseService = DatabaseService();
-  await databaseService.database;
   final cacheService = CacheService();
   final httpClient = HttpClient(
     baseUrl: 'http://$baseIp:$port',
@@ -64,6 +53,7 @@ void main() async {
     ),
   );
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

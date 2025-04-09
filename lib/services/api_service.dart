@@ -5,7 +5,7 @@
 import 'package:meinbssb/services/http_client.dart';
 import 'dart:async';
 import 'package:meinbssb/services/localization_service.dart';
-import 'package:meinbssb/services/database_service.dart';
+import 'package:meinbssb/services/image_service.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/cache_service.dart';
@@ -25,12 +25,12 @@ class NetworkException implements Exception {
 
 class ApiService {
   final HttpClient _httpClient;
-  final DatabaseService _databaseService;
+  final ImageService _databaseService;
   final CacheService _cacheService;
 
   ApiService({
     required HttpClient httpClient,
-    required DatabaseService databaseService,
+    required ImageService databaseService,
     required CacheService cacheService,
     required String baseIp,
     required String port,

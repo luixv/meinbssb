@@ -3,13 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/database_service.dart';
+import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:mockito/mockito.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements ImageService {}
 
 class MockCacheService extends Mock implements CacheService {}
 
