@@ -5,12 +5,12 @@
 import 'package:meinbssb/services/http_client.dart';
 import 'dart:async';
 import 'package:meinbssb/services/image_service.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:meinbssb/services/config_service.dart'; 
+import 'package:meinbssb/services/network_service.dart'; // Import the new service
+
 class NetworkException implements Exception {
   final String message;
 
@@ -26,6 +26,8 @@ class ApiService {
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
+  final NetworkService _networkService =
+      NetworkService(); // Instantiate NetworkService
 
   ApiService({
     required HttpClient httpClient,
@@ -35,21 +37,15 @@ class ApiService {
     required String port,
     required int serverTimeout,
   }) : _httpClient = httpClient,
-        _imageService = imageService,
-        _cacheService = cacheService;
+       _imageService = imageService,
+       _cacheService = cacheService;
 
   Future<bool> hasInternet() async {
-    return await InternetConnectionChecker.createInstance().hasConnection;
+    return _networkService.hasInternet();
   }
 
   Duration getCacheExpirationDuration() {
-    return Duration(hours: _getCacheExpirationHoursFromConfig());
-  }
-
-  // Helper method to get cache expiration from config
-  int _getCacheExpirationHoursFromConfig() {
-    final expirationString = ConfigService.getString('cacheExpirationHours');
-    return int.tryParse(expirationString ?? '24') ?? 24; // Default to 24
+    return _networkService.getCacheExpirationDuration();
   }
 
   Future<Map<String, dynamic>> register({
@@ -112,10 +108,11 @@ class ApiService {
             cachedPassword == password &&
             cachedPersonId != null &&
             cachedTimestamp != null) {
-          final validityHours = _getCacheExpirationHoursFromConfig();
+          final expirationDuration =
+              _networkService.getCacheExpirationDuration();
           final expirationTime = DateTime.fromMillisecondsSinceEpoch(
             cachedTimestamp,
-          ).add(Duration(hours: validityHours));
+          ).add(expirationDuration);
 
           if (DateTime.now().isBefore(expirationTime)) {
             debugPrint('Login from cache successful.');
@@ -269,7 +266,9 @@ class ApiService {
       'zweitmitgliedschaften_$personId',
       getCacheExpirationDuration(),
       () async {
-        final response = await _httpClient.get('Zweitmitgliedschaften/$personId');
+        final response = await _httpClient.get(
+          'Zweitmitgliedschaften/$personId',
+        );
         if (response is List) {
           return response
               .map(
