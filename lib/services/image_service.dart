@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Conditional imports with explicit prefixes
-import 'package:path_provider/path_provider.dart' as mobile;
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io' as io;
 
 class ImageService {
@@ -61,18 +61,14 @@ class ImageService {
 
       if (DateTime.now().difference(
         DateTime.fromMillisecondsSinceEpoch(timestamp),
-      ) > validity) {
-        return null;
-      }
+      ) > validity) return null;
 
       final base64Image = prefs.getString('image_$personId.jpg');
-      if (base64Image != null) {
-        return base64Decode(base64Image);
-      }
+      return base64Image != null ? base64Decode(base64Image) : null;
     } catch (e) {
       debugPrint('Failed to retrieve image on web: $e');
+      return null;
     }
-    return null;
   }
 
   //=== Mobile/Desktop Implementation ===//
@@ -82,11 +78,10 @@ class ImageService {
     int timestamp,
   ) async {
     try {
-      final directory = await mobile.getApplicationDocumentsDirectory();
+      final directory = await path_provider.getApplicationDocumentsDirectory();
       final file = io.File('${directory.path}/image_$personId.jpg');
       await file.writeAsBytes(imageData);
       
-      // Store timestamp in SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('image_${personId}_timestamp', timestamp);
     } catch (e) {
@@ -99,7 +94,7 @@ class ImageService {
     Duration validity,
   ) async {
     try {
-      final directory = await mobile.getApplicationDocumentsDirectory();
+      final directory = await path_provider.getApplicationDocumentsDirectory();
       final file = io.File('${directory.path}/image_$personId.jpg');
       
       if (await file.exists()) {
@@ -108,9 +103,10 @@ class ImageService {
           return await file.readAsBytes();
         }
       }
+      return null;
     } catch (e) {
       debugPrint('Failed to retrieve image on mobile/desktop: $e');
+      return null;
     }
-    return null;
   }
 }
