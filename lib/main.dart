@@ -14,11 +14,11 @@ import 'package:meinbssb/services/config_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ConfigService.load('assets/config.json'); // Ensure the path is correct
+  await ConfigService.load('assets/config.json');
 
-  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10; 
+  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10;
   final baseIP = ConfigService.getString('apiBaseIP', '') ?? '127.0.0.1';
-final port = ConfigService.getString('apiPort', '') ?? '3001';
+  final port = ConfigService.getString('apiPort', '') ?? '3001';
 
   final imageService = ImageService();
   final cacheService = CacheService();
@@ -75,18 +75,17 @@ class MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('de', 'DE'),
-        Locale('en', 'US'),
-      ],
+      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
       initialRoute: _isLoggedIn ? '/home' : '/login',
       routes: {
-        '/login': (context) => LoginScreen(
+        '/login':
+            (context) => LoginScreen(
               onLoginSuccess: (userData) => _setLoggedIn(true, userData),
             ),
         '/home': (context) {
           final arguments =
-              ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+              ModalRoute.of(context)?.settings.arguments
+                  as Map<String, dynamic>?;
 
           if (arguments == null) {
             return StartScreen(
@@ -105,12 +104,14 @@ class MyAppState extends State<MyApp> {
             );
           }
         },
-        '/help': (context) => HelpScreen(
+        '/help':
+            (context) => HelpScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
             ),
-        '/impressum': (context) => ImpressumScreen(
+        '/impressum':
+            (context) => ImpressumScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
