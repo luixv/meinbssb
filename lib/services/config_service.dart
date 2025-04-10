@@ -10,7 +10,6 @@ class ConfigService {
       final String data = await rootBundle.loadString(path);
       _config = jsonDecode(data);
     } catch (e) {
-      print('Error loading config: $e');
       _config = {}; // Initialize to an empty map on error
     }
   }
