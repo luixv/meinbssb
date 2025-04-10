@@ -9,7 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:meinbssb/services/network_service.dart'; // Import the new service
+import 'package:meinbssb/services/network_service.dart';
 
 class NetworkException implements Exception {
   final String message;
@@ -198,7 +198,7 @@ class ApiService {
       final cachedImage = await getCachedSchuetzenausweis();
       if (cachedImage != null) {
         debugPrint('Using cached Schuetzenausweis');
-        return cachedImage;
+        return _imageService.rotatedImage(cachedImage);
       }
 
       final imageData = await _httpClient.getBytes(
@@ -210,7 +210,7 @@ class ApiService {
         imageData,
         DateTime.now().millisecondsSinceEpoch,
       );
-      return imageData;
+      return _imageService.rotatedImage(imageData);
     } on http.ClientException catch (e) {
       throw NetworkException('Network error: ${e.message}');
     } catch (e) {

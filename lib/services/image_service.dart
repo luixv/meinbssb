@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as img;
 
 // Conditional imports with explicit prefixes
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -21,6 +22,26 @@ class ImageService {
       await _cacheImageMobileDesktop(personId, imageData, timestamp);
     }
   }
+
+
+Future<Uint8List> rotatedImage(Uint8List imageData) async {
+  try {
+    // Decode the image from Uint8List
+    final image = img.decodeImage(imageData);
+    if (image == null) {
+      throw Exception('Failed to decode image');
+    }
+
+    final rotatedImage = img.copyRotate(image, angle: 270);
+    final rotatedImageData = img.encodeJpg(rotatedImage);
+
+    return Uint8List.fromList(rotatedImageData);
+  } catch (e) {
+    debugPrint('Error rotating image: $e');
+    throw Exception('Failed to rotate image');
+  }
+}
+
 
   /// Retrieve a cached Schuetzenausweis
   Future<Uint8List?> getCachedSchuetzenausweis(
