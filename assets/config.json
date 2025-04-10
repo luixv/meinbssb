@@ -1,5 +1,5 @@
 {
-    "apiBaseIP": "10.0.2.2",
+    "apiBaseIP": "127.0.0.1", 
     "apiPort": "3001",
     "serverTimeout": 8,
     "cacheExpirationHours": "24",
@@ -7,7 +7,7 @@
       "host": "smtp.dummyserver.com",
       "username": "mySmtpUsername",
       "password": "mySmtpPassword",
-      "fromEmail": "dummyemail@example.com",
+      "fromEmail": "dummyemail@de.bssb.meinbssb",
       "registrationSubject": "registration to BSSB",
       "registrationContent": "user registered"
     },

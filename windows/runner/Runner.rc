@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
+            VALUE "CompanyName", "de.bssb" "\0"
             VALUE "FileDescription", "meinbssb" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "meinbssb" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 de.bssb.meinbssb. All rights reserved." "\0"
             VALUE "OriginalFilename", "meinbssb.exe" "\0"
             VALUE "ProductName", "meinbssb" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -16,7 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ConfigService.load('assets/config.json'); // Ensure the path is correct
 
-  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10; // Specify the section (even if empty)
+  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10; 
   final baseIP = ConfigService.getString('apiBaseIP', '') ?? '127.0.0.1';
 final port = ConfigService.getString('apiPort', '') ?? '3001';
 

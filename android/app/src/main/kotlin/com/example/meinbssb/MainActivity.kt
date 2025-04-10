@@ -1,4 +1,4 @@
-package com.example.meinbssb
+package de.bssb.meinbssb
 
 import io.flutter.embedding.android.FlutterActivity
 
