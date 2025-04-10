@@ -1,0 +1,17 @@
+{
+    "apiBaseIP": "10.0.2.2",
+    "apiPort": "3001",
+    "serverTimeout": 8,
+    "cacheExpirationHours": "24",
+    "smtpSettings": {
+      "host": "smtp.dummyserver.com",
+      "username": "mySmtpUsername",
+      "password": "mySmtpPassword",
+      "fromEmail": "dummyemail@example.com",
+      "registrationSubject": "registration to BSSB",
+      "registrationContent": "user registered"
+    },
+    "appTheme": {
+      "logoName": "assets/images/myBSSB-logo.png" 
+    }
+  }

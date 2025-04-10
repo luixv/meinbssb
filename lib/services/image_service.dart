@@ -36,7 +36,7 @@ class ImageService {
 
   //=== Web Implementation ===//
   Future<void> _cacheImageWeb(
-    int personId, 
+    int personId,
     Uint8List imageData,
     int timestamp,
   ) async {
@@ -49,19 +49,19 @@ class ImageService {
     }
   }
 
-  Future<Uint8List?> _getCachedImageWeb(
-    int personId,
-    Duration validity,
-  ) async {
+  Future<Uint8List?> _getCachedImageWeb(int personId, Duration validity) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final timestamp = prefs.getInt('image_${personId}_timestamp');
-      
+
       if (timestamp == null) return null;
 
       if (DateTime.now().difference(
-        DateTime.fromMillisecondsSinceEpoch(timestamp),
-      ) > validity) return null;
+            DateTime.fromMillisecondsSinceEpoch(timestamp),
+          ) >
+          validity) {
+        return null;
+      }
 
       final base64Image = prefs.getString('image_$personId.jpg');
       return base64Image != null ? base64Decode(base64Image) : null;
@@ -81,7 +81,7 @@ class ImageService {
       final directory = await path_provider.getApplicationDocumentsDirectory();
       final file = io.File('${directory.path}/image_$personId.jpg');
       await file.writeAsBytes(imageData);
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('image_${personId}_timestamp', timestamp);
     } catch (e) {
@@ -96,7 +96,7 @@ class ImageService {
     try {
       final directory = await path_provider.getApplicationDocumentsDirectory();
       final file = io.File('${directory.path}/image_$personId.jpg');
-      
+
       if (await file.exists()) {
         final stat = await file.stat();
         if (DateTime.now().difference(stat.modified) <= validity) {

@@ -7,8 +7,8 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/services/config_service.dart'; // Import ConfigService
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   final int personId;
@@ -35,17 +35,14 @@ class _ZweitmitgliedschaftenScreenState
   void initState() {
     super.initState();
     _loadData();
-    _loadLocalization();
+    _loadAppColor();
   }
 
-  Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json');
-    if (mounted) {
+  Future<void> _loadAppColor() async {
+    final colorString = ConfigService.getString('appColor', 'theme');
+    if (mounted && colorString != null && colorString.isNotEmpty) {
       setState(() {
-        final colorString = LocalizationService.getString('appColor');
-        if (colorString.isNotEmpty) {
-          _appColor = Color(int.parse(colorString));
-        }
+        _appColor = Color(int.parse(colorString));
       });
     }
   }
@@ -54,11 +51,11 @@ class _ZweitmitgliedschaftenScreenState
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final passDataId = widget.userData['PASSDATENID'];
-      
+
       _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
         widget.personId,
       );
-      
+
       _passdatenZVEFuture = passDataId != null
           ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
           : Future.value([]);

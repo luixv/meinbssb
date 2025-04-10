@@ -5,26 +5,25 @@ import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
-import 'services/localization_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/config_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalizationService.load('assets/strings.json');
-  final serverTimeout =
-      int.tryParse(LocalizationService.getString('ServerTimeout')) ?? 10;
-  final baseIp = LocalizationService.getString('BaseIp');
-  final port = LocalizationService.getString('Port');
+  await ConfigService.load('assets/config.json'); // Ensure the path is correct
 
-  // ✅ Platform-specific initialization
+  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10; // Specify the section (even if empty)
+  final baseIP = ConfigService.getString('apiBaseIP', '') ?? '127.0.0.1';
+final port = ConfigService.getString('apiPort', '') ?? '3001';
+
   final imageService = ImageService();
   final cacheService = CacheService();
   final httpClient = HttpClient(
-    baseUrl: 'http://$baseIp:$port',
+    baseUrl: 'http://$baseIP:$port',
     serverTimeout: serverTimeout,
   );
 
@@ -32,7 +31,7 @@ void main() async {
     httpClient: httpClient,
     imageService: imageService,
     cacheService: cacheService,
-    baseIp: baseIp,
+    baseIp: baseIP,
     port: port,
     serverTimeout: serverTimeout,
   );
@@ -76,20 +75,18 @@ class MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('de', 'DE'),
         Locale('en', 'US'),
-      ], // Removed 'const' to avoid non-constant issue
+      ],
       initialRoute: _isLoggedIn ? '/home' : '/login',
       routes: {
-        '/login':
-            (context) => LoginScreen(
+        '/login': (context) => LoginScreen(
               onLoginSuccess: (userData) => _setLoggedIn(true, userData),
             ),
         '/home': (context) {
           final arguments =
-              ModalRoute.of(context)?.settings.arguments
-                  as Map<String, dynamic>?;
+              ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
           if (arguments == null) {
             return StartScreen(
@@ -108,17 +105,12 @@ class MyAppState extends State<MyApp> {
             );
           }
         },
-
-        '/help':
-            (context) => HelpScreen(
-              userData: _userData, // Use your current user data
-              isLoggedIn: _isLoggedIn, // Use your current login status
-              onLogout:
-                  () => _setLoggedIn(false, {}), // Use your logout function
+        '/help': (context) => HelpScreen(
+              userData: _userData,
+              isLoggedIn: _isLoggedIn,
+              onLogout: () => _setLoggedIn(false, {}),
             ),
-
-        '/impressum':
-            (context) => ImpressumScreen(
+        '/impressum': (context) => ImpressumScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),

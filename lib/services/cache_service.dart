@@ -5,6 +5,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'base_service.dart';
+import 'package:meinbssb/services/config_service.dart';
 
 class CacheService extends BaseService {
   static const String _cacheKeyPrefix = 'cache_';
@@ -162,5 +163,11 @@ class CacheService extends BaseService {
       logDebug('Retrieving cached data due to error for key: $cacheKey');
       return await retrieveCachedData();
     }
+  }
+
+  // Method to get cache expiration hours from config
+  static Future<int> getCacheExpirationHours() async {
+    final expirationString = ConfigService.getString('cacheExpirationHours');
+    return int.tryParse(expirationString ?? '24') ?? 24;
   }
 }

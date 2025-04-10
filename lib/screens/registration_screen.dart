@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/services/error_service.dart';
 import 'logo_widget.dart';
@@ -55,13 +54,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    _loadLocalization();
     zipCodeError = null;
     passNumberError = null;
-  }
-
-  Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json');
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -270,14 +264,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   Future<void> _sendRegistrationEmail() async {
     try {
-      String from = LocalizationService.getString('From');
-      String subject = LocalizationService.getString('Subject');
-      String registrationContent = LocalizationService.getString(
-        'registrationContent',
-      );
+      final fromEmail = await widget.emailService.getFromEmail();
+      final subject = await widget.emailService.getRegistrationSubject();
+      final registrationContent = await widget.emailService.getRegistrationContent();
+
+      if (fromEmail == null || subject == null || registrationContent == null) {
+        debugPrint('Registration email content not fully configured.');
+        return;
+      }
 
       final emailResponse = await widget.emailService.sendEmail(
-        from: from,
+        from: fromEmail,
         recipient: _emailController.text,
         subject: subject,
         body: registrationContent,
@@ -389,9 +386,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       _selectedDate == null
                           ? 'Wählen Sie Ihr Geburtsdatum'
                           : DateFormat(
-                            'dd.MM.yyyy',
-                            'de_DE',
-                          ).format(_selectedDate!),
+                              'dd.MM.yyyy',
+                              'de_DE',
+                            ).format(_selectedDate!),
                       style: UIConstants.bodyStyle.copyWith(
                         color:
                             _selectedDate != null
@@ -435,9 +432,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       children: <TextSpan>[
                         TextSpan(
                           text:
-                              LocalizationService.getString(
-                                'privacyText',
-                              ).split('Datenschutzbestimmungen')[0],
+                              // Directly using the hardcoded text as the split might be unreliable
+                              'Ich habe die ',
                         ),
                         TextSpan(
                           text: 'Datenschutzbestimmungen',
@@ -458,10 +454,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                 },
                         ),
                         TextSpan(
-                          text:
-                              LocalizationService.getString(
-                                'privacyText',
-                              ).split('Datenschutzbestimmungen')[1],
+                          text: ' gelesen und akzeptiere sie.',
                         ),
                       ],
                     ),
@@ -481,15 +474,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 child:
                     _isLoading
                         ? CircularProgressIndicator(
-                          color: UIConstants.white,
-                          strokeWidth: 2.0,
-                        )
-                        : Text(
-                          "Registrieren",
-                          style: UIConstants.bodyStyle.copyWith(
                             color: UIConstants.white,
+                            strokeWidth: 2.0,
+                          )
+                        : Text(
+                            "Registrieren",
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                            ),
                           ),
-                        ),
               ),
             ),
           ],

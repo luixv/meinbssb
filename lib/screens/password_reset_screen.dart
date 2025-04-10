@@ -7,7 +7,6 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'logo_widget.dart';
 import 'app_menu.dart';
-import 'package:meinbssb/services/localization_service.dart';
 import 'password_reset_success_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
@@ -24,22 +23,11 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _isPassNumberValid = false;
   bool _hasInteracted = false;
   bool _isLoading = false;
-  Color _appColor = UIConstants.defaultAppColor;
+  final Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
     super.initState();
-    _loadLocalization();
-  }
-
-  Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json');
-    setState(() {
-      final colorString = LocalizationService.getString('appColor');
-      if (colorString.isNotEmpty) {
-        _appColor = Color(int.parse(colorString));
-      }
-    });
   }
 
   bool _validatePassNumber(String value) {

@@ -11,7 +11,6 @@ import 'registration_screen.dart';
 import 'help_screen.dart';
 import 'password_reset_screen.dart';
 import 'logo_widget.dart';
-import 'package:meinbssb/services/localization_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onLoginSuccess;
@@ -28,12 +27,11 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
-  Color _appColor = UIConstants.defaultAppColor;
+  final Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
     super.initState();
-    _loadLocalization();
   }
 
   @override
@@ -41,16 +39,6 @@ class LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json');
-    setState(() {
-      final colorString = LocalizationService.getString('appColor');
-      if (colorString.isNotEmpty) {
-        _appColor = Color(int.parse(colorString));
-      }
-    });
   }
 
   Future<void> _handleLogin() async {

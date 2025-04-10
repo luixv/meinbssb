@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/services/localization_service.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 
@@ -29,27 +28,16 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
-  Color _appColor = UIConstants.defaultAppColor;
+  final Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
     super.initState();
     fetchSchulungen();
-    _loadLocalization();
     debugPrint('StartScreen initialized with user: ${widget.userData}');
   }
 
-  Future<void> _loadLocalization() async {
-    await LocalizationService.load('assets/strings.json');
-    if (mounted) {
-      setState(() {
-        final colorString = LocalizationService.getString('appColor');
-        if (colorString.isNotEmpty) {
-          _appColor = Color(int.parse(colorString));
-        }
-      });
-    }
-  }
+
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);

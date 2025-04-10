@@ -4,13 +4,12 @@
 
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:meinbssb/services/localization_service.dart';
+import 'package:meinbssb/services/config_service.dart'; 
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class EmailService {
-
   Future<Map<String, dynamic>> sendEmail({
     required String from,
     required String recipient,
@@ -18,15 +17,22 @@ class EmailService {
     String? body,
     int? emailId,
   }) async {
-
     debugPrint("sendEmail called with emailId: $emailId");
 
     try {
-      String smtpServerAddress = LocalizationService.getString('smtp');
-      String username = LocalizationService.getString('smtp_username');
-      String password = LocalizationService.getString('smtp_password');
+      final smtpHost = ConfigService.getString('host', 'smtpSettings');
+      final username = ConfigService.getString('username', 'smtpSettings');
+      final password = ConfigService.getString('password', 'smtpSettings');
 
-      final smtpServer = SmtpServer(smtpServerAddress, username: username, password: password);
+      if (smtpHost == null || username == null || password == null) {
+        debugPrint('SMTP settings are not fully configured in config.json.');
+        return {
+          "ResultType": 0,
+          "ResultMessage": "SMTP settings are not fully configured.",
+        };
+      }
+
+      final smtpServer = SmtpServer(smtpHost, username: username, password: password);
 
       final message = Message()
         ..from = Address(from)
@@ -44,7 +50,8 @@ class EmailService {
     } catch (e) {
       String errorMessage = "Error sending email: $e";
       if (e is SocketException) {
-        errorMessage = "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
+        errorMessage =
+            "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
       }
 
       debugPrint('Email sending failed: $errorMessage');
@@ -55,4 +62,15 @@ class EmailService {
     }
   }
 
+  Future<String?> getRegistrationSubject() async {
+    return ConfigService.getString('registrationSubject', 'smtpSettings');
+  }
+
+  Future<String?> getRegistrationContent() async {
+    return ConfigService.getString('registrationContent', 'smtpSettings');
+  }
+
+  Future<String?> getFromEmail() async {
+    return ConfigService.getString('fromEmail', 'smtpSettings');
+  }
 }
