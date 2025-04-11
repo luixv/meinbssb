@@ -2,12 +2,12 @@
 // Filename: email_service.dart
 // Author: Luis Mandel / NTT DATA
 
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
-import 'package:meinbssb/services/config_service.dart'; 
-import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:flutter/material.dart';
+import '/services/config_service.dart';
 
 class EmailService {
   Future<Map<String, dynamic>> sendEmail({
@@ -32,21 +32,23 @@ class EmailService {
         };
       }
 
-      final smtpServer = SmtpServer(smtpHost, username: username, password: password);
+      final smtpServer = SmtpServer(
+        smtpHost,
+        username: username,
+        password: password,
+      );
 
-      final message = Message()
-        ..from = Address(from)
-        ..recipients.add(recipient)
-        ..subject = subject
-        ..text = body;
+      final message =
+          Message()
+            ..from = Address(from)
+            ..recipients.add(recipient)
+            ..subject = subject
+            ..text = body;
 
       final sendReport = await send(message, smtpServer);
       debugPrint('Message sent: ${sendReport.toString()}');
 
-      return {
-        "ResultType": 1,
-        "ResultMessage": "Email sent successfully",
-      };
+      return {"ResultType": 1, "ResultMessage": "Email sent successfully"};
     } catch (e) {
       String errorMessage = "Error sending email: $e";
       if (e is SocketException) {
@@ -55,10 +57,7 @@ class EmailService {
       }
 
       debugPrint('Email sending failed: $errorMessage');
-      return {
-        "ResultType": 0,
-        "ResultMessage": errorMessage,
-      };
+      return {"ResultType": 0, "ResultMessage": errorMessage};
     }
   }
 

@@ -3,7 +3,7 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
+import '/constants/ui_constants.dart';
 
 /// A service for handling errors consistently across the application
 class ErrorService {

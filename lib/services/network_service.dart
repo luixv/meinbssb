@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:meinbssb/services/config_service.dart';
+import '/services/config_service.dart';
 
 class NetworkService {
   Future<bool> hasInternet() async {

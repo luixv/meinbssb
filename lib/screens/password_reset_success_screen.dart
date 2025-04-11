@@ -3,8 +3,8 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'app_menu.dart';
+import '/constants/ui_constants.dart';
+import '/screens/app_menu.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   final Map<String, dynamic> userData;

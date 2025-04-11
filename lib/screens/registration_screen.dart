@@ -2,17 +2,17 @@
 // Filename: registration_screen.dart
 // Author: Luis Mandel / NTT DATA
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/services/error_service.dart';
-import 'logo_widget.dart';
-import 'app_menu.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'registration_success_screen.dart';
-import 'privacy_screen.dart';
-import 'package:flutter/gestures.dart';
-import 'package:meinbssb/services/email_service.dart';
+import '/constants/ui_constants.dart';
+import '/screens/logo_widget.dart';
+import '/screens/app_menu.dart';
+import '/screens/registration_success_screen.dart';
+import '/screens/privacy_screen.dart';
+import '/services/email_service.dart';
+import '/services/error_service.dart';
+import '/services/api_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final ApiService apiService;
@@ -266,7 +266,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     try {
       final fromEmail = await widget.emailService.getFromEmail();
       final subject = await widget.emailService.getRegistrationSubject();
-      final registrationContent = await widget.emailService.getRegistrationContent();
+      final registrationContent =
+          await widget.emailService.getRegistrationContent();
 
       if (fromEmail == null || subject == null || registrationContent == null) {
         debugPrint('Registration email content not fully configured.');
@@ -386,9 +387,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       _selectedDate == null
                           ? 'Wählen Sie Ihr Geburtsdatum'
                           : DateFormat(
-                              'dd.MM.yyyy',
-                              'de_DE',
-                            ).format(_selectedDate!),
+                            'dd.MM.yyyy',
+                            'de_DE',
+                          ).format(_selectedDate!),
                       style: UIConstants.bodyStyle.copyWith(
                         color:
                             _selectedDate != null
@@ -453,9 +454,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                   );
                                 },
                         ),
-                        TextSpan(
-                          text: ' gelesen und akzeptiere sie.',
-                        ),
+                        TextSpan(text: ' gelesen und akzeptiere sie.'),
                       ],
                     ),
                   ),
@@ -474,15 +473,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 child:
                     _isLoading
                         ? CircularProgressIndicator(
-                            color: UIConstants.white,
-                            strokeWidth: 2.0,
-                          )
+                          color: UIConstants.white,
+                          strokeWidth: 2.0,
+                        )
                         : Text(
-                            "Registrieren",
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                            ),
+                          "Registrieren",
+                          style: UIConstants.bodyStyle.copyWith(
+                            color: UIConstants.white,
                           ),
+                        ),
               ),
             ),
           ],

@@ -5,7 +5,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'base_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import '/services/config_service.dart';
 
 class CacheService extends BaseService {
   static const String _cacheKeyPrefix = 'cache_';

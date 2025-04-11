@@ -5,8 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/screens/app_menu.dart';
+import '/constants/ui_constants.dart';
+import '/screens/app_menu.dart';
 
 class HelpScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -35,7 +35,9 @@ class _HelpScreenState extends State<HelpScreen> {
 
   Future<void> _loadFaq() async {
     try {
-      final String content = await rootBundle.loadString('assets/html/faq.html');
+      final String content = await rootBundle.loadString(
+        'assets/html/faq.html',
+      );
       setState(() {
         _htmlContent = content;
       });
@@ -55,7 +57,8 @@ class _HelpScreenState extends State<HelpScreen> {
           style: UIConstants.titleStyle,
         ),
         actions: [
-          AppMenu( // Add your AppMenu widget if needed
+          AppMenu(
+            // Add your AppMenu widget if needed
             context: context,
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
@@ -65,9 +68,7 @@ class _HelpScreenState extends State<HelpScreen> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(UIConstants.defaultPadding),
-        child: HtmlWidget(
-          _htmlContent,
-        ),
+        child: HtmlWidget(_htmlContent),
       ),
     );
   }

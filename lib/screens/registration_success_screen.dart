@@ -3,9 +3,9 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/screens/app_menu.dart';
-import 'logo_widget.dart';
+import '/constants/ui_constants.dart';
+import '/screens/app_menu.dart';
+import '/screens/logo_widget.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
   final String message;

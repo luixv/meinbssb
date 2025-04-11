@@ -3,11 +3,11 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'logo_widget.dart';
-import 'app_menu.dart';
-import 'password_reset_success_screen.dart';
+import '/services/api_service.dart';
+import '/constants/ui_constants.dart';
+import '/screens/logo_widget.dart';
+import '/screens/app_menu.dart';
+import '/screens/password_reset_success_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   final ApiService apiService;

@@ -2,12 +2,12 @@
 // Filename: schuetzenausweis_screen.dart
 // Author: Luis Mandel / NTT DATA
 
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'dart:typed_data';
+import '/services/api_service.dart';
+import '/screens/app_menu.dart';
+import '/constants/ui_constants.dart';
 
 class SchuetzenausweisScreen extends StatelessWidget {
   final int personId;

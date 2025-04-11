@@ -3,10 +3,10 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
-import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
-import 'package:meinbssb/screens/impressum_screen.dart';
+import '/constants/ui_constants.dart';
+import '/screens/schuetzenausweis_screen.dart';
+import '/screens/zweitmitgliedschaften_screen.dart';
+import '/screens/impressum_screen.dart';
 
 class AppMenu extends StatelessWidget {
   final BuildContext context;
@@ -26,8 +26,9 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SchuetzenausweisScreen(personId: personId, userData: userData),
+        builder:
+            (context) =>
+                SchuetzenausweisScreen(personId: personId, userData: userData),
       ),
     );
   }
@@ -36,10 +37,11 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ZweitmitgliedschaftenScreen(
-          personId: personId,
-          userData: userData,
-        ),
+        builder:
+            (context) => ZweitmitgliedschaftenScreen(
+              personId: personId,
+              userData: userData,
+            ),
       ),
     );
   }
@@ -48,11 +50,12 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ImpressumScreen(
-          userData: userData,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout,
-        ),
+        builder:
+            (context) => ImpressumScreen(
+              userData: userData,
+              isLoggedIn: isLoggedIn,
+              onLogout: onLogout,
+            ),
       ),
     );
   }

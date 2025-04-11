@@ -2,14 +2,14 @@
 // Filename: api_service.dart
 // Author: Luis Mandel / NTT DATA
 
-import 'package:meinbssb/services/http_client.dart';
 import 'dart:async';
-import 'package:meinbssb/services/image_service.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:meinbssb/services/network_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
+import '/services/network_service.dart';
+import '/services/http_client.dart';
+import '/services/cache_service.dart';
+import '/services/image_service.dart';
 
 class NetworkException implements Exception {
   final String message;

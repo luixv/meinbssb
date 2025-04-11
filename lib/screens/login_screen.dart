@@ -4,13 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/email_service.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'registration_screen.dart';
-import 'help_screen.dart';
-import 'password_reset_screen.dart';
-import 'logo_widget.dart';
+import '/services/api_service.dart';
+import '/services/email_service.dart';
+import '/constants/ui_constants.dart';
+import '/screens/registration_screen.dart';
+import '/screens/help_screen.dart';
+import '/screens/password_reset_screen.dart';
+import '/screens/logo_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onLoginSuccess;
@@ -226,7 +226,7 @@ class LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                 builder:
                     (context) => HelpScreen(
-                      userData: {}, 
+                      userData: {},
                       isLoggedIn:
                           false, // User is not logged in on the login page
                       onLogout: () {

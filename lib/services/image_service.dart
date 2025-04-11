@@ -23,25 +23,23 @@ class ImageService {
     }
   }
 
+  Future<Uint8List> rotatedImage(Uint8List imageData) async {
+    try {
+      // Decode the image from Uint8List
+      final image = img.decodeImage(imageData);
+      if (image == null) {
+        throw Exception('Failed to decode image');
+      }
 
-Future<Uint8List> rotatedImage(Uint8List imageData) async {
-  try {
-    // Decode the image from Uint8List
-    final image = img.decodeImage(imageData);
-    if (image == null) {
-      throw Exception('Failed to decode image');
+      final rotatedImage = img.copyRotate(image, angle: 270);
+      final rotatedImageData = img.encodeJpg(rotatedImage);
+
+      return Uint8List.fromList(rotatedImageData);
+    } catch (e) {
+      debugPrint('Error rotating image: $e');
+      throw Exception('Failed to rotate image');
     }
-
-    final rotatedImage = img.copyRotate(image, angle: 270);
-    final rotatedImageData = img.encodeJpg(rotatedImage);
-
-    return Uint8List.fromList(rotatedImageData);
-  } catch (e) {
-    debugPrint('Error rotating image: $e');
-    throw Exception('Failed to rotate image');
   }
-}
-
 
   /// Retrieve a cached Schuetzenausweis
   Future<Uint8List?> getCachedSchuetzenausweis(

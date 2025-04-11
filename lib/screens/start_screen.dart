@@ -4,10 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
+import '/services/api_service.dart';
+import '/screens/app_menu.dart';
+import '/screens/logo_widget.dart';
+import '/constants/ui_constants.dart';
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -36,8 +36,6 @@ class StartScreenState extends State<StartScreen> {
     fetchSchulungen();
     debugPrint('StartScreen initialized with user: ${widget.userData}');
   }
-
-
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);

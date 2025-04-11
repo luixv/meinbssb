@@ -3,12 +3,12 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/services/config_service.dart'; // Import ConfigService
+import '/screens/logo_widget.dart';
+import '/screens/app_menu.dart';
+import '/constants/ui_constants.dart';
+import '/services/config_service.dart';
+import '/services/api_service.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   final int personId;
@@ -56,9 +56,10 @@ class _ZweitmitgliedschaftenScreenState
         widget.personId,
       );
 
-      _passdatenZVEFuture = passDataId != null
-          ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
-          : Future.value([]);
+      _passdatenZVEFuture =
+          passDataId != null
+              ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
+              : Future.value([]);
     } catch (e) {
       debugPrint('Error loading data: $e');
       _zweitmitgliedschaftenFuture = Future.value([]);
@@ -71,11 +72,7 @@ class _ZweitmitgliedschaftenScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: UIConstants.red,
-          ),
+          Icon(Icons.error_outline, size: 48, color: UIConstants.red),
           SizedBox(height: UIConstants.defaultSpacing),
           Text(
             message,
