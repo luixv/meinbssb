@@ -13,7 +13,7 @@ class LogoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final logoName = ConfigService.getString('logoName', 'appTheme');
     return Image.asset(
-      logoName ?? 'assets/images/default_logo.png',
+      logoName ?? 'assets/images/myBSSB-logo.png',
       height: UIConstants.logoSize,
       width: UIConstants.logoSize,
     );
