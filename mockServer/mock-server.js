@@ -32,7 +32,6 @@ const schulungstermineRoutes = require('./routes/schulungstermine');
 const oktoberfestlandesschiessenRoutes = require('./routes/oktoberfestlandesschiessen');
 const gewinneAbrufenRoutes = require('./routes/gewinneAbrufen');
 
-
 // Use route handlers
 app.use('/LoginMyBSSB', loginRoutes);
 app.use('/Passdaten', passdatenRoutes);
@@ -46,8 +45,6 @@ app.use('/Passwordreset', passwordresetRoutes);
 app.use('/Schulungstermine', schulungstermineRoutes); 
 app.use('/Oktoberfestlandesschiessen', oktoberfestlandesschiessenRoutes); 
 app.use('/GewinneAbrufen', gewinneAbrufenRoutes); 
-
-
 
 app.listen(port, () => {
     console.log(`Mock server listening at http://localhost:${port}`);

@@ -3,9 +3,11 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/image_service.dart';
@@ -17,17 +19,14 @@ class NetworkException implements Exception {
   NetworkException(this.message);
 
   @override
-  String toString() {
-    return 'NetworkException: $message';
-  }
+  String toString() => 'NetworkException: $message';
 }
 
 class ApiService {
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
-  final NetworkService _networkService =
-      NetworkService(); // Instantiate NetworkService
+  final NetworkService _networkService;
 
   ApiService({
     required HttpClient httpClient,
@@ -38,15 +37,13 @@ class ApiService {
     required int serverTimeout,
   }) : _httpClient = httpClient,
        _imageService = imageService,
-       _cacheService = cacheService;
+       _cacheService = cacheService,
+       _networkService = NetworkService(); // Initialize here
 
-  Future<bool> hasInternet() async {
-    return _networkService.hasInternet();
-  }
+  Future<bool> hasInternet() => _networkService.hasInternet();
 
-  Duration getCacheExpirationDuration() {
-    return _networkService.getCacheExpirationDuration();
-  }
+  Duration getCacheExpirationDuration() =>
+      _networkService.getCacheExpirationDuration();
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -56,20 +53,19 @@ class ApiService {
     required String birthDate,
     required String zipCode,
   }) async {
-    return _httpClient
-        .post('RegisterMyBSSB', {
-          "firstName": firstName,
-          "lastName": lastName,
-          "passNumber": passNumber,
-          "email": email,
-          "birthDate": birthDate,
-          "zipCode": zipCode,
-        })
-        .then((value) => value is Map<String, dynamic> ? value : {});
+    final response = await _httpClient.post('RegisterMyBSSB', {
+      "firstName": firstName,
+      "lastName": lastName,
+      "passNumber": passNumber,
+      "email": email,
+      "birthDate": birthDate,
+      "zipCode": zipCode,
+    });
+    return response is Map<String, dynamic> ? response : {};
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final secureStorage = const FlutterSecureStorage();
+    const secureStorage = FlutterSecureStorage();
 
     try {
       final response = await _httpClient.post('LoginMyBSSB', {
@@ -103,33 +99,38 @@ class ApiService {
         final cachedPassword = await secureStorage.read(key: 'password');
         final cachedPersonId = await _cacheService.getInt('personId');
         final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
+        final expirationDuration = _networkService.getCacheExpirationDuration();
+        final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+          cachedTimestamp ?? 0,
+        ).add(expirationDuration);
 
-        if (cachedUsername == email &&
-            cachedPassword == password &&
-            cachedPersonId != null &&
-            cachedTimestamp != null) {
-          final expirationDuration =
-              _networkService.getCacheExpirationDuration();
-          final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-            cachedTimestamp,
-          ).add(expirationDuration);
+        final testCachedUsername = cachedUsername == email;
+        final testCachedPassword = cachedPassword == password;
+        final testCachedPersonId = cachedPersonId != null;
+        final testCachedTimestamp = cachedTimestamp != null;
+        final today = DateTime.now();
+        final testExpirationDate = today.isBefore(expirationTime);
 
-          if (DateTime.now().isBefore(expirationTime)) {
-            debugPrint('Login from cache successful.');
-            return {"ResultType": 1, "PersonID": cachedPersonId};
-          } else {
-            debugPrint('Cached data expired.');
-            return {
-              "ResultType": 0,
-              "ResultMessage": "Cached data expired. Please log in again.",
-            };
-          }
+        final isCacheValid =
+            testCachedUsername &&
+            testCachedPassword &&
+            testCachedPersonId &&
+            testCachedTimestamp &&
+            testExpirationDate;
+
+        if (isCacheValid) {
+          debugPrint('Login from cache successful.');
+          return {"ResultType": 1, "PersonID": cachedPersonId};
+        } else {
+          debugPrint('Cached data expired.');
+          return {
+            "ResultType": 0,
+            "ResultMessage":
+                isCacheValid
+                    ? "Cached data expired. Please log in again."
+                    : "Offline login failed, no cache or password mismatch",
+          };
         }
-        return {
-          "ResultType": 0,
-          "ResultMessage":
-              "Offline login failed, no cache or password mismatch",
-        };
       } else {
         debugPrint('Username or Password is incorrect: $e');
         return {
@@ -142,9 +143,10 @@ class ApiService {
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     try {
-      return _httpClient
-          .post('PasswordReset/$passNumber', {"passNumber": passNumber})
-          .then((value) => value is Map<String, dynamic> ? value : {});
+      final response = await _httpClient.post('PasswordReset/$passNumber', {
+        "passNumber": passNumber,
+      });
+      return response is Map<String, dynamic> ? response : {};
     } on http.ClientException catch (e) {
       throw NetworkException('Network error: ${e.message}');
     } catch (e) {
@@ -158,25 +160,27 @@ class ApiService {
       getCacheExpirationDuration(),
       () async =>
           await _httpClient.get('Passdaten/$personId') as Map<String, dynamic>,
-      (response) {
-        if (response is Map<String, dynamic>) {
-          return {
-            'PASSNUMMER': response['PASSNUMMER'],
-            'VEREINNR': response['VEREINNR'],
-            'NAMEN': response['NAMEN'],
-            'VORNAME': response['VORNAME'],
-            'TITEL': response['TITEL'],
-            'GEBURTSDATUM': response['GEBURTSDATUM'],
-            'GESCHLECHT': response['GESCHLECHT'],
-            'VEREINNAME': response['VEREINNAME'],
-            'PASSDATENID': response['PASSDATENID'],
-            'MITGLIEDSCHAFTID': response['MITGLIEDSCHAFTID'],
-            'PERSONID': response['PERSONID'],
-          };
-        }
-        return {};
-      },
+      (response) => _mapPassdatenResponse(response),
     );
+  }
+
+  Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
+    if (response is Map<String, dynamic>) {
+      return {
+        'PASSNUMMER': response['PASSNUMMER'],
+        'VEREINNR': response['VEREINNR'],
+        'NAMEN': response['NAMEN'],
+        'VORNAME': response['VORNAME'],
+        'TITEL': response['TITEL'],
+        'GEBURTSDATUM': response['GEBURTSDATUM'],
+        'GESCHLECHT': response['GESCHLECHT'],
+        'VEREINNAME': response['VEREINNAME'],
+        'PASSDATENID': response['PASSDATENID'],
+        'MITGLIEDSCHAFTID': response['MITGLIEDSCHAFTID'],
+        'PERSONID': response['PERSONID'],
+      };
+    }
+    return {};
   }
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
@@ -228,37 +232,39 @@ class ApiService {
       () async =>
           await _httpClient.get('AngemeldeteSchulungen/$personId/$abDatum')
               as List<dynamic>,
-      (response) {
-        if (response is List) {
-          return response.map((item) {
-            return {
-              'DATUM': item['DATUM'],
-              'BEZEICHNUNG': item['BEZEICHNUNG'],
-              'SCHULUNGENTEILNEHMERID': 0,
-              'SCHULUNGENTERMINID': 0,
-              'SCHULUNGSARTID': 0,
-              'STATUS': 0,
-              'DATUMBIS': '',
-              'FUERVERLAENGERUNGEN': false,
-            };
-          }).toList();
-        } else if (response is Map && response.containsKey('schulungen')) {
-          return List.from(response['schulungen']).map((item) {
-            return {
-              'DATUM': item['DATUM'],
-              'BEZEICHNUNG': item['BEZEICHNUNG'],
-              'SCHULUNGENTEILNEHMERID': 0,
-              'SCHULUNGENTERMINID': 0,
-              'SCHULUNGSARTID': 0,
-              'STATUS': 0,
-              'DATUMBIS': '',
-              'FUERVERLAENGERUNGEN': false,
-            };
-          }).toList();
-        }
-        return [];
-      },
+      (response) => _mapAngemeldeteSchulungenResponse(response),
     );
+  }
+
+  List<dynamic> _mapAngemeldeteSchulungenResponse(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        return {
+          'DATUM': item['DATUM'],
+          'BEZEICHNUNG': item['BEZEICHNUNG'],
+          'SCHULUNGENTEILNEHMERID': 0,
+          'SCHULUNGENTERMINID': 0,
+          'SCHULUNGSARTID': 0,
+          'STATUS': 0,
+          'DATUMBIS': '',
+          'FUERVERLAENGERUNGEN': false,
+        };
+      }).toList();
+    } else if (response is Map && response.containsKey('schulungen')) {
+      return List.from(response['schulungen']).map((item) {
+        return {
+          'DATUM': item['DATUM'],
+          'BEZEICHNUNG': item['BEZEICHNUNG'],
+          'SCHULUNGENTEILNEHMERID': 0,
+          'SCHULUNGENTERMINID': 0,
+          'SCHULUNGSARTID': 0,
+          'STATUS': 0,
+          'DATUMBIS': '',
+          'FUERVERLAENGERUNGEN': false,
+        };
+      }).toList();
+    }
+    return [];
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
@@ -269,27 +275,30 @@ class ApiService {
         final response = await _httpClient.get(
           'Zweitmitgliedschaften/$personId',
         );
-        if (response is List) {
-          return response
-              .map(
-                (item) => {
-                  'VEREINID': item['VEREINID'],
-                  'VEREINNR': item['VEREINNR'],
-                  'VEREINNAME': item['VEREINNAME'],
-                  'EINTRITTVEREIN': item['EINTRITTVEREIN'],
-                },
-              )
-              .toList();
-        }
-        return [];
+        return _mapZweitmitgliedschaftenRemoteResponse(response);
       },
-      (response) {
-        if (response is List) {
-          return response;
-        }
-        return [];
-      },
+      (response) => _mapZweitmitgliedschaftenCacheResponse(response),
     );
+  }
+
+  List<dynamic> _mapZweitmitgliedschaftenRemoteResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map(
+            (item) => {
+              'VEREINID': item['VEREINID'],
+              'VEREINNR': item['VEREINNR'],
+              'VEREINNAME': item['VEREINNAME'],
+              'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+            },
+          )
+          .toList();
+    }
+    return [];
+  }
+
+  List<dynamic> _mapZweitmitgliedschaftenCacheResponse(dynamic response) {
+    return response is List ? response : [];
   }
 
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
@@ -300,26 +309,29 @@ class ApiService {
         final response = await _httpClient.get(
           'PassdatenZVE/$passdatenId/$personId',
         );
-        if (response is List) {
-          return response
-              .map(
-                (item) => {
-                  'DISZIPLINNR': item['DISZIPLINNR'],
-                  'VEREINNAME': item['VEREINNAME'],
-                  'DISZIPLIN': item['DISZIPLIN'],
-                  'DISZIPLINID': item['DISZIPLINID'],
-                },
-              )
-              .toList();
-        }
-        return [];
+        return _mapPassdatenZVERemoteResponse(response);
       },
-      (response) {
-        if (response is List) {
-          return response;
-        }
-        return [];
-      },
+      (response) => _mapPassdatenZVECacheResponse(response),
     );
+  }
+
+  List<dynamic> _mapPassdatenZVERemoteResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map(
+            (item) => {
+              'DISZIPLINNR': item['DISZIPLINNR'],
+              'VEREINNAME': item['VEREINNAME'],
+              'DISZIPLIN': item['DISZIPLIN'],
+              'DISZIPLINID': item['DISZIPLINID'],
+            },
+          )
+          .toList();
+    }
+    return [];
+  }
+
+  List<dynamic> _mapPassdatenZVECacheResponse(dynamic response) {
+    return response is List ? response : [];
   }
 }
