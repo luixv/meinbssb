@@ -4,7 +4,7 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'base_service.dart';
+import '/services/base_service.dart';
 import '/services/config_service.dart';
 
 class CacheService extends BaseService {
