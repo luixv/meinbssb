@@ -6,10 +6,10 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart';
-import '/services/network_service.dart';
-import '/services/http_client.dart';
 import '/services/cache_service.dart';
+import '/services/http_client.dart';
 import '/services/image_service.dart';
+import '/services/network_service.dart';
 
 class NetworkException implements Exception {
   final String message;
