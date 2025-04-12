@@ -42,6 +42,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   bool _isLoading = false;
   String _successMessage = "";
   Map<String, dynamic> userData = {};
+  final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
+  bool _emailFieldTouched = false; // New flag
 
   TextEditingController get firstNameController => _firstNameController;
   TextEditingController get lastNameController => _lastNameController;
@@ -56,6 +58,27 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     super.initState();
     zipCodeError = null;
     passNumberError = null;
+    emailError = null;
+    _emailFieldTouched = false;
+    _emailFocusNode.addListener(
+      _onEmailFocusChanged,
+    ); // Listen for focus changes
+  }
+
+  @override
+  void dispose() {
+    _emailFocusNode.removeListener(_onEmailFocusChanged);
+    _emailFocusNode.dispose(); // Dispose of the FocusNode
+    super.dispose();
+  }
+
+  void _onEmailFocusChanged() {
+    if (!_emailFocusNode.hasFocus) {
+      setState(() {
+        _emailFieldTouched = true;
+        validateEmail(_emailController.text);
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -96,6 +119,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   bool validateEmail(String value) {
+    if (!_emailFieldTouched && value.isEmpty) {
+      emailError = null; // Don't show error if not touched and empty
+      return true;
+    }
     if (value.isEmpty) {
       emailError = ErrorService.handleValidationError(
         "E-Mail",
@@ -363,13 +390,26 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             TextField(
               key: const Key('emailField'),
               controller: _emailController,
+              focusNode: _emailFocusNode, // Assign the FocusNode
               decoration: UIConstants.defaultInputDecoration.copyWith(
                 labelText: "E-mail",
-                errorText: emailError,
+                errorText:
+                    _emailFieldTouched
+                        ? emailError
+                        : null, // Only show error if touched
               ),
-              onChanged: (_) {
+              onChanged: (value) {
                 setState(() {
-                  validateEmail(_emailController.text);
+                  if (_emailFieldTouched || value.isNotEmpty) {
+                    validateEmail(value);
+                  } else {
+                    emailError = null; // Clear error if untouched and empty
+                  }
+                });
+              },
+              onTap: () {
+                setState(() {
+                  _emailFieldTouched = true; // Mark as touched when focused
                 });
               },
             ),

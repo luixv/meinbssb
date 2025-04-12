@@ -4,21 +4,25 @@
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart' as mailer;
+import 'package:mailer/smtp_server.dart' as smtp;
 import '/services/config_service.dart';
 
-// Define a contract for sending emails
 abstract class EmailSender {
-  Future<SendReport> send(Message message, SmtpServer server);
+  Future<mailer.SendReport> send(
+    mailer.Message message,
+    smtp.SmtpServer server,
+  );
 }
 
-// Implement the actual email sending using the mailer package
 class MailerEmailSender implements EmailSender {
   @override
-  Future<SendReport> send(Message message, SmtpServer server) async {
-    return await send(message, server); // Call the top-level send function
+  Future<mailer.SendReport> send(
+    mailer.Message message,
+    smtp.SmtpServer server,
+  ) async {
+    return await mailer.send(message, server);
   }
 }
 
@@ -49,15 +53,15 @@ class EmailService {
         };
       }
 
-      final smtpServer = SmtpServer(
+      final smtpServer = smtp.SmtpServer(
         smtpHost,
         username: username,
         password: password,
       );
 
       final message =
-          Message()
-            ..from = Address(from)
+          mailer.Message()
+            ..from = mailer.Address(from)
             ..recipients.add(recipient)
             ..subject = subject
             ..text = body;
@@ -79,23 +83,14 @@ class EmailService {
   }
 
   Future<String?> getRegistrationSubject() async {
-    return ConfigService.getString(
-      'registrationSubject',
-      'smtpSettings',
-    ); // Access static method directly
+    return ConfigService.getString('registrationSubject', 'smtpSettings');
   }
 
   Future<String?> getRegistrationContent() async {
-    return ConfigService.getString(
-      'registrationContent',
-      'smtpSettings',
-    ); // Access static method directly
+    return ConfigService.getString('registrationContent', 'smtpSettings');
   }
 
   Future<String?> getFromEmail() async {
-    return ConfigService.getString(
-      'fromEmail',
-      'smtpSettings',
-    ); // Access static method directly
+    return ConfigService.getString('fromEmail', 'smtpSettings');
   }
 }
