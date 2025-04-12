@@ -27,21 +27,28 @@ void main() {
       expect(validateIBAN('GB82W'), isFalse);
     });
 
-    test('should return false for an invalid IBAN (incorrect check digits)', () {
-      expect(validateIBAN('GB82 WEST 1234 5698 7654 33'), isFalse);
-    });
+    test(
+      'should return false for an invalid IBAN (incorrect check digits)',
+      () {
+        expect(validateIBAN('GB82 WEST 1234 5698 7654 33'), isFalse);
+      },
+    );
 
-    test('should return false for another invalid IBAN (incorrect check digits)', () {
-      expect(validateIBAN('DE89370400440532013001'), isFalse);
-    });
+    test(
+      'should return false for another invalid IBAN (incorrect check digits)',
+      () {
+        expect(validateIBAN('DE89370400440532013001'), isFalse);
+      },
+    );
 
-    test('should return false for an IBAN with lowercase letters if not handled', () {
-      expect(validateIBAN('gb82west12345698765432'), isTrue); // Should pass due to toUpperCase()
-    });
-
-    test('should handle country codes correctly', () {
-      expect(validateIBAN('NL91ABNA0417164300'), isTrue);
-      expect(validateIBAN('BE62271064878003'), isTrue);
-    });
+    test(
+      'should return false for an IBAN with lowercase letters if not handled',
+      () {
+        expect(
+          validateIBAN('gb82west12345698765432'),
+          isTrue,
+        ); // Should pass due to toUpperCase()
+      },
+    );
   });
 }

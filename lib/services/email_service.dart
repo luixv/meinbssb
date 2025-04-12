@@ -9,7 +9,24 @@ import 'package:mailer/smtp_server.dart';
 import 'package:flutter/material.dart';
 import '/services/config_service.dart';
 
+// Define a contract for sending emails
+abstract class EmailSender {
+  Future<SendReport> send(Message message, SmtpServer server);
+}
+
+// Implement the actual email sending using the mailer package
+class MailerEmailSender implements EmailSender {
+  @override
+  Future<SendReport> send(Message message, SmtpServer server) async {
+    return await send(message, server); // Call the top-level send function
+  }
+}
+
 class EmailService {
+  final EmailSender _emailSender;
+
+  EmailService({required EmailSender emailSender}) : _emailSender = emailSender;
+
   Future<Map<String, dynamic>> sendEmail({
     required String from,
     required String recipient,
@@ -45,7 +62,7 @@ class EmailService {
             ..subject = subject
             ..text = body;
 
-      final sendReport = await send(message, smtpServer);
+      final sendReport = await _emailSender.send(message, smtpServer);
       debugPrint('Message sent: ${sendReport.toString()}');
 
       return {"ResultType": 1, "ResultMessage": "Email sent successfully"};
@@ -62,14 +79,23 @@ class EmailService {
   }
 
   Future<String?> getRegistrationSubject() async {
-    return ConfigService.getString('registrationSubject', 'smtpSettings');
+    return ConfigService.getString(
+      'registrationSubject',
+      'smtpSettings',
+    ); // Access static method directly
   }
 
   Future<String?> getRegistrationContent() async {
-    return ConfigService.getString('registrationContent', 'smtpSettings');
+    return ConfigService.getString(
+      'registrationContent',
+      'smtpSettings',
+    ); // Access static method directly
   }
 
   Future<String?> getFromEmail() async {
-    return ConfigService.getString('fromEmail', 'smtpSettings');
+    return ConfigService.getString(
+      'fromEmail',
+      'smtpSettings',
+    ); // Access static method directly
   }
 }

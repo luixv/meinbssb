@@ -18,7 +18,10 @@ class ConfigService {
     if (_config == null) return null;
 
     dynamic value;
-    if (section != null && section.isNotEmpty && _config!.containsKey(section) && _config![section] is Map) {
+    if (section != null &&
+        section.isNotEmpty &&
+        _config!.containsKey(section) &&
+        _config![section] is Map) {
       value = _config![section][key];
     } else {
       value = _config![key];
@@ -37,7 +40,10 @@ class ConfigService {
     if (_config == null) return null;
 
     dynamic value;
-    if (section != null && section.isNotEmpty && _config!.containsKey(section) && _config![section] is Map) {
+    if (section != null &&
+        section.isNotEmpty &&
+        _config!.containsKey(section) &&
+        _config![section] is Map) {
       value = _config![section][key];
     } else {
       value = _config![key];
@@ -48,5 +54,4 @@ class ConfigService {
     }
     return null;
   }
-
 }

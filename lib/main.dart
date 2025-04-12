@@ -40,7 +40,16 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<ApiService>(create: (context) => apiService),
-        Provider<EmailService>(create: (_) => EmailService()),
+        Provider<EmailSender>(create: (context) => MailerEmailSender()),
+        // We still provide ConfigService for other parts of the app that might need it
+        Provider<ConfigService>(create: (context) => ConfigService()),
+        Provider<EmailService>(
+          create:
+              (context) => EmailService(
+                emailSender: context.read<EmailSender>(),
+                // Removed the incorrect 'configService' named parameter
+              ),
+        ),
       ],
       child: MyApp(),
     ),

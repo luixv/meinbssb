@@ -8,6 +8,7 @@ import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:mockito/mockito.dart';
+import 'package:meinbssb/services/config_service.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 
@@ -15,16 +16,7 @@ class MockDatabaseService extends Mock implements ImageService {}
 
 class MockCacheService extends Mock implements CacheService {}
 
-class MockApiService extends ApiService {
-  MockApiService({
-    required super.httpClient,
-    required super.imageService,
-    required super.cacheService,
-    required super.baseIp,
-    required super.port,
-    required super.serverTimeout,
-  });
-
+class MockApiService extends Mock implements ApiService {
   @override
   Future<Map<String, dynamic>> login(String email, String password) async {
     if (email == 'test@test.com' && password == 'password') {
@@ -39,7 +31,20 @@ class MockApiService extends ApiService {
   }
 }
 
-class MockEmailService extends EmailService {
+class MockEmailSender extends Mock implements EmailSender {}
+
+class MockConfigService extends Mock implements ConfigService {
+  String? getString(String key, [String? section]) =>
+      super.noSuchMethod(
+            Invocation.method(#getString, [key, section]),
+            returnValue: null,
+          )
+          as String?;
+}
+
+class MockEmailService extends Mock implements EmailService {
+  MockEmailService({required EmailSender emailSender});
+
   @override
   Future<Map<String, dynamic>> sendEmail({
     required String from,
@@ -54,21 +59,15 @@ class MockEmailService extends EmailService {
 
 void main() {
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
+    final mockApiService = MockApiService();
+    final mockEmailSender = MockEmailSender();
+    final mockEmailService = MockEmailService(emailSender: mockEmailSender);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<ApiService>(
-            create:
-                (_) => MockApiService(
-                  httpClient: MockHttpClient(),
-                  imageService: MockDatabaseService(),
-                  cacheService: MockCacheService(),
-                  baseIp: 'test',
-                  port: '1234',
-                  serverTimeout: 10,
-                ),
-          ),
-          Provider<EmailService>(create: (_) => MockEmailService()),
+          Provider<ApiService>(create: (context) => mockApiService),
+          Provider<EmailService>(create: (context) => mockEmailService),
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),
@@ -81,21 +80,15 @@ void main() {
   });
 
   testWidgets('Can toggle password visibility', (WidgetTester tester) async {
+    final mockApiService = MockApiService();
+    final mockEmailSender = MockEmailSender();
+    final mockEmailService = MockEmailService(emailSender: mockEmailSender);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<ApiService>(
-            create:
-                (_) => MockApiService(
-                  httpClient: MockHttpClient(),
-                  imageService: MockDatabaseService(),
-                  cacheService: MockCacheService(),
-                  baseIp: 'test',
-                  port: '1234',
-                  serverTimeout: 10,
-                ),
-          ),
-          Provider<EmailService>(create: (_) => MockEmailService()),
+          Provider<ApiService>(create: (context) => mockApiService),
+          Provider<EmailService>(create: (context) => mockEmailService),
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),
@@ -115,21 +108,15 @@ void main() {
   });
 
   testWidgets('Shows error on invalid login', (WidgetTester tester) async {
+    final mockApiService = MockApiService();
+    final mockEmailSender = MockEmailSender();
+    final mockEmailService = MockEmailService(emailSender: mockEmailSender);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<ApiService>(
-            create:
-                (_) => MockApiService(
-                  httpClient: MockHttpClient(),
-                  imageService: MockDatabaseService(),
-                  cacheService: MockCacheService(),
-                  baseIp: 'test',
-                  port: '1234',
-                  serverTimeout: 10,
-                ),
-          ),
-          Provider<EmailService>(create: (_) => MockEmailService()),
+          Provider<ApiService>(create: (context) => mockApiService),
+          Provider<EmailService>(create: (context) => mockEmailService),
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),
