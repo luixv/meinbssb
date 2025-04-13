@@ -39,7 +39,8 @@ class _ZweitmitgliedschaftenScreenState
   }
 
   Future<void> _loadAppColor() async {
-    final colorString = ConfigService.getString('appColor', 'theme');
+    final configService = Provider.of<ConfigService>(context, listen: false);
+    final colorString = configService.getString('appColor', 'theme');
     if (mounted && colorString != null && colorString.isNotEmpty) {
       setState(() {
         _appColor = Color(int.parse(colorString));

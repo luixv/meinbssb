@@ -28,8 +28,13 @@ class MailerEmailSender implements EmailSender {
 
 class EmailService {
   final EmailSender _emailSender;
+  final ConfigService _configService;
 
-  EmailService({required EmailSender emailSender}) : _emailSender = emailSender;
+  EmailService({
+    required EmailSender emailSender,
+    required ConfigService configService,
+  }) : _emailSender = emailSender,
+       _configService = configService; // Inject ConfigService
 
   Future<Map<String, dynamic>> sendEmail({
     required String from,
@@ -41,9 +46,9 @@ class EmailService {
     debugPrint("sendEmail called with emailId: $emailId");
 
     try {
-      final smtpHost = ConfigService.getString('host', 'smtpSettings');
-      final username = ConfigService.getString('username', 'smtpSettings');
-      final password = ConfigService.getString('password', 'smtpSettings');
+      final smtpHost = _configService.getString('host', 'smtpSettings');
+      final username = _configService.getString('username', 'smtpSettings');
+      final password = _configService.getString('password', 'smtpSettings');
 
       if (smtpHost == null || username == null || password == null) {
         debugPrint('SMTP settings are not fully configured in config.json.');
@@ -83,14 +88,14 @@ class EmailService {
   }
 
   Future<String?> getRegistrationSubject() async {
-    return ConfigService.getString('registrationSubject', 'smtpSettings');
+    return _configService.getString('registrationSubject', 'smtpSettings');
   }
 
   Future<String?> getRegistrationContent() async {
-    return ConfigService.getString('registrationContent', 'smtpSettings');
+    return _configService.getString('registrationContent', 'smtpSettings');
   }
 
   Future<String?> getFromEmail() async {
-    return ConfigService.getString('fromEmail', 'smtpSettings');
+    return _configService.getString('fromEmail', 'smtpSettings');
   }
 }

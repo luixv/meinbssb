@@ -8,10 +8,14 @@ import '/services/config_service.dart';
 
 class NetworkService {
   final InternetConnectionChecker _connectionChecker;
+  final ConfigService _configService;
 
-  NetworkService({InternetConnectionChecker? connectionChecker})
-    : _connectionChecker =
-          connectionChecker ?? InternetConnectionChecker.createInstance();
+  NetworkService({
+    InternetConnectionChecker? connectionChecker,
+    required ConfigService configService,
+  }) : _connectionChecker =
+           connectionChecker ?? InternetConnectionChecker.createInstance(),
+       _configService = configService;
 
   Future<bool> hasInternet() async {
     return await _connectionChecker.hasConnection;
@@ -22,9 +26,7 @@ class NetworkService {
   }
 
   int _getCacheExpirationHoursFromConfig() {
-    final expirationString = ConfigService.getString(
-      'cacheExpirationHours',
-    ); // Call the static method directly
+    final expirationString = _configService.getString('cacheExpirationHours');
     return int.tryParse(expirationString ?? '24') ?? 24;
   }
 }

@@ -4,11 +4,11 @@ import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:provider/provider.dart';
+import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/services/config_service.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 
@@ -34,6 +34,7 @@ class MockApiService extends Mock implements ApiService {
 class MockEmailSender extends Mock implements EmailSender {}
 
 class MockConfigService extends Mock implements ConfigService {
+  @override
   String? getString(String key, [String? section]) =>
       super.noSuchMethod(
             Invocation.method(#getString, [key, section]),
@@ -61,6 +62,7 @@ void main() {
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
     final mockApiService = MockApiService();
     final mockEmailSender = MockEmailSender();
+    final mockConfigService = MockConfigService();
     final mockEmailService = MockEmailService(emailSender: mockEmailSender);
 
     await tester.pumpWidget(
@@ -68,6 +70,9 @@ void main() {
         providers: [
           Provider<ApiService>(create: (context) => mockApiService),
           Provider<EmailService>(create: (context) => mockEmailService),
+          Provider<ConfigService>(
+            create: (context) => mockConfigService,
+          ), // Provide MockConfigService
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),
@@ -82,6 +87,7 @@ void main() {
   testWidgets('Can toggle password visibility', (WidgetTester tester) async {
     final mockApiService = MockApiService();
     final mockEmailSender = MockEmailSender();
+    final mockConfigService = MockConfigService();
     final mockEmailService = MockEmailService(emailSender: mockEmailSender);
 
     await tester.pumpWidget(
@@ -89,6 +95,9 @@ void main() {
         providers: [
           Provider<ApiService>(create: (context) => mockApiService),
           Provider<EmailService>(create: (context) => mockEmailService),
+          Provider<ConfigService>(
+            create: (context) => mockConfigService,
+          ), // Provide MockConfigService
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),
@@ -110,6 +119,7 @@ void main() {
   testWidgets('Shows error on invalid login', (WidgetTester tester) async {
     final mockApiService = MockApiService();
     final mockEmailSender = MockEmailSender();
+    final mockConfigService = MockConfigService();
     final mockEmailService = MockEmailService(emailSender: mockEmailSender);
 
     await tester.pumpWidget(
@@ -117,6 +127,9 @@ void main() {
         providers: [
           Provider<ApiService>(create: (context) => mockApiService),
           Provider<EmailService>(create: (context) => mockEmailService),
+          Provider<ConfigService>(
+            create: (context) => mockConfigService,
+          ), // Provide MockConfigService
         ],
         child: MaterialApp(home: LoginScreen(onLoginSuccess: (userData) {})),
       ),

@@ -1,5 +1,5 @@
 {
-    "apiBaseIP": "172.21.144.1", 
+    "apiBaseIP": "127.0.0.1", 
     "apiPort": "3001",
     "serverTimeout": 8,
     "cacheExpirationHours": "24",

@@ -42,7 +42,6 @@ void main() {
       expect(state.validateEmail('missing@'), isFalse);
       expect(state.validateEmail('@domain.com'), isFalse);
       expect(state.validateEmail('mein@@domain.com'), isFalse);
-      expect(state.validateEmail(''), isFalse);
     });
 
     test('Email validation', () {

@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/image_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/network_service.dart';
 import 'package:mockito/mockito.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 
-class MockDatabaseService extends Mock implements ImageService {}
+class MockImageService extends Mock implements ImageService {}
 
 class MockCacheService extends Mock implements CacheService {}
+
+class MockNetworkService extends Mock implements NetworkService {}
+
+class MockConfigService extends Mock implements ConfigService {
+  @override
+  String? getString(String key, [String? section]) =>
+      super.noSuchMethod(
+            Invocation.method(#getString, [key, section]),
+            returnValue: null,
+          )
+          as String?;
+}
 
 // Updated MockApiService to use super parameters and mocks
 class MockApiService extends ApiService {
@@ -19,6 +34,7 @@ class MockApiService extends ApiService {
     required super.httpClient,
     required super.imageService,
     required super.cacheService,
+    required super.networkService,
     required super.baseIp,
     required super.port,
     required super.serverTimeout,
@@ -31,72 +47,87 @@ class MockApiService extends ApiService {
 }
 
 void main() {
-  testWidgets('Displays password reset form', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: PasswordResetScreen(
-            apiService: MockApiService(
-              httpClient: MockHttpClient(),
-              imageService: MockDatabaseService(),
-              cacheService: MockCacheService(),
-              baseIp: 'test',
-              port: '1234',
-              serverTimeout: 10,
-            ),
-          ),
-          appBar: AppBar(title: const Text('Test')),
-        ),
-      ),
-    );
-
-    // Find the main heading by style (size 24 and bold)
-    expect(
-      find.byWidgetPredicate(
-        (widget) =>
-            widget is Text &&
-            widget.data == 'Passwort zurücksetzen' &&
-            widget.style?.fontSize == 24 &&
-            widget.style?.fontWeight == FontWeight.bold,
-      ),
-      findsOneWidget,
-    );
-
-    expect(find.byType(TextField), findsOneWidget);
-  });
-
-  testWidgets('Validates pass number input', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: PasswordResetScreen(
-            apiService: MockApiService(
-              httpClient: MockHttpClient(),
-              imageService: MockDatabaseService(),
-              cacheService: MockCacheService(),
-              baseIp: 'test',
-              port: '1234',
-              serverTimeout: 10,
+  group('PasswordResetScreen Tests', () {
+    testWidgets('Displays password reset form', (tester) async {
+      await tester.pumpWidget(
+        Provider<ConfigService>(
+          // Provide ConfigService
+          create: (context) => MockConfigService(),
+          child: MaterialApp(
+            home: Scaffold(
+              body: PasswordResetScreen(
+                apiService: MockApiService(
+                  httpClient: MockHttpClient(),
+                  imageService: MockImageService(),
+                  networkService: MockNetworkService(),
+                  cacheService: MockCacheService(),
+                  baseIp: 'test',
+                  port: '1234',
+                  serverTimeout: 10,
+                ),
+              ),
+              appBar: AppBar(title: const Text('Test')),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Test invalid input
-    await tester.enterText(find.byType(TextField), '1234');
-    await tester.pump();
+      // Find the main heading by style (size 24 and bold)
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Text &&
+              widget.data == 'Passwort zurücksetzen' &&
+              widget.style?.fontSize == 24 &&
+              widget.style?.fontWeight == FontWeight.bold,
+        ),
+        findsOneWidget,
+      );
 
-    final errorText =
-        tester.widget<TextField>(find.byType(TextField)).decoration?.errorText;
-    expect(errorText, contains('Passnummer muss 8 Ziffern enthalten'));
+      expect(find.byType(TextField), findsOneWidget);
+    });
 
-    // Test valid input
-    await tester.enterText(find.byType(TextField), '12345678');
-    await tester.pump();
-    expect(
-      tester.widget<TextField>(find.byType(TextField)).decoration?.errorText,
-      isNull,
-    );
+    testWidgets('Validates pass number input', (tester) async {
+      await tester.pumpWidget(
+        Provider<ConfigService>(
+          // Provide ConfigService
+          create: (context) => MockConfigService(),
+          child: MaterialApp(
+            home: Scaffold(
+              body: PasswordResetScreen(
+                apiService: MockApiService(
+                  httpClient: MockHttpClient(),
+                  imageService: MockImageService(),
+                  networkService: MockNetworkService(),
+                  cacheService: MockCacheService(),
+                  baseIp: 'test',
+                  port: '1234',
+                  serverTimeout: 10,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Test invalid input
+      await tester.enterText(find.byType(TextField), '1234');
+      await tester.pump();
+
+      final errorText =
+          tester
+              .widget<TextField>(find.byType(TextField))
+              .decoration
+              ?.errorText;
+      expect(errorText, contains('Passnummer muss 8 Ziffern enthalten'));
+
+      // Test valid input
+      await tester.enterText(find.byType(TextField), '12345678');
+      await tester.pump();
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).decoration?.errorText,
+        isNull,
+      );
+    });
   });
 }

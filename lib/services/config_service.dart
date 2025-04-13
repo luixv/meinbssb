@@ -1,19 +1,37 @@
+// config_service.dart
+
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class ConfigService {
   static Map<String, dynamic>? _config;
+  static ConfigService? _instance;
 
-  static Future<void> load(String path) async {
+  ConfigService._internal();
+
+  static Future<ConfigService> load(String path) async {
     try {
       final String data = await rootBundle.loadString(path);
       _config = jsonDecode(data);
+      _instance ??= ConfigService._internal();
+      return _instance!;
     } catch (e) {
-      _config = {}; // Initialize to an empty map on error
+      _config = {};
+      _instance ??= ConfigService._internal();
+      return _instance!;
     }
   }
 
-  static int? getInt(String key, [String? section]) {
+  static ConfigService get instance {
+    if (_instance == null) {
+      throw StateError(
+        'ConfigService has not been loaded. Call ConfigService.load() first.',
+      );
+    }
+    return _instance!;
+  }
+
+  int? getInt(String key, [String? section]) {
     if (_config == null) return null;
 
     dynamic value;
@@ -35,7 +53,7 @@ class ConfigService {
     return null;
   }
 
-  static String? getString(String key, [String? section]) {
+  String? getString(String key, [String? section]) {
     if (_config == null) return null;
 
     dynamic value;

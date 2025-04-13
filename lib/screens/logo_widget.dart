@@ -3,6 +3,7 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/services/config_service.dart';
 
@@ -11,7 +12,8 @@ class LogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logoName = ConfigService.getString('logoName', 'appTheme');
+    final configService = Provider.of<ConfigService>(context, listen: false);
+    final logoName = configService.getString('logoName', 'appTheme');
     return Image.asset(
       logoName ?? 'assets/images/myBSSB-logo.png',
       height: UIConstants.logoSize,

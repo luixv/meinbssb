@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/impressum_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
@@ -11,17 +12,32 @@ import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/config_service.dart';
+import '/services/network_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ConfigService.load('assets/config.json');
+  final configServiceInstance = await ConfigService.load('assets/config.json');
 
-  final serverTimeout = ConfigService.getInt('serverTimeout', '') ?? 10;
-  final baseIP = ConfigService.getString('apiBaseIP', '') ?? '127.0.0.1';
-  final port = ConfigService.getString('apiPort', '') ?? '3001';
+  final serverTimeout =
+      configServiceInstance.getInt('serverTimeout', 'theme') ??
+      10; // Example with section
+  final baseIP =
+      configServiceInstance.getString('apiBaseIP', 'api') ??
+      '127.0.0.1'; // Example with section
+  final port =
+      configServiceInstance.getString('apiPort', 'api') ??
+      '3001'; // Example with section
 
   final imageService = ImageService();
-  final cacheService = CacheService();
+  final prefs = await SharedPreferences.getInstance();
+  final cacheService = CacheService(
+    prefs: prefs,
+    configService: ConfigService.instance,
+  ); // Use ConfigService.instance
+  final networkService = NetworkService(
+    configService: ConfigService.instance,
+  ); // Use ConfigService.instance
+
   final httpClient = HttpClient(
     baseUrl: 'http://$baseIP:$port',
     serverTimeout: serverTimeout,
@@ -31,6 +47,7 @@ void main() async {
     httpClient: httpClient,
     imageService: imageService,
     cacheService: cacheService,
+    networkService: networkService,
     baseIp: baseIP,
     port: port,
     serverTimeout: serverTimeout,
@@ -41,13 +58,17 @@ void main() async {
       providers: [
         Provider<ApiService>(create: (context) => apiService),
         Provider<EmailSender>(create: (context) => MailerEmailSender()),
-        // We still provide ConfigService for other parts of the app that might need it
-        Provider<ConfigService>(create: (context) => ConfigService()),
+        Provider<ConfigService>(
+          create: (context) => ConfigService.instance,
+        ), // Provide the instance
+        Provider<NetworkService>(create: (context) => networkService),
+        Provider<CacheService>(create: (context) => cacheService),
         Provider<EmailService>(
           create:
               (context) => EmailService(
                 emailSender: context.read<EmailSender>(),
-                // Removed the incorrect 'configService' named parameter
+                configService:
+                    context.read<ConfigService>(), // Access via context.read
               ),
         ),
       ],
@@ -83,6 +104,7 @@ class MyAppState extends State<MyApp> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
       initialRoute: _isLoggedIn ? '/home' : '/login',

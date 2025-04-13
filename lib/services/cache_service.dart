@@ -9,16 +9,22 @@ import '/services/config_service.dart';
 
 class CacheService extends BaseService {
   static const String _cacheKeyPrefix = 'cache_';
+  final SharedPreferences _prefs;
+  final ConfigService _configService;
+
+  CacheService({
+    required SharedPreferences prefs,
+    required ConfigService configService,
+  }) : _prefs = prefs,
+       _configService = configService;
 
   Future<void> setString(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_cacheKeyPrefix + key, value);
+    await _prefs.setString(_cacheKeyPrefix + key, value);
     logDebug('Cached string for key: $key');
   }
 
   Future<String?> getString(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final value = prefs.getString(_cacheKeyPrefix + key);
+    final value = _prefs.getString(_cacheKeyPrefix + key);
     logDebug(
       'Retrieved string for key: $key, value: ${value != null ? 'exists' : 'null'}',
     );
@@ -26,14 +32,12 @@ class CacheService extends BaseService {
   }
 
   Future<void> setJson(String key, Map<String, dynamic> json) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_cacheKeyPrefix + key, jsonEncode(json));
+    await _prefs.setString(_cacheKeyPrefix + key, jsonEncode(json));
     logDebug('Cached JSON for key: $key');
   }
 
   Future<Map<String, dynamic>?> getJson(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(_cacheKeyPrefix + key);
+    final jsonString = _prefs.getString(_cacheKeyPrefix + key);
     if (jsonString == null) {
       logDebug('No JSON found for key: $key');
       return null;
@@ -43,44 +47,38 @@ class CacheService extends BaseService {
   }
 
   Future<void> setInt(String key, int value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_cacheKeyPrefix + key, value);
+    await _prefs.setInt(_cacheKeyPrefix + key, value);
     logDebug('Cached int for key: $key, value: $value');
   }
 
   Future<int?> getInt(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final value = prefs.getInt(_cacheKeyPrefix + key);
+    final value = _prefs.getInt(_cacheKeyPrefix + key);
     logDebug('Retrieved int for key: $key, value: ${value ?? 'null'}');
     return value;
   }
 
   Future<void> setBool(String key, bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_cacheKeyPrefix + key, value);
+    await _prefs.setBool(_cacheKeyPrefix + key, value);
     logDebug('Cached bool for key: $key, value: $value');
   }
 
   Future<bool?> getBool(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final value = prefs.getBool(_cacheKeyPrefix + key);
+    final value = _prefs.getBool(_cacheKeyPrefix + key);
     logDebug('Retrieved bool for key: $key, value: ${value ?? 'null'}');
     return value;
   }
 
   Future<void> remove(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_cacheKeyPrefix + key);
+    await _prefs.remove(_cacheKeyPrefix + key);
     logDebug('Removed cache for key: $key');
   }
 
   Future<void> clear() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
+    final keys = _prefs.getKeys();
     int count = 0;
     for (String key in keys) {
       if (key.startsWith(_cacheKeyPrefix)) {
-        await prefs.remove(key);
+        await _prefs.remove(key);
         count++;
       }
     }
@@ -88,8 +86,7 @@ class CacheService extends BaseService {
   }
 
   Future<bool> containsKey(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    final exists = prefs.containsKey(_cacheKeyPrefix + key);
+    final exists = _prefs.containsKey(_cacheKeyPrefix + key);
     logDebug('Checked if key exists: $key, result: $exists');
     return exists;
   }
@@ -113,19 +110,20 @@ class CacheService extends BaseService {
     Future<T> Function() fetchData,
     T Function(dynamic response) processResponse,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
-
     Future<T> retrieveCachedData() async {
       return getCachedData(cacheKey, () async {
-        final cachedJson = prefs.getString(cacheKey);
+        final cachedJson = _prefs.getString(cacheKey);
         if (cachedJson != null) {
           final cachedData = jsonDecode(cachedJson);
           final globalTimestamp = await getInt('cacheTimestamp');
+          final cacheExpirationHours =
+              _configService.getInt('cacheExpirationHours') ?? 24;
+          final validityDurationConfig = Duration(hours: cacheExpirationHours);
 
           if (globalTimestamp != null) {
             final expirationTime = DateTime.fromMillisecondsSinceEpoch(
               globalTimestamp,
-            ).add(validityDuration);
+            ).add(validityDurationConfig); // Use config-based duration
             if (DateTime.now().isBefore(expirationTime)) {
               logDebug(
                 'Using cached data from SharedPreferences for key: $cacheKey',
@@ -148,7 +146,7 @@ class CacheService extends BaseService {
       final processedData = processResponse(response);
 
       if (processedData != null) {
-        await prefs.setString(cacheKey, jsonEncode(processedData));
+        await _prefs.setString(cacheKey, jsonEncode(processedData));
         await setCacheTimestamp();
         logDebug('Successfully cached fresh data for key: $cacheKey');
         return processedData;
@@ -163,11 +161,5 @@ class CacheService extends BaseService {
       logDebug('Retrieving cached data due to error for key: $cacheKey');
       return await retrieveCachedData();
     }
-  }
-
-  // Method to get cache expiration hours from config
-  static Future<int> getCacheExpirationHours() async {
-    final expirationString = ConfigService.getString('cacheExpirationHours');
-    return int.tryParse(expirationString ?? '24') ?? 24;
   }
 }

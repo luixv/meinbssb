@@ -26,19 +26,21 @@ class ApiService {
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
+
   final NetworkService _networkService;
 
   ApiService({
     required HttpClient httpClient,
     required ImageService imageService,
     required CacheService cacheService,
+    required NetworkService networkService,
     required String baseIp,
     required String port,
     required int serverTimeout,
   }) : _httpClient = httpClient,
        _imageService = imageService,
        _cacheService = cacheService,
-       _networkService = NetworkService(); // Initialize here
+       _networkService = networkService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
