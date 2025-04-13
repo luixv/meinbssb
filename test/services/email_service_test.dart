@@ -118,9 +118,9 @@ void main() {
 
 class FakeSendReport extends SendReport {
   FakeSendReport(
-    Message mail,
-    DateTime connectionOpened,
-    DateTime messageSendingStart,
-    DateTime messageSendingEnd,
-  ) : super(mail, connectionOpened, messageSendingStart, messageSendingEnd);
+    super.mail,
+    super.connectionOpened,
+    super.messageSendingStart,
+    super.messageSendingEnd,
+  );
 }
