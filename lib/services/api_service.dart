@@ -13,7 +13,6 @@ import '/services/http_client.dart';
 import '/services/image_service.dart';
 import '/services/logger_service.dart';
 import '/services/network_service.dart';
-import '/services/config_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -32,16 +31,14 @@ class ApiService {
     required String baseIp,
     required String port,
     required int serverTimeout,
-    required ConfigService configService,
   }) : _httpClient = httpClient,
        _imageService = imageService,
        _cacheService = cacheService,
-       _networkService = networkService,
-       _configService = configService;
+       _networkService = networkService;
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
-  final ConfigService _configService;
+
   final NetworkService _networkService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
@@ -276,52 +273,70 @@ class ApiService {
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    final cacheKey = 'zweitmitgliedschaften_$personId';
-    
-    // Try to get cached data first
-    final cachedData = await _cacheService.getCachedResponse(cacheKey);
-    if (cachedData != null) {
-      return cachedData;
-    }
-    
-    try {
-      final response = await _httpClient.get(
-        '${_configService.getString('apiUrl', 'api')}/zweitmitgliedschaften/$personId',
-      );
-      
-      // Cache the successful response
-      await _cacheService.cacheResponse(cacheKey, response);
-      
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      'zweitmitgliedschaften_$personId',
+      getCacheExpirationDuration(),
+      () async {
+        final response = await _httpClient.get(
+          'Zweitmitgliedschaften/$personId',
+        );
+        return _mapZweitmitgliedschaftenRemoteResponse(response);
+      },
+      (response) => _mapZweitmitgliedschaftenCacheResponse(response),
+    );
   }
 
-  Future<List<dynamic>> fetchPassdatenZVE(int personId, int passdatenId) async {
-    final cacheKey = 'passdaten_zve_${personId}_$passdatenId';
-    
-    // Try to get cached data first
-    final cachedData = await _cacheService.getCachedResponse(cacheKey);
-    if (cachedData != null) {
-      return cachedData;
+  List<dynamic> _mapZweitmitgliedschaftenRemoteResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map(
+            (item) => {
+              'VEREINID': item['VEREINID'],
+              'VEREINNR': item['VEREINNR'],
+              'VEREINNAME': item['VEREINNAME'],
+              'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+            },
+          )
+          .toList();
     }
-    
-    try {
-      final response = await _httpClient.get(
-        '${_configService.getString('apiUrl', 'api')}/passdaten/zve/$personId/$passdatenId',
-      );
-      
-      // Cache the successful response
-      await _cacheService.cacheResponse(cacheKey, response);
-      
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return [];
   }
 
-  Future<void> clearCache() async {
-    await _cacheService.clearCache();
+  List<dynamic> _mapZweitmitgliedschaftenCacheResponse(dynamic response) {
+    return response is List ? response : [];
+  }
+
+  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
+    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      'passdatenzve_${passdatenId}_$personId',
+      getCacheExpirationDuration(),
+      () async {
+        final response = await _httpClient.get(
+          'PassdatenZVE/$passdatenId/$personId',
+        );
+        return _mapPassdatenZVERemoteResponse(response);
+      },
+      (response) => _mapPassdatenZVECacheResponse(response),
+    );
+  }
+
+  List<dynamic> _mapPassdatenZVERemoteResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map(
+            (item) => {
+              'DISZIPLINNR': item['DISZIPLINNR'],
+              'VEREINNAME': item['VEREINNAME'],
+              'DISZIPLIN': item['DISZIPLIN'],
+              'DISZIPLINID': item['DISZIPLINID'],
+            },
+          )
+          .toList();
+    }
+    return [];
+  }
+
+  List<dynamic> _mapPassdatenZVECacheResponse(dynamic response) {
+    return response is List ? response : [];
   }
 }
