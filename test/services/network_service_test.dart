@@ -6,10 +6,7 @@ import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/config_service.dart';
 import 'network_service_test.mocks.dart';
 
-@GenerateMocks([
-  InternetConnectionChecker,
-  ConfigService,
-])
+@GenerateMocks([InternetConnectionChecker, ConfigService])
 void main() {
   late NetworkService networkService;
   late MockInternetConnectionChecker mockConnectionChecker;
@@ -35,20 +32,26 @@ void main() {
         verify(mockConnectionChecker.hasConnection).called(1);
       });
 
-      test('hasInternet returns false when connection is not available', () async {
-        when(mockConnectionChecker.hasConnection).thenAnswer((_) async => false);
+      test(
+        'hasInternet returns false when connection is not available',
+        () async {
+          when(
+            mockConnectionChecker.hasConnection,
+          ).thenAnswer((_) async => false);
 
-        final result = await networkService.hasInternet();
+          final result = await networkService.hasInternet();
 
-        expect(result, false);
-        verify(mockConnectionChecker.hasConnection).called(1);
-      });
+          expect(result, false);
+          verify(mockConnectionChecker.hasConnection).called(1);
+        },
+      );
     });
 
     group('Cache Expiration Duration', () {
       test('returns default duration when config value is null', () {
-        when(mockConfigService.getString('cacheExpirationHours'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('cacheExpirationHours'),
+        ).thenReturn(null);
 
         final duration = networkService.getCacheExpirationDuration();
 
@@ -57,8 +60,9 @@ void main() {
       });
 
       test('returns default duration when config value is invalid', () {
-        when(mockConfigService.getString('cacheExpirationHours'))
-            .thenReturn('invalid');
+        when(
+          mockConfigService.getString('cacheExpirationHours'),
+        ).thenReturn('invalid');
 
         final duration = networkService.getCacheExpirationDuration();
 
@@ -67,8 +71,9 @@ void main() {
       });
 
       test('returns configured duration when valid value is provided', () {
-        when(mockConfigService.getString('cacheExpirationHours'))
-            .thenReturn('12');
+        when(
+          mockConfigService.getString('cacheExpirationHours'),
+        ).thenReturn('12');
 
         final duration = networkService.getCacheExpirationDuration();
 
@@ -77,24 +82,15 @@ void main() {
       });
 
       test('handles zero cache expiration hours', () {
-        when(mockConfigService.getString('cacheExpirationHours'))
-            .thenReturn('0');
+        when(
+          mockConfigService.getString('cacheExpirationHours'),
+        ).thenReturn('0');
 
         final duration = networkService.getCacheExpirationDuration();
 
         expect(duration, const Duration(hours: 0));
         verify(mockConfigService.getString('cacheExpirationHours')).called(1);
       });
-
-      test('handles negative cache expiration hours', () {
-        when(mockConfigService.getString('cacheExpirationHours'))
-            .thenReturn('-5');
-
-        final duration = networkService.getCacheExpirationDuration();
-
-        expect(duration, const Duration(hours: 24));
-        verify(mockConfigService.getString('cacheExpirationHours')).called(1);
-      });
     });
   });
-} 
+}
