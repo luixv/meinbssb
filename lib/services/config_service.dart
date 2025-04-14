@@ -4,10 +4,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class ConfigService {
+  ConfigService._internal();
   static Map<String, dynamic>? _config;
   static ConfigService? _instance;
-
-  ConfigService._internal();
 
   static Future<ConfigService> load(String path) async {
     try {

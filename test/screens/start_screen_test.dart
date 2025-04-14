@@ -80,7 +80,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text("Keine Schulungen gefunden."), findsOneWidget);
+    expect(find.text('Keine Schulungen gefunden.'), findsOneWidget);
   });
 
   testWidgets('StartScreen displays Schulungen list when data is returned', (

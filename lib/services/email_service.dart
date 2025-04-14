@@ -26,14 +26,13 @@ class MailerEmailSender implements EmailSender {
 }
 
 class EmailService {
-  final EmailSender _emailSender;
-  final ConfigService _configService;
-
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
   }) : _emailSender = emailSender,
-       _configService = configService; // Inject ConfigService
+       _configService = configService;
+  final EmailSender _emailSender;
+  final ConfigService _configService; // Inject ConfigService
 
   Future<Map<String, dynamic>> sendEmail({
     required String from,
@@ -42,7 +41,7 @@ class EmailService {
     String? body,
     int? emailId,
   }) async {
-    LoggerService.logInfo("sendEmail called with emailId: $emailId");
+    LoggerService.logInfo('sendEmail called with emailId: $emailId');
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
@@ -54,8 +53,8 @@ class EmailService {
           'SMTP settings are not fully configured in config.json.',
         );
         return {
-          "ResultType": 0,
-          "ResultMessage": "SMTP settings are not fully configured.",
+          'ResultType': 0,
+          'ResultMessage': 'SMTP settings are not fully configured.',
         };
       }
 
@@ -75,16 +74,16 @@ class EmailService {
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');
 
-      return {"ResultType": 1, "ResultMessage": "Email sent successfully"};
+      return {'ResultType': 1, 'ResultMessage': 'Email sent successfully'};
     } catch (e) {
-      String errorMessage = "Error sending email: $e";
+      String errorMessage = 'Error sending email: $e';
       if (e is SocketException) {
         errorMessage =
-            "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
+            'Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})';
       }
 
       LoggerService.logInfo('Email sending failed: $errorMessage');
-      return {"ResultType": 0, "ResultMessage": errorMessage};
+      return {'ResultType': 0, 'ResultMessage': errorMessage};
     }
   }
 

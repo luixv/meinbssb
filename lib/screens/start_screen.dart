@@ -12,16 +12,15 @@ import '/services/api_service.dart';
 import '/services/logger_service.dart';
 
 class StartScreen extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  final bool isLoggedIn;
-  final Function() onLogout;
-
   const StartScreen(
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   StartScreenState createState() => StartScreenState();
@@ -112,7 +111,7 @@ class StartScreenState extends State<StartScreen> {
             const LogoWidget(),
             SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "Mein BSSB",
+              'Mein BSSB',
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
             SizedBox(height: UIConstants.defaultSpacing),
@@ -128,7 +127,7 @@ class StartScreenState extends State<StartScreen> {
               ),
             ),
             Text(
-              "Schützenpassnummer",
+              'Schützenpassnummer',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             SizedBox(height: UIConstants.smallSpacing),
@@ -139,11 +138,11 @@ class StartScreenState extends State<StartScreen> {
               ),
             ),
             Text(
-              "Erstverein",
+              'Erstverein',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             SizedBox(height: UIConstants.defaultSpacing),
-            Text("Angemeldete Schulungen:", style: UIConstants.titleStyle),
+            Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
             isLoading
                 ? Center(
                   child: CircularProgressIndicator(
@@ -153,7 +152,7 @@ class StartScreenState extends State<StartScreen> {
                 )
                 : schulungen.isEmpty
                 ? Text(
-                  "Keine Schulungen gefunden.",
+                  'Keine Schulungen gefunden.',
                   style: UIConstants.bodyStyle.copyWith(
                     color: UIConstants.grey,
                   ),

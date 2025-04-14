@@ -8,15 +8,14 @@ import '/services/config_service.dart';
 import '/services/logger_service.dart';
 
 class CacheService {
-  static const String _cacheKeyPrefix = 'cache_';
-  final SharedPreferences _prefs;
-  final ConfigService _configService;
-
   CacheService({
     required SharedPreferences prefs,
     required ConfigService configService,
   }) : _prefs = prefs,
        _configService = configService;
+  static const String _cacheKeyPrefix = 'cache_';
+  final SharedPreferences _prefs;
+  final ConfigService _configService;
 
   Future<void> setString(String key, String value) async {
     await _prefs.setString(_cacheKeyPrefix + key, value);

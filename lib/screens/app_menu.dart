@@ -9,11 +9,6 @@ import '/screens/zweitmitgliedschaften_screen.dart';
 import '/screens/impressum_screen.dart';
 
 class AppMenu extends StatelessWidget {
-  final BuildContext context;
-  final Map<String, dynamic> userData;
-  final bool isLoggedIn;
-  final Function() onLogout;
-
   const AppMenu({
     required this.context,
     required this.userData,
@@ -21,6 +16,10 @@ class AppMenu extends StatelessWidget {
     required this.onLogout,
     super.key,
   });
+  final BuildContext context;
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   Future<void> _displaySchuetzenausweis(int personId) async {
     Navigator.push(

@@ -12,14 +12,13 @@ import '/services/config_service.dart';
 import '/services/logger_service.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
-  final int personId;
-  final Map<String, dynamic> userData;
-
   const ZweitmitgliedschaftenScreen({
     super.key,
     required this.personId,
     required this.userData,
   });
+  final int personId;
+  final Map<String, dynamic> userData;
 
   @override
   State<ZweitmitgliedschaftenScreen> createState() =>
@@ -109,7 +108,7 @@ class _ZweitmitgliedschaftenScreenState
             const LogoWidget(),
             SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "Mein BSSB",
+              'Mein BSSB',
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
             SizedBox(height: UIConstants.defaultSpacing),
@@ -125,7 +124,7 @@ class _ZweitmitgliedschaftenScreenState
               ),
             ),
             Text(
-              "Schützenpassnummer",
+              'Schützenpassnummer',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             SizedBox(height: UIConstants.smallSpacing),
@@ -136,11 +135,11 @@ class _ZweitmitgliedschaftenScreenState
               ),
             ),
             Text(
-              "Erstverein",
+              'Erstverein',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             SizedBox(height: UIConstants.defaultSpacing),
-            Text("Zweitmitgliedschaften:", style: UIConstants.titleStyle),
+            Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
             SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
@@ -206,7 +205,7 @@ class _ZweitmitgliedschaftenScreenState
               },
             ),
             SizedBox(height: UIConstants.defaultSpacing),
-            Text("Disziplinen:", style: UIConstants.titleStyle),
+            Text('Disziplinen:', style: UIConstants.titleStyle),
             SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,

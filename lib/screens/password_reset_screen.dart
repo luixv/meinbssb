@@ -10,8 +10,8 @@ import '/screens/password_reset_success_screen.dart';
 import '/services/api_service.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  final ApiService apiService;
   const PasswordResetScreen({required this.apiService, super.key});
+  final ApiService apiService;
 
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
@@ -19,7 +19,7 @@ class PasswordResetScreen extends StatefulWidget {
 
 class PasswordResetScreenState extends State<PasswordResetScreen> {
   final TextEditingController _passNumberController = TextEditingController();
-  String _passNumberError = "";
+  String _passNumberError = '';
   bool _isPassNumberValid = false;
   bool _hasInteracted = false;
   bool _isLoading = false;
@@ -32,21 +32,21 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   bool _validatePassNumber(String value) {
     if (value.isEmpty) {
-      _passNumberError = "Passnummer ist erforderlich.";
+      _passNumberError = 'Passnummer ist erforderlich.';
       return false;
     }
     if (!RegExp(r'^\d{8}$').hasMatch(value)) {
-      _passNumberError = "Passnummer muss 8 Ziffern enthalten.";
+      _passNumberError = 'Passnummer muss 8 Ziffern enthalten.';
       return false;
     }
-    _passNumberError = "";
+    _passNumberError = '';
     return true;
   }
 
   Future<void> _resetPassword() async {
     setState(() {
       _isLoading = true;
-      _passNumberError = "";
+      _passNumberError = '';
     });
 
     if (!_isPassNumberValid) {
@@ -81,7 +81,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           }
         } catch (e) {
           setState(() {
-            _passNumberError = "Ein Fehler ist aufgetreten: $e";
+            _passNumberError = 'Ein Fehler ist aufgetreten: $e';
           });
         }
       } else {
@@ -91,7 +91,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       }
     } catch (e) {
       setState(() {
-        _passNumberError = "Ein Fehler ist aufgetreten: $e";
+        _passNumberError = 'Ein Fehler ist aufgetreten: $e';
       });
     } finally {
       setState(() {
@@ -128,7 +128,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               const LogoWidget(),
               SizedBox(height: UIConstants.defaultSpacing),
               Text(
-                "Passwort zurücksetzen",
+                'Passwort zurücksetzen',
                 style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
               SizedBox(height: UIConstants.defaultSpacing),
@@ -136,7 +136,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 controller: _passNumberController,
                 keyboardType: TextInputType.number,
                 decoration: UIConstants.defaultInputDecoration.copyWith(
-                  labelText: "Passnummer",
+                  labelText: 'Passnummer',
                   errorText:
                       _hasInteracted && _passNumberError.isNotEmpty
                           ? _passNumberError
@@ -166,7 +166,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                             strokeWidth: 2.0,
                           )
                           : Text(
-                            "Passwort zurücksetzen",
+                            'Passwort zurücksetzen',
                             style: UIConstants.bodyStyle.copyWith(
                               color: UIConstants.white,
                             ),

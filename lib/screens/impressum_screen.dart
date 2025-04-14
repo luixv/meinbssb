@@ -5,16 +5,15 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import '/screens/app_menu.dart';
 
 class ImpressumScreen extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  final bool isLoggedIn;
-  final Function() onLogout;
-
   const ImpressumScreen({
     super.key,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   State<ImpressumScreen> createState() => _ImpressumScreenState();

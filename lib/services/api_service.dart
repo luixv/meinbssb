@@ -15,21 +15,14 @@ import '/services/logger_service.dart';
 import '/services/network_service.dart';
 
 class NetworkException implements Exception {
-  final String message;
-
   NetworkException(this.message);
+  final String message;
 
   @override
   String toString() => 'NetworkException: $message';
 }
 
 class ApiService {
-  final HttpClient _httpClient;
-  final ImageService _imageService;
-  final CacheService _cacheService;
-
-  final NetworkService _networkService;
-
   ApiService({
     required HttpClient httpClient,
     required ImageService imageService,
@@ -42,6 +35,11 @@ class ApiService {
        _imageService = imageService,
        _cacheService = cacheService,
        _networkService = networkService;
+  final HttpClient _httpClient;
+  final ImageService _imageService;
+  final CacheService _cacheService;
+
+  final NetworkService _networkService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -57,12 +55,12 @@ class ApiService {
     required String zipCode,
   }) async {
     final response = await _httpClient.post('RegisterMyBSSB', {
-      "firstName": firstName,
-      "lastName": lastName,
-      "passNumber": passNumber,
-      "email": email,
-      "birthDate": birthDate,
-      "zipCode": zipCode,
+      'firstName': firstName,
+      'lastName': lastName,
+      'passNumber': passNumber,
+      'email': email,
+      'birthDate': birthDate,
+      'zipCode': zipCode,
     });
     return response is Map<String, dynamic> ? response : {};
   }
@@ -72,8 +70,8 @@ class ApiService {
 
     try {
       final response = await _httpClient.post('LoginMyBSSB', {
-        "email": email,
-        "password": password,
+        'email': email,
+        'password': password,
       });
 
       if (response is Map<String, dynamic>) {
@@ -127,22 +125,22 @@ class ApiService {
 
         if (isCacheValid) {
           LoggerService.logInfo('Login from cache successful.');
-          return {"ResultType": 1, "PersonID": cachedPersonId};
+          return {'ResultType': 1, 'PersonID': cachedPersonId};
         } else {
           LoggerService.logWarning('Cached data expired.');
           return {
-            "ResultType": 0,
-            "ResultMessage":
+            'ResultType': 0,
+            'ResultMessage':
                 isCacheValid
-                    ? "Cached data expired. Please log in again."
-                    : "Offline login failed, no cache or password mismatch",
+                    ? 'Cached data expired. Please log in again.'
+                    : 'Offline login failed, no cache or password mismatch',
           };
         }
       } else {
         LoggerService.logError('Username or Password is incorrect: $e');
         return {
-          "ResultType": 0,
-          "ResultMessage": "Username or Password is incorrect",
+          'ResultType': 0,
+          'ResultMessage': 'Username or Password is incorrect',
         };
       }
     }
@@ -151,7 +149,7 @@ class ApiService {
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     try {
       final response = await _httpClient.post('PasswordReset/$passNumber', {
-        "passNumber": passNumber,
+        'passNumber': passNumber,
       });
       return response is Map<String, dynamic> ? response : {};
     } on http.ClientException catch (e) {
