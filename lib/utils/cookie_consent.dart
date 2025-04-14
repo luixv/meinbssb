@@ -66,8 +66,8 @@ class _CookieConsentState extends State<CookieConsent> {
                         children: [
                           Text(
                             'We use cookies',
-                            style: UIConstants.titleStyle.copyWith(
-                              color: UIConstants.black,
+                            style: UIConstants.headerStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
                             ),
                           ),
                           const SizedBox(height: UIConstants.smallSpacing),

@@ -1,14 +1,8 @@
-import 'package:flutter_localizations/flutter_localizations.dart';
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'screens/login_screen.dart';
-import 'screens/start_screen.dart';
-import 'screens/help_screen.dart';
-import 'screens/impressum_screen.dart';
-import 'utils/cookie_consent.dart';
-
+import 'app.dart'; // Import app.dart to access MyAppWrapper
 import 'services/api_service.dart';
 import 'services/email_service.dart';
 import 'services/image_service.dart';
@@ -19,148 +13,84 @@ import 'services/logger_service.dart';
 import 'services/network_service.dart';
 
 void main() async {
-  LoggerService.init();
-
   WidgetsFlutterBinding.ensureInitialized();
+  await AppInitializer.init();
 
-  // Initialize services
-  final configServiceInstance = await ConfigService.load('assets/config.json');
-  final serverTimeout =
-      configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
-  final baseIP =
-      configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
-  final port = configServiceInstance.getString('apiPort', 'api') ?? '3001';
-
-  final imageService = ImageService();
-  final prefs = await SharedPreferences.getInstance();
-  final cacheService = CacheService(
-    prefs: prefs,
-    configService: ConfigService.instance,
-  );
-  final networkService = NetworkService(configService: ConfigService.instance);
-
-  final httpClient = HttpClient(
-    baseUrl: 'http://$baseIP:$port',
-    serverTimeout: serverTimeout,
-  );
-
-  final apiService = ApiService(
-    httpClient: httpClient,
-    imageService: imageService,
-    cacheService: cacheService,
-    networkService: networkService,
-    baseIp: baseIP,
-    port: port,
-    serverTimeout: serverTimeout,
-  );
-
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<ApiService>(create: (context) => apiService),
-        Provider<EmailSender>(create: (context) => MailerEmailSender()),
-        Provider<ConfigService>(create: (context) => ConfigService.instance),
-        Provider<NetworkService>(create: (context) => networkService),
-        Provider<CacheService>(create: (context) => cacheService),
-        Provider<EmailService>(
-          create:
-              (context) => EmailService(
-                emailSender: context.read<EmailSender>(),
-                configService: context.read<ConfigService>(),
-              ),
-        ),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyAppWrapper());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class AppInitializer {
+  static Future<void> init() async {
+    LoggerService.init();
+    final configServiceInstance = await ConfigService.load(
+      'assets/config.json',
+    );
+    final serverTimeout =
+        configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
+    final baseIP =
+        configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
+    final port = configServiceInstance.getString('apiPort', 'api') ?? '3001';
 
-  @override
-  MyAppState createState() => MyAppState();
-}
+    final imageService = ImageService();
+    final prefs = await SharedPreferences.getInstance();
+    final cacheService = CacheService(
+      prefs: prefs,
+      configService: ConfigService.instance,
+    );
+    final networkService = NetworkService(
+      configService: ConfigService.instance,
+    );
 
-class MyAppState extends State<MyApp> {
-  bool _isLoggedIn = false;
-  Map<String, dynamic> _userData = {};
+    final httpClient = HttpClient(
+      baseUrl: 'http://$baseIP:$port',
+      serverTimeout: serverTimeout,
+    );
 
-  void _setLoggedIn(bool isLoggedIn, Map<String, dynamic> userData) {
-    setState(() {
-      _isLoggedIn = isLoggedIn;
-      _userData = userData;
-    });
+    final apiService = ApiService(
+      httpClient: httpClient,
+      imageService: imageService,
+      cacheService: cacheService,
+      networkService: networkService,
+      baseIp: baseIP,
+      port: port,
+      serverTimeout: serverTimeout,
+    );
+
+    _registerProviders(apiService, networkService, cacheService);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mein BSSB',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        // Add this to prevent yellow highlights globally
-        textSelectionTheme: const TextSelectionThemeData(
-          selectionColor: Colors.transparent,
-          selectionHandleColor: Colors.transparent,
-          cursorColor: Colors.black,
-        ),
-      ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
-      initialRoute: _isLoggedIn ? '/home' : '/login',
-
-      // Modified builder with Theme wrapper
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            textSelectionTheme: const TextSelectionThemeData(
-              selectionColor: Colors.transparent,
-              cursorColor: Colors.black,
-            ),
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
+  static void _registerProviders(
+    ApiService apiService,
+    NetworkService networkService,
+    CacheService cacheService,
+  ) {
+    apiServiceProvider = Provider<ApiService>(create: (context) => apiService);
+    networkServiceProvider = Provider<NetworkService>(
+      create: (context) => networkService,
+    );
+    cacheServiceProvider = Provider<CacheService>(
+      create: (context) => cacheService,
+    );
+    emailServiceProvider = Provider<EmailService>(
+      create:
+          (context) => EmailService(
+            emailSender: context.read<EmailSender>(),
+            configService: context.read<ConfigService>(),
           ),
-          child: CookieConsent(
-            child: Material(
-              type: MaterialType.transparency,
-              child: child ?? const SizedBox.shrink(),
-            ),
-          ),
-        );
-      },
-      routes: {
-        '/login':
-            (context) => LoginScreen(
-              onLoginSuccess: (userData) => _setLoggedIn(true, userData),
-            ),
-        '/home': (context) {
-          final arguments =
-              ModalRoute.of(context)?.settings.arguments
-                  as Map<String, dynamic>?;
-          return StartScreen(
-            arguments?['userData'] ?? _userData,
-            isLoggedIn: arguments?['isLoggedIn'] ?? _isLoggedIn,
-            onLogout: () => _setLoggedIn(false, {}),
-          );
-        },
-        '/help':
-            (context) => HelpScreen(
-              userData: _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
-            ),
-        '/impressum':
-            (context) => ImpressumScreen(
-              userData: _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
-            ),
-      },
+    );
+    configServiceProvider = Provider<ConfigService>(
+      create: (context) => ConfigService.instance,
+    );
+    emailSenderProvider = Provider<EmailSender>(
+      create: (context) => MailerEmailSender(),
     );
   }
+
+  // Public static provider instances
+  static late Provider<ApiService> apiServiceProvider;
+  static late Provider<NetworkService> networkServiceProvider;
+  static late Provider<CacheService> cacheServiceProvider;
+  static late Provider<EmailService> emailServiceProvider;
+  static late Provider<ConfigService> configServiceProvider;
+  static late Provider<EmailSender> emailSenderProvider;
 }
