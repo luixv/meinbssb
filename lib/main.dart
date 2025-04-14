@@ -22,8 +22,9 @@ void main() async {
   LoggerService.init();
 
   WidgetsFlutterBinding.ensureInitialized();
-  final configServiceInstance = await ConfigService.load('assets/config.json');
 
+  // Initialize services
+  final configServiceInstance = await ConfigService.load('assets/config.json');
   final serverTimeout =
       configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
   final baseIP =
@@ -93,21 +94,44 @@ class MyAppState extends State<MyApp> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mein BSSB',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        // Add this to prevent yellow highlights globally
+        textSelectionTheme: const TextSelectionThemeData(
+          selectionColor: Colors.transparent,
+          selectionHandleColor: Colors.transparent,
+          cursorColor: Colors.black,
+        ),
+      ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
       initialRoute: _isLoggedIn ? '/home' : '/login',
+
+      // Modified builder with Theme wrapper
       builder: (context, child) {
-        return CookieConsent(child: child ?? const SizedBox.shrink());
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: const TextSelectionThemeData(
+              selectionColor: Colors.transparent,
+              cursorColor: Colors.black,
+            ),
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+          ),
+          child: CookieConsent(
+            child: Material(
+              type: MaterialType.transparency,
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
       },
       routes: {
         '/login':
@@ -118,23 +142,11 @@ class MyAppState extends State<MyApp> {
           final arguments =
               ModalRoute.of(context)?.settings.arguments
                   as Map<String, dynamic>?;
-
-          if (arguments == null) {
-            return StartScreen(
-              _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
-            );
-          } else {
-            final userData = arguments['userData'] as Map<String, dynamic>;
-            final isLoggedIn = arguments['isLoggedIn'] as bool;
-
-            return StartScreen(
-              userData,
-              isLoggedIn: isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
-            );
-          }
+          return StartScreen(
+            arguments?['userData'] ?? _userData,
+            isLoggedIn: arguments?['isLoggedIn'] ?? _isLoggedIn,
+            onLogout: () => _setLoggedIn(false, {}),
+          );
         },
         '/help':
             (context) => HelpScreen(

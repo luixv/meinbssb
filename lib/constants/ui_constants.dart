@@ -52,12 +52,17 @@ class UIConstants {
   static const TextStyle titleStyle = TextStyle(
     fontSize: titleFontSize,
     fontWeight: FontWeight.bold,
+    color: black,
+    backgroundColor: Colors.transparent,
+    decorationColor: Colors.transparent,
   );
 
   static const TextStyle bodyStyle = TextStyle(
     fontSize: bodyFontSize,
     color: black,
     fontWeight: FontWeight.normal,
+    backgroundColor: Colors.transparent,
+    decorationColor: Colors.transparent,
   );
 
   static const TextStyle linkStyle = TextStyle(
