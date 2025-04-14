@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/image_service.dart';
+import '/services/logger_service.dart';
 import '/services/network_service.dart';
 
 class NetworkException implements Exception {
@@ -81,21 +82,25 @@ class ApiService {
           await secureStorage.write(key: 'password', value: password);
           await _cacheService.setInt('personId', response['PersonID']);
           await _cacheService.setCacheTimestamp();
-          debugPrint('User data cached successfully.');
+          LoggerService.logInfo('User data cached successfully.');
           return response;
         } else {
-          debugPrint('Login failed on server: ${response['ResultMessage']}');
+          LoggerService.logError(
+            'Login failed on server: ${response['ResultMessage']}',
+          );
           return response;
         }
       } else {
-        debugPrint('Invalid server response.');
+        LoggerService.logError('Invalid server response.');
         return {};
       }
     } on Exception catch (e) {
       if (e is http.ClientException &&
           (e.message.contains('refused') ||
               e.message.contains('failed to connect'))) {
-        debugPrint('ClientException contains SocketException: ${e.message}');
+        LoggerService.logError(
+          'ClientException contains SocketException: ${e.message}',
+        );
 
         final cachedUsername = await _cacheService.getString('username');
         final cachedPassword = await secureStorage.read(key: 'password');
@@ -121,10 +126,10 @@ class ApiService {
             testExpirationDate;
 
         if (isCacheValid) {
-          debugPrint('Login from cache successful.');
+          LoggerService.logInfo('Login from cache successful.');
           return {"ResultType": 1, "PersonID": cachedPersonId};
         } else {
-          debugPrint('Cached data expired.');
+          LoggerService.logWarning('Cached data expired.');
           return {
             "ResultType": 0,
             "ResultMessage":
@@ -134,7 +139,7 @@ class ApiService {
           };
         }
       } else {
-        debugPrint('Username or Password is incorrect: $e');
+        LoggerService.logError('Username or Password is incorrect: $e');
         return {
           "ResultType": 0,
           "ResultMessage": "Username or Password is incorrect",
@@ -195,7 +200,7 @@ class ApiService {
           validityDuration,
         );
       } catch (cacheError) {
-        debugPrint('Cache error: $cacheError');
+        LoggerService.logError('Cache error: $cacheError');
         return null;
       }
     }
@@ -203,7 +208,7 @@ class ApiService {
     try {
       final cachedImage = await getCachedSchuetzenausweis();
       if (cachedImage != null) {
-        debugPrint('Using cached Schuetzenausweis');
+        LoggerService.logInfo('Using cached Schuetzenausweis');
         return _imageService.rotatedImage(cachedImage);
       }
 

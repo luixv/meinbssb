@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+final _log = Logger('StartScreen'); // Use the class name as the logger name
 
 class ConnectivityIcon extends StatefulWidget {
   const ConnectivityIcon({super.key});
@@ -26,7 +29,7 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
     try {
       results = await _connectivity.checkConnectivity();
     } catch (e) {
-      debugPrint('Couldn\'t check connectivity status: $e');
+      _log.warning('Couldn\'t check connectivity status: $e');
       return;
     }
     if (!mounted) {

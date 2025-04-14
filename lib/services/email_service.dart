@@ -3,11 +3,10 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
 import '/services/config_service.dart';
+import '/services/logger_service.dart';
 
 abstract class EmailSender {
   Future<mailer.SendReport> send(
@@ -43,7 +42,7 @@ class EmailService {
     String? body,
     int? emailId,
   }) async {
-    debugPrint("sendEmail called with emailId: $emailId");
+    LoggerService.logInfo("sendEmail called with emailId: $emailId");
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
@@ -51,7 +50,9 @@ class EmailService {
       final password = _configService.getString('password', 'smtpSettings');
 
       if (smtpHost == null || username == null || password == null) {
-        debugPrint('SMTP settings are not fully configured in config.json.');
+        LoggerService.logWarning(
+          'SMTP settings are not fully configured in config.json.',
+        );
         return {
           "ResultType": 0,
           "ResultMessage": "SMTP settings are not fully configured.",
@@ -72,7 +73,7 @@ class EmailService {
             ..text = body;
 
       final sendReport = await _emailSender.send(message, smtpServer);
-      debugPrint('Message sent: ${sendReport.toString()}');
+      LoggerService.logInfo('Message sent: ${sendReport.toString()}');
 
       return {"ResultType": 1, "ResultMessage": "Email sent successfully"};
     } catch (e) {
@@ -82,7 +83,7 @@ class EmailService {
             "Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})";
       }
 
-      debugPrint('Email sending failed: $errorMessage');
+      LoggerService.logInfo('Email sending failed: $errorMessage');
       return {"ResultType": 0, "ResultMessage": errorMessage};
     }
   }

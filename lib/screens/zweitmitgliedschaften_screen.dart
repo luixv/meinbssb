@@ -9,6 +9,7 @@ import '/screens/logo_widget.dart';
 import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 import '/services/config_service.dart';
+import '/services/logger_service.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   final int personId;
@@ -62,7 +63,7 @@ class _ZweitmitgliedschaftenScreenState
               ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
               : Future.value([]);
     } catch (e) {
-      debugPrint('Error loading data: $e');
+      LoggerService.logError('Error loading data: $e');
       _zweitmitgliedschaftenFuture = Future.value([]);
       _passdatenZVEFuture = Future.value([]);
     }

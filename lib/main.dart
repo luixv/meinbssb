@@ -1,20 +1,23 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:meinbssb/screens/impressum_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/email_service.dart';
-import 'package:meinbssb/services/image_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import '/screens/impressum_screen.dart';
+import '/services/api_service.dart';
+import '/services/email_service.dart';
+import '/services/image_service.dart';
+import '/services/http_client.dart';
+import '/services/cache_service.dart';
+import '/services/config_service.dart';
+import '/services/logger_service.dart';
 import '/services/network_service.dart';
 
 void main() async {
+  LoggerService.init();
+
   WidgetsFlutterBinding.ensureInitialized();
   final configServiceInstance = await ConfigService.load('assets/config.json');
 

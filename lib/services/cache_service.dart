@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '/services/base_service.dart';
 import '/services/config_service.dart';
+import '/services/logger_service.dart';
 
 class CacheService extends BaseService {
   static const String _cacheKeyPrefix = 'cache_';
@@ -20,12 +21,12 @@ class CacheService extends BaseService {
 
   Future<void> setString(String key, String value) async {
     await _prefs.setString(_cacheKeyPrefix + key, value);
-    logDebug('Cached string for key: $key');
+    LoggerService.logInfo('Cached string for key: $key');
   }
 
   Future<String?> getString(String key) async {
     final value = _prefs.getString(_cacheKeyPrefix + key);
-    logDebug(
+    LoggerService.logInfo(
       'Retrieved string for key: $key, value: ${value != null ? 'exists' : 'null'}',
     );
     return value;
@@ -33,44 +34,48 @@ class CacheService extends BaseService {
 
   Future<void> setJson(String key, Map<String, dynamic> json) async {
     await _prefs.setString(_cacheKeyPrefix + key, jsonEncode(json));
-    logDebug('Cached JSON for key: $key');
+    LoggerService.logInfo('Cached JSON for key: $key');
   }
 
   Future<Map<String, dynamic>?> getJson(String key) async {
     final jsonString = _prefs.getString(_cacheKeyPrefix + key);
     if (jsonString == null) {
-      logDebug('No JSON found for key: $key');
+      LoggerService.logInfo('No JSON found for key: $key');
       return null;
     }
-    logDebug('Retrieved JSON for key: $key');
+    LoggerService.logInfo('Retrieved JSON for key: $key');
     return jsonDecode(jsonString);
   }
 
   Future<void> setInt(String key, int value) async {
     await _prefs.setInt(_cacheKeyPrefix + key, value);
-    logDebug('Cached int for key: $key, value: $value');
+    LoggerService.logInfo('Cached int for key: $key, value: $value');
   }
 
   Future<int?> getInt(String key) async {
     final value = _prefs.getInt(_cacheKeyPrefix + key);
-    logDebug('Retrieved int for key: $key, value: ${value ?? 'null'}');
+    LoggerService.logInfo(
+      'Retrieved int for key: $key, value: ${value ?? 'null'}',
+    );
     return value;
   }
 
   Future<void> setBool(String key, bool value) async {
     await _prefs.setBool(_cacheKeyPrefix + key, value);
-    logDebug('Cached bool for key: $key, value: $value');
+    LoggerService.logInfo('Cached bool for key: $key, value: $value');
   }
 
   Future<bool?> getBool(String key) async {
     final value = _prefs.getBool(_cacheKeyPrefix + key);
-    logDebug('Retrieved bool for key: $key, value: ${value ?? 'null'}');
+    LoggerService.logInfo(
+      'Retrieved bool for key: $key, value: ${value ?? 'null'}',
+    );
     return value;
   }
 
   Future<void> remove(String key) async {
     await _prefs.remove(_cacheKeyPrefix + key);
-    logDebug('Removed cache for key: $key');
+    LoggerService.logInfo('Removed cache for key: $key');
   }
 
   Future<void> clear() async {
@@ -82,25 +87,25 @@ class CacheService extends BaseService {
         count++;
       }
     }
-    logDebug('Cleared $count cache entries');
+    LoggerService.logInfo('Cleared $count cache entries');
   }
 
   Future<bool> containsKey(String key) async {
     final exists = _prefs.containsKey(_cacheKeyPrefix + key);
-    logDebug('Checked if key exists: $key, result: $exists');
+    LoggerService.logInfo('Checked if key exists: $key, result: $exists');
     return exists;
   }
 
   Future<void> setCacheTimestamp() async {
     await setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch);
-    logDebug('Set cache timestamp');
+    LoggerService.logInfo('Set cache timestamp');
   }
 
   Future<T> getCachedData<T>(
     String cacheKey,
     Future<T> Function() getCachedData,
   ) async {
-    logDebug('Getting cached data for key: $cacheKey');
+    LoggerService.logInfo('Getting cached data for key: $cacheKey');
     return await getCachedData();
   }
 
@@ -125,40 +130,44 @@ class CacheService extends BaseService {
               globalTimestamp,
             ).add(validityDurationConfig); // Use config-based duration
             if (DateTime.now().isBefore(expirationTime)) {
-              logDebug(
+              LoggerService.logInfo(
                 'Using cached data from SharedPreferences for key: $cacheKey',
               );
               return cachedData as T;
             } else {
-              logDebug('Cached data expired for key: $cacheKey');
+              LoggerService.logInfo('Cached data expired for key: $cacheKey');
               return null as T;
             }
           }
         }
-        logDebug('No cached data found for key: $cacheKey');
+        LoggerService.logInfo('No cached data found for key: $cacheKey');
         return null as T;
       });
     }
 
     try {
-      logDebug('Fetching fresh data for key: $cacheKey');
+      LoggerService.logInfo('Fetching fresh data for key: $cacheKey');
       final response = await fetchData();
       final processedData = processResponse(response);
 
       if (processedData != null) {
         await _prefs.setString(cacheKey, jsonEncode(processedData));
         await setCacheTimestamp();
-        logDebug('Successfully cached fresh data for key: $cacheKey');
+        LoggerService.logInfo(
+          'Successfully cached fresh data for key: $cacheKey',
+        );
         return processedData;
       } else {
-        logDebug(
+        LoggerService.logInfo(
           'Processed data is null, retrieving cached data for key: $cacheKey',
         );
         return await retrieveCachedData();
       }
     } catch (e) {
-      logError('Error fetching data for key: $cacheKey', e);
-      logDebug('Retrieving cached data due to error for key: $cacheKey');
+      LoggerService.logError('Error fetching data for key: $cacheKey');
+      LoggerService.logInfo(
+        'Retrieving cached data due to error for key: $cacheKey',
+      );
       return await retrieveCachedData();
     }
   }

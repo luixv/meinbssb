@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
+import '/services/logger_service.dart';
 
 // Conditional imports with explicit prefixes
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -36,7 +37,7 @@ class ImageService {
 
       return Uint8List.fromList(rotatedImageData);
     } catch (e) {
-      debugPrint('Error rotating image: $e');
+      LoggerService.logError('Error rotating image: $e');
       throw Exception('Failed to rotate image');
     }
   }
@@ -64,7 +65,7 @@ class ImageService {
       await prefs.setString('image_$personId.jpg', base64Encode(imageData));
       await prefs.setInt('image_${personId}_timestamp', timestamp);
     } catch (e) {
-      debugPrint('Failed to cache image on web: $e');
+      LoggerService.logError('Failed to cache image on web: $e');
     }
   }
 
@@ -85,7 +86,7 @@ class ImageService {
       final base64Image = prefs.getString('image_$personId.jpg');
       return base64Image != null ? base64Decode(base64Image) : null;
     } catch (e) {
-      debugPrint('Failed to retrieve image on web: $e');
+      LoggerService.logError('Failed to retrieve image on web: $e');
       return null;
     }
   }
@@ -104,7 +105,7 @@ class ImageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('image_${personId}_timestamp', timestamp);
     } catch (e) {
-      debugPrint('Failed to cache image on mobile/desktop: $e');
+      LoggerService.logError('Failed to cache image on mobile/desktop: $e');
     }
   }
 
@@ -124,7 +125,7 @@ class ImageService {
       }
       return null;
     } catch (e) {
-      debugPrint('Failed to retrieve image on mobile/desktop: $e');
+      LoggerService.logError('Failed to retrieve image on mobile/desktop: $e');
       return null;
     }
   }

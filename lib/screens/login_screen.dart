@@ -5,12 +5,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/services/api_service.dart';
-import '/services/email_service.dart';
 import '/screens/registration_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/logo_widget.dart';
+import '/services/api_service.dart';
+import '/services/email_service.dart';
+import '/services/logger_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onLoginSuccess;
@@ -57,7 +58,7 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      debugPrint('Login response: $response');
+      LoggerService.logInfo('Login response: $response');
 
       if (response["ResultType"] == 1) {
         await _handleSuccessfulLogin(apiService, response["PersonID"]);
@@ -77,9 +78,9 @@ class LoginScreenState extends State<LoginScreen> {
     ApiService apiService,
     int personId,
   ) async {
-    debugPrint('Retrieving passdaten');
+    LoggerService.logInfo('Retrieving passdaten');
     var passdaten = await apiService.fetchPassdaten(personId);
-    debugPrint('User data: $passdaten');
+    LoggerService.logInfo('User data: $passdaten');
 
     if (!mounted) return;
 

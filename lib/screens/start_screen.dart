@@ -9,6 +9,7 @@ import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
+import '/services/logger_service.dart';
 
 class StartScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -35,7 +36,9 @@ class StartScreenState extends State<StartScreen> {
   void initState() {
     super.initState();
     fetchSchulungen();
-    debugPrint('StartScreen initialized with user: ${widget.userData}');
+    LoggerService.logInfo(
+      'StartScreen initialized with user: ${widget.userData}',
+    );
   }
 
   Future<void> fetchSchulungen() async {
@@ -43,7 +46,7 @@ class StartScreenState extends State<StartScreen> {
     final personId = widget.userData['PERSONID'];
 
     if (personId == null) {
-      debugPrint('PERSONID is null');
+      LoggerService.logError('PERSONID is null');
       if (mounted) setState(() => isLoading = false);
       return;
     }
@@ -53,7 +56,7 @@ class StartScreenState extends State<StartScreen> {
         "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
 
     try {
-      debugPrint('Fetching schulungen for $personId on $abDatum');
+      LoggerService.logInfo('Fetching schulungen for $personId on $abDatum');
       final result = await apiService.fetchAngemeldeteSchulungen(
         personId,
         abDatum,
@@ -66,7 +69,7 @@ class StartScreenState extends State<StartScreen> {
         });
       }
     } catch (e) {
-      debugPrint('Error fetching schulungen: $e');
+      LoggerService.logError('Error fetching schulungen: $e');
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -77,7 +80,7 @@ class StartScreenState extends State<StartScreen> {
   }
 
   void _handleLogout() {
-    debugPrint('Logging out user: ${widget.userData['VORNAME']}');
+    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
     widget.onLogout(); // Update app state
     Navigator.of(context).pushReplacementNamed('/login'); // Force navigation
   }

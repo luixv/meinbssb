@@ -13,6 +13,7 @@ import '/screens/registration_success_screen.dart';
 import '/services/api_service.dart';
 import '/services/email_service.dart';
 import '/services/error_service.dart';
+import '/services/logger_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final ApiService apiService;
@@ -232,14 +233,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       );
 
       if (response['ResultType'] == 1) {
-        debugPrint("Registration successful: ${response['ResultMessage']}");
+        LoggerService.logInfo(
+          "Registration successful: ${response['ResultMessage']}",
+        );
         bool emailSent = false;
 
         try {
           await _sendRegistrationEmail();
           emailSent = true;
         } catch (e) {
-          debugPrint("Email sending error: $e");
+          LoggerService.logError("Email sending error: $e");
           if (mounted) {
             ErrorService.showErrorSnackBar(
               context,
@@ -264,7 +267,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           );
         }
       } else {
-        debugPrint("Registration failed: ${response['ResultMessage']}");
+        LoggerService.logError(
+          "Registration failed: ${response['ResultMessage']}",
+        );
         if (mounted) {
           ErrorService.showErrorSnackBar(
             context,
@@ -273,7 +278,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         }
       }
     } catch (e) {
-      debugPrint("Error during registration: $e");
+      LoggerService.logError("Error during registration: $e");
       if (mounted) {
         ErrorService.showErrorSnackBar(
           context,
@@ -297,7 +302,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           await widget.emailService.getRegistrationContent();
 
       if (fromEmail == null || subject == null || registrationContent == null) {
-        debugPrint('Registration email content not fully configured.');
+        LoggerService.logWarning(
+          'Registration email content not fully configured.',
+        );
         return;
       }
 
@@ -312,7 +319,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         throw Exception(emailResponse['ResultMessage']);
       }
     } catch (e) {
-      debugPrint("Error sending email: $e");
+      LoggerService.logError("Error sending email: $e");
       rethrow;
     }
   }

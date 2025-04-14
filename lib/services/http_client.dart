@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '/services/logger_service.dart';
 
 class HttpClient {
   final String baseUrl;
@@ -17,8 +18,8 @@ class HttpClient {
     final String apiUrl = '$baseUrl/$endpoint';
     final requestBody = jsonEncode(body);
 
-    debugPrint('Sending POST request to: $apiUrl');
-    debugPrint('Request body: $requestBody');
+    LoggerService.logInfo('Sending POST request to: $apiUrl');
+    LoggerService.logInfo('Request body: $requestBody');
 
     return _makeRequest(
       http.post(
@@ -32,7 +33,7 @@ class HttpClient {
   Future<dynamic> get(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
 
-    debugPrint('Sending GET request to: $apiUrl');
+    LoggerService.logInfo('Sending GET request to: $apiUrl');
 
     return _makeRequest(http.get(Uri.parse(apiUrl)));
   }
@@ -40,7 +41,7 @@ class HttpClient {
   Future<dynamic> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
 
-    debugPrint('Sending GET bytes request to: $apiUrl');
+    LoggerService.logInfo('Sending GET bytes request to: $apiUrl');
 
     return _makeBytesRequest(http.get(Uri.parse(apiUrl)));
   }
@@ -54,8 +55,8 @@ class HttpClient {
         },
       );
 
-      debugPrint('Response status: ${response.statusCode}');
-      debugPrint('Response body http_client: ${response.body}');
+      LoggerService.logInfo('Response status: ${response.statusCode}');
+      LoggerService.logInfo('Response body http_client: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -63,7 +64,7 @@ class HttpClient {
         throw Exception("Request failed: ${response.statusCode}");
       }
     } catch (e) {
-      debugPrint('Exception in http_client: $e');
+      LoggerService.logError('Exception in http_client: $e');
       rethrow;
     }
   }
@@ -83,7 +84,7 @@ class HttpClient {
         throw Exception('Failed to load image: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error fetching bytes in http_client: $e');
+      LoggerService.logError('Error fetching bytes in http_client: $e');
       rethrow;
     }
   }
