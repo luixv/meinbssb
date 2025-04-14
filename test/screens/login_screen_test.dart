@@ -12,7 +12,7 @@ import 'package:mockito/mockito.dart';
 
 class MockHttpClient extends Mock implements HttpClient {}
 
-class MockDatabaseService extends Mock implements ImageService {}
+class MockImageService extends Mock implements ImageService {}
 
 class MockCacheService extends Mock implements CacheService {}
 

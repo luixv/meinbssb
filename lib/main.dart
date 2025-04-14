@@ -2,18 +2,21 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
-import '/screens/impressum_screen.dart';
-import '/services/api_service.dart';
-import '/services/email_service.dart';
-import '/services/image_service.dart';
-import '/services/http_client.dart';
-import '/services/cache_service.dart';
-import '/services/config_service.dart';
-import '/services/logger_service.dart';
-import '/services/network_service.dart';
+import 'screens/impressum_screen.dart';
+import 'utils/cookie_consent.dart';
+
+import 'services/api_service.dart';
+import 'services/email_service.dart';
+import 'services/image_service.dart';
+import 'services/http_client.dart';
+import 'services/cache_service.dart';
+import 'services/config_service.dart';
+import 'services/logger_service.dart';
+import 'services/network_service.dart';
 
 void main() async {
   LoggerService.init();
@@ -22,24 +25,18 @@ void main() async {
   final configServiceInstance = await ConfigService.load('assets/config.json');
 
   final serverTimeout =
-      configServiceInstance.getInt('serverTimeout', 'theme') ??
-      10; // Example with section
+      configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
   final baseIP =
-      configServiceInstance.getString('apiBaseIP', 'api') ??
-      '127.0.0.1'; // Example with section
-  final port =
-      configServiceInstance.getString('apiPort', 'api') ??
-      '3001'; // Example with section
+      configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
+  final port = configServiceInstance.getString('apiPort', 'api') ?? '3001';
 
   final imageService = ImageService();
   final prefs = await SharedPreferences.getInstance();
   final cacheService = CacheService(
     prefs: prefs,
     configService: ConfigService.instance,
-  ); // Use ConfigService.instance
-  final networkService = NetworkService(
-    configService: ConfigService.instance,
-  ); // Use ConfigService.instance
+  );
+  final networkService = NetworkService(configService: ConfigService.instance);
 
   final httpClient = HttpClient(
     baseUrl: 'http://$baseIP:$port',
@@ -61,21 +58,18 @@ void main() async {
       providers: [
         Provider<ApiService>(create: (context) => apiService),
         Provider<EmailSender>(create: (context) => MailerEmailSender()),
-        Provider<ConfigService>(
-          create: (context) => ConfigService.instance,
-        ), // Provide the instance
+        Provider<ConfigService>(create: (context) => ConfigService.instance),
         Provider<NetworkService>(create: (context) => networkService),
         Provider<CacheService>(create: (context) => cacheService),
         Provider<EmailService>(
           create:
               (context) => EmailService(
                 emailSender: context.read<EmailSender>(),
-                configService:
-                    context.read<ConfigService>(), // Access via context.read
+                configService: context.read<ConfigService>(),
               ),
         ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -99,6 +93,7 @@ class MyAppState extends State<MyApp> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mein BSSB',
@@ -111,6 +106,9 @@ class MyAppState extends State<MyApp> {
       ],
       supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
       initialRoute: _isLoggedIn ? '/home' : '/login',
+      builder: (context, child) {
+        return CookieConsent(child: child ?? const SizedBox.shrink());
+      },
       routes: {
         '/login':
             (context) => LoginScreen(

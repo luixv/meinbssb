@@ -4,11 +4,10 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '/services/base_service.dart';
 import '/services/config_service.dart';
 import '/services/logger_service.dart';
 
-class CacheService extends BaseService {
+class CacheService {
   static const String _cacheKeyPrefix = 'cache_';
   final SharedPreferences _prefs;
   final ConfigService _configService;

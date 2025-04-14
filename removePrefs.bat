@@ -1,0 +1,1 @@
+del C:\Users\EMANDELUN\AppData\Roaming\de.bssb\meinbssb\shared_preferences.json
