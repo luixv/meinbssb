@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: zweitmitgliedschaften_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
@@ -16,9 +12,11 @@ class ZweitmitgliedschaftenScreen extends StatefulWidget {
     super.key,
     required this.personId,
     required this.userData,
+    this.logoWidget, // Add this line
   });
   final int personId;
   final Map<String, dynamic> userData;
+  final Widget? logoWidget; // Add this line
 
   @override
   State<ZweitmitgliedschaftenScreen> createState() =>
@@ -87,6 +85,8 @@ class _ZweitmitgliedschaftenScreenState
 
   @override
   Widget build(BuildContext context) {
+    final Widget displayedLogo = widget.logoWidget ?? const LogoWidget();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -105,7 +105,7 @@ class _ZweitmitgliedschaftenScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LogoWidget(),
+            displayedLogo, // Use the potentially mocked logo
             SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Mein BSSB',
