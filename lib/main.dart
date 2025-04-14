@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'app.dart'; // Import app.dart to access MyAppWrapper
+import 'app.dart';
 import 'services/api_service.dart';
 import 'services/email_service.dart';
 import 'services/image_service.dart';
