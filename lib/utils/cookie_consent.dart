@@ -3,9 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '/constants/ui_constants.dart';
 
 class CookieConsent extends StatefulWidget {
-  final Widget child;
-
   const CookieConsent({super.key, required this.child});
+  final Widget child;
 
   @override
   State<CookieConsent> createState() => _CookieConsentState();
