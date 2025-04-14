@@ -14,6 +14,8 @@ class CacheService {
   }) : _prefs = prefs,
        _configService = configService;
   static const String _cacheKeyPrefix = 'cache_';
+  static const String _cachePrefix = 'api_cache_';
+  static const Duration _defaultCacheDuration = Duration(hours: 1);
   final SharedPreferences _prefs;
   final ConfigService _configService;
 
@@ -168,5 +170,46 @@ class CacheService {
       );
       return await retrieveCachedData();
     }
+  }
+
+  Future<void> cacheResponse(String key, dynamic data, {Duration? cacheDuration}) async {
+    final cacheKey = '$_cachePrefix$key';
+    final expiryTime = DateTime.now().add(cacheDuration ?? _defaultCacheDuration).millisecondsSinceEpoch;
+    
+    final cacheData = {
+      'data': data,
+      'expiry': expiryTime,
+    };
+    
+    await _prefs.setString(cacheKey, jsonEncode(cacheData));
+  }
+  
+  Future<dynamic?> getCachedResponse(String key) async {
+    final cacheKey = '$_cachePrefix$key';
+    final cachedData = _prefs.getString(cacheKey);
+    
+    if (cachedData == null) return null;
+    
+    final decodedData = jsonDecode(cachedData);
+    final expiryTime = decodedData['expiry'] as int;
+    
+    if (DateTime.now().millisecondsSinceEpoch > expiryTime) {
+      await _prefs.remove(cacheKey);
+      return null;
+    }
+    
+    return decodedData['data'];
+  }
+  
+  Future<void> clearCache() async {
+    final keys = _prefs.getKeys().where((key) => key.startsWith(_cachePrefix));
+    for (final key in keys) {
+      await _prefs.remove(key);
+    }
+  }
+  
+  Future<void> removeCachedResponse(String key) async {
+    final cacheKey = '$_cachePrefix$key';
+    await _prefs.remove(cacheKey);
   }
 }
