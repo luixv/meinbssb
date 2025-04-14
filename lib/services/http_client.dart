@@ -9,10 +9,15 @@ import 'package:http/http.dart' as http;
 import '/services/logger_service.dart';
 
 class HttpClient {
+  HttpClient({
+    required this.baseUrl,
+    required this.serverTimeout,
+    http.Client? client, // Add optional client parameter
+  }) : _client = client ?? http.Client(); // Use provided client or default
+
   final String baseUrl;
   final int serverTimeout;
-
-  HttpClient({required this.baseUrl, required this.serverTimeout});
+  final http.Client _client; // Private client instance
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
     final String apiUrl = '$baseUrl/$endpoint';
@@ -22,7 +27,8 @@ class HttpClient {
     LoggerService.logInfo('Request body: $requestBody');
 
     return _makeRequest(
-      http.post(
+      _client.post(
+        // Use the private _client
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: requestBody,
@@ -35,7 +41,9 @@ class HttpClient {
 
     LoggerService.logInfo('Sending GET request to: $apiUrl');
 
-    return _makeRequest(http.get(Uri.parse(apiUrl)));
+    return _makeRequest(
+      _client.get(Uri.parse(apiUrl)),
+    ); // Use the private _client
   }
 
   Future<dynamic> getBytes(String endpoint) async {
@@ -43,7 +51,9 @@ class HttpClient {
 
     LoggerService.logInfo('Sending GET bytes request to: $apiUrl');
 
-    return _makeBytesRequest(http.get(Uri.parse(apiUrl)));
+    return _makeBytesRequest(
+      _client.get(Uri.parse(apiUrl)),
+    ); // Use the private _client
   }
 
   Future<dynamic> _makeRequest(Future<http.Response> request) async {
@@ -51,7 +61,7 @@ class HttpClient {
       final response = await request.timeout(
         Duration(seconds: serverTimeout),
         onTimeout: () {
-          throw TimeoutException("Server timeout");
+          throw TimeoutException('Server timeout');
         },
       );
 
@@ -61,7 +71,7 @@ class HttpClient {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw Exception("Request failed: ${response.statusCode}");
+        throw Exception('Request failed: ${response.statusCode}');
       }
     } catch (e) {
       LoggerService.logError('Exception in http_client: $e');
@@ -74,7 +84,7 @@ class HttpClient {
       final response = await request.timeout(
         Duration(seconds: serverTimeout),
         onTimeout: () {
-          throw TimeoutException("Server timeout");
+          throw TimeoutException('Server timeout');
         },
       );
 

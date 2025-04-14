@@ -7,15 +7,14 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '/services/config_service.dart';
 
 class NetworkService {
-  final InternetConnectionChecker _connectionChecker;
-  final ConfigService _configService;
-
   NetworkService({
     InternetConnectionChecker? connectionChecker,
     required ConfigService configService,
   }) : _connectionChecker =
            connectionChecker ?? InternetConnectionChecker.createInstance(),
        _configService = configService;
+  final InternetConnectionChecker _connectionChecker;
+  final ConfigService _configService;
 
   Future<bool> hasInternet() async {
     return await _connectionChecker.hasConnection;

@@ -16,14 +16,13 @@ import '/services/error_service.dart';
 import '/services/logger_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  final ApiService apiService;
-  final EmailService emailService;
-
   const RegistrationScreen({
     required this.apiService,
     required this.emailService,
     super.key,
   });
+  final ApiService apiService;
+  final EmailService emailService;
 
   @override
   RegistrationScreenState createState() => RegistrationScreenState();
@@ -41,7 +40,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? passNumberError;
   String? emailError;
   bool _isLoading = false;
-  String _successMessage = "";
+  String _successMessage = '';
   Map<String, dynamic> userData = {};
   final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
   bool _emailFieldTouched = false; // New flag
@@ -126,16 +125,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
     if (value.isEmpty) {
       emailError = ErrorService.handleValidationError(
-        "E-Mail",
-        "E-Mail ist erforderlich.",
+        'E-Mail',
+        'E-Mail ist erforderlich.',
       );
       return false;
     }
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
       emailError = ErrorService.handleValidationError(
-        "E-Mail",
-        "Bitte geben Sie eine gültige E-Mail Adresse ein.",
+        'E-Mail',
+        'Bitte geben Sie eine gültige E-Mail Adresse ein.',
       );
       return false;
     }
@@ -146,13 +145,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   bool validateZipCode(String value) {
     if (value.isEmpty) {
       zipCodeError = ErrorService.handleValidationError(
-        "Postleitzahl",
-        "Postleitzahl ist erforderlich.",
+        'Postleitzahl',
+        'Postleitzahl ist erforderlich.',
       );
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
       zipCodeError = ErrorService.handleValidationError(
-        "Postleitzahl",
-        "Postleitzahl muss 5 Ziffern enthalten.",
+        'Postleitzahl',
+        'Postleitzahl muss 5 Ziffern enthalten.',
       );
     } else {
       zipCodeError = null;
@@ -163,13 +162,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   bool validatePassNumber(String value) {
     if (value.isEmpty) {
       passNumberError = ErrorService.handleValidationError(
-        "Schützenausweisnummer",
-        "Schützenausweisnummer ist erforderlich.",
+        'Schützenausweisnummer',
+        'Schützenausweisnummer ist erforderlich.',
       );
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
       passNumberError = ErrorService.handleValidationError(
-        "Schützenausweisnummer",
-        "Schützenausweisnummer muss 8 Ziffern enthalten.",
+        'Schützenausweisnummer',
+        'Schützenausweisnummer muss 8 Ziffern enthalten.',
       );
     } else {
       passNumberError = null;
@@ -202,7 +201,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Future<void> _registerUser() async {
     setState(() {
       _isLoading = true;
-      _successMessage = "";
+      _successMessage = '';
     });
 
     await Future.delayed(UIConstants.loadingDelay);
@@ -211,7 +210,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       if (mounted) {
         ErrorService.showErrorSnackBar(
           context,
-          "Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.",
+          'Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.',
         );
       }
       setState(() {
@@ -242,11 +241,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           await _sendRegistrationEmail();
           emailSent = true;
         } catch (e) {
-          LoggerService.logError("Email sending error: $e");
+          LoggerService.logError('Email sending error: $e');
           if (mounted) {
             ErrorService.showErrorSnackBar(
               context,
-              "Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.",
+              'Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.',
             );
           }
         }
@@ -259,8 +258,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   (context) => RegistrationSuccessScreen(
                     message:
                         emailSent
-                            ? "Registrierung erfolgreich!"
-                            : "Registrierung nicht erfolgreich! versuchen Sie es später erneut.",
+                            ? 'Registrierung erfolgreich!'
+                            : 'Registrierung nicht erfolgreich! versuchen Sie es später erneut.',
                     userData: userData,
                   ),
             ),
@@ -278,7 +277,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         }
       }
     } catch (e) {
-      LoggerService.logError("Error during registration: $e");
+      LoggerService.logError('Error during registration: $e');
       if (mounted) {
         ErrorService.showErrorSnackBar(
           context,
@@ -319,7 +318,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         throw Exception(emailResponse['ResultMessage']);
       }
     } catch (e) {
-      LoggerService.logError("Error sending email: $e");
+      LoggerService.logError('Error sending email: $e');
       rethrow;
     }
   }
@@ -349,7 +348,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             const LogoWidget(),
             SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "Hier Registrieren",
+              'Hier Registrieren',
               style: UIConstants.headerStyle.copyWith(
                 color: UIConstants.lightGreen,
               ),
@@ -366,7 +365,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               key: const Key('firstNameField'),
               controller: _firstNameController,
               decoration: UIConstants.defaultInputDecoration.copyWith(
-                labelText: "Vorname",
+                labelText: 'Vorname',
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -375,7 +374,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               key: const Key('lastNameField'),
               controller: _lastNameController,
               decoration: UIConstants.defaultInputDecoration.copyWith(
-                labelText: "Nachname",
+                labelText: 'Nachname',
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -384,7 +383,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               key: const Key('passNumberField'),
               controller: _passNumberController,
               decoration: UIConstants.defaultInputDecoration.copyWith(
-                labelText: "Schützenausweisnummer",
+                labelText: 'Schützenausweisnummer',
                 errorText: passNumberError,
               ),
               onChanged: (value) {
@@ -399,7 +398,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               controller: _emailController,
               focusNode: _emailFocusNode, // Assign the FocusNode
               decoration: UIConstants.defaultInputDecoration.copyWith(
-                labelText: "E-mail",
+                labelText: 'E-mail',
                 errorText:
                     _emailFieldTouched
                         ? emailError
@@ -425,7 +424,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               onTap: () => _selectDate(context),
               child: InputDecorator(
                 decoration: UIConstants.defaultInputDecoration.copyWith(
-                  labelText: "Geburtsdatum",
+                  labelText: 'Geburtsdatum',
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -454,7 +453,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               key: const Key('zipCodeField'),
               controller: _zipCodeController,
               decoration: UIConstants.defaultInputDecoration.copyWith(
-                labelText: "Postleitzahl",
+                labelText: 'Postleitzahl',
                 errorText: zipCodeError,
               ),
               onChanged: (value) {
@@ -524,7 +523,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           strokeWidth: 2.0,
                         )
                         : Text(
-                          "Registrieren",
+                          'Registrieren',
                           style: UIConstants.bodyStyle.copyWith(
                             color: UIConstants.white,
                           ),

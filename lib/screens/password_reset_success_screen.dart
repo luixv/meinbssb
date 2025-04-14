@@ -7,8 +7,8 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
-  final Map<String, dynamic> userData;
   const PasswordResetSuccessScreen({super.key, required this.userData});
+  final Map<String, dynamic> userData;
 
   @override
   Widget build(BuildContext context) {

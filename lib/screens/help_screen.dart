@@ -9,16 +9,15 @@ import '/screens/app_menu.dart';
 import '/constants/ui_constants.dart';
 
 class HelpScreen extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  final bool isLoggedIn;
-  final Function() onLogout;
-
   const HelpScreen({
     super.key,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   State<HelpScreen> createState() => _HelpScreenState();

@@ -14,9 +14,8 @@ import '/services/email_service.dart';
 import '/services/logger_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  final Function(Map<String, dynamic>) onLoginSuccess;
-
   const LoginScreen({required this.onLoginSuccess, super.key});
+  final Function(Map<String, dynamic>) onLoginSuccess;
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -60,13 +59,13 @@ class LoginScreenState extends State<LoginScreen> {
 
       LoggerService.logInfo('Login response: $response');
 
-      if (response["ResultType"] == 1) {
-        await _handleSuccessfulLogin(apiService, response["PersonID"]);
+      if (response['ResultType'] == 1) {
+        await _handleSuccessfulLogin(apiService, response['PersonID']);
       } else {
-        setState(() => _errorMessage = response["ResultMessage"]);
+        setState(() => _errorMessage = response['ResultMessage']);
       }
     } catch (e) {
-      setState(() => _errorMessage = "Error: ${e.toString()}");
+      setState(() => _errorMessage = 'Error: ${e.toString()}');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -96,7 +95,7 @@ class LoginScreenState extends State<LoginScreen> {
         );
       }
     } else {
-      setState(() => _errorMessage = "Fehler beim Laden der Passdaten.");
+      setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
     }
   }
 
@@ -134,7 +133,7 @@ class LoginScreenState extends State<LoginScreen> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: UIConstants.defaultInputDecoration.copyWith(
-        labelText: "E-mail",
+        labelText: 'E-mail',
       ),
     );
   }
@@ -145,7 +144,7 @@ class LoginScreenState extends State<LoginScreen> {
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
       decoration: UIConstants.defaultInputDecoration.copyWith(
-        labelText: "Passwort",
+        labelText: 'Passwort',
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -177,7 +176,7 @@ class LoginScreenState extends State<LoginScreen> {
                   strokeWidth: 2.0,
                 )
                 : Text(
-                  "Anmelden",
+                  'Anmelden',
                   style: UIConstants.bodyStyle.copyWith(
                     color: UIConstants.white,
                   ),
@@ -192,7 +191,7 @@ class LoginScreenState extends State<LoginScreen> {
         TextButton(
           onPressed: _navigateToPasswordReset,
           child: Text(
-            "Passwort vergessen?",
+            'Passwort vergessen?',
             style: UIConstants.linkStyle.copyWith(
               color: _appColor,
               fontSize: UIConstants.subtitleFontSize,
@@ -203,7 +202,7 @@ class LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Noch kein Konto?",
+              'Noch kein Konto?',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -211,7 +210,7 @@ class LoginScreenState extends State<LoginScreen> {
             TextButton(
               onPressed: _navigateToRegistrationPage,
               child: Text(
-                "Registrieren",
+                'Registrieren',
                 style: UIConstants.linkStyle.copyWith(
                   color: _appColor,
                   fontSize: UIConstants.subtitleFontSize,
@@ -238,7 +237,7 @@ class LoginScreenState extends State<LoginScreen> {
             );
           },
           child: Text(
-            "Hilfe",
+            'Hilfe',
             style: UIConstants.linkStyle.copyWith(
               color: _appColor,
               fontSize: UIConstants.subtitleFontSize,
@@ -261,7 +260,7 @@ class LoginScreenState extends State<LoginScreen> {
               const LogoWidget(),
               SizedBox(height: UIConstants.defaultSpacing),
               Text(
-                "Hier anmelden",
+                'Hier anmelden',
                 style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
               SizedBox(height: UIConstants.defaultSpacing),

@@ -8,14 +8,13 @@ import '/screens/app_menu.dart';
 import '/screens/logo_widget.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
-  final String message;
-  final Map<String, dynamic> userData;
-
   const RegistrationSuccessScreen({
     super.key,
     required this.message,
     required this.userData,
   });
+  final String message;
+  final Map<String, dynamic> userData;
 
   @override
   Widget build(BuildContext context) {

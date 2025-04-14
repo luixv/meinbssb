@@ -10,14 +10,13 @@ import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 
 class SchuetzenausweisScreen extends StatelessWidget {
-  final int personId;
-  final Map<String, dynamic> userData;
-
   const SchuetzenausweisScreen({
     super.key,
     required this.personId,
     required this.userData,
   });
+  final int personId;
+  final Map<String, dynamic> userData;
 
   @override
   Widget build(BuildContext context) {
