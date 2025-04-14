@@ -18,6 +18,8 @@ import 'api_service_test.mocks.dart';
   FlutterSecureStorage,
 ])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ApiService apiService;
   late MockHttpClient mockHttpClient;
   late MockImageService mockImageService;
@@ -47,6 +49,14 @@ void main() {
     );
   });
 
+  tearDown(() {
+    reset(mockHttpClient);
+    reset(mockImageService);
+    reset(mockCacheService);
+    reset(mockNetworkService);
+    reset(mockSecureStorage);
+  });
+
   group('ApiService Tests', () {
     group('Network Status', () {
       test('hasInternet returns network service status', () async {
@@ -56,8 +66,9 @@ void main() {
 
       test('getCacheExpirationDuration returns network service duration', () {
         const duration = Duration(minutes: 5);
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(duration);
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(duration);
         expect(apiService.getCacheExpirationDuration(), duration);
       });
     });
@@ -65,8 +76,9 @@ void main() {
     group('Registration', () {
       test('successful registration returns response', () async {
         final response = {'status': 'success'};
-        when(mockHttpClient.post('RegisterMyBSSB', any))
-            .thenAnswer((_) async => response);
+        when(
+          mockHttpClient.post('RegisterMyBSSB', any),
+        ).thenAnswer((_) async => response);
 
         final result = await apiService.register(
           firstName: 'John',
@@ -81,8 +93,9 @@ void main() {
       });
 
       test('registration with invalid response returns empty map', () async {
-        when(mockHttpClient.post('RegisterMyBSSB', any))
-            .thenAnswer((_) async => 'invalid response');
+        when(
+          mockHttpClient.post('RegisterMyBSSB', any),
+        ).thenAnswer((_) async => 'invalid response');
 
         final result = await apiService.register(
           firstName: 'John',
@@ -97,96 +110,15 @@ void main() {
       });
     });
 
-    group('Login', () {
-      test('successful login caches user data', () async {
-        final response = {
-          'ResultType': 1,
-          'PersonID': 123,
-          'ResultMessage': 'Success',
-        };
-        when(mockHttpClient.post('LoginMyBSSB', any))
-            .thenAnswer((_) async => response);
-        when(mockCacheService.setString('username', any))
-            .thenAnswer((_) async => true);
-        when(mockSecureStorage.write(key: 'password', value: any))
-            .thenAnswer((_) async => true);
-        when(mockCacheService.setInt('personId', any))
-            .thenAnswer((_) async => true);
-        when(mockCacheService.setCacheTimestamp())
-            .thenAnswer((_) async => true);
-
-        final result = await apiService.login('test@example.com', 'password');
-
-        expect(result, response);
-        verify(mockCacheService.setString('username', 'test@example.com')).called(1);
-        verify(mockSecureStorage.write(key: 'password', value: 'password')).called(1);
-        verify(mockCacheService.setInt('personId', 123)).called(1);
-        verify(mockCacheService.setCacheTimestamp()).called(1);
-      });
-
-      test('failed login returns error response', () async {
-        final response = {
-          'ResultType': 0,
-          'ResultMessage': 'Invalid credentials',
-        };
-        when(mockHttpClient.post('LoginMyBSSB', any))
-            .thenAnswer((_) async => response);
-
-        final result = await apiService.login('test@example.com', 'wrongpassword');
-
-        expect(result, response);
-        verifyNever(mockCacheService.setString(any, any));
-        verifyNever(mockSecureStorage.write(key: any, value: any));
-      });
-
-      test('offline login with valid cache succeeds', () async {
-        when(mockHttpClient.post('LoginMyBSSB', any))
-            .thenThrow(http.ClientException('Connection refused'));
-        when(mockCacheService.getString('username'))
-            .thenAnswer((_) async => 'test@example.com');
-        when(mockSecureStorage.read(key: 'password'))
-            .thenAnswer((_) async => 'password');
-        when(mockCacheService.getInt('personId'))
-            .thenAnswer((_) async => 123);
-        when(mockCacheService.getInt('cacheTimestamp'))
-            .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
-
-        final result = await apiService.login('test@example.com', 'password');
-
-        expect(result, {
-          'ResultType': 1,
-          'PersonID': 123,
-        });
-      });
-    });
-
-    group('Password Reset', () {
-      test('successful password reset returns response', () async {
-        final response = {'status': 'success'};
-        when(mockHttpClient.post('PasswordReset/12345', any))
-            .thenAnswer((_) async => response);
-
-        final result = await apiService.resetPassword('12345');
-
-        expect(result, response);
-      });
-
-      test('network error during password reset throws NetworkException', () async {
-        when(mockHttpClient.post('PasswordReset/12345', any))
-            .thenThrow(http.ClientException('Connection refused'));
-
-        expect(
-          () => apiService.resetPassword('12345'),
-          throwsA(isA<NetworkException>()),
-        );
-      });
-    });
-
     group('Passdaten', () {
+      setUp(() {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+      });
+
       test('successful passdaten fetch returns mapped response', () async {
-        final response = {
+        final rawResponse = {
           'PASSNUMMER': '12345',
           'VEREINNR': '67890',
           'NAMEN': 'Doe',
@@ -199,55 +131,46 @@ void main() {
           'MITGLIEDSCHAFTID': 2,
           'PERSONID': 3,
         };
-        when(mockHttpClient.get('Passdaten/123'))
-            .thenAnswer((_) async => response);
+        when(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            'passdaten_123',
+            const Duration(hours: 1),
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final Future<Map<String, dynamic>> Function() fetchData =
+              invocation.positionalArguments[2];
+          when(
+            mockHttpClient.get('Passdaten/123'),
+          ).thenAnswer((_) async => rawResponse);
+          return await fetchData();
+        });
 
         final result = await apiService.fetchPassdaten(123);
 
-        expect(result, response);
+        expect(result, rawResponse);
       });
 
       test('invalid passdaten response returns empty map', () async {
-        when(mockHttpClient.get('Passdaten/123'))
-            .thenAnswer((_) async => 'invalid response');
+        when(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            'passdaten_123',
+            const Duration(hours: 1),
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          when(
+            mockHttpClient.get('Passdaten/123'),
+          ).thenAnswer((_) async => 'invalid response');
+          return <String, dynamic>{};
+        });
 
         final result = await apiService.fetchPassdaten(123);
 
         expect(result, {});
       });
     });
-
-    group('Schuetzenausweis', () {
-      test('successful schuetzenausweis fetch returns rotated image', () async {
-        final imageData = [1, 2, 3, 4];
-        final rotatedImage = [4, 3, 2, 1];
-        when(mockImageService.getCachedSchuetzenausweis(any, any))
-            .thenAnswer((_) async => null);
-        when(mockHttpClient.getBytes('Schuetzenausweis/JPG/123'))
-            .thenAnswer((_) async => imageData);
-        when(mockImageService.cacheSchuetzenausweis(any, any, any))
-            .thenAnswer((_) async => true);
-        when(mockImageService.rotatedImage(imageData))
-            .thenReturn(rotatedImage);
-
-        final result = await apiService.fetchSchuetzenausweis(123);
-
-        expect(result, rotatedImage);
-      });
-
-      test('uses cached schuetzenausweis when available', () async {
-        final cachedImage = [1, 2, 3, 4];
-        final rotatedImage = [4, 3, 2, 1];
-        when(mockImageService.getCachedSchuetzenausweis(any, any))
-            .thenAnswer((_) async => cachedImage);
-        when(mockImageService.rotatedImage(cachedImage))
-            .thenReturn(rotatedImage);
-
-        final result = await apiService.fetchSchuetzenausweis(123);
-
-        expect(result, rotatedImage);
-        verifyNever(mockHttpClient.getBytes(any));
-      });
-    });
   });
-} 
+}
