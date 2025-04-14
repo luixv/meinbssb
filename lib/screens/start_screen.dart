@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
+import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 
@@ -88,6 +89,10 @@ class StartScreenState extends State<StartScreen> {
         automaticallyImplyLeading: false,
         title: Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(), // Add the ConnectivityIcon here
+          ),
           AppMenu(
             context: context,
             userData: widget.userData,
