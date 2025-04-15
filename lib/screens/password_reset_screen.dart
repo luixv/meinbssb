@@ -7,13 +7,9 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/error_service.dart';
-import '/services/logger_service.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  const PasswordResetScreen({
-    required this.authService,
-    super.key,
-  });
+  const PasswordResetScreen({required this.authService, super.key});
   final AuthService authService;
 
   @override
@@ -67,9 +63,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Passwort zurücksetzen'),
-      ),
+      appBar: AppBar(title: const Text('Passwort zurücksetzen')),
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
@@ -103,15 +97,16 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                   backgroundColor: UIConstants.lightGreen,
                   padding: UIConstants.buttonPadding,
                 ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(
-                        color: UIConstants.white,
-                        strokeWidth: 2.0,
-                      )
-                    : const Text(
-                        'Passwort zurücksetzen',
-                        style: UIConstants.bodyStyle,
-                      ),
+                child:
+                    _isLoading
+                        ? const CircularProgressIndicator(
+                          color: UIConstants.white,
+                          strokeWidth: 2.0,
+                        )
+                        : const Text(
+                          'Passwort zurücksetzen',
+                          style: UIConstants.bodyStyle,
+                        ),
               ),
             ),
           ],

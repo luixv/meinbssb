@@ -108,10 +108,11 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegistrationScreen(
-          authService: authService,
-          emailService: emailService,
-        ),
+        builder:
+            (context) => RegistrationScreen(
+              authService: authService,
+              emailService: emailService,
+            ),
       ),
     );
   }
