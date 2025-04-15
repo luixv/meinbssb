@@ -26,7 +26,13 @@ environment:
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
+# versions available, run `flutter pub outdated`. Consider to add
+ #sqflite: ^2.3.2
+ #sqflite_common: ^2.5.3
+ #sqflite_common_ffi_web: ^1.0.0
+ #sqflite_common_ffi: ^2.3.2+1
+ # In case a DB is needed, the previous dependencies are required.
+
 dependencies:
   flutter:
     sdk: flutter
@@ -46,10 +52,6 @@ dependencies:
   path_provider: ^2.1.1
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.14
-  #sqflite: ^2.3.2
-  #sqflite_common: ^2.5.3
-  #sqflite_common_ffi_web: ^1.0.0
-  #sqflite_common_ffi: ^2.3.2+1
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.8
