@@ -3,7 +3,6 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
-import 'package:http/http.dart' as http;
 
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
@@ -78,17 +77,14 @@ class TrainingService {
 
   Future<bool> registerForSchulung(int personId, int schulungId) async {
     try {
-      final response = await _httpClient.post(
-        'RegisterForSchulung',
-        {
-          'personId': personId,
-          'schulungId': schulungId,
-        },
-      );
+      final response = await _httpClient.post('RegisterForSchulung', {
+        'personId': personId,
+        'schulungId': schulungId,
+      });
       return response['ResultType'] == 1;
     } catch (e) {
       LoggerService.logError('Error registering for training: $e');
       rethrow;
     }
   }
-} 
+}

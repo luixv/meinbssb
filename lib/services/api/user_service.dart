@@ -3,11 +3,9 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
-import 'package:http/http.dart' as http;
 
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
-import '/services/logger_service.dart';
 import '/services/network_service.dart';
 
 class UserService {
@@ -66,19 +64,13 @@ class UserService {
   List<dynamic> _mapZweitmitgliedschaftenResponse(dynamic response) {
     if (response is List) {
       return response.map((item) {
-        return {
-          'VEREINID': item['VEREINID'],
-          'VEREINNAME': item['VEREINNAME'],
-        };
+        return {'VEREINID': item['VEREINID'], 'VEREINNAME': item['VEREINNAME']};
       }).toList();
     }
     return [];
   }
 
-  Future<List<dynamic>> fetchPassdatenZVE(
-    int passdatenId,
-    int personId,
-  ) async {
+  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
     return _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'passdaten_zve_$passdatenId',
       _networkService.getCacheExpirationDuration(),
@@ -101,4 +93,4 @@ class UserService {
     }
     return [];
   }
-} 
+}

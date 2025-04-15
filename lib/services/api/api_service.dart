@@ -3,7 +3,6 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
-import 'package:http/http.dart' as http;
 
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
@@ -18,8 +17,6 @@ class ApiService {
     required CacheService cacheService,
     required NetworkService networkService,
   }) : _httpClient = httpClient,
-       _cacheService = cacheService,
-       _networkService = networkService,
        _userService = UserService(
          httpClient: httpClient,
          cacheService: cacheService,
@@ -32,8 +29,6 @@ class ApiService {
        );
 
   final HttpClient _httpClient;
-  final CacheService _cacheService;
-  final NetworkService _networkService;
   final UserService _userService;
   final TrainingService _trainingService;
 
@@ -95,17 +90,14 @@ class ApiService {
     Map<String, dynamic> userData,
   ) async {
     try {
-      final response = await _httpClient.post(
-        'UpdateUserData',
-        {
-          'personId': personId,
-          ...userData,
-        },
-      );
+      final response = await _httpClient.post('UpdateUserData', {
+        'personId': personId,
+        ...userData,
+      });
       return response['ResultType'] == 1;
     } catch (e) {
       LoggerService.logError('Error updating user data: $e');
       rethrow;
     }
   }
-} 
+}
