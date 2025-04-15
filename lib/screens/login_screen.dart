@@ -9,6 +9,7 @@ import '/screens/registration_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/logo_widget.dart';
+import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/email_service.dart';
 import '/services/logger_service.dart';
@@ -42,7 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    if (!mounted) return; // Early return if the widget is disposed
+    final authService = Provider.of<AuthService>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     setState(() {
@@ -51,29 +52,24 @@ class LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final response = await apiService.login(
+      final response = await authService.login(
         _emailController.text,
         _passwordController.text,
       );
+
+      if (!mounted) return;
 
       LoggerService.logInfo('Login response: $response');
 
       if (response['ResultType'] == 1) {
         await _handleSuccessfulLogin(apiService, response['PersonID']);
       } else {
-        if (mounted) {
-          //check mounted before setting state
-          setState(() => _errorMessage = response['ResultMessage']);
-        }
+        setState(() => _errorMessage = response['ResultMessage']);
       }
     } catch (e) {
-      if (mounted) {
-        //check mounted before setting state
-        setState(() => _errorMessage = 'Error: ${e.toString()}');
-      }
+      setState(() => _errorMessage = 'Error: ${e.toString()}');
     } finally {
       if (mounted) {
-        //check mounted before setting state
         setState(() => _isLoading = false);
       }
     }
@@ -87,7 +83,7 @@ class LoginScreenState extends State<LoginScreen> {
     var passdaten = await apiService.fetchPassdaten(personId);
     LoggerService.logInfo('User data: $passdaten');
 
-    if (!mounted) return; // Early return
+    if (!mounted) return;
 
     if (passdaten.isNotEmpty) {
       final completeUserData = {...passdaten, 'PERSONID': personId};
@@ -101,37 +97,33 @@ class LoginScreenState extends State<LoginScreen> {
         );
       }
     } else {
-      if (mounted) {
-        //check mounted before setting state
-        setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
-      }
+      setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
     }
   }
 
   void _navigateToRegistrationPage() {
-    final apiService = Provider.of<ApiService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
     final emailService = Provider.of<EmailService>(context, listen: false);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => RegistrationScreen(
-              apiService: apiService,
-              emailService: emailService,
-            ),
+        builder: (context) => RegistrationScreen(
+          authService: authService,
+          emailService: emailService,
+        ),
       ),
     );
   }
 
   Future<void> _navigateToPasswordReset() async {
-    if (!mounted) return; //early return
-    final apiService = Provider.of<ApiService>(context, listen: false);
+    if (!mounted) return;
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PasswordResetScreen(apiService: apiService),
+        builder: (context) => PasswordResetScreen(authService: authService),
       ),
     );
   }

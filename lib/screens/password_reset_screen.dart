@@ -5,13 +5,16 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
-import '/screens/app_menu.dart';
-import '/screens/password_reset_success_screen.dart';
-import '/services/api_service.dart';
+import '/services/api/auth_service.dart';
+import '/services/error_service.dart';
+import '/services/logger_service.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  const PasswordResetScreen({required this.apiService, super.key});
-  final ApiService apiService;
+  const PasswordResetScreen({
+    required this.authService,
+    super.key,
+  });
+  final AuthService authService;
 
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
@@ -19,79 +22,40 @@ class PasswordResetScreen extends StatefulWidget {
 
 class PasswordResetScreenState extends State<PasswordResetScreen> {
   final TextEditingController _passNumberController = TextEditingController();
-  String _passNumberError = '';
-  bool _isPassNumberValid = false;
-  bool _hasInteracted = false;
   bool _isLoading = false;
-  final Color _appColor = UIConstants.defaultAppColor;
+  String _errorMessage = '';
+  String _successMessage = '';
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  bool _validatePassNumber(String value) {
-    if (value.isEmpty) {
-      _passNumberError = 'Passnummer ist erforderlich.';
-      return false;
-    }
-    if (!RegExp(r'^\d{8}$').hasMatch(value)) {
-      _passNumberError = 'Passnummer muss 8 Ziffern enthalten.';
-      return false;
-    }
-    _passNumberError = '';
-    return true;
+  void dispose() {
+    _passNumberController.dispose();
+    super.dispose();
   }
 
   Future<void> _resetPassword() async {
     setState(() {
       _isLoading = true;
-      _passNumberError = '';
+      _errorMessage = '';
+      _successMessage = '';
     });
 
-    if (!_isPassNumberValid) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
     try {
-      final response = await widget.apiService.resetPassword(
+      final response = await widget.authService.resetPassword(
         _passNumberController.text,
       );
 
       if (response['ResultType'] == 1) {
-        try {
-          final userData = await widget.apiService.fetchPassdaten(
-            int.parse(_passNumberController.text),
-          );
-
-          if (mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => PasswordResetSuccessScreen(
-                      userData: userData,
-                      // Temporarily removed apiService parameter
-                    ),
-              ),
-            );
-          }
-        } catch (e) {
-          setState(() {
-            _passNumberError = 'Ein Fehler ist aufgetreten: $e';
-          });
-        }
+        setState(() {
+          _successMessage = response['ResultMessage'];
+        });
       } else {
         setState(() {
-          _passNumberError = response['ResultMessage'];
+          _errorMessage = response['ResultMessage'];
         });
       }
     } catch (e) {
       setState(() {
-        _passNumberError = 'Ein Fehler ist aufgetreten: $e';
+        _errorMessage = ErrorService.handleNetworkError(e);
       });
     } finally {
       setState(() {
@@ -102,79 +66,55 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = {};
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Passwort zurücksetzen', style: UIConstants.titleStyle),
-        automaticallyImplyLeading: false,
-        actions: [
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: false,
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
+        title: const Text('Passwort zurücksetzen'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: UIConstants.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const LogoWidget(),
-              SizedBox(height: UIConstants.defaultSpacing),
-              Text(
-                'Passwort zurücksetzen',
-                style: UIConstants.headerStyle.copyWith(color: _appColor),
+        padding: UIConstants.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const LogoWidget(),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            Text(
+              'Passwort zurücksetzen',
+              style: UIConstants.headerStyle.copyWith(
+                color: UIConstants.lightGreen,
               ),
-              SizedBox(height: UIConstants.defaultSpacing),
-              TextField(
-                controller: _passNumberController,
-                keyboardType: TextInputType.number,
-                decoration: UIConstants.defaultInputDecoration.copyWith(
-                  labelText: 'Passnummer',
-                  errorText:
-                      _hasInteracted && _passNumberError.isNotEmpty
-                          ? _passNumberError
-                          : null,
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            if (_errorMessage.isNotEmpty)
+              Text(_errorMessage, style: UIConstants.errorStyle),
+            if (_successMessage.isNotEmpty)
+              Text(_successMessage, style: UIConstants.successStyle),
+            TextField(
+              controller: _passNumberController,
+              decoration: UIConstants.defaultInputDecoration.copyWith(
+                labelText: 'Schützenausweisnummer',
+              ),
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _resetPassword,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: UIConstants.lightGreen,
+                  padding: UIConstants.buttonPadding,
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _hasInteracted = true;
-                    _isPassNumberValid = _validatePassNumber(value);
-                  });
-                },
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        color: UIConstants.white,
+                        strokeWidth: 2.0,
+                      )
+                    : const Text(
+                        'Passwort zurücksetzen',
+                        style: UIConstants.bodyStyle,
+                      ),
               ),
-              SizedBox(height: UIConstants.defaultSpacing),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed:
-                      _isPassNumberValid && !_isLoading ? _resetPassword : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: UIConstants.lightGreen,
-                    padding: UIConstants.buttonPadding,
-                  ),
-                  child:
-                      _isLoading
-                          ? CircularProgressIndicator(
-                            color: UIConstants.white,
-                            strokeWidth: 2.0,
-                          )
-                          : Text(
-                            'Passwort zurücksetzen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                            ),
-                          ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

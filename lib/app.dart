@@ -21,6 +21,7 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.configServiceProvider,
         AppInitializer.emailSenderProvider,
         AppInitializer.emailServiceProvider,
+        AppInitializer.authServiceProvider,
         AppInitializer.apiServiceProvider,
         AppInitializer.networkServiceProvider,
         AppInitializer.cacheServiceProvider,

@@ -10,18 +10,18 @@ import '/screens/app_menu.dart';
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
-import '/services/api_service.dart';
+import '/services/api/auth_service.dart';
 import '/services/email_service.dart';
 import '/services/error_service.dart';
 import '/services/logger_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({
-    required this.apiService,
+    required this.authService,
     required this.emailService,
     super.key,
   });
-  final ApiService apiService;
+  final AuthService authService;
   final EmailService emailService;
 
   @override
@@ -222,7 +222,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
     try {
-      final response = await widget.apiService.register(
+      final response = await widget.authService.register(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,
@@ -254,14 +254,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder:
-                  (context) => RegistrationSuccessScreen(
-                    message:
-                        emailSent
-                            ? 'Registrierung erfolgreich!'
-                            : 'Registrierung nicht erfolgreich! versuchen Sie es später erneut.',
-                    userData: userData,
-                  ),
+              builder: (context) => RegistrationSuccessScreen(
+                message: emailSent
+                    ? 'Registrierung erfolgreich!'
+                    : 'Registrierung nicht erfolgreich! versuchen Sie es später erneut.',
+                userData: userData,
+              ),
             ),
           );
         }

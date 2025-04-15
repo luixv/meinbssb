@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
+import 'services/api/auth_service.dart';
 import 'services/api_service.dart';
 import 'services/email_service.dart';
 import 'services/image_service.dart';
@@ -56,33 +57,40 @@ class AppInitializer {
       serverTimeout: serverTimeout,
     );
 
-    _registerProviders(apiService, networkService, cacheService);
+    _registerProviders(apiService, networkService, cacheService, httpClient);
   }
 
   static void _registerProviders(
     ApiService apiService,
     NetworkService networkService,
     CacheService cacheService,
+    HttpClient httpClient,
   ) {
+    configServiceProvider = Provider<ConfigService>(
+      create: (context) => ConfigService.instance,
+    );
+    emailSenderProvider = Provider<EmailSender>(
+      create: (context) => MailerEmailSender(),
+    );
+    emailServiceProvider = Provider<EmailService>(
+      create: (context) => EmailService(
+        emailSender: context.read<EmailSender>(),
+        configService: context.read<ConfigService>(),
+      ),
+    );
+    authServiceProvider = Provider<AuthService>(
+      create: (context) => AuthService(
+        httpClient: httpClient,
+        cacheService: cacheService,
+        networkService: networkService,
+      ),
+    );
     apiServiceProvider = Provider<ApiService>(create: (context) => apiService);
     networkServiceProvider = Provider<NetworkService>(
       create: (context) => networkService,
     );
     cacheServiceProvider = Provider<CacheService>(
       create: (context) => cacheService,
-    );
-    emailServiceProvider = Provider<EmailService>(
-      create:
-          (context) => EmailService(
-            emailSender: context.read<EmailSender>(),
-            configService: context.read<ConfigService>(),
-          ),
-    );
-    configServiceProvider = Provider<ConfigService>(
-      create: (context) => ConfigService.instance,
-    );
-    emailSenderProvider = Provider<EmailSender>(
-      create: (context) => MailerEmailSender(),
     );
   }
 
@@ -93,4 +101,5 @@ class AppInitializer {
   static late Provider<EmailService> emailServiceProvider;
   static late Provider<ConfigService> configServiceProvider;
   static late Provider<EmailSender> emailSenderProvider;
+  static late Provider<AuthService> authServiceProvider;
 }
