@@ -50,7 +50,6 @@ class _ImpressumScreenState extends State<ImpressumScreen> {
         title: const Text('Impressum'),
         actions: [
           AppMenu(
-            // Add your AppMenu widget here
             context: context,
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
@@ -60,9 +59,7 @@ class _ImpressumScreenState extends State<ImpressumScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: HtmlWidget(
-          _htmlContent, // Use the defined _htmlContent
-        ),
+        child: HtmlWidget(_htmlContent),
       ),
     );
   }

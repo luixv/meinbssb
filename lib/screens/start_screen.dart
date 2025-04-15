@@ -88,61 +88,59 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
+        title: const Text('Startseite'),
         actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(), // Add the ConnectivityIcon here
-          ),
           AppMenu(
             context: context,
             userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
+            isLoggedIn: true,
+            onLogout: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Mein BSSB',
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
               style: UIConstants.titleStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['PASSNUMMER'],
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
-            Text(
+            const Text(
               'Schützenpassnummer',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['VEREINNAME'],
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
-            Text(
+            const Text(
               'Erstverein',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle,
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
-            Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.smallSpacing),
             isLoading
                 ? Center(
                   child: CircularProgressIndicator(

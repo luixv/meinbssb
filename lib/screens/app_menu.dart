@@ -81,96 +81,39 @@ class AppMenu extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) {
         final List<PopupMenuEntry<String>> items = [];
-
-        if (!isLoggedIn) {
-          items.add(
-            PopupMenuItem<String>(
-              value: 'impressum',
-              child: Text('Impressum', style: UIConstants.bodyStyle),
-            ),
-          );
-          items.add(
-            PopupMenuItem<String>(
-              value: 'back_to_login',
-              child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
-            ),
-          );
-        } else {
+        
+        if (isLoggedIn) {
           items.addAll([
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'startseite',
-              child: Text('Startseite', style: UIConstants.bodyStyle),
+              child: Text('Startseite'),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'digitaler_schuetzenausweis',
-              child: Text(
-                'Digitaler Schützenausweis',
-                style: UIConstants.bodyStyle,
-              ),
+              child: Text('Digitaler Schützenausweis'),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'zweitmitgliedschaften',
-              child: Text(
-                'Zweitmitgliedschaften',
-                style: UIConstants.bodyStyle,
-              ),
+              child: Text('Zweitmitgliedschaften'),
             ),
-            PopupMenuItem<String>(
-              value: 'aenderung_schuetzenausweis',
-              child: Text(
-                'Änderung Schützenausweis',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'physischer_schuetzenausweis',
-              child: Text(
-                'Physischer Schützenausweis',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'meine_stammdaten',
-              child: Text('Meine Stammdaten', style: UIConstants.bodyStyle),
-            ),
-            PopupMenuItem<String>(
-              value: 'meine_kontaktdaten',
-              child: Text('Meine Kontaktdaten', style: UIConstants.bodyStyle),
-            ),
-            PopupMenuItem<String>(
-              value: 'meine_seminare_buchen',
-              child: Text(
-                'Meine Seminare buchen',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'meine_seminare_absolviert',
-              child: Text(
-                'Meine Seminare absolviert',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'oktoberfestlandesschiessen',
-              child: Text(
-                'Oktoberfestlandesschiessen',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'impressum',
-              child: Text('Impressum', style: UIConstants.bodyStyle),
+              child: Text('Impressum'),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
               value: 'logout',
-              child: Text('Abmelden', style: UIConstants.bodyStyle),
+              child: Text('Logout'),
             ),
           ]);
+        } else {
+          items.add(const PopupMenuItem<String>(
+            value: 'back_to_login',
+            child: Text('Zurück zur Anmeldung'),
+          ));
         }
+        
         return items;
       },
-      icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );
   }
 }

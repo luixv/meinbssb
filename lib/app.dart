@@ -110,20 +110,17 @@ class MyAppState extends State<MyApp> {
         );
       },
       routes: {
-        '/login':
-            (context) => LoginScreen(
+        '/login': (context) => LoginScreen(
               onLoginSuccess: (userData) => _setLoggedIn(true, userData),
             ),
         '/home': (context) {
           final arguments =
-              ModalRoute.of(context)?.settings.arguments
-                  as Map<String, dynamic>?;
+              ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
           final userData =
               arguments?['userData'] as Map<String, dynamic>? ?? _userData;
           final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
-
           return StartScreen(
-            userData,
+            userData: userData,
             isLoggedIn: isLoggedIn,
             onLogout: () => _setLoggedIn(false, {}),
           );
