@@ -51,12 +51,13 @@ class _HelpScreenState extends State<HelpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'FAQ',
+        title: Text(
+          'FAQ', // You can hardcode the title or use a localization key
           style: UIConstants.titleStyle,
         ),
         actions: [
           AppMenu(
+            // Add your AppMenu widget if needed
             context: context,
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
@@ -65,7 +66,7 @@ class _HelpScreenState extends State<HelpScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        padding: EdgeInsets.all(UIConstants.defaultPadding),
         child: HtmlWidget(_htmlContent),
       ),
     );

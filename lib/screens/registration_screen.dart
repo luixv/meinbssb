@@ -327,7 +327,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registrierung', style: UIConstants.titleStyle),
+        title: Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
         actions: [
           AppMenu(
@@ -346,17 +346,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Hier Registrieren',
               style: UIConstants.headerStyle.copyWith(
                 color: UIConstants.lightGreen,
               ),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            SizedBox(height: UIConstants.defaultSpacing),
             if (_successMessage.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   vertical: UIConstants.smallSpacing,
                 ),
                 child: Text(_successMessage, style: UIConstants.successStyle),
@@ -369,7 +369,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('lastNameField'),
               controller: _lastNameController,
@@ -378,7 +378,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('passNumberField'),
               controller: _passNumberController,
@@ -392,7 +392,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 });
               },
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('emailField'),
               controller: _emailController,
@@ -419,7 +419,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 });
               },
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             InkWell(
               onTap: () => _selectDate(context),
               child: InputDecorator(
@@ -448,7 +448,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             TextField(
               key: const Key('zipCodeField'),
               controller: _zipCodeController,
@@ -462,7 +462,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 });
               },
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             Row(
               children: [
                 Checkbox(
@@ -507,7 +507,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            SizedBox(height: UIConstants.defaultSpacing),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

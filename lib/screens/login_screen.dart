@@ -169,15 +169,18 @@ class LoginScreenState extends State<LoginScreen> {
           backgroundColor: UIConstants.lightGreen,
           padding: UIConstants.buttonPadding,
         ),
-        child: _isLoading
-            ? const CircularProgressIndicator(
-                color: UIConstants.white,
-                strokeWidth: 2.0,
-              )
-            : const Text(
-                'Anmelden',
-                style: UIConstants.bodyStyle,
-              ),
+        child:
+            _isLoading
+                ? CircularProgressIndicator(
+                  color: UIConstants.white,
+                  strokeWidth: 2.0,
+                )
+                : Text(
+                  'Anmelden',
+                  style: UIConstants.bodyStyle.copyWith(
+                    color: UIConstants.white,
+                  ),
+                ),
       ),
     );
   }
@@ -255,20 +258,20 @@ class LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const LogoWidget(),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Hier anmelden',
                 style: UIConstants.headerStyle.copyWith(color: _appColor),
               ),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              SizedBox(height: UIConstants.defaultSpacing),
               _buildEmailField(),
-              const SizedBox(height: UIConstants.smallSpacing),
+              SizedBox(height: UIConstants.smallSpacing),
               _buildPasswordField(),
-              const SizedBox(height: UIConstants.defaultSpacing * 2),
+              SizedBox(height: UIConstants.defaultSpacing * 2),
               if (_errorMessage.isNotEmpty)
                 Text(_errorMessage, style: UIConstants.errorStyle),
               _buildLoginButton(),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              SizedBox(height: UIConstants.defaultSpacing),
               _buildNavigationLinks(),
             ],
           ),

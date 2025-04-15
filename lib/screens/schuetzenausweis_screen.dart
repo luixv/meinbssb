@@ -24,15 +24,14 @@ class SchuetzenausweisScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Digitaler Schützenausweis'),
+        automaticallyImplyLeading: false,
+        title: Text('Digitaler Schützenausweis', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
             userData: userData,
             isLoggedIn: true,
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
+            onLogout: () => Navigator.pushReplacementNamed(context, '/login'),
           ),
         ],
       ),
@@ -40,7 +39,7 @@ class SchuetzenausweisScreen extends StatelessWidget {
         future: apiService.fetchSchuetzenausweis(personId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
                 color: UIConstants.defaultAppColor,
                 strokeWidth: 2.0,
@@ -62,7 +61,7 @@ class SchuetzenausweisScreen extends StatelessWidget {
           if (snapshot.hasData) {
             return Center(child: Image.memory(snapshot.data!));
           }
-          return const Center(
+          return Center(
             child: Text(
               'No image data available',
               style: UIConstants.bodyStyle,
