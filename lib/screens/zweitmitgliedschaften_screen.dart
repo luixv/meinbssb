@@ -71,8 +71,8 @@ class _ZweitmitgliedschaftenScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 48, color: UIConstants.red),
-          SizedBox(height: UIConstants.defaultSpacing),
+          const Icon(Icons.error_outline, size: 48, color: UIConstants.red),
+          const SizedBox(height: UIConstants.defaultSpacing),
           Text(
             message,
             textAlign: TextAlign.center,

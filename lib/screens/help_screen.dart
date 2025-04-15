@@ -51,10 +51,7 @@ class _HelpScreenState extends State<HelpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'FAQ', // You can hardcode the title or use a localization key
-          style: UIConstants.titleStyle,
-        ),
+        title: const Text('FAQ', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             // Add your AppMenu widget if needed

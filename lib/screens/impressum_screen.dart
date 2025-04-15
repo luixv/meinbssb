@@ -20,7 +20,7 @@ class ImpressumScreen extends StatefulWidget {
 }
 
 class _ImpressumScreenState extends State<ImpressumScreen> {
-  String _htmlContent = 'Loading...'; // Define _htmlContent here
+  String _htmlContent = 'Loading...';
 
   @override
   void initState() {
