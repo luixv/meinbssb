@@ -18,12 +18,12 @@ class MyAppWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        AppInitializer.configServiceProvider,
+        AppInitializer.emailSenderProvider,
+        AppInitializer.emailServiceProvider,
         AppInitializer.apiServiceProvider,
         AppInitializer.networkServiceProvider,
         AppInitializer.cacheServiceProvider,
-        AppInitializer.emailServiceProvider,
-        AppInitializer.configServiceProvider,
-        AppInitializer.emailSenderProvider,
       ],
       child: const MyApp(),
     );
