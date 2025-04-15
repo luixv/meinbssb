@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:meinbssb/main.dart';
 import 'package:meinbssb/screens/login_screen.dart';
@@ -13,8 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   group('App Flow Integration Tests', () {
     late SharedPreferences prefs;
     late ApiService apiService;
@@ -28,7 +25,7 @@ void main() {
       final configService = await ConfigService.load('assets/config.json');
       
       httpClient = HttpClient(
-        baseUrl: 'http://localhost:3000', // Using your Node.js mock server
+        baseUrl: 'http://localhost:3000',
         serverTimeout: 30,
       );
       
@@ -46,7 +43,7 @@ void main() {
         cacheService: cacheService,
         networkService: networkService,
         baseIp: 'localhost',
-        port: '3000', // Using your Node.js mock server port
+        port: '3000',
         serverTimeout: 30,
       );
     });
