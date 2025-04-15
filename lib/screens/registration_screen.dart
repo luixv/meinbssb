@@ -477,10 +477,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     text: TextSpan(
                       style: UIConstants.bodyStyle,
                       children: <TextSpan>[
-                        TextSpan(
+                        const TextSpan(
                           text:
-                              // Directly using the hardcoded text as the split might be unreliable
-                              'Ich habe die ',
+                              'Ich habe die ', // Directly using the hardcoded text
                         ),
                         TextSpan(
                           text: 'Datenschutzbestimmungen',
@@ -500,7 +499,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                   );
                                 },
                         ),
-                        TextSpan(text: ' gelesen und akzeptiere sie.'),
+                        const TextSpan(text: ' gelesen und akzeptiere sie.'),
                       ],
                     ),
                   ),
@@ -518,7 +517,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 child:
                     _isLoading
-                        ? CircularProgressIndicator(
+                        ? const CircularProgressIndicator(
                           color: UIConstants.white,
                           strokeWidth: 2.0,
                         )

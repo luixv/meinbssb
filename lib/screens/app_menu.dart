@@ -84,85 +84,99 @@ class AppMenu extends StatelessWidget {
 
         if (!isLoggedIn) {
           items.add(
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'impressum',
               child: Text('Impressum', style: UIConstants.bodyStyle),
             ),
           );
           items.add(
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'back_to_login',
               child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
           );
         } else {
           items.addAll([
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'startseite',
               child: Text('Startseite', style: UIConstants.bodyStyle),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'digitaler_schuetzenausweis',
               child: Text(
                 'Digitaler Schützenausweis',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'zweitmitgliedschaften',
               child: Text(
                 'Zweitmitgliedschaften',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'aenderung_schuetzenausweis',
               child: Text(
                 'Änderung Schützenausweis',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'physischer_schuetzenausweis',
               child: Text(
                 'Physischer Schützenausweis',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'meine_stammdaten',
               child: Text('Meine Stammdaten', style: UIConstants.bodyStyle),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'meine_kontaktdaten',
               child: Text('Meine Kontaktdaten', style: UIConstants.bodyStyle),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'meine_seminare_buchen',
               child: Text(
                 'Meine Seminare buchen',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'meine_seminare_absolviert',
               child: Text(
                 'Meine Seminare absolviert',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'oktoberfestlandesschiessen',
               child: Text(
                 'Oktoberfestlandesschiessen',
                 style: UIConstants.bodyStyle,
               ),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'impressum',
               child: Text('Impressum', style: UIConstants.bodyStyle),
             ),
-            PopupMenuItem<String>(
+            const PopupMenuItem<String>(
+              // Use const here
               value: 'logout',
               child: Text('Abmelden', style: UIConstants.bodyStyle),
             ),
@@ -170,7 +184,7 @@ class AppMenu extends StatelessWidget {
         }
         return items;
       },
-      icon: Icon(Icons.menu, color: UIConstants.defaultAppColor),
+      icon: const Icon(Icons.menu, color: UIConstants.defaultAppColor),
     );
   }
 }

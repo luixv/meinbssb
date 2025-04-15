@@ -42,6 +42,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
+    if (!mounted) return; // Early return if the widget is disposed
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     setState(() {
@@ -55,19 +56,24 @@ class LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
 
-      if (!mounted) return;
-
       LoggerService.logInfo('Login response: $response');
 
       if (response['ResultType'] == 1) {
         await _handleSuccessfulLogin(apiService, response['PersonID']);
       } else {
-        setState(() => _errorMessage = response['ResultMessage']);
+        if (mounted) {
+          //check mounted before setting state
+          setState(() => _errorMessage = response['ResultMessage']);
+        }
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Error: ${e.toString()}');
+      if (mounted) {
+        //check mounted before setting state
+        setState(() => _errorMessage = 'Error: ${e.toString()}');
+      }
     } finally {
       if (mounted) {
+        //check mounted before setting state
         setState(() => _isLoading = false);
       }
     }
@@ -81,7 +87,7 @@ class LoginScreenState extends State<LoginScreen> {
     var passdaten = await apiService.fetchPassdaten(personId);
     LoggerService.logInfo('User data: $passdaten');
 
-    if (!mounted) return;
+    if (!mounted) return; // Early return
 
     if (passdaten.isNotEmpty) {
       final completeUserData = {...passdaten, 'PERSONID': personId};
@@ -95,7 +101,10 @@ class LoginScreenState extends State<LoginScreen> {
         );
       }
     } else {
-      setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
+      if (mounted) {
+        //check mounted before setting state
+        setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
+      }
     }
   }
 
@@ -116,7 +125,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _navigateToPasswordReset() async {
-    if (!mounted) return;
+    if (!mounted) return; //early return
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     Navigator.push(
@@ -129,7 +138,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget _buildEmailField() {
     return TextField(
-      key: const Key('usernameField'),
+      key: const Key('usernameField'), // Use const for keys
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: UIConstants.defaultInputDecoration.copyWith(
@@ -140,7 +149,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget _buildPasswordField() {
     return TextField(
-      key: const Key('passwordField'),
+      key: const Key('passwordField'), // Use const for keys
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
       decoration: UIConstants.defaultInputDecoration.copyWith(
@@ -150,9 +159,12 @@ class LoginScreenState extends State<LoginScreen> {
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
           ),
           onPressed: () {
-            setState(() {
-              _isPasswordVisible = !_isPasswordVisible;
-            });
+            if (mounted) {
+              //check mounted before calling setState
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            }
           },
         ),
       ),
@@ -171,7 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
         ),
         child:
             _isLoading
-                ? CircularProgressIndicator(
+                ? const CircularProgressIndicator(
                   color: UIConstants.white,
                   strokeWidth: 2.0,
                 )
@@ -226,7 +238,7 @@ class LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                 builder:
                     (context) => HelpScreen(
-                      userData: {},
+                      userData: const {},
                       isLoggedIn:
                           false, // User is not logged in on the login page
                       onLogout: () {
@@ -252,29 +264,27 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: UIConstants.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const LogoWidget(),
-              SizedBox(height: UIConstants.defaultSpacing),
-              Text(
-                'Hier anmelden',
-                style: UIConstants.headerStyle.copyWith(color: _appColor),
-              ),
-              SizedBox(height: UIConstants.defaultSpacing),
-              _buildEmailField(),
-              SizedBox(height: UIConstants.smallSpacing),
-              _buildPasswordField(),
-              SizedBox(height: UIConstants.defaultSpacing * 2),
-              if (_errorMessage.isNotEmpty)
-                Text(_errorMessage, style: UIConstants.errorStyle),
-              _buildLoginButton(),
-              SizedBox(height: UIConstants.defaultSpacing),
-              _buildNavigationLinks(),
-            ],
-          ),
+        padding: UIConstants.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const LogoWidget(),
+            SizedBox(height: UIConstants.defaultSpacing),
+            Text(
+              'Hier anmelden',
+              style: UIConstants.headerStyle.copyWith(color: _appColor),
+            ),
+            SizedBox(height: UIConstants.defaultSpacing),
+            _buildEmailField(),
+            SizedBox(height: UIConstants.smallSpacing),
+            _buildPasswordField(),
+            SizedBox(height: UIConstants.defaultSpacing * 2),
+            if (_errorMessage.isNotEmpty)
+              Text(_errorMessage, style: UIConstants.errorStyle),
+            _buildLoginButton(),
+            SizedBox(height: UIConstants.defaultSpacing),
+            _buildNavigationLinks(),
+          ],
         ),
       ),
     );
