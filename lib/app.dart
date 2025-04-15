@@ -125,14 +125,12 @@ class MyAppState extends State<MyApp> {
             onLogout: () => _setLoggedIn(false, {}),
           );
         },
-        '/help':
-            (context) => HelpScreen(
+        '/help': (context) => HelpScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
             ),
-        '/impressum':
-            (context) => ImpressumScreen(
+        '/impressum': (context) => ImpressumScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
