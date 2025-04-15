@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:mockito/mockito.dart';
 import 'package:meinbssb/main.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/screens/start_screen.dart';
@@ -8,6 +9,7 @@ import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/image_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,15 +20,19 @@ void main() {
     late CacheService cacheService;
     late NetworkService networkService;
     late HttpClient httpClient;
+    late ImageService imageService;
 
     setUpAll(() async {
       // Initialize services
       prefs = await SharedPreferences.getInstance();
       final configService = await ConfigService.load('assets/config.json');
       
+      imageService = ImageService();
+      
       httpClient = HttpClient(
         baseUrl: 'http://localhost:3000',
         serverTimeout: 30,
+        imageService: imageService,
       );
       
       cacheService = CacheService(
@@ -57,7 +63,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyAppWrapper(),
+          child: const MyApp(),
         ),
       );
 
@@ -110,7 +116,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyAppWrapper(),
+          child: const MyApp(),
         ),
       );
 
@@ -135,7 +141,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyAppWrapper(),
+          child: const MyApp(),
         ),
       );
 
