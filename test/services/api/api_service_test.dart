@@ -10,13 +10,15 @@ import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/network_service.dart';
 
-@GenerateMocks([
-  HttpClient,
-  CacheService,
-  NetworkService,
-  UserService,
-  TrainingService,
-])
+@GenerateMocks(
+  <Type>[
+    HttpClient,
+    CacheService,
+    NetworkService,
+    UserService,
+    TrainingService,
+  ],
+)
 import 'api_service_test.mocks.dart';
 
 void main() {
