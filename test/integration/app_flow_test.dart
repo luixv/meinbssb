@@ -9,6 +9,7 @@ import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/image_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +20,7 @@ void main() {
     late CacheService cacheService;
     late NetworkService networkService;
     late HttpClient httpClient;
+    late ImageService imageService;
 
     setUpAll(() async {
       // Initialize services
@@ -39,10 +41,13 @@ void main() {
         configService: configService,
       );
       
+      imageService = ImageService();
+      
       apiService = ApiService(
         httpClient: httpClient,
         cacheService: cacheService,
         networkService: networkService,
+        imageService: imageService,
         baseIp: 'localhost',
         port: '3000',
         serverTimeout: 30,
@@ -58,7 +63,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyApp(),
+          child: const MyAppWrapper(),
         ),
       );
 
@@ -111,7 +116,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyApp(),
+          child: const MyAppWrapper(),
         ),
       );
 
@@ -136,7 +141,7 @@ void main() {
             Provider<CacheService>.value(value: cacheService),
             Provider<NetworkService>.value(value: networkService),
           ],
-          child: const MyApp(),
+          child: const MyAppWrapper(),
         ),
       );
 
