@@ -33,17 +33,10 @@ void main() {
 
       // Enter login credentials
       await tester.enterText(
-        find.byKey(
-          const Key('usernameField'),
-        ), // Name field at the login screen
+        find.byKey(const Key('usernameField')),
         'luis@mandel.pro',
       );
-      await tester.enterText(
-        find.byKey(
-          const Key('passwordField'),
-        ), // Password field at the login screen
-        'a',
-      );
+      await tester.enterText(find.byKey(const Key('passwordField')), 'a');
 
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
@@ -52,29 +45,39 @@ void main() {
       // Verify we're on the start screen after successful login
       expect(find.byType(StartScreen), findsOneWidget);
 
-      // Verify user data is displayed (adjust these expectations based on your StartScreen)
+      // Verify user data is displayed
       expect(find.text('Luis Mandel'), findsOneWidget);
-      expect(find.text('4711'), findsOneWidget);
+      expect(find.text('41299999'), findsOneWidget);
 
-      // Test accessing Schuetzenausweis (adjust keys based on your StartScreen)
+      // Test accessing Schuetzenausweis
       await tester.tap(find.byKey(const Key('schuetzenausweisButton')));
       await tester.pumpAndSettle();
 
-      // Verify Schuetzenausweis is displayed (adjust finder based on your UI)
+      // Verify Schuetzenausweis is displayed
       expect(find.byType(Image), findsOneWidget);
 
-      // Test accessing Zweitmitgliedschaften (adjust keys based on your StartScreen)
-      await tester.tap(find.byKey(const Key('zweitmitgliedschaftenButton')));
+      // Test accessing Zweitmitgliedschaften
+      // Access Schuetzenausweis
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
+      await tester.tap(
+        find.text('Digitaler Schützenausweis'),
+      ); // Tap the menu item
+      await tester.pumpAndSettle();
+      expect(find.byType(Image), findsOneWidget);
 
-      // Verify Zweitmitgliedschaften screen is displayed (adjust finder based on your UI)
+      // Access Zweitmitgliedschaften
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Zweitmitgliedschaften')); // Tap the menu item
+      await tester.pumpAndSettle();
       expect(find.text('Zweitmitgliedschaften'), findsOneWidget);
 
-      // Test logout (adjust key based on your UI)
-      await tester.tap(find.byKey(const Key('logoutButton')));
+      // Test logout
+      await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
-
-      // Verify we're back on the login screen
+      await tester.tap(find.text('Abmelden'));
+      await tester.pumpAndSettle();
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
@@ -87,25 +90,23 @@ void main() {
 
       // Enter invalid credentials
       await tester.enterText(
-        find.byKey(const Key('usernameField')), // Changed to 'usernameField'
+        find.byKey(const Key('usernameField')),
         'invalid@example.com',
       );
       await tester.enterText(
-        find.byKey(const Key('passwordField')), // Correct key
+        find.byKey(const Key('passwordField')),
         'wrongpassword',
       );
 
       // Tap the login button
-      await tester.tap(
-        find.byKey(const Key('loginButton')), // Correct key
-      );
+      await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
 
       // Verify error message is displayed
       expect(
         find.text(
-          'Invalid credentials',
-        ), // You might need to adjust this based on the actual error message
+          'Benutzername oder Passwort ist falsch', // Corrected error message
+        ),
         findsOneWidget,
       );
     });
@@ -122,23 +123,18 @@ void main() {
 
       // Attempt login
       await tester.enterText(
-        find.byKey(const Key('usernameField')), // The username field
+        find.byKey(const Key('usernameField')),
         'luis@mandel.pro',
       );
-      await tester.enterText(
-        find.byKey(const Key('passwordField')), // The password field
-        'a',
-      );
-      await tester.tap(
-        find.byKey(const Key('loginButton')), // Correct key
-      );
+      await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+      await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
 
       // Verify offline mode message or behavior
       expect(
         find.text(
-          'Offline mode',
-        ), // You might need to adjust this based on the actual message
+          'Offline mode', // You might need to adjust this based on the actual message
+        ),
         findsOneWidget,
       );
       // You might also want to check if cached data is displayed if that's your offline behavior.
