@@ -137,10 +137,10 @@ class ApiService {
           };
         }
       } else {
-        LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
+        LoggerService.logError('Username or Password is incorrect: $e');
         return {
           'ResultType': 0,
-          'ResultMessage': 'Benutzername oder Passwort ist falsch',
+          'ResultMessage': 'Username or Password is incorrect',
         };
       }
     }
