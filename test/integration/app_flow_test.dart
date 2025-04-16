@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/main.dart';
+import 'package:meinbssb/app.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -14,6 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   group('App Flow Integration Tests', () {
     late SharedPreferences prefs;
     late ApiService apiService;
@@ -26,23 +29,18 @@ void main() {
       // Initialize services
       prefs = await SharedPreferences.getInstance();
       final configService = await ConfigService.load('assets/config.json');
-      
+
       httpClient = HttpClient(
         baseUrl: 'http://localhost:3000',
         serverTimeout: 30,
       );
-      
-      cacheService = CacheService(
-        prefs: prefs,
-        configService: configService,
-      );
-      
-      networkService = NetworkService(
-        configService: configService,
-      );
-      
+
+      cacheService = CacheService(prefs: prefs, configService: configService);
+
+      networkService = NetworkService(configService: configService);
+
       imageService = ImageService();
-      
+
       apiService = ApiService(
         httpClient: httpClient,
         cacheService: cacheService,
@@ -54,7 +52,9 @@ void main() {
       );
     });
 
-    testWidgets('Complete user flow from login to accessing data', (tester) async {
+    testWidgets('Complete user flow from login to accessing data', (
+      tester,
+    ) async {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         MultiProvider(
@@ -71,9 +71,15 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
 
       // Enter login credentials
-      await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('passwordField')), 'password123');
-      
+      await tester.enterText(
+        find.byKey(const Key('emailField')),
+        'test@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
@@ -121,9 +127,15 @@ void main() {
       );
 
       // Enter invalid credentials
-      await tester.enterText(find.byKey(const Key('emailField')), 'invalid@example.com');
-      await tester.enterText(find.byKey(const Key('passwordField')), 'wrongpassword');
-      
+      await tester.enterText(
+        find.byKey(const Key('emailField')),
+        'invalid@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'wrongpassword',
+      );
+
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
@@ -149,9 +161,15 @@ void main() {
       when(networkService.hasInternet()).thenAnswer((_) async => false);
 
       // Enter credentials
-      await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('passwordField')), 'password123');
-      
+      await tester.enterText(
+        find.byKey(const Key('emailField')),
+        'test@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
@@ -163,4 +181,4 @@ void main() {
       expect(find.text('Cached Data'), findsOneWidget);
     });
   });
-} 
+}
