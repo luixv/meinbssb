@@ -47,8 +47,18 @@ void main() {
       await tester.tap(find.text('Passwort vergessen?'));
       await tester.pumpAndSettle();
 
-      // Verify that the new page contains the key "forgotPasswordButton"
-      await tester.tap(find.byKey(const Key('forgotPasswordButton')));
+      // Verify that the new page is present by checking for the key
+      expect(find.byKey(const Key('passwordResetTitle')), findsOneWidget);
+      // Back to login
+      await tester.tap(
+        find.byType(PopupMenuButton<String>),
+      ); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text('Zurück zum Login'),
+      ); // Corrected text to match the menu
+      await tester.pumpAndSettle();
+      expect(find.byType(LoginScreen), findsOneWidget);
     });
 
     testWidgets('Access the help page', (tester) async {
@@ -71,6 +81,17 @@ void main() {
 
       // Verify that the new page contains the text "FAQ"
       expect(find.text('FAQ'), findsOneWidget);
+
+      // Back to login
+      await tester.tap(
+        find.byType(PopupMenuButton<String>),
+      ); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text('Zurück zum Login'),
+      ); // Corrected text to match the menu
+      await tester.pumpAndSettle();
+      expect(find.byType(LoginScreen), findsOneWidget);
     });
 
     testWidgets('Complete user flow from login to accessing data', (

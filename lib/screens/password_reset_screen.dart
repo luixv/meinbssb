@@ -94,6 +94,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Passwort zurücksetzen',
+              key: const Key('passwordResetTitle'),
               style: UIConstants.headerStyle.copyWith(
                 color: UIConstants.lightGreen,
               ),
