@@ -4,7 +4,8 @@
 
 import 'dart:async';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import '/services/config_service.dart';
+import '../config/app_config.dart';
+import '../services/config_service.dart';
 
 class NetworkService {
   NetworkService({
@@ -21,11 +22,12 @@ class NetworkService {
   }
 
   Duration getCacheExpirationDuration() {
-    return Duration(hours: _getCacheExpirationHoursFromConfig());
+    return AppConfig.cacheExpirationDuration;
   }
 
   int _getCacheExpirationHoursFromConfig() {
     final expirationString = _configService.getString('cacheExpirationHours');
-    return int.tryParse(expirationString ?? '24') ?? 24;
+    return int.tryParse(expirationString ?? AppConfig.cacheExpirationHours.toString()) ?? 
+           AppConfig.cacheExpirationHours;
   }
 }

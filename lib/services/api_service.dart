@@ -8,6 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../config/app_config.dart';
+import '../utils/error_handler.dart';
+import 'base_service.dart';
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/image_service.dart';
@@ -22,24 +25,19 @@ class NetworkException implements Exception {
   String toString() => 'NetworkException: $message';
 }
 
-class ApiService {
+class ApiService extends BaseService {
   ApiService({
     required HttpClient httpClient,
     required ImageService imageService,
     required CacheService cacheService,
     required NetworkService networkService,
-    required String baseIp,
-    required String port,
-    required int serverTimeout,
-  }) : _httpClient = httpClient,
-       _imageService = imageService,
-       _cacheService = cacheService,
-       _networkService = networkService;
-  final HttpClient _httpClient;
-  final ImageService _imageService;
-  final CacheService _cacheService;
+  }) : _imageService = imageService,
+       _networkService = networkService,
+       super(httpClient: httpClient, cacheService: cacheService);
 
+  final ImageService _imageService;
   final NetworkService _networkService;
+  final _secureStorage = const FlutterSecureStorage();
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -54,101 +52,59 @@ class ApiService {
     required String birthDate,
     required String zipCode,
   }) async {
-    final response = await _httpClient.post('RegisterMyBSSB', {
-      'firstName': firstName,
-      'lastName': lastName,
-      'passNumber': passNumber,
-      'email': email,
-      'birthDate': birthDate,
-      'zipCode': zipCode,
+    return ErrorHandler.handleAsyncError(() async {
+      final response = await handleResponse<Map<String, dynamic>>(
+        request: () => httpClient.post('RegisterMyBSSB', {
+          'firstName': firstName,
+          'lastName': lastName,
+          'passNumber': passNumber,
+          'email': email,
+          'birthDate': birthDate,
+          'zipCode': zipCode,
+        }),
+        mapper: (response) => response as Map<String, dynamic>,
+      );
+      return response;
     });
-    return response is Map<String, dynamic> ? response : {};
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    const secureStorage = FlutterSecureStorage();
+    return ErrorHandler.handleAsyncError(() async {
+      final response = await handleResponse<Map<String, dynamic>>(
+        request: () => httpClient.post('LoginMyBSSB', {
+          'email': email,
+          'password': password,
+        }),
+        mapper: (response) => response as Map<String, dynamic>,
+      );
 
-    try {
-      final response = await _httpClient.post('LoginMyBSSB', {
-        'email': email,
-        'password': password,
-      });
-
-      if (response is Map<String, dynamic>) {
-        if (response['ResultType'] == 1) {
-          await _cacheService.setString('username', email);
-          await secureStorage.write(key: 'password', value: password);
-          await _cacheService.setInt('personId', response['PersonID']);
-          await _cacheService.setCacheTimestamp();
-          LoggerService.logInfo('User data cached successfully.');
-          return response;
-        } else {
-          LoggerService.logError(
-            'Login failed on server: ${response['ResultMessage']}',
-          );
-          return response;
-        }
+      if (response['ResultType'] == 1) {
+        await _handleSuccessfulLogin(email, password, response['PersonID']);
       } else {
-        LoggerService.logError('Invalid server response.');
-        return {};
+        LoggerService.logError('Login failed: ${response['ResultMessage']}');
       }
-    } on Exception catch (e) {
-      if (e is http.ClientException &&
-          (e.message.contains('refused') ||
-              e.message.contains('failed to connect'))) {
-        LoggerService.logError(
-          'ClientException contains SocketException: ${e.message}',
-        );
 
-        final cachedUsername = await _cacheService.getString('username');
-        final cachedPassword = await secureStorage.read(key: 'password');
-        final cachedPersonId = await _cacheService.getInt('personId');
-        final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
-        final expirationDuration = _networkService.getCacheExpirationDuration();
-        final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-          cachedTimestamp ?? 0,
-        ).add(expirationDuration);
+      return response;
+    });
+  }
 
-        final testCachedUsername = cachedUsername == email;
-        final testCachedPassword = cachedPassword == password;
-        final testCachedPersonId = cachedPersonId != null;
-        final testCachedTimestamp = cachedTimestamp != null;
-        final today = DateTime.now();
-        final testExpirationDate = today.isBefore(expirationTime);
-
-        final isCacheValid =
-            testCachedUsername &&
-            testCachedPassword &&
-            testCachedPersonId &&
-            testCachedTimestamp &&
-            testExpirationDate;
-
-        if (isCacheValid) {
-          LoggerService.logInfo('Login from cache successful.');
-          return {'ResultType': 1, 'PersonID': cachedPersonId};
-        } else {
-          LoggerService.logWarning('Cached data expired.');
-          return {
-            'ResultType': 0,
-            'ResultMessage':
-                isCacheValid
-                    ? 'Cached data expired. Please log in again.'
-                    : 'Offline login failed, no cache or password mismatch',
-          };
-        }
-      } else {
-        LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
-        return {
-          'ResultType': 0,
-          'ResultMessage': 'Benutzername oder Passwort ist falsch',
-        };
-      }
-    }
+  Future<void> _handleSuccessfulLogin(
+    String email,
+    String password,
+    int personId,
+  ) async {
+    await Future.wait([
+      cacheService.setString('username', email),
+      _secureStorage.write(key: 'password', value: password),
+      cacheService.setInt('personId', personId),
+      cacheService.setCacheTimestamp(),
+    ]);
+    LoggerService.logInfo('User data cached successfully');
   }
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     try {
-      final response = await _httpClient.post('PasswordReset/$passNumber', {
+      final response = await httpClient.post('PasswordReset/$passNumber', {
         'passNumber': passNumber,
       });
       return response is Map<String, dynamic> ? response : {};
@@ -160,13 +116,14 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
-    return _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-      'passdaten_$personId',
-      getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('Passdaten/$personId') as Map<String, dynamic>,
-      (response) => _mapPassdatenResponse(response),
-    );
+    return ErrorHandler.handleAsyncError(() async {
+      return handleResponse<Map<String, dynamic>>(
+        request: () => httpClient.get('Passdaten/$personId'),
+        mapper: _mapPassdatenResponse,
+        cacheKey: 'passdaten_$personId',
+        cacheDuration: AppConfig.cacheExpirationDuration,
+      );
+    });
   }
 
   Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
@@ -189,56 +146,52 @@ class ApiService {
   }
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
-    final validityDuration = getCacheExpirationDuration();
-
-    Future<Uint8List?> getCachedSchuetzenausweis() async {
+    return ErrorHandler.handleAsyncError(() async {
+      final cacheKey = 'schuetzenausweis_$personId';
+      
       try {
-        return await _imageService.getCachedSchuetzenausweis(
+        final cachedImage = await _imageService.getCachedSchuetzenausweis(
           personId,
-          validityDuration,
+          AppConfig.cacheExpirationDuration,
         );
-      } catch (cacheError) {
-        LoggerService.logError('Cache error: $cacheError');
-        return null;
+        
+        if (cachedImage != null) {
+          LoggerService.logInfo('Using cached Schuetzenausweis');
+          return _imageService.rotatedImage(cachedImage);
+        }
+
+        final imageData = await handleImageResponse(
+          request: () => httpClient.getBytes('Schuetzenausweis/JPG/$personId'),
+          cacheKey: cacheKey,
+          cacheDuration: AppConfig.cacheExpirationDuration,
+        );
+
+        await _imageService.cacheSchuetzenausweis(
+          personId,
+          imageData,
+          DateTime.now().millisecondsSinceEpoch,
+        );
+        
+        return _imageService.rotatedImage(imageData);
+      } catch (e) {
+        LoggerService.logError('Error fetching Schuetzenausweis: $e');
+        rethrow;
       }
-    }
-
-    try {
-      final cachedImage = await getCachedSchuetzenausweis();
-      if (cachedImage != null) {
-        LoggerService.logInfo('Using cached Schuetzenausweis');
-        return _imageService.rotatedImage(cachedImage);
-      }
-
-      final imageData = await _httpClient.getBytes(
-        'Schuetzenausweis/JPG/$personId',
-      );
-
-      await _imageService.cacheSchuetzenausweis(
-        personId,
-        imageData,
-        DateTime.now().millisecondsSinceEpoch,
-      );
-      return _imageService.rotatedImage(imageData);
-    } on http.ClientException catch (e) {
-      throw NetworkException('Network error: ${e.message}');
-    } catch (e) {
-      throw NetworkException('An unexpected error occurred: $e');
-    }
+    });
   }
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
   ) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
-      'schulungen_$personId',
-      getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('AngemeldeteSchulungen/$personId/$abDatum')
-              as List<dynamic>,
-      (response) => _mapAngemeldeteSchulungenResponse(response),
-    );
+    return ErrorHandler.handleAsyncError(() async {
+      return handleResponse<List<dynamic>>(
+        request: () => httpClient.get('AngemeldeteSchulungen/$personId/$abDatum'),
+        mapper: _mapAngemeldeteSchulungenResponse,
+        cacheKey: 'schulungen_$personId',
+        cacheDuration: AppConfig.cacheExpirationDuration,
+      );
+    });
   }
 
   List<dynamic> _mapAngemeldeteSchulungenResponse(dynamic response) {
@@ -273,17 +226,14 @@ class ApiService {
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
-      'zweitmitgliedschaften_$personId',
-      getCacheExpirationDuration(),
-      () async {
-        final response = await _httpClient.get(
-          'Zweitmitgliedschaften/$personId',
-        );
-        return _mapZweitmitgliedschaftenRemoteResponse(response);
-      },
-      (response) => _mapZweitmitgliedschaftenCacheResponse(response),
-    );
+    return ErrorHandler.handleAsyncError(() async {
+      return handleResponse<List<dynamic>>(
+        request: () => httpClient.get('Zweitmitgliedschaften/$personId'),
+        mapper: _mapZweitmitgliedschaftenRemoteResponse,
+        cacheKey: 'zweitmitgliedschaften_$personId',
+        cacheDuration: AppConfig.cacheExpirationDuration,
+      );
+    });
   }
 
   List<dynamic> _mapZweitmitgliedschaftenRemoteResponse(dynamic response) {
@@ -307,17 +257,14 @@ class ApiService {
   }
 
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
-      'passdatenzve_${passdatenId}_$personId',
-      getCacheExpirationDuration(),
-      () async {
-        final response = await _httpClient.get(
-          'PassdatenZVE/$passdatenId/$personId',
-        );
-        return _mapPassdatenZVERemoteResponse(response);
-      },
-      (response) => _mapPassdatenZVECacheResponse(response),
-    );
+    return ErrorHandler.handleAsyncError(() async {
+      return handleResponse<List<dynamic>>(
+        request: () => httpClient.get('PassdatenZVE/$passdatenId/$personId'),
+        mapper: _mapPassdatenZVERemoteResponse,
+        cacheKey: 'passdatenzve_${passdatenId}_$personId',
+        cacheDuration: AppConfig.cacheExpirationDuration,
+      );
+    });
   }
 
   List<dynamic> _mapPassdatenZVERemoteResponse(dynamic response) {
