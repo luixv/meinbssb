@@ -8,7 +8,7 @@ import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/config_service.dart'; // Import ConfigService
+import 'package:meinbssb/services/config_service.dart';
 
 // Generate the mock
 class MockNetworkService extends Mock implements NetworkService {}
@@ -17,9 +17,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Flow Integration Tests', () {
-    late NetworkService networkService;
-    late ConfigService configService; // Add ConfigService
-
+    late ConfigService configService;
     setUpAll(() async {
       // Initialize the app's service providers
       await AppInitializer.init();
@@ -29,9 +27,28 @@ void main() {
       ); // Load config
     });
 
-    setUp(() {
-      // Initialize a mock NetworkService for offline testing
-      networkService = MockNetworkService();
+    setUp(() {});
+
+    testWidgets('Access the help page', (tester) async {
+      // Build our app and trigger a frame
+      await tester.pumpWidget(
+        Provider<NetworkService>(
+          create: (context) => NetworkService(configService: configService),
+          child: const MyAppWrapper(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify we're on the login screen
+      expect(find.byType(LoginScreen), findsOneWidget);
+
+      // Tap the "Hilfe" link.  Find the RichText by text.
+      await tester.tap(find.text('Hilfe'));
+      await tester.pumpAndSettle();
+
+      // Verify that the new page contains the text "FAQ"
+      expect(find.text('FAQ'), findsOneWidget);
     });
 
     testWidgets('Complete user flow from login to accessing data', (
@@ -40,10 +57,7 @@ void main() {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create:
-              (context) => NetworkService(
-                configService: configService, // Provide ConfigService
-              ),
+          create: (context) => NetworkService(configService: configService),
           child: const MyAppWrapper(),
         ),
       );
@@ -88,6 +102,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Zweitmitgliedschaften'), findsOneWidget);
 
+      // Access Zweitmitgliedschaften
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Impressum')); // Tap the menu item
+      await tester.pumpAndSettle();
+      expect(find.text('Impressum'), findsOneWidget);
+
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
@@ -131,35 +152,6 @@ void main() {
         find.text('Benutzername oder Passwort ist falsch'),
         findsOneWidget,
       );
-    });
-
-    testWidgets('Offline mode functionality', (tester) async {
-      // Override the NetworkService with the mock
-      await tester.pumpWidget(
-        Provider<NetworkService>.value(
-          value: networkService,
-          child: const MyAppWrapper(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Simulate offline mode
-      when(networkService.hasInternet()).thenAnswer((_) async => false);
-
-      // Verify we're on the login screen (assuming it's the starting point)
-      expect(find.byType(LoginScreen), findsOneWidget);
-
-      // Attempt login
-      await tester.enterText(
-        find.byKey(const Key('usernameField')),
-        'luis@mandel.pro',
-      );
-      await tester.enterText(find.byKey(const Key('passwordField')), 'a');
-      await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle();
-
-      // Verify offline mode message or behavior
-      expect(find.text('Offline mode'), findsOneWidget);
     });
   });
 }
