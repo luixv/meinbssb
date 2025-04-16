@@ -29,6 +29,8 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   String _errorMessage = '';
   final Color _appColor = UIConstants.defaultAppColor;
+  Map<String, dynamic> _userData = {};
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
@@ -87,7 +89,11 @@ class LoginScreenState extends State<LoginScreen> {
 
     if (passdaten.isNotEmpty) {
       final completeUserData = {...passdaten, 'PERSONID': personId};
+      _userData = completeUserData;
+      _isLoggedIn =
+          true; // Update the login state.  Crucial for passing to PasswordReset.
       widget.onLoginSuccess(completeUserData);
+
       await apiService.fetchSchuetzenausweis(personId);
 
       if (mounted) {
@@ -124,9 +130,25 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PasswordResetScreen(authService: authService),
+        builder:
+            (context) => PasswordResetScreen(
+              authService: authService,
+              userData: _userData,
+              isLoggedIn: _isLoggedIn,
+              onLogout: _handleLogout,
+            ),
       ),
     );
+  }
+
+  void _handleLogout() {
+    setState(() {
+      _isLoggedIn = false; //  Update local state.
+      _userData = {};
+    });
+    Navigator.of(context).pushReplacementNamed(
+      '/login',
+    ); // Navigate back to login.  Use pushReplacementNamed
   }
 
   Widget _buildEmailField() {
@@ -142,7 +164,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget _buildPasswordField() {
     return TextField(
-      key: const Key('passwordField'), // Use const for keys
+      key: const Key('passwordField'),
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
       decoration: UIConstants.defaultInputDecoration.copyWith(
@@ -234,12 +256,9 @@ class LoginScreenState extends State<LoginScreen> {
               MaterialPageRoute(
                 builder:
                     (context) => HelpScreen(
-                      userData: const {},
-                      isLoggedIn:
-                          false, // User is not logged in on the login page
-                      onLogout: () {
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      },
+                      userData: _userData,
+                      isLoggedIn: _isLoggedIn,
+                      onLogout: _handleLogout,
                     ),
               ),
             );

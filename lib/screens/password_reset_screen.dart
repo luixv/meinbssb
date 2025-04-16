@@ -7,10 +7,20 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/error_service.dart';
+import '/screens/app_menu.dart'; // Import the AppMenu
 
 class PasswordResetScreen extends StatefulWidget {
-  const PasswordResetScreen({required this.authService, super.key});
+  const PasswordResetScreen({
+    required this.authService,
+    super.key,
+    required this.userData, // Add userData
+    required this.isLoggedIn, // Add isLoggedIn
+    required this.onLogout, // Add onLogout
+  });
   final AuthService authService;
+  final Map<String, dynamic> userData; // Add userData
+  final bool isLoggedIn; // Add isLoggedIn
+  final Function() onLogout; // Add onLogout
 
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
@@ -63,7 +73,18 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Passwort zurücksetzen')),
+      appBar: AppBar(
+        title: const Text('Passwort zurücksetzen'),
+        actions: [
+          // Add the actions property to include the menu
+          AppMenu(
+            context: context,
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
