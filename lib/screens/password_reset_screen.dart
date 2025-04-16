@@ -7,20 +7,20 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/error_service.dart';
-import '/screens/app_menu.dart'; // Import the AppMenu
+import '/screens/app_menu.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
     required this.authService,
     super.key,
-    required this.userData, // Add userData
-    required this.isLoggedIn, // Add isLoggedIn
-    required this.onLogout, // Add onLogout
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
   });
   final AuthService authService;
-  final Map<String, dynamic> userData; // Add userData
-  final bool isLoggedIn; // Add isLoggedIn
-  final Function() onLogout; // Add onLogout
+  final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   PasswordResetScreenState createState() => PasswordResetScreenState();
@@ -76,7 +76,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       appBar: AppBar(
         title: const Text('Passwort zurücksetzen'),
         actions: [
-          // Add the actions property to include the menu
+          // include the menu
           AppMenu(
             context: context,
             userData: widget.userData,
