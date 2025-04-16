@@ -21,76 +21,75 @@ void main() async {
 }
 
 class AppInitializer {
+  static late ConfigService _configServiceInstance;
+  static late ApiService _apiService;
+  static late NetworkService _networkService;
+  static late CacheService _cacheService;
+  static late HttpClient _httpClient;
+
   static Future<void> init() async {
     LoggerService.init();
-    final configServiceInstance = await ConfigService.load(
-      'assets/config.json',
-    );
+    _configServiceInstance = await ConfigService.load('assets/config.json');
     final serverTimeout =
-        configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
+        _configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
     final baseIP =
-        configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
-    final port = configServiceInstance.getString('apiPort', 'api') ?? '3001';
+        _configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
+    final port = _configServiceInstance.getString('apiPort', 'api') ?? '3001';
 
     final imageService = ImageService();
     final prefs = await SharedPreferences.getInstance();
-    final cacheService = CacheService(
+    _cacheService = CacheService(
       prefs: prefs,
-      configService: ConfigService.instance,
+      configService: _configServiceInstance,
     );
-    final networkService = NetworkService(
-      configService: ConfigService.instance,
-    );
+    _networkService = NetworkService(configService: _configServiceInstance);
 
-    final httpClient = HttpClient(
+    _httpClient = HttpClient(
       baseUrl: 'http://$baseIP:$port',
       serverTimeout: serverTimeout,
     );
 
-    final apiService = ApiService(
-      httpClient: httpClient,
+    _apiService = ApiService(
+      httpClient: _httpClient,
       imageService: imageService,
-      cacheService: cacheService,
-      networkService: networkService,
+      cacheService: _cacheService,
+      networkService: _networkService,
       baseIp: baseIP,
       port: port,
       serverTimeout: serverTimeout,
     );
 
-    _registerProviders(apiService, networkService, cacheService, httpClient);
+    _registerProviders();
   }
 
-  static void _registerProviders(
-    ApiService apiService,
-    NetworkService networkService,
-    CacheService cacheService,
-    HttpClient httpClient,
-  ) {
+  static void _registerProviders() {
     configServiceProvider = Provider<ConfigService>(
-      create: (context) => ConfigService.instance,
+      create: (context) => _configServiceInstance,
     );
     emailSenderProvider = Provider<EmailSender>(
       create: (context) => MailerEmailSender(),
     );
     emailServiceProvider = Provider<EmailService>(
-      create: (context) => EmailService(
-        emailSender: context.read<EmailSender>(),
-        configService: context.read<ConfigService>(),
-      ),
+      create:
+          (context) => EmailService(
+            emailSender: Provider.of<EmailSender>(context, listen: false),
+            configService: Provider.of<ConfigService>(context, listen: false),
+          ),
     );
     authServiceProvider = Provider<AuthService>(
-      create: (context) => AuthService(
-        httpClient: httpClient,
-        cacheService: cacheService,
-        networkService: networkService,
-      ),
+      create:
+          (context) => AuthService(
+            httpClient: _httpClient,
+            cacheService: _cacheService,
+            networkService: _networkService,
+          ),
     );
-    apiServiceProvider = Provider<ApiService>(create: (context) => apiService);
+    apiServiceProvider = Provider<ApiService>(create: (context) => _apiService);
     networkServiceProvider = Provider<NetworkService>(
-      create: (context) => networkService,
+      create: (context) => _networkService,
     );
     cacheServiceProvider = Provider<CacheService>(
-      create: (context) => cacheService,
+      create: (context) => _cacheService,
     );
   }
 

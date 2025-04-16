@@ -169,6 +169,9 @@ class LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
+        key: const Key(
+          'loginButton',
+        ), // Name of the button, used for the integration test
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
           backgroundColor: UIConstants.lightGreen,
