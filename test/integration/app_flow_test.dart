@@ -94,6 +94,39 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
+    testWidgets('Access the Registration page', (tester) async {
+      // Build our app and trigger a frame
+      await tester.pumpWidget(
+        Provider<NetworkService>(
+          create: (context) => NetworkService(configService: configService),
+          child: const MyAppWrapper(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify we're on the login screen
+      expect(find.byType(LoginScreen), findsOneWidget);
+
+      // Tap the "Hilfe" link.  Find the RichText by text.
+      await tester.tap(find.text('Registrieren'));
+      await tester.pumpAndSettle();
+
+      // Verify that the new page contains the text "FAQ"
+      expect(find.text('Hier Registrieren'), findsOneWidget);
+
+      // Back to login
+      await tester.tap(
+        find.byType(PopupMenuButton<String>),
+      ); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text('Zurück zum Login'),
+      ); // Corrected text to match the menu
+      await tester.pumpAndSettle();
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
     testWidgets('Complete user flow from login to accessing data', (
       tester,
     ) async {
