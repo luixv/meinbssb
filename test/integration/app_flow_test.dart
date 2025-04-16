@@ -121,10 +121,7 @@ void main() {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create:
-              (context) => NetworkService(
-                configService: configService, // Provide ConfigService
-              ),
+          create: (context) => NetworkService(configService: configService),
           child: const MyAppWrapper(),
         ),
       );
