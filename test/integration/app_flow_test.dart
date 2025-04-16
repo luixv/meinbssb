@@ -53,8 +53,8 @@ void main() {
       expect(find.byType(StartScreen), findsOneWidget);
 
       // Verify user data is displayed (adjust these expectations based on your StartScreen)
-      expect(find.text('John Doe'), findsOneWidget);
-      expect(find.text('ABC123'), findsOneWidget);
+      expect(find.text('Luis Mandel'), findsOneWidget);
+      expect(find.text('4711'), findsOneWidget);
 
       // Test accessing Schuetzenausweis (adjust keys based on your StartScreen)
       await tester.tap(find.byKey(const Key('schuetzenausweisButton')));
