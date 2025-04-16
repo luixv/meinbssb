@@ -29,6 +29,28 @@ void main() {
 
     setUp(() {});
 
+    testWidgets('Access the Passwort vergessen?', (tester) async {
+      // Build our app and trigger a frame
+      await tester.pumpWidget(
+        Provider<NetworkService>(
+          create: (context) => NetworkService(configService: configService),
+          child: const MyAppWrapper(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify we're on the login screen
+      expect(find.byType(LoginScreen), findsOneWidget);
+
+      // Tap the "Passwort vergessen?" link.  Find the RichText by text.
+      await tester.tap(find.text('Passwort vergessen?'));
+      await tester.pumpAndSettle();
+
+      // Verify that the new page contains the key "forgotPasswordButton"
+      await tester.tap(find.byKey(const Key('forgotPasswordButton')));
+    });
+
     testWidgets('Access the help page', (tester) async {
       // Build our app and trigger a frame
       await tester.pumpWidget(

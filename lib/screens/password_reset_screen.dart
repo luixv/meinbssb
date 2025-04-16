@@ -92,6 +92,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                key: const Key('forgotPasswordButton'),
                 onPressed: _isLoading ? null : _resetPassword,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: UIConstants.lightGreen,
