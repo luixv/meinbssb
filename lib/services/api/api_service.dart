@@ -22,7 +22,6 @@ class ApiService {
     String? port,
     int? serverTimeout,
   }) : _httpClient = httpClient,
-       _imageService = imageService,
        _userService = UserService(
          httpClient: httpClient,
          cacheService: cacheService,
@@ -35,7 +34,6 @@ class ApiService {
        );
 
   final HttpClient _httpClient;
-  final ImageService _imageService;
   final UserService _userService;
   final TrainingService _trainingService;
 
