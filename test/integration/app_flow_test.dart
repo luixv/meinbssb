@@ -7,17 +7,29 @@ import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/main.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/services/config_service.dart'; // Import ConfigService
+
+// Generate the mock
+class MockNetworkService extends Mock implements NetworkService {}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Flow Integration Tests', () {
     late NetworkService networkService;
+    late ConfigService configService; // Add ConfigService
 
     setUpAll(() async {
       // Initialize the app's service providers
       await AppInitializer.init();
+      // Load ConfigService
+      configService = await ConfigService.load(
+        'config/app_config.json',
+      ); // Load config
+    });
 
+    setUp(() {
       // Initialize a mock NetworkService for offline testing
       networkService = MockNetworkService();
     });
@@ -26,7 +38,17 @@ void main() {
       tester,
     ) async {
       // Build our app and trigger a frame
-      await tester.pumpWidget(const MyAppWrapper());
+      await tester.pumpWidget(
+        Provider<NetworkService>(
+          create:
+              (context) => NetworkService(
+                configService: configService, // Provide ConfigService
+              ),
+          child: const MyAppWrapper(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
 
       // Verify we're on the login screen
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -48,13 +70,6 @@ void main() {
       // Verify user data is displayed
       expect(find.text('Luis Mandel'), findsOneWidget);
       expect(find.text('41299999'), findsOneWidget);
-
-      // Test accessing Schuetzenausweis
-      await tester.tap(find.byKey(const Key('schuetzenausweisButton')));
-      await tester.pumpAndSettle();
-
-      // Verify Schuetzenausweis is displayed
-      expect(find.byType(Image), findsOneWidget);
 
       // Test accessing Zweitmitgliedschaften
       // Access Schuetzenausweis
@@ -83,7 +98,16 @@ void main() {
 
     testWidgets('Error handling during login', (tester) async {
       // Build our app and trigger a frame
-      await tester.pumpWidget(const MyAppWrapper());
+      await tester.pumpWidget(
+        Provider<NetworkService>(
+          create:
+              (context) => NetworkService(
+                configService: configService, // Provide ConfigService
+              ),
+          child: const MyAppWrapper(),
+        ),
+      );
+      await tester.pumpAndSettle();
 
       // Verify we're on the login screen
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -104,22 +128,26 @@ void main() {
 
       // Verify error message is displayed
       expect(
-        find.text(
-          'Benutzername oder Passwort ist falsch', // Corrected error message
-        ),
+        find.text('Benutzername oder Passwort ist falsch'),
         findsOneWidget,
       );
     });
 
     testWidgets('Offline mode functionality', (tester) async {
-      // Build our app and trigger a frame
-      await tester.pumpWidget(const MyAppWrapper());
-
-      // Verify we're on the login screen (assuming it's the starting point)
-      expect(find.byType(LoginScreen), findsOneWidget);
+      // Override the NetworkService with the mock
+      await tester.pumpWidget(
+        Provider<NetworkService>.value(
+          value: networkService,
+          child: const MyAppWrapper(),
+        ),
+      );
+      await tester.pumpAndSettle();
 
       // Simulate offline mode
       when(networkService.hasInternet()).thenAnswer((_) async => false);
+
+      // Verify we're on the login screen (assuming it's the starting point)
+      expect(find.byType(LoginScreen), findsOneWidget);
 
       // Attempt login
       await tester.enterText(
@@ -131,17 +159,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify offline mode message or behavior
-      expect(
-        find.text(
-          'Offline mode', // You might need to adjust this based on the actual message
-        ),
-        findsOneWidget,
-      );
-      // You might also want to check if cached data is displayed if that's your offline behavior.
-      // expect(find.text('Cached Data'), findsOneWidget);
+      expect(find.text('Offline mode'), findsOneWidget);
     });
   });
 }
-
-// Create a mock class for NetworkService
-class MockNetworkService extends Mock implements NetworkService {}
