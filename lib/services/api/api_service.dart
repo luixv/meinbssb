@@ -8,6 +8,7 @@ import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/logger_service.dart';
 import '/services/network_service.dart';
+import '/services/image_service.dart';
 import '/services/api/user_service.dart';
 import '/services/api/training_service.dart';
 
@@ -16,7 +17,12 @@ class ApiService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ImageService imageService,
+    String? baseIp,
+    String? port,
+    int? serverTimeout,
   }) : _httpClient = httpClient,
+       _imageService = imageService,
        _userService = UserService(
          httpClient: httpClient,
          cacheService: cacheService,
@@ -29,6 +35,7 @@ class ApiService {
        );
 
   final HttpClient _httpClient;
+  final ImageService _imageService;
   final UserService _userService;
   final TrainingService _trainingService;
 
