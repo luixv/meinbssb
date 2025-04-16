@@ -9,6 +9,8 @@ import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/http_client.dart';
+import 'package:meinbssb/services/cache_service.dart';
 
 // Generate the mock
 class MockNetworkService extends Mock implements NetworkService {}
@@ -237,19 +239,17 @@ class AppConfig {
 
 // Consider implementing a custom exception class
 class AppException implements Exception {
+  AppException(this.message, {this.code});
   final String message;
   final int? code;
-  
-  AppException(this.message, {this.code});
 }
 
 // Consider implementing a base service class
 abstract class BaseService {
+  BaseService(this.httpClient, this.cacheService);
   final HttpClient httpClient;
   final CacheService cacheService;
-  
-  BaseService(this.httpClient, this.cacheService);
-  
+
   // Common methods can be implemented here
 }
 
