@@ -84,10 +84,10 @@ class AuthService {
 
         return await _handleOfflineLogin(email, password);
       } else {
-        LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
+        LoggerService.logError('Username or Password is incorrect: $e');
         return {
           'ResultType': 0,
-          'ResultMessage': 'Benutzername oder Passwort ist falsch',
+          'ResultMessage': 'Username or Password is incorrect',
         };
       }
     }
@@ -127,10 +127,9 @@ class AuthService {
       LoggerService.logWarning('Cached data expired.');
       return {
         'ResultType': 0,
-        'ResultMessage':
-            isCacheValid
-                ? 'Cached data expired. Please log in again.'
-                : 'Offline login failed, no cache or password mismatch',
+        'ResultMessage': isCacheValid
+            ? 'Cached data expired. Please log in again.'
+            : 'Offline login failed, no cache or password mismatch',
       };
     }
   }
@@ -159,4 +158,4 @@ class AuthService {
       rethrow;
     }
   }
-}
+} 
