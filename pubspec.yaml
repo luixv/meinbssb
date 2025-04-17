@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.4.0 <3.8.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -73,7 +73,7 @@ dev_dependencies:
 dependency_overrides:
   collection: ^1.19.0
   fwfh_webview: ^0.15.4
-  chewie: 1.10.0
+  chewie: ^1.10.0
     
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
