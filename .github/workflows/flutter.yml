@@ -59,7 +59,7 @@ jobs:
         run: flutter build apk --release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
@@ -85,7 +85,7 @@ jobs:
         run: flutter build ios --release --no-codesign
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         with:
           name: release-ipa
           path: build/ios/ipa/*.ipa
@@ -97,7 +97,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v3
         with:
           path: artifacts
 
