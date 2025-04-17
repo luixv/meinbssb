@@ -52,6 +52,7 @@ dependencies:
   path_provider: ^2.1.1
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.14
+  
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.8
@@ -72,6 +73,7 @@ dev_dependencies:
 dependency_overrides:
   collection: ^1.19.0
   fwfh_webview: ^0.15.4
+  chewie: 1.10.0
     
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
