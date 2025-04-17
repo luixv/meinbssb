@@ -40,7 +40,6 @@ dependencies:
   flutter_html: ^3.0.0  
   flutter_secure_storage: ^9.2.4
   flutter_svg: ^2.0.17  
-  flutter_widget_from_html: 0.16.0
   http: ^1.2.0 
   image: ^4.1.6
   internet_connection_checker: ^3.0.1
@@ -72,8 +71,6 @@ dev_dependencies:
   
 dependency_overrides:
   collection: ^1.19.0
-  fwfh_webview: ^0.15.4
-  chewie: ^1.10.0
     
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

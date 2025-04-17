@@ -1,10 +1,9 @@
 // lib/screens/impressum_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
 
-class ImpressumScreen extends StatefulWidget {
+class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
     super.key,
     required this.userData,
@@ -16,52 +15,254 @@ class ImpressumScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  State<ImpressumScreen> createState() => _ImpressumScreenState();
-}
-
-class _ImpressumScreenState extends State<ImpressumScreen> {
-  String _htmlContent = 'Loading...';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadImpressum();
-  }
-
-  Future<void> _loadImpressum() async {
-    try {
-      final String content = await rootBundle.loadString(
-        'assets/html/impressum.html',
-      );
-      setState(() {
-        _htmlContent = content;
-      });
-    } catch (e) {
-      setState(() {
-        _htmlContent = 'Failed to load Impressum: $e';
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Impressum'),
         actions: [
           AppMenu(
-            // Add your AppMenu widget here
             context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: widget.onLogout,
+            userData: userData,
+            isLoggedIn: isLoggedIn,
+            onLogout: onLogout,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: HtmlWidget(
-          _htmlContent, // Use the defined _htmlContent
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Directly embedding the content based on your HTML structure
+            Text(
+              'Impressum',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Für den Inhalt verantwortlich sind:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Gesamtverantwortung',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Bayerischer Sportschützenbund e.V.'),
+            Text('1. Landesschützenmeister'),
+            SizedBox(height: 4),
+            Text('Christian Kühn'),
+            Text('Olympia-Schießanlage Hochbrück'),
+            Text('Ingolstädter Landstraße 110'),
+            Text('85748 Garching'),
+            SizedBox(height: 8),
+            Text('eingetragen im Vereinsregister des'),
+            Text('Amtsgerichts München: VR 4803'),
+            SizedBox(height: 8),
+            _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
+            _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
+            _LinkText('Website: https://www.bssb.de', 'https://www.bssb.de'),
+            SizedBox(height: 16),
+            Text(
+              'Realisierung des Internetauftritts',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Datenschutzbeauftragter',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Herbert Isdebski'),
+            Text('Scheibenhalde 1'),
+            Text('72160 Horb-Nordstetten'),
+            SizedBox(height: 8),
+            _LinkText(
+              'E-Mail: datenschutz@bssb.de',
+              'mailto:datenschutz@bssb.de',
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Telefon-Sprechstunde für BSSB-Mitglieder:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('jeder erste Donnerstag im Monat, 16 bis 18 Uhr'),
+            _LinkText('Telefon: (07451) 6 25 42 40', 'tel:074516254240'),
+            SizedBox(height: 16),
+            Text(
+              'Inhaltlich verantwortlich für die Teilbereiche',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Verband',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Bayerischer Sportschützenbund e.V.'),
+            Text('Herr Alexander Heidel'),
+            Text('Olympia-Schießanlage Hochbrück'),
+            Text('Ingolstädter Landstraße 110'),
+            Text('85748 Garching'),
+            SizedBox(height: 8),
+            _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
+            _LinkText(
+              'E-Mail: alexander.heidel@bssb.bayern',
+              'mailto:alexander.heidel@bssb.bayern',
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Sport',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Einstellen der Ergebnisse'),
+            Text('Bayerischer Sportschützenbund e.V.'),
+            Text('Herr Josef Lederer'),
+            Text('Olympia-Schießanlage Hochbrück'),
+            Text('Ingolstädter Landstraße 110'),
+            Text('85748 Garching'),
+            SizedBox(height: 8),
+            _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
+            _LinkText(
+              'E-Mail: josef.lederer@bssb.de',
+              'mailto:josef.lederer@bssb.de',
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Jugend',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Bayerischer Sportschützenbund e.V.'),
+            Text('Herr Markus Maas'),
+            Text('Olympia-Schießanlage Hochbrück'),
+            Text('Ingolstädter Landstraße 110'),
+            Text('85748 Garching'),
+            SizedBox(height: 8),
+            _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
+            _LinkText(
+              'E-Mail: jugend@bssb.bayern',
+              'mailto:jugend@bssb.bayern',
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Bezirke / Gaue / Vereine',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
+            ),
+            Text(
+              'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
+            ),
+            Text(
+              'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Haftung für weiterführende Links',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung.',
+            ),
+            Text(
+              'Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an.',
+            ),
+            Text(
+              'Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Bayerischer Sportschützenbund e.V.',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
+            ),
+            SizedBox(height: 8),
+            Text('Postanschrift der Geschäftsstelle:'),
+            Text('Ingolstädter Landstrasse 110'),
+            Text('85748 Garching'),
+            SizedBox(height: 8),
+            Text(
+              'Kommunikation',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
+            _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
+            _LinkText('Homepage: https://www.bssb.de/', 'https://www.bssb.de/'),
+            SizedBox(height: 8),
+            Text(
+              'Geschäftsführer',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('Alexander Heidel'),
+            SizedBox(height: 8),
+            Text(
+              'Vorstand i.S. §26 BGB',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('1. Landesschützenmeister: Christian Kühn'),
+            Text('2. Landesschützenmeister: Dieter Vierlbeck'),
+            Text('3. Landesschützenmeister: Hans Hainthaler'),
+            Text('4. Landesschützenmeister: Albert Euba'),
+            Text('5. Landesschützenmeister: Stefan Fersch'),
+            SizedBox(height: 8),
+            Text(
+              'Bankverbindung',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
+            ),
+            Text('IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX'),
+            SizedBox(height: 8),
+            Text(
+              'Umsatzsteueridentifikationsnummer',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('DE 129514004'),
+            SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LinkText extends StatelessWidget {
+  const _LinkText(this.text, this.url);
+
+  final String text;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(Uri.parse(url));
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Could not launch URL')),
+            );
+          }
+        }
+      },
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
         ),
       ),
     );
