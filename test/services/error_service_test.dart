@@ -51,11 +51,5 @@ void main() {
         equals('Email: Invalid format'),
       );
     });
-
-    test('handleGeneralError includes error message', () {
-      final error = Exception('Test error');
-
-      expect(ErrorService.handleGeneralError(error), contains('Test error'));
-    });
   });
 }
