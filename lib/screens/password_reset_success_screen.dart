@@ -14,7 +14,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Passwort zurückgesetzt', style: UIConstants.titleStyle),
+        title: const Text('Passwort zurückgesetzt', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -27,7 +27,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Ihr Passwort wurde erfolgreich zurückgesetzt.',
           style: UIConstants.bodyStyle,

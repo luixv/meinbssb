@@ -63,7 +63,7 @@ class _HelpScreenState extends State<HelpScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: HtmlWidget(_htmlContent),
       ),
     );

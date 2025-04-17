@@ -27,7 +27,7 @@ void main() {
 
     when(
       mockApiService.fetchAngemeldeteSchulungen(any, any),
-    ).thenAnswer((_) async => Future.delayed(Duration(seconds: 1), () => []));
+    ).thenAnswer((_) async => Future.delayed(const Duration(seconds: 1), () => []));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -119,7 +119,7 @@ void main() {
 
     // Use pump with a duration to allow for the async operation to complete.
     await tester.pump(
-      Duration(milliseconds: 500),
+      const Duration(milliseconds: 500),
     ); // Adjust duration as needed.
 
     expect(find.text('Schulung 1'), findsOneWidget);

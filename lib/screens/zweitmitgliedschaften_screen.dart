@@ -90,7 +90,7 @@ class _ZweitmitgliedschaftenScreenState
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
+        title: const Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -101,22 +101,22 @@ class _ZweitmitgliedschaftenScreenState
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             displayedLogo, // Use the potentially mocked logo
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Mein BSSB',
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
               style: UIConstants.titleStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['PASSNUMMER'],
               style: UIConstants.bodyStyle.copyWith(
@@ -127,7 +127,7 @@ class _ZweitmitgliedschaftenScreenState
               'Schützenpassnummer',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['VEREINNAME'],
               style: UIConstants.bodyStyle.copyWith(
@@ -138,14 +138,14 @@ class _ZweitmitgliedschaftenScreenState
               'Erstverein',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
-            Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       color: UIConstants.defaultAppColor,
                       strokeWidth: 2.0,
@@ -175,7 +175,7 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: EdgeInsets.only(bottom: UIConstants.smallSpacing),
+                      margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
                       child: ListTile(
                         title: Row(
                           children: [
@@ -204,14 +204,14 @@ class _ZweitmitgliedschaftenScreenState
                 );
               },
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
-            Text('Disziplinen:', style: UIConstants.titleStyle),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Disziplinen:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       color: UIConstants.defaultAppColor,
                       strokeWidth: 2.0,
@@ -241,9 +241,9 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: EdgeInsets.only(bottom: UIConstants.smallSpacing),
+                      margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: UIConstants.smallSpacing,
                           horizontal: UIConstants.smallSpacing,
                         ),
@@ -258,7 +258,7 @@ class _ZweitmitgliedschaftenScreenState
                                 ),
                               ),
                             ),
-                            SizedBox(width: UIConstants.smallSpacing),
+                            const SizedBox(width: UIConstants.smallSpacing),
                             SizedBox(
                               width: 120,
                               child: Text(
@@ -268,7 +268,7 @@ class _ZweitmitgliedschaftenScreenState
                                 ),
                               ),
                             ),
-                            SizedBox(width: UIConstants.smallSpacing),
+                            const SizedBox(width: UIConstants.smallSpacing),
                             Expanded(
                               child: Text(
                                 item['VEREINNAME'] ?? 'N/A',

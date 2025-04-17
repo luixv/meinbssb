@@ -14,7 +14,7 @@ class PrivacyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Datenschutzbestimmungen', style: UIConstants.titleStyle),
+        title: const Text('Datenschutzbestimmungen', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -26,7 +26,7 @@ class PrivacyScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: const Padding(
         padding: EdgeInsets.all(UIConstants.defaultPadding),
         child: Text(
           'Hier stehen die Datenschutzbestimmungen des BSSB.',

@@ -123,7 +123,7 @@ void main() {
           when(mockClient.get(Uri.parse('$baseUrl/test'))).thenAnswer((
             _,
           ) async {
-            await Future.delayed(Duration(seconds: serverTimeout + 1));
+            await Future.delayed(const Duration(seconds: serverTimeout + 1));
             return http.Response('{}', 200);
           });
 

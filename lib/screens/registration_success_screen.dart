@@ -20,7 +20,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registrierung', style: UIConstants.titleStyle),
+        title: const Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
         actions: [
           AppMenu(
@@ -38,7 +38,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const LogoWidget(),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               message,
               style: UIConstants.successStyle.copyWith(

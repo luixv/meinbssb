@@ -89,7 +89,7 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
+        title: const Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
@@ -104,22 +104,22 @@ class StartScreenState extends State<StartScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Mein BSSB',
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
               style: UIConstants.titleStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['PASSNUMMER'],
               style: UIConstants.bodyStyle.copyWith(
@@ -130,7 +130,7 @@ class StartScreenState extends State<StartScreen> {
               'Schützenpassnummer',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.smallSpacing),
             Text(
               widget.userData['VEREINNAME'],
               style: UIConstants.bodyStyle.copyWith(
@@ -141,70 +141,72 @@ class StartScreenState extends State<StartScreen> {
               'Erstverein',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
-            Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
             isLoading
-                ? Center(
-                  child: CircularProgressIndicator(
-                    color: UIConstants.defaultAppColor,
-                    strokeWidth: 2.0,
-                  ),
-                )
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  )
                 : schulungen.isEmpty
-                ? Text(
-                  'Keine Schulungen gefunden.',
-                  style: UIConstants.bodyStyle.copyWith(
-                    color: UIConstants.grey,
-                  ),
-                )
-                : Expanded(
-                  child: ListView.builder(
-                    itemCount: schulungen.length,
-                    itemBuilder: (context, index) {
-                      final schulung = schulungen[index];
-                      final datum = DateTime.parse(schulung['DATUM']);
-                      final formattedDatum =
-                          "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
-                      return Card(
-                        margin: EdgeInsets.only(
-                          bottom: UIConstants.smallSpacing,
+                    ? Text(
+                        'Keine Schulungen gefunden.',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.grey,
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: UIConstants.smallSpacing,
-                            horizontal: UIConstants.smallSpacing,
-                          ),
-                          child: Row(
-                            children: [
-                              // Date
-                              SizedBox(
-                                width: 90, // Fixed width for date
-                                child: Text(
-                                  formattedDatum,
-                                  style: UIConstants.bodyStyle.copyWith(
-                                    fontSize: UIConstants.subtitleFontSize,
-                                  ),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount: schulungen.length,
+                          itemBuilder: (context, index) {
+                            final schulung = schulungen[index];
+                            final datum = DateTime.parse(schulung['DATUM']);
+                            final formattedDatum =
+                                "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
+                            return Card(
+                              margin: const EdgeInsets.only(
+                                bottom: UIConstants.smallSpacing,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: UIConstants.smallSpacing,
+                                  horizontal: UIConstants.smallSpacing,
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Date
+                                    SizedBox(
+                                      width: 90, // Fixed width for date
+                                      child: Text(
+                                        formattedDatum,
+                                        style: UIConstants.bodyStyle.copyWith(
+                                          fontSize:
+                                              UIConstants.subtitleFontSize,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: UIConstants.smallSpacing,
+                                    ), // Small spacing
+                                    // Schulung name
+                                    Expanded(
+                                      child: Text(
+                                        schulung['BEZEICHNUNG'] ?? 'N/A',
+                                        style: UIConstants.bodyStyle.copyWith(
+                                          fontSize:
+                                              UIConstants.subtitleFontSize,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                width: UIConstants.smallSpacing,
-                              ), // Small spacing
-                              // Schulung name
-                              Expanded(
-                                child: Text(
-                                  schulung['BEZEICHNUNG'] ?? 'N/A',
-                                  style: UIConstants.bodyStyle.copyWith(
-                                    fontSize: UIConstants.subtitleFontSize,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
           ],
         ),
       ),
