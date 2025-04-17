@@ -16,9 +16,9 @@ class AuthService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
-  }) : _httpClient = httpClient,
-       _cacheService = cacheService,
-       _networkService = networkService;
+  })  : _httpClient = httpClient,
+        _cacheService = cacheService,
+        _networkService = networkService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -113,8 +113,7 @@ class AuthService {
     final today = DateTime.now();
     final testExpirationDate = today.isBefore(expirationTime);
 
-    final isCacheValid =
-        testCachedUsername &&
+    final isCacheValid = testCachedUsername &&
         testCachedPassword &&
         testCachedPersonId &&
         testCachedTimestamp &&
@@ -127,10 +126,9 @@ class AuthService {
       LoggerService.logWarning('Cached data expired.');
       return {
         'ResultType': 0,
-        'ResultMessage':
-            isCacheValid
-                ? 'Cached data expired. Please log in again.'
-                : 'Offline login failed, no cache or password mismatch',
+        'ResultMessage': isCacheValid
+            ? 'Cached data expired. Please log in again.'
+            : 'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
       };
     }
   }

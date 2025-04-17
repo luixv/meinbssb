@@ -189,14 +189,29 @@ class _AccordionItem extends StatelessWidget {
   });
 
   final String question;
-  final Widget answer; // Answer is now a Widget
+  final Widget answer;
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       title:
           Text(question, style: const TextStyle(fontWeight: FontWeight.bold)),
-      leading: const Icon(Icons.add), // Initially shows a plus sign
+      leading: Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+              color: Colors.grey,), // You can customize the border color
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.add,
+            size: 18,
+            color: Colors.grey, // You can customize the icon color
+          ),
+        ),
+      ),
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -205,7 +220,7 @@ class _AccordionItem extends StatelessWidget {
       ],
       onExpansionChanged: (bool expanded) {
         // You could potentially change the leading icon here if desired
-        // based on the expanded state.
+        // based on the expanded state (e.g., to a minus sign in a circle).
       },
     );
   }

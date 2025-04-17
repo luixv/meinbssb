@@ -31,10 +31,10 @@ class ApiService {
     required String baseIp,
     required String port,
     required int serverTimeout,
-  }) : _httpClient = httpClient,
-       _imageService = imageService,
-       _cacheService = cacheService,
-       _networkService = networkService;
+  })  : _httpClient = httpClient,
+        _imageService = imageService,
+        _cacheService = cacheService,
+        _networkService = networkService;
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
@@ -116,8 +116,7 @@ class ApiService {
         final today = DateTime.now();
         final testExpirationDate = today.isBefore(expirationTime);
 
-        final isCacheValid =
-            testCachedUsername &&
+        final isCacheValid = testCachedUsername &&
             testCachedPassword &&
             testCachedPersonId &&
             testCachedTimestamp &&
@@ -130,10 +129,9 @@ class ApiService {
           LoggerService.logWarning('Cached data expired.');
           return {
             'ResultType': 0,
-            'ResultMessage':
-                isCacheValid
-                    ? 'Cached data expired. Please log in again.'
-                    : 'Offline login failed, no cache or password mismatch',
+            'ResultMessage': isCacheValid
+                ? 'Cached data expired. Please log in again.'
+                : 'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
           };
         }
       } else {
@@ -234,9 +232,8 @@ class ApiService {
     return _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'schulungen_$personId',
       getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('AngemeldeteSchulungen/$personId/$abDatum')
-              as List<dynamic>,
+      () async => await _httpClient
+          .get('AngemeldeteSchulungen/$personId/$abDatum') as List<dynamic>,
       (response) => _mapAngemeldeteSchulungenResponse(response),
     );
   }

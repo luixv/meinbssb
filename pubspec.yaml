@@ -94,5 +94,4 @@ flutter:
   assets:
     - assets/images/myBSSB-logo.png
     - assets/config.json
-    - assets/html/
 
