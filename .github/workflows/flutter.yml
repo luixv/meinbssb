@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Run tests
-        run: flutter test ./unit/test/services ./unit/test/screens --coverage
+        run: flutter test ./test/unit/services ./test/unit/screens --coverage
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
