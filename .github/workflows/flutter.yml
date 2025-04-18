@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write # Changed to 'write' to allow tag creation
   packages: write
   actions: write
 
@@ -122,19 +122,38 @@ jobs:
           name: release-windows
           path: build/windows/runner/Release
 
-  deploy:
-    name: Deploy
+  release:
+    name: Create Release
     needs: [build-android, build-ios, build-web, build-windows]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important to fetch all history for tags
+
+      - name: Determine Version
+        id: version
+        run: |
+          VERSION=$(date +%Y.%m.%d-%H%M%S) # Simple timestamp-based version
+          echo "::set-output name=tag::$VERSION"
+
+      - name: Create Git Tag
+        run: |
+          git config --local user.name "GitHub Actions Bot"
+          git config --local user.email "actions@github.com"
+          git tag ${{ steps.version.outputs.tag }}
+          git push origin ${{ steps.version.outputs.tag }}
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
           files: |
             artifacts/release-apk/app-release.apk
             artifacts/release-ipa/*.ipa
