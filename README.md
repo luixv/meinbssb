@@ -92,6 +92,9 @@ For generating mocks and testing:
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart
 
+For installing at the phone do this: 
+    adb install build/app/outputs/flutter-apk/app-release.apk
+
 For the web version go to project root and at a shell run the following:
 
 $ python.exe -m http.server 8080 --directory build/web
@@ -127,6 +130,3 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
-For running integration tests do this:
-
