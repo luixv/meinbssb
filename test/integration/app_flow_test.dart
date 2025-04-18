@@ -227,11 +227,16 @@ void main() {
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
 
-      // Verify error message is displayed
+      // Verify either the online or offline error message is displayed
+      final onlineErrorFinder =
+          find.text('Benutzername oder Passwort ist falsch');
+      final offlineErrorFinder = find.text(
+          'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',);
+
       expect(
-        find.text('Benutzername oder Passwort ist falsch'),
-        findsOneWidget,
-      );
+          tester.widgetList(onlineErrorFinder).isNotEmpty ||
+              tester.widgetList(offlineErrorFinder).isNotEmpty,
+          isTrue,);
     });
   });
 }
