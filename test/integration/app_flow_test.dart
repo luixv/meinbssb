@@ -180,12 +180,17 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Zweitmitgliedschaften'), findsOneWidget);
 
-      // Access Zweitmitgliedschaften
+      // Access Impressum
       await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
       await tester.tap(find.text('Impressum')); // Tap the menu item
       await tester.pumpAndSettle();
-      expect(find.text('Impressum'), findsOneWidget);
+      expect(
+        find
+            .text('Impressum')
+            .first, // Target the first 'Impressum' text, which is in the AppBar
+        findsOneWidget,
+      );
 
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
