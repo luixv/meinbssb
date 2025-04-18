@@ -87,7 +87,7 @@ For building the project:
 
 For generating mocks and testing:
     flutter pub run build_runner build
-    flutter test .\test\screens .\test\services\
+    flutter test .\test\unit\screens .\test\unit\services\
 
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart
@@ -104,23 +104,29 @@ Then with a web browser address the URL: localhost:8080
 et voila!
 
 Follow this structure: 
-lib/
+lib
+├── app.dart
+├── constants
+│   ├── ui_constants.dart
+├── errors
 ├── main.dart
-├── constants/
-├── services/
+├── models
+├── screens
+│   ├── app_menu.dart
+│   ├── *.screen
+├── services
+│   ├── api
+│   │   ├── api_service.dart
+│   │   ├── auth_service.dart
+│   │   ├── training_service.dart
+│   │   ├── user_service.dart
 │   ├── api_service.dart
-│   ├── base_service.dart
-│   ├── cache_service.dart
-│   ├── database_service.dart
-│   ├── email_service.dart
-│   ├── error_service.dart
-│   ├── http_client.dart
+│   ├── *.service
+├── utils
+│   ├── cookie_consent.dart
 │   ├── iban_checker.dart
-│   └── localization_service.dart
-├── data/
-│   └── email_queue_db.dart
-└── screens/
-    └── *_screen
+
+For a complete tree: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
 A few resources to get you started if this is your first Flutter project:
 
