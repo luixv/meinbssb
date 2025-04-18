@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write # Changed to 'write' to allow tag creation
+  contents: write
   packages: write
   actions: write
 
@@ -70,8 +70,8 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign
+      - name: Build IPA
+        run: flutter build ipa --release --no-codesign
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
@@ -98,7 +98,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-web
-          path: build/web
+          path: |
+            build/web
+          if-no-files-found: ignore
 
   build-windows:
     name: Build Windows
@@ -121,6 +123,7 @@ jobs:
         with:
           name: release-windows
           path: build/windows/runner/Release
+          if-no-files-found: ignore
 
   release:
     name: Create Release
@@ -130,13 +133,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Important to fetch all history for tags
+          fetch-depth: 0
 
       - name: Determine Version
         id: version
         run: |
-          VERSION=$(date +%Y.%m.%d-%H%M%S) # Simple timestamp-based version
-          echo "::set-output name=tag::$VERSION"
+          VERSION=$(date +%Y.%m.%d-%H%M%S)
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Git Tag
         run: |
