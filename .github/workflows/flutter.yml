@@ -160,19 +160,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           files: |
-            artifacts/release-apk/app-release.apk
-            artifacts/release-ipa/*.ipa
-            artifacts/release-web/index.html
-            artifacts/release-web/canvaskit/canvaskit.js=canvaskit.js
-            artifacts/release-web/canvaskit/chromium/canvaskit.js=chromium-canvaskit.js
-            artifacts/release-web/assets/**
-            artifacts/release-web/icons/**
-            artifacts/release-web/*.js
-            artifacts/release-web/*.wasm
-            artifacts/release-web/*.json
-            artifacts/release-web/*.png
-            artifacts/release-web/version.json
-            artifacts/release-windows/**
+            artifacts/release-web/index.html=index.html
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
