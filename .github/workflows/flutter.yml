@@ -124,7 +124,7 @@ jobs:
           path: |
             build/windows/x64/runner/Release/*.exe
             build/windows/x64/runner/Release/*.dll
-            build/windows/x64/runner/Release/data/
+            build/windows/x64/runner/Release/data/*
           if-no-files-found: error
           
   release:
