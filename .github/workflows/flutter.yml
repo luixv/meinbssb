@@ -179,7 +179,7 @@ jobs:
             cp "artifacts/release-ipa/*.ipa" "$RELEASE_DIR/"
           else
             echo "No iOS build found - skipping"
-          fi 
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -187,5 +187,7 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           files: release_assets/*
           generate_release_notes: true
+          draft: false
+          prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
