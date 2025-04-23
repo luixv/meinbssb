@@ -123,6 +123,7 @@ jobs:
           name: release-windows
           path: build/windows/runner/Release
           if-no-files-found: ignore
+          
   release:
     name: Create Release
     needs: [build-android, build-ios, build-web, build-windows]
@@ -153,7 +154,7 @@ jobs:
 
       - name: Prepare Release Assets
         run: |
-          RELEASE_DIR="release_assets"
+          RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
           mkdir -p "$RELEASE_DIR"
 
           # Android
@@ -161,13 +162,13 @@ jobs:
 
           # Web
           cd "artifacts/release-web"
-          zip -r "../$RELEASE_DIR/web_build.zip" .
+          zip -r "$GITHUB_WORKSPACE/$RELEASE_DIR/web_build.zip" .
           cd -
 
           # Windows
           if [ -d "artifacts/release-windows" ]; then
             cd "artifacts/release-windows"
-            zip -r "../$RELEASE_DIR/windows_build.zip" .
+            zip -r "$GITHUB_WORKSPACE/$RELEASE_DIR/windows_build.zip" .
             cd -
           else
             echo "No Windows build found - skipping"
