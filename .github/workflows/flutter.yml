@@ -122,9 +122,9 @@ jobs:
         with:
           name: release-windows
           path: |
-            build/windows/x64/Release/*.exe
-            build/windows/x64/Release/*.dll
-            build/windows/x64/Release/data/
+            build/windows/x64/runner/Release/*.exe
+            build/windows/x64/runner/Release/*.dll
+            build/windows/x64/runner/Release/data/
           if-no-files-found: error
           
   release:
