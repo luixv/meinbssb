@@ -123,10 +123,9 @@ jobs:
           name: release-windows
           path: build/windows/runner/Release
           if-no-files-found: ignore
-
   release:
     name: Create Release
-    needs: [build-android, build-ios, build-web, build-windows]  # Keep iOS in needs
+    needs: [build-android, build-ios, build-web, build-windows]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -152,29 +151,36 @@ jobs:
         with:
           path: artifacts
 
-      - name: Verify and Prepare Artifacts
+      - name: Prepare Release Assets
         run: |
-          # Create release directory
-          mkdir -p release_assets
-          
-          # Android (required)
-          cp artifacts/release-apk/app-release.apk release_assets/
-          
-          # Web (required)
-          cd artifacts/release-web && zip -r ../../release_assets/web_build.zip .
-          
-          # Windows (optional)
-          [ -d "artifacts/release-windows" ] && cp artifacts/release-windows/*.exe release_assets/
-          [ -d "artifacts/release-windows" ] && cp artifacts/release-windows/*.dll release_assets/
-          
-          # iOS (optional)
+          RELEASE_DIR="release_assets"
+          mkdir -p "$RELEASE_DIR"
+
+          # Android
+          cp "artifacts/release-apk/app-release.apk" "$RELEASE_DIR/"
+
+          # Web
+          cd "artifacts/release-web"
+          zip -r "../$RELEASE_DIR/web_build.zip" .
+          cd -
+
+          # Windows
+          if [ -d "artifacts/release-windows" ]; then
+            cd "artifacts/release-windows"
+            zip -r "../$RELEASE_DIR/windows_build.zip" .
+            cd -
+          else
+            echo "No Windows build found - skipping"
+          fi
+
+          # iOS
           if [ -f "artifacts/release-ipa/*.ipa" ]; then
-            cp artifacts/release-ipa/*.ipa release_assets/
+            cp "artifacts/release-ipa/*.ipa" "$RELEASE_DIR/"
           else
             echo "No iOS build found - skipping"
           fi
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
