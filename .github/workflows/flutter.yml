@@ -171,14 +171,14 @@ jobs:
             zip -r "$RELEASE_DIR/windows_build.zip" .
             cd -
           else
-            echo "No Windows build found - skipping"
+            echo "No Windows build found -- skipping"
           fi
 
           # iOS
           if [ -f "artifacts/release-ipa/*.ipa" ]; then
             cp "artifacts/release-ipa/*.ipa" "$RELEASE_DIR/"
           else
-            echo "No iOS build found - skipping"
+            echo "No iOS build found -- skipping"
           fi
 
       - name: Create GitHub Release
