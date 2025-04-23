@@ -126,7 +126,7 @@ jobs:
 
   release:
     name: Create Release
-    needs: [build-android, build-ios, build-web, build-windows]
+    needs: [build-android, build-ios, build-web, build-windows]  # Keep iOS in needs
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -152,27 +152,33 @@ jobs:
         with:
           path: artifacts
 
-      - name: List Artifact Contents
-        run: ls -R artifacts
+      - name: Verify and Prepare Artifacts
+        run: |
+          # Create release directory
+          mkdir -p release_assets
+          
+          # Android (required)
+          cp artifacts/release-apk/app-release.apk release_assets/
+          
+          # Web (required)
+          cd artifacts/release-web && zip -r ../../release_assets/web_build.zip .
+          
+          # Windows (optional)
+          [ -d "artifacts/release-windows" ] && cp artifacts/release-windows/*.exe release_assets/
+          [ -d "artifacts/release-windows" ] && cp artifacts/release-windows/*.dll release_assets/
+          
+          # iOS (optional)
+          if [ -f "artifacts/release-ipa/*.ipa" ]; then
+            cp artifacts/release-ipa/*.ipa release_assets/
+          else
+            echo "No iOS build found - skipping"
+          fi
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          files: |
-            artifacts/release-apk/app-release.apk
-            artifacts/release-ipa/*.ipa
-            artifacts/release-web/index.html
-            artifacts/release-web/canvaskit/canvaskit.js
-            artifacts/release-web/canvaskit/chromium/canvaskit.js
-            artifacts/release-web/assets/**
-            artifacts/release-web/icons/**
-            artifacts/release-web/*.js
-            artifacts/release-web/*.wasm
-            artifacts/release-web/*.json
-            artifacts/release-web/*.png
-            artifacts/release-web/version.json
-            artifacts/release-windows/**
+          files: release_assets/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
