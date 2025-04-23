@@ -165,7 +165,13 @@ jobs:
             artifacts/release-web/index.html
             artifacts/release-web/canvaskit/canvaskit.js
             artifacts/release-web/canvaskit/chromium/canvaskit.js
-            artifacts/release-web/**
+            artifacts/release-web/assets/**
+            artifacts/release-web/icons/**
+            artifacts/release-web/*.js
+            artifacts/release-web/*.wasm
+            artifacts/release-web/*.json
+            artifacts/release-web/*.png
+            artifacts/release-web/version.json
             artifacts/release-windows/**
           generate_release_notes: true
         env:
