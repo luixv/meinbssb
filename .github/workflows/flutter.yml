@@ -164,6 +164,7 @@ jobs:
             artifacts/release-ipa/*.ipa
             artifacts/release-web/index.html
             artifacts/release-web/canvaskit/canvaskit.js
+            artifacts/release-web/canvaskit/chromium/canvaskit.js
             artifacts/release-web/**
             artifacts/release-windows/**
           generate_release_notes: true
