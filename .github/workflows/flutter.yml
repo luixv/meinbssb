@@ -162,13 +162,13 @@ jobs:
 
           # Web
           cd "artifacts/release-web"
-          zip -r "$GITHUB_WORKSPACE/$RELEASE_DIR/web_build.zip" .
+          zip -r "$RELEASE_DIR/web_build.zip" .
           cd -
 
           # Windows
           if [ -d "artifacts/release-windows" ]; then
             cd "artifacts/release-windows"
-            zip -r "$GITHUB_WORKSPACE/$RELEASE_DIR/windows_build.zip" .
+            zip -r "$RELEASE_DIR/windows_build.zip" .
             cd -
           else
             echo "No Windows build found - skipping"
@@ -179,7 +179,7 @@ jobs:
             cp "artifacts/release-ipa/*.ipa" "$RELEASE_DIR/"
           else
             echo "No iOS build found - skipping"
-          fi
+          fi 
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
