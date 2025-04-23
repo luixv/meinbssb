@@ -163,8 +163,8 @@ jobs:
             artifacts/release-apk/app-release.apk
             artifacts/release-ipa/*.ipa
             artifacts/release-web/index.html
-            artifacts/release-web/canvaskit/canvaskit.js
-            artifacts/release-web/canvaskit/chromium/canvaskit.js
+            artifacts/release-web/canvaskit/canvaskit.js=canvaskit.js
+            artifacts/release-web/canvaskit/chromium/canvaskit.js=chromium-canvaskit.js
             artifacts/release-web/assets/**
             artifacts/release-web/icons/**
             artifacts/release-web/*.js
