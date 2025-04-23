@@ -121,8 +121,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          path: build/windows/runner/Release
-          if-no-files-found: ignore
+          path: |
+            build/windows/runner/Release/*.exe
+            build/windows/runner/Release/*.dll
+            build/windows/runner/Release/data/
+          if-no-files-found: error
           
   release:
     name: Create Release
@@ -168,17 +171,17 @@ jobs:
           # Windows
           if [ -d "artifacts/release-windows" ]; then
             cd "artifacts/release-windows"
-            zip -r "$RELEASE_DIR/windows_build.zip" .
+            zip -r "$RELEASE_DIR/windows_build.zip" *
             cd -
           else
-            echo "No Windows build found -- skipping"
+            echo "::warning::No Windows build found"
           fi
 
           # iOS
-          if [ -f "artifacts/release-ipa/*.ipa" ]; then
-            cp "artifacts/release-ipa/*.ipa" "$RELEASE_DIR/"
+          if compgen -G "artifacts/release-ipa/*.ipa" > /dev/null; then
+            cp artifacts/release-ipa/*.ipa "$RELEASE_DIR/"
           else
-            echo "No iOS build found -- skipping"
+            echo "::warning::No iOS build found"
           fi
 
       - name: Create GitHub Release
