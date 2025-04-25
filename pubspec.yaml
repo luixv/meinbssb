@@ -55,7 +55,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  webview_flutter: ^4.0.1
+  #webview_flutter: ^4.0.1
 
 dev_dependencies:
   flutter_test:
@@ -78,8 +78,8 @@ dependency_overrides:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
 
-scripts:
-  copy_sqflite_worker: flutter pub run sqflite_common_ffi_web:copy_assets
+#scripts:
+#  copy_sqflite_worker: flutter pub run sqflite_common_ffi_web:copy_assets
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
