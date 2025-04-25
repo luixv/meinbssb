@@ -2,7 +2,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/services/api/auth_service.dart';
@@ -28,7 +27,7 @@ void main() {
   late MockHttpClient mockHttpClient;
   late MockCacheService mockCacheService;
   late MockNetworkServiceWithGetter mockNetworkService;
-  
+
   // Setup mock for FlutterSecureStorage platform channel
   const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
   final stored = <String, String>{};
@@ -39,7 +38,8 @@ void main() {
     mockNetworkService = MockNetworkServiceWithGetter();
 
     // Setup platform channel mock
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
         switch (methodCall.method) {
@@ -72,7 +72,8 @@ void main() {
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
       null,
     );
@@ -89,8 +90,8 @@ void main() {
     };
 
     test('successful registration', () async {
-      when(mockHttpClient.post('RegisterMyBSSB', any))
-          .thenAnswer((_) async => {'ResultType': 1, 'ResultMessage': 'Success'});
+      when(mockHttpClient.post('RegisterMyBSSB', any)).thenAnswer(
+          (_) async => {'ResultType': 1, 'ResultMessage': 'Success'},);
 
       final result = await authService.register(
         firstName: registrationData['firstName']!,
@@ -122,16 +123,16 @@ void main() {
         'PersonID': personId,
         'ResultMessage': 'Success',
       };
-      
+
       when(mockNetworkService.isConnected).thenReturn(true);
       when(mockHttpClient.post(
         'LoginMyBSSB',
         expectedLoginData,
-      )).thenAnswer((_) async => loginResponse);
-      
-      when(mockCacheService.setString(any, any)).thenAnswer((_) async => null);
-      when(mockCacheService.setInt(any, any)).thenAnswer((_) async => null);
-      when(mockCacheService.setCacheTimestamp()).thenAnswer((_) async => null);
+      ),).thenAnswer((_) async => loginResponse);
+
+      when(mockCacheService.setString(any, any)).thenAnswer((_) async {});
+      when(mockCacheService.setInt(any, any)).thenAnswer((_) async {});
+      when(mockCacheService.setCacheTimestamp()).thenAnswer((_) async {});
 
       final result = await authService.login(email, password);
 
@@ -142,7 +143,7 @@ void main() {
       verify(mockHttpClient.post(
         'LoginMyBSSB',
         expectedLoginData,
-      )).called(1);
+      ),).called(1);
       expect(stored['password'], equals(password));
     });
 
@@ -160,7 +161,7 @@ void main() {
       when(mockHttpClient.post(
         'LoginMyBSSB',
         expectedLoginData,
-      )).thenAnswer((_) async => errorResponse);
+      ),).thenAnswer((_) async => errorResponse);
 
       final result = await authService.login(email, password);
 
@@ -171,7 +172,7 @@ void main() {
       verify(mockHttpClient.post(
         'LoginMyBSSB',
         expectedLoginData,
-      )).called(1);
+      ),).called(1);
       expect(stored['password'], isNull);
     });
 
@@ -183,7 +184,8 @@ void main() {
 
       when(mockNetworkService.isConnected).thenReturn(false);
       stored['password'] = password;
-      when(mockCacheService.getString('username')).thenAnswer((_) async => email);
+      when(mockCacheService.getString('username'))
+          .thenAnswer((_) async => email);
       when(mockCacheService.getInt('personId'))
           .thenAnswer((_) async => personId);
       when(mockCacheService.getInt('cacheTimestamp'))
@@ -194,7 +196,7 @@ void main() {
       when(mockHttpClient.post(
         'LoginMyBSSB',
         expectedLoginData,
-      )).thenThrow(http.ClientException('Connection refused'));
+      ),).thenThrow(http.ClientException('Connection refused'));
 
       final result = await authService.login(email, password);
 
@@ -209,8 +211,8 @@ void main() {
     const passNumber = '12345';
 
     test('successful password reset', () async {
-      when(mockHttpClient.post('PasswordReset/$passNumber', any))
-          .thenAnswer((_) async => {'ResultType': 1, 'ResultMessage': 'Success'});
+      when(mockHttpClient.post('PasswordReset/$passNumber', any)).thenAnswer(
+          (_) async => {'ResultType': 1, 'ResultMessage': 'Success'},);
 
       final result = await authService.resetPassword(passNumber);
 
@@ -229,7 +231,7 @@ void main() {
   group('AuthService - Logout', () {
     test('successful logout', () async {
       stored['password'] = 'somepassword'; // Simulate stored password
-      when(mockCacheService.remove(any)).thenAnswer((_) async => null);
+      when(mockCacheService.remove(any)).thenAnswer((_) async {});
 
       await authService.logout();
 
