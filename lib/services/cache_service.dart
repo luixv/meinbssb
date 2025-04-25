@@ -11,8 +11,8 @@ class CacheService {
   CacheService({
     required SharedPreferences prefs,
     required ConfigService configService,
-  }) : _prefs = prefs,
-       _configService = configService;
+  })  : _prefs = prefs,
+        _configService = configService;
   static const String _cacheKeyPrefix = 'cache_';
   final SharedPreferences _prefs;
   final ConfigService _configService;
@@ -114,8 +114,10 @@ class CacheService {
     T Function(dynamic response) processResponse,
   ) async {
     Future<T> retrieveCachedData() async {
-      return getCachedData(cacheKey, () async {
-        final cachedJson = _prefs.getString(cacheKey);
+      return getCachedData(_cacheKeyPrefix + cacheKey, () async {
+        // Use the prefixed key
+        final cachedJson = _prefs
+            .getString(_cacheKeyPrefix + cacheKey); // Use the prefixed key
         if (cachedJson != null) {
           final cachedData = jsonDecode(cachedJson);
           final globalTimestamp = await getInt('cacheTimestamp');
@@ -126,7 +128,7 @@ class CacheService {
           if (globalTimestamp != null) {
             final expirationTime = DateTime.fromMillisecondsSinceEpoch(
               globalTimestamp,
-            ).add(validityDurationConfig); // Use config-based duration
+            ).add(validityDurationConfig);
             if (DateTime.now().isBefore(expirationTime)) {
               LoggerService.logInfo(
                 'Using cached data from SharedPreferences for key: $cacheKey',
@@ -149,7 +151,10 @@ class CacheService {
       final processedData = processResponse(response);
 
       if (processedData != null) {
-        await _prefs.setString(cacheKey, jsonEncode(processedData));
+        await _prefs.setString(
+          _cacheKeyPrefix + cacheKey,
+          jsonEncode(processedData),
+        ); // Use the prefixed key
         await setCacheTimestamp();
         LoggerService.logInfo(
           'Successfully cached fresh data for key: $cacheKey',
@@ -166,7 +171,13 @@ class CacheService {
       LoggerService.logInfo(
         'Retrieving cached data due to error for key: $cacheKey',
       );
-      return await retrieveCachedData();
+      final cachedResult = await retrieveCachedData();
+      if (cachedResult != null) {
+        return cachedResult;
+      } else {
+        // Handle the case where fetch fails and no valid cache exists
+        rethrow; // Or return a default value, or null as T
+      }
     }
   }
 }
