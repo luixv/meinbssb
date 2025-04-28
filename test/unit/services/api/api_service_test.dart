@@ -76,7 +76,7 @@ void main() {
       verify(mockHttpClient.post('UpdateUserData', {
         'personId': personId,
         ...userData,
-      })).called(1);
+      }),).called(1);
     });
 
     test('returns false when update fails', () async {

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_type_check
+
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -45,7 +47,7 @@ void main() {
 
   group('getCachedSchuetzenausweis', () {
     test('returns null or Uint8List (smoke test)', () async {
-      final result = await imageService.getCachedSchuetzenausweis(1, Duration(seconds: 1));
+      final result = await imageService.getCachedSchuetzenausweis(1, const Duration(seconds: 1));
       expect(result == null || result is Uint8List, isTrue);
     });
   });
