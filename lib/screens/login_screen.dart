@@ -13,7 +13,6 @@ import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/email_service.dart';
 import '/services/logger_service.dart';
-import '/services/config_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({required this.onLoginSuccess, super.key});
@@ -115,11 +114,10 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => RegistrationScreen(
-              authService: authService,
-              emailService: emailService,
-            ),
+        builder: (context) => RegistrationScreen(
+          authService: authService,
+          emailService: emailService,
+        ),
       ),
     );
   }
@@ -131,13 +129,12 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => PasswordResetScreen(
-              authService: authService,
-              userData: _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: _handleLogout,
-            ),
+        builder: (context) => PasswordResetScreen(
+          authService: authService,
+          userData: _userData,
+          isLoggedIn: _isLoggedIn,
+          onLogout: _handleLogout,
+        ),
       ),
     );
   }
@@ -200,18 +197,17 @@ class LoginScreenState extends State<LoginScreen> {
           backgroundColor: UIConstants.lightGreen,
           padding: UIConstants.buttonPadding,
         ),
-        child:
-            _isLoading
-                ? const CircularProgressIndicator(
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                color: UIConstants.white,
+                strokeWidth: 2.0,
+              )
+            : Text(
+                'Anmelden',
+                style: UIConstants.bodyStyle.copyWith(
                   color: UIConstants.white,
-                  strokeWidth: 2.0,
-                )
-                : Text(
-                  'Anmelden',
-                  style: UIConstants.bodyStyle.copyWith(
-                    color: UIConstants.white,
-                  ),
                 ),
+              ),
       ),
     );
   }
@@ -260,12 +256,11 @@ class LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder:
-                    (context) => HelpScreen(
-                      userData: _userData,
-                      isLoggedIn: _isLoggedIn,
-                      onLogout: _handleLogout,
-                    ),
+                builder: (context) => HelpScreen(
+                  userData: _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
               ),
             );
           },
