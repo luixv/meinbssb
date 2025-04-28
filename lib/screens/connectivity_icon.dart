@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-final _log = Logger('StartScreen'); // Use the class name as the logger name
+final _log = Logger('StartScreen');
 
 class ConnectivityIcon extends StatefulWidget {
   const ConnectivityIcon({super.key});
@@ -60,76 +60,72 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
 
     switch (_connectivityResult) {
       case ConnectivityResult.wifi:
-        icon =
-            _useSvg
-                ? SvgPicture.asset(
-                  'assets/wifi_on.svg', // Replace with your SVG asset path
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.green,
-                    BlendMode.srcIn,
-                  ),
-                )
-                : const Icon(Icons.wifi, color: Colors.green);
+        icon = _useSvg
+            ? SvgPicture.asset(
+                'assets/wifi_on.svg', // Replace with your SVG asset path
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.green,
+                  BlendMode.srcIn,
+                ),
+              )
+            : const Icon(Icons.wifi, color: Colors.green);
         tooltip = 'Connected to Wi-Fi';
         break;
       case ConnectivityResult.mobile:
-        icon =
-            _useSvg
-                ? SvgPicture.asset(
-                  'assets/signal_cellular_4_bar.svg', // Replace with your SVG asset path
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.green,
-                    BlendMode.srcIn,
-                  ),
-                )
-                : const Icon(Icons.signal_cellular_4_bar, color: Colors.green);
+        icon = _useSvg
+            ? SvgPicture.asset(
+                'assets/signal_cellular_4_bar.svg', // Replace with your SVG asset path
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.green,
+                  BlendMode.srcIn,
+                ),
+              )
+            : const Icon(Icons.signal_cellular_4_bar, color: Colors.green);
         tooltip = 'Connected to Mobile Data';
         break;
       case ConnectivityResult.ethernet:
         // Use a generic network icon or your own custom icon for Ethernet
-        icon =
-            _useSvg
-                ? SvgPicture.asset(
-                  'assets/ethernet.svg', // Replace with your SVG asset path
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.green,
-                    BlendMode.srcIn,
-                  ),
-                )
-                : const Icon(
-                  Icons
-                      .network_check, // Using a more widely available network icon
-                  color: Colors.green,
-                );
+        icon = _useSvg
+            ? SvgPicture.asset(
+                'assets/ethernet.svg', // Replace with your SVG asset path
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.green,
+                  BlendMode.srcIn,
+                ),
+              )
+            : const Icon(
+                Icons
+                    .network_check, // Using a more widely available network icon
+                color: Colors.green,
+              );
         tooltip = 'Connected to Ethernet';
         break;
       case ConnectivityResult.none:
-        icon =
-            _useSvg
-                ? SvgPicture.asset(
-                  'assets/wifi_off.svg', // Replace with your SVG asset path
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.red,
-                    BlendMode.srcIn,
-                  ),
-                )
-                : const Icon(Icons.wifi_off, color: Colors.red);
+        icon = _useSvg
+            ? SvgPicture.asset(
+                'assets/wifi_off.svg', // Replace with your SVG asset path
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.red,
+                  BlendMode.srcIn,
+                ),
+              )
+            : const Icon(Icons.wifi_off, color: Colors.red);
         tooltip = 'No Internet Connection';
         break;
       case ConnectivityResult
-          .bluetooth: // You might want to handle this differently
+            .bluetooth: // You might want to handle this differently
         icon = const Icon(Icons.bluetooth_connected, color: Colors.grey);
         tooltip = 'Connected via Bluetooth (No Internet)';
         break;
-      case ConnectivityResult.vpn: // You might want to treat this as connected
+      case ConnectivityResult.vpn: //  treat this as connected
         icon = const Icon(Icons.vpn_lock, color: Colors.green);
         tooltip = 'Connected via VPN';
         break;

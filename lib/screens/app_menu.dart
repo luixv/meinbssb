@@ -25,9 +25,8 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                SchuetzenausweisScreen(personId: personId, userData: userData),
+        builder: (context) =>
+            SchuetzenausweisScreen(personId: personId, userData: userData),
       ),
     );
   }
@@ -36,11 +35,10 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => ZweitmitgliedschaftenScreen(
-              personId: personId,
-              userData: userData,
-            ),
+        builder: (context) => ZweitmitgliedschaftenScreen(
+          personId: personId,
+          userData: userData,
+        ),
       ),
     );
   }
@@ -49,12 +47,11 @@ class AppMenu extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => ImpressumScreen(
-              userData: userData,
-              isLoggedIn: isLoggedIn,
-              onLogout: onLogout,
-            ),
+        builder: (context) => ImpressumScreen(
+          userData: userData,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
       ),
     );
   }
@@ -85,14 +82,12 @@ class AppMenu extends StatelessWidget {
         if (!isLoggedIn) {
           items.add(
             const PopupMenuItem<String>(
-              // Use const here
               value: 'impressum',
               child: Text('Impressum', style: UIConstants.bodyStyle),
             ),
           );
           items.add(
             const PopupMenuItem<String>(
-              // Use const here
               value: 'back_to_login',
               child: Text('Zurück zum Login', style: UIConstants.bodyStyle),
             ),
@@ -100,12 +95,10 @@ class AppMenu extends StatelessWidget {
         } else {
           items.addAll([
             const PopupMenuItem<String>(
-              // Use const here
               value: 'startseite',
               child: Text('Startseite', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'digitaler_schuetzenausweis',
               child: Text(
                 'Digitaler Schützenausweis',
@@ -113,7 +106,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'zweitmitgliedschaften',
               child: Text(
                 'Zweitmitgliedschaften',
@@ -121,7 +113,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'aenderung_schuetzenausweis',
               child: Text(
                 'Änderung Schützenausweis',
@@ -129,7 +120,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'physischer_schuetzenausweis',
               child: Text(
                 'Physischer Schützenausweis',
@@ -137,17 +127,14 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'meine_stammdaten',
               child: Text('Meine Stammdaten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'meine_kontaktdaten',
               child: Text('Meine Kontaktdaten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'meine_seminare_buchen',
               child: Text(
                 'Meine Seminare buchen',
@@ -155,7 +142,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'meine_seminare_absolviert',
               child: Text(
                 'Meine Seminare absolviert',
@@ -163,7 +149,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'oktoberfestlandesschiessen',
               child: Text(
                 'Oktoberfestlandesschiessen',
@@ -171,7 +156,6 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              // Use const here
               value: 'impressum',
               child: Text('Impressum', style: UIConstants.bodyStyle),
             ),

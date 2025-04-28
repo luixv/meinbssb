@@ -151,7 +151,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget _buildEmailField() {
     return TextField(
-      key: const Key('usernameField'), // Use const for keys
+      key: const Key('usernameField'),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: UIConstants.defaultInputDecoration.copyWith(
