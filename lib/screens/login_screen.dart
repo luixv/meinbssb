@@ -13,6 +13,7 @@ import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/email_service.dart';
 import '/services/logger_service.dart';
+import '/services/config_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({required this.onLoginSuccess, super.key});
@@ -230,20 +231,25 @@ class LoginScreenState extends State<LoginScreen> {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Noch kein Konto?',
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
+            Flexible(
+              child: Text(
+                'Noch kein Konto?',
+                style: UIConstants.bodyStyle.copyWith(
+                  fontSize: UIConstants.subtitleFontSize,
+                ),
               ),
             ),
-            TextButton(
-              onPressed: _navigateToRegistrationPage,
-              child: Text(
-                'Registrieren',
-                style: UIConstants.linkStyle.copyWith(
-                  color: _appColor,
-                  fontSize: UIConstants.subtitleFontSize,
+            Flexible(
+              child: TextButton(
+                onPressed: _navigateToRegistrationPage,
+                child: Text(
+                  'Registrieren',
+                  style: UIConstants.linkStyle.copyWith(
+                    color: _appColor,
+                    fontSize: UIConstants.subtitleFontSize,
+                  ),
                 ),
               ),
             ),
