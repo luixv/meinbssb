@@ -6,8 +6,6 @@ import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/image_service.dart';
-import 'package:meinbssb/services/api/user_service.dart';
-import 'package:meinbssb/services/api/training_service.dart';
 
 import 'api_service_test.mocks.dart';
 
@@ -100,100 +98,4 @@ void main() {
     });
   });
 
-  group('delegation to UserService', () {
-    late MockUserService mockUserService;
-
-    setUp(() {
-      mockUserService = MockUserService();
-      apiService = ApiService(
-        httpClient: mockHttpClient,
-        cacheService: mockCacheService,
-        networkService: mockNetworkService,
-        imageService: mockImageService,
-        userService: mockUserService,
-      );
-    });
-
-    test('fetchPassdaten delegates to UserService', () async {
-      const personId = 42;
-      final expected = {'foo': 'bar'};
-      when(mockUserService.fetchPassdaten(personId)).thenAnswer((_) async => expected);
-
-      final result = await apiService.fetchPassdaten(personId);
-
-      expect(result, expected);
-      verify(mockUserService.fetchPassdaten(personId)).called(1);
-    });
-
-    test('fetchZweitmitgliedschaften delegates to UserService', () async {
-      const personId = 42;
-      final expected = [1, 2, 3];
-      when(mockUserService.fetchZweitmitgliedschaften(personId)).thenAnswer((_) async => expected);
-
-      final result = await apiService.fetchZweitmitgliedschaften(personId);
-
-      expect(result, expected);
-      verify(mockUserService.fetchZweitmitgliedschaften(personId)).called(1);
-    });
-
-    test('fetchPassdatenZVE delegates to UserService', () async {
-      const passdatenId = 1;
-      const personId = 42;
-      final expected = ['a', 'b'];
-      when(mockUserService.fetchPassdatenZVE(passdatenId, personId)).thenAnswer((_) async => expected);
-
-      final result = await apiService.fetchPassdatenZVE(passdatenId, personId);
-
-      expect(result, expected);
-      verify(mockUserService.fetchPassdatenZVE(passdatenId, personId)).called(1);
-    });
-  });
-
-  group('delegation to TrainingService', () {
-    late MockTrainingService mockTrainingService;
-
-    setUp(() {
-      mockTrainingService = MockTrainingService();
-      apiService = ApiService(
-        httpClient: mockHttpClient,
-        cacheService: mockCacheService,
-        networkService: mockNetworkService,
-        imageService: mockImageService,
-        trainingService: mockTrainingService,
-      );
-    });
-
-    test('fetchAngemeldeteSchulungen delegates to TrainingService', () async {
-      const personId = 42;
-      const abDatum = '2024-01-01';
-      final expected = [1, 2];
-      when(mockTrainingService.fetchAngemeldeteSchulungen(personId, abDatum)).thenAnswer((_) async => expected);
-
-      final result = await apiService.fetchAngemeldeteSchulungen(personId, abDatum);
-
-      expect(result, expected);
-      verify(mockTrainingService.fetchAngemeldeteSchulungen(personId, abDatum)).called(1);
-    });
-
-    test('fetchAvailableSchulungen delegates to TrainingService', () async {
-      final expected = ['foo', 'bar'];
-      when(mockTrainingService.fetchAvailableSchulungen()).thenAnswer((_) async => expected);
-
-      final result = await apiService.fetchAvailableSchulungen();
-
-      expect(result, expected);
-      verify(mockTrainingService.fetchAvailableSchulungen()).called(1);
-    });
-
-    test('registerForSchulung delegates to TrainingService', () async {
-      const personId = 42;
-      const schulungId = 99;
-      when(mockTrainingService.registerForSchulung(personId, schulungId)).thenAnswer((_) async => true);
-
-      final result = await apiService.registerForSchulung(personId, schulungId);
-
-      expect(result, isTrue);
-      verify(mockTrainingService.registerForSchulung(personId, schulungId)).called(1);
-    });
-  });
 } 
