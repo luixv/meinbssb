@@ -107,32 +107,43 @@ Follow this structure:
 lib
 ├── app.dart
 ├── constants
-│   ├── ui_constants.dart
+│   └── ui_constants.dart
 ├── errors
 ├── main.dart
 ├── models
 ├── screens
-│   ├── app_menu.dart
-│   ├── *.screen
+│   ├── app_menu.dart
+│   ├── connectivity_icon.dart
+│   ├── help_screen.dart
+│   ├── impressum_screen.dart
+│   ├── login_screen.dart
+│   ├── logo_widget.dart
+│   ├── password_reset_screen.dart
+│   ├── password_reset_success_screen.dart
+│   ├── privacy_screen.dart
+│   ├── registration_screen.dart
+│   ├── registration_success_screen.dart
+│   ├── schuetzenausweis_screen.dart
+│   ├── start_screen.dart
+│   └── zweitmitgliedschaften_screen.dart
 ├── services
-│   ├── api
-│   │   ├── api_service.dart
-│   │   ├── auth_service.dart
-│   │   ├── training_service.dart
-│   │   ├── user_service.dart
-│   ├── api_service.dart
-│   ├── *.service
-├── utils
-│   ├── cookie_consent.dart
-│   ├── iban_checker.dart
+│   ├── api
+│   │   ├── api_service.dart
+│   │   ├── auth_service.dart
+│   │   ├── training_service.dart
+│   │   └── user_service.dart
+│   ├── api_service.dart
+│   ├── cache_service.dart
+│   ├── config_service.dart
+│   ├── email_service.dart
+│   ├── error_service.dart
+│   ├── http_client.dart
+│   ├── image_service.dart
+│   ├── logger_service.dart
+│   └── network_service.dart
+└── utils
+    ├── cookie_consent.dart
+    └── iban_checker.dart
 
 For a complete tree: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
