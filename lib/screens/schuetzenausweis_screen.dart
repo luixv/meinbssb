@@ -25,7 +25,8 @@ class SchuetzenausweisScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Digitaler Schützenausweis', style: UIConstants.titleStyle),
+        title: const Text('Digitaler Schützenausweis',
+            style: UIConstants.titleStyle,),
         actions: [
           AppMenu(
             context: context,

@@ -213,66 +213,68 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildNavigationLinks() {
-    return Column(
-      children: [
-        TextButton(
-          onPressed: _navigateToPasswordReset,
-          child: Text(
-            'Passwort vergessen?',
-            style: UIConstants.linkStyle.copyWith(
-              color: _appColor,
-              fontSize: UIConstants.subtitleFontSize,
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                'Noch kein Konto?',
-                style: UIConstants.bodyStyle.copyWith(
-                  fontSize: UIConstants.subtitleFontSize,
-                ),
+    return Center(
+      child: Column(
+        children: [
+          TextButton(
+            onPressed: _navigateToPasswordReset,
+            child: Text(
+              'Passwort vergessen?',
+              style: UIConstants.linkStyle.copyWith(
+                color: _appColor,
+                fontSize: UIConstants.subtitleFontSize,
               ),
             ),
-            Flexible(
-              child: TextButton(
-                onPressed: _navigateToRegistrationPage,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
                 child: Text(
-                  'Registrieren',
-                  style: UIConstants.linkStyle.copyWith(
-                    color: _appColor,
+                  'Noch kein Konto?',
+                  style: UIConstants.bodyStyle.copyWith(
                     fontSize: UIConstants.subtitleFontSize,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HelpScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
+              Flexible(
+                child: TextButton(
+                  onPressed: _navigateToRegistrationPage,
+                  child: Text(
+                    'Registrieren',
+                    style: UIConstants.linkStyle.copyWith(
+                      color: _appColor,
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
-          child: Text(
-            'Hilfe',
-            style: UIConstants.linkStyle.copyWith(
-              color: _appColor,
-              fontSize: UIConstants.subtitleFontSize,
+            ],
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HelpScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              'Hilfe',
+              style: UIConstants.linkStyle.copyWith(
+                color: _appColor,
+                fontSize: UIConstants.subtitleFontSize,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
