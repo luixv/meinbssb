@@ -15,8 +15,13 @@ import '/services/email_service.dart';
 import '/services/logger_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({required this.onLoginSuccess, super.key});
+  const LoginScreen({
+    required this.onLoginSuccess,
+    this.logoWidget,
+    super.key,
+  }); // Added optional logoWidget
   final Function(Map<String, dynamic>) onLoginSuccess;
+  final Widget? logoWidget; // Define the optional logoWidget
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -286,7 +291,8 @@ class LoginScreenState extends State<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LogoWidget(),
+            widget.logoWidget ??
+                const LogoWidget(), // Use the provided logoWidget or the default
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Hier anmelden',
