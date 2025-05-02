@@ -54,15 +54,20 @@ class ApiService {
     required String birthDate,
     required String zipCode,
   }) async {
-    final response = await _httpClient.post('RegisterMyBSSB', {
-      'firstName': firstName,
-      'lastName': lastName,
-      'passNumber': passNumber,
-      'email': email,
-      'birthDate': birthDate,
-      'zipCode': zipCode,
-    });
-    return response is Map<String, dynamic> ? response : {};
+    try {
+      final response = await _httpClient.post('RegisterMyBSSB', {
+        'firstName': firstName,
+        'lastName': lastName,
+        'passNumber': passNumber,
+        'email': email,
+        'birthDate': birthDate,
+        'zipCode': zipCode,
+      });
+      return response is Map<String, dynamic> ? response : {};
+    } catch (e) {
+      LoggerService.logError('Invalid server response.');
+      return {};
+    }
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
