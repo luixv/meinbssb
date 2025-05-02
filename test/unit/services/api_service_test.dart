@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -7,6 +9,7 @@ import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'api_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -280,6 +283,76 @@ void main() {
           any,
         ),
       ).called(1);
+    });
+  });
+
+  group('ApiService - fetchSchuetzenausweis', () {
+    const int personId = 789;
+    final Uint8List mockImageData = Uint8List.fromList([1, 2, 3]);
+    final Uint8List mockRotatedImageData = Uint8List.fromList([3, 2, 1]);
+    const Duration cacheDuration = Duration(minutes: 30);
+
+    setUp(() {
+      // Clear previous interactions
+      reset(mockImageService);
+      reset(mockHttpClient);
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(cacheDuration);
+    });
+
+    test('should return cached image if available', () async {
+      // Mock setup with explicit type casting
+      when(mockImageService.getCachedSchuetzenausweis(any, any))
+          .thenAnswer((_) => Future<Uint8List?>.value(mockImageData));
+
+      when(mockImageService.rotatedImage(any))
+          .thenAnswer((_) async => mockRotatedImageData);
+
+      final result = await apiService.fetchSchuetzenausweis(personId);
+
+      expect(result, mockRotatedImageData);
+      verify(
+        mockImageService.getCachedSchuetzenausweis(personId, cacheDuration),
+      );
+      verify(mockImageService.rotatedImage(mockImageData));
+      verifyNever(mockHttpClient.getBytes(any));
+    });
+
+    test('should fetch from network when no cached image', () async {
+      // Explicit null return with proper type
+      when(mockImageService.getCachedSchuetzenausweis(any, any))
+          .thenAnswer((_) => Future<Uint8List?>.value(null));
+      when(mockHttpClient.getBytes(any))
+          .thenAnswer((_) => Future.value(mockImageData));
+      when(mockImageService.rotatedImage(any))
+          .thenAnswer((_) async => mockRotatedImageData);
+      when(mockImageService.cacheSchuetzenausweis(any, any, any))
+          .thenAnswer((_) => Future.value());
+
+      final result = await apiService.fetchSchuetzenausweis(personId);
+
+      expect(result, mockRotatedImageData);
+      verify(mockHttpClient.getBytes('Schuetzenausweis/JPG/$personId'));
+      verify(
+        mockImageService.cacheSchuetzenausweis(
+          personId,
+          mockImageData,
+          any,
+        ),
+      );
+    });
+
+    test('should handle network errors', () async {
+      when(mockImageService.getCachedSchuetzenausweis(any, any))
+          .thenAnswer((_) => Future<Uint8List?>.value(null));
+      when(mockHttpClient.getBytes(any))
+          .thenThrow(http.ClientException('Network error'));
+
+      expect(
+        () => apiService.fetchSchuetzenausweis(personId),
+        throwsA(isA<NetworkException>()),
+      );
     });
   });
 }
