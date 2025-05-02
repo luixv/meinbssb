@@ -355,4 +355,37 @@ void main() {
       );
     });
   });
+
+  group('ApiService - fetchPassdatenZVE', () {
+    test('should return cached data when available', () async {
+      const personId = 123;
+      const passdatenId = 456;
+      final mockCachedResponse = [
+        {'ZVEID': 'CACHED123'},
+      ];
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(days: 30));
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => mockCachedResponse);
+
+      final result = await apiService.fetchPassdatenZVE(passdatenId, personId);
+
+      expect(result, mockCachedResponse);
+      verify(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          'passdatenzve_${passdatenId}_$personId',
+          any,
+          any,
+          any,
+        ),
+      ).called(1);
+    });
+  });
 }
