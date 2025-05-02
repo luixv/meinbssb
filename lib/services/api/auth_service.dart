@@ -75,13 +75,10 @@ class AuthService {
         return {};
       }
     } on Exception catch (e) {
-      if (e is http.ClientException &&
-          (e.message.contains('refused') ||
-              e.message.contains('failed to connect'))) {
+      if (e is http.ClientException) {
         LoggerService.logError(
-          'ClientException contains SocketException: ${e.message}',
+          'http.ClientException occurred: ${e.message}',
         );
-
         return await _handleOfflineLogin(email, password);
       } else {
         LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
@@ -111,7 +108,8 @@ class AuthService {
     final testCachedPersonId = cachedPersonId != null;
     final testCachedTimestamp = cachedTimestamp != null;
     final today = DateTime.now();
-    final testExpirationDate = today.isBefore(expirationTime);
+    final testExpirationDate = testCachedTimestamp &&
+        today.isBefore(expirationTime); // Check timestamp before comparing
 
     final isCacheValid = testCachedUsername &&
         testCachedPassword &&
@@ -123,13 +121,23 @@ class AuthService {
       LoggerService.logInfo('Login from cache successful.');
       return {'ResultType': 1, 'PersonID': cachedPersonId};
     } else {
-      LoggerService.logWarning('Cached data expired.');
-      return {
-        'ResultType': 0,
-        'ResultMessage': isCacheValid
-            ? 'Cached data expired. Please log in again.'
-            : 'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
-      };
+      LoggerService.logWarning('Offline login failed.');
+      if (testCachedUsername &&
+          testCachedPassword &&
+          testCachedPersonId &&
+          testCachedTimestamp &&
+          !testExpirationDate) {
+        return {
+          'ResultType': 0,
+          'ResultMessage': 'Die Cache Daten sind abgelaufen. Bitte melde dich erneut an.',
+        };
+      } else {
+        return {
+          'ResultType': 0,
+          'ResultMessage':
+              'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
+        };
+      }
     }
   }
 
