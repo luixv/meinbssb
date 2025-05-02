@@ -30,6 +30,12 @@ class ConfigService {
     return _instance!;
   }
 
+  // Public method to reset the singleton for testing
+  static void reset() {
+    _instance = null;
+    _config = null;
+  }
+
   int? getInt(String key, [String? section]) {
     if (_config == null) return null;
 
