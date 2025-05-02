@@ -6,7 +6,7 @@ import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/image_service.dart';
-import 'package:http/http.dart' as http; // Import for http.ClientException
+import 'package:http/http.dart' as http;
 
 import 'api_service_test.mocks.dart';
 
@@ -29,7 +29,7 @@ void main() {
       cacheService: mockCacheService,
       networkService: mockNetworkService,
       imageService: mockImageService,
-      baseIp: '127.0.0.1', // Added baseIp and port.  Important for tests.
+      baseIp: '127.0.0.1',
       port: '8080',
       serverTimeout: 5,
     );
