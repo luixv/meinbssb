@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/http_client.dart';
@@ -13,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'api_service_test.mocks.dart';
 
 @GenerateMocks([
+  ConfigService,
   HttpClient,
   ImageService,
   CacheService,
@@ -27,25 +29,25 @@ void main() {
   late MockImageService mockImageService;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
+  late MockConfigService mockConfigService;
 
-  const String testBaseIp = 'test.com';
-  const String testPort = '8080';
-  const int testServerTimeout = 5;
+  //const String testBaseIp = 'test.com';
+  //const String testPort = '8080';
+  //const int testServerTimeout = 5;
 
   setUp(() {
+    mockConfigService = MockConfigService();
     mockHttpClient = MockHttpClient();
     mockImageService = MockImageService();
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
 
     apiService = ApiService(
+      configService: mockConfigService,
       httpClient: mockHttpClient,
       imageService: mockImageService,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
-      baseIp: testBaseIp,
-      port: testPort,
-      serverTimeout: testServerTimeout,
     );
   });
 

@@ -4,16 +4,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i7;
+import 'dart:typed_data' as _i8;
 
-import 'package:flutter/foundation.dart' as _i10;
+import 'package:flutter/services.dart' as _i11;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
-import 'package:meinbssb/services/cache_service.dart' as _i8;
-import 'package:meinbssb/services/http_client.dart' as _i4;
-import 'package:meinbssb/services/image_service.dart' as _i6;
-import 'package:meinbssb/services/network_service.dart' as _i9;
+import 'package:meinbssb/services/cache_service.dart' as _i9;
+import 'package:meinbssb/services/config_service.dart' as _i4;
+import 'package:meinbssb/services/http_client.dart' as _i5;
+import 'package:meinbssb/services/image_service.dart' as _i7;
+import 'package:meinbssb/services/network_service.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -111,10 +112,45 @@ class _FakeMacOsOptions_7 extends _i1.SmartFake implements _i3.MacOsOptions {
         );
 }
 
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i4.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
+}
+
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i5.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -122,7 +158,7 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
@@ -172,7 +208,7 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
 /// A class which mocks [ImageService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageService extends _i1.Mock implements _i6.ImageService {
+class MockImageService extends _i1.Mock implements _i7.ImageService {
   MockImageService() {
     _i1.throwOnMissingStub(this);
   }
@@ -180,7 +216,7 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
   @override
   _i2.Future<void> cacheSchuetzenausweis(
     int? personId,
-    _i7.Uint8List? imageData,
+    _i8.Uint8List? imageData,
     int? timestamp,
   ) =>
       (super.noSuchMethod(
@@ -197,17 +233,17 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<_i7.Uint8List> rotatedImage(_i7.Uint8List? imageData) =>
+  _i2.Future<_i8.Uint8List> rotatedImage(_i8.Uint8List? imageData) =>
       (super.noSuchMethod(
         Invocation.method(
           #rotatedImage,
           [imageData],
         ),
-        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i2.Future<_i7.Uint8List>);
+        returnValue: _i2.Future<_i8.Uint8List>.value(_i8.Uint8List(0)),
+      ) as _i2.Future<_i8.Uint8List>);
 
   @override
-  _i2.Future<_i7.Uint8List?> getCachedSchuetzenausweis(
+  _i2.Future<_i8.Uint8List?> getCachedSchuetzenausweis(
     int? personId,
     Duration? validity,
   ) =>
@@ -219,14 +255,14 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
             validity,
           ],
         ),
-        returnValue: _i2.Future<_i7.Uint8List?>.value(),
-      ) as _i2.Future<_i7.Uint8List?>);
+        returnValue: _i2.Future<_i8.Uint8List?>.value(),
+      ) as _i2.Future<_i8.Uint8List?>);
 }
 
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i8.CacheService {
+class MockCacheService extends _i1.Mock implements _i9.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -387,8 +423,8 @@ class MockCacheService extends _i1.Mock implements _i8.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -429,8 +465,8 @@ class MockCacheService extends _i1.Mock implements _i8.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,
@@ -462,7 +498,7 @@ class MockCacheService extends _i1.Mock implements _i8.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i9.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i10.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -558,7 +594,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void registerListener({
     required String? key,
-    required _i10.ValueChanged<String?>? listener,
+    required _i11.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -575,7 +611,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void unregisterListener({
     required String? key,
-    required _i10.ValueChanged<String?>? listener,
+    required _i11.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(

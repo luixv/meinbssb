@@ -50,13 +50,11 @@ class AppInitializer {
     );
 
     _apiService = ApiService(
+      configService: _configServiceInstance,
       httpClient: _httpClient,
       imageService: imageService,
       cacheService: _cacheService,
       networkService: _networkService,
-      baseIp: baseIP,
-      port: port,
-      serverTimeout: serverTimeout,
     );
 
     _registerProviders();
@@ -70,19 +68,17 @@ class AppInitializer {
       create: (context) => MailerEmailSender(),
     );
     emailServiceProvider = Provider<EmailService>(
-      create:
-          (context) => EmailService(
-            emailSender: Provider.of<EmailSender>(context, listen: false),
-            configService: Provider.of<ConfigService>(context, listen: false),
-          ),
+      create: (context) => EmailService(
+        emailSender: Provider.of<EmailSender>(context, listen: false),
+        configService: Provider.of<ConfigService>(context, listen: false),
+      ),
     );
     authServiceProvider = Provider<AuthService>(
-      create:
-          (context) => AuthService(
-            httpClient: _httpClient,
-            cacheService: _cacheService,
-            networkService: _networkService,
-          ),
+      create: (context) => AuthService(
+        httpClient: _httpClient,
+        cacheService: _cacheService,
+        networkService: _networkService,
+      ),
     );
     apiServiceProvider = Provider<ApiService>(create: (context) => _apiService);
     networkServiceProvider = Provider<NetworkService>(

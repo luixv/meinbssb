@@ -10,6 +10,7 @@ import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/image_service.dart';
 
 // Minimal fakes for required dependencies
+
 class FakeHttpClient implements HttpClient {
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -38,13 +39,11 @@ class FakeApiService extends ApiService {
     required this.passdatenZVE,
     this.throwError = false,
   }) : super(
+          configService: FakeConfigService(),
           httpClient: FakeHttpClient(),
           cacheService: FakeCacheService(),
           networkService: FakeNetworkService(),
           imageService: FakeImageService(),
-          baseIp: '',
-          port: '',
-          serverTimeout: 0,
         );
 
   final List<dynamic> zweitmitgliedschaften;
@@ -93,7 +92,9 @@ void main() {
     return MultiProvider(
       providers: [
         Provider<ApiService>.value(value: apiService),
-        Provider<ConfigService>.value(value: configService ?? FakeConfigService()),
+        Provider<ConfigService>.value(
+            // ignore: require_trailing_commas
+            value: configService ?? FakeConfigService()),
       ],
       child: MaterialApp(
         home: ZweitmitgliedschaftenScreen(
@@ -125,7 +126,8 @@ void main() {
     expect(find.textContaining('Fehler'), findsNWidgets(2));
   });
 
-  testWidgets('shows empty state when no zweitmitgliedschaften', (tester) async {
+  testWidgets('shows empty state when no zweitmitgliedschaften',
+      (tester) async {
     final apiService = FakeApiService(
       zweitmitgliedschaften: [],
       passdatenZVE: [],

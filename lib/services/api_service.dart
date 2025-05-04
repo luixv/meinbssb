@@ -9,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '/services/cache_service.dart';
+import '/services/config_service.dart';
 import '/services/http_client.dart';
 import '/services/image_service.dart';
 import '/services/logger_service.dart';
@@ -24,13 +25,11 @@ class NetworkException implements Exception {
 
 class ApiService {
   ApiService({
+    required ConfigService configService,
     required HttpClient httpClient,
     required ImageService imageService,
     required CacheService cacheService,
     required NetworkService networkService,
-    required String baseIp,
-    required String port,
-    required int serverTimeout,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _cacheService = cacheService,
@@ -38,7 +37,6 @@ class ApiService {
   final HttpClient _httpClient;
   final ImageService _imageService;
   final CacheService _cacheService;
-
   final NetworkService _networkService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();

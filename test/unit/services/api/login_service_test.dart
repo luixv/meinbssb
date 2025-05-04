@@ -9,8 +9,8 @@ import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-// Adjust the import path
 
+import '../../screens/start_screen_test.dart';
 import 'login_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -25,19 +25,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late ApiService apiService;
+  late MockConfigService mockConfigService;
   late MockHttpClient mockHttpClient;
   late MockImageService mockImageService;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
 
-  const String testBaseIp = 'test.com';
-  const String testPort = '8080';
-  const int testServerTimeout = 5;
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
 
   setUp(() {
+    mockConfigService = MockConfigService();
     mockHttpClient = MockHttpClient();
     mockImageService = MockImageService();
     mockCacheService = MockCacheService();
@@ -45,13 +44,11 @@ void main() {
     mockSecureStorage = MockFlutterSecureStorage();
 
     apiService = ApiService(
+      configService: mockConfigService,
       httpClient: mockHttpClient,
       imageService: mockImageService,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
-      baseIp: testBaseIp,
-      port: testPort,
-      serverTimeout: testServerTimeout,
     );
   });
 
