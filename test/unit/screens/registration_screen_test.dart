@@ -1,8 +1,61 @@
-// test/registration_screen_test.dart
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
+import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/email_service.dart';
+import 'package:meinbssb/services/config_service.dart';
+
+import 'registration_screen_test.mocks.dart';
+
+@GenerateMocks([AuthService, EmailService, ConfigService, EmailSender])
 void main() {
+  late MockAuthService mockAuthService;
+  late MockEmailService mockEmailService;
+  late MockConfigService mockConfigService;
+  late MockEmailSender mockEmailSender;
+
+  setUp(() {
+    mockAuthService = MockAuthService();
+    mockEmailService = MockEmailService();
+    mockConfigService = MockConfigService();
+    mockEmailSender = MockEmailSender();
+
+    when(mockConfigService.getString('logoName', 'appTheme'))
+        .thenReturn('assets/images/myBSSB-logo.png');
+  });
+
+  Future<void> pumpRegistrationScreen(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<ConfigService>.value(value: mockConfigService),
+          Provider<AuthService>.value(value: mockAuthService),
+          Provider<EmailService>.value(value: mockEmailService),
+          Provider<EmailSender>.value(value: mockEmailSender),
+        ],
+        child: MaterialApp(
+          home: RegistrationScreen(
+            authService: mockAuthService,
+            emailService: mockEmailService,
+          ),
+        ),
+      ),
+    );
+  }
+
+  testWidgets('Text Field are present', (WidgetTester tester) async {
+    await pumpRegistrationScreen(tester);
+
+    expect(find.byKey(const Key('firstNameField')), findsOneWidget);
+    expect(find.byKey(const Key('lastNameField')), findsOneWidget);
+    expect(find.byKey(const Key('passNumberField')), findsOneWidget);
+    expect(find.byKey(const Key('emailField')), findsOneWidget);
+  });
+
   group('Pure Validation Tests', () {
     test('Pass number validation - accepts 8 digits', () {
       final state = RegistrationScreenState();

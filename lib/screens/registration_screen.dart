@@ -177,14 +177,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   bool isFormValid() {
-    final isZipValid =
-        _zipCodeController.text.isNotEmpty
-            ? validateZipCode(_zipCodeController.text)
-            : true;
-    final isPassValid =
-        _passNumberController.text.isNotEmpty
-            ? validatePassNumber(_passNumberController.text)
-            : true;
+    final isZipValid = _zipCodeController.text.isNotEmpty
+        ? validateZipCode(_zipCodeController.text)
+        : true;
+    final isPassValid = _passNumberController.text.isNotEmpty
+        ? validatePassNumber(_passNumberController.text)
+        : true;
     final isDateValid =
         _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
     final isEmailValid = validateEmail(_emailController.text);
@@ -397,10 +395,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               focusNode: _emailFocusNode, // Assign the FocusNode
               decoration: UIConstants.defaultInputDecoration.copyWith(
                 labelText: 'E-mail',
-                errorText:
-                    _emailFieldTouched
-                        ? emailError
-                        : null, // Only show error if touched
+                errorText: _emailFieldTouched
+                    ? emailError
+                    : null, // Only show error if touched
               ),
               onChanged: (value) {
                 setState(() {
@@ -431,14 +428,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       _selectedDate == null
                           ? 'Wählen Sie Ihr Geburtsdatum'
                           : DateFormat(
-                            'dd.MM.yyyy',
-                            'de_DE',
-                          ).format(_selectedDate!),
+                              'dd.MM.yyyy',
+                              'de_DE',
+                            ).format(_selectedDate!),
                       style: UIConstants.bodyStyle.copyWith(
-                        color:
-                            _selectedDate != null
-                                ? UIConstants.lightGreen
-                                : UIConstants.black,
+                        color: _selectedDate != null
+                            ? UIConstants.lightGreen
+                            : UIConstants.black,
                       ),
                     ),
                     const Icon(Icons.calendar_today),
@@ -464,11 +460,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             Row(
               children: [
                 Checkbox(
+                  key: const Key('privacyCheckbox'),
                   value: _privacyAccepted,
-                  onChanged:
-                      (bool? value) => setState(() {
-                        _privacyAccepted = value!;
-                      }),
+                  onChanged: (bool? value) => setState(() {
+                    _privacyAccepted = value!;
+                  }),
                 ),
                 Expanded(
                   child: RichText(
@@ -484,18 +480,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           style: UIConstants.linkStyle.copyWith(
                             color: UIConstants.lightGreen,
                           ),
-                          recognizer:
-                              TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              PrivacyScreen(userData: userData),
-                                    ),
-                                  );
-                                },
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PrivacyScreen(userData: userData),
+                                ),
+                              );
+                            },
                         ),
                         const TextSpan(text: ' gelesen und akzeptiere sie.'),
                       ],
@@ -508,23 +502,23 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                key: const Key('submitButton'),
                 onPressed: isFormValid() && !_isLoading ? _registerUser : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: UIConstants.lightGreen,
                   padding: UIConstants.buttonPadding,
                 ),
-                child:
-                    _isLoading
-                        ? const CircularProgressIndicator(
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        color: UIConstants.white,
+                        strokeWidth: 2.0,
+                      )
+                    : Text(
+                        'Registrieren',
+                        style: UIConstants.bodyStyle.copyWith(
                           color: UIConstants.white,
-                          strokeWidth: 2.0,
-                        )
-                        : Text(
-                          'Registrieren',
-                          style: UIConstants.bodyStyle.copyWith(
-                            color: UIConstants.white,
-                          ),
                         ),
+                      ),
               ),
             ),
           ],
