@@ -13,8 +13,14 @@ class PrivacyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ändere die Hintergrundfarbe des Scaffolds.
+      backgroundColor:
+          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe
       appBar: AppBar(
-        title: const Text('Datenschutzbestimmungen', style: UIConstants.titleStyle),
+        title: const Text(
+          'Datenschutzbestimmungen',
+          style: UIConstants.titleStyle,
+        ),
         actions: [
           AppMenu(
             context: context,

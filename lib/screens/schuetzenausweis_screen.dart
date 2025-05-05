@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: schuetzenausweis_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +19,15 @@ class SchuetzenausweisScreen extends StatelessWidget {
     final apiService = Provider.of<ApiService>(context);
 
     return Scaffold(
+      // Ändere die Hintergrundfarbe des Scaffolds
+      backgroundColor:
+          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe hier
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Digitaler Schützenausweis',
-            style: UIConstants.titleStyle,),
+        title: const Text(
+          'Digitaler Schützenausweis',
+          style: UIConstants.titleStyle,
+        ),
         actions: [
           AppMenu(
             context: context,

@@ -73,6 +73,9 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Hier wird die Hintergrundfarbe des Scaffolds geändert.
+      backgroundColor:
+          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe
       appBar: AppBar(
         title: const Text('Passwort zurücksetzen'),
         actions: [
@@ -120,16 +123,15 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                   backgroundColor: UIConstants.lightGreen,
                   padding: UIConstants.buttonPadding,
                 ),
-                child:
-                    _isLoading
-                        ? const CircularProgressIndicator(
-                          color: UIConstants.white,
-                          strokeWidth: 2.0,
-                        )
-                        : const Text(
-                          'Passwort zurücksetzen',
-                          style: UIConstants.bodyStyle,
-                        ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        color: UIConstants.white,
+                        strokeWidth: 2.0,
+                      )
+                    : const Text(
+                        'Passwort zurücksetzen',
+                        style: UIConstants.bodyStyle,
+                      ),
               ),
             ),
           ],

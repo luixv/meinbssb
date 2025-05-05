@@ -87,9 +87,13 @@ class StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ändere die Hintergrundfarbe des Scaffolds.
+      backgroundColor:
+          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
+        title:
+            const Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
@@ -142,7 +146,10 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
-            const Text('Angemeldete Schulungen:', style: UIConstants.titleStyle),
+            const Text(
+              'Angemeldete Schulungen:',
+              style: UIConstants.titleStyle,
+            ),
             isLoading
                 ? const Center(
                     child: CircularProgressIndicator(

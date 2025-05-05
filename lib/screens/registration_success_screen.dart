@@ -19,6 +19,9 @@ class RegistrationSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ändere die Hintergrundfarbe des Scaffolds.
+      backgroundColor: UIConstants
+          .backgroundGreen, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
       appBar: AppBar(
         title: const Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,

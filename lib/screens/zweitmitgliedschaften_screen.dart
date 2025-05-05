@@ -55,10 +55,9 @@ class _ZweitmitgliedschaftenScreenState
         widget.personId,
       );
 
-      _passdatenZVEFuture =
-          passDataId != null
-              ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
-              : Future.value([]);
+      _passdatenZVEFuture = passDataId != null
+          ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
+          : Future.value([]);
     } catch (e) {
       LoggerService.logError('Error loading data: $e');
       _zweitmitgliedschaftenFuture = Future.value([]);
@@ -88,9 +87,13 @@ class _ZweitmitgliedschaftenScreenState
     final Widget displayedLogo = widget.logoWidget ?? const LogoWidget();
 
     return Scaffold(
+      // Ändere die Hintergrundfarbe des Scaffolds.
+      backgroundColor:
+          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe hier
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
+        title:
+            const Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -175,7 +178,9 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
+                      margin: const EdgeInsets.only(
+                        bottom: UIConstants.smallSpacing,
+                      ),
                       child: ListTile(
                         title: Row(
                           children: [
@@ -241,7 +246,9 @@ class _ZweitmitgliedschaftenScreenState
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
                     return Card(
-                      margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
+                      margin: const EdgeInsets.only(
+                        bottom: UIConstants.smallSpacing,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: UIConstants.smallSpacing,

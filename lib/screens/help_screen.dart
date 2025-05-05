@@ -1,6 +1,5 @@
-// lib/screens/help_screen.dart
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import for handling links
+import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
 import '/constants/ui_constants.dart';
 
@@ -29,128 +28,133 @@ class HelpScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Häufig gestellte Fragen (FAQ)',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            _AccordionSection(
-              title: 'Allgemein',
-              questions: [
-                _AccordionItem(
-                  question: 'Was ist Mein BSSB?',
-                  answer: Text(
-                    'Mein BSSB ist die offizielle App des Bayerischen Sportschützenbundes e.V. Sie bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
+      // Ändere die Hintergrundfarbe des Bodys
+      body: Container(
+        color: UIConstants
+            .backgroundGreen, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
+        child: const SingleChildScrollView(
+          padding: EdgeInsets.all(UIConstants.defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Häufig gestellte Fragen (FAQ)',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              _AccordionSection(
+                title: 'Allgemein',
+                questions: [
+                  _AccordionItem(
+                    question: 'Was ist Mein BSSB?',
+                    answer: Text(
+                      'Mein BSSB ist die offizielle App des Bayerischen Sportschützenbundes e.V. Sie bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Wer kann die App nutzen?',
-                  answer: Text(
-                    'Die App steht allen Mitgliedern des Bayerischen Sportschützenbundes e.V. zur Verfügung.',
+                  _AccordionItem(
+                    question: 'Wer kann die App nutzen?',
+                    answer: Text(
+                      'Die App steht allen Mitgliedern des Bayerischen Sportschützenbundes e.V. zur Verfügung.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Wie erhalte ich meine Zugangsdaten?',
-                  answer: Text(
-                    'Ihre Zugangsdaten (Mitgliedsnummer und Passwort) erhalten Sie in der Regel per E-Mail oder über Ihren Verein. Bei Problemen wenden Sie sich bitte an Ihren Verein oder die Geschäftsstelle des BSSB.',
+                  _AccordionItem(
+                    question: 'Wie erhalte ich meine Zugangsdaten?',
+                    answer: Text(
+                      'Ihre Zugangsdaten (Mitgliedsnummer und Passwort) erhalten Sie in der Regel per E-Mail oder über Ihren Verein. Bei Problemen wenden Sie sich bitte an Ihren Verein oder die Geschäftsstelle des BSSB.',
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            _AccordionSection(
-              title: 'Funktionen der App',
-              questions: [
-                _AccordionItem(
-                  question: 'Welche Bereiche gibt es in der App?',
-                  answer: Text(
-                    'Die App umfasst verschiedene Bereiche wie News, Termine, Ergebnisse, mein Profil, Dokumente und mehr. Navigieren Sie einfach durch das Menü, um die gewünschten Informationen zu finden.',
+                ],
+              ),
+              SizedBox(height: 16),
+              _AccordionSection(
+                title: 'Funktionen der App',
+                questions: [
+                  _AccordionItem(
+                    question: 'Welche Bereiche gibt es in der App?',
+                    answer: Text(
+                      'Die App umfasst verschiedene Bereiche wie News, Termine, Ergebnisse, mein Profil, Dokumente und mehr. Navigieren Sie einfach durch das Menü, um die gewünschten Informationen zu finden.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question:
-                      'Wie kann ich meine persönlichen Daten einsehen und ändern?',
-                  answer: Text(
-                    'Im Bereich "mein Profil" können Sie Ihre hinterlegten Daten einsehen. Änderungen können Sie in der Regel über die Webseite des BSSB oder über Ihren Verein vornehmen.',
+                  _AccordionItem(
+                    question:
+                        'Wie kann ich meine persönlichen Daten einsehen und ändern?',
+                    answer: Text(
+                      'Im Bereich "mein Profil" können Sie Ihre hinterlegten Daten einsehen. Änderungen können Sie in der Regel über die Webseite des BSSB oder über Ihren Verein vornehmen.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question:
-                      'Wo finde ich aktuelle Termine und Veranstaltungen?',
-                  answer: Text(
-                    'Unter dem Punkt "Termine" finden Sie eine Übersicht über alle wichtigen Veranstaltungen, Wettkämpfe und Schulungen.',
+                  _AccordionItem(
+                    question:
+                        'Wo finde ich aktuelle Termine und Veranstaltungen?',
+                    answer: Text(
+                      'Unter dem Punkt "Termine" finden Sie eine Übersicht über alle wichtigen Veranstaltungen, Wettkämpfe und Schulungen.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Kann ich Ergebnisse von Wettkämpfen einsehen?',
-                  answer: Text(
-                    'Ja, im Bereich "Ergebnisse" werden die Resultate von verschiedenen Wettkämpfen veröffentlicht.',
+                  _AccordionItem(
+                    question: 'Kann ich Ergebnisse von Wettkämpfen einsehen?',
+                    answer: Text(
+                      'Ja, im Bereich "Ergebnisse" werden die Resultate von verschiedenen Wettkämpfen veröffentlicht.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Wo finde ich wichtige Dokumente und Formulare?',
-                  answer: Text(
-                    'Im Bereich "Dokumente" stehen Ihnen wichtige Formulare, Ordnungen und andere Dokumente zum Download zur Verfügung.',
+                  _AccordionItem(
+                    question: 'Wo finde ich wichtige Dokumente und Formulare?',
+                    answer: Text(
+                      'Im Bereich "Dokumente" stehen Ihnen wichtige Formulare, Ordnungen und andere Dokumente zum Download zur Verfügung.',
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            _AccordionSection(
-              title: 'Technische Fragen',
-              questions: [
-                _AccordionItem(
-                  question:
-                      'Die App funktioniert nicht richtig. Was kann ich tun?',
-                  answer: Text(
-                    'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB.',
+                ],
+              ),
+              SizedBox(height: 16),
+              _AccordionSection(
+                title: 'Technische Fragen',
+                questions: [
+                  _AccordionItem(
+                    question:
+                        'Die App funktioniert nicht richtig. Was kann ich tun?',
+                    answer: Text(
+                      'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Ich habe mein Passwort vergessen. Was nun?',
-                  answer: Text(
-                    'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
+                  _AccordionItem(
+                    question: 'Ich habe mein Passwort vergessen. Was nun?',
+                    answer: Text(
+                      'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
+                    ),
                   ),
-                ),
-                _AccordionItem(
-                  question: 'Unterstützt die App Benachrichtigungen?',
-                  answer: Text(
-                    'Ja, die App kann Benachrichtigungen für wichtige Termine oder Neuigkeiten senden. Sie können die Benachrichtigungseinstellungen in Ihrem Profil anpassen.',
+                  _AccordionItem(
+                    question: 'Unterstützt die App Benachrichtigungen?',
+                    answer: Text(
+                      'Ja, die App kann Benachrichtigungen für wichtige Termine oder Neuigkeiten senden. Sie können die Benachrichtigungseinstellungen in Ihrem Profil anpassen.',
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            _AccordionSection(
-              title: 'Kontakt und Hilfe',
-              questions: [
-                _AccordionItem(
-                  question: 'Wo erhalte ich weitere Hilfe?',
-                  answer: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an Ihren Verein oder direkt an die Geschäftsstelle des Bayerischen Sportschützenbundes e.V.',
-                      ),
-                      _LinkText(
-                        'Zur Webseite des BSSB',
-                        'https://www.bssb.de/',
-                      ),
-                      Text(
-                        'Kontaktdaten der Geschäftsstelle finden Sie im Impressum der App.',
-                      ),
-                    ],
+                ],
+              ),
+              SizedBox(height: 16),
+              _AccordionSection(
+                title: 'Kontakt und Hilfe',
+                questions: [
+                  _AccordionItem(
+                    question: 'Wo erhalte ich weitere Hilfe?',
+                    answer: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an Ihren Verein oder direkt an die Geschäftsstelle des Bayerischen Sportschützenbundes e.V.',
+                        ),
+                        _LinkText(
+                          'Zur Webseite des BSSB',
+                          'https://www.bssb.de/',
+                        ),
+                        Text(
+                          'Kontaktdaten der Geschäftsstelle finden Sie im Impressum der App.',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-          ],
+                ],
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -202,13 +206,14 @@ class _AccordionItem extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-              color: Colors.grey,), // You can customize the border color
+            color: Colors.grey,
+          ), // For customizing the border color
         ),
         child: const Center(
           child: Icon(
             Icons.add,
             size: 18,
-            color: Colors.grey, // You can customize the icon color
+            color: Colors.grey, // For customizing the icon color
           ),
         ),
       ),
