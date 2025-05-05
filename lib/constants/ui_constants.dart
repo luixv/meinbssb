@@ -5,8 +5,10 @@
 import 'package:flutter/material.dart';
 
 class UIConstants {
-  // Colors
+  // Colors "apiBackground": "e2f0d9",
+
   static const Color defaultAppColor = Color(0xFF006400); // Main green color
+  static const Color backgroundGreen = Color(0xFFe2f0d9);
   static const Color lightGreen = Colors.lightGreen;
   static const Color black = Colors.black;
   static const Color white = Colors.white;
