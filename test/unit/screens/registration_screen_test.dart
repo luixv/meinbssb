@@ -8,6 +8,7 @@ import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart'; // Import UIConstants
 
 import 'registration_screen_test.mocks.dart';
 
@@ -38,9 +39,14 @@ void main() {
           Provider<EmailSender>.value(value: mockEmailSender),
         ],
         child: MaterialApp(
-          home: RegistrationScreen(
-            authService: mockAuthService,
-            emailService: mockEmailService,
+          home: Scaffold(
+            // Wrap RegistrationScreen with a Scaffold
+            backgroundColor:
+                UIConstants.backgroundGreen, // Set background color here
+            body: RegistrationScreen(
+              authService: mockAuthService,
+              emailService: mockEmailService,
+            ),
           ),
         ),
       ),

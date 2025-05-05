@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_constants.dart'; // Import der UIConstants
 import '/screens/registration_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
@@ -96,7 +96,7 @@ class LoginScreenState extends State<LoginScreen> {
       final completeUserData = {...passdaten, 'PERSONID': personId};
       _userData = completeUserData;
       _isLoggedIn =
-          true; // Update the login state.  Crucial for passing to PasswordReset.
+          true; // Update the login state.  Crucial for passing to PasswordReset.
       widget.onLoginSuccess(completeUserData);
 
       await apiService.fetchSchuetzenausweis(personId);
@@ -146,12 +146,12 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _handleLogout() {
     setState(() {
-      _isLoggedIn = false; //  Update local state.
+      _isLoggedIn = false; //  Update local state.
       _userData = {};
     });
     Navigator.of(context).pushReplacementNamed(
       '/login',
-    ); // Navigate back to login.  Use pushReplacementNamed
+    ); // Navigate back to login.  Use pushReplacementNamed
   }
 
   Widget _buildEmailField() {
@@ -199,7 +199,8 @@ class LoginScreenState extends State<LoginScreen> {
         ), // Name of the button, used for the integration test
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor: UIConstants.lightGreen,
+          backgroundColor:
+              UIConstants.lightGreen, // Hier wird die Farbe gesetzt
           padding: UIConstants.buttonPadding,
         ),
         child: _isLoading
@@ -286,6 +287,8 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Hier wird die Hintergrundfarbe des Scaffolds geändert.
+      backgroundColor: UIConstants.backgroundGreen, // Set background color
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
