@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
+import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
+import '/services/config_service.dart';
 
-class SchuetzenausweisScreen extends StatelessWidget {
+class SchuetzenausweisScreen extends StatefulWidget {
   const SchuetzenausweisScreen({
     super.key,
     required this.personId,
@@ -15,11 +17,178 @@ class SchuetzenausweisScreen extends StatelessWidget {
   final Map<String, dynamic> userData;
 
   @override
-  Widget build(BuildContext context) {
-    final apiService = Provider.of<ApiService>(context);
+  State<SchuetzenausweisScreen> createState() => _SchuetzenausweisScreenState();
+}
 
+class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
+  late Future<Uint8List> _schuetzenausweisFuture;
+  late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
+  late Future<List<dynamic>> _passdatenZVEFuture;
+  Color _appColor = UIConstants.defaultAppColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+    _loadAppColor();
+  }
+
+  Future<void> _loadAppColor() async {
+    final configService = Provider.of<ConfigService>(context, listen: false);
+    final colorString = configService.getString('appColor', 'theme');
+    if (mounted && colorString != null && colorString.isNotEmpty) {
+      setState(() {
+        _appColor = Color(int.parse(colorString));
+      });
+    }
+  }
+
+  void _loadData() {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final passDataId = widget.userData['PASSDATENID'];
+
+    _schuetzenausweisFuture = apiService.fetchSchuetzenausweis(widget.personId);
+    _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
+      widget.personId,
+    );
+    _passdatenZVEFuture = passDataId != null
+        ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
+        : Future.value([]);
+  }
+
+  Widget _buildErrorWidget(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 48, color: UIConstants.red),
+          const SizedBox(height: UIConstants.defaultSpacing),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: UIConstants.errorStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildZweitmitgliedschaftenSection(
+    List<dynamic> zweitmitgliedschaften,
+  ) {
+    if (zweitmitgliedschaften.isEmpty) {
+      return Center(
+        child: Text(
+          'Keine Zweitmitgliedschaften gefunden.',
+          style: UIConstants.bodyStyle.copyWith(
+            fontSize: UIConstants.subtitleFontSize,
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: zweitmitgliedschaften.length,
+      itemBuilder: (context, index) {
+        final item = zweitmitgliedschaften[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
+          child: ListTile(
+            title: Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    '${item['VEREINID'] ?? 'N/A'}',
+                    style: UIConstants.bodyStyle.copyWith(
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    item['VEREINNAME'] ?? 'Unbekannter Verein',
+                    style: UIConstants.bodyStyle.copyWith(
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDisziplinenSection(List<dynamic> disziplinen) {
+    if (disziplinen.isEmpty) {
+      return Center(
+        child: Text(
+          'Keine Disziplinen gefunden.',
+          style: UIConstants.bodyStyle.copyWith(
+            fontSize: UIConstants.subtitleFontSize,
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: disziplinen.length,
+      itemBuilder: (context, index) {
+        final item = disziplinen[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: UIConstants.smallSpacing,
+              horizontal: UIConstants.smallSpacing,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    item['DISZIPLINNR'] ?? 'N/A',
+                    style: UIConstants.bodyStyle.copyWith(
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: UIConstants.smallSpacing),
+                SizedBox(
+                  width: 120,
+                  child: Text(
+                    item['DISZIPLIN'] ?? 'N/A',
+                    style: UIConstants.bodyStyle.copyWith(
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: UIConstants.smallSpacing),
+                Expanded(
+                  child: Text(
+                    item['VEREINNAME'] ?? 'N/A',
+                    style: UIConstants.bodyStyle.copyWith(
+                      fontSize: UIConstants.subtitleFontSize,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      // Ändere die Hintergrundfarbe des Scaffolds
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -30,45 +199,146 @@ class SchuetzenausweisScreen extends StatelessWidget {
         actions: [
           AppMenu(
             context: context,
-            userData: userData,
+            userData: widget.userData,
             isLoggedIn: true,
             onLogout: () => Navigator.pushReplacementNamed(context, '/login'),
           ),
         ],
       ),
-      body: FutureBuilder<Uint8List>(
-        future: apiService.fetchSchuetzenausweis(personId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: UIConstants.defaultAppColor,
-                strokeWidth: 2.0,
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            String errorMessage = snapshot.error.toString();
-            if (errorMessage.startsWith('Exception: ')) {
-              errorMessage = errorMessage.substring('Exception: '.length);
-            }
-            return Center(
-              child: Text(
-                'Error: $errorMessage',
-                style: UIConstants.errorStyle,
-              ),
-            );
-          }
-          if (snapshot.hasData) {
-            return Center(child: Image.memory(snapshot.data!));
-          }
-          return const Center(
-            child: Text(
-              'No image data available',
-              style: UIConstants.bodyStyle,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const LogoWidget(), // Display the logo at the top
+            const SizedBox(height: UIConstants.defaultSpacing),
+            Text(
+              'Mein BSSB',
+              style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
-          );
-        },
+            const SizedBox(height: UIConstants.defaultSpacing),
+            Text(
+              "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
+              style: UIConstants.titleStyle,
+            ),
+            const SizedBox(height: UIConstants.smallSpacing),
+            Text(
+              widget.userData['PASSNUMMER'],
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
+            ),
+            Text(
+              'Schützenpassnummer',
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+            ),
+            const SizedBox(height: UIConstants.smallSpacing),
+            Text(
+              widget.userData['VEREINNAME'],
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+              ),
+            ),
+            Text(
+              'Erstverein',
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            FutureBuilder<Uint8List>(
+              future: _schuetzenausweisFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  String errorMessage = snapshot.error.toString();
+                  if (errorMessage.startsWith('Exception: ')) {
+                    errorMessage = errorMessage.substring('Exception: '.length);
+                  }
+                  return Center(
+                    child: Text(
+                      'Error beim Laden des Schützenausweises: $errorMessage',
+                      style: UIConstants.errorStyle,
+                    ),
+                  );
+                }
+                if (snapshot.hasData) {
+                  return Center(child: Image.memory(snapshot.data!));
+                }
+                return const Center(
+                  child: Text(
+                    'Kein Schützenausweis verfügbar',
+                    style: UIConstants.bodyStyle,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.smallSpacing),
+            FutureBuilder<List<dynamic>>(
+              future: _zweitmitgliedschaftenFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return _buildErrorWidget(
+                    'Fehler beim Laden der Zweitmitgliedschaften',
+                  );
+                }
+                if (snapshot.hasData) {
+                  return _buildZweitmitgliedschaftenSection(snapshot.data!);
+                }
+                return const Center(
+                  child: Text(
+                    'Keine Zweitmitgliedschaften gefunden.',
+                    style: UIConstants.bodyStyle,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            const Text('Disziplinen:', style: UIConstants.titleStyle),
+            const SizedBox(height: UIConstants.smallSpacing),
+            FutureBuilder<List<dynamic>>(
+              future: _passdatenZVEFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: UIConstants.defaultAppColor,
+                      strokeWidth: 2.0,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return _buildErrorWidget('Fehler beim Laden der Disziplinen');
+                }
+                if (snapshot.hasData) {
+                  return _buildDisziplinenSection(snapshot.data!);
+                }
+                return const Center(
+                  child: Text(
+                    'Keine Disziplinen gefunden.',
+                    style: UIConstants.bodyStyle,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+          ],
+        ),
       ),
     );
   }
