@@ -99,9 +99,7 @@ For the web version go to project root and at a shell run the following:
 
 $ python.exe -m http.server 8080 --directory build/web
 
-Then with a web browser address the URL: localhost:8080
-
-et voila!
+Then with a web browser address the URL: localhost:8080 et voila!
 
 For a complete tree: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
