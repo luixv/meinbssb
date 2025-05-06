@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // Import the intl package
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
-import '/services/config_service.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
   const SchuetzenausweisScreen({
@@ -24,23 +24,11 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   late Future<Uint8List> _schuetzenausweisFuture;
   late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
   late Future<List<dynamic>> _passdatenZVEFuture;
-  Color _appColor = UIConstants.defaultAppColor;
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    _loadAppColor();
-  }
-
-  Future<void> _loadAppColor() async {
-    final configService = Provider.of<ConfigService>(context, listen: false);
-    final colorString = configService.getString('appColor', 'theme');
-    if (mounted && colorString != null && colorString.isNotEmpty) {
-      setState(() {
-        _appColor = Color(int.parse(colorString));
-      });
-    }
   }
 
   void _loadData() {
@@ -73,116 +61,201 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
     );
   }
 
+  String _formatDate(String? isoDateString) {
+    if (isoDateString == null ||
+        isoDateString.isEmpty ||
+        isoDateString == 'N/A') {
+      return 'N/A';
+    }
+    try {
+      final DateTime dateTime = DateTime.parse(isoDateString);
+      final DateFormat formatter = DateFormat('dd.MM.yyyy');
+      return formatter.format(dateTime);
+    } catch (e) {
+      return isoDateString; // Return the original string in case of error
+    }
+  }
+
   Widget _buildZweitmitgliedschaftenSection(
     List<dynamic> zweitmitgliedschaften,
   ) {
     if (zweitmitgliedschaften.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'Keine Zweitmitgliedschaften gefunden.',
-          style: UIConstants.bodyStyle.copyWith(
-            fontSize: UIConstants.subtitleFontSize,
-          ),
+          style: UIConstants.bodyStyle,
         ),
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: zweitmitgliedschaften.length,
-      itemBuilder: (context, index) {
-        final item = zweitmitgliedschaften[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
-          child: ListTile(
-            title: Row(
+    return Container(
+      color: UIConstants.tableBackground,
+      child: Center(
+        child: Table(
+          columnWidths: const {
+            0: IntrinsicColumnWidth(),
+            1: IntrinsicColumnWidth(),
+            2: IntrinsicColumnWidth(),
+          },
+          border: null,
+          children: [
+            TableRow(
               children: [
-                SizedBox(
-                  width: 60,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    '${item['VEREINID'] ?? 'N/A'}',
-                    style: UIConstants.bodyStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
+                    'Id',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
+                  ),
+                ), // Empty title for VereinID
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Zweitmitgliedschaften',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
                 ),
-                Expanded(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    item['VEREINNAME'] ?? 'Unbekannter Verein',
-                    style: UIConstants.bodyStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
+                    'Seit',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            for (final item in zweitmitgliedschaften)
+              TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${item['VEREINID'] ?? 'N/A'}',
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${item['VEREINNAME'] ?? 'Unbekannter Verein'}',
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _formatDate(item['EINTRITTVEREIN']),
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildDisziplinenSection(List<dynamic> disziplinen) {
     if (disziplinen.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'Keine Disziplinen gefunden.',
-          style: UIConstants.bodyStyle.copyWith(
-            fontSize: UIConstants.subtitleFontSize,
-          ),
+          style: UIConstants.bodyStyle,
         ),
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: disziplinen.length,
-      itemBuilder: (context, index) {
-        final item = disziplinen[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: UIConstants.smallSpacing,
-              horizontal: UIConstants.smallSpacing,
-            ),
-            child: Row(
+    return Container(
+      color: UIConstants.white,
+      child: Center(
+        child: Table(
+          columnWidths: const {
+            0: IntrinsicColumnWidth(),
+            1: IntrinsicColumnWidth(),
+            2: IntrinsicColumnWidth(),
+          },
+          border: null,
+          children: [
+            TableRow(
               children: [
-                SizedBox(
-                  width: 60,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    item['DISZIPLINNR'] ?? 'N/A',
-                    style: UIConstants.bodyStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
+                    'Nr.',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
                 ),
-                const SizedBox(width: UIConstants.smallSpacing),
-                SizedBox(
-                  width: 120,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    item['DISZIPLIN'] ?? 'N/A',
-                    style: UIConstants.bodyStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
+                    'Disziplin',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
                 ),
-                const SizedBox(width: UIConstants.smallSpacing),
-                Expanded(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    item['VEREINNAME'] ?? 'N/A',
-                    style: UIConstants.bodyStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
+                    'Verein',
+                    style: UIConstants.titleStyle
+                        .copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,
                   ),
                 ),
               ],
             ),
-          ),
-        );
-      },
+            for (final item in disziplinen)
+              TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      item['DISZIPLINNR'] ?? 'N/A',
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      item['DISZIPLIN'] ?? 'N/A',
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      item['VEREINNAME'] ?? 'N/A',
+                      style: UIConstants.bodyStyle.copyWith(
+                        fontSize: UIConstants.subtitleFontSize,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -191,7 +264,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
     return Scaffold(
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false, // Remove the back button
         title: const Text(
           'Digitaler Schützenausweis',
           style: UIConstants.titleStyle,
@@ -211,38 +284,6 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(), // Display the logo at the top
-            const SizedBox(height: UIConstants.defaultSpacing),
-            Text(
-              'Mein BSSB',
-              style: UIConstants.headerStyle.copyWith(color: _appColor),
-            ),
-            const SizedBox(height: UIConstants.defaultSpacing),
-            Text(
-              "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
-              style: UIConstants.titleStyle,
-            ),
-            const SizedBox(height: UIConstants.smallSpacing),
-            Text(
-              widget.userData['PASSNUMMER'],
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
-            ),
-            Text(
-              'Schützenpassnummer',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
-            ),
-            const SizedBox(height: UIConstants.smallSpacing),
-            Text(
-              widget.userData['VEREINNAME'],
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
-            ),
-            Text(
-              'Erstverein',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
-            ),
             const SizedBox(height: UIConstants.defaultSpacing),
             FutureBuilder<Uint8List>(
               future: _schuetzenausweisFuture,
@@ -279,8 +320,6 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
               },
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
-            const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
-            const SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
               builder: (context, snapshot) {
@@ -309,8 +348,6 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
               },
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
-            const Text('Disziplinen:', style: UIConstants.titleStyle),
-            const SizedBox(height: UIConstants.smallSpacing),
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,
               builder: (context, snapshot) {

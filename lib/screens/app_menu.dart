@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
-import '/screens/zweitmitgliedschaften_screen.dart';
 import '/screens/impressum_screen.dart';
 
 class AppMenu extends StatelessWidget {
@@ -27,18 +26,6 @@ class AppMenu extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) =>
             SchuetzenausweisScreen(personId: personId, userData: userData),
-      ),
-    );
-  }
-
-  Future<void> _displayZweitmitgliedschaften(int personId) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ZweitmitgliedschaftenScreen(
-          personId: personId,
-          userData: userData,
-        ),
       ),
     );
   }
@@ -70,8 +57,6 @@ class AppMenu extends StatelessWidget {
           );
         } else if (value == 'digitaler_schuetzenausweis') {
           _displaySchuetzenausweis(userData['PERSONID']);
-        } else if (value == 'zweitmitgliedschaften') {
-          _displayZweitmitgliedschaften(userData['PERSONID']);
         } else if (value == 'impressum') {
           _openImpressumScreen();
         }
@@ -102,13 +87,6 @@ class AppMenu extends StatelessWidget {
               value: 'digitaler_schuetzenausweis',
               child: Text(
                 'Digitaler Schützenausweis',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            const PopupMenuItem<String>(
-              value: 'zweitmitgliedschaften',
-              child: Text(
-                'Zweitmitgliedschaften',
                 style: UIConstants.bodyStyle,
               ),
             ),

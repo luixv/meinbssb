@@ -16,6 +16,9 @@ class UIConstants {
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
 
+  static const Color tableBackground = Colors.white;
+  static const Color tableBorder = Colors.white;
+
   // Font Properties
   static const String defaultFontFamily = 'Arial'; // Roboto (no more)
 

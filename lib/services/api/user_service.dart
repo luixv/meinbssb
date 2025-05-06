@@ -13,9 +13,9 @@ class UserService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
-  }) : _httpClient = httpClient,
-       _cacheService = cacheService,
-       _networkService = networkService;
+  })  : _httpClient = httpClient,
+        _cacheService = cacheService,
+        _networkService = networkService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -54,9 +54,8 @@ class UserService {
     return _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'zweitmitgliedschaften_$personId',
       _networkService.getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('Zweitmitgliedschaften/$personId')
-              as List<dynamic>,
+      () async => await _httpClient.get('Zweitmitgliedschaften/$personId')
+          as List<dynamic>,
       (response) => _mapZweitmitgliedschaftenResponse(response),
     );
   }
@@ -64,7 +63,11 @@ class UserService {
   List<dynamic> _mapZweitmitgliedschaftenResponse(dynamic response) {
     if (response is List) {
       return response.map((item) {
-        return {'VEREINID': item['VEREINID'], 'VEREINNAME': item['VEREINNAME']};
+        return {
+          'VEREINID': item['VEREINID'],
+          'VEREINNAME': item['VEREINNAME'],
+          'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+        };
       }).toList();
     }
     return [];
@@ -74,9 +77,8 @@ class UserService {
     return _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'passdaten_zve_$passdatenId',
       _networkService.getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('PassdatenZVE/$passdatenId/$personId')
-              as List<dynamic>,
+      () async => await _httpClient.get('PassdatenZVE/$passdatenId/$personId')
+          as List<dynamic>,
       (response) => _mapPassdatenZVEResponse(response),
     );
   }
