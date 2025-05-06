@@ -20,8 +20,7 @@ class SchuetzenausweisScreen extends StatelessWidget {
 
     return Scaffold(
       // Ändere die Hintergrundfarbe des Scaffolds
-      backgroundColor:
-          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe hier
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(

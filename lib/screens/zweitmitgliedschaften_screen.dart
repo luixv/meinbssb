@@ -12,11 +12,11 @@ class ZweitmitgliedschaftenScreen extends StatefulWidget {
     super.key,
     required this.personId,
     required this.userData,
-    this.logoWidget, // Add this line
+    this.logoWidget,
   });
   final int personId;
   final Map<String, dynamic> userData;
-  final Widget? logoWidget; // Add this line
+  final Widget? logoWidget;
 
   @override
   State<ZweitmitgliedschaftenScreen> createState() =>
