@@ -92,8 +92,10 @@ class StartScreenState extends State<StartScreen> {
           UIConstants.backgroundGreen, // Setze die Hintergrundfarbe
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title:
-            const Text('Angemeldete Schulungen', style: UIConstants.titleStyle),
+        title: const Text(
+          'Startseite',
+          style: UIConstants.titleStyle,
+        ),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
