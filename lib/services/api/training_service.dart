@@ -14,9 +14,9 @@ class TrainingService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
-  }) : _httpClient = httpClient,
-       _cacheService = cacheService,
-       _networkService = networkService;
+  })  : _httpClient = httpClient,
+        _cacheService = cacheService,
+        _networkService = networkService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -26,14 +26,20 @@ class TrainingService {
     int personId,
     String abDatum,
   ) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'schulungen_$personId',
       _networkService.getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('AngemeldeteSchulungen/$personId/$abDatum')
-              as List<dynamic>,
+      () async => await _httpClient
+          .get('AngemeldeteSchulungen/$personId/$abDatum') as List<dynamic>,
       (response) => _mapAngemeldeteSchulungenResponse(response),
     );
+
+    final schulungen = result['data'] as List<dynamic>? ?? [];
+    final isOnline = result['ONLINE'] as bool? ?? false;
+
+    return schulungen.map((schulung) {
+      return {...schulung, 'ONLINE': isOnline};
+    }).toList();
   }
 
   List<dynamic> _mapAngemeldeteSchulungenResponse(dynamic response) {
@@ -50,13 +56,19 @@ class TrainingService {
   }
 
   Future<List<dynamic>> fetchAvailableSchulungen() async {
-    try {
-      final response = await _httpClient.get('AvailableSchulungen');
-      return _mapAvailableSchulungenResponse(response);
-    } catch (e) {
-      LoggerService.logError('Error fetching available trainings: $e');
-      rethrow;
-    }
+    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      'available_schulungen',
+      _networkService.getCacheExpirationDuration(),
+      () async => await _httpClient.get('AvailableSchulungen') as List<dynamic>,
+      _mapAvailableSchulungenResponse,
+    );
+
+    final schulungen = result['data'] as List<dynamic>? ?? [];
+    final isOnline = result['ONLINE'] as bool? ?? false;
+
+    return schulungen.map((schulung) {
+      return {...schulung, 'ONLINE': isOnline};
+    }).toList();
   }
 
   List<dynamic> _mapAvailableSchulungenResponse(dynamic response) {

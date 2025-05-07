@@ -99,7 +99,7 @@ void main() {
         (response) => response as Map<String, dynamic>,
       );
 
-      expect(result, testData);
+      expect(result['data'], testData); // Corrected line
       final cachedData = await cacheService.getJson('testKey');
       expect(cachedData, testData);
     });
@@ -126,7 +126,7 @@ void main() {
         (response) => response as Map<String, dynamic>,
       );
 
-      expect(result, newData);
+      expect(result['data'], newData); // Corrected line
     });
 
     test('cacheAndRetrieveData - fetch failure fallback to cache', () async {
@@ -146,7 +146,7 @@ void main() {
         (response) => response as Map<String, dynamic>,
       );
 
-      expect(result, testData);
+      expect(result['data'], testData); // Corrected line
     });
   });
 }

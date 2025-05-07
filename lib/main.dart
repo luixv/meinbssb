@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'services/api/auth_service.dart';
+import 'services/api/user_service.dart';
 import 'services/api_service.dart';
 import 'services/email_service.dart';
 import 'services/image_service.dart';
@@ -12,6 +13,7 @@ import 'services/cache_service.dart';
 import 'services/config_service.dart';
 import 'services/logger_service.dart';
 import 'services/network_service.dart';
+import 'services/api/training_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,10 @@ class AppInitializer {
   static late NetworkService _networkService;
   static late CacheService _cacheService;
   static late HttpClient _httpClient;
+  static late ImageService _imageService;
+  static late TrainingService _trainingService;
+  static late UserService _userService;
+  static late AuthService _authService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -36,7 +42,7 @@ class AppInitializer {
         _configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
     final port = _configServiceInstance.getString('apiPort', 'api') ?? '3001';
 
-    final imageService = ImageService();
+    _imageService = ImageService();
     final prefs = await SharedPreferences.getInstance();
     _cacheService = CacheService(
       prefs: prefs,
@@ -49,12 +55,34 @@ class AppInitializer {
       serverTimeout: serverTimeout,
     );
 
+    _trainingService = TrainingService(
+      httpClient: _httpClient,
+      cacheService: _cacheService,
+      networkService: _networkService,
+    );
+
+    _userService = UserService(
+      httpClient: _httpClient,
+      cacheService: _cacheService,
+      networkService: _networkService,
+    );
+
+    _authService = AuthService(
+      // Initialize AuthService
+      httpClient: _httpClient,
+      cacheService: _cacheService,
+      networkService: _networkService,
+    );
+
     _apiService = ApiService(
       configService: _configServiceInstance,
       httpClient: _httpClient,
-      imageService: imageService,
+      imageService: _imageService,
       cacheService: _cacheService,
       networkService: _networkService,
+      trainingService: _trainingService,
+      userService: _userService,
+      authService: _authService,
     );
 
     _registerProviders();
@@ -74,11 +102,8 @@ class AppInitializer {
       ),
     );
     authServiceProvider = Provider<AuthService>(
-      create: (context) => AuthService(
-        httpClient: _httpClient,
-        cacheService: _cacheService,
-        networkService: _networkService,
-      ),
+      // Provide AuthService
+      create: (context) => _authService,
     );
     apiServiceProvider = Provider<ApiService>(create: (context) => _apiService);
     networkServiceProvider = Provider<NetworkService>(
@@ -86,6 +111,12 @@ class AppInitializer {
     );
     cacheServiceProvider = Provider<CacheService>(
       create: (context) => _cacheService,
+    );
+    trainingServiceProvider = Provider<TrainingService>(
+      create: (context) => _trainingService,
+    );
+    userServiceProvider = Provider<UserService>(
+      create: (context) => _userService,
     );
   }
 
@@ -96,5 +127,8 @@ class AppInitializer {
   static late Provider<EmailService> emailServiceProvider;
   static late Provider<ConfigService> configServiceProvider;
   static late Provider<EmailSender> emailSenderProvider;
-  static late Provider<AuthService> authServiceProvider;
+  static late Provider<AuthService>
+      authServiceProvider; // Make sure this is here
+  static late Provider<TrainingService> trainingServiceProvider;
+  static late Provider<UserService> userServiceProvider;
 }

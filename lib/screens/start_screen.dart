@@ -172,6 +172,8 @@ class StartScreenState extends State<StartScreen> {
                           itemBuilder: (context, index) {
                             final schulung = schulungen[index];
                             final datum = DateTime.parse(schulung['DATUM']);
+                            final online = schulung['ONLINE'] as bool? ?? false;
+
                             final formattedDatum =
                                 "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
                             return Card(
@@ -209,6 +211,15 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                     ),
+                                    // Delete Icon (conditionally shown)
+                                    if (online)
+                                      const SizedBox(
+                                          width: UIConstants.smallSpacing,),
+                                    if (online)
+                                      const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.redAccent,
+                                      ),
                                   ],
                                 ),
                               ),

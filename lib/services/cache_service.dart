@@ -107,42 +107,48 @@ class CacheService {
     return await getCachedData();
   }
 
-  Future<T> cacheAndRetrieveData<T>(
+  Future<Map<String, dynamic>> _retrieveCachedDataWithOnlineFlag(
+      String cacheKey,) async {
+    final cachedJson = _prefs.getString(_cacheKeyPrefix + cacheKey);
+    if (cachedJson != null) {
+      final cachedData = jsonDecode(cachedJson);
+      final globalTimestamp = await getInt('cacheTimestamp');
+      final cacheExpirationHours =
+          _configService.getInt('cacheExpirationHours') ?? 24;
+      final validityDurationConfig = Duration(hours: cacheExpirationHours);
+
+      if (globalTimestamp != null) {
+        final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+          globalTimestamp,
+        ).add(validityDurationConfig);
+        if (DateTime.now().isBefore(expirationTime)) {
+          LoggerService.logInfo(
+            'Using cached data from SharedPreferences for key: $cacheKey',
+          );
+          return {'data': cachedData, 'ONLINE': false};
+        } else {
+          LoggerService.logInfo('Cached data expired for key: $cacheKey');
+          return {'data': null, 'ONLINE': false}; // Indicate expired
+        }
+      }
+      return {
+        'data': cachedData,
+        'ONLINE': false,
+      }; // No timestamp, assume valid
+    }
+    LoggerService.logInfo('No cached data found for key: $cacheKey');
+    return {'data': null, 'ONLINE': false};
+  }
+
+  Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
     String cacheKey,
     Duration validityDuration,
     Future<T> Function() fetchData,
     T Function(dynamic response) processResponse,
   ) async {
-    Future<T> retrieveCachedData() async {
-      return getCachedData(_cacheKeyPrefix + cacheKey, () async {
-        // Use the prefixed key
-        final cachedJson = _prefs
-            .getString(_cacheKeyPrefix + cacheKey); // Use the prefixed key
-        if (cachedJson != null) {
-          final cachedData = jsonDecode(cachedJson);
-          final globalTimestamp = await getInt('cacheTimestamp');
-          final cacheExpirationHours =
-              _configService.getInt('cacheExpirationHours') ?? 24;
-          final validityDurationConfig = Duration(hours: cacheExpirationHours);
-
-          if (globalTimestamp != null) {
-            final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-              globalTimestamp,
-            ).add(validityDurationConfig);
-            if (DateTime.now().isBefore(expirationTime)) {
-              LoggerService.logInfo(
-                'Using cached data from SharedPreferences for key: $cacheKey',
-              );
-              return cachedData as T;
-            } else {
-              LoggerService.logInfo('Cached data expired for key: $cacheKey');
-              return null as T;
-            }
-          }
-        }
-        LoggerService.logInfo('No cached data found for key: $cacheKey');
-        return null as T;
-      });
+    final cachedResult = await _retrieveCachedDataWithOnlineFlag(cacheKey);
+    if (cachedResult['data'] != null) {
+      return cachedResult; // Return the map with data and ONLINE: false
     }
 
     try {
@@ -159,25 +165,19 @@ class CacheService {
         LoggerService.logInfo(
           'Successfully cached fresh data for key: $cacheKey',
         );
-        return processedData;
+        return {'data': processedData, 'ONLINE': true};
       } else {
         LoggerService.logInfo(
-          'Processed data is null, retrieving cached data for key: $cacheKey',
+          'Processed data is null, returning expired/null cache for key: $cacheKey',
         );
-        return await retrieveCachedData();
+        return cachedResult; // Return the expired/null cache with ONLINE: false
       }
     } catch (e) {
-      LoggerService.logError('Error fetching data for key: $cacheKey');
+      LoggerService.logError('Error fetching data for key: $cacheKey: $e');
       LoggerService.logInfo(
-        'Retrieving cached data due to error for key: $cacheKey',
+        'Returning cached data due to error for key: $cacheKey',
       );
-      final cachedResult = await retrieveCachedData();
-      if (cachedResult != null) {
-        return cachedResult;
-      } else {
-        // Handle the case where fetch fails and no valid cache exists
-        rethrow; // Or return a default value, or null as T
-      }
+      return cachedResult; // Return the cached data (might be null) with ONLINE: false
     }
   }
 }

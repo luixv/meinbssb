@@ -9,7 +9,10 @@ import 'dart:typed_data' as _i7;
 import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/services/api/auth_service.dart' as _i11;
+import 'package:meinbssb/services/api/training_service.dart' as _i13;
+import 'package:meinbssb/services/api/user_service.dart' as _i14;
 import 'package:meinbssb/services/cache_service.dart' as _i8;
+import 'package:meinbssb/services/config_service.dart' as _i12;
 import 'package:meinbssb/services/http_client.dart' as _i4;
 import 'package:meinbssb/services/image_service.dart' as _i6;
 import 'package:meinbssb/services/network_service.dart' as _i9;
@@ -198,16 +201,6 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<_i7.Uint8List> rotatedImage(_i7.Uint8List? imageData) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #rotatedImage,
-          [imageData],
-        ),
-        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i2.Future<_i7.Uint8List>);
-
-  @override
   _i2.Future<_i7.Uint8List?> getCachedSchuetzenausweis(
     int? personId,
     Duration? validity,
@@ -222,6 +215,34 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
         ),
         returnValue: _i2.Future<_i7.Uint8List?>.value(),
       ) as _i2.Future<_i7.Uint8List?>);
+
+  @override
+  _i2.Future<_i7.Uint8List> rotatedImage(_i7.Uint8List? imageData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #rotatedImage,
+          [imageData],
+        ),
+        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+      ) as _i2.Future<_i7.Uint8List>);
+
+  @override
+  _i2.Future<_i7.Uint8List> fetchAndCacheSchuetzenausweis(
+    int? personId,
+    _i2.Future<_i7.Uint8List>? fetchFunction,
+    Duration? validityDuration,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAndCacheSchuetzenausweis,
+          [
+            personId,
+            fetchFunction,
+            validityDuration,
+          ],
+        ),
+        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+      ) as _i2.Future<_i7.Uint8List>);
 }
 
 /// A class which mocks [CacheService].
@@ -414,7 +435,7 @@ class MockCacheService extends _i1.Mock implements _i8.CacheService {
       ) as _i2.Future<T>);
 
   @override
-  _i2.Future<T> cacheAndRetrieveData<T>(
+  _i2.Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
     String? cacheKey,
     Duration? validityDuration,
     _i2.Future<T> Function()? fetchData,
@@ -430,34 +451,9 @@ class MockCacheService extends _i1.Mock implements _i8.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #cacheAndRetrieveData,
-                  [
-                    cacheKey,
-                    validityDuration,
-                    fetchData,
-                    processResponse,
-                  ],
-                ),
-              ),
-              (T v) => _i2.Future<T>.value(v),
-            ) ??
-            _FakeFuture_0<T>(
-              this,
-              Invocation.method(
-                #cacheAndRetrieveData,
-                [
-                  cacheKey,
-                  validityDuration,
-                  fetchData,
-                  processResponse,
-                ],
-              ),
-            ),
-      ) as _i2.Future<T>);
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [NetworkService].
@@ -854,4 +850,135 @@ class MockAuthService extends _i1.Mock implements _i11.AuthService {
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+}
+
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i12.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
+}
+
+/// A class which mocks [TrainingService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
+  MockTrainingService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<List<dynamic>> fetchAngemeldeteSchulungen(
+    int? personId,
+    String? abDatum,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAngemeldeteSchulungen,
+          [
+            personId,
+            abDatum,
+          ],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchAvailableSchulungen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchAvailableSchulungen,
+          [],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
+
+  @override
+  _i2.Future<bool> registerForSchulung(
+    int? personId,
+    int? schulungId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerForSchulung,
+          [
+            personId,
+            schulungId,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+}
+
+/// A class which mocks [UserService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockUserService extends _i1.Mock implements _i14.UserService {
+  MockUserService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdaten,
+          [personId],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchZweitmitgliedschaften(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaften,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchPassdatenZVE(
+    int? passdatenId,
+    int? personId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdatenZVE,
+          [
+            passdatenId,
+            personId,
+          ],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 }

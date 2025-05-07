@@ -294,7 +294,7 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
       ) as _i2.Future<T>);
 
   @override
-  _i2.Future<T> cacheAndRetrieveData<T>(
+  _i2.Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
     String? cacheKey,
     Duration? validityDuration,
     _i2.Future<T> Function()? fetchData,
@@ -310,34 +310,9 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #cacheAndRetrieveData,
-                  [
-                    cacheKey,
-                    validityDuration,
-                    fetchData,
-                    processResponse,
-                  ],
-                ),
-              ),
-              (T v) => _i2.Future<T>.value(v),
-            ) ??
-            _FakeFuture_0<T>(
-              this,
-              Invocation.method(
-                #cacheAndRetrieveData,
-                [
-                  cacheKey,
-                  validityDuration,
-                  fetchData,
-                  processResponse,
-                ],
-              ),
-            ),
-      ) as _i2.Future<T>);
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [NetworkServiceWithGetter].

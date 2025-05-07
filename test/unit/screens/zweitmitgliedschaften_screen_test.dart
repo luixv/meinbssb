@@ -9,61 +9,29 @@ import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/image_service.dart';
 
-// Minimal fakes for required dependencies
+// More explicit fakes
 
-class FakeHttpClient implements HttpClient {
+class MockHttpClient implements HttpClient {
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class FakeCacheService implements CacheService {
+class MockCacheService implements CacheService {
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class FakeNetworkService implements NetworkService {
+class MockNetworkService implements NetworkService {
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class FakeImageService implements ImageService {
+class MockImageService implements ImageService {
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class Dummy {}
-
-class FakeApiService extends ApiService {
-  FakeApiService({
-    required this.zweitmitgliedschaften,
-    required this.passdatenZVE,
-    this.throwError = false,
-  }) : super(
-          configService: FakeConfigService(),
-          httpClient: FakeHttpClient(),
-          cacheService: FakeCacheService(),
-          networkService: FakeNetworkService(),
-          imageService: FakeImageService(),
-        );
-
-  final List<dynamic> zweitmitgliedschaften;
-  final List<dynamic> passdatenZVE;
-  final bool throwError;
-
-  @override
-  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    if (throwError) throw Exception('error');
-    return zweitmitgliedschaften;
-  }
-
-  @override
-  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    if (throwError) throw Exception('error');
-    return passdatenZVE;
-  }
-}
-
-class FakeConfigService implements ConfigService {
+class MockConfigService implements ConfigService {
   @override
   String? getString(String key, [String? section]) {
     if (key == 'appColor') return '4278190080'; // ARGB for blue
@@ -76,16 +44,42 @@ class FakeConfigService implements ConfigService {
   }
 }
 
+class MockApiService extends Fake implements ApiService {
+  MockApiService({
+    required this.mockZweitmitgliedschaften,
+    required this.mockPassdatenZVE,
+    this.shouldThrowError = false,
+  });
+
+  final List<dynamic> mockZweitmitgliedschaften;
+  final List<dynamic> mockPassdatenZVE;
+  final bool shouldThrowError;
+
+  @override
+  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
+    if (shouldThrowError) throw Exception('API Error');
+    return mockZweitmitgliedschaften;
+  }
+
+  @override
+  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
+    if (shouldThrowError) throw Exception('API Error');
+    return mockPassdatenZVE;
+  }
+}
+
 void main() {
-  final userData = {
+  const int testPersonId = 1;
+  final testUserData = {
     'VORNAME': 'Max',
     'NAMEN': 'Mustermann',
     'PASSNUMMER': '123456',
     'VEREINNAME': 'Test Verein',
     'PASSDATENID': 1,
   };
+  const Widget dummyLogo = SizedBox();
 
-  Widget makeTestable({
+  Widget makeTestableWidget({
     required ApiService apiService,
     ConfigService? configService,
   }) {
@@ -93,61 +87,85 @@ void main() {
       providers: [
         Provider<ApiService>.value(value: apiService),
         Provider<ConfigService>.value(
-            // ignore: require_trailing_commas
-            value: configService ?? FakeConfigService()),
+            value: configService ?? MockConfigService(),),
       ],
       child: MaterialApp(
         home: ZweitmitgliedschaftenScreen(
-          personId: 1,
-          userData: userData,
-          logoWidget: const SizedBox(), // avoid loading real logo
+          personId: testPersonId,
+          userData: testUserData,
+          logoWidget: dummyLogo,
         ),
       ),
     );
   }
 
-  testWidgets('shows loading indicator', (tester) async {
-    final apiService = FakeApiService(
-      zweitmitgliedschaften: [],
-      passdatenZVE: [],
-    );
-    await tester.pumpWidget(makeTestable(apiService: apiService));
-    expect(find.byType(CircularProgressIndicator), findsNWidgets(2));
-  });
+  group('ZweitmitgliedschaftenScreen', () {
+    testWidgets('displays loading indicators initially', (tester) async {
+      // Arrange
+      final apiService = MockApiService(
+        mockZweitmitgliedschaften: [],
+        mockPassdatenZVE: [],
+      );
 
-  testWidgets('shows error widget on error', (tester) async {
-    final apiService = FakeApiService(
-      zweitmitgliedschaften: [],
-      passdatenZVE: [],
-      throwError: true,
-    );
-    await tester.pumpWidget(makeTestable(apiService: apiService));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Fehler'), findsNWidgets(2));
-  });
+      // Act
+      await tester.pumpWidget(makeTestableWidget(apiService: apiService));
 
-  testWidgets('shows empty state when no zweitmitgliedschaften',
-      (tester) async {
-    final apiService = FakeApiService(
-      zweitmitgliedschaften: [],
-      passdatenZVE: [],
-    );
-    await tester.pumpWidget(makeTestable(apiService: apiService));
-    await tester.pumpAndSettle();
-    expect(find.text('Keine Zweitmitgliedschaften gefunden.'), findsOneWidget);
-  });
+      // Assert
+      expect(find.byType(CircularProgressIndicator), findsNWidgets(2));
+    });
 
-  testWidgets('shows list of zweitmitgliedschaften', (tester) async {
-    final apiService = FakeApiService(
-      zweitmitgliedschaften: [
-        {'VEREINID': 1, 'VEREINNAME': 'Verein A'},
-        {'VEREINID': 2, 'VEREINNAME': 'Verein B'},
-      ],
-      passdatenZVE: [],
-    );
-    await tester.pumpWidget(makeTestable(apiService: apiService));
-    await tester.pumpAndSettle();
-    expect(find.text('Verein A'), findsOneWidget);
-    expect(find.text('Verein B'), findsOneWidget);
+    testWidgets('displays error message when fetchZweitmitgliedschaften fails',
+        (tester) async {
+      // Arrange
+      final apiService = MockApiService(
+        mockZweitmitgliedschaften: [],
+        mockPassdatenZVE: [],
+        shouldThrowError: true,
+      );
+
+      // Act
+      await tester.pumpWidget(makeTestableWidget(apiService: apiService));
+      await tester.pumpAndSettle(); // Wait for the error state
+
+      // Assert
+      expect(find.textContaining('Fehler beim Laden'), findsNWidgets(2));
+    });
+
+    testWidgets(
+        'displays "Keine Zweitmitgliedschaften gefunden." when the list is empty',
+        (tester) async {
+      // Arrange
+      final apiService = MockApiService(
+        mockZweitmitgliedschaften: [],
+        mockPassdatenZVE: [],
+      );
+
+      // Act
+      await tester.pumpWidget(makeTestableWidget(apiService: apiService));
+      await tester.pumpAndSettle(); // Wait for data to load
+
+      // Assert
+      expect(
+          find.text('Keine Zweitmitgliedschaften gefunden.'), findsOneWidget,);
+    });
+
+    testWidgets('displays a list of zweitmitgliedschaften', (tester) async {
+      // Arrange
+      final apiService = MockApiService(
+        mockZweitmitgliedschaften: [
+          {'VEREINID': 1, 'VEREINNAME': 'Verein Alpha'},
+          {'VEREINID': 2, 'VEREINNAME': 'Verein Beta'},
+        ],
+        mockPassdatenZVE: [],
+      );
+
+      // Act
+      await tester.pumpWidget(makeTestableWidget(apiService: apiService));
+      await tester.pumpAndSettle(); // Wait for data to load
+
+      // Assert
+      expect(find.text('Verein Alpha'), findsOneWidget);
+      expect(find.text('Verein Beta'), findsOneWidget);
+    });
   });
 }

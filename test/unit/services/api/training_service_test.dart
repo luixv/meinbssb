@@ -5,9 +5,10 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/config_service.dart';
 
 // Generate mocks
-@GenerateMocks([HttpClient, CacheService, NetworkService])
+@GenerateMocks([HttpClient, CacheService, NetworkService, ConfigService])
 import 'training_service_test.mocks.dart';
 
 void main() {
@@ -50,13 +51,13 @@ void main() {
         mockNetworkService.getCacheExpirationDuration(),
       ).thenReturn(const Duration(hours: 1));
       when(
-        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
           any,
           any,
           any,
           any,
         ),
-      ).thenAnswer((_) async => testResponse);
+      ).thenAnswer((_) async => {'data': testResponse});
 
       // Act
       final result = await trainingService.fetchAngemeldeteSchulungen(
@@ -84,13 +85,13 @@ void main() {
         mockNetworkService.getCacheExpirationDuration(),
       ).thenReturn(const Duration(hours: 1));
       when(
-        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
           any,
           any,
           any,
           any,
         ),
-      ).thenAnswer((_) async => []); // Return empty list instead of Set
+      ).thenAnswer((_) async => {'data': []});
 
       // Act
       final result = await trainingService.fetchAngemeldeteSchulungen(
@@ -123,11 +124,40 @@ void main() {
       },
     ];
 
+    setUp(() {
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+      when(
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => {'data': testResponse}); // Add this stub
+    });
+
     test('returns mapped available trainings', () async {
       // Arrange
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
       when(
-        mockHttpClient.get('AvailableSchulungen'),
-      ).thenAnswer((_) async => testResponse);
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          'available_schulungen', // Match the key
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async {
+        // Simulate a cache miss or expired cache by returning null for cached data
+        // and then returning the testResponse when the fetch function is called.
+        final fetchFunction =
+            // ignore: no_wildcard_variable_uses
+            _.positionalArguments[2] as Future<List<dynamic>> Function()?;
+        return {'data': await fetchFunction?.call() ?? []};
+      });
+      when(mockHttpClient.get('AvailableSchulungen'))
+          .thenAnswer((_) async => testResponse);
 
       // Act
       final result = await trainingService.fetchAvailableSchulungen();
@@ -144,7 +174,17 @@ void main() {
       // Arrange
       when(
         mockHttpClient.get('AvailableSchulungen'),
-      ).thenAnswer((_) async => {}); // Not a list
+      ).thenAnswer((_) async => []);
+      when(
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer(
+        (_) async => {'data': []},
+      ); // Add this stub for the empty list case
 
       // Act
       final result = await trainingService.fetchAvailableSchulungen();
@@ -157,6 +197,16 @@ void main() {
       // Arrange
       final testException = Exception('Network error');
       when(mockHttpClient.get('AvailableSchulungen')).thenThrow(testException);
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+      when(
+        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenThrow(testException); // Simulate cache retrieval failing as well
 
       // Act & Assert
       expect(

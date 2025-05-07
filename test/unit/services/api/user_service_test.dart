@@ -21,11 +21,9 @@ void main() {
       mockHttpClient = MockHttpClient();
       mockCacheService = MockCacheService();
       mockNetworkService = MockNetworkService();
-      // ADD THIS LINE:  Provide a default value for getCacheExpirationDuration()
       when(mockNetworkService.getCacheExpirationDuration()).thenReturn(
         const Duration(days: 7),
-      ); // Or any default duration you prefer
-
+      );
       userService = UserService(
         httpClient: mockHttpClient,
         cacheService: mockCacheService,
@@ -64,6 +62,7 @@ void main() {
             'PASSDATENID': 1,
             'MITGLIEDSCHAFTID': 2,
             'PERSONID': personId,
+            'ONLINE': false, // Default when cached
           };
           when(
             mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -72,10 +71,7 @@ void main() {
               any,
               any,
             ),
-          ).thenAnswer((invocation) async {
-            // Simulate cache hit
-            return Future.value(cachedResponse);
-          });
+          ).thenAnswer((_) async => {'data': cachedResponse, 'ONLINE': false});
 
           // Act
           final result = await userService.fetchPassdaten(personId);
@@ -124,6 +120,7 @@ void main() {
             'PASSDATENID': 3,
             'MITGLIEDSCHAFTID': 4,
             'PERSONID': personId,
+            'ONLINE': true,
           };
           when(
             mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -133,11 +130,10 @@ void main() {
               any,
             ),
           ).thenAnswer((invocation) async {
-            // Simulate cache miss
-            final fetchFunction =
-                invocation.positionalArguments[2]
-                    as Future<Map<String, dynamic>> Function();
-            return await fetchFunction();
+            final fetchFunction = invocation.positionalArguments[2]
+                as Future<Map<String, dynamic>> Function();
+            final response = await fetchFunction();
+            return {'data': response, 'ONLINE': true};
           });
           when(
             mockHttpClient.get('Passdaten/$personId'),
@@ -166,7 +162,6 @@ void main() {
       test('should return empty map on empty response', () async {
         // Arrange
         const personId = 123;
-        // Change this line to return a Map<String, dynamic>
         when(
           mockHttpClient.get('Passdaten/$personId'),
         ).thenAnswer((_) async => <String, dynamic>{});
@@ -178,17 +173,17 @@ void main() {
             any,
           ),
         ).thenAnswer((invocation) async {
-          final fetchFunction =
-              invocation.positionalArguments[2]
-                  as Future<Map<String, dynamic>> Function();
-          return await fetchFunction();
+          final fetchFunction = invocation.positionalArguments[2]
+              as Future<Map<String, dynamic>> Function();
+          final response = await fetchFunction();
+          return {'data': response, 'ONLINE': true};
         });
 
         // Act
         final result = await userService.fetchPassdaten(personId);
 
         // Assert
-        expect(result, {});
+        expect(result, {'ONLINE': true});
       });
     });
 
@@ -203,8 +198,8 @@ void main() {
             {'VEREINID': 102, 'VEREINNAME': 'Club Beta'},
           ];
           final expectedResult = [
-            {'VEREINID': 101, 'VEREINNAME': 'Club Alpha'},
-            {'VEREINID': 102, 'VEREINNAME': 'Club Beta'},
+            {'VEREINID': 101, 'VEREINNAME': 'Club Alpha', 'ONLINE': false},
+            {'VEREINID': 102, 'VEREINNAME': 'Club Beta', 'ONLINE': false},
           ];
           when(
             mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -213,9 +208,7 @@ void main() {
               any,
               any,
             ),
-          ).thenAnswer((invocation) async {
-            return Future.value(cachedResponse);
-          });
+          ).thenAnswer((_) async => {'data': cachedResponse, 'ONLINE': false});
 
           // Act
           final result = await userService.fetchZweitmitgliedschaften(personId);
@@ -244,8 +237,8 @@ void main() {
             {'VEREINID': 202, 'VEREINNAME': 'Club Delta'},
           ];
           final expectedResult = [
-            {'VEREINID': 201, 'VEREINNAME': 'Club Gamma'},
-            {'VEREINID': 202, 'VEREINNAME': 'Club Delta'},
+            {'VEREINID': 201, 'VEREINNAME': 'Club Gamma', 'ONLINE': true},
+            {'VEREINID': 202, 'VEREINNAME': 'Club Delta', 'ONLINE': true},
           ];
           when(
             mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -255,10 +248,10 @@ void main() {
               any,
             ),
           ).thenAnswer((invocation) async {
-            final fetchFunction =
-                invocation.positionalArguments[2]
-                    as Future<List<dynamic>> Function();
-            return await fetchFunction();
+            final fetchFunction = invocation.positionalArguments[2]
+                as Future<List<dynamic>> Function();
+            final response = await fetchFunction();
+            return {'data': response, 'ONLINE': true};
           });
           when(
             mockHttpClient.get('Zweitmitgliedschaften/$personId'),
@@ -298,10 +291,10 @@ void main() {
             any,
           ),
         ).thenAnswer((invocation) async {
-          final fetchFunction =
-              invocation.positionalArguments[2]
-                  as Future<List<dynamic>> Function();
-          return await fetchFunction();
+          final fetchFunction = invocation.positionalArguments[2]
+              as Future<List<dynamic>> Function();
+          final response = await fetchFunction();
+          return {'data': response, 'ONLINE': true};
         });
         when(
           mockHttpClient.get('Zweitmitgliedschaften/$personId'),
@@ -339,11 +332,13 @@ void main() {
               'DISZIPLINNR': 1,
               'DISZIPLIN': 'Discipline A',
               'VEREINNAME': 'Club 1',
+              'ONLINE': false,
             },
             {
               'DISZIPLINNR': 2,
               'DISZIPLIN': 'Discipline B',
               'VEREINNAME': 'Club 2',
+              'ONLINE': false,
             },
           ];
           when(
@@ -353,9 +348,7 @@ void main() {
               any,
               any,
             ),
-          ).thenAnswer((invocation) async {
-            return Future.value(cachedResponse);
-          });
+          ).thenAnswer((_) async => {'data': cachedResponse, 'ONLINE': false});
 
           // Act
           final result = await userService.fetchPassdatenZVE(
@@ -402,11 +395,13 @@ void main() {
               'DISZIPLINNR': 3,
               'DISZIPLIN': 'Discipline C',
               'VEREINNAME': 'Club 3',
+              'ONLINE': true,
             },
             {
               'DISZIPLINNR': 4,
               'DISZIPLIN': 'Discipline D',
               'VEREINNAME': 'Club 4',
+              'ONLINE': true,
             },
           ];
           when(
@@ -417,10 +412,10 @@ void main() {
               any,
             ),
           ).thenAnswer((invocation) async {
-            final fetchFunction =
-                invocation.positionalArguments[2]
-                    as Future<List<dynamic>> Function();
-            return await fetchFunction();
+            final fetchFunction = invocation.positionalArguments[2]
+                as Future<List<dynamic>> Function();
+            final response = await fetchFunction();
+            return {'data': response, 'ONLINE': true};
           });
           when(
             mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'),
@@ -464,10 +459,10 @@ void main() {
             any,
           ),
         ).thenAnswer((invocation) async {
-          final fetchFunction =
-              invocation.positionalArguments[2]
-                  as Future<List<dynamic>> Function();
-          return await fetchFunction();
+          final fetchFunction = invocation.positionalArguments[2]
+              as Future<List<dynamic>> Function();
+          final response = await fetchFunction();
+          return {'data': response, 'ONLINE': true};
         });
         when(
           mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'),

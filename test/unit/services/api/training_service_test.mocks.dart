@@ -6,6 +6,7 @@
 import 'dart:async' as _i2;
 
 import 'package:meinbssb/services/cache_service.dart' as _i5;
+import 'package:meinbssb/services/config_service.dart' as _i7;
 import 'package:meinbssb/services/http_client.dart' as _i3;
 import 'package:meinbssb/services/network_service.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
@@ -293,7 +294,7 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
       ) as _i2.Future<T>);
 
   @override
-  _i2.Future<T> cacheAndRetrieveData<T>(
+  _i2.Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
     String? cacheKey,
     Duration? validityDuration,
     _i2.Future<T> Function()? fetchData,
@@ -309,34 +310,9 @@ class MockCacheService extends _i1.Mock implements _i5.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #cacheAndRetrieveData,
-                  [
-                    cacheKey,
-                    validityDuration,
-                    fetchData,
-                    processResponse,
-                  ],
-                ),
-              ),
-              (T v) => _i2.Future<T>.value(v),
-            ) ??
-            _FakeFuture_0<T>(
-              this,
-              Invocation.method(
-                #cacheAndRetrieveData,
-                [
-                  cacheKey,
-                  validityDuration,
-                  fetchData,
-                  processResponse,
-                ],
-              ),
-            ),
-      ) as _i2.Future<T>);
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [NetworkService].
@@ -370,4 +346,39 @@ class MockNetworkService extends _i1.Mock implements _i6.NetworkService {
           ),
         ),
       ) as Duration);
+}
+
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i7.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
 }

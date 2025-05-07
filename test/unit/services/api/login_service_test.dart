@@ -7,10 +7,12 @@ import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/image_service.dart';
 import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api/training_service.dart';
+import 'package:meinbssb/services/api/user_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/exceptions/network_exception.dart' as network_ex;
 
-import '../../screens/start_screen_test.dart';
 import 'login_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -20,6 +22,9 @@ import 'login_service_test.mocks.dart';
   NetworkService,
   FlutterSecureStorage,
   AuthService,
+  ConfigService,
+  TrainingService,
+  UserService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +36,9 @@ void main() {
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
+  late MockAuthService mockAuthService;
+  late MockTrainingService mockTrainingService;
+  late MockUserService mockUserService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -42,6 +50,9 @@ void main() {
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
     mockSecureStorage = MockFlutterSecureStorage();
+    mockAuthService = MockAuthService();
+    mockTrainingService = MockTrainingService();
+    mockUserService = MockUserService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -49,51 +60,62 @@ void main() {
       imageService: mockImageService,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
+      authService: mockAuthService,
+      trainingService: mockTrainingService,
+      userService: mockUserService,
     );
   });
 
   group('Login Functionality', () {
     const String testUsername = 'testuser';
     const String testPassword = 'testpassword';
+    const Map<String, dynamic> successfulLoginResponse = {
+      'ResultType': 1,
+      'ResultMessage': 'MyBSSB Login Erfolgreich',
+      'PersonID': testPersonId,
+      'WebLoginID': testWebLoginId,
+    };
+    const Map<String, dynamic> failedLoginResponse = {
+      'ResultType': 0,
+      'ResultMessage': 'Invalid credentials',
+    };
+    const Map<String, dynamic> networkErrorResponse = {
+      'ResultType': 0,
+      'ResultMessage': 'Benutzername oder Passwort ist falsch',
+    };
 
-    test('should call httpClient.post with correct credentials', () async {
-      final expectedData = {'email': testUsername, 'password': testPassword};
-      when(mockHttpClient.post('LoginMyBSSB', expectedData)).thenAnswer(
-        (_) async => {
-          'ResultType': 1,
-          'ResultMessage': 'MyBSSB Login Erfolgreich',
-          'PersonID': testPersonId,
-          'WebLoginID': testWebLoginId,
-        },
-      );
+    test('should call authService.login with correct credentials', () async {
+      when(mockAuthService.login(testUsername, testPassword))
+          .thenAnswer((_) async => successfulLoginResponse);
 
       await apiService.login(testUsername, testPassword);
 
-      verify(mockHttpClient.post('LoginMyBSSB', expectedData)).called(1);
+      verify(mockAuthService.login(testUsername, testPassword)).called(1);
+      verifyNever(mockHttpClient.post(any, any));
     });
 
     test('should return the failed login response on failed login', () async {
-      final mockResponse = {
-        'ResultType': 0,
-        'ResultMessage': 'Invalid credentials',
-      };
-      when(mockHttpClient.post(any, any)).thenAnswer((_) async => mockResponse);
+      when(mockAuthService.login(testUsername, testPassword))
+          .thenAnswer((_) async => failedLoginResponse);
 
       final result = await apiService.login(testUsername, testPassword);
 
-      expect(result, mockResponse); // Expect the entire map
+      expect(result, failedLoginResponse);
+      verifyNever(
+        mockSecureStorage.write(
+          key: anyNamed('key'),
+          value: anyNamed('value'),
+        ),
+      );
     });
 
     test('should handle network errors during login', () async {
-      when(mockHttpClient.post(any, any))
-          .thenThrow(http.ClientException('Network error during login'));
+      when(mockAuthService.login(testUsername, testPassword))
+          .thenThrow(network_ex.NetworkException('Network error during login'));
 
       final result = await apiService.login(testUsername, testPassword);
 
-      expect(result, {
-        'ResultType': 0,
-        'ResultMessage': 'Benutzername oder Passwort ist falsch',
-      });
+      expect(result, networkErrorResponse);
       verifyNever(
         mockSecureStorage.write(
           key: anyNamed('key'),

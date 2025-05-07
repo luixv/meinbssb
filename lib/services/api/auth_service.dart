@@ -129,7 +129,8 @@ class AuthService {
           !testExpirationDate) {
         return {
           'ResultType': 0,
-          'ResultMessage': 'Die Cache Daten sind abgelaufen. Bitte melde dich erneut an.',
+          'ResultMessage':
+              'Die Cache Daten sind abgelaufen. Bitte melde dich erneut an.',
         };
       } else {
         return {

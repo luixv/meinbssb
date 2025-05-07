@@ -1,6 +1,7 @@
+// Filename: image_service.dart
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:typed_data'; // Import Uint8List
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
@@ -18,27 +19,11 @@ class ImageService {
     int timestamp,
   ) async {
     if (kIsWeb) {
-      await _cacheImageWeb(personId, imageData, timestamp);
+      await _cacheImageWeb(
+          'schuetzenausweis_$personId.jpg', imageData, timestamp,);
     } else {
-      await _cacheImageMobileDesktop(personId, imageData, timestamp);
-    }
-  }
-
-  Future<Uint8List> rotatedImage(Uint8List imageData) async {
-    try {
-      // Decode the image from Uint8List
-      final image = img.decodeImage(imageData);
-      if (image == null) {
-        throw Exception('Failed to decode image');
-      }
-
-      final rotatedImage = img.copyRotate(image, angle: 270);
-      final rotatedImageData = img.encodeJpg(rotatedImage);
-
-      return Uint8List.fromList(rotatedImageData);
-    } catch (e) {
-      LoggerService.logError('Error rotating image: $e');
-      throw Exception('Failed to rotate image');
+      await _cacheImageMobileDesktop(
+          'schuetzenausweis_$personId.jpg', imageData, timestamp,);
     }
   }
 
@@ -48,31 +33,74 @@ class ImageService {
     Duration validity,
   ) async {
     if (kIsWeb) {
-      return await _getCachedImageWeb(personId, validity);
+      return await _getCachedImageWeb(
+          'schuetzenausweis_$personId.jpg', validity,
+          timestampKey: 'schuetzenausweis_${personId}_timestamp',);
     } else {
-      return await _getCachedImageMobileDesktop(personId, validity);
+      return await _getCachedImageMobileDesktop(
+          'schuetzenausweis_$personId.jpg', validity,);
     }
+  }
+
+  Future<Uint8List> rotatedImage(Uint8List imageData) async {
+    try {
+      final image = img.decodeImage(imageData);
+      if (image == null) {
+        throw Exception('Failed to decode image');
+      }
+      final rotatedImage = img.copyRotate(image, angle: 270);
+      final rotatedImageData = img.encodeJpg(rotatedImage);
+      return Uint8List.fromList(rotatedImageData);
+    } catch (e) {
+      LoggerService.logError('Error rotating image: $e');
+      throw Exception('Failed to rotate image');
+    }
+  }
+
+  Future<Uint8List> fetchAndCacheSchuetzenausweis(
+    int personId,
+    Future<Uint8List> fetchFunction,
+    Duration validityDuration,
+  ) async {
+    final cachedImage =
+        await getCachedSchuetzenausweis(personId, validityDuration);
+    if (cachedImage != null) {
+      LoggerService.logInfo('Using cached Schuetzenausweis');
+      return rotatedImage(cachedImage);
+    }
+
+    final fetchedImage = await fetchFunction;
+    await cacheSchuetzenausweis(
+      personId,
+      fetchedImage, // No need to cast here as it's already Uint8List
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    return rotatedImage(fetchedImage);
   }
 
   //=== Web Implementation ===//
   Future<void> _cacheImageWeb(
-    int personId,
+    String filename,
     Uint8List imageData,
     int timestamp,
   ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('image_$personId.jpg', base64Encode(imageData));
-      await prefs.setInt('image_${personId}_timestamp', timestamp);
+      await prefs.setString(filename, base64Encode(imageData));
+      await prefs.setInt('${filename.split('.').first}_timestamp', timestamp);
     } catch (e) {
-      LoggerService.logError('Failed to cache image on web: $e');
+      LoggerService.logError('Failed to cache image on web ($filename): $e');
     }
   }
 
-  Future<Uint8List?> _getCachedImageWeb(int personId, Duration validity) async {
+  Future<Uint8List?> _getCachedImageWeb(
+    String filename,
+    Duration validity, {
+    required String timestampKey,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final timestamp = prefs.getInt('image_${personId}_timestamp');
+      final timestamp = prefs.getInt(timestampKey);
 
       if (timestamp == null) return null;
 
@@ -83,39 +111,40 @@ class ImageService {
         return null;
       }
 
-      final base64Image = prefs.getString('image_$personId.jpg');
+      final base64Image = prefs.getString(filename);
       return base64Image != null ? base64Decode(base64Image) : null;
     } catch (e) {
-      LoggerService.logError('Failed to retrieve image on web: $e');
+      LoggerService.logError('Failed to retrieve image on web ($filename): $e');
       return null;
     }
   }
 
   //=== Mobile/Desktop Implementation ===//
   Future<void> _cacheImageMobileDesktop(
-    int personId,
+    String filename,
     Uint8List imageData,
     int timestamp,
   ) async {
     try {
       final directory = await path_provider.getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/image_$personId.jpg');
+      final file = io.File('${directory.path}/$filename');
       await file.writeAsBytes(imageData);
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('image_${personId}_timestamp', timestamp);
+      await prefs.setInt('${filename.split('.').first}_timestamp', timestamp);
     } catch (e) {
-      LoggerService.logError('Failed to cache image on mobile/desktop: $e');
+      LoggerService.logError(
+          'Failed to cache image on mobile/desktop ($filename): $e',);
     }
   }
 
   Future<Uint8List?> _getCachedImageMobileDesktop(
-    int personId,
+    String filename,
     Duration validity,
   ) async {
     try {
       final directory = await path_provider.getApplicationDocumentsDirectory();
-      final file = io.File('${directory.path}/image_$personId.jpg');
+      final file = io.File('${directory.path}/$filename');
 
       if (await file.exists()) {
         final stat = await file.stat();
@@ -125,7 +154,8 @@ class ImageService {
       }
       return null;
     } catch (e) {
-      LoggerService.logError('Failed to retrieve image on mobile/desktop: $e');
+      LoggerService.logError(
+          'Failed to retrieve image on mobile/desktop ($filename): $e',);
       return null;
     }
   }

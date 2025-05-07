@@ -93,14 +93,14 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
 
   @override
   _i3.Future<Map<String, dynamic>> login(
-    String? email,
+    String? username,
     String? password,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #login,
           [
-            email,
+            username,
             password,
           ],
         ),
@@ -243,14 +243,14 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
 
   @override
   _i3.Future<Map<String, dynamic>> login(
-    String? email,
+    String? username,
     String? password,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #login,
           [
-            email,
+            username,
             password,
           ],
         ),

@@ -22,13 +22,22 @@ class UserService {
   final NetworkService _networkService;
 
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
-    return _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+    final result =
+        await _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
       'passdaten_$personId',
       _networkService.getCacheExpirationDuration(),
       () async =>
           await _httpClient.get('Passdaten/$personId') as Map<String, dynamic>,
       (response) => _mapPassdatenResponse(response),
     );
+
+    final passdaten = result['data'] as Map<String, dynamic>? ?? {};
+    final isOnline = result['ONLINE'] as bool? ?? false;
+
+    return {
+      ...passdaten,
+      'ONLINE': isOnline,
+    };
   }
 
   Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
@@ -51,13 +60,20 @@ class UserService {
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'zweitmitgliedschaften_$personId',
       _networkService.getCacheExpirationDuration(),
       () async => await _httpClient.get('Zweitmitgliedschaften/$personId')
           as List<dynamic>,
       (response) => _mapZweitmitgliedschaftenResponse(response),
     );
+
+    final zweitmitgliedschaften = result['data'] as List<dynamic>? ?? [];
+    final isOnline = result['ONLINE'] as bool? ?? false;
+
+    return zweitmitgliedschaften.map((mitgliedschaft) {
+      return {...mitgliedschaft, 'ONLINE': isOnline};
+    }).toList();
   }
 
   List<dynamic> _mapZweitmitgliedschaftenResponse(dynamic response) {
@@ -74,13 +90,20 @@ class UserService {
   }
 
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    return _cacheService.cacheAndRetrieveData<List<dynamic>>(
+    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'passdaten_zve_$passdatenId',
       _networkService.getCacheExpirationDuration(),
       () async => await _httpClient.get('PassdatenZVE/$passdatenId/$personId')
           as List<dynamic>,
       (response) => _mapPassdatenZVEResponse(response),
     );
+
+    final passdatenZVE = result['data'] as List<dynamic>? ?? [];
+    final isOnline = result['ONLINE'] as bool? ?? false;
+
+    return passdatenZVE.map((zveData) {
+      return {...zveData, 'ONLINE': isOnline};
+    }).toList();
   }
 
   List<dynamic> _mapPassdatenZVEResponse(dynamic response) {
