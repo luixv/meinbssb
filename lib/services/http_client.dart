@@ -46,7 +46,7 @@ class HttpClient {
     ); // Use the private _client
   }
 
-  Future<dynamic> getBytes(String endpoint) async {
+  Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
 
     LoggerService.logInfo('Sending GET bytes request to: $apiUrl');

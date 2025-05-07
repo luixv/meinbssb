@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data'; // Import Uint8List
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as img;
@@ -67,28 +68,40 @@ class ImageService {
     }
   }
 
+  Future<bool> isDeviceOnline() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.isEmpty) {
+      return false;
+    }
+    return connectivityResult.contains(ConnectivityResult.wifi) ||
+        connectivityResult.contains(ConnectivityResult.mobile);
+  }
+
   Future<Uint8List> fetchAndCacheSchuetzenausweis(
     int personId,
-    Future<Uint8List> fetchFunction,
+    Future<Uint8List> Function() fetchFunction, // Accepts a function
     Duration validityDuration,
   ) async {
     final cachedImage =
         await getCachedSchuetzenausweis(personId, validityDuration);
-    if (cachedImage != null) {
-      LoggerService.logInfo('Using cached Schuetzenausweis');
-      return rotatedImage(cachedImage);
-    }
+    if (cachedImage != null) return rotatedImage(cachedImage);
 
-    final fetchedImage = await fetchFunction;
-    await cacheSchuetzenausweis(
-      personId,
-      fetchedImage, // No need to cast here as it's already Uint8List
-      DateTime.now().millisecondsSinceEpoch,
-    );
-    return rotatedImage(fetchedImage);
+    try {
+      final fetchedImage =
+          await fetchFunction(); // Execute the network call here
+      await cacheSchuetzenausweis(
+          personId, fetchedImage, DateTime.now().millisecondsSinceEpoch,);
+      return rotatedImage(fetchedImage);
+    } catch (e) {
+      // Fallback to expired cache if available
+      final fallback = await getCachedSchuetzenausweis(
+          personId, const Duration(days: 365 * 100),);
+      if (fallback != null) return rotatedImage(fallback);
+      throw Exception('Failed to fetch and no cache available');
+    }
   }
 
-  //=== Web Implementation ===//
+//=== Web Implementation ===//
   Future<void> _cacheImageWeb(
     String filename,
     Uint8List imageData,

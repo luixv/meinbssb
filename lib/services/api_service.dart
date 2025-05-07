@@ -96,15 +96,10 @@ class ApiService {
   }
 
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
-    final validityDuration = getCacheExpirationDuration();
-    Future<Uint8List> getImageBytes() async {
-      return await _httpClient.getBytes('Schuetzenausweis/JPG/$personId');
-    }
-
     return _imageService.fetchAndCacheSchuetzenausweis(
       personId,
-      getImageBytes(),
-      validityDuration,
+      () => _httpClient.getBytes('Schuetzenausweis/JPG/$personId'), // Now valid
+      getCacheExpirationDuration(),
     );
   }
 

@@ -4,7 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i7;
+import 'dart:typed_data' as _i6;
 
 import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
@@ -14,7 +14,7 @@ import 'package:meinbssb/services/api/user_service.dart' as _i14;
 import 'package:meinbssb/services/cache_service.dart' as _i8;
 import 'package:meinbssb/services/config_service.dart' as _i12;
 import 'package:meinbssb/services/http_client.dart' as _i4;
-import 'package:meinbssb/services/image_service.dart' as _i6;
+import 'package:meinbssb/services/image_service.dart' as _i7;
 import 'package:meinbssb/services/network_service.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
@@ -164,19 +164,19 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
       ) as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<dynamic> getBytes(String? endpoint) => (super.noSuchMethod(
+  _i2.Future<_i6.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #getBytes,
           [endpoint],
         ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
+        returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
+      ) as _i2.Future<_i6.Uint8List>);
 }
 
 /// A class which mocks [ImageService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageService extends _i1.Mock implements _i6.ImageService {
+class MockImageService extends _i1.Mock implements _i7.ImageService {
   MockImageService() {
     _i1.throwOnMissingStub(this);
   }
@@ -184,7 +184,7 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
   @override
   _i2.Future<void> cacheSchuetzenausweis(
     int? personId,
-    _i7.Uint8List? imageData,
+    _i6.Uint8List? imageData,
     int? timestamp,
   ) =>
       (super.noSuchMethod(
@@ -201,7 +201,7 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<_i7.Uint8List?> getCachedSchuetzenausweis(
+  _i2.Future<_i6.Uint8List?> getCachedSchuetzenausweis(
     int? personId,
     Duration? validity,
   ) =>
@@ -213,23 +213,32 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
             validity,
           ],
         ),
-        returnValue: _i2.Future<_i7.Uint8List?>.value(),
-      ) as _i2.Future<_i7.Uint8List?>);
+        returnValue: _i2.Future<_i6.Uint8List?>.value(),
+      ) as _i2.Future<_i6.Uint8List?>);
 
   @override
-  _i2.Future<_i7.Uint8List> rotatedImage(_i7.Uint8List? imageData) =>
+  _i2.Future<_i6.Uint8List> rotatedImage(_i6.Uint8List? imageData) =>
       (super.noSuchMethod(
         Invocation.method(
           #rotatedImage,
           [imageData],
         ),
-        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i2.Future<_i7.Uint8List>);
+        returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
+      ) as _i2.Future<_i6.Uint8List>);
 
   @override
-  _i2.Future<_i7.Uint8List> fetchAndCacheSchuetzenausweis(
+  _i2.Future<bool> isDeviceOnline() => (super.noSuchMethod(
+        Invocation.method(
+          #isDeviceOnline,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<_i6.Uint8List> fetchAndCacheSchuetzenausweis(
     int? personId,
-    _i2.Future<_i7.Uint8List>? fetchFunction,
+    _i2.Future<_i6.Uint8List> Function()? fetchFunction,
     Duration? validityDuration,
   ) =>
       (super.noSuchMethod(
@@ -241,8 +250,8 @@ class MockImageService extends _i1.Mock implements _i6.ImageService {
             validityDuration,
           ],
         ),
-        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i2.Future<_i7.Uint8List>);
+        returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
+      ) as _i2.Future<_i6.Uint8List>);
 }
 
 /// A class which mocks [CacheService].
