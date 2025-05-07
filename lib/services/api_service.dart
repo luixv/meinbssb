@@ -69,13 +69,6 @@ class ApiService {
     );
   }
 
-/*
-  // Use the login method from AuthService
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    return _authService.login(email, password);
-  }
-*/
-
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _authService.login(username, password);

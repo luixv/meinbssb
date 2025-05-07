@@ -41,14 +41,21 @@ void main() {
   group('cacheSchuetzenausweis', () {
     test('completes without error (smoke test)', () async {
       final imageData = Uint8List.fromList([1, 2, 3]);
-      await imageService.cacheSchuetzenausweis(1, imageData, DateTime.now().millisecondsSinceEpoch);
+      await imageService.cacheSchuetzenausweis(
+        1,
+        imageData,
+        DateTime.now().millisecondsSinceEpoch,
+      );
     });
   });
 
   group('getCachedSchuetzenausweis', () {
     test('returns null or Uint8List (smoke test)', () async {
-      final result = await imageService.getCachedSchuetzenausweis(1, const Duration(seconds: 1));
+      final result = await imageService.getCachedSchuetzenausweis(
+        1,
+        const Duration(seconds: 1),
+      );
       expect(result == null || result is Uint8List, isTrue);
     });
   });
-} 
+}

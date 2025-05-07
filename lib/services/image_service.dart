@@ -20,10 +20,16 @@ class ImageService {
   ) async {
     if (kIsWeb) {
       await _cacheImageWeb(
-          'schuetzenausweis_$personId.jpg', imageData, timestamp,);
+        'schuetzenausweis_$personId.jpg',
+        imageData,
+        timestamp,
+      );
     } else {
       await _cacheImageMobileDesktop(
-          'schuetzenausweis_$personId.jpg', imageData, timestamp,);
+        'schuetzenausweis_$personId.jpg',
+        imageData,
+        timestamp,
+      );
     }
   }
 
@@ -34,11 +40,15 @@ class ImageService {
   ) async {
     if (kIsWeb) {
       return await _getCachedImageWeb(
-          'schuetzenausweis_$personId.jpg', validity,
-          timestampKey: 'schuetzenausweis_${personId}_timestamp',);
+        'schuetzenausweis_$personId.jpg',
+        validity,
+        timestampKey: 'schuetzenausweis_${personId}_timestamp',
+      );
     } else {
       return await _getCachedImageMobileDesktop(
-          'schuetzenausweis_$personId.jpg', validity,);
+        'schuetzenausweis_$personId.jpg',
+        validity,
+      );
     }
   }
 
@@ -134,7 +144,8 @@ class ImageService {
       await prefs.setInt('${filename.split('.').first}_timestamp', timestamp);
     } catch (e) {
       LoggerService.logError(
-          'Failed to cache image on mobile/desktop ($filename): $e',);
+        'Failed to cache image on mobile/desktop ($filename): $e',
+      );
     }
   }
 
@@ -155,7 +166,8 @@ class ImageService {
       return null;
     } catch (e) {
       LoggerService.logError(
-          'Failed to retrieve image on mobile/desktop ($filename): $e',);
+        'Failed to retrieve image on mobile/desktop ($filename): $e',
+      );
       return null;
     }
   }
