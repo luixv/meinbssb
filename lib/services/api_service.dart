@@ -228,6 +228,19 @@ class ApiService {
     }
   }
 
+  Map<String, dynamic> _mapAngemeldeteSchulungItem(dynamic item) {
+    return {
+      'DATUM': item['DATUM'],
+      'BEZEICHNUNG': item['BEZEICHNUNG'],
+      'SCHULUNGENTEILNEHMERID': item['SCHULUNGENTEILNEHMERID'] ?? 0,
+      'SCHULUNGENTERMINID': item['SCHULUNGENTERMINID'] ?? 0,
+      'SCHULUNGSARTID': item['SCHULUNGSARTID'] ?? 0,
+      'STATUS': item['STATUS'] ?? 0,
+      'DATUMBIS': item['DATUMBIS'] ?? '',
+      'FUERVERLAENGERUNGEN': item['FUERVERLAENGERUNGEN'] ?? false,
+    };
+  }
+
   Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
@@ -237,37 +250,17 @@ class ApiService {
       getCacheExpirationDuration(),
       () async => await _httpClient
           .get('AngemeldeteSchulungen/$personId/$abDatum') as List<dynamic>,
-      (response) => _mapAngemeldeteSchulungenResponse(response),
+      _mapAngemeldeteSchulungenResponse,
     );
   }
 
   List<dynamic> _mapAngemeldeteSchulungenResponse(dynamic response) {
     if (response is List) {
-      return response.map((item) {
-        return {
-          'DATUM': item['DATUM'],
-          'BEZEICHNUNG': item['BEZEICHNUNG'],
-          'SCHULUNGENTEILNEHMERID': 0,
-          'SCHULUNGENTERMINID': 0,
-          'SCHULUNGSARTID': 0,
-          'STATUS': 0,
-          'DATUMBIS': '',
-          'FUERVERLAENGERUNGEN': false,
-        };
-      }).toList();
+      return response.map(_mapAngemeldeteSchulungItem).toList();
     } else if (response is Map && response.containsKey('schulungen')) {
-      return List.from(response['schulungen']).map((item) {
-        return {
-          'DATUM': item['DATUM'],
-          'BEZEICHNUNG': item['BEZEICHNUNG'],
-          'SCHULUNGENTEILNEHMERID': 0,
-          'SCHULUNGENTERMINID': 0,
-          'SCHULUNGSARTID': 0,
-          'STATUS': 0,
-          'DATUMBIS': '',
-          'FUERVERLAENGERUNGEN': false,
-        };
-      }).toList();
+      return (response['schulungen'] as List)
+          .map(_mapAngemeldeteSchulungItem)
+          .toList();
     }
     return [];
   }
