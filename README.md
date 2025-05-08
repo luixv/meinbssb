@@ -64,7 +64,7 @@ This script runs:
 
 Run tests with coverage:
 ```bash
-flutter test --coverage
+flutter test  .\test\unit --coverage
 ```
 
 ## Contributing
