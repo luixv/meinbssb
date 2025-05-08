@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: start_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
@@ -82,6 +78,67 @@ class StartScreenState extends State<StartScreen> {
     LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
     widget.onLogout(); // Update app state
     Navigator.of(context).pushReplacementNamed('/login'); // Force navigation
+  }
+
+  Future<void> _handleDeleteSchulung(
+      int personId, int schulungId, int index,) async {
+    final apiService =
+        Provider.of<ApiService>(context, listen: false); //get api service
+
+    try {
+      setState(() {
+        isLoading = true; // Show loading indicator
+      });
+      final success =
+          await apiService.unregisterFromSchulung(personId, schulungId);
+      if (mounted) {
+        // ADDED THIS CHECK
+        if (success) {
+          LoggerService.logInfo(
+              'Successfully unregistered from Schulung $schulungId',);
+          // Remove the item from the list to update the UI
+          setState(() {
+            schulungen.removeAt(index); // Remove at index
+          });
+
+          // Optionally, show a success message to the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Schulung abgemeldet.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          LoggerService.logWarning(
+              'Failed to unregister from Schulung $schulungId',);
+          // Optionally, show an error message to the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Abmelden von der Schulung.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      LoggerService.logError('Error unregistering from Schulung: $error');
+      if (mounted) {
+        // ADDED THIS CHECK
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $error'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        // ADDED THIS CHECK
+        setState(() {
+          isLoading = false; // Hide loading indicator
+        });
+      }
+    }
   }
 
   @override
@@ -173,6 +230,8 @@ class StartScreenState extends State<StartScreen> {
                             final schulung = schulungen[index];
                             final datum = DateTime.parse(schulung['DATUM']);
                             final online = schulung['ONLINE'] as bool? ?? false;
+                            final personId =
+                                widget.userData['PERSONID']; // Get Person ID
 
                             final formattedDatum =
                                 "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
@@ -189,7 +248,7 @@ class StartScreenState extends State<StartScreen> {
                                   children: [
                                     // Date
                                     SizedBox(
-                                      width: 90, // Fixed width for date
+                                      width: 90,
                                       child: Text(
                                         formattedDatum,
                                         style: UIConstants.bodyStyle.copyWith(
@@ -200,7 +259,7 @@ class StartScreenState extends State<StartScreen> {
                                     ),
                                     const SizedBox(
                                       width: UIConstants.smallSpacing,
-                                    ), // Small spacing
+                                    ),
                                     // Schulung name
                                     Expanded(
                                       child: Text(
@@ -211,14 +270,39 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                     ),
-                                    // Delete Icon (conditionally shown)
+                                    // Delete Icon
                                     if (online)
-                                      const SizedBox(
-                                          width: UIConstants.smallSpacing,),
-                                    if (online)
-                                      const Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.redAccent,
+                                      IconButton(
+                                        // Changed to IconButton
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.redAccent,
+                                        ),
+                                        onPressed: () {
+                                          // Call the delete handler
+                                          if (personId != null &&
+                                              schulung[
+                                                      'SCHULUNGENTEILNEHMERID'] !=
+                                                  null) {
+                                            _handleDeleteSchulung(
+                                              personId,
+                                              schulung[
+                                                  'SCHULUNGENTEILNEHMERID'],
+                                              index, // Pass the index
+                                            );
+                                          } else {
+                                            LoggerService.logError(
+                                                "personId or schulungId is null. personId: $personId, schulungId: ${schulung['SCHULUNGENTEILNEHMERID']}",);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Ein unerwarteter Fehler ist aufgetreten.',),
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                   ],
                                 ),

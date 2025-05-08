@@ -117,4 +117,8 @@ class ApiService {
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
+
+  Future<bool> unregisterFromSchulung(int personId, int schulungId) async {
+    return _trainingService.unregisterFromSchulung(personId, schulungId);
+  }
 }

@@ -22,27 +22,6 @@ class TrainingService {
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
-/*
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
-    int personId,
-    String abDatum,
-  ) async {
-    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
-      'schulungen_$personId',
-      _networkService.getCacheExpirationDuration(),
-      () async => await _httpClient
-          .get('AngemeldeteSchulungen/$personId/$abDatum') as List<dynamic>,
-      (response) => _mapAngemeldeteSchulungenResponse(response),
-    );
-
-    final schulungen = result['data'] as List<dynamic>? ?? [];
-    final isOnline = result['ONLINE'] as bool? ?? false;
-
-    return schulungen.map((schulung) {
-      return {...schulung, 'ONLINE': isOnline};
-    }).toList();
-  }
-*/
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int personId,
@@ -140,4 +119,30 @@ class TrainingService {
       rethrow;
     }
   }
+
+  Future<bool> unregisterFromSchulung(int personId, int schulungId) async {
+    try {
+      final response = await _httpClient.post('UnregisterFromSchulung', {
+        'personId': personId,
+        'schulungId': schulungId,
+      });
+      return response['ResultType'] == 1;
+    } catch (e) {
+      LoggerService.logError('Error unregistering from training: $e');
+      rethrow;
+    }
+  }
+  
+  /*
+  
+  "DATUM": "2025-05-12T00:00:00.000+02:00",
+        "BEZEICHNUNG": "Digitale Evolution 2.0: Deine Reise in die digitale Zukunft der neuen Medien",
+        "SCHULUNGENTEILNEHMERID": 27203,
+        "SCHULUNGENTERMINID": 1570,
+        "SCHULUNGSARTID": 2000000326,
+        "STATUS": 0,
+        "DATUMBIS": "",
+        "FUERVERLAENGERUNGEN": true
+  
+  */
 }
