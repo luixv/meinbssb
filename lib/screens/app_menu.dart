@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/impressum_screen.dart';
+import '/screens/contactdata_screen.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -43,6 +44,20 @@ class AppMenu extends StatelessWidget {
     );
   }
 
+  void _openKontaktdatenScreen() {
+    // Function to open KontaktdatenScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => KontaktdatenScreen(
+          userData, // Pass the userData
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
@@ -59,6 +74,9 @@ class AppMenu extends StatelessWidget {
           _displaySchuetzenausweis(userData['PERSONID']);
         } else if (value == 'impressum') {
           _openImpressumScreen();
+        } else if (value == 'meine_kontaktdaten') {
+          // Call the function to open KontaktdatenScreen
+          _openKontaktdatenScreen();
         }
       },
       itemBuilder: (BuildContext context) {
