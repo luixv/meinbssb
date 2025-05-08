@@ -309,7 +309,12 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                   );
                 }
                 if (snapshot.hasData) {
-                  return Center(child: Image.memory(snapshot.data!));
+                  return Center(
+                    child: SizedBox(
+                      key: const ValueKey<String>('schuetzenausweis'),
+                      child: Image.memory(snapshot.data!),
+                    ),
+                  );
                 }
                 return const Center(
                   child: Text(
