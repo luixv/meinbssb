@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/impressum_screen.dart';
-import '/screens/contactdata_screen.dart';
+import '/screens/personal_data_screen.dart';
+import '/screens/contact_data_screen.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -44,12 +45,26 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-  void _openKontaktdatenScreen() {
-    // Function to open KontaktdatenScreen
+  void _openPersonalDataScreen() {
+    // Function to open PersonDataScreen
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => KontaktdatenScreen(
+        builder: (context) => PersonDataScreen(
+          userData, // Pass the userData
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
+  void _openContactDataScreen() {
+    // Function to open ContactDataScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactDataScreen(
           userData, // Pass the userData
           isLoggedIn: isLoggedIn,
           onLogout: onLogout,
@@ -76,7 +91,10 @@ class AppMenu extends StatelessWidget {
           _openImpressumScreen();
         } else if (value == 'meine_kontaktdaten') {
           // Call the function to open KontaktdatenScreen
-          _openKontaktdatenScreen();
+          _openContactDataScreen();
+        } else if (value == 'meine_stammdaten') {
+          // Call the function to open Persönliche Daten
+          _openPersonalDataScreen();
         }
       },
       itemBuilder: (BuildContext context) {
@@ -124,7 +142,7 @@ class AppMenu extends StatelessWidget {
             ),
             const PopupMenuItem<String>(
               value: 'meine_stammdaten',
-              child: Text('Meine Stammdaten', style: UIConstants.bodyStyle),
+              child: Text('Persönliche Daten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
               value: 'meine_kontaktdaten',

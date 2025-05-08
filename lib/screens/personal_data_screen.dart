@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
-// Import your ApiService
-import '/services/logger_service.dart'; // Import your LoggerService
-import 'package:intl/intl.dart'; // Import the intl package for date formatting
+import '/services/logger_service.dart';
+import 'package:intl/intl.dart';
 
-class KontaktdatenScreen extends StatefulWidget {
-  const KontaktdatenScreen(
+class PersonDataScreen extends StatefulWidget {
+  const PersonDataScreen(
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
@@ -18,10 +17,10 @@ class KontaktdatenScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  KontaktdatenScreenState createState() => KontaktdatenScreenState();
+  PersonDataScreenState createState() => PersonDataScreenState();
 }
 
-class KontaktdatenScreenState extends State<KontaktdatenScreen> {
+class PersonDataScreenState extends State<PersonDataScreen> {
   // Form Controllers
   final TextEditingController _passnummerController = TextEditingController();
   final TextEditingController _geburtsdatumController = TextEditingController();
@@ -34,9 +33,7 @@ class KontaktdatenScreenState extends State<KontaktdatenScreen> {
   final TextEditingController _ortController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
-  bool _isLoading =
-      false; // Track loading state, though you don't have async calls here, it's good practice.
-
+  bool _isLoading = false; // Loading state for the submit button
   // Initial Data Loading (Populate fields)
   @override
   void initState() {
@@ -91,7 +88,7 @@ class KontaktdatenScreenState extends State<KontaktdatenScreen> {
         _isLoading = true; // Show loading indicator
       });
 
-      // Simulate an API call (replace with your actual API call)
+      // Simulate an API call (this will be replaced with the actual API call)
       try {
         // In a real app, you'd call your ApiService here to update the data.
         // Example:
@@ -310,8 +307,7 @@ class KontaktdatenScreenState extends State<KontaktdatenScreen> {
                         _isLoading ? null : _submitForm, // Disable when loading
                     style: ElevatedButton.styleFrom(
                       padding: UIConstants.buttonPadding,
-                      backgroundColor:
-                          UIConstants.lightGreen, // Use your app's main color
+                      backgroundColor: UIConstants.lightGreen,
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(
