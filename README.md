@@ -91,6 +91,7 @@ For generating mocks and testing:
 
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart
+    (Use --debug just in case you want to debug it)
 
 For installing at the phone do this: 
     adb install build/app/outputs/flutter-apk/app-release.apk
