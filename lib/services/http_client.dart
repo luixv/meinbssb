@@ -65,8 +65,12 @@ class HttpClient {
         },
       );
 
-      LoggerService.logInfo('Response status: ${response.statusCode}');
-      LoggerService.logInfo('Response body http_client: ${response.body}');
+      LoggerService.logInfo(
+        'At HTTP_CLIENT: Response status: ${response.statusCode}',
+      );
+      LoggerService.logInfo(
+        'At HTTP_CLIENT: Response body http_client: ${response.body}',
+      );
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);

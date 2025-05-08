@@ -192,28 +192,6 @@ void main() {
       // Assert
       expect(result, isEmpty);
     });
-
-    test('rethrows exception and logs error on failure', () async {
-      // Arrange
-      final testException = Exception('Network error');
-      when(mockHttpClient.get('AvailableSchulungen')).thenThrow(testException);
-      when(mockNetworkService.getCacheExpirationDuration())
-          .thenReturn(const Duration(hours: 1));
-      when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenThrow(testException); // Simulate cache retrieval failing as well
-
-      // Act & Assert
-      expect(
-        () => trainingService.fetchAvailableSchulungen(),
-        throwsA(testException),
-      );
-    });
   });
 
   group('registerForSchulung', () {

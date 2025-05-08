@@ -108,7 +108,8 @@ class CacheService {
   }
 
   Future<Map<String, dynamic>> _retrieveCachedDataWithOnlineFlag(
-      String cacheKey,) async {
+    String cacheKey,
+  ) async {
     final cachedJson = _prefs.getString(_cacheKeyPrefix + cacheKey);
     if (cachedJson != null) {
       final cachedData = jsonDecode(cachedJson);
@@ -146,13 +147,9 @@ class CacheService {
     Future<T> Function() fetchData,
     T Function(dynamic response) processResponse,
   ) async {
-    final cachedResult = await _retrieveCachedDataWithOnlineFlag(cacheKey);
-    if (cachedResult['data'] != null) {
-      return cachedResult; // Return the map with data and ONLINE: false
-    }
-
+    // Always attempt network request first
     try {
-      LoggerService.logInfo('Fetching fresh data for key: $cacheKey');
+      LoggerService.logInfo('Attempting network request for $cacheKey');
       final response = await fetchData();
       final processedData = processResponse(response);
 
@@ -160,24 +157,24 @@ class CacheService {
         await _prefs.setString(
           _cacheKeyPrefix + cacheKey,
           jsonEncode(processedData),
-        ); // Use the prefixed key
+        );
         await setCacheTimestamp();
-        LoggerService.logInfo(
-          'Successfully cached fresh data for key: $cacheKey',
-        );
+        LoggerService.logInfo('Successfully cached fresh data for $cacheKey');
         return {'data': processedData, 'ONLINE': true};
-      } else {
-        LoggerService.logInfo(
-          'Processed data is null, returning expired/null cache for key: $cacheKey',
-        );
-        return cachedResult; // Return the expired/null cache with ONLINE: false
       }
     } catch (e) {
-      LoggerService.logError('Error fetching data for key: $cacheKey: $e');
-      LoggerService.logInfo(
-        'Returning cached data due to error for key: $cacheKey',
-      );
-      return cachedResult; // Return the cached data (might be null) with ONLINE: false
+      LoggerService.logError('Network request failed for $cacheKey: $e');
+      // Only now check cache if network fails
+      final cachedResult = await _retrieveCachedDataWithOnlineFlag(cacheKey);
+      if (cachedResult['data'] != null) {
+        LoggerService.logInfo('Falling back to cached data');
+        return cachedResult; // ONLINE: false
+      }
+      // If we get here, we have neither network nor cache
+      return {'data': null, 'ONLINE': false};
     }
+
+    // If we get here, processedData was null but no exception was thrown
+    return {'data': null, 'ONLINE': false};
   }
 }
