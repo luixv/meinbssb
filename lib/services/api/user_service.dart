@@ -54,6 +54,9 @@ class UserService {
         'PASSDATENID': response['PASSDATENID'],
         'MITGLIEDSCHAFTID': response['MITGLIEDSCHAFTID'],
         'PERSONID': response['PERSONID'],
+        'STRASSE': response['STRASSE'],
+        'PLZ': response['PLZ'],
+        'ORT': response['ORT'],
       };
     }
     return {};

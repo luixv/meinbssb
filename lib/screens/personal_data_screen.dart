@@ -43,7 +43,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   void _loadInitialData() {
     // Populate the text fields with the user's data.
-    _passnummerController.text = widget.userData['PASSNUMMER'] ?? '';
+    _passnummerController.text =
+        widget.userData['PASSNUMMER']?.toString() ?? ''; //ADDED ?.toString()
     // Format the date if it's not null
     if (widget.userData['GEBURTSDATUM'] != null) {
       try {
@@ -61,13 +62,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       _geburtsdatumController.text = '';
     }
 
-    _titelController.text = widget.userData['TITEL'] ?? '';
-    _vornameController.text = widget.userData['VORNAME'] ?? '';
-    _nachnameController.text = widget.userData['NAMEN'] ?? '';
+    _titelController.text = widget.userData['TITEL']?.toString() ?? '';
+    _vornameController.text = widget.userData['VORNAME']?.toString() ?? '';
+    _nachnameController.text = widget.userData['NAMEN']?.toString() ?? '';
     _strasseHausnummerController.text =
-        widget.userData['STRASSE_HAUSNUMMER'] ?? '';
-    _postleitzahlController.text = widget.userData['PLZ'] ?? '';
-    _ortController.text = widget.userData['ORT'] ?? '';
+        widget.userData['STRASSE']?.toString() ?? '';
+    _postleitzahlController.text = widget.userData['PLZ']?.toString() ?? '';
+    _ortController.text = widget.userData['ORT']?.toString() ?? '';
 
     LoggerService.logInfo('KontaktdatenScreen initialized');
   }
