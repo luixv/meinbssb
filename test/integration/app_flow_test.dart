@@ -203,12 +203,34 @@ void main() {
       debugPrint('Impressum menu  found!\n\n');
       await tester.pumpAndSettle();
       expect(
-        find
-            .text('Impressum')
-            .first, // Target the first 'Impressum' text, which is in the AppBar
+        find.text('Impressum').first,
         findsOneWidget,
       );
       debugPrint('Impressum found!\n\n');
+
+      // Access Kontaktdaten
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Kontaktdaten')); // Tap the menu item
+      debugPrint('Kontaktdaten menu found!\n\n');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Kontaktdaten').first,
+        findsOneWidget,
+      );
+      debugPrint('Kontaktdaten found!\n\n');
+
+      // Access Stammdaten
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Persönliche Daten')); // Tap the menu item
+      debugPrint('Persönliche Daten menu found!\n\n');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Persönliche Daten').first,
+        findsOneWidget,
+      );
+      debugPrint('Persönliche Daten found!\n\n');
 
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
