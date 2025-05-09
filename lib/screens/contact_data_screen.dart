@@ -138,7 +138,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
-          'Persönliche Daten', // Schützenausweis Kontaktdaten
+          'Kontaktdaten', // Schützenausweis Kontaktdaten
           style: UIConstants.titleStyle,
         ),
         actions: [
@@ -241,8 +241,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     onPressed: _isLoading ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
                       padding: UIConstants.buttonPadding,
-                      backgroundColor:
-                          UIConstants.lightGreen, 
+                      backgroundColor: UIConstants.lightGreen,
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(

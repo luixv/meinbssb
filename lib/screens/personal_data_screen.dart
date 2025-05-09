@@ -169,7 +169,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false, // Remove the default back button
         title: const Text(
-          'Kontaktdaten', // Set the title of the AppBar
+          'Persönliche Daten', // Set the title of the AppBar
           style: UIConstants.titleStyle, // Use the title style from UIConstants
         ),
         actions: [

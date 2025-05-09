@@ -89,10 +89,10 @@ class AppMenu extends StatelessWidget {
           _displaySchuetzenausweis(userData['PERSONID']);
         } else if (value == 'impressum') {
           _openImpressumScreen();
-        } else if (value == 'meine_kontaktdaten') {
+        } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
           _openContactDataScreen();
-        } else if (value == 'meine_stammdaten') {
+        } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
           _openPersonalDataScreen();
         }
@@ -141,24 +141,24 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'meine_stammdaten',
+              value: 'stammdaten',
               child: Text('Persönliche Daten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              value: 'meine_kontaktdaten',
-              child: Text('Meine Kontaktdaten', style: UIConstants.bodyStyle),
+              value: 'kontaktdaten',
+              child: Text('Kontaktdaten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              value: 'meine_seminare_buchen',
+              value: 'seminare_buchen',
               child: Text(
-                'Meine Seminare buchen',
+                'Seminare buchen',
                 style: UIConstants.bodyStyle,
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'meine_seminare_absolviert',
+              value: 'seminare_absolviert',
               child: Text(
-                'Meine Seminare absolviert',
+                'Seminare absolviert',
                 style: UIConstants.bodyStyle,
               ),
             ),
