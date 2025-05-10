@@ -78,7 +78,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     widget.onLogout(); // Call the logout function provided by the parent.
     Navigator.of(context).pushReplacementNamed(
       '/login',
-    ); // Navigate to the login screen.  Use pushReplacementNamed
+    ); // Navigate to the login screen.  Use pushReplacementNamed
   }
 
   // Method to handle form submission
@@ -95,15 +95,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         // Example:
         // final apiService = Provider.of<ApiService>(context, listen: false);
         // final success = await apiService.updateKontaktdaten({
-        //   'PASSNUMMER': _passnummerController.text,
-        //   'GEBURTSDATUM': _geburtsdatumController.text, // Consider re-parsing if needed
-        //   'TITEL': _titelController.text,
-        //   'VORNAME': _vornameController.text,
-        //   'NAMEN': _nachnameController.text,
-        //   'STRASSE_HAUSNUMMER': _strasseHausnummerController.text,
-        //   'PLZ': _postleitzahlController.text,
-        //   'ORT': _ortController.text,
-        //   //  'PERSONID' : widget.userData['PERSONID'], //DO NOT SEND PERSONID.
+        //   'PASSNUMMER': _passnummerController.text,
+        //   'GEBURTSDATUM': _geburtsdatumController.text, // Consider re-parsing if needed
+        //   'TITEL': _titelController.text,
+        //   'VORNAME': _vornameController.text,
+        //   'NAMEN': _nachnameController.text,
+        //   'STRASSE_HAUSNUMMER': _strasseHausnummerController.text,
+        //   'PLZ': _postleitzahlController.text,
+        //   'ORT': _ortController.text,
+        //   //  'PERSONID' : widget.userData['PERSONID'], //DO NOT SEND PERSONID.
         // });
 
         // Simulate a successful response (replace with actual response handling)
@@ -198,9 +198,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             // Make the content scrollable
             child: Column(
               crossAxisAlignment: CrossAxisAlignment
-                  .start, // Left-align labels.  This is mostly handled by the _buildTextField now.
+                  .start, // Left-align labels.  This is mostly handled by the _buildTextField now.
               children: <Widget>[
-                //const LogoWidget(), //  NO LOGO HERE
+                //const LogoWidget(), //  NO LOGO HERE
                 const SizedBox(height: UIConstants.defaultSpacing),
                 _buildTextField(
                   // Use the helper method for consistent text fields
@@ -209,12 +209,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   isReadOnly: true,
                   floatingLabelBehavior:
                       FloatingLabelBehavior.always, // Always show label on top
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Passnummer ist erforderlich';
-                    }
-                    return null;
-                  },
+                  inputTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ), // Make Value Bold
                 ),
                 _buildTextField(
                   label: 'Geburtsdatum',
@@ -222,16 +219,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   isReadOnly: true,
                   floatingLabelBehavior:
                       FloatingLabelBehavior.always, // Always show label on top
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Geburtsdatum ist erforderlich';
-                    }
-                    // Date format validation
-                    if (!RegExp(r'^\d{2}\.\d{2}\.\d{4}$').hasMatch(value)) {
-                      return 'Ungültiges Datumsformat (DD.MM.YYYY)';
-                    }
-                    return null;
-                  },
+                  inputTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ), // Make Value Bold
                 ),
                 _buildTextField(
                   label: 'Titel',
@@ -341,27 +331,31 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     bool isReadOnly = false,
     FloatingLabelBehavior floatingLabelBehavior =
         FloatingLabelBehavior.auto, // Added this parameter
+    TextStyle? labelStyle,
+    TextStyle? inputTextStyle,
     Color? backgroundColor, // Added background color parameter
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
       child: TextFormField(
         controller: controller,
-        style: const TextStyle(
-          fontSize: UIConstants.bodyFontSize,
-        ), // Input text style.  Important
+        style: inputTextStyle ??
+            const TextStyle(
+              fontSize: UIConstants.bodyFontSize,
+            ), // Input text style.  Important
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label, // Now set here
-          labelStyle: const TextStyle(
-            fontSize: UIConstants.subtitleFontSize,
-          ), // Ensure label style is set.
+          labelStyle: labelStyle ??
+              const TextStyle(
+                fontSize: UIConstants.subtitleFontSize,
+              ), // Ensure label style is set.
           floatingLabelBehavior:
               floatingLabelBehavior, // Use the parameter here
           hintText:
               isReadOnly ? null : label, // Only show hint for editable fields
           fillColor: backgroundColor, // Use the provided background color
           filled: backgroundColor !=
-              null, // Only fill if a color is provided.  Important.
+              null, // Only fill if a color is provided.  Important.
         ),
         validator: validator,
         readOnly: isReadOnly,
