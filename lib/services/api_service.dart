@@ -110,6 +110,10 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
+  Future<List<dynamic>> fetchAvailableSchulungen() async {
+    return _trainingService.fetchAvailableSchulungen();
+  }
+
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
