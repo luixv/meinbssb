@@ -194,10 +194,11 @@ void main() {
             .thenAnswer((_) async => testUsername);
         when(mockCacheService.getInt('personId'))
             .thenAnswer((_) async => cachedPersonId);
-        when(mockCacheService.getInt('cacheTimestamp')).thenAnswer((_) async =>
-            DateTime.now()
-                .subtract(const Duration(minutes: 5))
-                .millisecondsSinceEpoch,);
+        when(mockCacheService.getInt('cacheTimestamp')).thenAnswer(
+          (_) async => DateTime.now()
+              .subtract(const Duration(minutes: 5))
+              .millisecondsSinceEpoch,
+        );
       });
 
       test(
@@ -224,7 +225,7 @@ void main() {
         expect(result, {
           'ResultType': 0,
           'ResultMessage':
-              'Die Cache Daten sind abgelaufen. Bitte melde dich erneut an.',
+              'Die Cache Daten sind abgelaufen. Bitte melden Sie sich erneut an.',
         });
       });
 

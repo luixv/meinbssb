@@ -130,7 +130,7 @@ class AuthService {
         return {
           'ResultType': 0,
           'ResultMessage':
-              'Die Cache Daten sind abgelaufen. Bitte melde dich erneut an.',
+              'Die Cache Daten sind abgelaufen. Bitte melden Sie sich erneut an.',
         };
       } else {
         return {
