@@ -18,11 +18,11 @@ void main() async {
   final String jsonBody = jsonEncode(body);
   debugPrint(jsonBody);
 
-  String cookieValue =
-      'access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDczOTQ3ODMsImlhdCI6MTc0NzMwODM4MywiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.nyrknugJrTj77N1xPyA4NQLjrK2Zn89qBgKl_VErL5U';
+  String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDczOTQ3ODMsImlhdCI6MTc0NzMwODM4MywiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.nyrknugJrTj77N1xPyA4NQLjrK2Zn89qBgKl_VErL5U';
+  String cookieValue = 'access_token=$token';
 
-  const String authorization =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDczOTQ3ODMsImlhdCI6MTc0NzMwODM4MywiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.nyrknugJrTj77N1xPyA4NQLjrK2Zn89qBgKl_VErL5U';
+  String authorization = 'Bearer $token';
 
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
