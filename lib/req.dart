@@ -1,22 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:logging/logging.dart';
-import 'package:flutter/material.dart';
 
 void main() async {
-  // Define the URL
-  Logger.root.level = Level.ALL;
   const String url =
       'https://webintern.bssb.bayern:56400/rest/zmi/api/LoginMyBSSB';
-
-  // Define the body
 
   final Map<String, String> body = {
     'Email': 'kostas@rizoudis1.de',
     'Passwort': 'test1',
   };
   final String jsonBody = jsonEncode(body);
-  debugPrint(jsonBody);
+  print(jsonBody);
 
   String token =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDczOTQ3ODMsImlhdCI6MTc0NzMwODM4MywiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.nyrknugJrTj77N1xPyA4NQLjrK2Zn89qBgKl_VErL5U';
@@ -32,9 +26,9 @@ void main() async {
     'Authorization': authorization,
   };
 
-  debugPrint('Sending GET Request to: $url');
-  debugPrint('Headers: $headers');
-  debugPrint('Body: $jsonBody');
+  print('Sending GET Request to: $url');
+  print('Headers: $headers');
+  print('Body: $jsonBody');
 
   try {
     final request = http.Request('GET', Uri.parse(url));
@@ -47,10 +41,10 @@ void main() async {
     final http.Response response =
         await http.Response.fromStream(streamedResponse);
 
-    debugPrint('Response Status Code: ${response.statusCode}');
-    debugPrint('Response body: ${response.body}');
+    print('Response Status Code: ${response.statusCode}');
+    print('Response body: ${response.body}');
   } catch (e) {
-    debugPrint('GET Request Error: $e');
+    print('GET Request Error: $e');
   } finally {
     http.Client().close();
   }
