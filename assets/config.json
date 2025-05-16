@@ -1,7 +1,20 @@
 {
-    "apiBaseIP": "127.0.0.1", 
-    "apiPort": "3001",
-    "serverTimeout": 8,
+
+    "usernameWebUser": "webuser",
+    "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
+
+    "oktoberFestBaseServer": "webintern.bssb.bayern", 
+    "oktoberFestBasePath": "rest/zmi/api7", 
+    "oktoberFestPort": "50211", 
+
+    "apiBaseServer": "webintern.bssb.bayern", 
+    "apiBasePath": "rest/zmi/api", 
+    "apiPort": "56400",
+
+    "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token", 
+
+
+    "serverTimeout": 15,
     "cacheExpirationHours": "24",
     "smtpSettings": {
       "host": "smtp.dummyserver.com",

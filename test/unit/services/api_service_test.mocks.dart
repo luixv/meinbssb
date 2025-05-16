@@ -174,6 +174,21 @@ class MockHttpClient extends _i1.Mock implements _i5.HttpClient {
       ) as int);
 
   @override
+  _i2.Future<String> requestToken() => (super.noSuchMethod(
+        Invocation.method(
+          #requestToken,
+          [],
+        ),
+        returnValue: _i2.Future<String>.value(_i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #requestToken,
+            [],
+          ),
+        )),
+      ) as _i2.Future<String>);
+
+  @override
   _i2.Future<dynamic> post(
     String? endpoint,
     Map<String, dynamic>? body,
@@ -194,6 +209,22 @@ class MockHttpClient extends _i1.Mock implements _i5.HttpClient {
         Invocation.method(
           #get,
           [endpoint],
+        ),
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
+
+  @override
+  _i2.Future<dynamic> getWithBody(
+    String? endpoint,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getWithBody,
+          [
+            endpoint,
+            body,
+          ],
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
@@ -937,6 +968,22 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
       (super.noSuchMethod(
         Invocation.method(
           #registerForSchulung,
+          [
+            personId,
+            schulungId,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> unregisterFromSchulung(
+    int? personId,
+    int? schulungId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unregisterFromSchulung,
           [
             personId,
             schulungId,

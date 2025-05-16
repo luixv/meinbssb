@@ -134,6 +134,21 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
       ) as int);
 
   @override
+  _i2.Future<String> requestToken() => (super.noSuchMethod(
+        Invocation.method(
+          #requestToken,
+          [],
+        ),
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #requestToken,
+            [],
+          ),
+        )),
+      ) as _i2.Future<String>);
+
+  @override
   _i2.Future<dynamic> post(
     String? endpoint,
     Map<String, dynamic>? body,
@@ -154,6 +169,22 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
         Invocation.method(
           #get,
           [endpoint],
+        ),
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
+
+  @override
+  _i2.Future<dynamic> getWithBody(
+    String? endpoint,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getWithBody,
+          [
+            endpoint,
+            body,
+          ],
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);

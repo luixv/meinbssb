@@ -23,7 +23,7 @@ void main() async {
 }
 
 class AppInitializer {
-  static late ConfigService _configServiceInstance;
+  static late ConfigService _configService;
   static late ApiService _apiService;
   static late NetworkService _networkService;
   static late CacheService _cacheService;
@@ -35,24 +35,30 @@ class AppInitializer {
 
   static Future<void> init() async {
     LoggerService.init();
-    _configServiceInstance = await ConfigService.load('assets/config.json');
-    final serverTimeout =
-        _configServiceInstance.getInt('serverTimeout', 'theme') ?? 10;
+    _configService = await ConfigService.load('assets/config.json');
+    final serverTimeout = _configService.getInt('serverTimeout', 'theme') ?? 10;
+
     final baseIP =
-        _configServiceInstance.getString('apiBaseIP', 'api') ?? '127.0.0.1';
-    final port = _configServiceInstance.getString('apiPort', 'api') ?? '3001';
+        _configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
+
+    final port = _configService.getString('apiPort', 'api') ?? '56400';
+
+    final path =
+        _configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
 
     _imageService = ImageService();
     final prefs = await SharedPreferences.getInstance();
     _cacheService = CacheService(
       prefs: prefs,
-      configService: _configServiceInstance,
+      configService: _configService,
     );
-    _networkService = NetworkService(configService: _configServiceInstance);
+    _networkService = NetworkService(configService: _configService);
 
     _httpClient = HttpClient(
-      baseUrl: 'http://$baseIP:$port',
+      baseUrl: 'https://$baseIP:$port/$path',
       serverTimeout: serverTimeout,
+      configService: _configService,
+      cacheService: _cacheService,
     );
 
     _trainingService = TrainingService(
@@ -68,14 +74,13 @@ class AppInitializer {
     );
 
     _authService = AuthService(
-      // Initialize AuthService
       httpClient: _httpClient,
       cacheService: _cacheService,
       networkService: _networkService,
     );
 
     _apiService = ApiService(
-      configService: _configServiceInstance,
+      configService: _configService,
       httpClient: _httpClient,
       imageService: _imageService,
       cacheService: _cacheService,
@@ -90,7 +95,7 @@ class AppInitializer {
 
   static void _registerProviders() {
     configServiceProvider = Provider<ConfigService>(
-      create: (context) => _configServiceInstance,
+      create: (context) => _configService,
     );
     emailSenderProvider = Provider<EmailSender>(
       create: (context) => MailerEmailSender(),
@@ -102,7 +107,6 @@ class AppInitializer {
       ),
     );
     authServiceProvider = Provider<AuthService>(
-      // Provide AuthService
       create: (context) => _authService,
     );
     apiServiceProvider = Provider<ApiService>(create: (context) => _apiService);
@@ -127,8 +131,7 @@ class AppInitializer {
   static late Provider<EmailService> emailServiceProvider;
   static late Provider<ConfigService> configServiceProvider;
   static late Provider<EmailSender> emailSenderProvider;
-  static late Provider<AuthService>
-      authServiceProvider; // Make sure this is here
+  static late Provider<AuthService> authServiceProvider;
   static late Provider<TrainingService> trainingServiceProvider;
   static late Provider<UserService> userServiceProvider;
 }

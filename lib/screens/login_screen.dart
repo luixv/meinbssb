@@ -101,6 +101,10 @@ class LoginScreenState extends State<LoginScreen> {
 
       await apiService.fetchSchuetzenausweis(personId);
 
+      // Get the famous Token :-)
+
+      
+
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(
           '/home',

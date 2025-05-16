@@ -1,23 +1,214 @@
-// Project: Mein BSSB
-// Filename: http_client.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '/services/logger_service.dart';
+import '/services/config_service.dart';
+import '/services/cache_service.dart';
 
 class HttpClient {
   HttpClient({
     required this.baseUrl,
     required this.serverTimeout,
-    http.Client? client, // Add optional client parameter
-  }) : _client = client ?? http.Client(); // Use provided client or default
+    required ConfigService configService,
+    required CacheService cacheService,
+    http.Client? client,
+  })  : _client = client ?? http.Client(),
+        _configService = configService,
+        _cacheService = cacheService;
 
   final String baseUrl;
   final int serverTimeout;
-  final http.Client _client; // Private client instance
+  final ConfigService _configService;
+  final http.Client _client;
+  final CacheService _cacheService;
+  static const String _tokenCacheKey = 'authToken';
+
+  // Helper method to get the token
+  Future<String> _fetchToken() async {
+    final String tokenServerURL =
+        _configService.getString('tokenServerURL') ?? '';
+
+    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
+    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
+
+    final body = {
+      'username': usernameWebUser,
+      'password': passwordWebUser,
+    };
+
+    LoggerService.logInfo('Fetching new token from: $tokenServerURL');
+
+    final response = await _client
+        .post(
+          Uri.parse(tokenServerURL),
+          body: body,
+        )
+        .timeout(Duration(seconds: serverTimeout));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final String token = jsonResponse['Token'];
+      await _cacheService.setString(_tokenCacheKey, token);
+      LoggerService.logInfo('Successfully fetched and cached new token');
+      return token;
+    } else {
+      throw Exception(
+        'Failed to fetch token: ${response.statusCode}, body: ${response.body}',
+      );
+    }
+  }
+
+  // Helper method to get token from cache or fetch if needed
+  Future<String> _getToken() async {
+    final cachedToken = await _cacheService.getString(_tokenCacheKey);
+    if (cachedToken != null && cachedToken.isNotEmpty) {
+      LoggerService.logInfo('Using cached token');
+      return cachedToken;
+    } else {
+      LoggerService.logInfo('No cached token found, fetching new one');
+      return await _fetchToken();
+    }
+  }
+
+  // Public method to get and cache the token (for login)
+  Future<String> requestToken() async {
+    final token = await _fetchToken();
+    return token;
+  }
+
+  // Method to make HTTP requests with token handling
+  Future<dynamic> _makeRequest(
+    String method,
+    String url,
+    Map<String, String>? headers,
+    dynamic body, {
+    bool retry = true,
+  }) async {
+    try {
+      final token = await _getToken(); // Get the token
+      // Add Authorization header
+      final requestHeaders = headers ?? {};
+      requestHeaders['Authorization'] = 'Bearer $token';
+      requestHeaders['Cookie'] = 'access_token=$token';
+
+      http.Response response;
+      if (method == 'POST') {
+        response = await _client
+            .post(
+              Uri.parse(url),
+              headers: requestHeaders,
+              body: body,
+            )
+            .timeout(Duration(seconds: serverTimeout));
+      } else if (method == 'GET') {
+        if (body == null) {
+          response = await _client
+              .get(Uri.parse(url), headers: requestHeaders)
+              .timeout(Duration(seconds: serverTimeout));
+        } else {
+          // Handle GET with body using http.Request
+          final request = http.Request('GET', Uri.parse(url));
+          request.headers.addAll(requestHeaders);
+          request.body = body;
+          final streamedResponse = await _client.send(request);
+          response = await http.Response.fromStream(streamedResponse);
+          //.timeout(Duration(seconds: serverTimeout));
+        }
+      } else {
+        throw Exception('Unsupported HTTP method: $method');
+      }
+
+      LoggerService.logInfo(
+        'Response status: ${response.statusCode}, url: ${response.request?.url}',
+      );
+      LoggerService.logInfo('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        // Handle token expiration/invalidation
+        if (retry) {
+          //prevent infinite loop.
+          LoggerService.logWarning('Token expired, attempting to refresh');
+          await _cacheService.remove(_tokenCacheKey); //remove invalid token
+          final newToken = await _fetchToken();
+
+          await _cacheService.setString(
+            _tokenCacheKey,
+            newToken,
+          ); // Cache the new token
+          return _makeRequest(
+            method,
+            url,
+            requestHeaders,
+            body,
+            retry: false,
+          ); // Retry the request once
+        } else {
+          throw Exception(
+            'Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
+          );
+        }
+      } else {
+        throw Exception(
+          'Request failed: ${response.statusCode}, body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Exception in _makeRequest: $e');
+      rethrow;
+    }
+  }
+
+  // Method to make HTTP requests to get bytes with token handling
+  Future<Uint8List> _makeBytesRequest(
+    String method,
+    String url,
+    Map<String, String>? headers, {
+    bool retry = true,
+  }) async {
+    try {
+      final token = await _getToken(); // Get the token
+      final requestHeaders = headers ?? {};
+      requestHeaders['Authorization'] = 'Bearer $token';
+
+      http.Response response;
+
+      if (method == 'GET') {
+        response = await _client.get(Uri.parse(url), headers: requestHeaders);
+      } else {
+        throw Exception('Method not supported for byte requests');
+      }
+
+      LoggerService.logInfo(
+        'Response status: ${response.statusCode}, url: ${response.request?.url}',
+      );
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        if (retry) {
+          LoggerService.logWarning(
+            'Token expired, attempting to refresh for bytes request',
+          );
+          await _cacheService.remove(_tokenCacheKey);
+          final newToken = await _fetchToken();
+          await _cacheService.setString(_tokenCacheKey, newToken);
+          return _makeBytesRequest(method, url, requestHeaders, retry: false);
+        } else {
+          throw Exception(
+            'Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
+          );
+        }
+      } else {
+        throw Exception('Failed to load bytes: ${response.statusCode}');
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bytes in _makeBytesRequest: $e');
+      rethrow;
+    }
+  }
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
     final String apiUrl = '$baseUrl/$endpoint';
@@ -27,79 +218,55 @@ class HttpClient {
     LoggerService.logInfo('Request body: $requestBody');
 
     return _makeRequest(
-      _client.post(
-        // Use the private _client
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: requestBody,
-      ),
+      'POST',
+      apiUrl,
+      {
+        'Content-Type': 'application/json',
+      },
+      requestBody,
     );
   }
 
   Future<dynamic> get(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
-
     LoggerService.logInfo('Sending GET request to: $apiUrl');
+    return _makeRequest('GET', apiUrl, null, null);
+  }
 
-    return _makeRequest(
-      _client.get(Uri.parse(apiUrl)),
-    ); // Use the private _client
+  // New method to send GET request with a body (non-standard)
+  Future<dynamic> getWithBody(
+    String endpoint,
+    Map<String, dynamic> body,
+  ) async {
+    //baseUrl: 'https://$baseIP:$port/$path',
+    final String apiUrl = '$baseUrl/$endpoint';
+    LoggerService.logWarning(
+      'Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
+    );
+
+    final baseIP = _configService.getString('apiBaseServer', 'api') ??
+        'webintern.bssb.bayern';
+    final port = _configService.getString('apiPort', 'api') ?? '56400';
+    final host = '$baseIP:$port';
+
+    final requestBody = jsonEncode(body);
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Content-Length': utf8.encode(requestBody).length.toString(),
+      'Host': host, //'webintern.bssb.bayern:56400'
+    };
+
+    LoggerService.logInfo('Sending GET to: $apiUrl');
+    LoggerService.logInfo('Headers: $headers');
+    LoggerService.logInfo('Body: $requestBody');
+
+    return _makeRequest('GET', apiUrl, headers, requestBody);
   }
 
   Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
-
     LoggerService.logInfo('Sending GET bytes request to: $apiUrl');
-
-    return _makeBytesRequest(
-      _client.get(Uri.parse(apiUrl)),
-    ); // Use the private _client
-  }
-
-  Future<dynamic> _makeRequest(Future<http.Response> request) async {
-    try {
-      final response = await request.timeout(
-        Duration(seconds: serverTimeout),
-        onTimeout: () {
-          throw TimeoutException('Server timeout');
-        },
-      );
-
-      LoggerService.logInfo(
-        'At HTTP_CLIENT: Response status: ${response.statusCode}',
-      );
-      LoggerService.logInfo(
-        'At HTTP_CLIENT: Response body http_client: ${response.body}',
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Request failed: ${response.statusCode}');
-      }
-    } catch (e) {
-      LoggerService.logError('Exception in http_client: $e');
-      rethrow;
-    }
-  }
-
-  Future<Uint8List> _makeBytesRequest(Future<http.Response> request) async {
-    try {
-      final response = await request.timeout(
-        Duration(seconds: serverTimeout),
-        onTimeout: () {
-          throw TimeoutException('Server timeout');
-        },
-      );
-
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      } else {
-        throw Exception('Failed to load image: ${response.statusCode}');
-      }
-    } catch (e) {
-      LoggerService.logError('Error fetching bytes in http_client: $e');
-      rethrow;
-    }
+    return _makeBytesRequest('GET', apiUrl, null);
   }
 }

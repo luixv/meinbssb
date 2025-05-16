@@ -15,7 +15,7 @@ void main() {
   group('ConfigService', () {
     const testJson = '''
     {
-      "apiBaseIP": "127.0.0.1",
+      "apiBaseServer": "127.0.0.1",
       "apiPort": "3001",
       "serverTimeout": 8,
       "cacheExpirationHours": "24",
@@ -61,7 +61,7 @@ void main() {
       final service = await ConfigService.load('assets/config.json');
 
       // Test top-level values
-      expect(service.getString('apiBaseIP'), '127.0.0.1');
+      expect(service.getString('apiBaseServer'), '127.0.0.1');
       expect(service.getString('apiPort'), '3001');
       expect(service.getInt('serverTimeout'), 8);
       expect(service.getString('cacheExpirationHours'), '24');
@@ -85,7 +85,7 @@ void main() {
       final service = await ConfigService.load('assets/config.json');
 
       // Verify data types
-      expect(service.getString('apiBaseIP'), isA<String>());
+      expect(service.getString('apiBaseServer'), isA<String>());
       expect(service.getString('apiPort'), isA<String>());
       expect(service.getInt('serverTimeout'), isA<int>());
       expect(service.getString('cacheExpirationHours'), isA<String>());

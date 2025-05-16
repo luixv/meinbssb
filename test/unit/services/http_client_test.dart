@@ -5,21 +5,32 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/http_client.dart';
+import 'package:meinbssb/services/config_service.dart';
+
+import 'package:meinbssb/services/cache_service.dart';
 import 'http_client_test.mocks.dart';
 
-@GenerateMocks([http.Client])
+@GenerateMocks([http.Client, ConfigService, CacheService])
 void main() {
   late HttpClient httpClient;
   late MockClient mockClient;
+  late MockConfigService mockConfigService;
+  late MockCacheService mockCacheService;
+
   const String baseUrl = 'https://api.example.com';
   const int serverTimeout = 30;
 
   setUp(() {
     mockClient = MockClient();
+    mockConfigService = MockConfigService();
+    mockCacheService = MockCacheService();
+
     httpClient = HttpClient(
       baseUrl: baseUrl,
       serverTimeout: serverTimeout,
-      client: mockClient, // Pass the mockClient here
+      configService: mockConfigService,
+      cacheService: mockCacheService,
+      client: mockClient,
     );
   });
 

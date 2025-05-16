@@ -8,9 +8,10 @@ import 'dart:typed_data' as _i5;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i2;
 import 'package:meinbssb/services/api_service.dart' as _i4;
-import 'package:meinbssb/services/config_service.dart' as _i7;
-import 'package:meinbssb/services/email_service.dart' as _i6;
+import 'package:meinbssb/services/config_service.dart' as _i8;
+import 'package:meinbssb/services/email_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -217,6 +218,21 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i3.Future<_i5.Uint8List>);
 
   @override
+  _i3.Future<String> fetchAuthToken() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchAuthToken,
+          [],
+        ),
+        returnValue: _i3.Future<String>.value(_i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchAuthToken,
+            [],
+          ),
+        )),
+      ) as _i3.Future<String>);
+
+  @override
   _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
@@ -228,6 +244,15 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
             personId,
             abDatum,
           ],
+        ),
+        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i3.Future<List<dynamic>>);
+
+  @override
+  _i3.Future<List<dynamic>> fetchAvailableSchulungen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchAvailableSchulungen,
+          [],
         ),
         returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
       ) as _i3.Future<List<dynamic>>);
@@ -257,12 +282,28 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
       ) as _i3.Future<List<dynamic>>);
+
+  @override
+  _i3.Future<bool> unregisterFromSchulung(
+    int? personId,
+    int? schulungId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unregisterFromSchulung,
+          [
+            personId,
+            schulungId,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i6.EmailService {
+class MockEmailService extends _i1.Mock implements _i7.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -322,7 +363,7 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i7.ConfigService {
+class MockConfigService extends _i1.Mock implements _i8.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

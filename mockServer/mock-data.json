@@ -13,7 +13,7 @@
             "WebLoginID": 27
         }
     },
-    "passdaten": {
+    "passdaten": [{
         "luis@mandel.pro": {
             "PASSNUMMER": "41299999",
             "VEREINNR": 412013,
@@ -41,7 +41,7 @@
             "ERSTVEREINID": 1963,
             "DIGITALERPASS": 1
         }
-    },
+    }],
     "schulungen": [
         {
             "DATUM": "2025-05-12T00:00:00.000+02:00",

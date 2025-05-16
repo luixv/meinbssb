@@ -41,23 +41,29 @@ class UserService {
   }
 
   Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
-    if (response is Map<String, dynamic>) {
-      return {
-        'PASSNUMMER': response['PASSNUMMER'],
-        'VEREINNR': response['VEREINNR'],
-        'NAMEN': response['NAMEN'],
-        'VORNAME': response['VORNAME'],
-        'TITEL': response['TITEL'],
-        'GEBURTSDATUM': response['GEBURTSDATUM'],
-        'GESCHLECHT': response['GESCHLECHT'],
-        'VEREINNAME': response['VEREINNAME'],
-        'PASSDATENID': response['PASSDATENID'],
-        'MITGLIEDSCHAFTID': response['MITGLIEDSCHAFTID'],
-        'PERSONID': response['PERSONID'],
-        'STRASSE': response['STRASSE'],
-        'PLZ': response['PLZ'],
-        'ORT': response['ORT'],
-      };
+    // Überprüfen, ob die Antwort eine Liste ist
+    if (response is List) {
+      // Da wir nur ein Objekt erwarten, nehmen wir das erste Element der Liste.
+      final Map<String, dynamic>? data =
+          response.isNotEmpty ? response.first as Map<String, dynamic>? : null;
+      if (data != null) {
+        return {
+          'PASSNUMMER': data['PASSNUMMER'],
+          'VEREINNR': data['VEREINNR'],
+          'NAMEN': data['NAMEN'],
+          'VORNAME': data['VORNAME'],
+          'TITEL': data['TITEL'],
+          'GEBURTSDATUM': data['GEBURTSDATUM'],
+          'GESCHLECHT': data['GESCHLECHT'],
+          'VEREINNAME': data['VEREINNAME'],
+          'PASSDATENID': data['PASSDATENID'],
+          'MITGLIEDSCHAFTID': data['MITGLIEDSCHAFTID'],
+          'PERSONID': data['PERSONID'],
+          'STRASSE': data['STRASSE'],
+          'PLZ': data['PLZ'],
+          'ORT': data['ORT'],
+        };
+      }
     }
     return {};
   }

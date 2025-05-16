@@ -51,9 +51,9 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _httpClient.post('LoginMyBSSB', {
-        'email': email,
-        'password': password,
+      final response = await _httpClient.getWithBody('LoginMyBSSB', {
+        'Email': email,
+        'Passwort': password,
       });
 
       if (response is Map<String, dynamic>) {
