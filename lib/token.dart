@@ -1,6 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 
 void main() async {
+  final logger = Logger('main');
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((LogRecord rec) {
+    print('${rec.level.name}: ${rec.time}: ${rec.message}');
+  });
+
   const String tokenServerURL =
       'https://webintern.bssb.bayern:56400/rest/zmi/token';
 
@@ -19,8 +26,8 @@ void main() async {
   });
 
   //Log
-  print("url: ${request.url}");
-  print("fields: ${request.fields}");
+  logger.fine('url: ${request.url}');
+  logger.fine('fields: ${request.fields}');
 
   // Send the request.
   try {
@@ -28,10 +35,10 @@ void main() async {
     final http.Response response =
         await http.Response.fromStream(streamedResponse);
 
-    print('Response Status Code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    logger.fine('Response Status Code: ${response.statusCode}');
+    logger.fine('Response body: ${response.body}');
   } catch (e) {
-    print('POST Request Error: $e'); // Changed to POST
+    logger.fine('POST Request Error: $e'); // Changed to POST
   } finally {
     // No need to close the client here, as we are not creating one.
   }
