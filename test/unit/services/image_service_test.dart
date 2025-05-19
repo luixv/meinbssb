@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/image_service.dart';
-import 'package:image/image.dart' as img;
 
 class MockLoggerService extends Mock {}
 
@@ -13,25 +12,6 @@ void main() {
 
   setUp(() {
     imageService = ImageService();
-  });
-
-  group('rotatedImage', () {
-    test('returns rotated image data when input is valid', () async {
-      // Create a simple 1x1 pixel image and encode it as jpg
-      final original = img.Image(width: 1, height: 1);
-      final imageData = Uint8List.fromList(img.encodeJpg(original));
-
-      final rotated = await imageService.rotatedImage(imageData);
-
-      // The result should be a non-empty Uint8List
-      expect(rotated, isA<Uint8List>());
-      expect(rotated.length, greaterThan(0));
-    });
-
-    test('throws Exception when image cannot be decoded', () async {
-      final invalidData = Uint8List.fromList([0, 1, 2, 3, 4, 5]);
-      expect(() => imageService.rotatedImage(invalidData), throwsException);
-    });
   });
 
   // Note: The cacheSchuetzenausweis and getCachedSchuetzenausweis methods

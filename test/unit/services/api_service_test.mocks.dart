@@ -283,16 +283,6 @@ class MockImageService extends _i1.Mock implements _i8.ImageService {
       ) as _i2.Future<_i7.Uint8List?>);
 
   @override
-  _i2.Future<_i7.Uint8List> rotatedImage(_i7.Uint8List? imageData) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #rotatedImage,
-          [imageData],
-        ),
-        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i2.Future<_i7.Uint8List>);
-
-  @override
   _i2.Future<bool> isDeviceOnline() => (super.noSuchMethod(
         Invocation.method(
           #isDeviceOnline,

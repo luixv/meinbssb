@@ -5,7 +5,6 @@ import 'dart:typed_data'; // Import Uint8List
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image/image.dart' as img;
 import '/services/logger_service.dart';
 
 // Conditional imports with explicit prefixes
@@ -53,21 +52,6 @@ class ImageService {
     }
   }
 
-  Future<Uint8List> rotatedImage(Uint8List imageData) async {
-    try {
-      final image = img.decodeImage(imageData);
-      if (image == null) {
-        throw Exception('Failed to decode image');
-      }
-      final rotatedImage = img.copyRotate(image, angle: 270);
-      final rotatedImageData = img.encodeJpg(rotatedImage);
-      return Uint8List.fromList(rotatedImageData);
-    } catch (e) {
-      LoggerService.logError('Error rotating image: $e');
-      throw Exception('Failed to rotate image');
-    }
-  }
-
   Future<bool> isDeviceOnline() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult.isEmpty) {
@@ -84,19 +68,24 @@ class ImageService {
   ) async {
     final cachedImage =
         await getCachedSchuetzenausweis(personId, validityDuration);
-    if (cachedImage != null) return rotatedImage(cachedImage);
+    if (cachedImage != null) return cachedImage;
 
     try {
       final fetchedImage =
           await fetchFunction(); // Execute the network call here
       await cacheSchuetzenausweis(
-          personId, fetchedImage, DateTime.now().millisecondsSinceEpoch,);
-      return rotatedImage(fetchedImage);
+        personId,
+        fetchedImage,
+        DateTime.now().millisecondsSinceEpoch,
+      );
+      return fetchedImage;
     } catch (e) {
       // Fallback to expired cache if available
       final fallback = await getCachedSchuetzenausweis(
-          personId, const Duration(days: 365 * 100),);
-      if (fallback != null) return rotatedImage(fallback);
+        personId,
+        const Duration(days: 365 * 100),
+      );
+      if (fallback != null) return fallback;
       throw Exception('Failed to fetch and no cache available');
     }
   }
