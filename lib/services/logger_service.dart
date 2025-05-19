@@ -7,9 +7,8 @@ class LoggerService {
   // Initialize the logger
   static void init() {
     // Set the log level
-    Logger.root.level =
-        Level
-            .ALL; // Set to Level.OFF to disable logging or to Level.INFO to limit logs
+    Logger.root.level = Level
+        .ALL; //  Level.OFF to disable logging or to Level.INFO to limit logs
 
     // Log to the console or a desired output
     Logger.root.onRecord.listen((record) {
