@@ -69,8 +69,16 @@ class AuthService {
 
           What to do with the birthdate and zip code?
     */
-      String personId = await _findPersonId(lastName, passNumber);
+      String personId = await _findePersonIDUndDokumente(lastName, passNumber);
       String password = '';
+
+      personId = await _findePersonID(
+        lastName,
+        firstName,
+        birthDate,
+        passNumber,
+        zipCode,
+      );
 
       String loginMail = await _findeMailadressen(personId);
 
@@ -93,13 +101,46 @@ class AuthService {
     }
   }
 
-  Future<String> _findPersonId(
+  Future<String> _findePersonIDUndDokumente(
     String lastName,
     String passNumber,
   ) async {
     try {
       final response = await _httpClient
           .get('FindePersonIDUndDokumente/$lastName/$passNumber');
+      if (response is Map<String, dynamic>) {
+        if (response['PERSONID'] != 0) {
+          return response['PERSONID'].toString();
+        } else {
+          LoggerService.logError('Person ID not found.');
+          return '0';
+        }
+      } else {
+        LoggerService.logError('Invalid server response.');
+        return '0';
+      }
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
+    }
+  }
+
+/*
+/FindePersonID/{Namen}/{Vorname}/{Geburtsdatum}/{Passnummer}/{PLZ}
+/FindePersonID/rizoudis/konstantinos/30.12.1968/40101205/86574
+Ergebnis der Abfrage:
+[{"PERSONID":439287}]
+*/
+  Future<String> _findePersonID(
+    String namen,
+    String vorname,
+    String geburtsdatum,
+    String passNumber,
+    String plz,
+  ) async {
+    try {
+      final response = await _httpClient
+          .get('FindePersonID/$namen/$vorname/$geburtsdatum/$passNumber/$plz');
       if (response is Map<String, dynamic>) {
         if (response['PERSONID'] != 0) {
           return response['PERSONID'].toString();
