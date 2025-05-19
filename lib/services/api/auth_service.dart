@@ -34,17 +34,123 @@ class AuthService {
     required String zipCode,
   }) async {
     try {
+      /*  ErstelleMyBSSBAccount/
+          Body as JSON
+          {"PersonID": 439287,
+           "Email": "kostas@rizoudis1.de",
+           "Passwort": "test1"}
+
+           Find personID
+          /FindePersonIDUndDokumente/{Namen}/{Passnummer}
+          /FindePersonIDUndDokumente/Schürz/40100709
+
+          Response (If correct)
+          {
+            "NAMEN": "Schürz",
+            "VORNAME": "Lukas",
+            "PERSONID": 439287,
+            "GESCHLECHT": 1,
+            "STRASSE": "Hubenstein",
+            "PLZ": "54293",
+            "ORT": "Trier"
+          }
+
+          Response (If not correct, but Status is 200) 
+          {
+              "PERSONID": 0,
+              "GESCHLECHT": 0
+          }
+
+      */
+
+      /* @TODO
+          Find out where the password is set
+          and if it is needed for the registration.
+
+          What to do with the birthdate and zip code?
+    */
+      String personId = await _findPersonId(lastName, passNumber);
+      String password = '';
+
+      String loginMail = await _findeMailadressen(personId);
+
+      // ERROR
+      if (loginMail.isEmpty && loginMail == 'null' && loginMail != email) {
+        LoggerService.logError('No email address found.');
+        return {};
+      }
+
       final response = await _httpClient.post('RegisterMyBSSB', {
-        'firstName': firstName,
-        'lastName': lastName,
-        'passNumber': passNumber,
-        'email': email,
-        'birthDate': birthDate,
-        'zipCode': zipCode,
+        'PersonId': personId,
+        'Email': email,
+        'Passwort': password,
       });
+
       return response is Map<String, dynamic> ? response : {};
     } catch (e) {
       LoggerService.logError('Registration error: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> _findPersonId(
+    String lastName,
+    String passNumber,
+  ) async {
+    try {
+      final response = await _httpClient
+          .get('FindePersonIDUndDokumente/$lastName/$passNumber');
+      if (response is Map<String, dynamic>) {
+        if (response['PERSONID'] != 0) {
+          return response['PERSONID'].toString();
+        } else {
+          LoggerService.logError('Person ID not found.');
+          return '0';
+        }
+      } else {
+        LoggerService.logError('Invalid server response.');
+        return '0';
+      }
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> _findeMailadressen(
+    String personId,
+
+    /*
+    /FindeMailadressen/{PersonID}
+    Response
+    [
+    {
+        "MAILADRESSEN": "an719328@gmail.com",
+        "LOGINMAIL": "kostas@rizoudis1.de"
+    },
+    {
+        "MAILADRESSEN": "an963916@freenet.de",
+        "LOGINMAIL": "kostas@rizoudis1.de"
+    }
+  ]
+    */
+  ) async {
+    try {
+      final response = await _httpClient.get('FindeMailadressen/$personId');
+      if (response is List) {
+        if (response.isNotEmpty) {
+          final email = response[0]['LOGINMAIL'];
+          return email;
+        } else {
+          LoggerService.logError('No email addresses found.');
+          return '';
+        }
+      } else {
+        LoggerService.logError('Invalid server response.');
+        return '';
+      }
+    } catch (e) {
+      LoggerService.logError('Find email address error: $e');
       rethrow;
     }
   }
@@ -144,6 +250,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     try {
+      // This method needs the email address of the user
+
       final response = await _httpClient.post('PasswordReset/$passNumber', {
         'passNumber': passNumber,
       });

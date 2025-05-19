@@ -26,10 +26,14 @@ class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
   final Color _appColor = UIConstants.defaultAppColor;
+  // Declare a new variable to hold the simplified user data.
+  Map<String, dynamic> _userData = {};
 
   @override
   void initState() {
     super.initState();
+    // Assign the nested data to _userData in initState.
+    _userData = widget.userData['data'] ?? {}; // Use a null check here.
     fetchSchulungen();
     LoggerService.logInfo(
       'StartScreen initialized with user: ${widget.userData}',
@@ -38,7 +42,8 @@ class StartScreenState extends State<StartScreen> {
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final personId = widget.userData['PERSONID'];
+    // Use the simplified _userData here.
+    final personId = _userData['PERSONID'];
 
     if (personId == null) {
       LoggerService.logError('PERSONID is null');
@@ -75,13 +80,17 @@ class StartScreenState extends State<StartScreen> {
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
+    // Use the simplified _userData here.
+    LoggerService.logInfo('Logging out user: ${_userData['VORNAME']}');
     widget.onLogout(); // Update app state
     Navigator.of(context).pushReplacementNamed('/login'); // Force navigation
   }
 
   Future<void> _handleDeleteSchulung(
-      int personId, int schulungId, int index,) async {
+    int personId,
+    int schulungId,
+    int index,
+  ) async {
     final apiService =
         Provider.of<ApiService>(context, listen: false); //get api service
 
@@ -95,7 +104,8 @@ class StartScreenState extends State<StartScreen> {
         // ADDED THIS CHECK
         if (success) {
           LoggerService.logInfo(
-              'Successfully unregistered from Schulung $schulungId',);
+            'Successfully unregistered from Schulung $schulungId',
+          );
           // Remove the item from the list to update the UI
           setState(() {
             schulungen.removeAt(index); // Remove at index
@@ -110,7 +120,8 @@ class StartScreenState extends State<StartScreen> {
           );
         } else {
           LoggerService.logWarning(
-              'Failed to unregister from Schulung $schulungId',);
+            'Failed to unregister from Schulung $schulungId',
+          );
           // Optionally, show an error message to the user
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -178,13 +189,15 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
+            // Use the simplified _userData here.
             Text(
-              "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
+              "${_userData['VORNAME'] ?? ''} ${_userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
+            // Use the simplified _userData here.
             Text(
-              widget.userData['PASSNUMMER'],
+              '${_userData['PASSNUMMER'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -194,8 +207,9 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             const SizedBox(height: UIConstants.smallSpacing),
+            // Use the simplified _userData here.
             Text(
-              widget.userData['VEREINNAME'],
+              '${_userData['VEREINNAME'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -230,8 +244,9 @@ class StartScreenState extends State<StartScreen> {
                             final schulung = schulungen[index];
                             final datum = DateTime.parse(schulung['DATUM']);
                             final online = schulung['ONLINE'] as bool? ?? false;
+                            // Use the simplified _userData here.
                             final personId =
-                                widget.userData['PERSONID']; // Get Person ID
+                                _userData['PERSONID']; // Get Person ID
 
                             final formattedDatum =
                                 "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
@@ -292,12 +307,14 @@ class StartScreenState extends State<StartScreen> {
                                             );
                                           } else {
                                             LoggerService.logError(
-                                                "personId or schulungId is null. personId: $personId, schulungId: ${schulung['SCHULUNGENTEILNEHMERID']}",);
+                                              "personId or schulungId is null. personId: $personId, schulungId: ${schulung['SCHULUNGENTEILNEHMERID']}",
+                                            );
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               const SnackBar(
                                                 content: Text(
-                                                    'Ein unerwarteter Fehler ist aufgetreten.',),
+                                                  'Ein unerwarteter Fehler ist aufgetreten.',
+                                                ),
                                                 duration: Duration(seconds: 2),
                                               ),
                                             );

@@ -1,8 +1,5 @@
-// Project: Mein BSSB
-// Filename: user_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'dart:async';
+import 'dart:developer';
 
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
@@ -26,27 +23,33 @@ class UserService {
         await _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
       'passdaten_$personId',
       _networkService.getCacheExpirationDuration(),
-      () async =>
-          await _httpClient.get('Passdaten/$personId') as Map<String, dynamic>,
-      (response) => _mapPassdatenResponse(response),
+      () async {
+        final response = await _httpClient.get('Passdaten/$personId');
+        final mappedResponse = _mapPassdatenResponse(response);
+        return mappedResponse; // Return the mapped response
+      },
+      (cachedResponse) {
+        // Check the type of cachedResponse. If it's already a map, return it directly.
+        if (cachedResponse is Map<String, dynamic>) {
+          return cachedResponse;
+        }
+        // If it is not a map, map it.
+        return _mapPassdatenResponse(cachedResponse);
+      },
     );
-
-    final passdaten = result['data'] as Map<String, dynamic>? ?? {};
-    final isOnline = result['ONLINE'] as bool? ?? false;
-
-    return {
-      ...passdaten,
-      'ONLINE': isOnline,
-    };
+    // Debug log to inspect the structure of 'result'
+    log('fetchPassdaten result: $result');
+    return result;
   }
 
+  // This function is crucial for ensuring the correct data structure
   Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
-    // Überprüfen, ob die Antwort eine Liste ist
+    // Handle different response types (List or Map) for robustness
     if (response is List) {
-      // Da wir nur ein Objekt erwarten, nehmen wir das erste Element der Liste.
-      final Map<String, dynamic>? data =
-          response.isNotEmpty ? response.first as Map<String, dynamic>? : null;
-      if (data != null) {
+      if (response.isNotEmpty) {
+        final Map<String, dynamic> data =
+            response.first as Map<String, dynamic>; // Extract the first element
+        // Map the fields to the desired structure, including ONLINE
         return {
           'PASSNUMMER': data['PASSNUMMER'],
           'VEREINNR': data['VEREINNR'],
@@ -62,23 +65,49 @@ class UserService {
           'STRASSE': data['STRASSE'],
           'PLZ': data['PLZ'],
           'ORT': data['ORT'],
+          'ONLINE':
+              data['ONLINE'] ?? false, // Default to false if ONLINE is missing
         };
+      } else {
+        return {}; // Return empty map for empty list
       }
+    } else if (response is Map<String, dynamic>) {
+      //if the response is already a map, return it.
+      return {
+        'PASSNUMMER': response['PASSNUMMER'],
+        'VEREINNR': response['VEREINNR'],
+        'NAMEN': response['NAMEN'],
+        'VORNAME': response['VORNAME'],
+        'TITEL': response['TITEL'],
+        'GEBURTSDATUM': response['GEBURTSDATUM'],
+        'GESCHLECHT': response['GESCHLECHT'],
+        'VEREINNAME': response['VEREINNAME'],
+        'PASSDATENID': response['PASSDATENID'],
+        'MITGLIEDSCHAFTID': response['MITGLIEDSCHAFTID'],
+        'PERSONID': response['PERSONID'],
+        'STRASSE': response['STRASSE'],
+        'PLZ': response['PLZ'],
+        'ORT': response['ORT'],
+        'ONLINE': response['ONLINE'] ??
+            false, // Default to false if ONLINE is missing
+      };
     }
-    return {};
+    return {}; // Return empty map for other cases
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+    final dynamic result =
+        await _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'zweitmitgliedschaften_$personId',
       _networkService.getCacheExpirationDuration(),
-      () async => await _httpClient.get('Zweitmitgliedschaften/$personId')
-          as List<dynamic>,
+      () async => await _httpClient.get('Zweitmitgliedschaften/$personId'),
       (response) => _mapZweitmitgliedschaftenResponse(response),
     );
-
-    final zweitmitgliedschaften = result['data'] as List<dynamic>? ?? [];
-    final isOnline = result['ONLINE'] as bool? ?? false;
+    final List<dynamic> zweitmitgliedschaften =
+        result is List<dynamic> ? result : [];
+    final bool isOnline = zweitmitgliedschaften.isNotEmpty
+        ? zweitmitgliedschaften.first['ONLINE'] as bool? ?? false
+        : false;
 
     return zweitmitgliedschaften.map((mitgliedschaft) {
       return {...mitgliedschaft, 'ONLINE': isOnline};
@@ -92,6 +121,8 @@ class UserService {
           'VEREINID': item['VEREINID'],
           'VEREINNAME': item['VEREINNAME'],
           'EINTRITTVEREIN': item['EINTRITTVEREIN'],
+          'ONLINE':
+              item['ONLINE'] ?? false, // Default to false if ONLINE is missing
         };
       }).toList();
     }
@@ -99,16 +130,17 @@ class UserService {
   }
 
   Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+    final dynamic result =
+        await _cacheService.cacheAndRetrieveData<List<dynamic>>(
       'passdaten_zve_$passdatenId',
       _networkService.getCacheExpirationDuration(),
-      () async => await _httpClient.get('PassdatenZVE/$passdatenId/$personId')
-          as List<dynamic>,
+      () async => await _httpClient.get('PassdatenZVE/$passdatenId/$personId'),
       (response) => _mapPassdatenZVEResponse(response),
     );
-
-    final passdatenZVE = result['data'] as List<dynamic>? ?? [];
-    final isOnline = result['ONLINE'] as bool? ?? false;
+    final List<dynamic> passdatenZVE = result is List<dynamic> ? result : [];
+    final bool isOnline = passdatenZVE.isNotEmpty
+        ? passdatenZVE.first['ONLINE'] as bool? ?? false
+        : false;
 
     return passdatenZVE.map((zveData) {
       return {...zveData, 'ONLINE': isOnline};
@@ -122,6 +154,8 @@ class UserService {
           'DISZIPLINNR': item['DISZIPLINNR'],
           'DISZIPLIN': item['DISZIPLIN'],
           'VEREINNAME': item['VEREINNAME'],
+          'ONLINE':
+              item['ONLINE'] ?? false, // Default to false if ONLINE is missing
         };
       }).toList();
     }

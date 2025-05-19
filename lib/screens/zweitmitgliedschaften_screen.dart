@@ -28,10 +28,14 @@ class _ZweitmitgliedschaftenScreenState
   late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
   late Future<List<dynamic>> _passdatenZVEFuture;
   Color _appColor = UIConstants.defaultAppColor;
+  // Add the _userData variable
+  Map<String, dynamic> _userData = {};
 
   @override
   void initState() {
     super.initState();
+    // Assign the user data.
+    _userData = widget.userData['data'] ?? {};
     _loadData();
     _loadAppColor();
   }
@@ -49,7 +53,7 @@ class _ZweitmitgliedschaftenScreenState
   void _loadData() {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final passDataId = widget.userData['PASSDATENID'];
+      final passDataId = _userData['PASSDATENID']; // Use _userData
 
       _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
         widget.personId,
@@ -116,12 +120,12 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "${widget.userData['VORNAME']} ${widget.userData['NAMEN']}",
+              "${_userData['VORNAME']} ${_userData['NAMEN']}", // Use _userData
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              widget.userData['PASSNUMMER'],
+              _userData['PASSNUMMER'], // Use _userData
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -132,7 +136,7 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              widget.userData['VEREINNAME'],
+              _userData['VEREINNAME'], // Use _userData
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),

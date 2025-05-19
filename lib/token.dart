@@ -38,8 +38,6 @@ void main() async {
     logger.fine('Response Status Code: ${response.statusCode}');
     logger.fine('Response body: ${response.body}');
   } catch (e) {
-    logger.fine('POST Request Error: $e'); // Changed to POST
-  } finally {
-    // No need to close the client here, as we are not creating one.
+    logger.fine('POST Request Error: $e');
   }
 }

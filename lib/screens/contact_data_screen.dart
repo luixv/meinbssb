@@ -40,30 +40,30 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false; // Track loading state for the submit button.
+  // Add the _userData variable
+  Map<String, dynamic> _userData = {};
 
   @override
   void initState() {
     super.initState();
+    // Assign the user data.
+    _userData = widget.userData['data'] ?? {};
     _loadInitialData();
   }
 
   void _loadInitialData() {
-    // Populate the text fields with the user's data.
-    _privatTelefonController.text =
-        widget.userData['TELEFONNUMMER_PRIVAT'] ?? '';
-    _privatMobilnummerController.text =
-        widget.userData['MOBILNUMMER_PRIVAT'] ?? '';
-    _privatEmailController.text = widget.userData['EMAIL_PRIVAT'] ?? '';
-    _privatFaxController.text = widget.userData['FAX_PRIVAT'] ?? '';
+    // Populate the text fields with the user's data.  Use _userData
+    _privatTelefonController.text = _userData['TELEFONNUMMER_PRIVAT'] ?? '';
+    _privatMobilnummerController.text = _userData['MOBILNUMMER_PRIVAT'] ?? '';
+    _privatEmailController.text = _userData['EMAIL_PRIVAT'] ?? '';
+    _privatFaxController.text = _userData['FAX_PRIVAT'] ?? '';
 
     _geschaeftlichTelefonController.text =
-        widget.userData['TELEFONNUMMER_GESCHAEFTLICH'] ?? '';
+        _userData['TELEFONNUMMER_GESCHAEFTLICH'] ?? '';
     _geschaeftlichMobilnummerController.text =
-        widget.userData['MOBILNUMMER_GESCHAEFTLICH'] ?? '';
-    _geschaeftlichEmailController.text =
-        widget.userData['EMAIL_GESCHAEFTLICH'] ?? '';
-    _geschaeftlichFaxController.text =
-        widget.userData['FAX_GESCHAEFTLICH'] ?? '';
+        _userData['MOBILNUMMER_GESCHAEFTLICH'] ?? '';
+    _geschaeftlichEmailController.text = _userData['EMAIL_GESCHAEFTLICH'] ?? '';
+    _geschaeftlichFaxController.text = _userData['FAX_GESCHAEFTLICH'] ?? '';
 
     LoggerService.logInfo('ContactDataScreen initialized');
   }

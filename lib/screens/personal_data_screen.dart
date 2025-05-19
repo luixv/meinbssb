@@ -34,26 +34,31 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false; // Loading state for the submit button
+  // Declare a variable to hold the simplified user data
+  Map<String, dynamic> _userData = {};
+
   // Initial Data Loading (Populate fields)
   @override
   void initState() {
     super.initState();
+    // Assign the nested data to _userData
+    _userData = widget.userData['data'] ?? {};
     _loadInitialData();
   }
 
   void _loadInitialData() {
-    // Populate the text fields with the user's data.
+    // Populate the text fields with the user's data.  Use _userData
     _passnummerController.text =
-        widget.userData['PASSNUMMER']?.toString() ?? ''; //ADDED ?.toString()
+        _userData['PASSNUMMER']?.toString() ?? ''; //ADDED ?.toString()
     // Format the date if it's not null
-    if (widget.userData['GEBURTSDATUM'] != null) {
+    if (_userData['GEBURTSDATUM'] != null) {
       try {
-        final parsedDate = DateTime.parse(widget.userData['GEBURTSDATUM']);
+        final parsedDate = DateTime.parse(_userData['GEBURTSDATUM']);
         _geburtsdatumController.text =
             DateFormat('dd.MM.yyyy').format(parsedDate);
       } catch (e) {
         LoggerService.logError(
-          'Error parsing date: ${widget.userData['GEBURTSDATUM']}',
+          'Error parsing date: ${_userData['GEBURTSDATUM']}',
         );
         _geburtsdatumController.text =
             'Invalid Date'; // Or some default error message
@@ -62,13 +67,12 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       _geburtsdatumController.text = '';
     }
 
-    _titelController.text = widget.userData['TITEL']?.toString() ?? '';
-    _vornameController.text = widget.userData['VORNAME']?.toString() ?? '';
-    _nachnameController.text = widget.userData['NAMEN']?.toString() ?? '';
-    _strasseHausnummerController.text =
-        widget.userData['STRASSE']?.toString() ?? '';
-    _postleitzahlController.text = widget.userData['PLZ']?.toString() ?? '';
-    _ortController.text = widget.userData['ORT']?.toString() ?? '';
+    _titelController.text = _userData['TITEL']?.toString() ?? '';
+    _vornameController.text = _userData['VORNAME']?.toString() ?? '';
+    _nachnameController.text = _userData['NAMEN']?.toString() ?? '';
+    _strasseHausnummerController.text = _userData['STRASSE']?.toString() ?? '';
+    _postleitzahlController.text = _userData['PLZ']?.toString() ?? '';
+    _ortController.text = _userData['ORT']?.toString() ?? '';
 
     LoggerService.logInfo('KontaktdatenScreen initialized');
   }
@@ -303,8 +307,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     child: _isLoading
                         ? const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              UIConstants.white,
-                            ),
+                                UIConstants.white,),
                           )
                         : const Text(
                             'Absenden',

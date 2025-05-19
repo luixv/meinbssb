@@ -64,9 +64,7 @@ class HttpClient {
         return token;
       }
     } catch (e) {
-      LoggerService.logInfo('POST Request Error: $e'); // Changed to POST
-    } finally {
-      // No need to close the client here, as we are not creating one.
+      LoggerService.logInfo('POST Request Error: $e');
     }
     return '';
   }
@@ -103,7 +101,6 @@ class HttpClient {
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
       requestHeaders['Cookie'] = 'access_token=$token';
-      requestHeaders['Content-Length'] = utf8.encode(body).length.toString();
 
       http.Response response;
       if (method == 'POST') {
@@ -121,13 +118,16 @@ class HttpClient {
               .timeout(Duration(seconds: serverTimeout));
         } else {
           // Handle GET with body using http.Request
+          requestHeaders['Content-Length'] =
+              utf8.encode(body).length.toString();
+
           final request = http.Request('GET', Uri.parse(url));
           request.headers.addAll(requestHeaders);
           request.body = body;
 
-          print('Sending GET Request to: $url');
-          print('Headers: $headers');
-          print('Body: $body');
+          LoggerService.logInfo('Sending GET Request to: $url');
+          LoggerService.logInfo('Headers: $headers');
+          LoggerService.logInfo('Body: $body');
 
           final streamedResponse = await _client.send(request);
           response = await http.Response.fromStream(streamedResponse);
