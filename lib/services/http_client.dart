@@ -32,31 +32,43 @@ class HttpClient {
     final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
     final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
 
-    final body = {
+    final Map<String, String> body = {
       'username': usernameWebUser,
       'password': passwordWebUser,
     };
 
+    // Create a multipart request.
+    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
+    request.headers['Cookie'] =
+        'access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDc3MzIyMzEsImlhdCI6MTc0NzY0NTgzMSwiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.yNcjrKOLA1HlomQ0fICdxb12uYF-b0WBIv28jW4bmDg';
+// Add the form fields to the request.
+    body.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
     LoggerService.logInfo('Fetching new token from: $tokenServerURL');
 
-    final response = await _client
-        .post(
-          Uri.parse(tokenServerURL),
-          body: body,
-        )
-        .timeout(Duration(seconds: serverTimeout));
+    try {
+      final http.StreamedResponse streamedResponse = await request.send();
+      final http.Response response =
+          await http.Response.fromStream(streamedResponse);
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      final String token = jsonResponse['Token'];
-      await _cacheService.setString(_tokenCacheKey, token);
-      LoggerService.logInfo('Successfully fetched and cached new token');
-      return token;
-    } else {
-      throw Exception(
-        'Failed to fetch token: ${response.statusCode}, body: ${response.body}',
-      );
+      LoggerService.logInfo('Response Status Code: ${response.statusCode}');
+      LoggerService.logInfo('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final String token = jsonResponse['Token'];
+        await _cacheService.setString(_tokenCacheKey, token);
+        LoggerService.logInfo('Successfully fetched and cached new token');
+        return token;
+      }
+    } catch (e) {
+      LoggerService.logInfo('POST Request Error: $e'); // Changed to POST
+    } finally {
+      // No need to close the client here, as we are not creating one.
     }
+    return '';
   }
 
   // Helper method to get token from cache or fetch if needed
@@ -91,6 +103,7 @@ class HttpClient {
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
       requestHeaders['Cookie'] = 'access_token=$token';
+      requestHeaders['Content-Length'] = utf8.encode(body).length.toString();
 
       http.Response response;
       if (method == 'POST') {
@@ -111,6 +124,11 @@ class HttpClient {
           final request = http.Request('GET', Uri.parse(url));
           request.headers.addAll(requestHeaders);
           request.body = body;
+
+          print('Sending GET Request to: $url');
+          print('Headers: $headers');
+          print('Body: $body');
+
           final streamedResponse = await _client.send(request);
           response = await http.Response.fromStream(streamedResponse);
           //.timeout(Duration(seconds: serverTimeout));
