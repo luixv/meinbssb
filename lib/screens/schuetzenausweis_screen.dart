@@ -1,9 +1,6 @@
-// ignore_for_file: unused_field, unused_element
-
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Import the intl package
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/logo_widget.dart';
@@ -24,8 +21,6 @@ class SchuetzenausweisScreen extends StatefulWidget {
 
 class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   late Future<Uint8List> _schuetzenausweisFuture;
-  late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
-  late Future<List<dynamic>> _passdatenZVEFuture;
 
   @override
   void initState() {
@@ -35,47 +30,8 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
 
   void _loadData() {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final passDataId = widget.userData['PASSDATENID'];
 
     _schuetzenausweisFuture = apiService.fetchSchuetzenausweis(widget.personId);
-    _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
-      widget.personId,
-    );
-    _passdatenZVEFuture = passDataId != null
-        ? apiService.fetchPassdatenZVE(passDataId, widget.personId)
-        : Future.value([]);
-  }
-
-  Widget _buildErrorWidget(String message) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 48, color: UIConstants.red),
-          const SizedBox(height: UIConstants.defaultSpacing),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: UIConstants.errorStyle,
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(String? isoDateString) {
-    if (isoDateString == null ||
-        isoDateString.isEmpty ||
-        isoDateString == 'N/A') {
-      return 'N/A';
-    }
-    try {
-      final DateTime dateTime = DateTime.parse(isoDateString);
-      final DateFormat formatter = DateFormat('dd.MM.yyyy');
-      return formatter.format(dateTime);
-    } catch (e) {
-      return isoDateString; // Return the original string in case of error
-    }
   }
 
   @override

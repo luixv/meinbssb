@@ -1,7 +1,7 @@
 // Filename: image_service.dart
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data'; // Import Uint8List
+import 'dart:typed_data';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
