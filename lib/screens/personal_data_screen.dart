@@ -48,8 +48,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   void _loadInitialData() {
     // Populate the text fields with the user's data.  Use _userData
-    _passnummerController.text =
-        _userData['PASSNUMMER']?.toString() ?? ''; //ADDED ?.toString()
+    _passnummerController.text = _userData['PASSNUMMER']?.toString() ?? '';
     // Format the date if it's not null
     if (_userData['GEBURTSDATUM'] != null) {
       try {
@@ -211,8 +210,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   label: 'Passnummer',
                   controller: _passnummerController,
                   isReadOnly: true,
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.always, // Always show label on top
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   inputTextStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ), // Make Value Bold
@@ -221,11 +219,24 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   label: 'Geburtsdatum',
                   controller: _geburtsdatumController,
                   isReadOnly: true,
-                  floatingLabelBehavior:
-                      FloatingLabelBehavior.always, // Always show label on top
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   inputTextStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ), // Make Value Bold
+                  // Add the info icon here
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                          ),
+                          duration: Duration(seconds: 5),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 _buildTextField(
                   label: 'Titel',
@@ -332,11 +343,11 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior =
-        FloatingLabelBehavior.auto, // Added this parameter
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
     TextStyle? labelStyle,
     TextStyle? inputTextStyle,
-    Color? backgroundColor, // Added background color parameter
+    Color? backgroundColor,
+    Widget? suffixIcon, // Added suffixIcon parameter
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
@@ -352,13 +363,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               const TextStyle(
                 fontSize: UIConstants.subtitleFontSize,
               ), // Ensure label style is set.
-          floatingLabelBehavior:
-              floatingLabelBehavior, // Use the parameter here
+          floatingLabelBehavior: floatingLabelBehavior,
           hintText:
               isReadOnly ? null : label, // Only show hint for editable fields
           fillColor: backgroundColor, // Use the provided background color
           filled: backgroundColor !=
               null, // Only fill if a color is provided.  Important.
+          suffixIcon: suffixIcon, // Assign the suffixIcon here
         ),
         validator: validator,
         readOnly: isReadOnly,
