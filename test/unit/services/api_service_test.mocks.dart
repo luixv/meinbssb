@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i7;
 import 'package:flutter/services.dart' as _i11;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/services/api/auth_service.dart' as _i12;
+import 'package:meinbssb/services/api/bank_service.dart' as _i15;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
 import 'package:meinbssb/services/api/user_service.dart' as _i14;
 import 'package:meinbssb/services/cache_service.dart' as _i9;
@@ -1027,4 +1028,33 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
         ),
         returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
       ) as _i2.Future<List<dynamic>>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchKontakte(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchKontakte,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
+}
+
+/// A class which mocks [BankService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockBankService extends _i1.Mock implements _i15.BankService {
+  MockBankService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBankdaten,
+          [webloginId],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }

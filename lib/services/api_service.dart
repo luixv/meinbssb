@@ -7,6 +7,7 @@ import 'package:meinbssb/services/api_service.dart' as network_ex;
 import '/services/api/auth_service.dart';
 import '/services/api/training_service.dart';
 import '/services/api/user_service.dart';
+import '/services/api/bank_service.dart';
 import '/services/cache_service.dart';
 import '/services/config_service.dart';
 import '/services/http_client.dart';
@@ -31,12 +32,14 @@ class ApiService {
     required TrainingService trainingService,
     required UserService userService,
     required AuthService authService,
+    required BankService bankService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
         _userService = userService,
-        _authService = authService;
+        _authService = authService,
+        _bankService = bankService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -44,6 +47,7 @@ class ApiService {
   final TrainingService _trainingService;
   final UserService _userService;
   final AuthService _authService;
+  final BankService _bankService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -128,6 +132,10 @@ class ApiService {
 
   Future<List<dynamic>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
+  }
+
+  Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
+    return _bankService.fetchBankdaten(webloginId);
   }
 
   Future<bool> unregisterFromSchulung(int personId, int schulungId) async {

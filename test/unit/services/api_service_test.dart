@@ -11,6 +11,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/user_service.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
 import 'api_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -23,6 +24,7 @@ import 'api_service_test.mocks.dart';
   AuthService,
   TrainingService,
   UserService,
+  BankService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +38,7 @@ void main() {
   late MockAuthService mockAuthService;
   late MockTrainingService mockTrainingService;
   late MockUserService mockUserService;
+  late MockBankService mockBankService;
 
   setUp(() {
     mockConfigService = MockConfigService();
@@ -46,6 +49,7 @@ void main() {
     mockAuthService = MockAuthService();
     mockTrainingService = MockTrainingService();
     mockUserService = MockUserService();
+    mockBankService = MockBankService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -56,6 +60,7 @@ void main() {
       authService: mockAuthService,
       trainingService: mockTrainingService,
       userService: mockUserService,
+      bankService: mockBankService,
     );
   });
 

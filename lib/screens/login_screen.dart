@@ -69,7 +69,11 @@ class LoginScreenState extends State<LoginScreen> {
       LoggerService.logInfo('Login response: $response');
 
       if (response['ResultType'] == 1) {
-        await _handleSuccessfulLogin(apiService, response['PersonID']);
+        await _handleSuccessfulLogin(
+          apiService,
+          response['PersonID'],
+          response['WebLoginID'],
+        );
       } else {
         setState(() => _errorMessage = response['ResultMessage']);
       }
@@ -85,6 +89,7 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> _handleSuccessfulLogin(
     ApiService apiService,
     int personId,
+    int webloginId,
   ) async {
     LoggerService.logInfo('Retrieving passdaten');
     var passdaten = await apiService.fetchPassdaten(personId);
@@ -93,7 +98,11 @@ class LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (passdaten.isNotEmpty) {
-      final completeUserData = {...passdaten, 'PERSONID': personId};
+      final completeUserData = {
+        ...passdaten,
+        'PERSONID': personId,
+        'WEBLOGINID': webloginId,
+      };
       _userData = completeUserData;
       _isLoggedIn =
           true; // Update the login state.  Crucial for passing to PasswordReset.

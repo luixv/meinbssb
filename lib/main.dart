@@ -6,6 +6,8 @@ import 'app.dart';
 import 'services/api/auth_service.dart';
 import 'services/api/user_service.dart';
 import 'services/api_service.dart';
+import 'services/api/training_service.dart';
+import 'services/api/bank_service.dart';
 import 'services/email_service.dart';
 import 'services/image_service.dart';
 import 'services/http_client.dart';
@@ -13,7 +15,6 @@ import 'services/cache_service.dart';
 import 'services/config_service.dart';
 import 'services/logger_service.dart';
 import 'services/network_service.dart';
-import 'services/api/training_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class AppInitializer {
   static late TrainingService _trainingService;
   static late UserService _userService;
   static late AuthService _authService;
+  static late BankService _bankService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -83,6 +85,10 @@ class AppInitializer {
       networkService: _networkService,
     );
 
+    _bankService = BankService(
+      httpClient: _httpClient,
+    );
+
     _apiService = ApiService(
       configService: _configService,
       httpClient: _httpClient,
@@ -92,6 +98,7 @@ class AppInitializer {
       trainingService: _trainingService,
       userService: _userService,
       authService: _authService,
+      bankService: _bankService,
     );
 
     _registerProviders();

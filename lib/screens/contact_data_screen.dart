@@ -14,8 +14,8 @@ class ContactDataScreen extends StatefulWidget {
     required this.onLogout,
     super.key,
   });
-  final int personId;
   final Map<String, dynamic> userData;
+  final int personId;
   final bool isLoggedIn;
   final Function() onLogout;
 

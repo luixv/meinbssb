@@ -8,6 +8,7 @@ import '/screens/schuetzenausweis_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
+import '/screens/bank_data_screen.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -78,6 +79,25 @@ class AppMenu extends StatelessWidget {
     );
   }
 
+  void _openBanktDataScreen(int webloginId) {
+    // Function to open BankDataScreen
+    // call the api_service for the bank data
+    // and pass the data to the BankDataScreen
+    //fetchBankdata(webloginId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BankDataScreen(
+          userData, // Pass the userData
+          webloginId: webloginId,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
@@ -97,6 +117,9 @@ class AppMenu extends StatelessWidget {
         } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
           _openContactDataScreen(userData['PERSONID']);
+        } else if (value == 'zahlungsart') {
+          // Call the function to open BankdatenScreen
+          _openBanktDataScreen(userData['WEBLOGINID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
           _openPersonalDataScreen();
@@ -171,6 +194,13 @@ class AppMenu extends StatelessWidget {
               value: 'oktoberfestlandesschiessen',
               child: Text(
                 'Oktoberfestlandesschiessen',
+                style: UIConstants.bodyStyle,
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'zahlungsart',
+              child: Text(
+                'Zahlungsart',
                 style: UIConstants.bodyStyle,
               ),
             ),

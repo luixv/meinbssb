@@ -208,6 +208,7 @@ Ergebnis der Abfrage:
           await _cacheService.setString('username', email);
           await _secureStorage.write(key: 'password', value: password);
           await _cacheService.setInt('personId', response['PersonID']);
+          await _cacheService.setInt('webLoginId', response['WebLoginID']);
           await _cacheService.setCacheTimestamp();
           LoggerService.logInfo('User data cached successfully.');
           return response;
@@ -244,6 +245,7 @@ Ergebnis der Abfrage:
     final cachedUsername = await _cacheService.getString('username');
     final cachedPassword = await _secureStorage.read(key: 'password');
     final cachedPersonId = await _cacheService.getInt('personId');
+    final cachedWebloginId = await _cacheService.getInt('webloginId');
     final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
     final expirationDuration = _networkService.getCacheExpirationDuration();
     final expirationTime = DateTime.fromMillisecondsSinceEpoch(
@@ -266,7 +268,11 @@ Ergebnis der Abfrage:
 
     if (isCacheValid) {
       LoggerService.logInfo('Login from cache successful.');
-      return {'ResultType': 1, 'PersonID': cachedPersonId};
+      return {
+        'ResultType': 1,
+        'PersonID': cachedPersonId,
+        'WebLoginID': cachedWebloginId,
+      };
     } else {
       LoggerService.logWarning('Offline login failed.');
       if (testCachedUsername &&

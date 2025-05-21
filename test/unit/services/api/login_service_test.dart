@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -9,7 +10,7 @@ import 'package:meinbssb/services/network_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/user_service.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/config_service.dart';
 import 'package:meinbssb/exceptions/network_exception.dart' as network_ex;
 
@@ -25,6 +26,7 @@ import 'login_service_test.mocks.dart';
   ConfigService,
   TrainingService,
   UserService,
+  BankService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +41,7 @@ void main() {
   late MockAuthService mockAuthService;
   late MockTrainingService mockTrainingService;
   late MockUserService mockUserService;
+  late MockBankService mockBankService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -53,6 +56,7 @@ void main() {
     mockAuthService = MockAuthService();
     mockTrainingService = MockTrainingService();
     mockUserService = MockUserService();
+    mockBankService = MockBankService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -63,6 +67,7 @@ void main() {
       authService: mockAuthService,
       trainingService: mockTrainingService,
       userService: mockUserService,
+      bankService: mockBankService,
     );
   });
 
