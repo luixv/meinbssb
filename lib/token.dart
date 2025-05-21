@@ -43,7 +43,6 @@ void main() async {
       logger.fine('$key: $value'); // Log each header line
     });
 
-    // Optional: Extract cookies separately (if 'set-cookie' exists)
     if (response.headers.containsKey('set-cookie')) {
       logger.fine('\n==== Cookies (from set-cookie) ====');
       response.headers['set-cookie']!.split(',').forEach((cookie) {
