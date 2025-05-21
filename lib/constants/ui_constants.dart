@@ -54,6 +54,12 @@ class UIConstants {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle subtitleStyle = TextStyle(
+    fontSize: 18.0, // Example size, adjust as needed
+    fontWeight: FontWeight.w600, // Example weight, adjust as needed
+    color: Colors.black87, // Default color, can be overridden
+  );
+
   static const TextStyle titleStyle = TextStyle(
     fontSize: titleFontSize,
     fontWeight: FontWeight.bold,

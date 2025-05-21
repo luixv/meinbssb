@@ -40,7 +40,7 @@ class HttpClient {
     // Create a multipart request.
     var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
     request.headers['Cookie'] =
-        'access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDc3MzIyMzEsImlhdCI6MTc0NzY0NTgzMSwiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.yNcjrKOLA1HlomQ0fICdxb12uYF-b0WBIv28jW4bmDg';
+        'access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDc5MDc2NDksImlhdCI6MTc0NzgyMTI0OSwiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.ksmD7FkX7yIQRV5r_Dgj4A5YiagS40ya6SP4ur86srk';
 // Add the form fields to the request.
     body.forEach((key, value) {
       request.fields[key] = value;

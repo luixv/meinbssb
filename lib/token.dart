@@ -19,6 +19,8 @@ void main() async {
 
   // Create a multipart request.
   var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
+  request.headers['Cookie'] =
+      'access_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlcyI6InN0YW5kYXJkLHdlYix3aWVzbix3ZWJCYXVrYXN0ZW4sYWNjZXNzIiwiZHVyYXRpb24iOiIxODk5LTEyLTMxIiwiaXNzIjoiTUFSUy1DdXJpb3NpdHkiLCJleHAiOjE3NDc5MDg5OTQsImlhdCI6MTc0NzgyMjU5NCwiVXNlck5hbWUiOiJ3ZWJVc2VyIiwiQkVOVVRaRVJJRCI6Nn0.fmwEbE_uVJ2773zBJ0Qwru41bPjJlqhkrRb2B71ENLE';
 
   // Add the form fields to the request.
   formFields.forEach((key, value) {

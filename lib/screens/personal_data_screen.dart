@@ -215,6 +215,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     fontWeight: FontWeight.bold,
                   ), // Make Value Bold
                 ),
+                // Reverted to _buildTextField for Geburtsdatum
                 _buildTextField(
                   label: 'Geburtsdatum',
                   controller: _geburtsdatumController,
@@ -223,19 +224,17 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   inputTextStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ), // Make Value Bold
-                  // Add the info icon here
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.info_outline),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                          ),
-                          duration: Duration(seconds: 5),
-                        ),
-                      );
-                    },
+                  // Add the info icon as a suffix
+                  suffixIcon: Tooltip(
+                    message:
+                        'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                    preferBelow: false, // Show tooltip above the icon
+                    child: Icon(
+                      Icons.info_outline,
+                      size: UIConstants
+                          .subtitleStyle.fontSize, // Match label font size
+                      color: Colors.black, // Set color to black
+                    ),
                   ),
                 ),
                 _buildTextField(
@@ -318,7 +317,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     child: _isLoading
                         ? const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.white,),
+                              UIConstants.white,
+                            ),
                           )
                         : const Text(
                             'Absenden',
@@ -344,10 +344,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     String? Function(String?)? validator,
     bool isReadOnly = false,
     FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    TextStyle? labelStyle,
+    //TextStyle? labelStyle,
     TextStyle? inputTextStyle,
     Color? backgroundColor,
-    Widget? suffixIcon, // Added suffixIcon parameter
+    Widget? suffixIcon, // Re-added suffixIcon parameter
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
@@ -359,10 +359,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             ), // Input text style.  Important
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label, // Now set here
-          labelStyle: labelStyle ??
-              const TextStyle(
-                fontSize: UIConstants.subtitleFontSize,
-              ), // Ensure label style is set.
+          // labelStyle: labelStyle ??
+          //     UIConstants.subtitleStyle, // Use subtitleStyle as default
           floatingLabelBehavior: floatingLabelBehavior,
           hintText:
               isReadOnly ? null : label, // Only show hint for editable fields

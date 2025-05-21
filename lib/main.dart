@@ -36,26 +36,30 @@ class AppInitializer {
   static Future<void> init() async {
     LoggerService.init();
     _configService = await ConfigService.load('assets/config.json');
-    final serverTimeout = _configService.getInt('serverTimeout', 'theme') ?? 10;
 
+    final serverTimeout = _configService.getInt('serverTimeout', 'theme') ?? 10;
+    final protocol = _configService.getString('apiProtocol', 'api') ?? 'https';
     final baseIP =
         _configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
-
     final port = _configService.getString('apiPort', 'api') ?? '56400';
-
     final path =
         _configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
 
     _imageService = ImageService();
+
     final prefs = await SharedPreferences.getInstance();
+
     _cacheService = CacheService(
       prefs: prefs,
       configService: _configService,
     );
     _networkService = NetworkService(configService: _configService);
 
+    String baseUrl =
+        '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
+
     _httpClient = HttpClient(
-      baseUrl: 'https://$baseIP:$port/$path',
+      baseUrl: baseUrl,
       serverTimeout: serverTimeout,
       configService: _configService,
       cacheService: _cacheService,

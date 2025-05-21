@@ -103,8 +103,6 @@ class LoginScreenState extends State<LoginScreen> {
 
       // Get the famous Token :-)
 
-      
-
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(
           '/home',
@@ -165,6 +163,7 @@ class LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       decoration: UIConstants.defaultInputDecoration.copyWith(
         labelText: 'E-mail',
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
   }
