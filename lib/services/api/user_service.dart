@@ -161,4 +161,24 @@ class UserService {
     }
     return [];
   }
+
+  Future<List<dynamic>> fetchKontakte(int personId) async {
+    final response = await _httpClient.get('Kontakte/$personId');
+    final mappedResponse = _mapKontakteResponse(response);
+    return mappedResponse; // Return the mapped response
+  }
+
+  List<dynamic> _mapKontakteResponse(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        return {
+          'PERSONID': item['PERSONID'],
+          'KONTAKTID': item['KONTAKTID'],
+          'KONTAKTTYP': item['KONTAKTTYP'],
+          'KONTAKT': item['KONTAKT'],
+        };
+      }).toList();
+    }
+    return [];
+  }
 }

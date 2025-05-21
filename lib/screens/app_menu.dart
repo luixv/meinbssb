@@ -59,13 +59,18 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-  void _openContactDataScreen() {
+  void _openContactDataScreen(int personId) {
     // Function to open ContactDataScreen
+    // call the api_service for the contact data
+    // and pass the data to the ContactDataScreen
+    //fetchKontakte(personId);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ContactDataScreen(
           userData, // Pass the userData
+          personId: personId,
           isLoggedIn: isLoggedIn,
           onLogout: onLogout,
         ),
@@ -91,7 +96,7 @@ class AppMenu extends StatelessWidget {
           _openImpressumScreen();
         } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
-          _openContactDataScreen();
+          _openContactDataScreen(userData['PERSONID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
           _openPersonalDataScreen();

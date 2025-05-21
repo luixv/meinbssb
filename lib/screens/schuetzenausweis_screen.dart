@@ -25,10 +25,10 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadInitialData();
   }
 
-  void _loadData() {
+  void _loadInitialData() {
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     _schuetzenausweisFuture = apiService.fetchSchuetzenausweis(widget.personId);

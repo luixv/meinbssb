@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
-import '/services/logger_service.dart'; // Import your LoggerService
+import '/services/api_service.dart';
+import '/services/logger_service.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
     this.userData, {
+    required this.personId,
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
+  final int personId;
   final Map<String, dynamic> userData;
   final bool isLoggedIn;
   final Function() onLogout;
@@ -38,6 +42,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   final TextEditingController _geschaeftlichFaxController =
       TextEditingController();
 
+  late Future<List<dynamic>> _contactDataFuture;
+
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false; // Track loading state for the submit button.
   // Add the _userData variable
@@ -64,6 +70,19 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         _userData['MOBILNUMMER_GESCHAEFTLICH'] ?? '';
     _geschaeftlichEmailController.text = _userData['EMAIL_GESCHAEFTLICH'] ?? '';
     _geschaeftlichFaxController.text = _userData['FAX_GESCHAEFTLICH'] ?? '';
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+
+      _contactDataFuture = apiService.fetchKontakte(
+        widget.personId,
+      );
+
+      print(_contactDataFuture);
+    } catch (e) {
+      LoggerService.logError('Error loading data: $e');
+      _contactDataFuture = Future.value([]);
+    }
 
     LoggerService.logInfo('ContactDataScreen initialized');
   }
