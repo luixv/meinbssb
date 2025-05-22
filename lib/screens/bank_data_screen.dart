@@ -3,6 +3,7 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/logger_service.dart';
+import '/services/api/bank_service.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -75,7 +76,8 @@ class BankDataScreenState extends State<BankDataScreen> {
         // });
 
         await Future.delayed(
-            const Duration(seconds: 2),); // Simulate network delay
+          const Duration(seconds: 2),
+        ); // Simulate network delay
 
         const bool success = true; // Simulate a successful response
 
@@ -108,63 +110,6 @@ class BankDataScreenState extends State<BankDataScreen> {
         }
       }
     }
-  }
-
-  // IBAN Validator functions (copied from your provided iban_checker.dart)
-  bool validateIBAN(String iban) {
-    iban =
-        iban.toUpperCase().replaceAll(' ', ''); // Remove spaces and uppercase
-
-    if (!RegExp(r'^[A-Z0-9]+$').hasMatch(iban)) {
-      return false; // Invalid characters
-    }
-
-    if (iban.length < 5) {
-      return false; // Too short to be a valid IBAN
-    }
-
-    String countryCode = iban.substring(0, 2);
-    String checkDigits = iban.substring(2, 4);
-    String bban = iban.substring(4);
-
-    String movedIban = bban + countryCode + checkDigits;
-
-    String numericIban = '';
-    for (int i = 0; i < movedIban.length; i++) {
-      String char = movedIban[i];
-      if (RegExp(r'^[0-9]$').hasMatch(char)) {
-        numericIban += char;
-      } else {
-        numericIban += (char.codeUnitAt(0) - 55).toString(); // A=10, B=11, ...
-      }
-    }
-
-    int remainder = _mod97(numericIban);
-
-    return remainder == 1;
-  }
-
-  int _mod97(String numericIban) {
-    int remainder = 0;
-    for (int i = 0; i < numericIban.length; i++) {
-      remainder = (remainder * 10 + int.parse(numericIban[i])) % 97;
-    }
-    return remainder;
-  }
-
-  // BIC Validator
-  String? validateBIC(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'BIC ist erforderlich';
-    }
-    // BIC (SWIFT code) is 8 or 11 alphanumeric characters.
-    // Format: AAAA BB CC DDD (AAAA: bank code, BB: country code, CC: location code, DDD: optional branch code)
-    // Only A-Z and 0-9 are allowed.
-    final bicRegex = RegExp(r'^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$');
-    if (!bicRegex.hasMatch(value.toUpperCase())) {
-      return 'Ungültiger BIC (Beispiel: DEUTDEFFXXX)';
-    }
-    return null;
   }
 
   @override
@@ -225,7 +170,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                     if (value == null || value.isEmpty) {
                       return 'IBAN ist erforderlich';
                     }
-                    if (!validateIBAN(value)) {
+                    if (!BankService.validateIBAN(value)) {
                       return 'Ungültige IBAN';
                     }
                     return null;
@@ -234,7 +179,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                 _buildTextField(
                   label: 'BIC',
                   controller: _bicController,
-                  validator: validateBIC, // Use the dedicated BIC validator
+                  validator: BankService
+                      .validateBIC, // Use the dedicated BIC validator
                 ),
                 const SizedBox(height: UIConstants.defaultSpacing),
                 SizedBox(
@@ -248,7 +194,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                     child: _isLoading
                         ? const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.white,),
+                              UIConstants.white,
+                            ),
                           )
                         : const Text(
                             'Absenden',
@@ -289,7 +236,8 @@ class BankDataScreenState extends State<BankDataScreen> {
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
           labelStyle: const TextStyle(
-              fontSize: UIConstants.subtitleFontSize,), // Fixed label style
+            fontSize: UIConstants.subtitleFontSize,
+          ), // Fixed label style
           floatingLabelBehavior:
               FloatingLabelBehavior.auto, // Set to auto for desired behavior
           hintText: isReadOnly ? null : label,

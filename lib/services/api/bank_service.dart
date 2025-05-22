@@ -1,11 +1,13 @@
 // Project: Mein BSSB
-// Filename: training_service.dart
+// Filename: bank_service.dart (Updated)
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
+import 'dart:convert'; // Import for jsonDecode
 
 import '/services/http_client.dart';
 import '/services/logger_service.dart';
+import 'package:http/http.dart' as http; // Import http for http.Response
 
 class BankService {
   BankService({
@@ -16,8 +18,13 @@ class BankService {
 
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     try {
-      final response = await _httpClient.get('BankdatenMyBSSB/$webloginId');
-      final mappedResponse = _mapBankdatenResponse(response);
+      // HttpClient.get returns an http.Response.
+      final http.Response response =
+          await _httpClient.get('BankdatenMyBSSB/$webloginId');
+
+      // Decode the JSON body of the http.Response before mapping.
+      final dynamic decodedResponse = jsonDecode(response.body);
+      final mappedResponse = _mapBankdatenResponse(decodedResponse);
 
       return mappedResponse;
     } catch (e) {
@@ -66,5 +73,58 @@ class BankService {
       };
     }
     return {}; // Return empty map for other cases
+  }
+
+  // IBAN Validator functions moved from BankDataScreen
+  static bool validateIBAN(String iban) {
+    iban =
+        iban.toUpperCase().replaceAll(' ', ''); // Remove spaces and uppercase
+
+    if (!RegExp(r'^[A-Z0-9]+$').hasMatch(iban)) {
+      return false; // Invalid characters
+    }
+
+    if (iban.length < 5) {
+      return false; // Too short to be a valid IBAN
+    }
+
+    String countryCode = iban.substring(0, 2);
+    String checkDigits = iban.substring(2, 4);
+    String bban = iban.substring(4);
+
+    String movedIban = bban + countryCode + checkDigits;
+
+    String numericIban = '';
+    for (int i = 0; i < movedIban.length; i++) {
+      String char = movedIban[i];
+      if (RegExp(r'^[0-9]$').hasMatch(char)) {
+        numericIban += char;
+      } else {
+        numericIban += (char.codeUnitAt(0) - 55).toString(); // A=10, B=11, ...
+      }
+    }
+
+    //int remainder = _mod97(numericIban); // Original call to private method
+    int remainder = 0; // Inlined _mod97 logic
+    for (int i = 0; i < numericIban.length; i++) {
+      remainder = (remainder * 10 + int.parse(numericIban[i])) % 97;
+    }
+
+    return remainder == 1;
+  }
+
+  // BIC Validator
+  static String? validateBIC(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'BIC ist erforderlich';
+    }
+    // BIC (SWIFT code) is 8 or 11 alphanumeric characters.
+    // Format: AAAA BB CC DDD (AAAA: bank code, BB: country code, CC: location code, DDD: optional branch code)
+    // Only A-Z and 0-9 are allowed.
+    final bicRegex = RegExp(r'^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$');
+    if (!bicRegex.hasMatch(value.toUpperCase())) {
+      return 'Ungültiger BIC (Beispiel: DEUTDEFFXXX)';
+    }
+    return null;
   }
 }

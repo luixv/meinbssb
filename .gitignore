@@ -46,3 +46,4 @@ app.*.map.json
 lib/ping.dart
 lib/req.dart
 lib/token.dart
+pubspec.lock
