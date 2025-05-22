@@ -321,11 +321,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Um die Hintergrundfarbe zu ändern, wickeln wir den gesamten Scaffold-Body in ein Container-Widget
     return Scaffold(
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
-        title: const Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
+        title: const Text('Registrierung', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
             context: context,
@@ -338,7 +338,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         ],
       ),
       body: Container(
-        // Hier setzen wir die Hintergrundfarbe des Containers
         color: UIConstants.backgroundGreen,
         child: SingleChildScrollView(
           padding: UIConstants.screenPadding,

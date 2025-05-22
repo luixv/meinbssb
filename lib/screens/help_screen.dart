@@ -17,7 +17,9 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('FAQ', style: UIConstants.titleStyle),
         actions: [
           AppMenu(

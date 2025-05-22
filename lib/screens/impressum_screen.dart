@@ -17,9 +17,17 @@ class ImpressumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
-        title: const Text('Impressum'),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Impressum',
+          style: UIConstants.titleStyle,
+        ),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+          ),
           AppMenu(
             context: context,
             userData: userData,
@@ -37,10 +45,6 @@ class ImpressumScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Der gesamte Inhalt bleibt gleich
-              Text(
-                'Impressum',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
               SizedBox(height: 16),
               Text(
                 'Für den Inhalt verantwortlich sind:',
