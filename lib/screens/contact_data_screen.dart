@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
-import '/services/logger_service.dart';
+import '/services/logger_service.dart'; // Import your LoggerService
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -181,7 +181,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _buildSectionTitle('Privat'),
+                _buildSectionTitle(
+                  'Privat',
+                  color: UIConstants.defaultAppColor,
+                ), // Changed color
                 _buildTextField(
                   label: 'Telefonnummer',
                   controller: _privatTelefonController,
@@ -217,7 +220,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     return null;
                   },
                 ),
-                _buildSectionTitle('Geschäftlich'),
+                _buildSectionTitle(
+                  'Geschäftlich',
+                  color: UIConstants.defaultAppColor,
+                ), // Changed color
                 _buildTextField(
                   label: 'Telefonnummer',
                   controller: _geschaeftlichTelefonController,
@@ -285,14 +291,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, {Color? color}) {
+    // Added color parameter
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing / 2),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
+          // Use TextStyle to apply color
           fontSize: UIConstants.titleFontSize,
           fontWeight: FontWeight.bold,
+          color: color, // Apply the color here
         ),
       ),
     );
