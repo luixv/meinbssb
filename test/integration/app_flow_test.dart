@@ -156,7 +156,7 @@ void main() {
       // Enter login credentials
       await tester.enterText(
         find.byKey(const Key('usernameField')),
-        'luis@mandel.pro',
+        'kostas@rizoudis1.de',
       );
       await tester.enterText(find.byKey(const Key('passwordField')), 'a');
 
@@ -171,8 +171,8 @@ void main() {
       debugPrint('Login done!\n\n');
 
       // Verify user data is displayed
-      expect(find.text('Luis Mandel'), findsOneWidget);
-      expect(find.text('41299999'), findsOneWidget);
+      expect(find.text('Lukas Schürz'), findsOneWidget);
+      expect(find.text('40100709'), findsOneWidget);
       debugPrint('User found!\n\n');
 
       // Test accessing Schuetzenausweis
@@ -232,6 +232,18 @@ void main() {
       );
       debugPrint('Persönliche Daten found!\n\n');
 
+      // Access Zahlungsart
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Zahlungsart')); // Tap the menu item
+      debugPrint('Zahlungsart!\n\n');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Bankdaten').first,
+        findsOneWidget,
+      );
+      debugPrint('Zahlungsart!\n\n');
+
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
@@ -272,7 +284,8 @@ void main() {
 
       // Verify either the online or offline error message is displayed
       final onlineErrorFinder =
-          find.text('Benutzername oder Passwort ist falsch');
+          //find.text('Benutzername oder Passwort ist falsch');
+          find.text('MyBSSB Login nicht vorhanden');
       final offlineErrorFinder = find.text(
         'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
       );
