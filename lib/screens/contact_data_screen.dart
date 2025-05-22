@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
-import '/services/logger_service.dart'; // Import your LoggerService
+import '/services/logger_service.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -46,7 +46,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false; // Track loading state for the submit button.
-  // Add the _userData variable
   Map<String, dynamic> _userData = {};
 
   @override
@@ -90,8 +89,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from StammdatenScreen');
     widget.onLogout(); // Call the logout function provided by the parent.
-    Navigator.of(context)
-        .pushReplacementNamed('/login'); // Navigate to the login screen
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   Future<void> _submitForm() async {
@@ -298,10 +296,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       child: Text(
         title,
         style: TextStyle(
-          // Use TextStyle to apply color
           fontSize: UIConstants.titleFontSize,
           fontWeight: FontWeight.bold,
-          color: color, // Apply the color here
+          color: color,
         ),
       ),
     );
