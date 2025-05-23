@@ -2,6 +2,7 @@
 // Filename: training_service.dart
 // Author: Luis Mandel / NTT DATA
 
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -132,17 +133,49 @@ class TrainingService {
       rethrow;
     }
   }
-  
-  /*
-  
-  "DATUM": "2025-05-12T00:00:00.000+02:00",
-        "BEZEICHNUNG": "Digitale Evolution 2.0: Deine Reise in die digitale Zukunft der neuen Medien",
-        "SCHULUNGENTEILNEHMERID": 27203,
-        "SCHULUNGENTERMINID": 1570,
-        "SCHULUNGSARTID": 2000000326,
-        "STATUS": 0,
-        "DATUMBIS": "",
-        "FUERVERLAENGERUNGEN": true
-  
-  */
+
+  Future<List<dynamic>> fetchAbsolvierteSchulungen(int personId) async {
+    try {
+      final response = await _httpClient.get('AbsolvierteSchulungen/$personId');
+      return _mapAbsolvierteSchulungen(response);
+    } catch (e) {
+      LoggerService.logError('Error registering for training: $e');
+      rethrow;
+    }
+  }
+
+  List<dynamic> _mapAbsolvierteSchulungen(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        // Helper function to parse and format dates
+        String formatDate(String? dateString) {
+          if (dateString == null || dateString.isEmpty) {
+            return ''; // Return empty string for null or empty dates
+          }
+          try {
+            // Parse the ISO 8601 string into a DateTime object
+            final DateTime dateTime = DateTime.parse(dateString);
+            // Format the DateTime object to DD.MM.YYYY
+            return DateFormat('dd.MM.yyyy').format(dateTime);
+          } catch (e) {
+            // Log error if date parsing fails for some reason
+            LoggerService.logError('Error parsing date "$dateString": $e');
+            return dateString; // Return original string if parsing fails
+          }
+        }
+
+        return {
+          'AUSGESTELLTAM':
+              formatDate(item['AUSGESTELLTAM']), // Format this date
+          'BEZEICHNUNG': item['BEZEICHNUNG'] ?? '',
+          'GUELTIGBIS': formatDate(item['GUELTIGBIS']), // Format this date
+          // 'NUMMER': item['NUMMER'] ?? '',
+          // 'SCHULUNGID': item['SCHULUNGID'] ?? 0,
+          // 'SCHULUNGSARTID': item['SCHULUNGSARTID'] ?? 0,
+          // 'FUERVERLAENGERUNGEN': item['FUERVERLAENGERUNGEN'] ?? false,
+        };
+      }).toList();
+    }
+    return [];
+  }
 }

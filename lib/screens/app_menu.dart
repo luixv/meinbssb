@@ -9,6 +9,7 @@ import '/screens/impressum_screen.dart';
 import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
+import '/screens/absolvierte_schulungen_screen.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -79,6 +80,25 @@ class AppMenu extends StatelessWidget {
     );
   }
 
+  void _openAbsolvierteSchulungenScreen(int personId) {
+    // Function to open AbsolvierteSchulungenScreen
+    // call the api_service for the Absolvierte Schulungen data
+    // and pass the data to the AbsolvierteSchulungenScreen
+    //fetchAbsolvierteSchulungen(personId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AbsolvierteSchulungenScreen(
+          userData, // Pass the userData
+          personId: personId,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
   void _openBanktDataScreen(int webloginId) {
     // Function to open BankDataScreen
     // call the api_service for the bank data
@@ -117,6 +137,9 @@ class AppMenu extends StatelessWidget {
         } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
           _openContactDataScreen(userData['PERSONID']);
+        } else if (value == 'absolvierte_schulungen') {
+          // Call the function to open AbsolvierteSchulungenScreen
+          _openAbsolvierteSchulungenScreen(userData['PERSONID']);
         } else if (value == 'zahlungsart') {
           // Call the function to open BankdatenScreen
           _openBanktDataScreen(userData['WEBLOGINID']);
@@ -184,9 +207,9 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'seminare_absolviert',
+              value: 'absolvierte_schulungen',
               child: Text(
-                'Seminare absolviert',
+                'Absolvierte Schulungen',
                 style: UIConstants.bodyStyle,
               ),
             ),
