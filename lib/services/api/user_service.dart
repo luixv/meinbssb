@@ -162,23 +162,59 @@ class UserService {
     return [];
   }
 
-  Future<List<dynamic>> fetchKontakte(int personId) async {
+  Future<Map<String, dynamic>> fetchKontakte(int personId) async {
     final response = await _httpClient.get('Kontakte/$personId');
+    // Call the modified _mapKontakteResponse which now returns a single Map
     final mappedResponse = _mapKontakteResponse(response);
-    return mappedResponse; // Return the mapped response
+    return mappedResponse; // Return the single mapped response
   }
 
-  List<dynamic> _mapKontakteResponse(dynamic response) {
+  // Modified _mapKontakteResponse to create a single consolidated Map
+  Map<String, dynamic> _mapKontakteResponse(dynamic response) {
+    Map<String, dynamic> consolidatedContactData =
+        {}; // This will hold the single item
+
     if (response is List) {
-      return response.map((item) {
-        return {
-          'PERSONID': item['PERSONID'],
-          'KONTAKTID': item['KONTAKTID'],
-          'KONTAKTTYP': item['KONTAKTTYP'],
-          'KONTAKT': item['KONTAKT'],
-        };
-      }).toList();
+      for (var item in response) {
+        if (item is Map<String, dynamic>) {
+          int? kontaktTyp = item['KONTAKTTYP'];
+          String? kontaktValue = item['KONTAKT'];
+
+          if (kontaktTyp != null && kontaktValue != null) {
+            switch (kontaktTyp) {
+              case 1:
+                consolidatedContactData['TELEFONNUMMER_PRIVAT'] = kontaktValue;
+                break;
+              case 2:
+                consolidatedContactData['MOBILNUMMER_PRIVAT'] = kontaktValue;
+                break;
+              case 3:
+                consolidatedContactData['FAX_PRIVAT'] = kontaktValue;
+                break;
+              case 4:
+                consolidatedContactData['EMAIL_PRIVAT'] = kontaktValue;
+                break;
+              case 5:
+                consolidatedContactData['TELEFONNUMMER_GESCHAEFTLICH'] =
+                    kontaktValue;
+                break;
+              case 6:
+                consolidatedContactData['MOBILNUMMER_GESCHAEFTLICH'] =
+                    kontaktValue;
+                break;
+              case 7:
+                consolidatedContactData['FAX_GESCHAEFTLICH'] = kontaktValue;
+                break;
+              case 8:
+                consolidatedContactData['EMAIL_GESCHAEFTLICH'] = kontaktValue;
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
     }
-    return [];
+    return consolidatedContactData; // Return the single consolidated map
   }
 }

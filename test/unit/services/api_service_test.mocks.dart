@@ -1030,13 +1030,15 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
       ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i2.Future<List<dynamic>> fetchKontakte(int? personId) => (super.noSuchMethod(
+  _i2.Future<Map<String, dynamic>> fetchKontakte(int? personId) =>
+      (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
-        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i2.Future<List<dynamic>>);
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [BankService].

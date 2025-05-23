@@ -130,7 +130,7 @@ class ApiService {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
-  Future<List<dynamic>> fetchKontakte(int personId) async {
+  Future<Map<String, dynamic>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
   }
 

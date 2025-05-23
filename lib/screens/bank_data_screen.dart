@@ -128,7 +128,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
-          'Bankdaten',
+          'Zahlungsart',
           style: UIConstants.titleStyle,
         ),
         actions: [

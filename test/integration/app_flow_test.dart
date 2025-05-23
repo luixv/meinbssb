@@ -239,7 +239,7 @@ void main() {
       debugPrint('Zahlungsart!\n\n');
       await tester.pumpAndSettle();
       expect(
-        find.text('Bankdaten').first,
+        find.text('Zahlungsart').first,
         findsOneWidget,
       );
       debugPrint('Zahlungsart!\n\n');
