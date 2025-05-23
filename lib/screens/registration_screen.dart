@@ -349,7 +349,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               Text(
                 'Hier Registrieren',
                 style: UIConstants.headerStyle.copyWith(
-                  color: UIConstants.lightGreen,
+                  color: UIConstants.defaultAppColor,
                 ),
               ),
               const SizedBox(height: UIConstants.defaultSpacing),

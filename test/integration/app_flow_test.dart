@@ -244,6 +244,19 @@ void main() {
       );
       debugPrint('Zahlungsart!\n\n');
 
+      // Access Absolvierte Schulungen
+      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.text('Absolvierte Schulungen')); // Tap the menu item
+      debugPrint('Absolvierte Schulungen!\n\n');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Absolvierte Schulungen').first,
+        findsOneWidget,
+      );
+      debugPrint('Absolvierte Schulungen!\n\n');
+
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();

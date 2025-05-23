@@ -47,20 +47,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false;
-  Map<String, dynamic> _initialUserData = {}; // Renamed to clarify its purpose
 
   @override
   void initState() {
     super.initState();
-    // Assign the user data from widget. This might contain other profile info.
-    _initialUserData = widget.userData['data'] ?? {};
+
     _loadInitialData(); // Start fetching the contact-specific data
   }
 
   void _loadInitialData() {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-
       // Assign the Future returned by fetchKontakte.
       // It now directly returns a Map<String, dynamic>
       _contactDataFuture = apiService.fetchKontakte(
