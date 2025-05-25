@@ -60,6 +60,36 @@ class ErrorService {
     return 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
   }
 
+  /// Handles validation errors and returns a user-friendly error message
+  static String handleValidationError(String field, String message) {
+    return ValidationException(
+      message: message,
+      field: field,
+    ).message;
+  }
+
+  /// Handles network errors and returns a user-friendly error message
+  static String handleNetworkError(dynamic error) {
+    if (error is NetworkException) {
+      return error.message;
+    }
+    
+    // Handle common network error cases
+    if (error.toString().contains('SocketException')) {
+      return 'Keine Internetverbindung verfügbar. Bitte überprüfen Sie Ihre Verbindung.';
+    }
+    
+    if (error.toString().contains('TimeoutException')) {
+      return 'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut.';
+    }
+    
+    if (error.toString().contains('Connection refused')) {
+      return 'Verbindung zum Server nicht möglich. Bitte versuchen Sie es später erneut.';
+    }
+    
+    return 'Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.';
+  }
+
   static String _handleBaseException(BaseException error) {
     return error.message;
   }
