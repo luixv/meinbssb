@@ -8,12 +8,6 @@ import 'package:meinbssb/services/error_service.dart';
 
 void main() {
   group('ErrorService', () {
-    late TestWidgetsFlutterBinding binding;
-
-    setUp(() {
-      binding = TestWidgetsFlutterBinding.ensureInitialized();
-    });
-
     group('handleValidationError', () {
       test('should return formatted validation error message', () {
         const field = 'email';
