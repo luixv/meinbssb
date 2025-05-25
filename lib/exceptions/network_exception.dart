@@ -1,8 +1,15 @@
-class NetworkException implements Exception {
+import 'base_exception.dart';
 
-  NetworkException([this.message = 'An unexpected network error occurred.']);
-  final String message;
-
-  @override
-  String toString() => 'NetworkException: $message';
+class NetworkException extends BaseException {
+  NetworkException({
+    String message = 'An unexpected network error occurred.',
+    String? code,
+    dynamic originalError,
+    StackTrace? stackTrace,
+  }) : super(
+          message: message,
+          code: code,
+          originalError: originalError,
+          stackTrace: stackTrace,
+        );
 }

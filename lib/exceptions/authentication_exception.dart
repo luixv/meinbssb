@@ -1,9 +1,15 @@
-class AuthenticationException implements Exception {
-  AuthenticationException([this.message = 'Authentication failed']);
-  final String message;
+import 'base_exception.dart';
 
-  @override
-  String toString() {
-    return 'AuthenticationException: $message';
-  }
+class AuthenticationException extends BaseException {
+  AuthenticationException({
+    String message = 'Authentication failed',
+    String? code,
+    dynamic originalError,
+    StackTrace? stackTrace,
+  }) : super(
+          message: message,
+          code: code,
+          originalError: originalError,
+          stackTrace: stackTrace,
+        );
 }
