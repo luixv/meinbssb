@@ -102,5 +102,5 @@ $ python.exe -m http.server 8080 --directory build/web
 
 Then with a web browser address the URL: localhost:8080 et voila!
 
-For a complete tree: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
+For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 

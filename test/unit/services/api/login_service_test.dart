@@ -116,7 +116,7 @@ void main() {
 
     test('should handle network errors during login', () async {
       when(mockAuthService.login(testUsername, testPassword))
-          .thenThrow(network_ex.NetworkException('Network error during login'));
+          .thenThrow(network_ex.NetworkException());
 
       final result = await apiService.login(testUsername, testPassword);
 

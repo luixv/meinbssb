@@ -982,6 +982,16 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchAbsolvierteSchulungen(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAbsolvierteSchulungen,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 }
 
 /// A class which mocks [UserService].
