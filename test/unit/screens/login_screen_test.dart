@@ -198,11 +198,14 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byKey(const Key('loginButton')));
+      Finder loginButton = find.byKey(const Key('loginButton'));
+
+      await tester.tap(loginButton);
       await tester.pumpAndSettle();
 
       expect(loginSuccessCalled, isTrue);
-      expect(find.byType(Placeholder), findsOneWidget);
+      Finder placeholder = find.byType(Placeholder);
+      expect(placeholder, findsOneWidget);
     });
   });
 }
