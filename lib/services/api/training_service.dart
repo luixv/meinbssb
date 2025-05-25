@@ -153,12 +153,9 @@ class TrainingService {
             return ''; // Return empty string for null or empty dates
           }
           try {
-            // Parse the ISO 8601 string into a DateTime object
             final DateTime dateTime = DateTime.parse(dateString);
-            // Format the DateTime object to DD.MM.YYYY
             return DateFormat('dd.MM.yyyy').format(dateTime);
           } catch (e) {
-            // Log error if date parsing fails for some reason
             LoggerService.logError('Error parsing date "$dateString": $e');
             return dateString; // Return original string if parsing fails
           }
