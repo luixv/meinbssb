@@ -1,22 +1,6 @@
 import 'base_exception.dart';
 
 class ApiException extends BaseException {
-  final int? statusCode;
-  final Map<String, dynamic>? response;
-
-  ApiException({
-    required String message,
-    this.statusCode,
-    this.response,
-    String? code,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-          message: message,
-          code: code,
-          originalError: originalError,
-          stackTrace: stackTrace,
-        );
 
   factory ApiException.fromResponse(Map<String, dynamic> response, {StackTrace? stackTrace}) {
     final message = response['ResultMessage'] as String? ?? 'An unexpected API error occurred';
@@ -28,4 +12,15 @@ class ApiException extends BaseException {
       stackTrace: stackTrace,
     );
   }
+
+  ApiException({
+    required super.message,
+    this.statusCode,
+    this.response,
+    super.code,
+    super.originalError,
+    super.stackTrace,
+  });
+  final int? statusCode;
+  final Map<String, dynamic>? response;
 } 

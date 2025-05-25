@@ -9,6 +9,7 @@ import '/exceptions/authentication_exception.dart';
 import '/exceptions/network_exception.dart';
 import '/exceptions/validation_exception.dart';
 import '/exceptions/base_exception.dart';
+import '/services/logger_service.dart';
 
 /// A service for handling errors consistently across the application
 class ErrorService {
@@ -73,20 +74,20 @@ class ErrorService {
     if (error is NetworkException) {
       return error.message;
     }
-    
+
     // Handle common network error cases
     if (error.toString().contains('SocketException')) {
       return 'Keine Internetverbindung verfügbar. Bitte überprüfen Sie Ihre Verbindung.';
     }
-    
+
     if (error.toString().contains('TimeoutException')) {
       return 'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut.';
     }
-    
+
     if (error.toString().contains('Connection refused')) {
       return 'Verbindung zum Server nicht möglich. Bitte versuchen Sie es später erneut.';
     }
-    
+
     return 'Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.';
   }
 
@@ -118,7 +119,8 @@ class ErrorService {
 
   /// Formats API error messages for display
   static String formatApiError(Map<String, dynamic> response) {
-    if (response.containsKey('ResultMessage') && response['ResultMessage'] != null) {
+    if (response.containsKey('ResultMessage') &&
+        response['ResultMessage'] != null) {
       return response['ResultMessage'];
     }
     return 'Ein unbekannter Fehler ist aufgetreten.';
@@ -126,10 +128,9 @@ class ErrorService {
 
   /// Logs an error with its stack trace
   static void logError(dynamic error, [StackTrace? stackTrace]) {
-    // TODO: Implement proper logging
-    print('Error: $error');
+    LoggerService.logError('Error: $error');
     if (stackTrace != null) {
-      print('Stack trace: $stackTrace');
+      LoggerService.logError('Stack trace: $stackTrace');
     }
   }
 }

@@ -1,9 +1,5 @@
 /// Base exception class for the application
 class BaseException implements Exception {
-  final String message;
-  final String? code;
-  final dynamic originalError;
-  final StackTrace? stackTrace;
 
   BaseException({
     required this.message,
@@ -11,6 +7,10 @@ class BaseException implements Exception {
     this.originalError,
     this.stackTrace,
   });
+  final String message;
+  final String? code;
+  final dynamic originalError;
+  final StackTrace? stackTrace;
 
   @override
   String toString() {
