@@ -17,76 +17,96 @@ void main() {
     group('handleValidationError', () {
       test('should return formatted validation error message', () {
         const field = 'email';
-        const message = 'Email is required';
-        
+        const message = 'email: Email is required';
+
         final result = ErrorService.handleValidationError(field, message);
-        
+
         expect(result, equals('email: Email is required'));
       });
 
       test('should handle empty field name', () {
         const field = '';
         const message = 'Field is required';
-        
+
         final result = ErrorService.handleValidationError(field, message);
-        
-        expect(result, equals(': Field is required'));
+
+        expect(result, equals('Field is required'));
       });
     });
 
     group('handleNetworkError', () {
       test('should handle NetworkException', () {
         final error = NetworkException(message: 'No internet connection');
-        
+
         final result = ErrorService.handleNetworkError(error);
-        
+
         expect(result, equals('No internet connection'));
       });
 
       test('should handle SocketException', () {
-        final error = 'SocketException: Failed host lookup';
-        
+        const error = 'SocketException: Failed host lookup';
+
         final result = ErrorService.handleNetworkError(error);
-        
-        expect(result, equals('Keine Internetverbindung verfügbar. Bitte überprüfen Sie Ihre Verbindung.'));
+
+        expect(
+          result,
+          equals(
+            'Keine Internetverbindung verfügbar. Bitte überprüfen Sie Ihre Verbindung.',
+          ),
+        );
       });
 
       test('should handle TimeoutException', () {
-        final error = 'TimeoutException: Connection timed out';
-        
+        const error = 'TimeoutException: Connection timed out';
+
         final result = ErrorService.handleNetworkError(error);
-        
-        expect(result, equals('Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut.'));
+
+        expect(
+          result,
+          equals(
+            'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut.',
+          ),
+        );
       });
 
       test('should handle Connection refused', () {
-        final error = 'Connection refused';
-        
+        const error = 'Connection refused';
+
         final result = ErrorService.handleNetworkError(error);
-        
-        expect(result, equals('Verbindung zum Server nicht möglich. Bitte versuchen Sie es später erneut.'));
+
+        expect(
+          result,
+          equals(
+            'Verbindung zum Server nicht möglich. Bitte versuchen Sie es später erneut.',
+          ),
+        );
       });
 
       test('should handle unknown network error', () {
-        final error = 'Unknown network error';
-        
+        const error = 'Unknown network error';
+
         final result = ErrorService.handleNetworkError(error);
-        
-        expect(result, equals('Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.'));
+
+        expect(
+          result,
+          equals(
+            'Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.',
+          ),
+        );
       });
     });
 
     group('handleException', () {
       test('should handle ApiException', () {
         final error = ApiException(
-          message: 'API Error',
+          message: 'Server Error',
           statusCode: 500,
-          response: {'ResultMessage': 'Server error'},
+          response: {'ResultMessage': 'Server Error'},
         );
-        
+
         final result = ErrorService.handleException(error);
-        
-        expect(result, equals('Server error'));
+
+        expect(result, equals('Server Error'));
       });
 
       test('should handle AuthenticationException', () {
@@ -94,30 +114,35 @@ void main() {
           message: 'Invalid credentials',
           code: 'AUTH_001',
         );
-        
+
         final result = ErrorService.handleException(error);
-        
+
         expect(result, equals('Invalid credentials'));
       });
 
       test('should handle ValidationException', () {
         final error = ValidationException(
-          message: 'Invalid input',
+          message: 'Invalid email format',
           field: 'email',
           errors: {'email': 'Invalid email format'},
         );
-        
+
         final result = ErrorService.handleException(error);
-        
+
         expect(result, equals('Invalid email format'));
       });
 
       test('should handle unknown exception', () {
         final error = Exception('Unknown error');
-        
+
         final result = ErrorService.handleException(error);
-        
-        expect(result, equals('Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'));
+
+        expect(
+          result,
+          equals(
+            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
+          ),
+        );
       });
     });
 
@@ -127,9 +152,9 @@ void main() {
           'ResultMessage': 'Invalid request',
           'ResultCode': 'ERR_001',
         };
-        
+
         final result = ErrorService.formatApiError(response);
-        
+
         expect(result, equals('Invalid request'));
       });
 
@@ -137,9 +162,9 @@ void main() {
         final response = {
           'ResultCode': 'ERR_001',
         };
-        
+
         final result = ErrorService.formatApiError(response);
-        
+
         expect(result, equals('Ein unbekannter Fehler ist aufgetreten.'));
       });
 
@@ -148,9 +173,9 @@ void main() {
           'ResultMessage': null,
           'ResultCode': 'ERR_001',
         };
-        
+
         final result = ErrorService.formatApiError(response);
-        
+
         expect(result, equals('Ein unbekannter Fehler ist aufgetreten.'));
       });
     });

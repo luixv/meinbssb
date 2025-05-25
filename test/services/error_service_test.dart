@@ -44,7 +44,7 @@ void main() {
       });
 
       test('should handle SocketException', () {
-        final error = 'SocketException: Failed host lookup';
+        const error = 'SocketException: Failed host lookup';
         
         final result = ErrorService.handleNetworkError(error);
         
@@ -52,7 +52,7 @@ void main() {
       });
 
       test('should handle TimeoutException', () {
-        final error = 'TimeoutException: Connection timed out';
+        const error = 'TimeoutException: Connection timed out';
         
         final result = ErrorService.handleNetworkError(error);
         
@@ -60,7 +60,7 @@ void main() {
       });
 
       test('should handle Connection refused', () {
-        final error = 'Connection refused';
+        const error = 'Connection refused';
         
         final result = ErrorService.handleNetworkError(error);
         
@@ -68,7 +68,7 @@ void main() {
       });
 
       test('should handle unknown network error', () {
-        final error = 'Unknown network error';
+        const error = 'Unknown network error';
         
         final result = ErrorService.handleNetworkError(error);
         
