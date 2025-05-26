@@ -4,6 +4,8 @@ import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/logger_service.dart';
 import '/services/api/bank_service.dart';
+import '/services/api_service.dart'; // Import ApiService
+import 'package:provider/provider.dart'; // Import Provider
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -30,22 +32,44 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   final _formKey = GlobalKey<FormState>(); // Key for form validation
   bool _isLoading = false; // Loading state for the submit button
-  Map<String, dynamic> _userData = {}; // To hold simplified user data
+// To hold simplified user data
 
   @override
   void initState() {
     super.initState();
-    _userData = widget.userData['data'] ?? {}; // Assign nested data
+// Assign nested data
     _loadInitialData();
   }
 
-  void _loadInitialData() {
-    // Populate the text fields with the user's data (if available)
-    // For this example, we assume these fields might be part of userData
-    // If not, they will remain empty as per ?? ''
-    _kontoinhaberController.text = _userData['KONTOINHABER']?.toString() ?? '';
-    _ibanController.text = _userData['IBAN']?.toString() ?? '';
-    _bicController.text = _userData['BIC']?.toString() ?? '';
+  Future<void> _loadInitialData() async {
+    final apiService = Provider.of<ApiService>(
+      context,
+      listen: false,
+    ); // Get ApiService instance
+
+    try {
+      final bankData = await apiService.fetchBankdaten(widget.webloginId);
+      if (bankData.isNotEmpty) {
+        _kontoinhaberController.text =
+            bankData['KONTOINHABER']?.toString() ?? '';
+        _ibanController.text = bankData['IBAN']?.toString() ?? '';
+        _bicController.text = bankData['BIC']?.toString() ?? '';
+      } else {
+        LoggerService.logWarning(
+          'No bank data found for webloginId: ${widget.webloginId}',
+        );
+      }
+    } catch (error) {
+      LoggerService.logError('Error fetching bank data: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Laden der Bankdaten: $error'),
+            duration: UIConstants.snackBarDuration,
+          ),
+        );
+      }
+    }
 
     LoggerService.logInfo('BankDataScreen initialized');
   }
@@ -65,28 +89,37 @@ class BankDataScreenState extends State<BankDataScreen> {
       });
 
       try {
-        // Simulate an API call to save bank data
-        // In a real app, you'd call your ApiService here to update the data.
-        // Example:
-        // final apiService = Provider.of<ApiService>(context, listen: false);
-        // final success = await apiService.updateBankData({
-        //   'KONTOINHABER': _kontoinhaberController.text,
-        //   'IBAN': _ibanController.text,
-        //   'BIC': _bicController.text,
-        // });
+        final apiService = Provider.of<ApiService>(context, listen: false);
+        final response = await apiService.registerBankdaten(
+          widget.webloginId,
+          _kontoinhaberController.text,
+          _ibanController.text,
+          _bicController.text,
+        );
 
-        await Future.delayed(
-          const Duration(seconds: 2),
-        ); // Simulate network delay
-
-        const bool success = true; // Simulate a successful response
-
-        if (success) {
-          LoggerService.logInfo('Bank data updated successfully');
+        if (response.isNotEmpty && response.containsKey('BankdatenWebID')) {
+          final int bankdatenWebId = response['BankdatenWebID'];
+          LoggerService.logInfo(
+            'Bank data updated successfully, ID: $bankdatenWebId',
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Bankdaten erfolgreich aktualisiert.'),
+                duration: UIConstants.snackBarDuration,
+              ),
+            );
+          }
+        } else {
+          LoggerService.logError(
+            'Failed to update bank data: Unexpected API response',
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+                ),
                 duration: UIConstants.snackBarDuration,
               ),
             );
@@ -220,7 +253,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
-    // Removed floatingLabelBehavior parameter from here, as it's now fixed to auto
     TextStyle? inputTextStyle,
     Color? backgroundColor,
     Widget? suffixIcon,

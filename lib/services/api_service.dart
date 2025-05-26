@@ -142,6 +142,20 @@ class ApiService {
     return _bankService.fetchBankdaten(webloginId);
   }
 
+  Future<Map<String, dynamic>> registerBankdaten(
+    int webloginId,
+    String kontoinhaber,
+    String iban,
+    String bic,
+  ) async {
+    return _bankService.registerBankdaten(
+      webloginId,
+      kontoinhaber,
+      iban,
+      bic,
+    );
+  }
+
   Future<bool> unregisterFromSchulung(int personId, int schulungId) async {
     return _trainingService.unregisterFromSchulung(personId, schulungId);
   }
