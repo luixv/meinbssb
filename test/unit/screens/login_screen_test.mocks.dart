@@ -3,11 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i2;
 import 'dart:typed_data' as _i5;
 
-import 'package:meinbssb/services/api/auth_service.dart' as _i2;
+import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
+import 'package:meinbssb/services/cache_service.dart' as _i9;
 import 'package:meinbssb/services/config_service.dart' as _i8;
 import 'package:meinbssb/services/email_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
@@ -37,16 +38,26 @@ class _FakeDuration_0 extends _i1.SmartFake implements Duration {
         );
 }
 
+class _FakeFuture_1<T1> extends _i1.SmartFake implements _i2.Future<T1> {
+  _FakeFuture_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i2.AuthService {
+class MockAuthService extends _i1.Mock implements _i3.AuthService {
   MockAuthService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<Map<String, dynamic>> register({
+  _i2.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -68,11 +79,11 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
           },
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> login(
+  _i2.Future<Map<String, dynamic>> login(
     String? email,
     String? password,
   ) =>
@@ -85,29 +96,29 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
+  _i2.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #resetPassword,
           [passNumber],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<void> logout() => (super.noSuchMethod(
+  _i2.Future<void> logout() => (super.noSuchMethod(
         Invocation.method(
           #logout,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 }
 
 /// A class which mocks [ApiService].
@@ -119,13 +130,13 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
   }
 
   @override
-  _i3.Future<bool> hasInternet() => (super.noSuchMethod(
+  _i2.Future<bool> hasInternet() => (super.noSuchMethod(
         Invocation.method(
           #hasInternet,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() => (super.noSuchMethod(
@@ -143,7 +154,7 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as Duration);
 
   @override
-  _i3.Future<Map<String, dynamic>> register({
+  _i2.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -165,11 +176,11 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
           },
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> login(
+  _i2.Future<Map<String, dynamic>> login(
     String? username,
     String? password,
   ) =>
@@ -182,58 +193,58 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
+  _i2.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #resetPassword,
           [passNumber],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
+  _i2.Future<Map<String, dynamic>> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchPassdaten,
           [personId],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<_i5.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i2.Future<_i5.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchuetzenausweis,
           [personId],
         ),
-        returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i3.Future<_i5.Uint8List>);
+        returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+      ) as _i2.Future<_i5.Uint8List>);
 
   @override
-  _i3.Future<String> fetchAuthToken() => (super.noSuchMethod(
+  _i2.Future<String> fetchAuthToken() => (super.noSuchMethod(
         Invocation.method(
           #fetchAuthToken,
           [],
         ),
-        returnValue: _i3.Future<String>.value(_i6.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i6.dummyValue<String>(
           this,
           Invocation.method(
             #fetchAuthToken,
             [],
           ),
         )),
-      ) as _i3.Future<String>);
+      ) as _i2.Future<String>);
 
   @override
-  _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  _i2.Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -245,40 +256,40 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i3.Future<List<dynamic>> fetchAvailableSchulungen() => (super.noSuchMethod(
+  _i2.Future<List<dynamic>> fetchAvailableSchulungen() => (super.noSuchMethod(
         Invocation.method(
           #fetchAvailableSchulungen,
           [],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i3.Future<List<dynamic>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i2.Future<List<dynamic>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i3.Future<List<dynamic>> fetchZweitmitgliedschaften(int? personId) =>
+  _i2.Future<List<dynamic>> fetchZweitmitgliedschaften(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchZweitmitgliedschaften,
           [personId],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i3.Future<List<dynamic>> fetchPassdatenZVE(
+  _i2.Future<List<dynamic>> fetchPassdatenZVE(
     int? passdatenId,
     int? personId,
   ) =>
@@ -290,33 +301,33 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
             personId,
           ],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> fetchKontakte(int? personId) =>
+  _i2.Future<Map<String, dynamic>> fetchKontakte(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
+  _i2.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankdaten,
           [webloginId],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<bool> unregisterFromSchulung(
+  _i2.Future<bool> unregisterFromSchulung(
     int? personId,
     int? schulungId,
   ) =>
@@ -328,8 +339,8 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
             schulungId,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [EmailService].
@@ -341,7 +352,7 @@ class MockEmailService extends _i1.Mock implements _i7.EmailService {
   }
 
   @override
-  _i3.Future<Map<String, dynamic>> sendEmail({
+  _i2.Future<Map<String, dynamic>> sendEmail({
     required String? from,
     required String? recipient,
     required String? subject,
@@ -361,35 +372,35 @@ class MockEmailService extends _i1.Mock implements _i7.EmailService {
           },
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
+  _i2.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
         Invocation.method(
           #getRegistrationSubject,
           [],
         ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
 
   @override
-  _i3.Future<String?> getRegistrationContent() => (super.noSuchMethod(
+  _i2.Future<String?> getRegistrationContent() => (super.noSuchMethod(
         Invocation.method(
           #getRegistrationContent,
           [],
         ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
 
   @override
-  _i3.Future<String?> getFromEmail() => (super.noSuchMethod(
+  _i2.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
           [],
         ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
 }
 
 /// A class which mocks [ConfigService].
@@ -425,4 +436,215 @@ class MockConfigService extends _i1.Mock implements _i8.ConfigService {
           section,
         ],
       )) as String?);
+}
+
+/// A class which mocks [CacheService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCacheService extends _i1.Mock implements _i9.CacheService {
+  MockCacheService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<void> setString(
+    String? key,
+    String? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setString,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<String?> getString(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getString,
+          [key],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<void> setJson(
+    String? key,
+    Map<String, dynamic>? json,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setJson,
+          [
+            key,
+            json,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getJson(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getJson,
+          [key],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<void> setInt(
+    String? key,
+    int? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setInt,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getInt(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getInt,
+          [key],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
+
+  @override
+  _i2.Future<void> setBool(
+    String? key,
+    bool? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setBool,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool?> getBool(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getBool,
+          [key],
+        ),
+        returnValue: _i2.Future<bool?>.value(),
+      ) as _i2.Future<bool?>);
+
+  @override
+  _i2.Future<void> remove(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #remove,
+          [key],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clear() => (super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #containsKey,
+          [key],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<void> setCacheTimestamp() => (super.noSuchMethod(
+        Invocation.method(
+          #setCacheTimestamp,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<T> getCachedData<T>(
+    String? cacheKey,
+    _i2.Future<T> Function()? getCachedData,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCachedData,
+          [
+            cacheKey,
+            getCachedData,
+          ],
+        ),
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #getCachedData,
+                  [
+                    cacheKey,
+                    getCachedData,
+                  ],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_1<T>(
+              this,
+              Invocation.method(
+                #getCachedData,
+                [
+                  cacheKey,
+                  getCachedData,
+                ],
+              ),
+            ),
+      ) as _i2.Future<T>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
+    String? cacheKey,
+    Duration? validityDuration,
+    _i2.Future<T> Function()? fetchData,
+    T Function(dynamic)? processResponse,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cacheAndRetrieveData,
+          [
+            cacheKey,
+            validityDuration,
+            fetchData,
+            processResponse,
+          ],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
