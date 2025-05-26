@@ -16,14 +16,17 @@ class AuthService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    FlutterSecureStorage? secureStorage,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
-        _networkService = networkService;
+        _networkService = networkService,
+        _secureStorage = secureStorage ?? const FlutterSecureStorage();
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
-  final _secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage
+      _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -34,45 +37,17 @@ class AuthService {
     required String zipCode,
   }) async {
     try {
-      /*  ErstelleMyBSSBAccount/
-          Body as JSON
-          {"PersonID": 439287,
-           "Email": "kostas@rizoudis1.de",
-           "Passwort": "test1"}
+      /* ErstelleMyBSSBAccount/
+           Body as JSON
+           {"PersonID": 439287,
+            "Email": "kostas@rizoudis1.de",
+            "Passwort": "test1"}
 
-           Find personID
-          /FindePersonIDUndDokumente/{Namen}/{Passnummer}
-          /FindePersonIDUndDokumente/Schürz/40100709
-
-          Response (If correct)
-          {
-            "NAMEN": "Schürz",
-            "VORNAME": "Lukas",
-            "PERSONID": 439287,
-            "GESCHLECHT": 1,
-            "STRASSE": "Hubenstein",
-            "PLZ": "54293",
-            "ORT": "Trier"
-          }
-
-          Response (If not correct, but Status is 200) 
-          {
-              "PERSONID": 0,
-              "GESCHLECHT": 0
-          }
 
       */
 
-      /* @TODO
-          Find out where the password is set
-          and if it is needed for the registration.
-
-          What to do with the birthdate and zip code?
-    */
-      String personId = await _findePersonIDUndDokumente(lastName, passNumber);
       String password = '';
-
-      personId = await _findePersonID(
+      String personId = await _findePersonID(
         lastName,
         firstName,
         birthDate,
@@ -82,7 +57,8 @@ class AuthService {
 
       String loginMail = await _findeMailadressen(personId);
 
-      // ERROR
+      // ERROR - This logical condition (loginMail.isEmpty && loginMail == 'null' && loginMail != email)
+      // is always false and will never return {}. The post call will always be made.
       if (loginMail.isEmpty && loginMail == 'null' && loginMail != email) {
         LoggerService.logError('No email address found.');
         return {};
@@ -100,7 +76,7 @@ class AuthService {
       rethrow;
     }
   }
-
+/*
   Future<String> _findePersonIDUndDokumente(
     String lastName,
     String passNumber,
@@ -124,6 +100,7 @@ class AuthService {
       rethrow;
     }
   }
+  */
 
 /*
 /FindePersonID/{Namen}/{Vorname}/{Geburtsdatum}/{Passnummer}/{PLZ}
@@ -245,7 +222,7 @@ Ergebnis der Abfrage:
     final cachedUsername = await _cacheService.getString('username');
     final cachedPassword = await _secureStorage.read(key: 'password');
     final cachedPersonId = await _cacheService.getInt('personId');
-    final cachedWebloginId = await _cacheService.getInt('webloginId');
+    final cachedWebloginId = await _cacheService.getInt('webLoginId');
     final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
     final expirationDuration = _networkService.getCacheExpirationDuration();
     final expirationTime = DateTime.fromMillisecondsSinceEpoch(

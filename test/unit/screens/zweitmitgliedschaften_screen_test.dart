@@ -77,7 +77,7 @@ void main() {
       'PASSNUMMER': '123456',
       'VEREINNAME': 'Test Verein',
       'PASSDATENID': 1,
-    }
+    },
   };
 
   const Widget dummyLogo = SizedBox();
