@@ -48,21 +48,23 @@ void main() {
             'VEREINNAME': 'Test Club',
             'PASSDATENID': 1,
             'MITGLIEDSCHAFTID': 2,
-            'PERSONID': personId,
+            'PERSONID': 123,
           };
           final expectedResult = {
-            'PASSNUMMER': '12345',
-            'VEREINNR': 67890,
-            'NAMEN': 'Doe',
-            'VORNAME': 'John',
-            'TITEL': 'Mr.',
-            'GEBURTSDATUM': '1990-01-01',
-            'GESCHLECHT': 'M',
-            'VEREINNAME': 'Test Club',
-            'PASSDATENID': 1,
-            'MITGLIEDSCHAFTID': 2,
-            'PERSONID': personId,
-            'ONLINE': false, // Default when cached
+            'data': {
+              'PASSNUMMER': '12345',
+              'VEREINNR': 67890,
+              'NAMEN': 'Doe',
+              'VORNAME': 'John',
+              'TITEL': 'Mr.',
+              'GEBURTSDATUM': '1990-01-01',
+              'GESCHLECHT': 'M',
+              'VEREINNAME': 'Test Club',
+              'PASSDATENID': 1,
+              'MITGLIEDSCHAFTID': 2,
+              'PERSONID': 123,
+            },
+            'ONLINE': false,
           };
           when(
             mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -109,17 +111,23 @@ void main() {
             'PERSONID': personId,
           };
           final expectedResult = {
-            'PASSNUMMER': '54321',
-            'VEREINNR': 98765,
-            'NAMEN': 'Smith',
-            'VORNAME': 'Jane',
-            'TITEL': 'Ms.',
-            'GEBURTSDATUM': '1995-05-05',
-            'GESCHLECHT': 'F',
-            'VEREINNAME': 'Another Club',
-            'PASSDATENID': 3,
-            'MITGLIEDSCHAFTID': 4,
-            'PERSONID': personId,
+            'data': {
+              'PASSNUMMER': '54321',
+              'VEREINNR': 98765,
+              'NAMEN': 'Smith',
+              'VORNAME': 'Jane',
+              'TITEL': 'Ms.',
+              'GEBURTSDATUM': '1995-05-05',
+              'GESCHLECHT': 'F',
+              'VEREINNAME': 'Another Club',
+              'PASSDATENID': 3,
+              'MITGLIEDSCHAFTID': 4,
+              'PERSONID': 123,
+              'STRASSE': null,
+              'PLZ': null,
+              'ORT': null,
+              'ONLINE': false,
+            },
             'ONLINE': true,
           };
           when(
@@ -183,7 +191,26 @@ void main() {
         final result = await userService.fetchPassdaten(personId);
 
         // Assert
-        expect(result, {'ONLINE': true});
+        expect(result, {
+          'data': {
+            'PASSNUMMER': null,
+            'VEREINNR': null,
+            'NAMEN': null,
+            'VORNAME': null,
+            'TITEL': null,
+            'GEBURTSDATUM': null,
+            'GESCHLECHT': null,
+            'VEREINNAME': null,
+            'PASSDATENID': null,
+            'MITGLIEDSCHAFTID': null,
+            'PERSONID': null,
+            'STRASSE': null,
+            'PLZ': null,
+            'ORT': null,
+            'ONLINE': false,
+          },
+          'ONLINE': true,
+        });
       });
     });
 
