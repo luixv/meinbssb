@@ -71,12 +71,15 @@ class MockApiService extends Fake implements ApiService {
 void main() {
   const int testPersonId = 1;
   final testUserData = {
-    'VORNAME': 'Max',
-    'NAMEN': 'Mustermann',
-    'PASSNUMMER': '123456',
-    'VEREINNAME': 'Test Verein',
-    'PASSDATENID': 1,
+    'data': {
+      'VORNAME': 'Max',
+      'NAMEN': 'Mustermann',
+      'PASSNUMMER': '123456',
+      'VEREINNAME': 'Test Verein',
+      'PASSDATENID': 1,
+    }
   };
+
   const Widget dummyLogo = SizedBox();
 
   Widget makeTestableWidget({
@@ -87,7 +90,8 @@ void main() {
       providers: [
         Provider<ApiService>.value(value: apiService),
         Provider<ConfigService>.value(
-            value: configService ?? MockConfigService(),),
+          value: configService ?? MockConfigService(),
+        ),
       ],
       child: MaterialApp(
         home: ZweitmitgliedschaftenScreen(
@@ -146,7 +150,9 @@ void main() {
 
       // Assert
       expect(
-          find.text('Keine Zweitmitgliedschaften gefunden.'), findsOneWidget,);
+        find.text('Keine Zweitmitgliedschaften gefunden.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('displays a list of zweitmitgliedschaften', (tester) async {
