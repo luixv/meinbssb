@@ -12,8 +12,6 @@ import 'package:mockito/annotations.dart';
 
 import 'bank_service_test.mocks.dart'; // Adjust path if necessary
 
-// Use the @GenerateMocks annotation to specify which classes to mock.
-// Mockito will generate a MockHttpClient class in bank_service_test.mocks.dart.
 @GenerateMocks([HttpClient])
 void main() {
   late BankService bankService;
@@ -47,9 +45,6 @@ void main() {
             'UNGUELTIG': false,
           }
         ];
-        // Correctly mock HttpClient.get to return an http.Response
-        // The HttpClient.get method (as per your provided definition)
-        // does NOT take 'headers' or 'body' as named parameters.
         when(mockHttpClient.get(any)).thenAnswer(
           (_) async => http.Response(jsonEncode(rawMockResponse), 200),
         );
@@ -134,9 +129,6 @@ void main() {
         // Arrange
         const int webloginId = 123;
         const String rawMockResponse = 'invalid data';
-        // Correctly mock HttpClient.get to return an http.Response
-        // with the invalid string body.
-        // The HttpClient.get method does NOT take 'headers' or 'body' as named parameters.
         when(mockHttpClient.get(any))
             .thenAnswer((_) async => http.Response(rawMockResponse, 200));
 
@@ -145,6 +137,179 @@ void main() {
 
         // Assert
         expect(result, isEmpty);
+      });
+    });
+
+    group('BankService', () {
+      // ... (fetchBankdaten group) ...
+
+      group('registerBankdaten', () {
+        test('should return BankdatenWebID on successful registration',
+            () async {
+          // Arrange
+          const int webloginId = 456;
+          const String mandatName = 'Test Mandat';
+          const String iban = 'DE12345678901234567890';
+          const String bic = 'TESTBANKBIC';
+          const int expectedBankdatenWebId = 1627; // New expected ID
+
+          // The mock response now reflects the actual API output
+          final Map<String, dynamic> mockSuccessResponse = {
+            'BankdatenWebID': expectedBankdatenWebId,
+          };
+
+          when(mockHttpClient.post(any, any)).thenAnswer(
+            (_) async => http.Response(jsonEncode(mockSuccessResponse), 200),
+          );
+
+          // Act
+          final result = await bankService.registerBankdaten(
+            webloginId,
+            mandatName,
+            iban,
+            bic,
+          );
+
+          // Assert
+          expect(result, isA<Map<String, dynamic>>());
+          expect(
+            result['BankdatenWebID'],
+            expectedBankdatenWebId,
+          ); // Expect the ID
+          expect(
+            result.containsKey('ResultType'),
+            isFalse,
+          ); // Ensure no ResultType
+          expect(
+            result.containsKey('ResultMessage'),
+            isFalse,
+          ); // Ensure no ResultMessage
+
+          // Verify the post call with expected arguments
+          verify(
+            mockHttpClient.post(
+              'BankdatenMyBSSB',
+              {
+                'WebloginID': webloginId,
+                'Kontoinhaber': mandatName,
+                'Bankname': '',
+                'IBAN': iban,
+                'BIC': bic,
+                'MandatNr': '',
+                'MandatSeq': 2,
+              },
+            ),
+          ).called(1);
+        });
+
+        test('should return empty map and log error on HTTP exception',
+            () async {
+          // Arrange
+          const int webloginId = 456;
+          const String mandatName = 'Test Mandat';
+          const String iban = 'DE12345678901234567890';
+          const String bic = 'TESTBANKBIC';
+
+          when(mockHttpClient.post(any, any)).thenThrow(Exception('API error'));
+
+          // Act
+          final result = await bankService.registerBankdaten(
+            webloginId,
+            mandatName,
+            iban,
+            bic,
+          );
+
+          // Assert
+          expect(result, isEmpty);
+        });
+
+        test('should return empty map if API returns non-200 status code',
+            () async {
+          // Arrange
+          const int webloginId = 456;
+          const String mandatName = 'Test Mandat';
+          const String iban = 'DE12345678901234567890';
+          const String bic = 'TESTBANKBIC';
+
+          // Simulate an API error response (e.g., 400 Bad Request)
+          final Map<String, dynamic> mockErrorResponse = {
+            'error': 'Invalid IBAN provided',
+          };
+
+          when(mockHttpClient.post(any, any)).thenAnswer(
+            (_) async =>
+                http.Response(jsonEncode(mockErrorResponse), 400), // Status 400
+          );
+
+          // Act
+          final result = await bankService.registerBankdaten(
+            webloginId,
+            mandatName,
+            iban,
+            bic,
+          );
+
+          // Assert
+          expect(
+            result,
+            isEmpty,
+          ); // Expect empty map as per your error handling
+        });
+
+        test(
+            'should return empty map if response is not a Map<String, dynamic>',
+            () async {
+          // Arrange
+          const int webloginId = 456;
+          const String mandatName = 'Test Mandat';
+          const String iban = 'DE12345678901234567890';
+          const String bic = 'TESTBANKBIC';
+
+          const String mockInvalidResponse =
+              'Some non-JSON string'; // Or a List, or null
+
+          when(mockHttpClient.post(any, any)).thenAnswer(
+            (_) async => http.Response(
+              mockInvalidResponse,
+              200,
+            ), // Status 200 but invalid body
+          );
+
+          // Act
+          final result = await bankService.registerBankdaten(
+            webloginId,
+            mandatName,
+            iban,
+            bic,
+          );
+
+          // Assert
+          expect(result, isEmpty);
+        });
+
+        test('should return empty map if response body is empty', () async {
+          // Arrange
+          const int webloginId = 456;
+          const String mandatName = 'Test Mandat';
+          const String iban = 'DE12345678901234567890';
+          const String bic = 'TESTBANKBIC';
+
+          when(mockHttpClient.post(any, any)).thenAnswer(
+            (_) async => http.Response('', 200), // Empty body
+          );
+
+          // Act
+          final result = await bankService.registerBankdaten(
+            webloginId,
+            mandatName,
+            iban,
+            bic,
+          );
+
+          // Assert
+          expect(result, isEmpty);
+        });
       });
     });
 
@@ -212,26 +377,34 @@ void main() {
 
       test('should return error message for a BIC that is too short (7 chars)',
           () {
-        expect(BankService.validateBIC('DEUTDEF'),
-            'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',);
+        expect(
+          BankService.validateBIC('DEUTDEF'),
+          'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',
+        );
       });
 
       test('should return error message for a BIC that is too long (12 chars)',
           () {
-        expect(BankService.validateBIC('COBADEFFXXXX'),
-            'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',);
+        expect(
+          BankService.validateBIC('COBADEFFXXXX'),
+          'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',
+        );
       });
 
       test('should return error message for a BIC with invalid characters', () {
-        expect(BankService.validateBIC('DEUTDE!@'),
-            'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',);
+        expect(
+          BankService.validateBIC('DEUTDE!@'),
+          'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',
+        );
       });
 
       test(
           'should return error message for a BIC with incorrect format (e.g., numbers in country code)',
           () {
-        expect(BankService.validateBIC('1234DEFF'),
-            'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',);
+        expect(
+          BankService.validateBIC('1234DEFF'),
+          'Ungültiger BIC (Beispiel: DEUTDEFFXXX)',
+        );
       });
     });
   });

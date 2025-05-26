@@ -127,4 +127,58 @@ class BankService {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>> registerBankdaten(
+    int webloginId,
+    String mandatName,
+    String iban,
+    String bic,
+  ) async {
+    try {
+      final http.Response response = await _httpClient.post('BankdatenMyBSSB', {
+        'WebloginID': webloginId,
+        'Kontoinhaber': mandatName,
+        'Bankname': '',
+        'IBAN': iban,
+        'BIC': bic,
+        'MandatNr': '',
+        'MandatSeq': 2,
+      });
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        try {
+          final decodedResponse = jsonDecode(response.body);
+          if (decodedResponse is Map<String, dynamic>) {
+            // Expecting something like {"BankdatenWebID": 1627}
+            LoggerService.logInfo(
+              'Successfully registered bankdaten. Response: ${jsonEncode(decodedResponse)}',
+            );
+            return decodedResponse;
+          } else {
+            // This handles cases where the response is not a Map (e.g., a list, or primitive)
+            LoggerService.logWarning(
+              'registerBankdaten: Expected a Map, but received: ${decodedResponse.runtimeType} -> $decodedResponse',
+            );
+            return {};
+          }
+        } on FormatException catch (e) {
+          // Catches errors if response.body is not valid JSON
+          LoggerService.logError(
+            'registerBankdaten: JSON decoding failed: $e, Body: ${response.body}',
+          );
+          return {};
+        }
+      } else {
+        // Handles non-200 status codes or empty body
+        LoggerService.logError(
+          'registerBankdaten HTTP error: Status ${response.statusCode}, Body: ${response.body}',
+        );
+        return {};
+      }
+    } catch (e) {
+      // Catches network errors or other exceptions during the HTTP request
+      LoggerService.logError('Error while registering bankdaten: $e');
+      return {};
+    }
+  }
 }
