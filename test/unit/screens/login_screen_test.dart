@@ -14,19 +14,17 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/email_service.dart';
 import 'package:meinbssb/services/config_service.dart';
-import 'package:meinbssb/services/cache_service.dart'; // <--- NEW: Import CacheService
+import 'package:meinbssb/services/cache_service.dart';
 
-// Generate mocks for all services your test setup uses
 @GenerateMocks([
   AuthService,
   ApiService,
   EmailService,
   ConfigService,
   CacheService,
-]) // <--- MODIFIED: Added CacheService
+])
 import 'login_screen_test.mocks.dart';
 
-// Create a simple mock LogoWidget to replace the actual one during tests
 class MockLogoWidget extends StatelessWidget {
   const MockLogoWidget({super.key});
 
@@ -41,8 +39,7 @@ void main() {
   late MockApiService mockApiService;
   late MockEmailService mockEmailService;
   late MockConfigService mockConfigService;
-  late MockCacheService
-      mockCacheService; // <--- NEW: Mock CacheService instance
+  late MockCacheService mockCacheService;
   late void Function(Map<String, dynamic>) onLoginSuccessCallback;
 
   setUp(() {
@@ -50,16 +47,13 @@ void main() {
     mockApiService = MockApiService();
     mockEmailService = MockEmailService();
     mockConfigService = MockConfigService();
-    mockCacheService = MockCacheService(); // <--- NEW: Initialize CacheService
+    mockCacheService = MockCacheService();
     onLoginSuccessCallback = (userData) {};
 
     // Setup default mock behaviors for ApiService
     when(mockApiService.fetchSchuetzenausweis(any))
         .thenAnswer((_) async => Uint8List(0));
 
-    // --- MODIFIED MOCKING FOR fetchPassdaten ---
-    // This mock now returns the single Map<String, dynamic> that your ApiService.fetchPassdaten
-    // method is expected to return AFTER it has processed the List response from the backend.
     when(mockApiService.fetchPassdaten(any)).thenAnswer(
       (_) async => {
         'PASSNUMMER': '40100709',
@@ -89,7 +83,6 @@ void main() {
         'DIGITALERPASS': 0,
       },
     );
-    // -------------------------------------------
 
     when(mockConfigService.getString('logoName', 'appTheme'))
         .thenReturn('irrelevant_logo_name');
