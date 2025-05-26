@@ -238,8 +238,7 @@ void main() {
                 return LoginScreen(
                   onLoginSuccess: (userData) {
                     loginSuccessCalled = true;
-                    // --- REFINED ASSERTIONS FOR userData ---
-                    // userData will be the combined map from fetchPassdaten + PERSONID + WEBLOGINID
+
                     expect(userData['PERSONID'], 123);
                     expect(userData['WEBLOGINID'], 456);
                     expect(
@@ -248,8 +247,6 @@ void main() {
                     ); // Check a field from the mocked passdaten
                     expect(userData['NAMEN'], 'Schürz');
                     expect(userData['PASSNUMMER'], '40100709');
-                    // Add more specific asserts if needed based on the completeUserData structure
-                    // -------------------------------------
                   },
                   logoWidget: const MockLogoWidget(),
                 );
