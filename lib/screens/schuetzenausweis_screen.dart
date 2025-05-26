@@ -83,7 +83,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                     ),
                   );
                 }
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data != null) {
                   return Center(
                     child: SizedBox(
                       key: const ValueKey<String>('schuetzenausweis'),
