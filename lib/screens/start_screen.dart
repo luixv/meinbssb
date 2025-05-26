@@ -26,7 +26,6 @@ class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
   final Color _appColor = UIConstants.defaultAppColor;
-  // Declare a new variable to hold the simplified user data.
   Map<String, dynamic> _userData = {};
 
   @override
