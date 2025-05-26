@@ -4,8 +4,9 @@ import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/logger_service.dart';
 import '/services/api/bank_service.dart';
-import '/services/api_service.dart'; // Import ApiService
-import 'package:provider/provider.dart'; // Import Provider
+import '/services/api_service.dart';
+import 'package:provider/provider.dart';
+import '/screens/bank_data_result_screen.dart'; // Make sure this import is correct
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -25,27 +26,21 @@ class BankDataScreen extends StatefulWidget {
 }
 
 class BankDataScreenState extends State<BankDataScreen> {
-  // Form Controllers
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
   final TextEditingController _bicController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>(); // Key for form validation
-  bool _isLoading = false; // Loading state for the submit button
-// To hold simplified user data
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-// Assign nested data
     _loadInitialData();
   }
 
   Future<void> _loadInitialData() async {
-    final apiService = Provider.of<ApiService>(
-      context,
-      listen: false,
-    ); // Get ApiService instance
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     try {
       final bankData = await apiService.fetchBankdaten(widget.webloginId);
@@ -76,17 +71,17 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from BankDataScreen');
-    widget.onLogout(); // Call the logout function provided by the parent.
-    Navigator.of(context)
-        .pushReplacementNamed('/login'); // Navigate to the login screen
+    widget.onLogout();
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
-  // Method to handle form submission
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true; // Show loading indicator
+        _isLoading = true;
       });
+
+      bool registrationSuccess = false;
 
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
@@ -102,44 +97,34 @@ class BankDataScreenState extends State<BankDataScreen> {
           LoggerService.logInfo(
             'Bank data updated successfully, ID: $bankdatenWebId',
           );
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Bankdaten erfolgreich aktualisiert.'),
-                duration: UIConstants.snackBarDuration,
-              ),
-            );
-          }
+          registrationSuccess = true;
         } else {
           LoggerService.logError(
             'Failed to update bank data: Unexpected API response',
           );
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
-                ),
-                duration: UIConstants.snackBarDuration,
-              ),
-            );
-          }
+          registrationSuccess = false;
         }
       } catch (error) {
         LoggerService.logError('Error updating bank data: $error');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Ein Fehler ist aufgetreten: $error'),
-              duration: UIConstants.snackBarDuration,
-            ),
-          );
-        }
+        registrationSuccess = false;
       } finally {
         if (mounted) {
           setState(() {
-            _isLoading = false; // Hide loading indicator
+            _isLoading = false;
           });
+          // --- FIX STARTS HERE ---
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => BankDataResultScreen(
+                success: registrationSuccess,
+                // Pass the required arguments from BankDataScreen's widget
+                userData: widget.userData,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+              ),
+            ),
+          );
+          // --- FIX ENDS HERE ---
         }
       }
     }
@@ -147,7 +132,6 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   @override
   void dispose() {
-    // Dispose of the controllers when the widget is disposed.
     _kontoinhaberController.dispose();
     _ibanController.dispose();
     _bicController.dispose();
@@ -212,8 +196,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 _buildTextField(
                   label: 'BIC',
                   controller: _bicController,
-                  validator: BankService
-                      .validateBIC, // Use the dedicated BIC validator
+                  validator: BankService.validateBIC,
                 ),
                 const SizedBox(height: UIConstants.defaultSpacing),
                 SizedBox(
@@ -247,7 +230,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     );
   }
 
-  // Helper method to create a text field with label
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -269,9 +251,8 @@ class BankDataScreenState extends State<BankDataScreen> {
           labelText: label,
           labelStyle: const TextStyle(
             fontSize: UIConstants.subtitleFontSize,
-          ), // Fixed label style
-          floatingLabelBehavior:
-              FloatingLabelBehavior.auto, // Set to auto for desired behavior
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: isReadOnly ? null : label,
           fillColor: backgroundColor,
           filled: backgroundColor != null,

@@ -1,32 +1,29 @@
 // In lib/services/api/bank_service.dart
 
-import 'dart:convert'; // Still needed for registerBankdaten, and potentially for other parts
-import 'package:http/http.dart'
-    as http; // Still good to have for http.Response type if used elsewhere
-import '/services/http_client.dart'; // Assuming your HttpClient is here
+import 'dart:convert';
+import '/services/http_client.dart';
 import '/services/logger_service.dart';
 
 class BankService {
   BankService({required HttpClient httpClient}) : _httpClient = httpClient;
   final HttpClient _httpClient;
 
+  /// Fetches bank data for a given weblogin ID.
+  /// Assumes _httpClient.get directly returns the JSON-decoded data (List or Map).
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     try {
-      // Assuming _httpClient.get directly returns the JSON-decoded data (List or Map)
       final dynamic responseData =
           await _httpClient.get('BankdatenMyBSSB/$webloginId');
 
-      // Now pass the raw decoded data to your mapping function
       final mappedResponse = _mapBankdatenResponse(responseData);
       return mappedResponse;
     } catch (e) {
       LoggerService.logError('Error fetching Bankdaten: $e');
-      return {}; // Return empty map on any exception
+      return {};
     }
   }
 
-  // Your existing _mapBankdatenResponse method remains largely the same,
-  // as it correctly handles `List` or `Map` input.
+  /// Maps the dynamic API response for bank data into a consistent Map<String, dynamic> format.
   Map<String, dynamic> _mapBankdatenResponse(dynamic response) {
     if (response is List) {
       if (response.isNotEmpty) {
@@ -57,7 +54,6 @@ class BankService {
         return {};
       }
     } else if (response is Map<String, dynamic>) {
-      // If the response is already a map, return it after mapping (if necessary)
       return {
         'BANKDATENWEBID': response['BANKDATENWEBID'],
         'WEBLOGINID': response['WEBLOGINID'],
@@ -78,18 +74,19 @@ class BankService {
     return {};
   }
 
+  /// Registers new bank data.
+  /// Assumes _httpClient.post directly returns the JSON-decoded data (Map<String, dynamic>).
   Future<Map<String, dynamic>> registerBankdaten(
     int webloginId,
-    String mandatName,
+    String kontoinhaber,
     String iban,
     String bic,
   ) async {
-    // This part remains the same, assuming _httpClient.post returns http.Response
-    // and you handle decoding it here.
     try {
-      final http.Response response = await _httpClient.post('BankdatenMyBSSB', {
+      final dynamic decodedResponse =
+          await _httpClient.post('BankdatenMyBSSB', {
         'WebloginID': webloginId,
-        'Kontoinhaber': mandatName,
+        'Kontoinhaber': kontoinhaber,
         'Bankname': '',
         'IBAN': iban,
         'BIC': bic,
@@ -97,29 +94,22 @@ class BankService {
         'MandatSeq': 2,
       });
 
-      if (response.statusCode == 200 && response.body.isNotEmpty) {
-        try {
-          final decodedResponse = jsonDecode(response.body);
-          if (decodedResponse is Map<String, dynamic>) {
-            LoggerService.logInfo(
-              'Successfully registered bankdaten. Response: ${jsonEncode(decodedResponse)}',
-            );
-            return decodedResponse;
-          } else {
-            LoggerService.logWarning(
-              'registerBankdaten: Expected a Map, but received: ${decodedResponse.runtimeType} -> $decodedResponse',
-            );
-            return {};
-          }
-        } on FormatException catch (e) {
-          LoggerService.logError(
-            'registerBankdaten: JSON decoding failed: $e, Body: ${response.body}',
+      if (decodedResponse is Map<String, dynamic>) {
+        if (decodedResponse.isNotEmpty &&
+            decodedResponse.containsKey('BankdatenWebID')) {
+          LoggerService.logInfo(
+            'Successfully registered bankdaten. Response: ${jsonEncode(decodedResponse)}',
+          );
+          return decodedResponse;
+        } else {
+          LoggerService.logWarning(
+            'registerBankdaten: API returned a map, but not with expected success structure: $decodedResponse',
           );
           return {};
         }
       } else {
-        LoggerService.logError(
-          'registerBankdaten HTTP error: Status ${response.statusCode}, Body: ${response.body}',
+        LoggerService.logWarning(
+          'registerBankdaten: Expected a Map response, but received: ${decodedResponse.runtimeType} -> $decodedResponse',
         );
         return {};
       }
@@ -128,6 +118,8 @@ class BankService {
       return {};
     }
   }
+
+  // --- Static validation methods ---
 
   static bool validateIBAN(String? iban) {
     if (iban == null || iban.trim().isEmpty) {
@@ -161,7 +153,8 @@ class BankService {
 
   static String? validateBIC(String? bic) {
     if (bic == null || bic.trim().isEmpty) {
-      return null;
+      // FIX HERE: Return the expected error message for null or empty BIC
+      return 'BIC muss 8 oder 11 Zeichen lang sein';
     }
     final String cleanBic = bic.trim().toUpperCase();
     if (cleanBic.length != 8 && cleanBic.length != 11) {
@@ -171,12 +164,14 @@ class BankService {
       return 'Ungültiger BIC (Bank- und Länderkennung)';
     }
     if (!RegExp(r'^[A-Z0-9]{2}').hasMatch(cleanBic.substring(6, 8))) {
+      // This part of the BIC (Ortscode) must be alphanumeric
       return 'Ungültiger BIC (Ortscode)';
     }
+    // Only check the last 3 characters if the BIC is 11 characters long
     if (cleanBic.length == 11 &&
         !RegExp(r'^[A-Z0-9]{3}$').hasMatch(cleanBic.substring(8, 11))) {
       return 'Ungültiger BIC (Filialcode)';
     }
-    return null;
+    return null; // BIC is valid
   }
 }
