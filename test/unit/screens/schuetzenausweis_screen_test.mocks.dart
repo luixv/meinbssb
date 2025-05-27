@@ -133,6 +133,34 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<Map<String, dynamic>>);
 
   @override
+  _i3.Future<bool> updateKritischeFelderUndAdresse(
+    int? personId,
+    String? titel,
+    String? namen,
+    String? vorname,
+    int? geschlecht,
+    String? strasse,
+    String? plz,
+    String? ort,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateKritischeFelderUndAdresse,
+          [
+            personId,
+            titel,
+            namen,
+            vorname,
+            geschlecht,
+            strasse,
+            plz,
+            ort,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<_i4.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -230,6 +258,42 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<List<Map<String, dynamic>>>);
 
   @override
+  _i3.Future<bool> addKontakt(
+    int? personId,
+    int? kontaktTyp,
+    String? kontakt,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addKontakt,
+          [
+            personId,
+            kontaktTyp,
+            kontakt,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<bool> deleteKontakt(
+    int? personId,
+    int? kontaktId,
+    int? kontaktTyp,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteKontakt,
+          [
+            personId,
+            kontaktId,
+            kontaktTyp,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -262,17 +326,11 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<bool> unregisterFromSchulung(
-    int? personId,
-    int? schulungId,
-  ) =>
+  _i3.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
-          [
-            personId,
-            schulungId,
-          ],
+          [schulungenTeilnehmerID],
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);

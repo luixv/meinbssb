@@ -194,7 +194,7 @@ class ApiService {
     );
   }
 
-  Future<bool> unregisterFromSchulung(int personId, int schulungId) async {
-    return _trainingService.unregisterFromSchulung(personId, schulungId);
+  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
+    return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
 }

@@ -117,6 +117,15 @@ class HttpClient {
               body: body,
             )
             .timeout(Duration(seconds: serverTimeout));
+      } else if (method == 'DELETE') {
+        // Added DELETE method handling
+        response = await _client
+            .delete(
+              Uri.parse(url),
+              headers: requestHeaders,
+              body: body, // DELETE requests can also have a body
+            )
+            .timeout(Duration(seconds: serverTimeout));
       } else if (method == 'GET') {
         if (body == null) {
           response = await _client
@@ -137,7 +146,7 @@ class HttpClient {
 
           final streamedResponse = await _client.send(request);
           response = await http.Response.fromStream(streamedResponse);
-          //.timeout(Duration(seconds: serverTimeout));
+          //.timeout(Duration(seconds: serverTimeout)); // Timeout is handled by send() now
         }
       } else {
         throw Exception('Unsupported HTTP method: $method');
@@ -148,12 +157,12 @@ class HttpClient {
       );
       LoggerService.logInfo('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        // 204 No Content is common for successful DELETE
         return jsonDecode(response.body);
       } else if (response.statusCode == 401 || response.statusCode == 403) {
         // Handle token expiration/invalidation
         if (retry) {
-          //prevent infinite loop.
           LoggerService.logWarning('Token expired, attempting to refresh');
           await _cacheService.remove(_tokenCacheKey); //remove invalid token
           final newToken = await _fetchToken();
@@ -251,7 +260,6 @@ class HttpClient {
     );
   }
 
-  // This is the public `put` method you already have, which correctly calls `_makeRequest` with 'PUT'
   Future<dynamic> put(String endpoint, Map<String, dynamic> body) async {
     final String apiUrl = '$baseUrl/$endpoint';
     final requestBody = jsonEncode(body);
@@ -269,13 +277,33 @@ class HttpClient {
     );
   }
 
+  // New DELETE method
+  Future<dynamic> delete(String endpoint, {Map<String, dynamic>? body}) async {
+    final String apiUrl = '$baseUrl/$endpoint';
+    final requestBody = body != null ? jsonEncode(body) : null;
+
+    LoggerService.logInfo('Sending DELETE request to: $apiUrl');
+    if (requestBody != null) {
+      LoggerService.logInfo('Request body: $requestBody');
+    }
+
+    return _makeRequest(
+      'DELETE',
+      apiUrl,
+      {
+        'Content-Type': 'application/json',
+      },
+      requestBody,
+    );
+  }
+
   Future<dynamic> get(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('Sending GET request to: $apiUrl');
     return _makeRequest('GET', apiUrl, null, null);
   }
 
-  // New method to send GET request with a body (non-standard)
+  // New method to send GET request with a body (non-standard but supported by your _makeRequest)
   Future<dynamic> getWithBody(
     String endpoint,
     Map<String, dynamic> body,

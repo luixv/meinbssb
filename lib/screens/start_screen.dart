@@ -86,8 +86,7 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Future<void> _handleDeleteSchulung(
-    int personId,
-    int schulungId,
+    int schulungenTeilnehmerID,
     int index,
   ) async {
     final apiService =
@@ -98,12 +97,12 @@ class StartScreenState extends State<StartScreen> {
         isLoading = true; // Show loading indicator
       });
       final success =
-          await apiService.unregisterFromSchulung(personId, schulungId);
+          await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
       if (mounted) {
         // ADDED THIS CHECK
         if (success) {
           LoggerService.logInfo(
-            'Successfully unregistered from Schulung $schulungId',
+            'Successfully unregistered from Schulung $schulungenTeilnehmerID',
           );
           // Remove the item from the list to update the UI
           setState(() {
@@ -119,7 +118,7 @@ class StartScreenState extends State<StartScreen> {
           );
         } else {
           LoggerService.logWarning(
-            'Failed to unregister from Schulung $schulungId',
+            'Failed to unregister from Schulung $schulungenTeilnehmerID',
           );
           // Optionally, show an error message to the user
           ScaffoldMessenger.of(context).showSnackBar(
@@ -299,14 +298,13 @@ class StartScreenState extends State<StartScreen> {
                                                       'SCHULUNGENTEILNEHMERID'] !=
                                                   null) {
                                             _handleDeleteSchulung(
-                                              personId,
                                               schulung[
                                                   'SCHULUNGENTEILNEHMERID'],
                                               index, // Pass the index
                                             );
                                           } else {
                                             LoggerService.logError(
-                                              "personId or schulungId is null. personId: $personId, schulungId: ${schulung['SCHULUNGENTEILNEHMERID']}",
+                                              "personId or schulungId is null. personId: $personId, schulungenTeilnehmerID: ${schulung['SCHULUNGENTEILNEHMERID']}",
                                             );
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(

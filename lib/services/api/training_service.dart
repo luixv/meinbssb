@@ -121,16 +121,22 @@ class TrainingService {
     }
   }
 
-  Future<bool> unregisterFromSchulung(int personId, int schulungId) async {
+  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
+    LoggerService.logInfo(
+        'Attempting to unregister from Schulung with ID: $schulungenTeilnehmerID',);
     try {
-      final response = await _httpClient.post('UnregisterFromSchulung', {
-        'personId': personId,
-        'schulungId': schulungId,
-      });
-      return response['ResultType'] == 1;
+      final response = await _httpClient.delete(
+        'SchulungenTeilnehmer/$schulungenTeilnehmerID',
+        body: {}, // Explicitly pass an empty body as requested
+      );
+
+      LoggerService.logInfo(
+          'Successfully unregistered from Schulung. Response: $response',);
+      return true; // If _httpClient.delete didn't throw and returned something, assume success.
     } catch (e) {
-      LoggerService.logError('Error unregistering from training: $e');
-      rethrow;
+      LoggerService.logError(
+          'Error unregistering from Schulung $schulungenTeilnehmerID: $e',);
+      return false; // Return false if an error occurred during the HTTP call
     }
   }
 

@@ -79,6 +79,36 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
       ) as _i4.Future<dynamic>);
 
   @override
+  _i4.Future<dynamic> put(
+    String? endpoint,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #put,
+          [
+            endpoint,
+            body,
+          ],
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<dynamic> delete(
+    String? endpoint, {
+    Map<String, dynamic>? body,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [endpoint],
+          {#body: body},
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
   _i4.Future<dynamic> get(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #get,

@@ -171,6 +171,36 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
       ) as _i2.Future<dynamic>);
 
   @override
+  _i2.Future<dynamic> put(
+    String? endpoint,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #put,
+          [
+            endpoint,
+            body,
+          ],
+        ),
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
+
+  @override
+  _i2.Future<dynamic> delete(
+    String? endpoint, {
+    Map<String, dynamic>? body,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [endpoint],
+          {#body: body},
+        ),
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
+
+  @override
   _i2.Future<dynamic> get(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #get,
@@ -968,17 +998,11 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> unregisterFromSchulung(
-    int? personId,
-    int? schulungId,
-  ) =>
+  _i2.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
-          [
-            personId,
-            schulungId,
-          ],
+          [schulungenTeilnehmerID],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -1012,6 +1036,34 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<bool> updateKritischeFelderUndAdresse(
+    int? personId,
+    String? titel,
+    String? namen,
+    String? vorname,
+    int? geschlecht,
+    String? strasse,
+    String? plz,
+    String? ort,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateKritischeFelderUndAdresse,
+          [
+            personId,
+            titel,
+            namen,
+            vorname,
+            geschlecht,
+            strasse,
+            plz,
+            ort,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 
   @override
   _i2.Future<List<dynamic>> fetchZweitmitgliedschaften(int? personId) =>
@@ -1049,6 +1101,42 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
         returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i2.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i2.Future<bool> addKontakt(
+    int? personId,
+    int? kontaktTyp,
+    String? kontakt,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addKontakt,
+          [
+            personId,
+            kontaktTyp,
+            kontakt,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> deleteKontakt(
+    int? personId,
+    int? kontaktId,
+    int? kontaktTyp,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteKontakt,
+          [
+            personId,
+            kontaktId,
+            kontaktTyp,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [BankService].
