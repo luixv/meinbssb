@@ -256,11 +256,7 @@ class UserService {
     ];
   }
 
-  Future<bool> addKontakt({
-    required int personId,
-    required int kontaktTyp,
-    required String kontakt,
-  }) async {
+  Future<bool> addKontakt(int personId, int kontaktTyp, String kontakt) async {
     try {
       final Map<String, dynamic> body = {
         'PersonID': personId,
@@ -295,11 +291,8 @@ class UserService {
     }
   }
 
-  Future<bool> deleteKontakt({
-    required int personId,
-    required int kontaktId,
-    required int kontaktTyp,
-  }) async {
+  Future<bool> deleteKontakt(
+      int personId, int kontaktId, int kontaktTyp,) async {
     try {
       final Map<String, dynamic> body = {
         'PersonID': personId,

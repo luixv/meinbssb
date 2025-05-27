@@ -28,21 +28,37 @@ class ContactDataScreen extends StatefulWidget {
 class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
 
-  // Added a state variable to manage loading for delete operations
   bool _isDeleting = false;
+  bool _isAdding = false; // New: State variable for add contact loading
+
+  // Mapping for contact types (used in the dropdown)
+  final Map<int, String> _contactTypeLabels = {
+    1: 'Telefonnummer Privat',
+    2: 'Mobilnummer Privat',
+    3: 'Fax Privat',
+    4: 'E-Mail Privat',
+    5: 'Telefonnummer Geschäftlich',
+    6: 'Mobilnummer Geschäftlich',
+    7: 'Fax Geschäftlich',
+    8: 'E-Mail Geschäftlich',
+  };
+
+  int?
+      _selectedKontaktTyp; // To store the selected contact type from the dropdown
+  final TextEditingController _kontaktController =
+      TextEditingController(); // Controller for the contact string
 
   @override
   void initState() {
     super.initState();
-    _loadInitialData(); // Start fetching the contact-specific data
+    _loadInitialData();
   }
 
   // --- Data Loading and Refresh ---
   void _loadInitialData() {
     setState(() {
-      // Set future to null to indicate loading state if you want to show a fresh spinner
-      // or just re-assign the future to trigger FutureBuilder rebuild.
-      _contactDataFuture = Future.value([]); // Clear current data
+      _contactDataFuture =
+          Future.value([]); // Clear current data to show spinner
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
@@ -64,10 +80,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
+      // CALL TO DELETEKONTAKT: Now uses positional arguments
       final bool success = await apiService.deleteKontakt(
-        widget.personId,
-        kontaktId,
-        kontaktTyp,
+        widget.personId, // personId
+        kontaktId, // kontaktId
+        kontaktTyp, // kontaktTyp
       );
 
       if (mounted) {
@@ -78,8 +95,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               duration: UIConstants.snackBarDuration,
             ),
           );
-          // Refresh the list after successful deletion
-          _loadInitialData();
+          _loadInitialData(); // Refresh the list after successful deletion
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -108,6 +124,140 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
   }
 
+  // --- Add Contact Logic ---
+  Future<void> _onAddContact() async {
+    if (_selectedKontaktTyp == null || _kontaktController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
+          duration: UIConstants.snackBarDuration,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isAdding = true; // Set loading state for add operation
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      // CALL TO ADDKONTAKT: Now uses positional arguments
+      final bool success = await apiService.addKontakt(
+        widget.personId, // personId
+        _selectedKontaktTyp!, // kontaktTyp
+        _kontaktController.text.trim(), // kontakt
+      );
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Kontakt erfolgreich hinzugefügt.'),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+          _kontaktController.clear(); // Clear text field
+          _selectedKontaktTyp = null; // Reset dropdown
+          Navigator.of(context).pop(); // Close the add contact dialog
+          _loadInitialData(); // Refresh the list after successful addition
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Hinzufügen des Kontakts.'),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during contact addition: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ein Fehler ist aufgetreten: $e'),
+            duration: UIConstants.snackBarDuration,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAdding = false; // Reset loading state
+        });
+      }
+    }
+  }
+
+  // --- Display Add Contact Form ---
+  void _showAddContactForm() {
+    _selectedKontaktTyp = null; // Reset selected type
+    _kontaktController.clear(); // Clear previous input
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        // Use dialogContext to avoid conflicts
+        return AlertDialog(
+          title: const Text('Neuen Kontakt hinzufügen'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                DropdownButtonFormField<int>(
+                  decoration: UIConstants.defaultInputDecoration.copyWith(
+                    labelText: 'Kontakttyp',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                  value: _selectedKontaktTyp,
+                  items: _contactTypeLabels.entries.map((entry) {
+                    return DropdownMenuItem<int>(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    );
+                  }).toList(),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _selectedKontaktTyp = newValue;
+                    });
+                  },
+                ),
+                const SizedBox(height: UIConstants.defaultSpacing),
+                TextFormField(
+                  controller: _kontaktController,
+                  decoration: UIConstants.defaultInputDecoration.copyWith(
+                    labelText: 'Kontakt',
+                    hintText: 'z.B. email@beispiel.de oder 0123456789',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                  keyboardType:
+                      TextInputType.text, // Could be email, phone etc.
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Abbrechen'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            ElevatedButton(
+              onPressed:
+                  _isAdding ? null : _onAddContact, // Disable button if adding
+              child: _isAdding
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    )
+                  : const Text('Hinzufügen'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // --- Logout Handler ---
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from ContactdataScreen');
@@ -117,6 +267,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   void dispose() {
+    _kontaktController.dispose(); // Dispose the controller
     super.dispose();
   }
 
@@ -189,6 +340,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           }
         },
       ),
+      // --- Floating Action Button (FAB) ---
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddContactForm,
+        backgroundColor: UIConstants.defaultAppColor, // Use your app's color
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -218,11 +376,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   Widget _buildReadOnlyTextField({
     required String label,
     required String value,
-    required int kontaktId, // New: Required kontaktId
-    required int rawKontaktTyp, // New: Required rawKontaktTyp
-    required Function(int kontaktId, int kontaktTyp)
-        onDelete, // New: Callback for delete
-    required bool isDeleting, // New: To disable delete button during operation
+    required int kontaktId,
+    required int rawKontaktTyp,
+    required Function(int kontaktId, int kontaktTyp) onDelete,
+    required bool isDeleting,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),

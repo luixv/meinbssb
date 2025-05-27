@@ -140,9 +140,9 @@ class ApiService {
 
   Future<bool> addKontakt(int personId, int kontaktTyp, String kontakt) async {
     return _userService.addKontakt(
-      personId: personId,
-      kontaktTyp: kontaktTyp,
-      kontakt: kontakt,
+      personId,
+      kontaktTyp,
+      kontakt,
     );
   }
 
@@ -151,11 +151,7 @@ class ApiService {
     int kontaktId,
     int kontaktTyp,
   ) async {
-    return _userService.deleteKontakt(
-      personId: personId,
-      kontaktId: kontaktId,
-      kontaktTyp: kontaktTyp,
-    );
+    return _userService.deleteKontakt(personId, kontaktId, kontaktTyp);
   }
 
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
