@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart'; // Ensure ConnectivityIcon is imported if used in AppMenu
+import '/screens/connectivity_icon.dart'; 
 
 class BankDataResultScreen extends StatelessWidget {
   const BankDataResultScreen({

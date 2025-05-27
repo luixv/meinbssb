@@ -48,6 +48,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   final TextEditingController _kontaktController =
       TextEditingController(); // Controller for the contact string
 
+  // Regex for email validation
+  final RegExp _emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  // Basic regex for phone numbers (allows digits, spaces, hyphens, plus sign, parentheses)
+  final RegExp _phoneFaxMobileRegex = RegExp(r'^[0-9\s\-\+\(\)]+$');
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +69,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       final apiService = Provider.of<ApiService>(context, listen: false);
       _contactDataFuture = apiService.fetchKontakte(widget.personId);
       LoggerService.logInfo(
-          'ContactDataScreen: Initiating contact data fetch.',);
+        'ContactDataScreen: Initiating contact data fetch.',
+      );
     } catch (e) {
       LoggerService.logError('Error setting up contact data fetch: $e');
       _contactDataFuture = Future.value([]); // Provide an empty list on error
@@ -80,7 +86,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      // CALL TO DELETEKONTAKT: Now uses positional arguments
       final bool success = await apiService.deleteKontakt(
         widget.personId, // personId
         kontaktId, // kontaktId
@@ -126,10 +131,38 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   // --- Add Contact Logic ---
   Future<void> _onAddContact() async {
-    if (_selectedKontaktTyp == null || _kontaktController.text.trim().isEmpty) {
+    final String kontaktValue = _kontaktController.text.trim();
+
+    if (_selectedKontaktTyp == null || kontaktValue.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
+          duration: UIConstants.snackBarDuration,
+        ),
+      );
+      return;
+    }
+
+    // Input Validation based on KontaktTyp
+    String? validationErrorMessage;
+    if (_selectedKontaktTyp == 4 || _selectedKontaktTyp == 8) {
+      // E-Mail Privat or E-Mail Geschäftlich
+      if (!_emailRegex.hasMatch(kontaktValue)) {
+        validationErrorMessage =
+            'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+      }
+    } else if ([1, 2, 3, 5, 6, 7].contains(_selectedKontaktTyp)) {
+      // Phone, Mobile, Fax types
+      if (!_phoneFaxMobileRegex.hasMatch(kontaktValue)) {
+        validationErrorMessage =
+            'Bitte geben Sie eine gültige Telefon-/Faxnummer ein (nur Ziffern, +, -, (, ) erlaubt).';
+      }
+    }
+
+    if (validationErrorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(validationErrorMessage),
           duration: UIConstants.snackBarDuration,
         ),
       );
@@ -142,11 +175,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      // CALL TO ADDKONTAKT: Now uses positional arguments
       final bool success = await apiService.addKontakt(
         widget.personId, // personId
         _selectedKontaktTyp!, // kontaktTyp
-        _kontaktController.text.trim(), // kontakt
+        kontaktValue, // kontakt
       );
 
       if (mounted) {
@@ -199,7 +231,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       builder: (BuildContext dialogContext) {
         // Use dialogContext to avoid conflicts
         return AlertDialog(
-          title: const Text('Neuen Kontakt hinzufügen'),
+          backgroundColor:
+              UIConstants.backgroundGreen, // Set background color of the dialog
+          title: const Center(
+            // Center the title
+            child: Text('Neuen Kontakt hinzufügen'),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -229,28 +266,65 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     hintText: 'z.B. email@beispiel.de oder 0123456789',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
-                  keyboardType:
-                      TextInputType.text, // Could be email, phone etc.
+                  keyboardType: TextInputType
+                      .text, // Set based on type, can be dynamic later
                 ),
               ],
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text('Abbrechen'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            ElevatedButton(
-              onPressed:
-                  _isAdding ? null : _onAddContact, // Disable button if adding
-              child: _isAdding
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    )
-                  : const Text('Hinzufügen'),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.defaultPadding,
+              ), // Add horizontal padding to the row
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceBetween, // Distribute space between buttons
+                children: [
+                  Expanded(
+                    // "Abbrechen" button takes available space
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: UIConstants.lightGreen,
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: Text(
+                        'Abbrechen',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: UIConstants.defaultSpacing,
+                  ), // Space between buttons
+                  Expanded(
+                    // "Hinzufügen" button takes available space
+                    child: ElevatedButton(
+                      onPressed: _isAdding ? null : _onAddContact,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: UIConstants.lightGreen,
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: _isAdding
+                          ? const CircularProgressIndicator(
+                              color: UIConstants.white,
+                              strokeWidth: 2,
+                            )
+                          : Text(
+                              'Hinzufügen',
+                              style: UIConstants.bodyStyle.copyWith(
+                                color: UIConstants.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -352,7 +426,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   // Helper method to build a contact group (e.g., "Privat")
   Widget _buildContactGroup(
-      String categoryTitle, List<Map<String, dynamic>> contacts,) {
+    String categoryTitle,
+    List<Map<String, dynamic>> contacts,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -387,7 +463,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         initialValue: value.isNotEmpty ? value : '-',
         readOnly: true,
         style: const TextStyle(
-            fontWeight: FontWeight.bold, fontSize: UIConstants.bodyFontSize,),
+          fontWeight: FontWeight.bold,
+          fontSize: UIConstants.bodyFontSize,
+        ),
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: FloatingLabelBehavior.always,

@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/constants/ui_constants.dart'; // Import der UIConstants
+import 'package:meinbssb/constants/ui_constants.dart';
 import '/screens/registration_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
