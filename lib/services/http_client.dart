@@ -145,8 +145,9 @@ class HttpClient {
           LoggerService.logInfo('Body: $body');
 
           final streamedResponse = await _client.send(request);
-          response = await http.Response.fromStream(streamedResponse);
-          //.timeout(Duration(seconds: serverTimeout)); // Timeout is handled by send() now
+          response = await http.Response.fromStream(streamedResponse).timeout(
+              Duration(
+                  seconds: serverTimeout,),); // Timeout is handled by send() now
         }
       } else {
         throw Exception('Unsupported HTTP method: $method');

@@ -78,7 +78,115 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }
 
   // --- Contact Deletion Logic ---
-  Future<void> _onDeleteContact(int kontaktId, int kontaktTyp) async {
+  Future<void> _onDeleteContact(
+    int kontaktId,
+    int kontaktTyp,
+    String contactValue, // Added to display in dialog
+    String contactLabel, // Added to display in dialog
+  ) async {
+    final bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor:
+              UIConstants.backgroundGreen, // Consistent background color
+          title: const Center(
+            child: Text(
+              'Kontakt löschen',
+              style: TextStyle(
+                color: UIConstants.defaultAppColor, // Consistent color
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          content: RichText(
+            // Use RichText for mixed styles
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.black,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Sind Sie sicher, dass Sie den Kontakt '),
+                TextSpan(
+                  text: '$contactLabel: $contactValue', // No quotes here
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,), // Bold the contact info
+                ),
+                const TextSpan(text: ' löschen möchten?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.defaultPadding,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(false); // Do not delete
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: UIConstants.lightGreen,
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: Text(
+                        'Abbrechen',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: UIConstants.defaultSpacing,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(true); // Confirm delete
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.red, // Red for delete, clear distinction
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: Text(
+                        'Löschen',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    // FIX: Add mounted check before using context after await
+    if (!mounted) return;
+
+    if (confirmDelete == null || !confirmDelete) {
+      LoggerService.logInfo('Contact deletion cancelled by user.');
+      // If deletion is cancelled, ensure _isDeleting is reset if it was set beforehand.
+      if (mounted) {
+        // Already checked above, but good to be explicit if this block is executed after an async call
+        setState(() {
+          _isDeleting = false;
+        });
+      }
+      return;
+    }
+
     setState(() {
       _isDeleting =
           true; // Show loading indicator (e.g., disable delete buttons)
@@ -134,12 +242,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     final String kontaktValue = _kontaktController.text.trim();
 
     if (_selectedKontaktTyp == null || kontaktValue.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
-          duration: UIConstants.snackBarDuration,
-        ),
-      );
+      if (mounted) {
+        // FIX: Add mounted check
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
+            duration: UIConstants.snackBarDuration,
+          ),
+        );
+      }
       return;
     }
 
@@ -160,12 +271,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
 
     if (validationErrorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(validationErrorMessage),
-          duration: UIConstants.snackBarDuration,
-        ),
-      );
+      if (mounted) {
+        // FIX: Add mounted check
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(validationErrorMessage),
+            duration: UIConstants.snackBarDuration,
+          ),
+        );
+      }
       return;
     }
 
@@ -191,7 +305,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           );
           _kontaktController.clear(); // Clear text field
           _selectedKontaktTyp = null; // Reset dropdown
-          Navigator.of(context).pop(); // Close the add contact dialog
+          // Navigator.of(context).pop(); // FIX: This pop might be too soon, ensure it's safe.
+          // For now, it's safer to pop after the data reloads if it's meant to close the dialog.
+          // If the dialog is still open, the mounted check will apply to the ScaffoldMessenger.
           _loadInitialData(); // Refresh the list after successful addition
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -217,6 +333,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         setState(() {
           _isAdding = false; // Reset loading state
         });
+        // If the dialog should close automatically on success, ensure it's done here.
+        // This 'pop' needs to be in the 'if (mounted)' block as well.
+        Navigator.of(context).pop(); // Close the add contact dialog
       }
     }
   }
@@ -253,9 +372,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     );
                   }).toList(),
                   onChanged: (int? newValue) {
-                    setState(() {
-                      _selectedKontaktTyp = newValue;
-                    });
+                    // setState(() { // No need for setState here if _selectedKontaktTyp is used only in dialog scope
+                    //   _selectedKontaktTyp = newValue;
+                    // });
+                    // To update _selectedKontaktTyp, it must be within the StatefulBuilder or the ContactDataScreenState's setState
+                    // Since it's a state variable of ContactDataScreenState, we need to call setState on the main widget's state.
+                    // However, directly calling setState from a dialog's builder can be tricky.
+                    // A better pattern for dialogs with stateful elements is to use a StatefulBuilder or manage state outside the dialog.
+                    // For now, let's just assign it directly as we'll use it in _onAddContact
+                    _selectedKontaktTyp = newValue;
                   },
                 ),
                 const SizedBox(height: UIConstants.defaultSpacing),
@@ -336,7 +461,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from ContactdataScreen');
     widget.onLogout(); // Call the logout function provided by the parent.
-    Navigator.of(context).pushReplacementNamed('/login');
+    if (mounted) {
+      // FIX: Add mounted check
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override
@@ -454,7 +582,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required String value,
     required int kontaktId,
     required int rawKontaktTyp,
-    required Function(int kontaktId, int kontaktTyp) onDelete,
+    required Function(int kontaktId, int kontaktTyp, String value, String label)
+        onDelete, // Updated signature
     required bool isDeleting,
   }) {
     return Padding(
@@ -474,8 +603,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             color: UIConstants.defaultAppColor, // Example color
             onPressed: isDeleting
                 ? null // Disable button while deleting
-                : () =>
-                    onDelete(kontaktId, rawKontaktTyp), // Call delete handler
+                : () => onDelete(
+                      kontaktId,
+                      rawKontaktTyp,
+                      value, // Pass contact value
+                      label, // Pass contact label
+                    ), // Call delete handler
           ),
         ),
       ),

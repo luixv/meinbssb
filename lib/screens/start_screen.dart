@@ -31,8 +31,7 @@ class StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    // Assign the nested data to _userData in initState.
-    _userData = widget.userData['data'] ?? {}; // Use a null check here.
+    _userData = widget.userData['data'] ?? {};
     fetchSchulungen();
     LoggerService.logInfo(
       'StartScreen initialized with user: ${widget.userData}',
@@ -41,7 +40,6 @@ class StartScreenState extends State<StartScreen> {
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    // Use the simplified _userData here.
     final personId = _userData['PERSONID'];
 
     if (personId == null) {
@@ -72,59 +70,150 @@ class StartScreenState extends State<StartScreen> {
       if (mounted) {
         setState(() {
           isLoading = false;
-          schulungen = []; // Ensure empty state is clear
+          schulungen = [];
         });
       }
     }
   }
 
   void _handleLogout() {
-    // Use the simplified _userData here.
     LoggerService.logInfo('Logging out user: ${_userData['VORNAME']}');
-    widget.onLogout(); // Update app state
-    Navigator.of(context).pushReplacementNamed('/login'); // Force navigation
+    widget.onLogout();
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   Future<void> _handleDeleteSchulung(
     int schulungenTeilnehmerID,
     int index,
+    String schulungDescription,
   ) async {
-    final apiService =
-        Provider.of<ApiService>(context, listen: false); //get api service
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    final bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundGreen, // Consistent background
+          title: const Center(
+            child: Text(
+              'Schulung abmelden',
+              style: TextStyle(
+                color: UIConstants.defaultAppColor, // Consistent color
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          content: RichText(
+            // Use RichText for mixed styles
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.black,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Sind Sie sicher, dass Sie die Schulung '),
+                TextSpan(
+                  text: schulungDescription, // No quotes here
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ), // Bold the description
+                ),
+                const TextSpan(text: ' löschen möchten?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.defaultPadding,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(false);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            UIConstants.lightGreen, // Green for cancel
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: Text(
+                        'Abbrechen',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: UIConstants.defaultSpacing,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(true);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.red, // Red for delete, clear distinction
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: Text(
+                        'Löschen',
+                        style: UIConstants.bodyStyle.copyWith(
+                          color: UIConstants.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == null || !confirmDelete) {
+      LoggerService.logInfo('Schulung deletion cancelled by user.');
+      return;
+    }
 
     try {
       setState(() {
-        isLoading = true; // Show loading indicator
+        isLoading = true;
       });
       final success =
           await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
       if (mounted) {
-        // ADDED THIS CHECK
         if (success) {
           LoggerService.logInfo(
             'Successfully unregistered from Schulung $schulungenTeilnehmerID',
           );
-          // Remove the item from the list to update the UI
           setState(() {
-            schulungen.removeAt(index); // Remove at index
+            schulungen.removeAt(index);
           });
 
-          // Optionally, show a success message to the user
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Schulung abgemeldet.'),
-              duration: Duration(seconds: 2),
+              duration: UIConstants.snackBarDuration,
             ),
           );
         } else {
           LoggerService.logWarning(
             'Failed to unregister from Schulung $schulungenTeilnehmerID',
           );
-          // Optionally, show an error message to the user
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Abmelden von der Schulung.'),
-              duration: Duration(seconds: 2),
+              duration: UIConstants.snackBarDuration,
             ),
           );
         }
@@ -132,19 +221,17 @@ class StartScreenState extends State<StartScreen> {
     } catch (error) {
       LoggerService.logError('Error unregistering from Schulung: $error');
       if (mounted) {
-        // ADDED THIS CHECK
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $error'),
-            duration: const Duration(seconds: 2),
+            duration: UIConstants.snackBarDuration,
           ),
         );
       }
     } finally {
       if (mounted) {
-        // ADDED THIS CHECK
         setState(() {
-          isLoading = false; // Hide loading indicator
+          isLoading = false;
         });
       }
     }
@@ -153,9 +240,7 @@ class StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Ändere die Hintergrundfarbe des Scaffolds.
-      backgroundColor:
-          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -165,7 +250,7 @@ class StartScreenState extends State<StartScreen> {
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(), // Add the ConnectivityIcon here
+            child: ConnectivityIcon(),
           ),
           AppMenu(
             context: context,
@@ -187,13 +272,11 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.headerStyle.copyWith(color: _appColor),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
-            // Use the simplified _userData here.
             Text(
               "${_userData['VORNAME'] ?? ''} ${_userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
-            // Use the simplified _userData here.
             Text(
               '${_userData['PASSNUMMER'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
@@ -205,7 +288,6 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             const SizedBox(height: UIConstants.smallSpacing),
-            // Use the simplified _userData here.
             Text(
               '${_userData['VEREINNAME'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
@@ -242,9 +324,7 @@ class StartScreenState extends State<StartScreen> {
                             final schulung = schulungen[index];
                             final datum = DateTime.parse(schulung['DATUM']);
                             final online = schulung['ONLINE'] as bool? ?? false;
-                            // Use the simplified _userData here.
-                            final personId =
-                                _userData['PERSONID']; // Get Person ID
+                            final personId = _userData['PERSONID'];
 
                             final formattedDatum =
                                 "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
@@ -259,7 +339,6 @@ class StartScreenState extends State<StartScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    // Date
                                     SizedBox(
                                       width: 90,
                                       child: Text(
@@ -273,7 +352,6 @@ class StartScreenState extends State<StartScreen> {
                                     const SizedBox(
                                       width: UIConstants.smallSpacing,
                                     ),
-                                    // Schulung name
                                     Expanded(
                                       child: Text(
                                         schulung['BEZEICHNUNG'] ?? 'N/A',
@@ -283,16 +361,13 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                     ),
-                                    // Delete Icon
                                     if (online)
                                       IconButton(
-                                        // Changed to IconButton
                                         icon: const Icon(
                                           Icons.delete_outline,
                                           color: Colors.redAccent,
                                         ),
                                         onPressed: () {
-                                          // Call the delete handler
                                           if (personId != null &&
                                               schulung[
                                                       'SCHULUNGENTEILNEHMERID'] !=
@@ -300,7 +375,8 @@ class StartScreenState extends State<StartScreen> {
                                             _handleDeleteSchulung(
                                               schulung[
                                                   'SCHULUNGENTEILNEHMERID'],
-                                              index, // Pass the index
+                                              index,
+                                              schulung['BEZEICHNUNG'],
                                             );
                                           } else {
                                             LoggerService.logError(
@@ -312,7 +388,8 @@ class StartScreenState extends State<StartScreen> {
                                                 content: Text(
                                                   'Ein unerwarteter Fehler ist aufgetreten.',
                                                 ),
-                                                duration: Duration(seconds: 2),
+                                                duration: UIConstants
+                                                    .snackBarDuration, // Using UIConstants
                                               ),
                                             );
                                           }
