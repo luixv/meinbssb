@@ -305,15 +305,15 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i2.Future<Map<String, dynamic>> fetchKontakte(int? personId) =>
+  _i2.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
   _i2.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
@@ -321,6 +321,27 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         Invocation.method(
           #fetchBankdaten,
           [webloginId],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> registerBankdaten(
+    int? webloginId,
+    String? kontoinhaber,
+    String? iban,
+    String? bic,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerBankdaten,
+          [
+            webloginId,
+            kontoinhaber,
+            iban,
+            bic,
+          ],
         ),
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),

@@ -134,8 +134,28 @@ class ApiService {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
-  Future<Map<String, dynamic>> fetchKontakte(int personId) async {
+  Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
+  }
+
+  Future<bool> addKontakt(int personId, int kontaktTyp, String kontakt) async {
+    return _userService.addKontakt(
+      personId: personId,
+      kontaktTyp: kontaktTyp,
+      kontakt: kontakt,
+    );
+  }
+
+  Future<bool> deleteKontakt(
+    int personId,
+    int kontaktId,
+    int kontaktTyp,
+  ) async {
+    return _userService.deleteKontakt(
+      personId: personId,
+      kontaktId: kontaktId,
+      kontaktTyp: kontaktTyp,
+    );
   }
 
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {

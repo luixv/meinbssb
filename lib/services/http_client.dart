@@ -1,3 +1,5 @@
+// In lib/services/http_client.dart
+
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -102,6 +104,14 @@ class HttpClient {
       if (method == 'POST') {
         response = await _client
             .post(
+              Uri.parse(url),
+              headers: requestHeaders,
+              body: body,
+            )
+            .timeout(Duration(seconds: serverTimeout));
+      } else if (method == 'PUT') {
+        response = await _client
+            .put(
               Uri.parse(url),
               headers: requestHeaders,
               body: body,
@@ -241,6 +251,24 @@ class HttpClient {
     );
   }
 
+  // This is the public `put` method you already have, which correctly calls `_makeRequest` with 'PUT'
+  Future<dynamic> put(String endpoint, Map<String, dynamic> body) async {
+    final String apiUrl = '$baseUrl/$endpoint';
+    final requestBody = jsonEncode(body);
+
+    LoggerService.logInfo('Sending PUT request to: $apiUrl');
+    LoggerService.logInfo('Request body: $requestBody');
+
+    return _makeRequest(
+      'PUT',
+      apiUrl,
+      {
+        'Content-Type': 'application/json',
+      },
+      requestBody,
+    );
+  }
+
   Future<dynamic> get(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('Sending GET request to: $apiUrl');
@@ -252,7 +280,6 @@ class HttpClient {
     String endpoint,
     Map<String, dynamic> body,
   ) async {
-    //baseUrl: 'https://$baseIP:$port/$path',
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logWarning(
       'Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',

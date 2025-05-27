@@ -1040,15 +1040,15 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
       ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i2.Future<Map<String, dynamic>> fetchKontakte(int? personId) =>
+  _i2.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [BankService].
@@ -1065,6 +1065,27 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
         Invocation.method(
           #fetchBankdaten,
           [webloginId],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> registerBankdaten(
+    int? webloginId,
+    String? kontoinhaber,
+    String? iban,
+    String? bic,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerBankdaten,
+          [
+            webloginId,
+            kontoinhaber,
+            iban,
+            bic,
+          ],
         ),
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),

@@ -4,6 +4,7 @@ import 'dart:developer';
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
 import '/services/network_service.dart';
+import '/services/logger_service.dart';
 
 class UserService {
   UserService({
@@ -162,59 +163,175 @@ class UserService {
     return [];
   }
 
-  Future<Map<String, dynamic>> fetchKontakte(int personId) async {
-    final response = await _httpClient.get('Kontakte/$personId');
-    // Call the modified _mapKontakteResponse which now returns a single Map
-    final mappedResponse = _mapKontakteResponse(response);
-    return mappedResponse; // Return the single mapped response
+  Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
+    try {
+      final dynamic response = await _httpClient.get('Kontakte/$personId');
+
+      if (response is List) {
+        final List<Map<String, dynamic>> mappedContacts =
+            _mapKontakteResponse(response);
+        return mappedContacts;
+      } else {
+        LoggerService.logWarning(
+          'fetchKontakte: API response was not a List: ${response.runtimeType}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching Kontakte: $e');
+      return [];
+    }
   }
 
-  // Modified _mapKontakteResponse to create a single consolidated Map
-  Map<String, dynamic> _mapKontakteResponse(dynamic response) {
-    Map<String, dynamic> consolidatedContactData =
-        {}; // This will hold the single item
+  /// Groups raw contact items into 'Privat' and 'Geschäftlich' lists.
+  /// IMPORTANT: This now correctly includes 'kontaktId' and 'rawKontaktTyp' in each contact entry.
+  List<Map<String, dynamic>> _mapKontakteResponse(dynamic response) {
+    if (response is! List) {
+      LoggerService.logWarning(
+        '_mapKontakteResponse received non-list: ${response.runtimeType}',
+      );
+      return [];
+    }
 
-    if (response is List) {
-      for (var item in response) {
-        if (item is Map<String, dynamic>) {
-          int? kontaktTyp = item['KONTAKTTYP'];
-          String? kontaktValue = item['KONTAKT'];
+    final List<Map<String, dynamic>> privateContacts = [];
+    final List<Map<String, dynamic>> businessContacts = [];
 
-          if (kontaktTyp != null && kontaktValue != null) {
-            switch (kontaktTyp) {
-              case 1:
-                consolidatedContactData['TELEFONNUMMER_PRIVAT'] = kontaktValue;
-                break;
-              case 2:
-                consolidatedContactData['MOBILNUMMER_PRIVAT'] = kontaktValue;
-                break;
-              case 3:
-                consolidatedContactData['FAX_PRIVAT'] = kontaktValue;
-                break;
-              case 4:
-                consolidatedContactData['EMAIL_PRIVAT'] = kontaktValue;
-                break;
-              case 5:
-                consolidatedContactData['TELEFONNUMMER_GESCHAEFTLICH'] =
-                    kontaktValue;
-                break;
-              case 6:
-                consolidatedContactData['MOBILNUMMER_GESCHAEFTLICH'] =
-                    kontaktValue;
-                break;
-              case 7:
-                consolidatedContactData['FAX_GESCHAEFTLICH'] = kontaktValue;
-                break;
-              case 8:
-                consolidatedContactData['EMAIL_GESCHAEFTLICH'] = kontaktValue;
-                break;
-              default:
-                break;
-            }
+    const Map<int, String> contactTypeLabels = {
+      1: 'Telefonnummer Privat',
+      2: 'Mobilnummer Privat',
+      3: 'Fax Privat',
+      4: 'E-Mail Privat',
+      5: 'Telefonnummer Geschäftlich',
+      6: 'Mobilnummer Geschäftlich',
+      7: 'Fax Geschäftlich',
+      8: 'E-Mail Geschäftlich',
+    };
+
+    for (var item in response) {
+      if (item is Map<String, dynamic>) {
+        int? kontaktTyp = item['KONTAKTTYP'];
+        int? kontaktId =
+            item['KONTAKTID']; // <--- ENSURE YOU EXTRACT KONTAKTID HERE
+        String? kontaktValue = item['KONTAKT'];
+
+        // Add null checks for kontaktTyp, kontaktValue, AND kontaktId
+        if (kontaktTyp != null &&
+            kontaktValue != null &&
+            kontaktValue.isNotEmpty &&
+            kontaktId != null) {
+          final String label = contactTypeLabels[kontaktTyp] ??
+              'Unbekannter Kontakt ($kontaktTyp)';
+          final Map<String, dynamic> contactEntry = {
+            'type': label,
+            'value': kontaktValue,
+            'kontaktId': kontaktId, // <--- ADD KONTAKTID TO THE MAP
+            'rawKontaktTyp': kontaktTyp, // <--- ADD raw KONTAKTTYP TO THE MAP
+          };
+
+          if (kontaktTyp >= 1 && kontaktTyp <= 4) {
+            privateContacts.add(contactEntry);
+          } else if (kontaktTyp >= 5 && kontaktTyp <= 8) {
+            businessContacts.add(contactEntry);
+          } else {
+            LoggerService.logWarning(
+              'Unknown KONTAKTTYP: $kontaktTyp for contact: $kontaktValue',
+            );
           }
+        } else {
+          // Log if any critical piece of data is missing from an API item
+          LoggerService.logWarning(
+            'Skipping contact due to missing data (KONTAKTTYP, KONTAKT, or KONTAKTID): $item',
+          );
         }
+      } else {
+        LoggerService.logWarning(
+          'Contact list contains non-map item: ${item.runtimeType}',
+        );
       }
     }
-    return consolidatedContactData; // Return the single consolidated map
+
+    return [
+      {'category': 'Privat', 'contacts': privateContacts},
+      {'category': 'Geschäftlich', 'contacts': businessContacts},
+    ];
+  }
+
+  Future<bool> addKontakt({
+    required int personId,
+    required int kontaktTyp,
+    required String kontakt,
+  }) async {
+    try {
+      final Map<String, dynamic> body = {
+        'PersonID': personId,
+        'KontaktTyp': kontaktTyp,
+        'Kontakt': kontakt,
+      };
+
+      LoggerService.logInfo('Attempting to add contact with body: $body');
+
+      final Map<String, dynamic> response = await _httpClient.post(
+        'KontaktHinzufuegen',
+        body,
+      );
+
+      LoggerService.logInfo('addKontakt API response: $response');
+
+      // Check the 'result' field in the response
+      if (response['result'] == true) {
+        LoggerService.logInfo(
+          'Contact added successfully for PersonID: $personId',
+        );
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'addKontakt: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error adding contact: $e');
+      return false; // Return false on any error during the API call
+    }
+  }
+
+  Future<bool> deleteKontakt({
+    required int personId,
+    required int kontaktId,
+    required int kontaktTyp,
+  }) async {
+    try {
+      final Map<String, dynamic> body = {
+        'PersonID': personId,
+        'KontaktID': kontaktId,
+        'KontaktTyp': kontaktTyp,
+        'Kontakt': '', // Kontakt must be empty  for deletion.
+      };
+
+      LoggerService.logInfo('Attempting to delete contact with body: $body');
+
+      final Map<String, dynamic> response = await _httpClient.put(
+        'KontaktAendern',
+        body,
+      );
+
+      LoggerService.logInfo('KontaktAendern (DELETE) API response: $response');
+
+      // Check the 'result' field in the response
+      if (response['result'] == true) {
+        LoggerService.logInfo(
+          'Contact deleted successfully for PersonID: $personId',
+        );
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'deleteKontakt: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error adding contact: $e');
+      return false; // Return false on any error during the API call
+    }
   }
 }
