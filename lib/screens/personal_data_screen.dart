@@ -11,13 +11,16 @@ import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 
 class PersonDataScreen extends StatefulWidget {
+  // Removed personId from here, as it will be accessed from userData
   const PersonDataScreen(
     this.userData, {
+    // userData is the first positional argument, implicitly named
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
-  final Map<String, dynamic> userData;
+
+  final Map<String, dynamic> userData; // This map now contains 'PERSONID'
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -39,49 +42,111 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  Map<String, dynamic> _userData = {}; // Local state for user data
+  Map<String, dynamic>?
+      _currentPassData; // Stores the fresh data fetched from API
+  String? _errorMessage; // To show if initial fetch fails
 
   @override
   void initState() {
     super.initState();
-    _userData =
-        widget.userData['data'] ?? {}; // Initialize from widget.userData
-    _loadInitialData();
+    // Fetch fresh data when the screen initializes
+    _fetchAndPopulateData();
   }
 
-  // Helper to load and populate fields from _userData
-  void _populateFields() {
-    _passnummerController.text = _userData['PASSNUMMER']?.toString() ?? '';
-    if (_userData['GEBURTSDATUM'] != null) {
+  // Method to fetch data from API and populate the form fields
+  Future<void> _fetchAndPopulateData() async {
+    // Get personId directly from widget.userData
+    final int? personId = widget.userData['PERSONID'] as int?;
+
+    if (personId == null) {
+      LoggerService.logError(
+        'Person ID is null in widget.userData. Cannot fetch personal data.',
+      );
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Person ID nicht verfügbar. Bitte erneut anmelden.';
+        });
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null; // Clear any previous error
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final response = await apiService
+          .fetchPassdaten(personId); // Use personId from userData
+
+      if (response['data'] != null) {
+        if (mounted) {
+          setState(() {
+            _currentPassData = response['data'] as Map<String, dynamic>;
+            _populateFields(
+              _currentPassData!,
+            ); // Populate fields with the new data
+          });
+          LoggerService.logInfo(
+            'Personal data fetched and fields populated successfully.',
+          );
+        }
+      } else {
+        final message = response['ResultMessage'] ??
+            'Unbekannter Fehler beim Laden der Daten.';
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'Fehler beim Laden: $message';
+          });
+        }
+        LoggerService.logError('Failed to fetch personal data: $message');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Netzwerkfehler oder Server nicht erreichbar: $e';
+        });
+      }
+      LoggerService.logError('Exception during _fetchAndPopulateData: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // Helper to populate fields from a Map<String, dynamic>
+  void _populateFields(Map<String, dynamic> data) {
+    _passnummerController.text = data['PASSNUMMER']?.toString() ?? '';
+    if (data['GEBURTSDATUM'] != null &&
+        data['GEBURTSDATUM'].toString().isNotEmpty) {
       try {
-        final parsedDate = DateTime.parse(_userData['GEBURTSDATUM']);
+        final parsedDate = DateTime.parse(data['GEBURTSDATUM'].toString());
         _geburtsdatumController.text =
             DateFormat('dd.MM.yyyy').format(parsedDate);
       } catch (e) {
         LoggerService.logError(
-          'Error parsing date: ${_userData['GEBURTSDATUM']}',
+          'Error parsing date: ${data['GEBURTSDATUM']}',
         );
         _geburtsdatumController.text = 'Invalid Date';
       }
     } else {
       _geburtsdatumController.text = '';
     }
-    _titelController.text = _userData['TITEL']?.toString() ?? '';
-    _vornameController.text = _userData['VORNAME']?.toString() ?? '';
-    _nachnameController.text = _userData['NAMEN']?.toString() ?? '';
-    _strasseHausnummerController.text = _userData['STRASSE']?.toString() ?? '';
-    _postleitzahlController.text = _userData['PLZ']?.toString() ?? '';
-    _ortController.text = _userData['ORT']?.toString() ?? '';
-    LoggerService.logInfo('Personal data fields populated.');
-  }
-
-  void _loadInitialData() {
-    _populateFields(); // Call this once in initState
-    LoggerService.logInfo('KontaktdatenScreen initialized');
+    _titelController.text = data['TITEL']?.toString() ?? '';
+    _vornameController.text = data['VORNAME']?.toString() ?? '';
+    _nachnameController.text =
+        data['NAMEN']?.toString() ?? ''; // Use 'NAMEN' for Nachname
+    _strasseHausnummerController.text = data['STRASSE']?.toString() ?? '';
+    _postleitzahlController.text = data['PLZ']?.toString() ?? '';
+    _ortController.text = data['ORT']?.toString() ?? '';
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user from KontaktdatenScreen');
+    LoggerService.logInfo('Logging out user from PersonalDataScreen');
     widget.onLogout();
     Navigator.of(context).pushReplacementNamed('/login');
   }
@@ -95,45 +160,47 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       bool updateSuccess = false;
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
-        final int personId = widget.userData['data']['PERSONID'];
+        final int? personId = widget.userData['PERSONID']
+            as int?; // Get personId from userData again
 
-        updateSuccess = await apiService.updateKritischeFelderUndAdresse(
-          personId,
-          _titelController.text,
-          _nachnameController.text,
-          _vornameController.text,
-          _userData['GESCHLECHT'] ?? 0, // Placeholder, ideally from UI
-          _strasseHausnummerController.text,
-          _postleitzahlController.text,
-          _ortController.text,
-        );
-
-        if (updateSuccess) {
-          LoggerService.logInfo(
-            'Personal data updated successfully. Fetching new data...',
+        if (personId == null) {
+          LoggerService.logError(
+            'Person ID is null for update. Cannot submit form.',
           );
-          // *** Crucial step: Re-fetch updated personal data ***
-          final updatedData = await apiService.fetchPassdaten(personId);
-          if (mounted) {
-            setState(() {
-              _userData =
-                  updatedData['data']; // Update local _userData with fresh data
-            });
-            _populateFields(); // Repopulate fields with new data
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
+              ),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+          updateSuccess = false;
+        } else {
+          updateSuccess = await apiService.updateKritischeFelderUndAdresse(
+            personId, // Use personId from userData
+            _titelController.text,
+            _nachnameController.text,
+            _vornameController.text,
+            _currentPassData?['GESCHLECHT'] as int? ??
+                0, // Get gender from the fetched map
+            _strasseHausnummerController.text,
+            _postleitzahlController.text,
+            _ortController.text,
+          );
+
+          if (updateSuccess) {
             LoggerService.logInfo(
-              'Personal data re-fetched and fields updated.',
+              'Personal data updated successfully. Re-fetching new data...',
             );
+            // Re-fetch updated data to ensure the form displays the latest state
+            await _fetchAndPopulateData(); // Call the same fetch method
           } else {
-            LoggerService.logError(
-              'Failed to re-fetch personal data after update.',
-            );
-            updateSuccess = false; // Treat re-fetch failure as overall failure
+            LoggerService.logError('Failed to update personal data.');
           }
         }
       } catch (error) {
-        LoggerService.logError(
-          'Exception during personal data update or re-fetch: $error',
-        );
+        LoggerService.logError('Exception during personal data update: $error');
         updateSuccess = false;
       } finally {
         if (mounted) {
@@ -146,7 +213,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               builder: (context) => PersonDataResultScreen(
                 success: updateSuccess,
                 userData: widget
-                    .userData, // Pass the original widget.userData (or ideally, the new _userData)
+                    .userData, // Pass original widget.userData for menu/consistency
                 isLoggedIn: widget.isLoggedIn,
                 onLogout: widget.onLogout,
               ),
@@ -187,144 +254,168 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           ),
           AppMenu(
             context: context,
-            userData: widget.userData,
+            userData: widget
+                .userData, // Pass the original widget.userData to the menu
             isLoggedIn: widget.isLoggedIn,
             onLogout: _handleLogout,
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(height: UIConstants.defaultSpacing),
-                _buildTextField(
-                  label: 'Passnummer',
-                  controller: _passnummerController,
-                  isReadOnly: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  inputTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                _buildTextField(
-                  label: 'Geburtsdatum',
-                  controller: _geburtsdatumController,
-                  isReadOnly: true,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  inputTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  suffixIcon: Tooltip(
-                    message:
-                        'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                    preferBelow: false,
-                    child: Icon(
-                      Icons.info_outline,
-                      size: UIConstants.subtitleStyle.fontSize,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                _buildTextField(
-                  label: 'Titel',
-                  controller: _titelController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'Vorname',
-                  controller: _vornameController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vorname ist erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'Nachname',
-                  controller: _nachnameController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Nachname ist erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'Straße + Hausnummer',
-                  controller: _strasseHausnummerController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Straße und Hausnummer sind erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'Postleitzahl',
-                  controller: _postleitzahlController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Postleitzahl ist erforderlich';
-                    }
-                    if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-                      return 'Ungültige Postleitzahl';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'Ort',
-                  controller: _ortController,
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Ort ist erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: UIConstants.defaultSpacing),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      padding: UIConstants.buttonPadding,
-                      backgroundColor: UIConstants.lightGreen,
-                    ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              UIConstants.white,
-                            ),
-                          )
-                        : const Text(
-                            'Absenden',
-                            style: TextStyle(
-                              fontSize: UIConstants.bodyFontSize,
-                              color: UIConstants.white,
-                            ),
+      body: _isLoading &&
+              _currentPassData ==
+                  null // Show loading indicator only on initial load
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? Center(child: Text(_errorMessage!))
+              : _currentPassData == null &&
+                      !_isLoading // No data and not loading
+                  ? const Center(
+                      child: Text('Keine persönlichen Daten verfügbar.'),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(UIConstants.defaultPadding),
+                      child: Form(
+                        key: _formKey,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const SizedBox(
+                                height: UIConstants.defaultSpacing,
+                              ),
+                              _buildTextField(
+                                label: 'Passnummer',
+                                controller: _passnummerController,
+                                isReadOnly: true,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                inputTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              _buildTextField(
+                                label: 'Geburtsdatum',
+                                controller: _geburtsdatumController,
+                                isReadOnly: true,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                inputTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                suffixIcon: Tooltip(
+                                  message:
+                                      'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                                  preferBelow: false,
+                                  child: Icon(
+                                    Icons.info_outline,
+                                    size: UIConstants.subtitleStyle.fontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              _buildTextField(
+                                label: 'Titel',
+                                controller: _titelController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                validator: (value) => null,
+                              ),
+                              _buildTextField(
+                                label: 'Vorname',
+                                controller: _vornameController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vorname ist erforderlich';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              _buildTextField(
+                                label: 'Nachname',
+                                controller: _nachnameController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Nachname ist erforderlich';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              _buildTextField(
+                                label: 'Straße + Hausnummer',
+                                controller: _strasseHausnummerController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Straße und Hausnummer sind erforderlich';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              _buildTextField(
+                                label: 'Postleitzahl',
+                                controller: _postleitzahlController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Postleitzahl ist erforderlich';
+                                  }
+                                  if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+                                    return 'Ungültige Postleitzahl';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              _buildTextField(
+                                label: 'Ort',
+                                controller: _ortController,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Ort ist erforderlich';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(
+                                height: UIConstants.defaultSpacing,
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _isLoading ? null : _submitForm,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: UIConstants.buttonPadding,
+                                    backgroundColor: UIConstants.lightGreen,
+                                  ),
+                                  child: _isLoading
+                                      ? const CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            UIConstants.white,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Absenden',
+                                          style: TextStyle(
+                                            fontSize: UIConstants.bodyFontSize,
+                                            color: UIConstants.white,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ],
                           ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+                        ),
+                      ),
+                    ),
     );
   }
 
@@ -337,6 +428,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     TextStyle? inputTextStyle,
     Color? backgroundColor,
     Widget? suffixIcon,
+    TextInputType? keyboardType,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
@@ -356,6 +448,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         ),
         validator: validator,
         readOnly: isReadOnly,
+        keyboardType: keyboardType,
       ),
     );
   }
