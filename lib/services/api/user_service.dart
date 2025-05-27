@@ -43,6 +43,57 @@ class UserService {
     return result;
   }
 
+  Future<bool> updateKritischeFelderUndAdresse(
+    int personId,
+    String titel,
+    String namen,
+    String vorname,
+    int geschlecht,
+    String strasse,
+    String plz,
+    String ort,
+  ) async {
+    try {
+      final Map<String, dynamic> body = {
+        'PersonID': personId,
+        'Titel': titel,
+        'Namen': namen,
+        'Vorname': vorname,
+        'Geschlecht': geschlecht,
+        'Strasse': strasse,
+        'PLZ': plz,
+        'Ort': ort, // Kontakt must be empty  for deletion.
+      };
+
+      LoggerService.logInfo('Attempting to delete contact with body: $body');
+
+      final Map<String, dynamic> response = await _httpClient.put(
+        'KritischeFelderUndAdresse',
+        body,
+      );
+
+      LoggerService.logInfo(
+        'KritischeFelderUndAdresse (UPDATE) API response: $response',
+      );
+
+      // Check the 'result' field in the response
+      if (response['result'] == true) {
+        LoggerService.logInfo(
+          'KritischeFelderUndAdresse UPDATED successfully for PersonID: $personId',
+        );
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'KritischeFelderUndAdresse: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating KritischeFelderUndAdresse: $e');
+      return false; // Return false on any error during the API call
+    }
+  }
+
   // This function is crucial for ensuring the correct data structure
   Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
     // Handle different response types (List or Map) for robustness
@@ -292,7 +343,10 @@ class UserService {
   }
 
   Future<bool> deleteKontakt(
-      int personId, int kontaktId, int kontaktTyp,) async {
+    int personId,
+    int kontaktId,
+    int kontaktTyp,
+  ) async {
     try {
       final Map<String, dynamic> body = {
         'PersonID': personId,

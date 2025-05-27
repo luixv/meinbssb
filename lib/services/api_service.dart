@@ -99,6 +99,28 @@ class ApiService {
     return _userService.fetchPassdaten(personId);
   }
 
+  Future<bool> updateKritischeFelderUndAdresse(
+    int personId,
+    String titel,
+    String namen,
+    String vorname,
+    int geschlecht,
+    String strasse,
+    String plz,
+    String ort,
+  ) async {
+    return _userService.updateKritischeFelderUndAdresse(
+      personId,
+      titel,
+      namen,
+      vorname,
+      geschlecht,
+      strasse,
+      plz,
+      ort,
+    );
+  }
+
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     return _imageService.fetchAndCacheSchuetzenausweis(
       personId,

@@ -1,8 +1,13 @@
+// In lib/screens/personal_data_screen.dart
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
+import '/screens/personal_data_result_screen.dart';
 import '/services/logger_service.dart';
+import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 
 class PersonDataScreen extends StatefulWidget {
@@ -32,24 +37,21 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   final TextEditingController _postleitzahlController = TextEditingController();
   final TextEditingController _ortController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>(); // Key for form validation
-  bool _isLoading = false; // Loading state for the submit button
-  // Declare a variable to hold the simplified user data
-  Map<String, dynamic> _userData = {};
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  Map<String, dynamic> _userData = {}; // Local state for user data
 
-  // Initial Data Loading (Populate fields)
   @override
   void initState() {
     super.initState();
-    // Assign the nested data to _userData
-    _userData = widget.userData['data'] ?? {};
+    _userData =
+        widget.userData['data'] ?? {}; // Initialize from widget.userData
     _loadInitialData();
   }
 
-  void _loadInitialData() {
-    // Populate the text fields with the user's data.  Use _userData
+  // Helper to load and populate fields from _userData
+  void _populateFields() {
     _passnummerController.text = _userData['PASSNUMMER']?.toString() ?? '';
-    // Format the date if it's not null
     if (_userData['GEBURTSDATUM'] != null) {
       try {
         final parsedDate = DateTime.parse(_userData['GEBURTSDATUM']);
@@ -59,91 +61,97 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         LoggerService.logError(
           'Error parsing date: ${_userData['GEBURTSDATUM']}',
         );
-        _geburtsdatumController.text =
-            'Invalid Date'; // Or some default error message
+        _geburtsdatumController.text = 'Invalid Date';
       }
     } else {
       _geburtsdatumController.text = '';
     }
-
     _titelController.text = _userData['TITEL']?.toString() ?? '';
     _vornameController.text = _userData['VORNAME']?.toString() ?? '';
     _nachnameController.text = _userData['NAMEN']?.toString() ?? '';
     _strasseHausnummerController.text = _userData['STRASSE']?.toString() ?? '';
     _postleitzahlController.text = _userData['PLZ']?.toString() ?? '';
     _ortController.text = _userData['ORT']?.toString() ?? '';
+    LoggerService.logInfo('Personal data fields populated.');
+  }
 
+  void _loadInitialData() {
+    _populateFields(); // Call this once in initState
     LoggerService.logInfo('KontaktdatenScreen initialized');
   }
 
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from KontaktdatenScreen');
-    widget.onLogout(); // Call the logout function provided by the parent.
-    Navigator.of(context).pushReplacementNamed(
-      '/login',
-    ); // Navigate to the login screen.  Use pushReplacementNamed
+    widget.onLogout();
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
-  // Method to handle form submission
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Form is valid
       setState(() {
-        _isLoading = true; // Show loading indicator
+        _isLoading = true;
       });
 
-      // Simulate an API call (this will be replaced with the actual API call)
+      bool updateSuccess = false;
       try {
-        // In a real app, you'd call your ApiService here to update the data.
-        // Example:
-        // final apiService = Provider.of<ApiService>(context, listen: false);
-        // final success = await apiService.updateKontaktdaten({
-        //   'PASSNUMMER': _passnummerController.text,
-        //   'GEBURTSDATUM': _geburtsdatumController.text, // Consider re-parsing if needed
-        //   'TITEL': _titelController.text,
-        //   'VORNAME': _vornameController.text,
-        //   'NAMEN': _nachnameController.text,
-        //   'STRASSE_HAUSNUMMER': _strasseHausnummerController.text,
-        //   'PLZ': _postleitzahlController.text,
-        //   'ORT': _ortController.text,
-        //   //  'PERSONID' : widget.userData['PERSONID'], //DO NOT SEND PERSONID.
-        // });
+        final apiService = Provider.of<ApiService>(context, listen: false);
+        final int personId = widget.userData['data']['PERSONID'];
 
-        // Simulate a successful response (replace with actual response handling)
-        await Future.delayed(
-          const Duration(seconds: 2),
-        ); // Simulate network delay
+        updateSuccess = await apiService.updateKritischeFelderUndAdresse(
+          personId,
+          _titelController.text,
+          _nachnameController.text,
+          _vornameController.text,
+          _userData['GESCHLECHT'] ?? 0, // Placeholder, ideally from UI
+          _strasseHausnummerController.text,
+          _postleitzahlController.text,
+          _ortController.text,
+        );
 
-        // Simulate different responses for testing
-        const bool success = true; // Or false, to test error handling.
-
-        if (success) {
-          LoggerService.logInfo('Kontaktdaten updated successfully');
+        if (updateSuccess) {
+          LoggerService.logInfo(
+            'Personal data updated successfully. Fetching new data...',
+          );
+          // *** Crucial step: Re-fetch updated personal data ***
+          final updatedData = await apiService.fetchPassdaten(personId);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Kontaktdaten erfolgreich aktualisiert.'),
-                duration: UIConstants.snackBarDuration,
-              ),
+            setState(() {
+              _userData =
+                  updatedData['data']; // Update local _userData with fresh data
+            });
+            _populateFields(); // Repopulate fields with new data
+            LoggerService.logInfo(
+              'Personal data re-fetched and fields updated.',
             );
+          } else {
+            LoggerService.logError(
+              'Failed to re-fetch personal data after update.',
+            );
+            updateSuccess = false; // Treat re-fetch failure as overall failure
           }
-          // You might want to navigate to another screen or update the UI here.
         }
       } catch (error) {
-        LoggerService.logError('Error updating Kontaktdaten: $error');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Ein Fehler ist aufgetreten: $error'),
-              duration: UIConstants.snackBarDuration,
-            ),
-          );
-        }
+        LoggerService.logError(
+          'Exception during personal data update or re-fetch: $error',
+        );
+        updateSuccess = false;
       } finally {
         if (mounted) {
           setState(() {
-            _isLoading = false; // Hide loading indicator
+            _isLoading = false;
           });
+          // Navigate to result screen after operation (success or failure)
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => PersonDataResultScreen(
+                success: updateSuccess,
+                userData: widget
+                    .userData, // Pass the original widget.userData (or ideally, the new _userData)
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+              ),
+            ),
+          );
         }
       }
     }
@@ -151,7 +159,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   @override
   void dispose() {
-    // Dispose of the controllers when the widget is disposed.
     _passnummerController.dispose();
     _geburtsdatumController.dispose();
     _titelController.dispose();
@@ -165,57 +172,45 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Build the UI for the Kontaktdaten screen.
     return Scaffold(
-      backgroundColor:
-          UIConstants.backgroundGreen, // Consistent background color
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remove the default back button
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Persönliche Daten', // Set the title of the AppBar
-          style: UIConstants.titleStyle, // Use the title style from UIConstants
+          'Persönliche Daten',
+          style: UIConstants.titleStyle,
         ),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
-            child:
-                ConnectivityIcon(), // Add the ConnectivityIcon here, as in StartScreen
+            child: ConnectivityIcon(),
           ),
           AppMenu(
             context: context,
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
-            onLogout:
-                _handleLogout, // Use the logout handler defined in this class
+            onLogout: _handleLogout,
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(
-          UIConstants.defaultPadding,
-        ), // Use default padding
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: Form(
-          //Wrap with a form
           key: _formKey,
           child: SingleChildScrollView(
-            // Make the content scrollable
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment
-                  .start, // Left-align labels.  This is mostly handled by the _buildTextField now.
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                //const LogoWidget(), //  NO LOGO HERE
                 const SizedBox(height: UIConstants.defaultSpacing),
                 _buildTextField(
-                  // Use the helper method for consistent text fields
                   label: 'Passnummer',
                   controller: _passnummerController,
                   isReadOnly: true,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   inputTextStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
-                  ), // Make Value Bold
+                  ),
                 ),
-                // Reverted to _buildTextField for Geburtsdatum
                 _buildTextField(
                   label: 'Geburtsdatum',
                   controller: _geburtsdatumController,
@@ -223,27 +218,24 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   inputTextStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
-                  ), // Make Value Bold
-                  // Add the info icon as a suffix
+                  ),
                   suffixIcon: Tooltip(
                     message:
                         'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                    preferBelow: false, // Show tooltip above the icon
+                    preferBelow: false,
                     child: Icon(
                       Icons.info_outline,
-                      size: UIConstants
-                          .subtitleStyle.fontSize, // Match label font size
-                      color: Colors.black, // Set color to black
+                      size: UIConstants.subtitleStyle.fontSize,
+                      color: Colors.black,
                     ),
                   ),
                 ),
                 _buildTextField(
                   label: 'Titel',
                   controller: _titelController,
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .auto, // Use the auto behavior, like the login screen
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
                   validator: (value) {
-                    return null; // It can be empty
+                    return null;
                   },
                 ),
                 _buildTextField(
@@ -306,10 +298,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 ),
                 const SizedBox(height: UIConstants.defaultSpacing),
                 SizedBox(
-                  width: double.infinity, // Make button full width
+                  width: double.infinity,
                   child: ElevatedButton(
-                    onPressed:
-                        _isLoading ? null : _submitForm, // Disable when loading
+                    onPressed: _isLoading ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
                       padding: UIConstants.buttonPadding,
                       backgroundColor: UIConstants.lightGreen,
@@ -337,17 +328,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     );
   }
 
-  // Helper method to create a text field with label
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
     FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    //TextStyle? labelStyle,
     TextStyle? inputTextStyle,
     Color? backgroundColor,
-    Widget? suffixIcon, // Re-added suffixIcon parameter
+    Widget? suffixIcon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
@@ -356,18 +345,14 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         style: inputTextStyle ??
             const TextStyle(
               fontSize: UIConstants.bodyFontSize,
-            ), // Input text style.  Important
+            ),
         decoration: UIConstants.defaultInputDecoration.copyWith(
-          labelText: label, // Now set here
-          // labelStyle: labelStyle ??
-          //     UIConstants.subtitleStyle, // Use subtitleStyle as default
+          labelText: label,
           floatingLabelBehavior: floatingLabelBehavior,
-          hintText:
-              isReadOnly ? null : label, // Only show hint for editable fields
-          fillColor: backgroundColor, // Use the provided background color
-          filled: backgroundColor !=
-              null, // Only fill if a color is provided.  Important.
-          suffixIcon: suffixIcon, // Assign the suffixIcon here
+          hintText: isReadOnly ? null : label,
+          fillColor: backgroundColor,
+          filled: backgroundColor != null,
+          suffixIcon: suffixIcon,
         ),
         validator: validator,
         readOnly: isReadOnly,
