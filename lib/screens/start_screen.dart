@@ -139,8 +139,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(false);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            UIConstants.lightGreen, // Green for cancel
+                        backgroundColor: UIConstants.accept, // Green for cancel
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -160,8 +159,8 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(true);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.red, // Red for delete, clear distinction
+                        backgroundColor: UIConstants
+                            .delete, // Red for delete, clear distinction
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(

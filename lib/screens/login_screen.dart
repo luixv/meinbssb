@@ -211,8 +211,7 @@ class LoginScreenState extends State<LoginScreen> {
         ), // Name of the button, used for the integration test
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              UIConstants.lightGreen, // Hier wird die Farbe gesetzt
+          backgroundColor: UIConstants.accept, // Hier wird die Farbe gesetzt
           padding: UIConstants.buttonPadding,
         ),
         child: _isLoading

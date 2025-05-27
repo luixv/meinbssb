@@ -15,6 +15,8 @@ class UIConstants {
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
+  static const Color delete = Colors.red;
+  static const Color accept = Colors.lightGreen;
 
   static const Color tableBackground = Colors.white;
   static const Color tableBorder = Colors.white;

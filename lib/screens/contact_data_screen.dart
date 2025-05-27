@@ -112,7 +112,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 TextSpan(
                   text: '$contactLabel: $contactValue', // No quotes here
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,), // Bold the contact info
+                    fontWeight: FontWeight.bold,
+                  ), // Bold the contact info
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -132,7 +133,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(false); // Do not delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.lightGreen,
+                        backgroundColor: UIConstants.accept,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -152,8 +153,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.red, // Red for delete, clear distinction
+                        backgroundColor: UIConstants
+                            .delete, // Red for delete, clear distinction
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(

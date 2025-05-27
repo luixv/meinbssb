@@ -393,7 +393,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   onPressed: _isLoading ? null : _submitForm,
                                   style: ElevatedButton.styleFrom(
                                     padding: UIConstants.buttonPadding,
-                                    backgroundColor: UIConstants.lightGreen,
+                                    backgroundColor: UIConstants.accept,
                                   ),
                                   child: _isLoading
                                       ? const CircularProgressIndicator(
