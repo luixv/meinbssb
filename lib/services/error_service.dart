@@ -18,7 +18,7 @@ class ErrorService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: UIConstants.bodyStyle),
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: UIConstants.error,
         duration: UIConstants.snackBarDuration,
       ),
     );
@@ -29,7 +29,7 @@ class ErrorService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: UIConstants.bodyStyle),
-        backgroundColor: Colors.green.shade700,
+        backgroundColor: UIConstants.success,
         duration: UIConstants.snackBarDuration,
       ),
     );

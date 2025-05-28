@@ -88,13 +88,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor:
-              UIConstants.backgroundGreen, // Consistent background color
+          backgroundColor: UIConstants.backgroundGreen,
           title: const Center(
             child: Text(
               'Kontakt löschen',
               style: TextStyle(
-                color: UIConstants.defaultAppColor, // Consistent color
+                color: UIConstants.defaultAppColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -153,8 +152,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants
-                            .delete, // Red for delete, clear distinction
+                        backgroundColor: UIConstants.delete,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -351,8 +349,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       builder: (BuildContext dialogContext) {
         // Use dialogContext to avoid conflicts
         return AlertDialog(
-          backgroundColor:
-              UIConstants.backgroundGreen, // Set background color of the dialog
+          backgroundColor: UIConstants.backgroundGreen,
           title: const Center(
             // Center the title
             child: Text('Neuen Kontakt hinzufügen'),
@@ -414,7 +411,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.lightGreen,
+                        backgroundColor: UIConstants.backgroundGreen,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -433,7 +430,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.lightGreen,
+                        backgroundColor: UIConstants.backgroundGreen,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: _isAdding
@@ -546,8 +543,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       // --- Floating Action Button (FAB) ---
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddContactForm,
-        backgroundColor: UIConstants.defaultAppColor, // Use your app's color
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.add, color: UIConstants.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

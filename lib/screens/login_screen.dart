@@ -211,7 +211,7 @@ class LoginScreenState extends State<LoginScreen> {
         ), // Name of the button, used for the integration test
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor: UIConstants.accept, // Hier wird die Farbe gesetzt
+          backgroundColor: UIConstants.accept,
           padding: UIConstants.buttonPadding,
         ),
         child: _isLoading
@@ -299,14 +299,13 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Hier wird die Hintergrundfarbe des Scaffolds geändert.
-      backgroundColor: UIConstants.backgroundGreen, // Set background color
+      backgroundColor: UIConstants.backgroundGreen,
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            widget.logoWidget ??
-                const LogoWidget(), // Use the provided logoWidget or the default
+            widget.logoWidget ?? const LogoWidget(),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Hier anmelden',

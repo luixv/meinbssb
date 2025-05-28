@@ -95,12 +95,12 @@ class StartScreenState extends State<StartScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: UIConstants.backgroundGreen, // Consistent background
+          backgroundColor: UIConstants.backgroundGreen,
           title: const Center(
             child: Text(
               'Schulung abmelden',
               style: TextStyle(
-                color: UIConstants.defaultAppColor, // Consistent color
+                color: UIConstants.defaultAppColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -139,7 +139,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(false);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.accept, // Green for cancel
+                        backgroundColor: UIConstants.accept, 
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -159,8 +159,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(true);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants
-                            .delete, // Red for delete, clear distinction
+                        backgroundColor: UIConstants.delete,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(

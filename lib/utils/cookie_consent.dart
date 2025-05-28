@@ -64,17 +64,17 @@ class _CookieConsentState extends State<CookieConsent> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'We use cookies',
+                            'Wir verwenden Cookies\n',
                             style: UIConstants.headerStyle.copyWith(
                               color: UIConstants.defaultAppColor,
                             ),
                           ),
                           const SizedBox(height: UIConstants.smallSpacing),
                           Text(
-                            'To improve your experience, we use cookies. By continuing to use the app, you accept our use of cookies.',
+                            'Um diese App offline nutzen zu können, verwenden wir Cookies.', // \n Durch die weitere Nutzung der App akzeptieren Sie unsere Verwendung von Cookies.
                             textAlign: TextAlign.center,
                             style: UIConstants.bodyStyle.copyWith(
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: UIConstants.transparent,
                             ),
                           ),
                           const SizedBox(height: UIConstants.defaultSpacing),
@@ -83,11 +83,11 @@ class _CookieConsentState extends State<CookieConsent> {
                             child: ElevatedButton(
                               onPressed: _acceptConsent,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: UIConstants.lightGreen,
+                                backgroundColor: UIConstants.backgroundGreen,
                                 padding: UIConstants.buttonPadding,
                               ),
                               child: Text(
-                                'Accept',
+                                'Zustimmen',
                                 style: UIConstants.bodyStyle.copyWith(
                                   color: UIConstants.white,
                                 ),

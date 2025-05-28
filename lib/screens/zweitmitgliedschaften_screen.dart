@@ -91,9 +91,7 @@ class _ZweitmitgliedschaftenScreenState
     final Widget displayedLogo = widget.logoWidget ?? const LogoWidget();
 
     return Scaffold(
-      // Ändere die Hintergrundfarbe des Scaffolds.
-      backgroundColor:
-          UIConstants.backgroundGreen, // Setze die Hintergrundfarbe hier
+      backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title:
