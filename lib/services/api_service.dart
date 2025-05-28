@@ -129,9 +129,6 @@ class ApiService {
     );
   }
 
-  Future<String> fetchAuthToken() async {
-    return _httpClient.requestToken();
-  }
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int personId,

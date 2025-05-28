@@ -8,7 +8,6 @@ import 'dart:typed_data' as _i4;
 
 import 'package:meinbssb/services/api_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -168,21 +167,6 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
         ),
         returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
       ) as _i3.Future<_i4.Uint8List>);
-
-  @override
-  _i3.Future<String> fetchAuthToken() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchAuthToken,
-          [],
-        ),
-        returnValue: _i3.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchAuthToken,
-            [],
-          ),
-        )),
-      ) as _i3.Future<String>);
 
   @override
   _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(
@@ -469,21 +453,6 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
         ),
         returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
       ) as _i3.Future<_i4.Uint8List>);
-
-  @override
-  _i3.Future<String> fetchAuthToken() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchAuthToken,
-          [],
-        ),
-        returnValue: _i3.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchAuthToken,
-            [],
-          ),
-        )),
-      ) as _i3.Future<String>);
 
   @override
   _i3.Future<List<dynamic>> fetchAngemeldeteSchulungen(

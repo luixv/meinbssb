@@ -1,90 +1,31 @@
-// In lib/services/http_client.dart
-
+// lib/services/http_client.dart
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '/services/logger_service.dart';
-import '/services/config_service.dart';
-import '/services/cache_service.dart';
+import '/services/config_service.dart'; 
+import '/services/cache_service.dart'; 
+import '/services/token_service.dart'; 
 
 class HttpClient {
   HttpClient({
     required this.baseUrl,
     required this.serverTimeout,
-    required ConfigService configService,
-    required CacheService cacheService,
+    required TokenService tokenService, 
+    required ConfigService configService, 
+    required CacheService
+        cacheService, // Keep to pass to TokenService, or for specific cache clear actions if needed
     http.Client? client,
   })  : _client = client ?? http.Client(),
-        _configService = configService,
-        _cacheService = cacheService;
+        _tokenService = tokenService,
+        _configService = configService;
 
   final String baseUrl;
   final int serverTimeout;
-  final ConfigService _configService;
   final http.Client _client;
-  final CacheService _cacheService;
-  static const String _tokenCacheKey = 'authToken';
-
-  // Helper method to get the token
-  Future<String> _fetchToken() async {
-    final String tokenServerURL =
-        _configService.getString('tokenServerURL') ?? '';
-
-    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
-    final Map<String, String> body = {
-      'username': usernameWebUser,
-      'password': passwordWebUser,
-    };
-
-    // Create a multipart request.
-    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    body.forEach((key, value) {
-      request.fields[key] = value;
-    });
-
-    LoggerService.logInfo('Fetching new token from: $tokenServerURL');
-
-    try {
-      final http.StreamedResponse streamedResponse = await request.send();
-      final http.Response response =
-          await http.Response.fromStream(streamedResponse);
-
-      LoggerService.logInfo('Response Status Code: ${response.statusCode}');
-      LoggerService.logInfo('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        final String token = jsonResponse['Token'];
-        await _cacheService.setString(_tokenCacheKey, token);
-        LoggerService.logInfo('Successfully fetched and cached new token');
-        return token;
-      }
-    } catch (e) {
-      LoggerService.logInfo('POST Request Error: $e');
-    }
-    return '';
-  }
-
-  // Helper method to get token from cache or fetch if needed
-  Future<String> _getToken() async {
-    final cachedToken = await _cacheService.getString(_tokenCacheKey);
-    if (cachedToken != null && cachedToken.isNotEmpty) {
-      LoggerService.logInfo('Using cached token');
-      return cachedToken;
-    } else {
-      LoggerService.logInfo('No cached token found, fetching new one');
-      return await _fetchToken();
-    }
-  }
-
-  // Public method to get and cache the token (for login)
-  Future<String> requestToken() async {
-    final token = await _fetchToken();
-    return token;
-  }
+  final TokenService _tokenService; 
+  final ConfigService _configService; 
 
   // Method to make HTTP requests with token handling
   Future<dynamic> _makeRequest(
@@ -95,7 +36,9 @@ class HttpClient {
     bool retry = true,
   }) async {
     try {
-      final token = await _getToken(); // Get the token
+      // Get the token from the TokenService
+      final token = await _tokenService.getAuthToken();
+
       // Add Authorization header
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
@@ -118,12 +61,11 @@ class HttpClient {
             )
             .timeout(Duration(seconds: serverTimeout));
       } else if (method == 'DELETE') {
-        // Added DELETE method handling
         response = await _client
             .delete(
               Uri.parse(url),
               headers: requestHeaders,
-              body: body, // DELETE requests can also have a body
+              body: body,
             )
             .timeout(Duration(seconds: serverTimeout));
       } else if (method == 'GET') {
@@ -140,57 +82,67 @@ class HttpClient {
           request.headers.addAll(requestHeaders);
           request.body = body;
 
-          LoggerService.logInfo('Sending GET Request to: $url');
-          LoggerService.logInfo('Headers: $headers');
-          LoggerService.logInfo('Body: $body');
+          LoggerService.logInfo('HttpClient: Sending GET Request to: $url');
+          LoggerService.logInfo('HttpClient: Headers: $requestHeaders');
+          LoggerService.logInfo('HttpClient: Body: $body');
 
           final streamedResponse = await _client.send(request);
-          response = await http.Response.fromStream(streamedResponse).timeout(
-              Duration(
-                  seconds: serverTimeout,),); // Timeout is handled by send() now
+          response =
+              await http.Response.fromStream(streamedResponse).timeout(Duration(
+            seconds: serverTimeout,
+          ),);
         }
       } else {
         throw Exception('Unsupported HTTP method: $method');
       }
 
       LoggerService.logInfo(
-        'Response status: ${response.statusCode}, url: ${response.request?.url}',
+        'HttpClient: Response status: ${response.statusCode}, url: ${response.request?.url}',
       );
-      LoggerService.logInfo('Response body: ${response.body}');
+      LoggerService.logInfo('HttpClient: Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        // 204 No Content is common for successful DELETE
-        return jsonDecode(response.body);
+        // For 204 No Content, body might be empty. Only decode if body is not empty.
+        if (response.body.isNotEmpty) {
+          return jsonDecode(response.body);
+        }
+        return {}; // Return empty map for 204 or empty body
       } else if (response.statusCode == 401 || response.statusCode == 403) {
         // Handle token expiration/invalidation
         if (retry) {
-          LoggerService.logWarning('Token expired, attempting to refresh');
-          await _cacheService.remove(_tokenCacheKey); //remove invalid token
-          final newToken = await _fetchToken();
+          LoggerService.logWarning(
+              'HttpClient: Token expired, attempting to refresh via TokenService',);
+          await _tokenService
+              .clearToken(); // Tell TokenService to clear its cached token
+          final newToken = await _tokenService
+              .requestToken(); // Request a new token from TokenService
 
-          await _cacheService.setString(
-            _tokenCacheKey,
-            newToken,
-          ); // Cache the new token
+          if (newToken.isEmpty) {
+            // If token refresh failed
+            throw Exception(
+                'HttpClient: Token refresh failed: ${response.statusCode}, body: ${response.body}',);
+          }
+          // Retry the request once with the new token
+          // Pass original headers as Authorization will be re-added by _makeRequest
           return _makeRequest(
             method,
             url,
-            requestHeaders,
+            headers,
             body,
             retry: false,
-          ); // Retry the request once
+          );
         } else {
           throw Exception(
-            'Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
+            'HttpClient: Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
           );
         }
       } else {
         throw Exception(
-          'Request failed: ${response.statusCode}, body: ${response.body}',
+          'HttpClient: Request failed: ${response.statusCode}, body: ${response.body}',
         );
       }
     } catch (e) {
-      LoggerService.logError('Exception in _makeRequest: $e');
+      LoggerService.logError('HttpClient: Exception in _makeRequest: $e');
       rethrow;
     }
   }
@@ -203,7 +155,8 @@ class HttpClient {
     bool retry = true,
   }) async {
     try {
-      final token = await _getToken(); // Get the token
+      final token =
+          await _tokenService.getAuthToken(); // Get the token from TokenService
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
 
@@ -216,7 +169,7 @@ class HttpClient {
       }
 
       LoggerService.logInfo(
-        'Response status: ${response.statusCode}, url: ${response.request?.url}',
+        'HttpClient: Response status: ${response.statusCode}, url: ${response.request?.url}',
       );
 
       if (response.statusCode == 200) {
@@ -224,22 +177,31 @@ class HttpClient {
       } else if (response.statusCode == 401 || response.statusCode == 403) {
         if (retry) {
           LoggerService.logWarning(
-            'Token expired, attempting to refresh for bytes request',
+            'HttpClient: Token expired, attempting to refresh for bytes request via TokenService',
           );
-          await _cacheService.remove(_tokenCacheKey);
-          final newToken = await _fetchToken();
-          await _cacheService.setString(_tokenCacheKey, newToken);
-          return _makeBytesRequest(method, url, requestHeaders, retry: false);
+          await _tokenService
+              .clearToken(); // Tell TokenService to clear its cached token
+          final newToken = await _tokenService
+              .requestToken(); // Request a new token from TokenService
+
+          if (newToken.isEmpty) {
+            // If token refresh failed
+            throw Exception(
+                'HttpClient: Token refresh failed for bytes request: ${response.statusCode}, body: ${response.body}',);
+          }
+          return _makeBytesRequest(method, url, headers, retry: false);
         } else {
           throw Exception(
-            'Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
+            'HttpClient: Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
           );
         }
       } else {
-        throw Exception('Failed to load bytes: ${response.statusCode}');
+        throw Exception(
+            'HttpClient: Failed to load bytes: ${response.statusCode}',);
       }
     } catch (e) {
-      LoggerService.logError('Error fetching bytes in _makeBytesRequest: $e');
+      LoggerService.logError(
+          'HttpClient: Error fetching bytes in _makeBytesRequest: $e',);
       rethrow;
     }
   }
@@ -248,8 +210,8 @@ class HttpClient {
     final String apiUrl = '$baseUrl/$endpoint';
     final requestBody = jsonEncode(body);
 
-    LoggerService.logInfo('Sending POST request to: $apiUrl');
-    LoggerService.logInfo('Request body: $requestBody');
+    LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'POST',
@@ -265,8 +227,8 @@ class HttpClient {
     final String apiUrl = '$baseUrl/$endpoint';
     final requestBody = jsonEncode(body);
 
-    LoggerService.logInfo('Sending PUT request to: $apiUrl');
-    LoggerService.logInfo('Request body: $requestBody');
+    LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'PUT',
@@ -278,14 +240,13 @@ class HttpClient {
     );
   }
 
-  // New DELETE method
   Future<dynamic> delete(String endpoint, {Map<String, dynamic>? body}) async {
     final String apiUrl = '$baseUrl/$endpoint';
     final requestBody = body != null ? jsonEncode(body) : null;
 
-    LoggerService.logInfo('Sending DELETE request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
     if (requestBody != null) {
-      LoggerService.logInfo('Request body: $requestBody');
+      LoggerService.logInfo('HttpClient: Request body: $requestBody');
     }
 
     return _makeRequest(
@@ -300,18 +261,17 @@ class HttpClient {
 
   Future<dynamic> get(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
-    LoggerService.logInfo('Sending GET request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
     return _makeRequest('GET', apiUrl, null, null);
   }
 
-  // New method to send GET request with a body (non-standard but supported by your _makeRequest)
   Future<dynamic> getWithBody(
     String endpoint,
     Map<String, dynamic> body,
   ) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logWarning(
-      'Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
+      'HttpClient: Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
     );
 
     final baseIP = _configService.getString('apiBaseServer', 'api') ??
@@ -324,19 +284,19 @@ class HttpClient {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Content-Length': utf8.encode(requestBody).length.toString(),
-      'Host': host, //'webintern.bssb.bayern:56400'
+      'Host': host,
     };
 
-    LoggerService.logInfo('Sending GET to: $apiUrl');
-    LoggerService.logInfo('Headers: $headers');
-    LoggerService.logInfo('Body: $requestBody');
+    LoggerService.logInfo('HttpClient: Sending GET to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Headers: $headers');
+    LoggerService.logInfo('HttpClient: Body: $requestBody');
 
     return _makeRequest('GET', apiUrl, headers, requestBody);
   }
 
   Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
-    LoggerService.logInfo('Sending GET bytes request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
     return _makeBytesRequest('GET', apiUrl, null);
   }
 }

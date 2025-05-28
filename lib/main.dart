@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart'
+    as http; // Import http client for TokenService and HttpClient
+
 import 'app.dart';
 import 'services/api/auth_service.dart';
 import 'services/api/user_service.dart';
@@ -14,6 +17,7 @@ import 'services/cache_service.dart';
 import 'services/config_service.dart';
 import 'services/logger_service.dart';
 import 'services/network_service.dart';
+import '/services/token_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +37,7 @@ class AppInitializer {
   static late UserService _userService;
   static late AuthService _authService;
   static late BankService _bankService;
+  static late TokenService _tokenService; // Make sure it's here
 
   static Future<void> init() async {
     LoggerService.init();
@@ -59,12 +64,27 @@ class AppInitializer {
     String baseUrl =
         '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
 
+    // --- FIX STARTS HERE ---
+    // Initialize the http.Client instance once and pass it to both services
+    final baseHttpClient = http.Client();
+
+    // 1. Initialize TokenService FIRST
+    _tokenService = TokenService(
+      configService: _configService,
+      cacheService: _cacheService,
+      client: baseHttpClient, // Pass the shared http.Client
+    );
+
+    // 2. Then, initialize HttpClient, passing the now-initialized _tokenService
     _httpClient = HttpClient(
       baseUrl: baseUrl,
       serverTimeout: serverTimeout,
+      tokenService: _tokenService, // This is now initialized!
       configService: _configService,
       cacheService: _cacheService,
+      client: baseHttpClient, // Pass the shared http.Client
     );
+    // --- FIX ENDS HERE ---
 
     _trainingService = TrainingService(
       httpClient: _httpClient,
@@ -132,6 +152,12 @@ class AppInitializer {
     userServiceProvider = Provider<UserService>(
       create: (context) => _userService,
     );
+
+// This is just in case the token_service is needed elsewhere.
+// In fact the only place where it is used is in the HttpClient
+    tokenServiceProvider = Provider<TokenService>(
+      create: (context) => _tokenService,
+    );
   }
 
   // Public static provider instances
@@ -144,4 +170,5 @@ class AppInitializer {
   static late Provider<AuthService> authServiceProvider;
   static late Provider<TrainingService> trainingServiceProvider;
   static late Provider<UserService> userServiceProvider;
+  static late Provider<TokenService> tokenServiceProvider;
 }
