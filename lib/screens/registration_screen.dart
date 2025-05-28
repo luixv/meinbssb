@@ -515,12 +515,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   child: _isLoading
                       ? const CircularProgressIndicator(
                           color: UIConstants.white,
-                          strokeWidth: 2.0,
                         )
                       : Text(
                           'Registrieren',
                           style: UIConstants.bodyStyle.copyWith(
-                            color: UIConstants.white,
+                            color: UIConstants.sendButton,
                           ),
                         ),
                 ),

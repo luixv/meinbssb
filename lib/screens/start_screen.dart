@@ -25,7 +25,6 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
-  final Color _appColor = UIConstants.defaultAppColor;
   Map<String, dynamic> _userData = {};
 
   @override
@@ -106,7 +105,6 @@ class StartScreenState extends State<StartScreen> {
             ),
           ),
           content: RichText(
-            // Use RichText for mixed styles
             textAlign: TextAlign.center,
             text: TextSpan(
               style: UIConstants.bodyStyle.copyWith(
@@ -116,10 +114,10 @@ class StartScreenState extends State<StartScreen> {
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie die Schulung '),
                 TextSpan(
-                  text: schulungDescription, // No quotes here
+                  text: schulungDescription,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                  ), // Bold the description
+                  ),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -139,7 +137,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(false);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancel,
+                        backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -159,7 +157,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(true);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.accept,
+                        backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -265,9 +263,22 @@ class StartScreenState extends State<StartScreen> {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.defaultSpacing),
-            Text(
-              'Mein BSSB',
-              style: UIConstants.headerStyle.copyWith(color: _appColor),
+            // Removed the "Mein BSSB" Text widget here
+            Container(
+              height: 100, // You can adjust the height as needed
+              width: double.infinity, // Makes the container take full width
+              decoration: BoxDecoration(
+                color: UIConstants.news, // Example background color
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              ),
+              child: Center(
+                child: Text(
+                  'Hier könnten News stehen',
+                  style: UIConstants.titleStyle.copyWith(
+                    color: UIConstants.white, // Adjust text color as needed
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
@@ -363,7 +374,7 @@ class StartScreenState extends State<StartScreen> {
                                       IconButton(
                                         icon: const Icon(
                                           Icons.delete_outline,
-                                          color: Colors.redAccent,
+                                          color: UIConstants.defaultAppColor,
                                         ),
                                         onPressed: () {
                                           if (personId != null &&
@@ -387,7 +398,7 @@ class StartScreenState extends State<StartScreen> {
                                                   'Ein unerwarteter Fehler ist aufgetreten.',
                                                 ),
                                                 duration: UIConstants
-                                                    .snackBarDuration, // Using UIConstants
+                                                    .snackBarDuration,
                                               ),
                                             );
                                           }

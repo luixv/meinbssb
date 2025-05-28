@@ -205,7 +205,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                     onPressed: _isLoading ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
                       padding: UIConstants.buttonPadding,
-                      backgroundColor: UIConstants.accept,
+                      backgroundColor: UIConstants.acceptButton,
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(
@@ -217,7 +217,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             'Absenden',
                             style: TextStyle(
                               fontSize: UIConstants.bodyFontSize,
-                              color: UIConstants.white,
+                              color: UIConstants.sendButton,
                             ),
                           ),
                   ),

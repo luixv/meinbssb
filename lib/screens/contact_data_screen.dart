@@ -132,7 +132,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(false); // Do not delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancel,
+                        backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -152,7 +152,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.accept,
+                        backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -403,7 +403,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancel,
+                        backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -422,7 +422,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.accept,
+                        backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: _isAdding
@@ -590,7 +590,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),
-            color: UIConstants.defaultAppColor, // Example color
+            color: UIConstants.deleteIcon, // Example color
             onPressed: isDeleting
                 ? null // Disable button while deleting
                 : () => onDelete(

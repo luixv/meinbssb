@@ -15,12 +15,16 @@ class UIConstants {
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
-  static const Color delete = Colors.red;
-  static const Color cancel = Colors.red;
-  static const Color accept = Colors.lightGreen;
+  static const Color cancelButton = Color.fromARGB(255, 92, 26, 22);
+  static const Color acceptButton = Colors.lightGreen;
+  static const Color sendButton = Colors.white;
+  static const Color deleteIcon = defaultAppColor;
+
   static const Color error = Colors.red;
   static const Color success = Colors.green;
+
   static const Color transparent = Colors.transparent;
+  static const Color news = Color(0xFFF4B183);
 
   static const Color tableBackground = Colors.white;
   static const Color tableBorder = Colors.white;
@@ -57,6 +61,8 @@ class UIConstants {
 
   // Logo Size
   static const double logoSize = 100.0;
+
+  static const double cornerRadius = 8.0;
 
   // Text Styles
   static const TextStyle headerStyle = TextStyle(

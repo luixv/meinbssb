@@ -121,17 +121,21 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 key: const Key('forgotPasswordButton'),
                 onPressed: _isLoading ? null : _resetPassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: UIConstants.backgroundGreen,
+                  backgroundColor: UIConstants.acceptButton,
                   padding: UIConstants.buttonPadding,
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(
-                        color: UIConstants.white,
-                        strokeWidth: 2.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          UIConstants.white,
+                        ),
                       )
                     : const Text(
                         'Passwort zurücksetzen',
-                        style: UIConstants.bodyStyle,
+                        style: TextStyle(
+                          fontSize: UIConstants.bodyFontSize,
+                          color: UIConstants.sendButton,
+                        ),
                       ),
               ),
             ),

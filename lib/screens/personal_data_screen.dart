@@ -393,7 +393,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   onPressed: _isLoading ? null : _submitForm,
                                   style: ElevatedButton.styleFrom(
                                     padding: UIConstants.buttonPadding,
-                                    backgroundColor: UIConstants.accept,
+                                    backgroundColor: UIConstants.acceptButton,
                                   ),
                                   child: _isLoading
                                       ? const CircularProgressIndicator(
@@ -406,7 +406,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                           'Absenden',
                                           style: TextStyle(
                                             fontSize: UIConstants.bodyFontSize,
-                                            color: UIConstants.white,
+                                            color: UIConstants.sendButton,
                                           ),
                                         ),
                                 ),
