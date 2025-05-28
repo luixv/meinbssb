@@ -16,6 +16,7 @@ class UIConstants {
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
   static const Color delete = Colors.red;
+  static const Color cancel = Colors.red;
   static const Color accept = Colors.lightGreen;
   static const Color error = Colors.red;
   static const Color success = Colors.green;

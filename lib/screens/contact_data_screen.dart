@@ -132,7 +132,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(false); // Do not delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.accept,
+                        backgroundColor: UIConstants.cancel,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -152,7 +152,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.delete,
+                        backgroundColor: UIConstants.accept,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -370,14 +370,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     );
                   }).toList(),
                   onChanged: (int? newValue) {
-                    // setState(() { // No need for setState here if _selectedKontaktTyp is used only in dialog scope
-                    //   _selectedKontaktTyp = newValue;
-                    // });
-                    // To update _selectedKontaktTyp, it must be within the StatefulBuilder or the ContactDataScreenState's setState
-                    // Since it's a state variable of ContactDataScreenState, we need to call setState on the main widget's state.
-                    // However, directly calling setState from a dialog's builder can be tricky.
-                    // A better pattern for dialogs with stateful elements is to use a StatefulBuilder or manage state outside the dialog.
-                    // For now, let's just assign it directly as we'll use it in _onAddContact
                     _selectedKontaktTyp = newValue;
                   },
                 ),
@@ -386,7 +378,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   controller: _kontaktController,
                   decoration: UIConstants.defaultInputDecoration.copyWith(
                     labelText: 'Kontakt',
-                    hintText: 'z.B. email@beispiel.de oder 0123456789',
+                    hintText: 'z.B. email@beispiel.de oder 0123 456789',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   keyboardType: TextInputType
@@ -411,7 +403,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.backgroundGreen,
+                        backgroundColor: UIConstants.cancel,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Text(
@@ -430,7 +422,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.backgroundGreen,
+                        backgroundColor: UIConstants.accept,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: _isAdding
