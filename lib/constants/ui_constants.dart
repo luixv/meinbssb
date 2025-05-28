@@ -36,7 +36,11 @@ class UIConstants {
   // Spacing and Padding
   static const double defaultSpacing = 20.0; // Major section spacing
   static const double smallSpacing = 8.0; // Minor element spacing
+  static const double mediumSpacing = 10.0; // Medium element spacing
+  static const double largeSpacing = 12.0; // large element spacing
+  static const double largerSpacing = 16.0; // larger element spacing
   static const double defaultPadding = 16.0; // Standard padding
+
   static const double topPadding = 60.0; // Top padding in scroll view
 
   // Button Properties

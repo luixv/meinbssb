@@ -64,12 +64,12 @@ class _CookieConsentState extends State<CookieConsent> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Wir verwenden Cookies\n',
+                            'Wir verwenden Cookies',
                             style: UIConstants.headerStyle.copyWith(
                               color: UIConstants.defaultAppColor,
                             ),
                           ),
-                          const SizedBox(height: UIConstants.smallSpacing),
+                          const SizedBox(height: UIConstants.largeSpacing),
                           Text(
                             'Um diese App offline nutzen zu können, verwenden wir Cookies.', // \n Durch die weitere Nutzung der App akzeptieren Sie unsere Verwendung von Cookies.
                             textAlign: TextAlign.center,
@@ -83,7 +83,7 @@ class _CookieConsentState extends State<CookieConsent> {
                             child: ElevatedButton(
                               onPressed: _acceptConsent,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: UIConstants.backgroundGreen,
+                                backgroundColor: UIConstants.accept,
                                 padding: UIConstants.buttonPadding,
                               ),
                               child: Text(
