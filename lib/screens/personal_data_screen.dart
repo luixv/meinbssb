@@ -11,16 +11,14 @@ import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 
 class PersonDataScreen extends StatefulWidget {
-  // Removed personId from here, as it will be accessed from userData
   const PersonDataScreen(
     this.userData, {
-    // userData is the first positional argument, implicitly named
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
 
-  final Map<String, dynamic> userData; // This map now contains 'PERSONID'
+  final Map<String, dynamic> userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -29,7 +27,6 @@ class PersonDataScreen extends StatefulWidget {
 }
 
 class PersonDataScreenState extends State<PersonDataScreen> {
-  // Form Controllers
   final TextEditingController _passnummerController = TextEditingController();
   final TextEditingController _geburtsdatumController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
@@ -42,20 +39,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  Map<String, dynamic>?
-      _currentPassData; // Stores the fresh data fetched from API
-  String? _errorMessage; // To show if initial fetch fails
+  Map<String, dynamic>? _currentPassData;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    // Fetch fresh data when the screen initializes
     _fetchAndPopulateData();
   }
 
-  // Method to fetch data from API and populate the form fields
   Future<void> _fetchAndPopulateData() async {
-    // Get personId directly from widget.userData
     final int? personId = widget.userData['PERSONID'] as int?;
 
     if (personId == null) {
@@ -72,35 +65,23 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
     setState(() {
       _isLoading = true;
-      _errorMessage = null; // Clear any previous error
+      _errorMessage = null;
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final response = await apiService
-          .fetchPassdaten(personId); // Use personId from userData
+      final response = await apiService.fetchPassdaten(personId);
 
-      if (response['data'] != null) {
-        if (mounted) {
-          setState(() {
-            _currentPassData = response['data'] as Map<String, dynamic>;
-            _populateFields(
-              _currentPassData!,
-            ); // Populate fields with the new data
-          });
-          LoggerService.logInfo(
-            'Personal data fetched and fields populated successfully.',
+      if (mounted) {
+        setState(() {
+          _currentPassData = response;
+          _populateFields(
+            _currentPassData!,
           );
-        }
-      } else {
-        final message = response['ResultMessage'] ??
-            'Unbekannter Fehler beim Laden der Daten.';
-        if (mounted) {
-          setState(() {
-            _errorMessage = 'Fehler beim Laden: $message';
-          });
-        }
-        LoggerService.logError('Failed to fetch personal data: $message');
+        });
+        LoggerService.logInfo(
+          'Personal data fetched and fields populated successfully.',
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -118,7 +99,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
   }
 
-  // Helper to populate fields from a Map<String, dynamic>
   void _populateFields(Map<String, dynamic> data) {
     _passnummerController.text = data['PASSNUMMER']?.toString() ?? '';
     if (data['GEBURTSDATUM'] != null &&
@@ -138,8 +118,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
     _titelController.text = data['TITEL']?.toString() ?? '';
     _vornameController.text = data['VORNAME']?.toString() ?? '';
-    _nachnameController.text =
-        data['NAMEN']?.toString() ?? ''; // Use 'NAMEN' for Nachname
+    _nachnameController.text = data['NAMEN']?.toString() ?? '';
     _strasseHausnummerController.text = data['STRASSE']?.toString() ?? '';
     _postleitzahlController.text = data['PLZ']?.toString() ?? '';
     _ortController.text = data['ORT']?.toString() ?? '';
@@ -148,7 +127,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from PersonalDataScreen');
     widget.onLogout();
-    Navigator.of(context).pushReplacementNamed('/login');
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   Future<void> _submitForm() async {
@@ -160,30 +141,30 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       bool updateSuccess = false;
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
-        final int? personId = widget.userData['PERSONID']
-            as int?; // Get personId from userData again
+        final int? personId = widget.userData['PERSONID'] as int?;
 
         if (personId == null) {
           LoggerService.logError(
             'Person ID is null for update. Cannot submit form.',
           );
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
+                ),
+                duration: UIConstants.snackBarDuration,
               ),
-              duration: UIConstants.snackBarDuration,
-            ),
-          );
+            );
+          }
           updateSuccess = false;
         } else {
           updateSuccess = await apiService.updateKritischeFelderUndAdresse(
-            personId, // Use personId from userData
+            personId,
             _titelController.text,
             _nachnameController.text,
             _vornameController.text,
-            _currentPassData?['GESCHLECHT'] as int? ??
-                0, // Get gender from the fetched map
+            _currentPassData?['GESCHLECHT'] as int? ?? 0,
             _strasseHausnummerController.text,
             _postleitzahlController.text,
             _ortController.text,
@@ -193,8 +174,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             LoggerService.logInfo(
               'Personal data updated successfully. Re-fetching new data...',
             );
-            // Re-fetch updated data to ensure the form displays the latest state
-            await _fetchAndPopulateData(); // Call the same fetch method
+            await _fetchAndPopulateData();
           } else {
             LoggerService.logError('Failed to update personal data.');
           }
@@ -207,13 +187,11 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           setState(() {
             _isLoading = false;
           });
-          // Navigate to result screen after operation (success or failure)
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => PersonDataResultScreen(
                 success: updateSuccess,
-                userData: widget
-                    .userData, // Pass original widget.userData for menu/consistency
+                userData: widget.userData,
                 isLoggedIn: widget.isLoggedIn,
                 onLogout: widget.onLogout,
               ),
@@ -254,21 +232,17 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           ),
           AppMenu(
             context: context,
-            userData: widget
-                .userData, // Pass the original widget.userData to the menu
+            userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: _handleLogout,
           ),
         ],
       ),
-      body: _isLoading &&
-              _currentPassData ==
-                  null // Show loading indicator only on initial load
+      body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!))
-              : _currentPassData == null &&
-                      !_isLoading // No data and not loading
+              : _currentPassData == null && !_isLoading
                   ? const Center(
                       child: Text('Keine persönlichen Daten verfügbar.'),
                     )
@@ -283,12 +257,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               const SizedBox(
                                 height: UIConstants.defaultSpacing,
                               ),
+                              // Read-only fields with FloatingLabelBehavior.always for clarity
                               _buildTextField(
                                 label: 'Passnummer',
                                 controller: _passnummerController,
                                 isReadOnly: true,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
+                                floatingLabelBehavior: FloatingLabelBehavior
+                                    .always, // Keep "always" for read-only
                                 inputTextStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -297,8 +272,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                 label: 'Geburtsdatum',
                                 controller: _geburtsdatumController,
                                 isReadOnly: true,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
+                                floatingLabelBehavior: FloatingLabelBehavior
+                                    .always, // Keep "always" for read-only
                                 inputTextStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -313,18 +288,17 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   ),
                                 ),
                               ),
+                              // Editable fields will use the default FloatingLabelBehavior.auto
                               _buildTextField(
                                 label: 'Titel',
                                 controller: _titelController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 validator: (value) => null,
                               ),
                               _buildTextField(
                                 label: 'Vorname',
                                 controller: _vornameController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Vorname ist erforderlich';
@@ -335,8 +309,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Nachname',
                                 controller: _nachnameController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Nachname ist erforderlich';
@@ -347,8 +320,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Straße + Hausnummer',
                                 controller: _strasseHausnummerController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Straße und Hausnummer sind erforderlich';
@@ -359,8 +331,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Postleitzahl',
                                 controller: _postleitzahlController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -375,8 +346,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Ort',
                                 controller: _ortController,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.auto,
+                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Ort ist erforderlich';
@@ -424,7 +394,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
+    FloatingLabelBehavior floatingLabelBehavior =
+        FloatingLabelBehavior.auto, // Set default to auto
     TextStyle? inputTextStyle,
     Color? backgroundColor,
     Widget? suffixIcon,
@@ -440,8 +411,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             ),
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
-          floatingLabelBehavior: floatingLabelBehavior,
-          hintText: isReadOnly ? null : label,
+          floatingLabelBehavior:
+              floatingLabelBehavior, // This will use the passed value (auto or always)
+          hintText:
+              isReadOnly ? null : label, // Only show hint for editable fields
           fillColor: backgroundColor,
           filled: backgroundColor != null,
           suffixIcon: suffixIcon,

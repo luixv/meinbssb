@@ -5,7 +5,7 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/http_client.dart';
 import 'package:meinbssb/services/cache_service.dart';
 import 'package:meinbssb/services/network_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/config_service.dart'; // Ensure ConfigService is mocked if used
 
 // Generate mocks
 @GenerateMocks([HttpClient, CacheService, NetworkService, ConfigService])
@@ -50,25 +50,50 @@ void main() {
       when(
         mockNetworkService.getCacheExpirationDuration(),
       ).thenReturn(const Duration(hours: 1));
+
+      // Simulate cached data with ONLINE: false, explicitly typing the return
+      final List<Map<String, dynamic>> mockedCachedData = testResponse
+          .map(
+            (e) => {
+              ...e,
+              'ONLINE': false,
+            },
+          )
+          .toList();
+
       when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-          any,
-          any,
-          any,
-          any,
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any, // cacheKey
+          any, // validityDuration
+          any, // fetchData function
+          any, // processResponse function
         ),
-      ).thenAnswer((_) async => {'data': testResponse});
+      ).thenAnswer((_) async {
+        // Debugging print
+        return mockedCachedData; // Direct return for cache hit scenario
+      });
 
       // Act
-      final result = await trainingService.fetchAngemeldeteSchulungen(
-        testPersonId,
-        testAbDatum,
-      );
+      List<Map<String, dynamic>> result;
+      try {
+        result = await trainingService.fetchAngemeldeteSchulungen(
+          testPersonId,
+          testAbDatum,
+        );
+      } catch (e) {
+        rethrow; // Re-throw to make the test fail explicitly if an error occurs
+      }
+
+      // Debugging print
 
       // Assert
-      expect(result, isA<List<dynamic>>());
+      expect(result, isA<List<Map<String, dynamic>>>());
       expect(result.length, 2);
       expect(result[0]['BEZEICHNUNG'], 'Basic Training');
+      expect(
+        result[0]['ONLINE'],
+        false,
+      ); // Ensure ONLINE flag is present and false
       verify(
         mockCacheService.cacheAndRetrieveData(
           'schulungen_$testPersonId',
@@ -84,14 +109,15 @@ void main() {
       when(
         mockNetworkService.getCacheExpirationDuration(),
       ).thenReturn(const Duration(hours: 1));
+      // Mock CacheService to return an empty list of the correct type
       when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
           any,
           any,
           any,
           any,
         ),
-      ).thenAnswer((_) async => {'data': []});
+      ).thenAnswer((_) async => []);
 
       // Act
       final result = await trainingService.fetchAngemeldeteSchulungen(
@@ -127,46 +153,56 @@ void main() {
     setUp(() {
       when(mockNetworkService.getCacheExpirationDuration())
           .thenReturn(const Duration(hours: 1));
-      when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((_) async => {'data': testResponse}); // Add this stub
     });
 
     test('returns mapped available trainings', () async {
       // Arrange
-      when(mockNetworkService.getCacheExpirationDuration())
-          .thenReturn(const Duration(hours: 1));
+      when(mockHttpClient.get('AvailableSchulungen')).thenAnswer(
+        (_) async => testResponse,
+      ); // HTTP client returns raw data
+
+      // Mock cacheAndRetrieveData to *execute* the fetchData and processResponse functions
+      // to simulate a network fetch returning fresh data.
       when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
           'available_schulungen', // Match the key
-          any,
-          any,
-          any,
+          any, // validityDuration
+          captureAny, // capture fetchData (index 2)
+          captureAny, // capture processResponse (index 3)
         ),
-      ).thenAnswer((_) async {
-        // Simulate a cache miss or expired cache by returning null for cached data
-        // and then returning the testResponse when the fetch function is called.
-        final fetchFunction =
-            // ignore: no_wildcard_variable_uses
-            _.positionalArguments[2] as Future<List<dynamic>> Function()?;
-        return {'data': await fetchFunction?.call() ?? []};
+      ).thenAnswer((Invocation inv) async {
+        final Future<List<Map<String, dynamic>>> Function() fetchData =
+            inv.positionalArguments[2];
+        final List<Map<String, dynamic>> Function(dynamic) processResponse =
+            inv.positionalArguments[3];
+
+        // Simulate CacheService's internal logic: fetch, process, and add ONLINE flag
+        final rawResponse =
+            await fetchData(); // This will call mockHttpClient.get
+        final processedData = processResponse(
+          rawResponse,
+        ); // This will call _mapAvailableSchulungenResponse
+
+        // Ensure the processed data is a List<Map<String, dynamic>> and add ONLINE: true
+        return processedData.map((item) => {...item, 'ONLINE': true}).toList();
       });
-      when(mockHttpClient.get('AvailableSchulungen'))
-          .thenAnswer((_) async => testResponse);
 
       // Act
-      final result = await trainingService.fetchAvailableSchulungen();
+      List<Map<String, dynamic>> result;
+      try {
+        result = await trainingService.fetchAvailableSchulungen();
+      } catch (e) {
+        rethrow; // Re-throw to make the test fail explicitly if an error occurs
+      }
+
+      // Debugging print
 
       // Assert
-      expect(result, isA<List<dynamic>>());
+      expect(result, isA<List<Map<String, dynamic>>>());
       expect(result.length, 2);
       expect(result[0]['BEZEICHNUNG'], 'Basic Training');
       expect(result[0]['ORT'], 'Munich');
+      expect(result[0]['ONLINE'], true); // Expect ONLINE true from fresh fetch
       verify(mockHttpClient.get('AvailableSchulungen')).called(1);
     });
 
@@ -174,17 +210,16 @@ void main() {
       // Arrange
       when(
         mockHttpClient.get('AvailableSchulungen'),
-      ).thenAnswer((_) async => []);
+      ).thenAnswer((_) async => []); // http client returns empty list
+      // CacheService will process this into an empty list of Map<String, dynamic>
       when(
-        mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
           any,
           any,
           any,
           any,
         ),
-      ).thenAnswer(
-        (_) async => {'data': []},
-      ); // Add this stub for the empty list case
+      ).thenAnswer((_) async => []); // Return an empty list for the stub
 
       // Act
       final result = await trainingService.fetchAvailableSchulungen();

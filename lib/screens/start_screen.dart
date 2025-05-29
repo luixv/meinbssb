@@ -25,12 +25,10 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<dynamic> schulungen = [];
   bool isLoading = true;
-  Map<String, dynamic> _userData = {};
 
   @override
   void initState() {
     super.initState();
-    _userData = widget.userData['data'] ?? {};
     fetchSchulungen();
     LoggerService.logInfo(
       'StartScreen initialized with user: ${widget.userData}',
@@ -39,7 +37,7 @@ class StartScreenState extends State<StartScreen> {
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final personId = _userData['PERSONID'];
+    final personId = widget.userData['PERSONID'];
 
     if (personId == null) {
       LoggerService.logError('PERSONID is null');
@@ -76,7 +74,7 @@ class StartScreenState extends State<StartScreen> {
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user: ${_userData['VORNAME']}');
+    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
     widget.onLogout();
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/login');
@@ -282,12 +280,12 @@ class StartScreenState extends State<StartScreen> {
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "${_userData['VORNAME'] ?? ''} ${_userData['NAMEN'] ?? ''}",
+              "${widget.userData['VORNAME'] ?? ''} ${widget.userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              '${_userData['PASSNUMMER'] ?? ''}',
+              '${widget.userData['PASSNUMMER'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -298,7 +296,7 @@ class StartScreenState extends State<StartScreen> {
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              '${_userData['VEREINNAME'] ?? ''}',
+              '${widget.userData['VEREINNAME'] ?? ''}',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -333,7 +331,7 @@ class StartScreenState extends State<StartScreen> {
                             final schulung = schulungen[index];
                             final datum = DateTime.parse(schulung['DATUM']);
                             final online = schulung['ONLINE'] as bool? ?? false;
-                            final personId = _userData['PERSONID'];
+                            final personId = widget.userData['PERSONID'];
 
                             final formattedDatum =
                                 "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";

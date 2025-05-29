@@ -516,7 +516,7 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
       ) as _i2.Future<T>);
 
   @override
-  _i2.Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
+  _i2.Future<T> cacheAndRetrieveData<T>(
     String? cacheKey,
     Duration? validityDuration,
     _i2.Future<T> Function()? fetchData,
@@ -532,9 +532,34 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
             processResponse,
           ],
         ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #cacheAndRetrieveData,
+                  [
+                    cacheKey,
+                    validityDuration,
+                    fetchData,
+                    processResponse,
+                  ],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #cacheAndRetrieveData,
+                [
+                  cacheKey,
+                  validityDuration,
+                  fetchData,
+                  processResponse,
+                ],
+              ),
+            ),
+      ) as _i2.Future<T>);
 }
 
 /// A class which mocks [NetworkService].
@@ -942,7 +967,7 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
   }
 
   @override
-  _i2.Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  _i2.Future<List<Map<String, dynamic>>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -954,17 +979,20 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
             abDatum,
           ],
         ),
-        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i2.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i2.Future<List<dynamic>> fetchAvailableSchulungen() => (super.noSuchMethod(
+  _i2.Future<List<Map<String, dynamic>>> fetchAvailableSchulungen() =>
+      (super.noSuchMethod(
         Invocation.method(
           #fetchAvailableSchulungen,
           [],
         ),
-        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i2.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
   _i2.Future<bool> registerForSchulung(
@@ -993,14 +1021,16 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<List<dynamic>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i2.Future<List<Map<String, dynamic>>> fetchAbsolvierteSchulungen(
+          int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i2.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [UserService].

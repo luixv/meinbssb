@@ -16,14 +16,13 @@ class MockConfigService extends Mock implements ConfigService {}
   customMocks: [MockSpec<ApiService>(as: #CustomMockApiService)],
 )
 void main() {
+  // CORRECTED: Flatten the userData map structure
   final userData = {
-    'data': {
-      'PERSONID': 123,
-      'VORNAME': 'John',
-      'NAMEN': 'Doe',
-      'PASSNUMMER': 'ABC123',
-      'VEREINNAME': 'My Vereinsname',
-    },
+    'PERSONID': 123,
+    'VORNAME': 'John',
+    'NAMEN': 'Doe',
+    'PASSNUMMER': 'ABC123',
+    'VEREINNAME': 'My Vereinsname',
   };
 
   testWidgets('StartScreen displays loading spinner while fetching data',
@@ -33,7 +32,8 @@ void main() {
     when(
       mockApiService.fetchAngemeldeteSchulungen(any, any),
     ).thenAnswer(
-        (_) async => Future.delayed(const Duration(seconds: 1), () => []),);
+      (_) async => Future.delayed(const Duration(seconds: 1), () => []),
+    );
 
     await tester.pumpWidget(
       MaterialApp(

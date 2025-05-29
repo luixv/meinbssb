@@ -352,7 +352,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           backgroundColor: UIConstants.backgroundGreen,
           title: const Center(
             // Center the title
-            child: Text('Neuen Kontakt hinzufügen'),
+            child: Text(
+              'Neuen Kontakt hinzufügen',
+              style: TextStyle(
+                color: UIConstants.defaultAppColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           content: SingleChildScrollView(
             child: ListBody(
@@ -360,7 +366,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 DropdownButtonFormField<int>(
                   decoration: UIConstants.defaultInputDecoration.copyWith(
                     labelText: 'Kontakttyp',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    floatingLabelBehavior:
+                        FloatingLabelBehavior.auto, // Apply auto behavior
                   ),
                   value: _selectedKontaktTyp,
                   items: _contactTypeLabels.entries.map((entry) {
@@ -370,7 +377,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     );
                   }).toList(),
                   onChanged: (int? newValue) {
-                    _selectedKontaktTyp = newValue;
+                    setState(() {
+                      // setState for dialog's own state
+                      _selectedKontaktTyp = newValue;
+                    });
                   },
                 ),
                 const SizedBox(height: UIConstants.defaultSpacing),
@@ -379,7 +389,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   decoration: UIConstants.defaultInputDecoration.copyWith(
                     labelText: 'Kontakt',
                     hintText: 'z.B. email@beispiel.de oder 0123 456789',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    floatingLabelBehavior:
+                        FloatingLabelBehavior.auto, // Apply auto behavior
                   ),
                   keyboardType: TextInputType
                       .text, // Set based on type, can be dynamic later
@@ -409,6 +420,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Text(
                         'Abbrechen',
                         style: UIConstants.bodyStyle.copyWith(
+                          fontSize: UIConstants
+                              .bodyFontSize, // Ensure font size consistency
                           color: UIConstants.white,
                         ),
                       ),
@@ -427,12 +440,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       ),
                       child: _isAdding
                           ? const CircularProgressIndicator(
-                              color: UIConstants.white,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.white,
+                              ),
                               strokeWidth: 2,
                             )
                           : Text(
                               'Hinzufügen',
                               style: UIConstants.bodyStyle.copyWith(
+                                fontSize: UIConstants
+                                    .bodyFontSize, // Ensure font size consistency
                                 color: UIConstants.white,
                               ),
                             ),
@@ -587,6 +604,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ),
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
+          // For read-only fields, 'always' might still be preferred for clarity,
+          // but if you want 'auto' behavior here too, you can change it.
+          // For now, keeping as 'always' for consistency with how read-only data is often displayed.
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),

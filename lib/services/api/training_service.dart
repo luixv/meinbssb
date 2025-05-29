@@ -4,7 +4,7 @@
 
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'dart:convert';
+import 'dart:convert'; // Keep for jsonEncode in logs, but not for direct data processing
 
 import '/services/cache_service.dart';
 import '/services/http_client.dart';
@@ -24,12 +24,13 @@ class TrainingService {
   final CacheService _cacheService;
   final NetworkService _networkService;
 
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  Future<List<Map<String, dynamic>>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
   ) async {
     try {
-      final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      final List<Map<String, dynamic>> result =
+          await _cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
         'schulungen_$personId',
         _networkService.getCacheExpirationDuration(),
         () async {
@@ -40,38 +41,38 @@ class TrainingService {
         _mapAngemeldeteSchulungenResponse,
       );
 
-      final responseData = (result['data'] as List<dynamic>?) ?? [];
-      final isOnline = result['ONLINE'] as bool? ?? false;
-
       LoggerService.logInfo(
-        'Returning angemeldete Schulungen (ONLINE=$isOnline): ${jsonEncode(responseData)}',
+        'Returning angemeldete Schulungen: ${jsonEncode(result)}',
       );
 
-      return responseData.map((schulung) {
-        return {...schulung, 'ONLINE': isOnline};
-      }).toList();
+      return result;
     } catch (e) {
       LoggerService.logError('Error fetching Schulungen: $e');
       return [];
     }
   }
 
-  List<dynamic> _mapAngemeldeteSchulungenResponse(dynamic response) {
+  List<Map<String, dynamic>> _mapAngemeldeteSchulungenResponse(
+      dynamic response,) {
     if (response is List) {
       return response.map((item) {
+        // Explicitly cast item to Map<String, dynamic> here
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
         return {
-          'DATUM': item['DATUM'],
-          'BEZEICHNUNG': item['BEZEICHNUNG'],
-          'SCHULUNGENTEILNEHMERID': item['SCHULUNGENTEILNEHMERID'] ?? 0,
+          'DATUM': typedItem['DATUM'],
+          'BEZEICHNUNG': typedItem['BEZEICHNUNG'],
+          'SCHULUNGENTEILNEHMERID': typedItem['SCHULUNGENTEILNEHMERID'] ?? 0,
         };
       }).toList();
     }
     return [];
   }
 
-  Future<List<dynamic>> fetchAvailableSchulungen() async {
+  Future<List<Map<String, dynamic>>> fetchAvailableSchulungen() async {
     try {
-      final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      final List<Map<String, dynamic>> result =
+          await _cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
         'available_schulungen',
         _networkService.getCacheExpirationDuration(),
         () async {
@@ -81,27 +82,29 @@ class TrainingService {
         _mapAvailableSchulungenResponse,
       );
 
-      final responseData = (result['data'] as List<dynamic>?) ?? [];
       LoggerService.logInfo(
-        'Returning available Schulungen: ${jsonEncode(responseData)}',
+        'Returning available Schulungen: ${jsonEncode(result)}',
       );
-      return responseData;
+      return result;
     } catch (e) {
       LoggerService.logError('Error fetching available Schulungen: $e');
       return [];
     }
   }
 
-  List<dynamic> _mapAvailableSchulungenResponse(dynamic response) {
+  List<Map<String, dynamic>> _mapAvailableSchulungenResponse(dynamic response) {
     if (response is List) {
       return response.map((item) {
+        // Explicitly cast item to Map<String, dynamic> here
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
         return {
-          'SCHULUNGID': item['SCHULUNGID'],
-          'BEZEICHNUNG': item['BEZEICHNUNG'],
-          'DATUM': item['DATUM'],
-          'ORT': item['ORT'],
-          'MAXTEILNEHMER': item['MAXTEILNEHMER'],
-          'TEILNEHMER': item['TEILNEHMER'],
+          'SCHULUNGID': typedItem['SCHULUNGID'],
+          'BEZEICHNUNG': typedItem['BEZEICHNUNG'],
+          'DATUM': typedItem['DATUM'],
+          'ORT': typedItem['ORT'],
+          'MAXTEILNEHMER': typedItem['MAXTEILNEHMER'],
+          'TEILNEHMER': typedItem['TEILNEHMER'],
         };
       }).toList();
     }
@@ -123,24 +126,28 @@ class TrainingService {
 
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
     LoggerService.logInfo(
-        'Attempting to unregister from Schulung with ID: $schulungenTeilnehmerID',);
+      'Attempting to unregister from Schulung with ID: $schulungenTeilnehmerID',
+    );
     try {
       final response = await _httpClient.delete(
         'SchulungenTeilnehmer/$schulungenTeilnehmerID',
-        body: {}, // Explicitly pass an empty body as requested
+        body: {},
       );
 
       LoggerService.logInfo(
-          'Successfully unregistered from Schulung. Response: $response',);
-      return true; // If _httpClient.delete didn't throw and returned something, assume success.
+        'Successfully unregistered from Schulung. Response: $response',
+      );
+      return true;
     } catch (e) {
       LoggerService.logError(
-          'Error unregistering from Schulung $schulungenTeilnehmerID: $e',);
-      return false; // Return false if an error occurred during the HTTP call
+        'Error unregistering from Schulung $schulungenTeilnehmerID: $e',
+      );
+      return false;
     }
   }
 
-  Future<List<dynamic>> fetchAbsolvierteSchulungen(int personId) async {
+  Future<List<Map<String, dynamic>>> fetchAbsolvierteSchulungen(
+      int personId,) async {
     try {
       final response = await _httpClient.get('AbsolvierteSchulungen/$personId');
       return _mapAbsolvierteSchulungen(response);
@@ -150,32 +157,29 @@ class TrainingService {
     }
   }
 
-  List<dynamic> _mapAbsolvierteSchulungen(dynamic response) {
+  List<Map<String, dynamic>> _mapAbsolvierteSchulungen(dynamic response) {
     if (response is List) {
       return response.map((item) {
-        // Helper function to parse and format dates
         String formatDate(String? dateString) {
           if (dateString == null || dateString.isEmpty) {
-            return ''; // Return empty string for null or empty dates
+            return '';
           }
           try {
             final DateTime dateTime = DateTime.parse(dateString);
             return DateFormat('dd.MM.yyyy').format(dateTime);
           } catch (e) {
             LoggerService.logError('Error parsing date "$dateString": $e');
-            return dateString; // Return original string if parsing fails
+            return dateString;
           }
         }
 
+        // Explicitly cast item to Map<String, dynamic> here
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
         return {
-          'AUSGESTELLTAM':
-              formatDate(item['AUSGESTELLTAM']), // Format this date
-          'BEZEICHNUNG': item['BEZEICHNUNG'] ?? '',
-          'GUELTIGBIS': formatDate(item['GUELTIGBIS']), // Format this date
-          // 'NUMMER': item['NUMMER'] ?? '',
-          // 'SCHULUNGID': item['SCHULUNGID'] ?? 0,
-          // 'SCHULUNGSARTID': item['SCHULUNGSARTID'] ?? 0,
-          // 'FUERVERLAENGERUNGEN': item['FUERVERLAENGERUNGEN'] ?? false,
+          'AUSGESTELLTAM': formatDate(typedItem['AUSGESTELLTAM']),
+          'BEZEICHNUNG': typedItem['BEZEICHNUNG'] ?? '',
+          'GUELTIGBIS': formatDate(typedItem['GUELTIGBIS']),
         };
       }).toList();
     }

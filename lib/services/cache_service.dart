@@ -42,7 +42,8 @@ class CacheService {
       return null;
     }
     LoggerService.logInfo('Retrieved JSON for key: $key');
-    return jsonDecode(jsonString);
+    // Ensure the decoded map is always Map<String, dynamic>
+    return jsonDecode(jsonString) as Map<String, dynamic>;
   }
 
   Future<void> setInt(String key, int value) async {
@@ -107,12 +108,14 @@ class CacheService {
     return await getCachedData();
   }
 
-  Future<Map<String, dynamic>> _retrieveCachedDataWithOnlineFlag(
+  Future<T?> _retrieveCachedDataWithOnlineFlag<T>(
     String cacheKey,
+    T Function(dynamic rawData) processCachedData,
   ) async {
     final cachedJson = _prefs.getString(_cacheKeyPrefix + cacheKey);
     if (cachedJson != null) {
-      final cachedData = jsonDecode(cachedJson);
+      final dynamic cachedRawData = jsonDecode(cachedJson);
+
       final globalTimestamp = await getInt('cacheTimestamp');
       final cacheExpirationHours =
           _configService.getInt('cacheExpirationHours') ?? 24;
@@ -126,55 +129,131 @@ class CacheService {
           LoggerService.logInfo(
             'Using cached data from SharedPreferences for key: $cacheKey',
           );
-          return {'data': cachedData, 'ONLINE': false};
+          final processedData = processCachedData(cachedRawData);
+
+          if (processedData is Map<String, dynamic>) {
+            return {...processedData, 'ONLINE': false} as T;
+          } else if (processedData is List) {
+            final List<Map<String, dynamic>> typedList = [];
+            for (var item in processedData) {
+              if (item is Map<dynamic, dynamic>) {
+                typedList
+                    .add(Map<String, dynamic>.from(item)..['ONLINE'] = false);
+              } else {
+                LoggerService.logWarning(
+                  'Unexpected item type in cached list for key $cacheKey: ${item.runtimeType}',
+                );
+                return null;
+              }
+            }
+            return typedList as T;
+          } else {
+            return processedData;
+          }
         } else {
           LoggerService.logInfo('Cached data expired for key: $cacheKey');
-          return {'data': null, 'ONLINE': false}; // Indicate expired
+          return null;
         }
       }
-      return {
-        'data': cachedData,
-        'ONLINE': false,
-      }; // No timestamp, assume valid
+      final processedData = processCachedData(cachedRawData);
+      if (processedData is Map<String, dynamic>) {
+        return {...processedData, 'ONLINE': false} as T;
+      } else if (processedData is List) {
+        final List<Map<String, dynamic>> typedList = [];
+        for (var item in processedData) {
+          if (item is Map<dynamic, dynamic>) {
+            typedList.add(Map<String, dynamic>.from(item)..['ONLINE'] = false);
+          } else {
+            LoggerService.logWarning(
+              'Unexpected item type in cached list for key $cacheKey: ${item.runtimeType}',
+            );
+            return null;
+          }
+        }
+        return typedList as T;
+      }
+      return processedData;
     }
     LoggerService.logInfo('No cached data found for key: $cacheKey');
-    return {'data': null, 'ONLINE': false};
+    return null;
   }
 
-  Future<Map<String, dynamic>> cacheAndRetrieveData<T>(
+  Future<T> cacheAndRetrieveData<T>(
     String cacheKey,
     Duration validityDuration,
     Future<T> Function() fetchData,
     T Function(dynamic response) processResponse,
   ) async {
-    // Always attempt network request first
     try {
       LoggerService.logInfo('Attempting network request for $cacheKey');
       final response = await fetchData();
       final processedData = processResponse(response);
 
       if (processedData != null) {
-        await _prefs.setString(
-          _cacheKeyPrefix + cacheKey,
-          jsonEncode(processedData),
-        );
-        await setCacheTimestamp();
-        LoggerService.logInfo('Successfully cached fresh data for $cacheKey');
-        return {'data': processedData, 'ONLINE': true};
-      }
-    } catch (e) {
-      LoggerService.logError('Network request failed for $cacheKey: $e');
-      // Only now check cache if network fails
-      final cachedResult = await _retrieveCachedDataWithOnlineFlag(cacheKey);
-      if (cachedResult['data'] != null) {
-        LoggerService.logInfo('Falling back to cached data');
-        return cachedResult; // ONLINE: false
-      }
-      // If we get here, we have neither network nor cache
-      return {'data': null, 'ONLINE': false};
-    }
+        dynamic dataToCache;
+        if (processedData is Map<String, dynamic>) {
+          dataToCache = {...processedData, 'ONLINE': true};
+        } else if (processedData is List) {
+          // Check if it's a list first
+          // Ensure all elements are maps and convert them safely
+          if (processedData.every((item) => item is Map<dynamic, dynamic>)) {
+            // Explicitly convert each map to Map<String, dynamic>
+            dataToCache = processedData.map((item) {
+              return Map<String, dynamic>.from(item as Map<dynamic, dynamic>)
+                ..['ONLINE'] = true;
+            }).toList();
+          } else {
+            LoggerService.logError(
+              'Unsupported list item type for caching with ONLINE flag: ${processedData.first.runtimeType} in list $cacheKey',
+            );
+            throw Exception(
+              'Unsupported data type for caching: List<${processedData.first.runtimeType}>',
+            );
+          }
+        } else {
+          LoggerService.logError(
+            'Unsupported data type for caching with ONLINE flag: ${processedData.runtimeType} (expected Map or List<Map>) for $cacheKey',
+          );
+          throw Exception(
+            'Unsupported data type for caching: ${processedData.runtimeType}',
+          );
+        }
 
-    // If we get here, processedData was null but no exception was thrown
-    return {'data': null, 'ONLINE': false};
+        if (dataToCache != null) {
+          await _prefs.setString(
+            _cacheKeyPrefix + cacheKey,
+            jsonEncode(dataToCache),
+          );
+          await setCacheTimestamp();
+          LoggerService.logInfo('Successfully cached fresh data for $cacheKey');
+          // Direct cast of dataToCache to T
+          return dataToCache as T;
+        }
+      }
+      LoggerService.logInfo('Network request returned null data for $cacheKey');
+      throw Exception(
+        'Network request returned no data.',
+      );
+    } on Exception catch (e) {
+      LoggerService.logError('Operation failed for $cacheKey: $e');
+
+      if (e.toString().contains('Unsupported data type for caching')) {
+        rethrow;
+      }
+
+      final cachedData =
+          await _retrieveCachedDataWithOnlineFlag<T>(cacheKey, processResponse);
+      if (cachedData != null) {
+        LoggerService.logInfo('Falling back to cached data');
+        return cachedData;
+      }
+      LoggerService.logWarning('No network and no valid cache for $cacheKey');
+      throw Exception(
+        'No network data and no valid cached data available.',
+      );
+    } catch (e) {
+      LoggerService.logError('An unexpected error occurred for $cacheKey: $e');
+      rethrow;
+    }
   }
 }
