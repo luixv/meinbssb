@@ -42,6 +42,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   Map<String, dynamic>? _currentPassData;
   String? _errorMessage;
   bool _isEditing = false; // State variable for edit mode
+  bool _isOnline = false; // <-- New state variable for online status
 
   @override
   void initState() {
@@ -67,6 +68,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _isOnline = false; // Reset online status when fetching
     });
 
     try {
@@ -76,12 +78,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       if (mounted) {
         setState(() {
           _currentPassData = response;
+          // Extract and set the online status
+          _isOnline = _currentPassData?['ONLINE'] as bool? ??
+              false; // <-- Set _isOnline here
           _populateFields(
             _currentPassData!,
           );
         });
         LoggerService.logInfo(
-          'Personal data fetched and fields populated successfully.',
+          'Personal data fetched and fields populated successfully. Online status: $_isOnline',
         );
       }
     } catch (e) {
@@ -133,7 +138,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
   }
 
-  // ---
   /// Handles the action when the Floating Action Button is pressed.
   /// Toggles edit mode, or submits the form if currently in edit mode.
   Future<void> _handleFabPressed() async {
@@ -152,7 +156,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       LoggerService.logInfo('Switched to edit mode.');
     }
   }
-  // ---
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -395,7 +398,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               const SizedBox(
                                 height: UIConstants.defaultSpacing,
                               ),
-                              // Removed the separate "Absenden" button
                             ],
                           ),
                         ),
@@ -403,21 +405,24 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     ),
       // ---
       // Modified Floating Action Button
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            _isLoading ? null : _handleFabPressed, // Call the new handler
-        backgroundColor: UIConstants.defaultAppColor,
-        child: _isLoading
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(UIConstants.white),
-              )
-            : Icon(
-                _isEditing
-                    ? Icons.save
-                    : Icons.edit, // Icon changes based on mode
-                color: UIConstants.white,
-              ),
-      ),
+      floatingActionButton: _isOnline // <-- Conditionally render FAB
+          ? FloatingActionButton(
+              onPressed:
+                  _isLoading ? null : _handleFabPressed, // Call the new handler
+              backgroundColor: UIConstants.defaultAppColor,
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(UIConstants.white),
+                    )
+                  : Icon(
+                      _isEditing
+                          ? Icons.save
+                          : Icons.edit, // Icon changes based on mode
+                      color: UIConstants.white,
+                    ),
+            )
+          : null, // <-- Render nothing if offline
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       // ---
     );
@@ -429,8 +434,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior =
-        FloatingLabelBehavior.auto, // Set default to auto
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
     TextStyle? inputTextStyle,
     Color? backgroundColor,
     Widget? suffixIcon,
@@ -455,7 +459,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           suffixIcon: suffixIcon,
         ),
         validator: validator,
-        readOnly: isReadOnly, // This is the key change to control editability
+        readOnly: isReadOnly,
         keyboardType: keyboardType,
       ),
     );
