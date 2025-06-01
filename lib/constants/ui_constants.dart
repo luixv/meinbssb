@@ -15,7 +15,8 @@ class UIConstants {
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
-  static const Color cancelButton = Color.fromARGB(255, 92, 26, 22);
+  static const Color cancelButton =
+      Colors.lightGreen; //Color.fromARGB(255, 92, 26, 22);
   static const Color acceptButton = Colors.lightGreen;
   static const Color sendButton = Colors.white;
   static const Color deleteIcon = defaultAppColor;

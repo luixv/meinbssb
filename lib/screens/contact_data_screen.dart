@@ -135,11 +135,25 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Text(
-                        'Abbrechen',
-                        style: UIConstants.bodyStyle.copyWith(
-                          color: UIConstants.white,
-                        ),
+                      child: Row(
+                        // <-- Row for icon and text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.white,
+                            size: UIConstants.bodyFontSize,
+                          ), // X icon
+                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Text(
+                            'Abbrechen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                              fontSize: UIConstants
+                                  .bodyFontSize, // Ensure font size consistency
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -155,11 +169,25 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Text(
-                        'Löschen',
-                        style: UIConstants.bodyStyle.copyWith(
-                          color: UIConstants.white,
-                        ),
+                      child: Row(
+                        // <-- Row for icon and text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.check,
+                            color: UIConstants.white,
+                            size: UIConstants.bodyFontSize,
+                          ), // OK icon
+                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Text(
+                            'Löschen', // Changed to Löschen
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                              fontSize: UIConstants
+                                  .bodyFontSize, // Ensure font size consistency
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -304,9 +332,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           );
           _kontaktController.clear(); // Clear text field
           _selectedKontaktTyp = null; // Reset dropdown
-          // Navigator.of(context).pop(); // FIX: This pop might be too soon, ensure it's safe.
-          // For now, it's safer to pop after the data reloads if it's meant to close the dialog.
-          // If the dialog is still open, the mounted check will apply to the ScaffoldMessenger.
           _loadInitialData(); // Refresh the list after successful addition
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -332,8 +357,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         setState(() {
           _isAdding = false; // Reset loading state
         });
-        // If the dialog should close automatically on success, ensure it's done here.
-        // This 'pop' needs to be in the 'if (mounted)' block as well.
         Navigator.of(context).pop(); // Close the add contact dialog
       }
     }
@@ -417,13 +440,25 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Text(
-                        'Abbrechen',
-                        style: UIConstants.bodyStyle.copyWith(
-                          fontSize: UIConstants
-                              .bodyFontSize, // Ensure font size consistency
-                          color: UIConstants.white,
-                        ),
+                      child: Row(
+                        // <-- Row for icon and text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.white,
+                            size: UIConstants.bodyFontSize,
+                          ), // X icon
+                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Text(
+                            'Abbrechen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              fontSize: UIConstants
+                                  .bodyFontSize, // Ensure font size consistency
+                              color: UIConstants.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -445,13 +480,28 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                               ),
                               strokeWidth: 2,
                             )
-                          : Text(
-                              'Hinzufügen',
-                              style: UIConstants.bodyStyle.copyWith(
-                                fontSize: UIConstants
-                                    .bodyFontSize, // Ensure font size consistency
-                                color: UIConstants.white,
-                              ),
+                          : Row(
+                              // <-- Row for icon and text
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.check,
+                                  color: UIConstants.white,
+                                  size: UIConstants.bodyFontSize + 4.0,
+                                ),
+                                // OK icon
+                                const SizedBox(
+                                  width: UIConstants.defaultSpacing / 2,
+                                ),
+                                Text(
+                                  'Hinzufügen',
+                                  style: UIConstants.bodyStyle.copyWith(
+                                    fontSize: UIConstants
+                                        .bodyFontSize, // Ensure font size consistency
+                                    color: UIConstants.white,
+                                  ),
+                                ),
+                              ],
                             ),
                     ),
                   ),
@@ -553,7 +603,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.add, color: UIConstants.white),
+        child: const Icon(
+          Icons.close,
+          color: UIConstants.white,
+          size: UIConstants.bodyFontSize + 4.0,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -604,9 +658,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ),
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
-          // For read-only fields, 'always' might still be preferred for clarity,
-          // but if you want 'auto' behavior here too, you can change it.
-          // For now, keeping as 'always' for consistency with how read-only data is often displayed.
           floatingLabelBehavior: FloatingLabelBehavior.always,
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),

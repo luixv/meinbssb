@@ -138,11 +138,25 @@ class StartScreenState extends State<StartScreen> {
                         backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Text(
-                        'Abbrechen',
-                        style: UIConstants.bodyStyle.copyWith(
-                          color: UIConstants.white,
-                        ),
+                      child: Row(
+                        // <-- Added Row for icon and text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.white,
+                            size: UIConstants.bodyFontSize + 4.0,
+                          ), // X icon
+                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Text(
+                            'Abbrechen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                              fontSize: UIConstants
+                                  .bodyFontSize, // Consistent font size
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -158,11 +172,25 @@ class StartScreenState extends State<StartScreen> {
                         backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Text(
-                        'Löschen',
-                        style: UIConstants.bodyStyle.copyWith(
-                          color: UIConstants.white,
-                        ),
+                      child: Row(
+                        // <-- Added Row for icon and text
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.check,
+                            color: UIConstants.white,
+                            size: UIConstants.bodyFontSize + 4.0,
+                          ), // OK icon
+                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Text(
+                            'Löschen',
+                            style: UIConstants.bodyStyle.copyWith(
+                              color: UIConstants.white,
+                              fontSize: UIConstants
+                                  .bodyFontSize, // Consistent font size
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -261,7 +289,6 @@ class StartScreenState extends State<StartScreen> {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.defaultSpacing),
-            // Removed the "Mein BSSB" Text widget here
             Container(
               height: 100, // You can adjust the height as needed
               width: double.infinity, // Makes the container take full width

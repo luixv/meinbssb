@@ -41,6 +41,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _currentPassData;
   String? _errorMessage;
+  bool _isEditing = false; // State variable for edit mode
 
   @override
   void initState() {
@@ -132,72 +133,102 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
   }
 
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
+  // ---
+  /// Handles the action when the Floating Action Button is pressed.
+  /// Toggles edit mode, or submits the form if currently in edit mode.
+  Future<void> _handleFabPressed() async {
+    if (_isLoading) {
+      return; // Do nothing if already loading/submitting
+    }
+
+    if (_isEditing) {
+      // If currently in edit mode, attempt to submit the form
+      await _submitForm();
+    } else {
+      // If not in edit mode, switch to edit mode
       setState(() {
-        _isLoading = true;
+        _isEditing = true;
       });
+      LoggerService.logInfo('Switched to edit mode.');
+    }
+  }
+  // ---
 
-      bool updateSuccess = false;
-      try {
-        final apiService = Provider.of<ApiService>(context, listen: false);
-        final int? personId = widget.userData['PERSONID'] as int?;
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) {
+      LoggerService.logInfo('Form validation failed. Not submitting.');
+      return; // Stop if validation fails
+    }
 
-        if (personId == null) {
-          LoggerService.logError(
-            'Person ID is null for update. Cannot submit form.',
-          );
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
-                ),
-                duration: UIConstants.snackBarDuration,
-              ),
-            );
-          }
-          updateSuccess = false;
-        } else {
-          updateSuccess = await apiService.updateKritischeFelderUndAdresse(
-            personId,
-            _titelController.text,
-            _nachnameController.text,
-            _vornameController.text,
-            _currentPassData?['GESCHLECHT'] as int? ?? 0,
-            _strasseHausnummerController.text,
-            _postleitzahlController.text,
-            _ortController.text,
-          );
+    setState(() {
+      _isLoading = true;
+    });
 
-          if (updateSuccess) {
-            LoggerService.logInfo(
-              'Personal data updated successfully. Re-fetching new data...',
-            );
-            await _fetchAndPopulateData();
-          } else {
-            LoggerService.logError('Failed to update personal data.');
-          }
-        }
-      } catch (error) {
-        LoggerService.logError('Exception during personal data update: $error');
-        updateSuccess = false;
-      } finally {
+    bool updateSuccess = false;
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final int? personId = widget.userData['PERSONID'] as int?;
+
+      if (personId == null) {
+        LoggerService.logError(
+          'Person ID is null for update. Cannot submit form.',
+        );
         if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => PersonDataResultScreen(
-                success: updateSuccess,
-                userData: widget.userData,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
               ),
+              duration: UIConstants.snackBarDuration,
             ),
           );
         }
+        updateSuccess = false;
+      } else {
+        updateSuccess = await apiService.updateKritischeFelderUndAdresse(
+          personId,
+          _titelController.text,
+          _nachnameController.text,
+          _vornameController.text,
+          _currentPassData?['GESCHLECHT'] as int? ?? 0,
+          _strasseHausnummerController.text,
+          _postleitzahlController.text,
+          _ortController.text,
+        );
+
+        if (updateSuccess) {
+          LoggerService.logInfo(
+            'Personal data updated successfully. Re-fetching new data...',
+          );
+          await _fetchAndPopulateData(); // Re-fetch to confirm update and populate with fresh data
+          if (mounted) {
+            setState(() {
+              _isEditing = false; // Exit edit mode on successful submission
+            });
+          }
+        } else {
+          LoggerService.logError('Failed to update personal data.');
+        }
+      }
+    } catch (error) {
+      LoggerService.logError('Exception during personal data update: $error');
+      updateSuccess = false;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        // Navigate to result screen after submission attempt
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PersonDataResultScreen(
+              success: updateSuccess,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
+          ),
+        );
       }
     }
   }
@@ -261,9 +292,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Passnummer',
                                 controller: _passnummerController,
-                                isReadOnly: true,
-                                floatingLabelBehavior: FloatingLabelBehavior
-                                    .always, // Keep "always" for read-only
+                                isReadOnly: true, // Always read-only
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
                                 inputTextStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -271,9 +302,9 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Geburtsdatum',
                                 controller: _geburtsdatumController,
-                                isReadOnly: true,
-                                floatingLabelBehavior: FloatingLabelBehavior
-                                    .always, // Keep "always" for read-only
+                                isReadOnly: true, // Always read-only
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
                                 inputTextStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -288,17 +319,19 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   ),
                                 ),
                               ),
-                              // Editable fields will use the default FloatingLabelBehavior.auto
+                              // Editable fields will now depend on _isEditing
                               _buildTextField(
                                 label: 'Titel',
                                 controller: _titelController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 validator: (value) => null,
                               ),
                               _buildTextField(
                                 label: 'Vorname',
                                 controller: _vornameController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Vorname ist erforderlich';
@@ -309,7 +342,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Nachname',
                                 controller: _nachnameController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Nachname ist erforderlich';
@@ -320,7 +354,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Straße + Hausnummer',
                                 controller: _strasseHausnummerController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Straße und Hausnummer sind erforderlich';
@@ -331,7 +366,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Postleitzahl',
                                 controller: _postleitzahlController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -346,7 +382,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Ort',
                                 controller: _ortController,
-                                // floatingLabelBehavior: FloatingLabelBehavior.auto, // REMOVED - uses default
+                                isReadOnly:
+                                    !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Ort ist erforderlich';
@@ -357,38 +394,35 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               const SizedBox(
                                 height: UIConstants.defaultSpacing,
                               ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _submitForm,
-                                  style: ElevatedButton.styleFrom(
-                                    padding: UIConstants.buttonPadding,
-                                    backgroundColor: UIConstants.acceptButton,
-                                  ),
-                                  child: _isLoading
-                                      ? const CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            UIConstants.white,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Absenden',
-                                          style: TextStyle(
-                                            fontSize: UIConstants.bodyFontSize,
-                                            color: UIConstants.sendButton,
-                                          ),
-                                        ),
-                                ),
-                              ),
+                              // Removed the separate "Absenden" button
                             ],
                           ),
                         ),
                       ),
                     ),
+      // ---
+      // Modified Floating Action Button
+      floatingActionButton: FloatingActionButton(
+        onPressed:
+            _isLoading ? null : _handleFabPressed, // Call the new handler
+        backgroundColor: UIConstants.defaultAppColor,
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(UIConstants.white),
+              )
+            : Icon(
+                _isEditing
+                    ? Icons.save
+                    : Icons.edit, // Icon changes based on mode
+                color: UIConstants.white,
+              ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // ---
     );
   }
 
+  // _buildTextField method remains the same
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -420,7 +454,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           suffixIcon: suffixIcon,
         ),
         validator: validator,
-        readOnly: isReadOnly,
+        readOnly: isReadOnly, // This is the key change to control editability
         keyboardType: keyboardType,
       ),
     );
