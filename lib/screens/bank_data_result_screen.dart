@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart'; 
+import '/screens/connectivity_icon.dart';
 
 class BankDataResultScreen extends StatelessWidget {
   const BankDataResultScreen({
@@ -30,6 +30,7 @@ class BankDataResultScreen extends StatelessWidget {
           style: UIConstants.titleStyle,
         ),
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),

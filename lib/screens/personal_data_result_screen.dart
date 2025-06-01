@@ -33,6 +33,7 @@ class PersonDataResultScreen extends StatelessWidget {
           style: UIConstants.titleStyle,
         ),
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),

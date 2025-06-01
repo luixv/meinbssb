@@ -265,6 +265,7 @@ class StartScreenState extends State<StartScreen> {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Startseite',
           style: UIConstants.titleStyle,

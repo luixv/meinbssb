@@ -144,6 +144,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Zahlungsart',
           style: UIConstants.titleStyle,

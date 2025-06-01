@@ -24,6 +24,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registrierung', style: UIConstants.titleStyle),
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         actions: [
           AppMenu(
             context: context,

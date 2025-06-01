@@ -20,6 +20,7 @@ class ImpressumScreen extends StatelessWidget {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Impressum',
           style: UIConstants.titleStyle,

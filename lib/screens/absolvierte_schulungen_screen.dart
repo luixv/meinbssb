@@ -64,6 +64,7 @@ class AbsolvierteSchulungenScreenState
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Absolvierte Schulungen', // Screen title
           style: UIConstants.titleStyle,

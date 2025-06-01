@@ -94,6 +94,7 @@ class _ZweitmitgliedschaftenScreenState
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title:
             const Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
         actions: [

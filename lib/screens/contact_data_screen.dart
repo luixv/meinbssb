@@ -536,6 +536,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Kontaktdaten',
           style: UIConstants.titleStyle,

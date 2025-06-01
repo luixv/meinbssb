@@ -39,7 +39,8 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
     return Scaffold(
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Remove the back button
+        automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Digitaler Schützenausweis',
           style: UIConstants.titleStyle,

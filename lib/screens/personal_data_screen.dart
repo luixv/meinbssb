@@ -252,6 +252,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text(
           'Persönliche Daten',
           style: UIConstants.titleStyle,

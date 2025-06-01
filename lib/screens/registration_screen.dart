@@ -325,6 +325,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundGreen,
         title: const Text('Registrierung', style: UIConstants.titleStyle),
         actions: [
           AppMenu(
