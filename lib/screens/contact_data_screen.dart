@@ -81,8 +81,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   Future<void> _onDeleteContact(
     int kontaktId,
     int kontaktTyp,
-    String contactValue, // Added to display in dialog
-    String contactLabel, // Added to display in dialog
+    String contactValue, 
+    String contactLabel, 
   ) async {
     final bool? confirmDelete = await showDialog<bool>(
       context: context,
@@ -517,9 +517,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   // --- Logout Handler ---
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from ContactdataScreen');
-    widget.onLogout(); // Call the logout function provided by the parent.
+    widget.onLogout();
     if (mounted) {
-      // FIX: Add mounted check
       Navigator.of(context).pushReplacementNamed('/login');
     }
   }
@@ -605,7 +604,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.close,
+          Icons.add,
           color: UIConstants.white,
           size: UIConstants.bodyFontSize + 4.0,
         ),
