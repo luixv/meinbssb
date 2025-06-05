@@ -55,14 +55,14 @@ class PersonDataResultScreen extends StatelessWidget {
             children: [
               Icon(
                 success ? Icons.check_circle_outline : Icons.error_outline,
-                color: success ? UIConstants.lightGreen : Colors.red,
+                color: success ? UIConstants.lightGreen : UIConstants.red,
                 size: 100,
               ),
               const SizedBox(height: UIConstants.defaultSpacing * 2),
               Text(
                 success ? 'Erfolg!' : 'Fehler!',
                 style: UIConstants.titleStyle.copyWith(
-                  color: success ? UIConstants.lightGreen : Colors.red,
+                  color: success ? UIConstants.lightGreen : UIConstants.red,
                 ),
               ),
               const SizedBox(height: UIConstants.defaultSpacing),

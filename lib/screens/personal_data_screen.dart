@@ -319,7 +319,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   child: Icon(
                                     Icons.info_outline,
                                     size: UIConstants.subtitleStyle.fontSize,
-                                    color: Colors.black,
+                                    color: UIConstants.black,
                                   ),
                                 ),
                               ),

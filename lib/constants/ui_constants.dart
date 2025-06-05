@@ -15,6 +15,9 @@ class UIConstants {
   static const Color green = Colors.green;
   static const Color grey = Colors.grey;
   static const Color red = Colors.red;
+  static const Color blue = Colors.blue;
+  static const Color transparent = Colors.transparent;
+
   static const Color cancelButton =
       Colors.lightGreen; //Color.fromARGB(255, 92, 26, 22);
   static const Color acceptButton = Colors.lightGreen;
@@ -24,14 +27,13 @@ class UIConstants {
   static const Color error = Colors.red;
   static const Color success = Colors.green;
 
-  static const Color transparent = Colors.transparent;
   static const Color news = Color(0xFFF4B183);
 
   static const Color tableBackground = Colors.white;
   static const Color tableBorder = Colors.white;
 
-  // Font Properties
-  static const String defaultFontFamily = 'Arial'; // Roboto (no more)
+  // Font Properties  Arial, Calibri, Roboto (no more)
+  static const String defaultFontFamily = 'Noto'; //
 
   // Font Sizes
   static const double headerFontSize = 24.0; // "Hier Registrieren"

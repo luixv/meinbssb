@@ -209,14 +209,14 @@ class _AccordionItem extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.grey,
+            color: UIConstants.grey,
           ), // For customizing the border color
         ),
         child: const Center(
           child: Icon(
             Icons.add,
             size: 18,
-            color: Colors.grey, // For customizing the icon color
+            color: UIConstants.grey, // For customizing the icon color
           ),
         ),
       ),
@@ -259,7 +259,7 @@ class _LinkText extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: Colors.blue,
+            color: UIConstants.blue,
             decoration: TextDecoration.underline,
           ),
         ),

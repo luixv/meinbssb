@@ -272,7 +272,7 @@ class _LinkText extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: Colors.blue,
+          color: UIConstants.blue,
           decoration: TextDecoration.underline,
         ),
       ),

@@ -4,6 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '/constants/ui_constants.dart';
+
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
@@ -78,11 +80,12 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Mein BSSB',
       theme: ThemeData(
+        fontFamily: UIConstants.defaultFontFamily,
         primarySwatch: Colors.blue,
         textSelectionTheme: const TextSelectionThemeData(
-          selectionColor: Colors.transparent,
-          selectionHandleColor: Colors.transparent,
-          cursorColor: Colors.black,
+          selectionColor: UIConstants.transparent,
+          selectionHandleColor: UIConstants.transparent,
+          cursorColor: UIConstants.black,
         ),
       ),
       localizationsDelegates: const [
@@ -96,11 +99,11 @@ class MyAppState extends State<MyApp> {
         return Theme(
           data: Theme.of(context).copyWith(
             textSelectionTheme: const TextSelectionThemeData(
-              selectionColor: Colors.transparent,
-              cursorColor: Colors.black,
+              selectionColor: UIConstants.transparent,
+              cursorColor: UIConstants.black,
             ),
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
+            highlightColor: UIConstants.transparent,
+            splashColor: UIConstants.transparent,
           ),
           child: CookieConsent(
             child: Material(
@@ -111,14 +114,12 @@ class MyAppState extends State<MyApp> {
         );
       },
       routes: {
-        '/login':
-            (context) => LoginScreen(
+        '/login': (context) => LoginScreen(
               onLoginSuccess: (userData) => _setLoggedIn(true, userData),
             ),
         '/home': (context) {
-          final arguments =
-              ModalRoute.of(context)?.settings.arguments
-                  as Map<String, dynamic>?;
+          final arguments = ModalRoute.of(context)?.settings.arguments
+              as Map<String, dynamic>?;
           final userData =
               arguments?['userData'] as Map<String, dynamic>? ?? _userData;
           final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
@@ -129,14 +130,12 @@ class MyAppState extends State<MyApp> {
             onLogout: () => _setLoggedIn(false, {}),
           );
         },
-        '/help':
-            (context) => HelpScreen(
+        '/help': (context) => HelpScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),
             ),
-        '/impressum':
-            (context) => ImpressumScreen(
+        '/impressum': (context) => ImpressumScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
               onLogout: () => _setLoggedIn(false, {}),

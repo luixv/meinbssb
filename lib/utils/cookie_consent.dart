@@ -49,10 +49,10 @@ class _CookieConsentState extends State<CookieConsent> {
               behavior: HitTestBehavior.opaque,
               onTap: () {}, // Absorb taps without doing anything
               child: Container(
-                color: Colors.black54,
+                color: UIConstants.black,
                 child: Center(
                   child: Material(
-                    color: Colors.transparent,
+                    color: UIConstants.transparent,
                     child: Container(
                       margin: const EdgeInsets.all(UIConstants.defaultSpacing),
                       padding: const EdgeInsets.all(UIConstants.defaultPadding),

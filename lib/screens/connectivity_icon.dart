@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '/constants/ui_constants.dart';
 
 final _log = Logger('StartScreen');
 
@@ -66,25 +67,25 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  Colors.green,
+                  UIConstants.green,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.wifi, color: Colors.green);
+            : const Icon(Icons.wifi, color: UIConstants.green);
         tooltip = 'Connected to Wi-Fi';
         break;
       case ConnectivityResult.mobile:
         icon = _useSvg
             ? SvgPicture.asset(
-                'assets/signal_cellular_4_bar.svg', // Replace with your SVG asset path
+                'assets/signal_cellular_4_bar.svg',
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  Colors.green,
+                  UIConstants.green,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.signal_cellular_4_bar, color: Colors.green);
+            : const Icon(Icons.signal_cellular_4_bar, color: UIConstants.green);
         tooltip = 'Connected to Mobile Data';
         break;
       case ConnectivityResult.ethernet:
@@ -95,14 +96,14 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  Colors.green,
+                  UIConstants.green,
                   BlendMode.srcIn,
                 ),
               )
             : const Icon(
                 Icons
                     .network_check, // Using a more widely available network icon
-                color: Colors.green,
+                color: UIConstants.green,
               );
         tooltip = 'Connected to Ethernet';
         break;
@@ -113,24 +114,24 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  Colors.red,
+                  UIConstants.red,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.wifi_off, color: Colors.red);
+            : const Icon(Icons.wifi_off, color: UIConstants.red);
         tooltip = 'No Internet Connection';
         break;
       case ConnectivityResult
             .bluetooth: // You might want to handle this differently
-        icon = const Icon(Icons.bluetooth_connected, color: Colors.grey);
+        icon = const Icon(Icons.bluetooth_connected, color: UIConstants.grey);
         tooltip = 'Connected via Bluetooth (No Internet)';
         break;
       case ConnectivityResult.vpn: //  treat this as connected
-        icon = const Icon(Icons.vpn_lock, color: Colors.green);
+        icon = const Icon(Icons.vpn_lock, color: UIConstants.green);
         tooltip = 'Connected via VPN';
         break;
       case ConnectivityResult.other: // Handle other types as needed
-        icon = const Icon(Icons.network_check, color: Colors.grey);
+        icon = const Icon(Icons.network_check, color: UIConstants.grey);
         tooltip = 'Other Connection Type';
         break;
     }
