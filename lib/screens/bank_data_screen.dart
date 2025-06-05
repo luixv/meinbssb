@@ -8,7 +8,7 @@ import '../services/core/logger_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api_service.dart';
 import 'package:provider/provider.dart';
-import '/screens/bank_data_result_screen.dart'; // Make sure this import is correct
+import '/screens/bank_data_result_screen.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -36,6 +36,7 @@ class BankDataScreenState extends State<BankDataScreen> {
   bool _isLoading = false;
   bool _isEditing = false; // New state variable for edit mode
   bool _isOnline = false; // New state variable for online status
+  bool _dataLoadedOnce = false; // To track if data has been attempted to load
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       final bankData = await apiService.fetchBankdaten(widget.webloginId);
       if (mounted) {
         setState(() {
+          _dataLoadedOnce = true; // Mark that data loading attempt has occurred
           if (bankData.isNotEmpty) {
             _kontoinhaberController.text =
                 bankData['KONTOINHABER']?.toString() ?? '';
@@ -65,8 +67,10 @@ class BankDataScreenState extends State<BankDataScreen> {
             LoggerService.logWarning(
               'No bank data found for webloginId: ${widget.webloginId}',
             );
-            _isOnline =
-                true; // Still consider online if no data, just empty fields
+            // If API returned empty data, but the API call itself was successful,
+            // we still consider ourselves "online" to show an empty form or allow entry.
+            // If 'ONLINE' was false here, it means a network error occurred.
+            _isOnline = bankData['ONLINE'] as bool? ?? true;
           }
         });
       }
@@ -74,8 +78,10 @@ class BankDataScreenState extends State<BankDataScreen> {
       LoggerService.logError('Error fetching bank data: $error');
       if (mounted) {
         setState(() {
+          _dataLoadedOnce = true; // Mark that data loading attempt has occurred
           _isOnline = false; // Set to offline on error
         });
+        // We only show snackbar for network errors, not if just empty data
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Laden der Bankdaten: $error'),
@@ -190,6 +196,88 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget bodyContent;
+
+    if (_isLoading && !_dataLoadedOnce) {
+      // Show loading indicator only initially, before first data attempt
+      bodyContent = const Center(child: CircularProgressIndicator());
+    } else if (!_isOnline) {
+      // Show offline message if not online after initial load attempt
+      bodyContent = Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.cloud_off,
+              size: 80,
+              color: UIConstants.grey,
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
+            Text(
+              'Internet ist nicht zu Verfügung.',
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.grey,
+              ),
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing / 2),
+            Text(
+              'Bitte überprüfen Sie Ihre Verbindung.',
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Show the form if online and data loaded (or no data but online)
+      bodyContent = Padding(
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: UIConstants.defaultSpacing),
+                _buildTextField(
+                  label: 'Kontoinhaber',
+                  controller: _kontoinhaberController,
+                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Kontoinhaber ist erforderlich';
+                    }
+                    return null;
+                  },
+                ),
+                _buildTextField(
+                  label: 'IBAN',
+                  controller: _ibanController,
+                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'IBAN ist erforderlich';
+                    }
+                    if (!BankService.validateIBAN(value)) {
+                      return 'Ungültige IBAN';
+                    }
+                    return null;
+                  },
+                ),
+                _buildTextField(
+                  label: 'BIC',
+                  controller: _bicController,
+                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  validator: BankService.validateBIC,
+                ),
+                const SizedBox(height: UIConstants.defaultSpacing),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
@@ -212,61 +300,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
         ],
       ),
-      body: _isLoading &&
-              _kontoinhaberController
-                  .text.isEmpty // Show loading indicator only initially
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(UIConstants.defaultPadding),
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const SizedBox(height: UIConstants.defaultSpacing),
-                      _buildTextField(
-                        label: 'Kontoinhaber',
-                        controller: _kontoinhaberController,
-                        isReadOnly:
-                            !_isEditing, // Read-only based on _isEditing
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kontoinhaber ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        label: 'IBAN',
-                        controller: _ibanController,
-                        isReadOnly:
-                            !_isEditing, // Read-only based on _isEditing
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'IBAN ist erforderlich';
-                          }
-                          if (!BankService.validateIBAN(value)) {
-                            return 'Ungültige IBAN';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        label: 'BIC',
-                        controller: _bicController,
-                        isReadOnly:
-                            !_isEditing, // Read-only based on _isEditing
-                        validator: BankService.validateBIC,
-                      ),
-                      const SizedBox(height: UIConstants.defaultSpacing),
-                      // The ElevatedButton for submission will be removed
-                      // as the FAB will handle submission in edit mode.
-                    ],
-                  ),
-                ),
-              ),
-            ),
+      body: bodyContent, // Use the dynamically determined body content
       // --- Floating Action Button (FAB) ---
       floatingActionButton: _isOnline
           ? FloatingActionButton(
