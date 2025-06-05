@@ -91,7 +91,8 @@ void main() {
         verify(mockHttpClient.get('BankdatenMyBSSB/$webloginId')).called(1);
       });
 
-      test('should return empty map and log error on HTTP exception', () async {
+      test('should return ONLINE: false and log error on HTTP exception',
+          () async {
         // Arrange
         const int webloginId = 123;
         // FIX 1: Mock HttpClient.get to directly throw the exception
@@ -101,7 +102,7 @@ void main() {
         final result = await bankService.fetchBankdaten(webloginId);
 
         // Assert
-        expect(result, isEmpty);
+        expect(result, {'ONLINE': false});
       });
 
       test('should return empty map for empty list response', () async {
@@ -117,7 +118,7 @@ void main() {
         final result = await bankService.fetchBankdaten(webloginId);
 
         // Assert
-        expect(result, isEmpty);
+        expect(result, {'ONLINE': false});
       });
 
       test('should return empty map for non-list/non-map response', () async {
@@ -133,7 +134,7 @@ void main() {
         final result = await bankService.fetchBankdaten(webloginId);
 
         // Assert
-        expect(result, isEmpty);
+        expect(result, {'ONLINE': false});
       });
     });
 
