@@ -5,7 +5,7 @@ import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
-import '/services/logger_service.dart';
+import '../services/core/logger_service.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(

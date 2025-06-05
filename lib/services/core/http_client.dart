@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import '/services/logger_service.dart';
-import '/services/config_service.dart'; 
-import '/services/cache_service.dart'; 
-import '/services/token_service.dart'; 
+import 'logger_service.dart';
+import 'config_service.dart'; 
+import 'cache_service.dart'; 
+import 'token_service.dart'; 
 
 class HttpClient {
   HttpClient({

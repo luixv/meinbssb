@@ -8,11 +8,11 @@ import '/services/api/auth_service.dart';
 import '/services/api/training_service.dart';
 import '/services/api/user_service.dart';
 import '/services/api/bank_service.dart';
-import '/services/cache_service.dart';
-import '/services/config_service.dart';
-import '/services/http_client.dart';
-import '/services/image_service.dart';
-import '/services/network_service.dart';
+import 'core/cache_service.dart';
+import 'core/config_service.dart';
+import 'core/http_client.dart';
+import 'core/image_service.dart';
+import 'core/network_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);

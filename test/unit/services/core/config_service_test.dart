@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'dart:convert'; // Import dart:convert for utf8
 

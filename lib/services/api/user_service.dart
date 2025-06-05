@@ -3,10 +3,10 @@ import 'dart:developer'
     as dev_log; // Using dev_log to avoid conflict with `log`
 // if you have a custom LoggerService.log.
 
-import '/services/cache_service.dart';
-import '/services/http_client.dart';
-import '/services/network_service.dart';
-import '/services/logger_service.dart'; // Assuming you have this for logging
+import '../core/cache_service.dart';
+import '../core/http_client.dart';
+import '../core/network_service.dart';
+import '../core/logger_service.dart'; // Assuming you have this for logging
 
 class UserService {
   UserService({

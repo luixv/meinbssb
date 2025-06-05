@@ -5,8 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
 
-import 'package:meinbssb/services/cache_service.dart' as _i4;
-import 'package:meinbssb/services/config_service.dart' as _i3;
+import 'package:meinbssb/services/core/cache_service.dart' as _i4;
+import 'package:meinbssb/services/core/config_service.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 

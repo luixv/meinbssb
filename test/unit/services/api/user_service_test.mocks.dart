@@ -6,9 +6,9 @@
 import 'dart:async' as _i2;
 import 'dart:typed_data' as _i5;
 
-import 'package:meinbssb/services/cache_service.dart' as _i6;
-import 'package:meinbssb/services/http_client.dart' as _i3;
-import 'package:meinbssb/services/network_service.dart' as _i7;
+import 'package:meinbssb/services/core/cache_service.dart' as _i6;
+import 'package:meinbssb/services/core/http_client.dart' as _i3;
+import 'package:meinbssb/services/core/network_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 

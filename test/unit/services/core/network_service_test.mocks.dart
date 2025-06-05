@@ -7,7 +7,7 @@ import 'dart:async' as _i3;
 
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i2;
-import 'package:meinbssb/services/config_service.dart' as _i4;
+import 'package:meinbssb/services/core/config_service.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint

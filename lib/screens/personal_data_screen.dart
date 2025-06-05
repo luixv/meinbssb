@@ -6,7 +6,7 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/screens/personal_data_result_screen.dart';
-import '/services/logger_service.dart';
+import '../services/core/logger_service.dart';
 import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 

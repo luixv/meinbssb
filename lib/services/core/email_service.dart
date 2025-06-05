@@ -5,8 +5,8 @@
 import 'dart:io';
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
-import '/services/config_service.dart';
-import '/services/logger_service.dart';
+import 'config_service.dart';
+import 'logger_service.dart';
 
 abstract class EmailSender {
   Future<mailer.SendReport> send(

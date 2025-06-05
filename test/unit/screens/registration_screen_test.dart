@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
-import 'package:meinbssb/services/email_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 
 import 'registration_screen_test.mocks.dart';
 

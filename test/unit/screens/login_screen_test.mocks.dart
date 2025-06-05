@@ -8,9 +8,9 @@ import 'dart:typed_data' as _i5;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
-import 'package:meinbssb/services/cache_service.dart' as _i8;
-import 'package:meinbssb/services/config_service.dart' as _i7;
-import 'package:meinbssb/services/email_service.dart' as _i6;
+import 'package:meinbssb/services/core/cache_service.dart' as _i8;
+import 'package:meinbssb/services/core/config_service.dart' as _i7;
+import 'package:meinbssb/services/core/email_service.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
 

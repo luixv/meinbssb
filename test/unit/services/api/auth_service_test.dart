@@ -3,9 +3,9 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/services/api/auth_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'auth_service_test.mocks.dart';

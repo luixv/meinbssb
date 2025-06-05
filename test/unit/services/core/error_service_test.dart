@@ -4,7 +4,7 @@ import 'package:meinbssb/exceptions/api_exception.dart';
 import 'package:meinbssb/exceptions/authentication_exception.dart';
 import 'package:meinbssb/exceptions/network_exception.dart';
 import 'package:meinbssb/exceptions/validation_exception.dart';
-import 'package:meinbssb/services/error_service.dart';
+import 'package:meinbssb/services/core/error_service.dart';
 
 void main() {
   group('ErrorService', () {

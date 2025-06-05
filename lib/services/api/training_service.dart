@@ -6,10 +6,10 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert'; // Keep for jsonEncode in logs, but not for direct data processing
 
-import '/services/cache_service.dart';
-import '/services/http_client.dart';
-import '/services/logger_service.dart';
-import '/services/network_service.dart';
+import '../core/cache_service.dart';
+import '../core/http_client.dart';
+import '../core/logger_service.dart';
+import '../core/network_service.dart';
 
 class TrainingService {
   TrainingService({

@@ -6,10 +6,10 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
-import '/services/cache_service.dart';
-import '/services/http_client.dart';
-import '/services/logger_service.dart';
-import '/services/network_service.dart';
+import '../core/cache_service.dart';
+import '../core/http_client.dart';
+import '../core/logger_service.dart';
+import '../core/network_service.dart';
 
 class AuthService {
   AuthService({

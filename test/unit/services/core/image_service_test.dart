@@ -3,7 +3,7 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/services/image_service.dart';
+import 'package:meinbssb/services/core/image_service.dart';
 
 class MockLoggerService extends Mock {}
 

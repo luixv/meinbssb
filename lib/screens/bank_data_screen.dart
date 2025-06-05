@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
-import '/services/logger_service.dart';
+import '../services/core/logger_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api_service.dart';
 import 'package:provider/provider.dart';
@@ -60,8 +60,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 bankData['KONTOINHABER']?.toString() ?? '';
             _ibanController.text = bankData['IBAN']?.toString() ?? '';
             _bicController.text = bankData['BIC']?.toString() ?? '';
-            _isOnline = bankData['ONLINE'] as bool? ??
-                true; // Assuming 'ONLINE' status is part of bankData, default to true if not present
+            _isOnline = bankData['ONLINE'] as bool? ?? true;
           } else {
             LoggerService.logWarning(
               'No bank data found for webloginId: ${widget.webloginId}',
@@ -263,10 +262,6 @@ class BankDataScreenState extends State<BankDataScreen> {
                       const SizedBox(height: UIConstants.defaultSpacing),
                       // The ElevatedButton for submission will be removed
                       // as the FAB will handle submission in edit mode.
-                      // You might want to keep it if you want both options,
-                      // but for "same behavior as personal data screen", it's usually one or the other.
-                      // If you still want a distinct "Absenden" button, you can keep it here,
-                      // but its `onPressed` should also depend on `_isEditing` and `_isLoading`.
                     ],
                   ),
                 ),

@@ -5,7 +5,7 @@ import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'start_screen_test.mocks.dart';
 
 // Mock ConfigService para Provider

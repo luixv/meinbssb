@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:meinbssb/services/network_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'network_service_test.mocks.dart';
 
 @GenerateMocks([InternetConnectionChecker, ConfigService])

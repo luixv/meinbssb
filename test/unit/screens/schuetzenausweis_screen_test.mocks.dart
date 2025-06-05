@@ -7,7 +7,7 @@ import 'dart:async' as _i3;
 import 'dart:typed_data' as _i4;
 
 import 'package:meinbssb/services/api_service.dart' as _i2;
-import 'package:meinbssb/services/config_service.dart' as _i5;
+import 'package:meinbssb/services/core/config_service.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint

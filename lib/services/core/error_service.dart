@@ -9,7 +9,7 @@ import '/exceptions/authentication_exception.dart';
 import '/exceptions/network_exception.dart';
 import '/exceptions/validation_exception.dart';
 import '/exceptions/base_exception.dart';
-import '/services/logger_service.dart';
+import 'logger_service.dart';
 
 /// A service for handling errors consistently across the application
 class ErrorService {

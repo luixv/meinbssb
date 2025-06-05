@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
-import '/services/logger_service.dart';
+import 'logger_service.dart';
 
 // Conditional imports with explicit prefixes
 import 'package:path_provider/path_provider.dart' as path_provider;

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'package:meinbssb/screens/schuetzenausweis_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 
 // 👇 Genera mocks para estos servicios
 @GenerateMocks([ApiService, ConfigService])

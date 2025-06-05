@@ -4,8 +4,8 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '/services/config_service.dart';
-import '/services/logger_service.dart';
+import 'config_service.dart';
+import 'logger_service.dart';
 
 class CacheService {
   CacheService({

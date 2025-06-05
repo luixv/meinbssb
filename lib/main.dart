@@ -10,14 +10,14 @@ import 'services/api/user_service.dart';
 import 'services/api_service.dart';
 import 'services/api/training_service.dart';
 import 'services/api/bank_service.dart';
-import 'services/email_service.dart';
-import 'services/image_service.dart';
-import 'services/http_client.dart';
-import 'services/cache_service.dart';
-import 'services/config_service.dart';
-import 'services/logger_service.dart';
-import 'services/network_service.dart';
-import '/services/token_service.dart';
+import 'services/core/email_service.dart';
+import 'services/core/image_service.dart';
+import 'services/core/http_client.dart';
+import 'services/core/cache_service.dart';
+import 'services/core/config_service.dart';
+import 'services/core/logger_service.dart';
+import 'services/core/network_service.dart';
+import 'services/core/token_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -7,8 +7,8 @@ import 'dart:async' as _i4;
 
 import 'package:mailer/mailer.dart' as _i2;
 import 'package:mailer/smtp_server.dart' as _i5;
-import 'package:meinbssb/services/config_service.dart' as _i6;
-import 'package:meinbssb/services/email_service.dart' as _i3;
+import 'package:meinbssb/services/core/config_service.dart' as _i6;
+import 'package:meinbssb/services/core/email_service.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint

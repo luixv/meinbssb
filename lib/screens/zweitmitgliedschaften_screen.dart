@@ -4,8 +4,8 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/screens/app_menu.dart';
 import '/services/api_service.dart';
-import '/services/config_service.dart';
-import '/services/logger_service.dart';
+import '../services/core/config_service.dart';
+import '../services/core/logger_service.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   const ZweitmitgliedschaftenScreen({

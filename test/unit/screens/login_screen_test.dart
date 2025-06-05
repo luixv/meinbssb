@@ -12,9 +12,9 @@ import 'dart:typed_data';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/email_service.dart';
-import 'package:meinbssb/services/config_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
 
 @GenerateMocks([
   AuthService,

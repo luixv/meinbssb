@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:meinbssb/services/api/user_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/network_service.dart';
 
 import 'user_service_test.mocks.dart';
 

@@ -1,8 +1,8 @@
 // In lib/services/api/bank_service.dart
 
 import 'dart:convert';
-import '/services/http_client.dart';
-import '/services/logger_service.dart';
+import '../core/http_client.dart';
+import '../core/logger_service.dart';
 
 class BankService {
   BankService({required HttpClient httpClient}) : _httpClient = httpClient;
@@ -10,16 +10,37 @@ class BankService {
 
   /// Fetches bank data for a given weblogin ID.
   /// Assumes _httpClient.get directly returns the JSON-decoded data (List or Map).
+  ///
+  /// Returns a Map<String, dynamic> including an 'ONLINE' field:
+  /// - 'ONLINE': true if data was fetched successfully from the network.
+  /// - 'ONLINE': false if an error occurred during network fetch (implies offline or network issue).
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     try {
       final dynamic responseData =
           await _httpClient.get('BankdatenMyBSSB/$webloginId');
 
       final mappedResponse = _mapBankdatenResponse(responseData);
-      return mappedResponse;
+
+      // If the response is not empty, and we successfully mapped it,
+      // it means we were online and got data.
+      if (mappedResponse.isNotEmpty) {
+        LoggerService.logInfo('Successfully fetched Bankdaten from network.');
+        return {...mappedResponse, 'ONLINE': true}; // Add ONLINE: true
+      } else {
+        // If responseData was empty or couldn't be mapped, consider it offline for this specific data.
+        LoggerService.logWarning(
+          'Bankdaten response was empty or unmappable. Returning offline data.',
+        );
+        return {
+          'ONLINE': false,
+        }; // Return with ONLINE: false if data is empty/unmappable
+      }
     } catch (e) {
-      LoggerService.logError('Error fetching Bankdaten: $e');
-      return {};
+      LoggerService.logError(
+        'Error fetching Bankdaten: $e. Returning offline data.',
+      );
+      // If any error occurs during the network request, assume offline status
+      return {'ONLINE': false}; // Return with ONLINE: false
     }
   }
 
@@ -153,7 +174,6 @@ class BankService {
 
   static String? validateBIC(String? bic) {
     if (bic == null || bic.trim().isEmpty) {
-      // FIX HERE: Return the expected error message for null or empty BIC
       return 'BIC muss 8 oder 11 Zeichen lang sein';
     }
     final String cleanBic = bic.trim().toUpperCase();
@@ -164,10 +184,8 @@ class BankService {
       return 'Ungültiger BIC (Bank- und Länderkennung)';
     }
     if (!RegExp(r'^[A-Z0-9]{2}').hasMatch(cleanBic.substring(6, 8))) {
-      // This part of the BIC (Ortscode) must be alphanumeric
       return 'Ungültiger BIC (Ortscode)';
     }
-    // Only check the last 3 characters if the BIC is 11 characters long
     if (cleanBic.length == 11 &&
         !RegExp(r'^[A-Z0-9]{3}$').hasMatch(cleanBic.substring(8, 11))) {
       return 'Ungültiger BIC (Filialcode)';

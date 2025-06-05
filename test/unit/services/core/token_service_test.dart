@@ -5,9 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
-import 'package:meinbssb/services/token_service.dart';
-import 'package:meinbssb/services/config_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/core/token_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
 
 // Generate mocks
 @GenerateMocks([

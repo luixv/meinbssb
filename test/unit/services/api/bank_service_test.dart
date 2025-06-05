@@ -5,7 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
-import 'package:meinbssb/services/http_client.dart';
+import 'package:meinbssb/services/core/http_client.dart';
 // Import dart:convert for jsonEncode (still needed for verify, but not for mock return types)
 import 'package:mockito/annotations.dart';
 

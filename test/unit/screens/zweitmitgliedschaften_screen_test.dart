@@ -3,11 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/zweitmitgliedschaften_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/config_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/network_service.dart';
-import 'package:meinbssb/services/image_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/image_service.dart';
 
 // More explicit fakes
 

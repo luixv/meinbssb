@@ -5,12 +5,12 @@ import 'package:mockito/mockito.dart';
 import 'package:meinbssb/app.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/screens/start_screen.dart';
-import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/config_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/cache_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
 
 // Generate the mock
 class MockNetworkService extends Mock implements NetworkService {}

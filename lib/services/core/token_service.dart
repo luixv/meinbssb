@@ -1,9 +1,9 @@
 // lib/services/token_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '/services/logger_service.dart';
-import '/services/config_service.dart';
-import '/services/cache_service.dart';
+import 'logger_service.dart';
+import 'config_service.dart';
+import 'cache_service.dart';
 
 /// A service responsible for managing authentication tokens,
 /// including fetching, caching, and providing them.

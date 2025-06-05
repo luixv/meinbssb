@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
-import '/services/logger_service.dart';
+import '../services/core/logger_service.dart';
 
 class AbsolvierteSchulungenScreen extends StatefulWidget {
   const AbsolvierteSchulungenScreen(

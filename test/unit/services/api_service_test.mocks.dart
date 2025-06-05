@@ -12,11 +12,11 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i12;
 import 'package:meinbssb/services/api/bank_service.dart' as _i15;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
 import 'package:meinbssb/services/api/user_service.dart' as _i14;
-import 'package:meinbssb/services/cache_service.dart' as _i9;
-import 'package:meinbssb/services/config_service.dart' as _i4;
-import 'package:meinbssb/services/http_client.dart' as _i5;
-import 'package:meinbssb/services/image_service.dart' as _i8;
-import 'package:meinbssb/services/network_service.dart' as _i10;
+import 'package:meinbssb/services/core/cache_service.dart' as _i9;
+import 'package:meinbssb/services/core/config_service.dart' as _i4;
+import 'package:meinbssb/services/core/http_client.dart' as _i5;
+import 'package:meinbssb/services/core/image_service.dart' as _i8;
+import 'package:meinbssb/services/core/network_service.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 

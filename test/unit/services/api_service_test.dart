@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/http_client.dart';
-import 'package:meinbssb/services/image_service.dart';
-import 'package:meinbssb/services/network_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/image_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';

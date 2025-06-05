@@ -11,9 +11,9 @@ import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
 import '/services/api/auth_service.dart';
-import '/services/email_service.dart';
-import '/services/error_service.dart';
-import '/services/logger_service.dart';
+import '../services/core/email_service.dart';
+import '../services/core/error_service.dart';
+import '../services/core/logger_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({

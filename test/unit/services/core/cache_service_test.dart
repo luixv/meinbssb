@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meinbssb/services/cache_service.dart';
-import 'package:meinbssb/services/config_service.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'dart:convert'; // Import jsonEncode for checking cached string
 // Import for `predicate` if `which` is not available
 
