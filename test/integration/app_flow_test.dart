@@ -19,7 +19,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Flow Integration Tests', () {
-    debugPrint('Test 1 started!\n\n');
+    debugPrint('Test 1 started!\n\n\n');
     late ConfigService configService;
     setUpAll(() async {
       // Initialize the app's service providers
@@ -33,7 +33,7 @@ void main() {
     setUp(() {});
 
     testWidgets('Access the Passwort vergessen?', (tester) async {
-      debugPrint('Test 2 started!\n\n');
+      debugPrint('Test 2 started!\n\n\n');
 
       // Build our app and trigger a frame
       await tester.pumpWidget(
@@ -67,7 +67,7 @@ void main() {
     });
 
     testWidgets('Access the help page', (tester) async {
-      debugPrint('Test 3 started!\n\n');
+      debugPrint('Test 3 started!\n\n\n');
       // Build our app and trigger a frame
       await tester.pumpWidget(
         Provider<NetworkService>(
@@ -101,7 +101,7 @@ void main() {
     });
 
     testWidgets('Access the Registration page', (tester) async {
-      debugPrint('Test 4 started!\n\n');
+      debugPrint('Test 4 started!\n\n\n');
 
       // Build our app and trigger a frame
       await tester.pumpWidget(
@@ -139,7 +139,7 @@ void main() {
       tester,
     ) async {
       // Build our app and trigger a frame
-      debugPrint('Test 5 started!\n\n');
+      debugPrint('Test 5 started!\n\n\n');
 
       await tester.pumpWidget(
         Provider<NetworkService>(
@@ -162,16 +162,16 @@ void main() {
 
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      debugPrint('Login button found!\n\n');
+      debugPrint('Login button found!\n\n\n');
 
       await tester.pumpAndSettle();
 
       // Verify we're on the start screen after successful login
       expect(find.byType(StartScreen), findsOneWidget);
-      debugPrint('Login done!\n\n');
+      debugPrint('Login done!\n\n\n');
 
       // Verify user data is displayed
-      expect(find.text('Lukas Schürz'), findsOneWidget);
+      expect(find.text('Kostas Rizoudis'), findsOneWidget);
       expect(find.text('40100709'), findsOneWidget);
       debugPrint('User found!\n\n');
 
@@ -179,7 +179,7 @@ void main() {
       // Access Schuetzenausweis
       await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
-      debugPrint('Menu icon found!\n\n');
+      debugPrint('Menu icon found!\n\n\n');
 
       await tester.tap(
         find.text('Digitaler Schützenausweis'),
@@ -200,31 +200,31 @@ void main() {
       await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
       await tester.tap(find.text('Impressum')); // Tap the menu item
-      debugPrint('Impressum menu  found!\n\n');
+      debugPrint('Impressum menu  found!\n\n\n');
       await tester.pumpAndSettle();
       expect(
         find.text('Impressum').first,
         findsOneWidget,
       );
-      debugPrint('Impressum found!\n\n');
+      debugPrint('Impressum found!\n\n\n');
 
       // Access Kontaktdaten
       await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
       await tester.tap(find.text('Kontaktdaten')); // Tap the menu item
-      debugPrint('Kontaktdaten menu found!\n\n');
+      debugPrint('Kontaktdaten menu found!\n\n\n');
       await tester.pumpAndSettle();
       expect(
         find.text('Kontaktdaten').first,
         findsOneWidget,
       );
-      debugPrint('Kontaktdaten found!\n\n');
+      debugPrint('Kontaktdaten found!\n\n\n');
 
       // Access Stammdaten
       await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
       await tester.pumpAndSettle();
       await tester.tap(find.text('Persönliche Daten')); // Tap the menu item
-      debugPrint('Persönliche Daten menu found!\n\n');
+      debugPrint('Persönliche Daten menu found!\n\n\n');
       await tester.pumpAndSettle();
       expect(
         find.text('Persönliche Daten').first,
