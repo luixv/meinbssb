@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
+import '/screens/connectivity_icon.dart'; // Ensure this import is present
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 
@@ -46,6 +47,12 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           style: UIConstants.titleStyle,
         ),
         actions: [
+          // --- Added ConnectivityIcon here ---
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(),
+          ),
+          // --- End ConnectivityIcon addition ---
           AppMenu(
             context: context,
             userData: widget.userData,

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
+import '/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
@@ -328,6 +329,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         backgroundColor: UIConstants.backgroundGreen,
         title: const Text('Registrierung', style: UIConstants.titleStyle),
         actions: [
+          // --- Added ConnectivityIcon here ---
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(),
+          ),
+          // --- End ConnectivityIcon addition ---
           AppMenu(
             context: context,
             userData: userData,

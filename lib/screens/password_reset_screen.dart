@@ -8,6 +8,7 @@ import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '../services/core/error_service.dart';
 import '/screens/app_menu.dart';
+import '/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
@@ -82,6 +83,12 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           style: UIConstants.titleStyle,
         ),
         actions: [
+          // --- Added ConnectivityIcon here ---
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(), // The ConnectivityIcon
+          ),
+          // --- End ConnectivityIcon addition ---
           AppMenu(
             context: context,
             userData: widget.userData,

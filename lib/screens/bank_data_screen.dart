@@ -1,5 +1,3 @@
-// In lib/screens/bank_data_screen.dart
-
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';

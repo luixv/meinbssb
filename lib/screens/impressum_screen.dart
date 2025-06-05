@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:meinbssb/screens/app_menu.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -26,9 +27,12 @@ class ImpressumScreen extends StatelessWidget {
           style: UIConstants.titleStyle,
         ),
         actions: [
+          // --- Added ConnectivityIcon here ---
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(), // The ConnectivityIcon
           ),
+          // --- End ConnectivityIcon addition ---
           AppMenu(
             context: context,
             userData: userData,
@@ -37,7 +41,6 @@ class ImpressumScreen extends StatelessWidget {
           ),
         ],
       ),
-      // Ändere hier die Farbe des Bodys
       body: Container(
         color: UIConstants.backgroundGreen,
         child: const SingleChildScrollView(
@@ -45,7 +48,6 @@ class ImpressumScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Der gesamte Inhalt bleibt gleich
               SizedBox(height: 16),
               Text(
                 'Für den Inhalt verantwortlich sind:',
@@ -63,9 +65,6 @@ class ImpressumScreen extends StatelessWidget {
               Text('Olympia-Schießanlage Hochbrück'),
               Text('Ingolstädter Landstraße 110'),
               Text('85748 Garching'),
-              SizedBox(height: 8),
-              Text('eingetragen im Vereinsregister des'),
-              Text('Amtsgerichts München: VR 4803'),
               SizedBox(height: 8),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
