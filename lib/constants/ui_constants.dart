@@ -70,17 +70,20 @@ class UIConstants {
   // Text Styles
   static const TextStyle headerStyle = TextStyle(
     fontSize: headerFontSize,
+    fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle subtitleStyle = TextStyle(
     fontSize: 18.0, // Example size, adjust as needed
     fontWeight: FontWeight.w600, // Example weight, adjust as needed
+    fontFamily: defaultFontFamily,
     color: Colors.black87, // Default color, can be overridden
   );
 
   static const TextStyle titleStyle = TextStyle(
     fontSize: titleFontSize,
+    fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
     color: black,
     backgroundColor: Colors.transparent,
@@ -89,6 +92,7 @@ class UIConstants {
 
   static const TextStyle bodyStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: black,
     fontWeight: FontWeight.normal,
     backgroundColor: Colors.transparent,
@@ -97,17 +101,20 @@ class UIConstants {
 
   static const TextStyle linkStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     decoration: TextDecoration.underline,
     fontWeight: FontWeight.normal,
   );
 
   static const TextStyle successStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: green,
   );
 
   static const TextStyle errorStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: Colors.red,
   );
 
