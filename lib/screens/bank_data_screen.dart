@@ -332,21 +332,33 @@ class BankDataScreenState extends State<BankDataScreen> {
     Color? backgroundColor,
     Widget? suffixIcon,
   }) {
+    // Determine the effective text style
+    TextStyle effectiveTextStyle;
+    if (!_isEditing) {
+      effectiveTextStyle = inputTextStyle ??
+          const TextStyle(
+            fontSize: UIConstants.bodyFontSize,
+            fontWeight: FontWeight.bold,
+          );
+    } else {
+      effectiveTextStyle = inputTextStyle ??
+          TextStyle(
+            fontSize: UIConstants.bodyFontSize,
+            fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
+          );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
       child: TextFormField(
         controller: controller,
-        style: inputTextStyle ??
-            const TextStyle(
-              fontSize: UIConstants.bodyFontSize,
-            ),
+        style: effectiveTextStyle,
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
           labelStyle: const TextStyle(
             fontSize: UIConstants.subtitleFontSize,
           ),
-          floatingLabelBehavior:
-              FloatingLabelBehavior.always, // Always show label for clarity
+          floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,
           fillColor: backgroundColor,
           filled: backgroundColor != null,

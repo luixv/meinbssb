@@ -428,7 +428,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     );
   }
 
-  // _buildTextField method remains the same
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,
@@ -440,20 +439,32 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     Widget? suffixIcon,
     TextInputType? keyboardType,
   }) {
+    // Determine the text style based on mode and read-only status
+    TextStyle effectiveTextStyle;
+    if (!isReadOnly) {
+      // Editable fields: default style or you can customize further
+      effectiveTextStyle = inputTextStyle ??
+          const TextStyle(
+            fontSize: UIConstants.bodyFontSize,
+          );
+    } else {
+      // Read-only fields: bold if in view mode
+      effectiveTextStyle = inputTextStyle ??
+          const TextStyle(
+            fontSize: UIConstants.bodyFontSize,
+            fontWeight: FontWeight.bold,
+          );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
       child: TextFormField(
         controller: controller,
-        style: inputTextStyle ??
-            const TextStyle(
-              fontSize: UIConstants.bodyFontSize,
-            ),
+        style: effectiveTextStyle,
         decoration: UIConstants.defaultInputDecoration.copyWith(
           labelText: label,
-          floatingLabelBehavior:
-              floatingLabelBehavior, // This will use the passed value (auto or always)
-          hintText:
-              isReadOnly ? null : label, // Only show hint for editable fields
+          floatingLabelBehavior: floatingLabelBehavior,
+          hintText: isReadOnly ? null : label,
           fillColor: backgroundColor,
           filled: backgroundColor != null,
           suffixIcon: suffixIcon,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
 import '/constants/ui_constants.dart';
+import '/screens/connectivity_icon.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({
@@ -20,9 +21,12 @@ class HelpScreen extends StatelessWidget {
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
         title: const Text('FAQ', style: UIConstants.titleStyle),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: ConnectivityIcon(),
+          ),
           AppMenu(
             context: context,
             userData: userData,
@@ -209,14 +213,14 @@ class _AccordionItem extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: UIConstants.grey,
+            color: Colors.grey,
           ), // For customizing the border color
         ),
         child: const Center(
           child: Icon(
             Icons.add,
             size: 18,
-            color: UIConstants.grey, // For customizing the icon color
+            color: Colors.grey, // For customizing the icon color
           ),
         ),
       ),
@@ -259,7 +263,7 @@ class _LinkText extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: UIConstants.blue,
+            color: Colors.blue,
             decoration: TextDecoration.underline,
           ),
         ),
