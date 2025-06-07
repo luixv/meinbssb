@@ -8,12 +8,16 @@ import 'cache_service.dart';
 /// A service responsible for managing authentication tokens,
 /// including fetching, caching, and providing them.
 class TokenService {
+
   TokenService({
     required ConfigService configService,
     required CacheService cacheService,
     http.Client? client, // Optional HTTP client for token requests
   })  : _configService = configService,
-        _cacheService = cacheService;
+        _cacheService = cacheService,
+        _client = client ?? http.Client();
+  // Add _client field to hold the injected HTTP client
+  final http.Client _client; // Initialize _client here
 
   final ConfigService _configService;
   final CacheService _cacheService;
@@ -41,15 +45,19 @@ class TokenService {
     });
 
     LoggerService.logInfo(
-        'TokenService: Fetching new token from: $tokenServerURL',);
+      'TokenService: Fetching new token from: $tokenServerURL',
+    );
 
     try {
-      final http.StreamedResponse streamedResponse = await request.send();
+      // Use the injected _client to send the request
+      final http.StreamedResponse streamedResponse =
+          await _client.send(request);
       final http.Response response =
           await http.Response.fromStream(streamedResponse);
 
       LoggerService.logInfo(
-          'TokenService: Response Status Code: ${response.statusCode}',);
+        'TokenService: Response Status Code: ${response.statusCode}',
+      );
       LoggerService.logInfo('TokenService: Response body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -57,7 +65,8 @@ class TokenService {
         final String token = jsonResponse['Token'];
         await _cacheService.setString(_tokenCacheKey, token);
         LoggerService.logInfo(
-            'TokenService: Successfully fetched and cached new token',);
+          'TokenService: Successfully fetched and cached new token',
+        );
         return token;
       }
     } catch (e) {
@@ -76,7 +85,8 @@ class TokenService {
       return cachedToken;
     } else {
       LoggerService.logInfo(
-          'TokenService: No cached token found, fetching new one',);
+        'TokenService: No cached token found, fetching new one',
+      );
       return await _fetchToken();
     }
   }
