@@ -73,6 +73,7 @@ class ApiService {
     );
   }
 
+// Auth service
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _authService.login(username, password);
@@ -90,13 +91,17 @@ class ApiService {
     }
   }
 
-  // Use the resetPassword method from AuthService
   Future<Map<String, dynamic>> resetPassword(String passNumber) async {
     return _authService.resetPassword(passNumber);
   }
 
+// User Service
   Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
+  }
+
+  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
+    return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
   Future<bool> updateKritischeFelderUndAdresse(
@@ -121,41 +126,15 @@ class ApiService {
     );
   }
 
-  Future<Uint8List> fetchSchuetzenausweis(int personId) async {
-    return _imageService.fetchAndCacheSchuetzenausweis(
-      personId,
-      () => _httpClient.getBytes('Schuetzenausweis/JPG/$personId'), // Now valid
-      getCacheExpirationDuration(),
-    );
-  }
-
-  Future<List<dynamic>> fetchSchulungsarten() async {
-    return _trainingService.fetchSchulungsarten();
-  }
-
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
-    int personId,
-    String abDatum,
-  ) async {
-    return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
-  }
-
-  Future<List<dynamic>> fetchAvailableSchulungen() async {
-    return _trainingService.fetchAvailableSchulungen();
+  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
+    return _userService.fetchZweitmitgliedschaften(personId);
   }
 
   Future<List<dynamic>> fetchAbsolvierteSchulungen(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }
 
-  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    return _userService.fetchZweitmitgliedschaften(personId);
-  }
-
-  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    return _userService.fetchPassdatenZVE(passdatenId, personId);
-  }
-
+// User Service - Kontakte
   Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
   }
@@ -176,6 +155,40 @@ class ApiService {
     return _userService.deleteKontakt(personId, kontaktId, kontaktTyp);
   }
 
+// Image Service
+  Future<Uint8List> fetchSchuetzenausweis(int personId) async {
+    return _imageService.fetchAndCacheSchuetzenausweis(
+      personId,
+      () => _httpClient.getBytes('Schuetzenausweis/JPG/$personId'), // Now valid
+      getCacheExpirationDuration(),
+    );
+  }
+
+// Training Service
+  Future<List<dynamic>> fetchSchulungsarten() async {
+    return _trainingService.fetchSchulungsarten();
+  }
+
+  Future<List<dynamic>> fetchAngemeldeteSchulungen(
+    int personId,
+    String abDatum,
+  ) async {
+    return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
+  }
+
+  Future<List<dynamic>> fetchAvailableSchulungen() async {
+    return _trainingService.fetchAvailableSchulungen();
+  }
+
+  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
+    return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
+  }
+
+  Future<bool> registerFromSchulung(int personId, int schulungId) async {
+    return _trainingService.registerForSchulung(personId, schulungId);
+  }
+
+// Bank Service
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     return _bankService.fetchBankdaten(webloginId);
   }
@@ -192,9 +205,5 @@ class ApiService {
       iban,
       bic,
     );
-  }
-
-  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
-    return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
 }

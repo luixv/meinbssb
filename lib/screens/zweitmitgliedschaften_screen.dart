@@ -119,12 +119,12 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "${_userData['VORNAME']} ${_userData['NAMEN']}", // Use _userData
+              "${_userData['VORNAME']} ${_userData['NAMEN']}", 
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              _userData['PASSNUMMER'], // Use _userData
+              _userData['PASSNUMMER'], 
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
@@ -135,7 +135,7 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              _userData['VEREINNAME'], // Use _userData
+              _userData['VEREINNAME'], 
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
