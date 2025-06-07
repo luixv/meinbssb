@@ -290,4 +290,151 @@ void main() {
       // as the flag is added to individual map items.
     });
   });
+
+  group('unregisterFromSchulung', () {
+    const testTeilnehmerId = 789;
+
+    test('returns true when unregistration is successful', () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        'SchulungenTeilnehmer/$testTeilnehmerId',
+        body: {},
+      ),).thenAnswer((_) async => {'ResultType': 1});
+
+      // Act
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      // Assert
+      expect(result, isTrue);
+      verify(mockHttpClient.delete(
+        'SchulungenTeilnehmer/$testTeilnehmerId',
+        body: {},
+      ),).called(1);
+    });
+
+    test('returns false when API returns unsuccessful response', () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        'SchulungenTeilnehmer/$testTeilnehmerId',
+        body: {},
+      ),).thenAnswer((_) async => {'ResultType': 0});
+
+      // Act
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      // Assert
+      expect(result, isFalse);
+    });
+
+    test('returns false when API response is invalid', () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        'SchulungenTeilnehmer/$testTeilnehmerId',
+        body: {},
+      ),).thenAnswer((_) async => {'error': 'Invalid request'});
+
+      // Act
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      // Assert
+      expect(result, isFalse);
+    });
+
+    test('returns false and logs error on exception', () async {
+      // Arrange
+      when(mockHttpClient.delete(
+        'SchulungenTeilnehmer/$testTeilnehmerId',
+        body: {},
+      ),).thenThrow(Exception('Network error'));
+
+      // Act
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      // Assert
+      expect(result, isFalse);
+    });
+  });
+
+  group('fetchAbsolvierteSchulungen', () {
+    const testPersonId = 123;
+    final testResponse = [
+      {
+        'AUSGESTELLTAM': '2023-01-01',
+        'BEZEICHNUNG': 'Completed Training 1',
+        'GUELTIGBIS': '2024-01-01',
+      },
+      {
+        'AUSGESTELLTAM': '2023-02-01',
+        'BEZEICHNUNG': 'Completed Training 2',
+        'GUELTIGBIS': '2024-02-01',
+      },
+    ];
+
+    test('returns formatted training list for valid response', () async {
+      // Arrange
+      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
+          .thenAnswer((_) async => testResponse);
+
+      // Act
+      final result =
+          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+
+      // Assert
+      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result.length, 2);
+      expect(result[0]['BEZEICHNUNG'], 'Completed Training 1');
+      expect(result[0]['AUSGESTELLTAM'], '01.01.2023');
+      expect(result[1]['GUELTIGBIS'], '01.02.2024');
+    });
+
+    test('handles empty date strings correctly', () async {
+      // Arrange
+      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
+          .thenAnswer((_) async => [
+                {
+                  'AUSGESTELLTAM': '',
+                  'BEZEICHNUNG': 'Training with empty date',
+                  'GUELTIGBIS': null,
+                }
+              ],);
+
+      // Act
+      final result =
+          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+
+      // Assert
+      expect(result[0]['AUSGESTELLTAM'], '');
+      expect(result[0]['GUELTIGBIS'], '');
+    });
+
+    test('returns empty list for non-list response', () async {
+      // Arrange
+      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
+          .thenAnswer((_) async => {'error': 'Invalid format'});
+
+      // Act
+      final result =
+          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+
+      // Assert
+      expect(result, isEmpty);
+    });
+
+    test('rethrows exceptions', () async {
+      // Arrange
+      final testException = Exception('Network error');
+      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
+          .thenThrow(testException);
+
+      // Act & Assert
+      expect(
+        () => trainingService.fetchAbsolvierteSchulungen(testPersonId),
+        throwsA(testException),
+      );
+    });
+  });
 }
