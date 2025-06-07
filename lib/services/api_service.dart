@@ -129,6 +129,9 @@ class ApiService {
     );
   }
 
+  Future<List<dynamic>> fetchSchulungsarten() async {
+    return _trainingService.fetchSchulungsarten();
+  }
 
   Future<List<dynamic>> fetchAngemeldeteSchulungen(
     int personId,
