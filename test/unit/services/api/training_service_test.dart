@@ -296,10 +296,12 @@ void main() {
 
     test('returns true when unregistration is successful', () async {
       // Arrange
-      when(mockHttpClient.delete(
-        'SchulungenTeilnehmer/$testTeilnehmerId',
-        body: {},
-      ),).thenAnswer((_) async => {'ResultType': 1});
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'ResultType': 1});
 
       // Act
       final result =
@@ -307,18 +309,22 @@ void main() {
 
       // Assert
       expect(result, isTrue);
-      verify(mockHttpClient.delete(
-        'SchulungenTeilnehmer/$testTeilnehmerId',
-        body: {},
-      ),).called(1);
+      verify(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).called(1);
     });
 
     test('returns false when API returns unsuccessful response', () async {
       // Arrange
-      when(mockHttpClient.delete(
-        'SchulungenTeilnehmer/$testTeilnehmerId',
-        body: {},
-      ),).thenAnswer((_) async => {'ResultType': 0});
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'ResultType': 0});
 
       // Act
       final result =
@@ -330,10 +336,12 @@ void main() {
 
     test('returns false when API response is invalid', () async {
       // Arrange
-      when(mockHttpClient.delete(
-        'SchulungenTeilnehmer/$testTeilnehmerId',
-        body: {},
-      ),).thenAnswer((_) async => {'error': 'Invalid request'});
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'error': 'Invalid request'});
 
       // Act
       final result =
@@ -345,10 +353,12 @@ void main() {
 
     test('returns false and logs error on exception', () async {
       // Arrange
-      when(mockHttpClient.delete(
-        'SchulungenTeilnehmer/$testTeilnehmerId',
-        body: {},
-      ),).thenThrow(Exception('Network error'));
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenThrow(Exception('Network error'));
 
       // Act
       final result =
@@ -394,13 +404,15 @@ void main() {
     test('handles empty date strings correctly', () async {
       // Arrange
       when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
-          .thenAnswer((_) async => [
-                {
-                  'AUSGESTELLTAM': '',
-                  'BEZEICHNUNG': 'Training with empty date',
-                  'GUELTIGBIS': null,
-                }
-              ],);
+          .thenAnswer(
+        (_) async => [
+          {
+            'AUSGESTELLTAM': '',
+            'BEZEICHNUNG': 'Training with empty date',
+            'GUELTIGBIS': null,
+          }
+        ],
+      );
 
       // Act
       final result =
