@@ -124,7 +124,7 @@ class AppMenu extends StatelessWidget {
       onSelected: (value) {
         if (value == 'logout' || value == 'back_to_login') {
           onLogout();
-        } else if (value == 'startseite') {
+        } else if (value == 'home') {
           Navigator.pushReplacementNamed(
             context,
             '/home',
@@ -167,13 +167,27 @@ class AppMenu extends StatelessWidget {
         } else {
           items.addAll([
             const PopupMenuItem<String>(
-              value: 'startseite',
-              child: Text('Startseite', style: UIConstants.bodyStyle),
+              value: 'home',
+              child: Text('Home', style: UIConstants.bodyStyle),
+            ),
+            const PopupMenuItem<String>(
+              value: 'seminare_buchen',
+              child: Text(
+                'Seminare buchen',
+                style: UIConstants.bodyStyle,
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'absolvierte_schulungen',
+              child: Text(
+                'Absolvierte Schulungen',
+                style: UIConstants.bodyStyle,
+              ),
             ),
             const PopupMenuItem<String>(
               value: 'digitaler_schuetzenausweis',
               child: Text(
-                'Digitaler Schützenausweis',
+                'Schützenausweis',
                 style: UIConstants.bodyStyle,
               ),
             ),
@@ -198,20 +212,6 @@ class AppMenu extends StatelessWidget {
             const PopupMenuItem<String>(
               value: 'kontaktdaten',
               child: Text('Kontaktdaten', style: UIConstants.bodyStyle),
-            ),
-            const PopupMenuItem<String>(
-              value: 'seminare_buchen',
-              child: Text(
-                'Seminare buchen',
-                style: UIConstants.bodyStyle,
-              ),
-            ),
-            const PopupMenuItem<String>(
-              value: 'absolvierte_schulungen',
-              child: Text(
-                'Absolvierte Schulungen',
-                style: UIConstants.bodyStyle,
-              ),
             ),
             const PopupMenuItem<String>(
               value: 'oktoberfestlandesschiessen',

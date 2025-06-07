@@ -222,7 +222,7 @@ class StartScreenState extends State<StartScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundGreen,
-        title: const Text('Startseite', style: UIConstants.titleStyle),
+        title: const Text('Home', style: UIConstants.titleStyle),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
