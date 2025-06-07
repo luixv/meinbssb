@@ -166,10 +166,19 @@ class TrainingService {
         body: {},
       );
 
-      LoggerService.logInfo(
-        'Successfully unregistered from Schulung. Response: $response',
-      );
-      return true;
+      // --- FIX HERE: Check ResultType from the API response ---
+      if (response != null && response['ResultType'] == 1) {
+        LoggerService.logInfo(
+          'Successfully unregistered from Schulung. Response: $response',
+        );
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'Unregistration API returned unexpected result: $response',
+        );
+        return false;
+      }
+      // --- END FIX ---
     } catch (e) {
       LoggerService.logError(
         'Error unregistering from Schulung $schulungenTeilnehmerID: $e',

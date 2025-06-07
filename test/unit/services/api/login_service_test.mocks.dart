@@ -995,6 +995,17 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
       ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
+  _i2.Future<List<Map<String, dynamic>>> fetchSchulungsarten() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungsarten,
+          [],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
+
+  @override
   _i2.Future<bool> registerForSchulung(
     int? personId,
     int? schulungId,
@@ -1193,4 +1204,13 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<bool> deleteBankdaten(int? webloginID) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteBankdaten,
+          [webloginID],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }

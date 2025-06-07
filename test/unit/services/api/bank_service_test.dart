@@ -6,10 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
-// Import dart:convert for jsonEncode (still needed for verify, but not for mock return types)
 import 'package:mockito/annotations.dart';
 
-import 'bank_service_test.mocks.dart'; // Adjust path if necessary
+import 'bank_service_test.mocks.dart';
 
 @GenerateMocks([HttpClient])
 void main() {
@@ -290,6 +289,51 @@ void main() {
 
         // Assert
         expect(result, isEmpty);
+      });
+    });
+
+    group('deleteBankdaten', () {
+      test('should return true on successful deletion', () async {
+        // Arrange
+        const int webloginId = 789;
+        // Mock the delete with one parameter (endpoint) and optional body
+        when(mockHttpClient.delete('BankdatenMyBSSB/$webloginId',
+                body: anyNamed('body'),),)
+            .thenAnswer((_) async => {}); // Empty map for successful deletion
+
+        // Act
+        final result = await bankService.deleteBankdaten(webloginId);
+
+        // Assert
+        expect(result, isTrue);
+        verify(mockHttpClient.delete(
+          'BankdatenMyBSSB/$webloginId',
+          body: {},
+        ),).called(1);
+      });
+
+      test('should return false and log error on HTTP exception', () async {
+        // Arrange
+        const int webloginId = 789;
+        when(mockHttpClient.delete(any)).thenThrow(Exception('Delete failed'));
+
+        // Act
+        final result = await bankService.deleteBankdaten(webloginId);
+
+        // Assert
+        expect(result, isFalse);
+      });
+
+      test('should return false when response is not as expected', () async {
+        // Arrange
+        const int webloginId = 789;
+        when(mockHttpClient.delete(any)).thenAnswer((_) async => null);
+
+        // Act
+        final result = await bankService.deleteBankdaten(webloginId);
+
+        // Assert
+        expect(result, isFalse);
       });
     });
 

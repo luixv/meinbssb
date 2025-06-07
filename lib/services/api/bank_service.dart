@@ -140,6 +140,28 @@ class BankService {
     }
   }
 
+  Future<bool> deleteBankdaten(int webloginID) async {
+    LoggerService.logInfo(
+      'Attempting to delete Bankdaten with ID: $webloginID',
+    );
+    try {
+      final response = await _httpClient.delete(
+        'BankdatenMyBSSB/$webloginID',
+        body: {},
+      );
+
+      LoggerService.logInfo(
+        'Successfully deleted Bankdaten. Response: $response',
+      );
+      return true;
+    } catch (e) {
+      LoggerService.logError(
+        'Error while deleting Bankdaten $webloginID: $e',
+      );
+      return false;
+    }
+  }
+
   // --- Static validation methods ---
 
   static bool validateIBAN(String? iban) {

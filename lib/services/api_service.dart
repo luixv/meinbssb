@@ -206,4 +206,8 @@ class ApiService {
       bic,
     );
   }
+
+  Future<bool> deleteBankdaten(int webloginId) async {
+    return _bankService.deleteBankdaten(webloginId);
+  }
 }
