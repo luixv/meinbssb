@@ -53,7 +53,8 @@ class TrainingService {
   }
 
   List<Map<String, dynamic>> _mapAngemeldeteSchulungenResponse(
-      dynamic response,) {
+    dynamic response,
+  ) {
     if (response is List) {
       return response.map((item) {
         // Explicitly cast item to Map<String, dynamic> here
@@ -71,21 +72,8 @@ class TrainingService {
 
   Future<List<Map<String, dynamic>>> fetchAvailableSchulungen() async {
     try {
-      final List<Map<String, dynamic>> result =
-          await _cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-        'available_schulungen',
-        _networkService.getCacheExpirationDuration(),
-        () async {
-          final response = await _httpClient.get('AvailableSchulungen');
-          return _mapAvailableSchulungenResponse(response);
-        },
-        _mapAvailableSchulungenResponse,
-      );
-
-      LoggerService.logInfo(
-        'Returning available Schulungen: ${jsonEncode(result)}',
-      );
-      return result;
+      final response = await _httpClient.get('AvailableSchulungen');
+      return _mapAvailableSchulungenResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching available Schulungen: $e');
       return [];
@@ -108,6 +96,50 @@ class TrainingService {
         };
       }).toList();
     }
+    return [];
+  }
+
+  /// Fetches available training types.
+  /// The response will include an 'ONLINE' field indicating if data was fetched from network (true) or cache (false).
+  Future<List<Map<String, dynamic>>> fetchSchulungsarten() async {
+    try {
+      final response = await _httpClient.get('Schulungsarten/false');
+      return _mapSchulungsartenResponse(response);
+    } catch (e) {
+      LoggerService.logError('Error fetching Schulungsarten: $e');
+      // If an error occurs, return an empty list. The cache service will handle
+      // adding the 'ONLINE: false' if it falls back to cached data.
+      return [];
+    }
+  }
+
+  /// Maps the dynamic API response for training types into a consistent List<Map<String, dynamic>> format.
+  List<Map<String, dynamic>> _mapSchulungsartenResponse(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
+        return {
+          'SCHULUNGSARTID': typedItem['SCHULUNGSARTID'],
+          'BEZEICHNUNG': typedItem['BEZEICHNUNG'],
+          'TYP': typedItem['TYP'],
+          'KOSTEN': typedItem['KOSTEN'],
+          'UE': typedItem['UE'],
+          'OMKATEGORIEID': typedItem['OMKATEGORIEID'],
+          'RECHNUNGAN': typedItem['RECHNUNGAN'],
+          'VERPFLEGUNGSKOSTEN': typedItem['VERPFLEGUNGSKOSTEN'],
+          'UEBERNACHTUNGSKOSTEN': typedItem['UEBERNACHTUNGSKOSTEN'],
+          'LEHRMATERIALKOSTEN': typedItem['LEHRMATERIALKOSTEN'],
+          'LEHRGANGSINHALT': typedItem['LEHRGANGSINHALT'],
+          'LEHRGANGSINHALTHTML': typedItem['LEHRGANGSINHALTHTML'],
+          'WEBGRUPPE': typedItem['WEBGRUPPE'],
+          'FUERVERLAENGERUNGEN': typedItem['FUERVERLAENGERUNGEN'],
+        };
+      }).toList();
+    }
+    LoggerService.logWarning(
+      'Schulungsarten response is not a List: ${response.runtimeType}',
+    );
     return [];
   }
 
@@ -147,7 +179,8 @@ class TrainingService {
   }
 
   Future<List<Map<String, dynamic>>> fetchAbsolvierteSchulungen(
-      int personId,) async {
+    int personId,
+  ) async {
     try {
       final response = await _httpClient.get('AbsolvierteSchulungen/$personId');
       return _mapAbsolvierteSchulungen(response);

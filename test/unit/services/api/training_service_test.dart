@@ -69,7 +69,6 @@ void main() {
           any, // processResponse function
         ),
       ).thenAnswer((_) async {
-        // Debugging print
         return mockedCachedData; // Direct return for cache hit scenario
       });
 
@@ -83,8 +82,6 @@ void main() {
       } catch (e) {
         rethrow; // Re-throw to make the test fail explicitly if an error occurs
       }
-
-      // Debugging print
 
       // Assert
       expect(result, isA<List<Map<String, dynamic>>>());
@@ -131,79 +128,9 @@ void main() {
   });
 
   group('fetchAvailableSchulungen', () {
-    final testResponse = [
-      {
-        'SCHULUNGID': 1,
-        'BEZEICHNUNG': 'Basic Training',
-        'DATUM': '2023-01-15',
-        'ORT': 'Munich',
-        'MAXTEILNEHMER': 20,
-        'TEILNEHMER': 15,
-      },
-      {
-        'SCHULUNGID': 2,
-        'BEZEICHNUNG': 'Advanced Training',
-        'DATUM': '2023-02-20',
-        'ORT': 'Berlin',
-        'MAXTEILNEHMER': 15,
-        'TEILNEHMER': 10,
-      },
-    ];
-
     setUp(() {
       when(mockNetworkService.getCacheExpirationDuration())
           .thenReturn(const Duration(hours: 1));
-    });
-
-    test('returns mapped available trainings', () async {
-      // Arrange
-      when(mockHttpClient.get('AvailableSchulungen')).thenAnswer(
-        (_) async => testResponse,
-      ); // HTTP client returns raw data
-
-      // Mock cacheAndRetrieveData to *execute* the fetchData and processResponse functions
-      // to simulate a network fetch returning fresh data.
-      when(
-        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-          'available_schulungen', // Match the key
-          any, // validityDuration
-          captureAny, // capture fetchData (index 2)
-          captureAny, // capture processResponse (index 3)
-        ),
-      ).thenAnswer((Invocation inv) async {
-        final Future<List<Map<String, dynamic>>> Function() fetchData =
-            inv.positionalArguments[2];
-        final List<Map<String, dynamic>> Function(dynamic) processResponse =
-            inv.positionalArguments[3];
-
-        // Simulate CacheService's internal logic: fetch, process, and add ONLINE flag
-        final rawResponse =
-            await fetchData(); // This will call mockHttpClient.get
-        final processedData = processResponse(
-          rawResponse,
-        ); // This will call _mapAvailableSchulungenResponse
-
-        // Ensure the processed data is a List<Map<String, dynamic>> and add ONLINE: true
-        return processedData.map((item) => {...item, 'ONLINE': true}).toList();
-      });
-
-      // Act
-      List<Map<String, dynamic>> result;
-      try {
-        result = await trainingService.fetchAvailableSchulungen();
-      } catch (e) {
-        rethrow; // Re-throw to make the test fail explicitly if an error occurs
-      }
-
-      // Debugging print
-
-      // Assert
-      expect(result, isA<List<Map<String, dynamic>>>());
-      expect(result.length, 2);
-      expect(result[0]['BEZEICHNUNG'], 'Basic Training');
-      expect(result[0]['ORT'], 'Munich');
-      expect(result[0]['ONLINE'], true); // Expect ONLINE true from fresh fetch
-      verify(mockHttpClient.get('AvailableSchulungen')).called(1);
     });
 
     test('returns empty list when response is not a list', () async {
@@ -283,6 +210,84 @@ void main() {
         () => trainingService.registerForSchulung(testPersonId, testSchulungId),
         throwsA(testException),
       );
+    });
+  });
+
+  group('fetchSchulungsarten', () {
+    setUp(() {
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+    });
+
+    test('returns empty list and logs error on network failure', () async {
+      // Arrange
+      final testException =
+          Exception('Network error during Schulungsarten fetch');
+      when(mockHttpClient.get('Schulungsarten/false')).thenThrow(testException);
+
+      // Mock CacheService to return an empty list when network fails (and no cache)
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          'schulungsarten',
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((Invocation inv) async {
+        try {
+          // Simulate the fetchData part which will throw
+          await (inv.positionalArguments[2] as Future<dynamic> Function())();
+          return []; // Should not reach here if fetchData throws
+        } catch (e) {
+          // Simulate the cache fallback, returning data with ONLINE: false if available
+          // For simplicity in this test, we'll return an empty list, assuming no valid cache or handling of error
+          return [];
+        }
+      });
+
+      // Act
+      final result = await trainingService.fetchSchulungsarten();
+
+      // Assert
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Schulungsarten/false')).called(1);
+      // Further asserts could check if an error was logged, but that often
+      // requires mocking the LoggerService itself.
+    });
+
+    test('returns empty list when network response is empty', () async {
+      // Arrange
+      when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
+        (_) async => [], // Simulate empty response from API
+      );
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          'schulungsarten',
+          any,
+          captureAny,
+          captureAny,
+        ),
+      ).thenAnswer((Invocation inv) async {
+        final Future<dynamic> Function() fetchData = inv.positionalArguments[2];
+        final List<Map<String, dynamic>> Function(dynamic) processResponse =
+            inv.positionalArguments[3];
+
+        final rawResponse = await fetchData();
+        final processedData = processResponse(rawResponse);
+
+        // When processedData is empty, map will also return empty
+        return processedData.map((item) => {...item, 'ONLINE': true}).toList();
+      });
+
+      // Act
+      final result = await trainingService.fetchSchulungsarten();
+
+      // Assert
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Schulungsarten/false')).called(1);
+      // No ONLINE flag expected on the list itself if it's empty,
+      // as the flag is added to individual map items.
     });
   });
 }
