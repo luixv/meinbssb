@@ -31,9 +31,10 @@ class UIConstants {
 
   static const Color tableBackground = Colors.white;
   static const Color tableBorder = Colors.white;
+  static const Color tileColor = Colors.white;
 
-  // Font Properties  Arial, Calibri, Roboto (no more)
-  static const String defaultFontFamily = 'Noto'; //
+  // Font Properties  Arial, Calibri, OpenSans, Roboto (no more)
+  static const String defaultFontFamily = 'OpenSans'; //
 
   // Font Sizes
   static const double headerFontSize = 24.0; // "Hier Registrieren"

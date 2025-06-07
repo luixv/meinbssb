@@ -48,7 +48,6 @@ class StartScreenState extends State<StartScreen> {
     final today = DateTime.now();
     final abDatum =
         "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
-
     try {
       LoggerService.logInfo('Fetching schulungen for $personId on $abDatum');
       final result = await apiService.fetchAngemeldeteSchulungen(
@@ -138,31 +137,20 @@ class StartScreenState extends State<StartScreen> {
                         backgroundColor: UIConstants.cancelButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Row(
-                        // <-- Added Row for icon and text
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.close,
-                            color: UIConstants.white,
-                            size: UIConstants.bodyFontSize + 4.0,
-                          ), // X icon
-                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Icon(Icons.close, color: UIConstants.white),
+                          SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                              fontSize: UIConstants
-                                  .bodyFontSize, // Consistent font size
-                            ),
+                            style: TextStyle(color: UIConstants.white),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: UIConstants.defaultSpacing,
-                  ),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -172,23 +160,14 @@ class StartScreenState extends State<StartScreen> {
                         backgroundColor: UIConstants.acceptButton,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Row(
-                        // <-- Added Row for icon and text
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.check,
-                            color: UIConstants.white,
-                            size: UIConstants.bodyFontSize + 4.0,
-                          ), // OK icon
-                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          Icon(Icons.check, color: UIConstants.white),
+                          SizedBox(width: 8),
                           Text(
                             'Löschen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
-                              fontSize: UIConstants
-                                  .bodyFontSize, // Consistent font size
-                            ),
+                            style: TextStyle(color: UIConstants.white),
                           ),
                         ],
                       ),
@@ -202,74 +181,48 @@ class StartScreenState extends State<StartScreen> {
       },
     );
 
-    if (confirmDelete == null || !confirmDelete) {
-      LoggerService.logInfo('Schulung deletion cancelled by user.');
-      return;
-    }
+    if (confirmDelete != true) return;
 
     try {
-      setState(() {
-        isLoading = true;
-      });
+      setState(() => isLoading = true);
       final success =
           await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
       if (mounted) {
         if (success) {
           LoggerService.logInfo(
-            'Successfully unregistered from Schulung $schulungenTeilnehmerID',
+            'Unregistered from Schulung $schulungenTeilnehmerID',
           );
-          setState(() {
-            schulungen.removeAt(index);
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Schulung abgemeldet.'),
-              duration: UIConstants.snackBarDuration,
-            ),
-          );
+          setState(() => schulungen.removeAt(index));
         } else {
-          LoggerService.logWarning(
-            'Failed to unregister from Schulung $schulungenTeilnehmerID',
-          );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Abmelden von der Schulung.'),
-              duration: UIConstants.snackBarDuration,
             ),
           );
         }
       }
-    } catch (error) {
-      LoggerService.logError('Error unregistering from Schulung: $error');
+    } catch (e) {
+      LoggerService.logError('Unregister error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $error'),
-            duration: UIConstants.snackBarDuration,
-          ),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userData = widget.userData;
+
     return Scaffold(
       backgroundColor: UIConstants.backgroundGreen,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundGreen,
-        title: const Text(
-          'Startseite',
-          style: UIConstants.titleStyle,
-        ),
+        title: const Text('Startseite', style: UIConstants.titleStyle),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
@@ -277,7 +230,7 @@ class StartScreenState extends State<StartScreen> {
           ),
           AppMenu(
             context: context,
-            userData: widget.userData,
+            userData: userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: _handleLogout,
           ),
@@ -290,33 +243,15 @@ class StartScreenState extends State<StartScreen> {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.defaultSpacing),
-            Container(
-              height: 100, // You can adjust the height as needed
-              width: double.infinity, // Makes the container take full width
-              decoration: BoxDecoration(
-                color: UIConstants.news, // Example background color
-                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-              ),
-              child: Center(
-                child: Text(
-                  'Hier könnten News stehen',
-                  style: UIConstants.titleStyle.copyWith(
-                    color: UIConstants.white, // Adjust text color as needed
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "${widget.userData['VORNAME'] ?? ''} ${widget.userData['NAMEN'] ?? ''}",
+              "${userData['VORNAME'] ?? ''} ${userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              '${widget.userData['PASSNUMMER'] ?? ''}',
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
+              '${userData['PASSNUMMER'] ?? ''}',
+              style: UIConstants.bodyStyle
+                  .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
             Text(
               'Schützenpassnummer',
@@ -324,119 +259,95 @@ class StartScreenState extends State<StartScreen> {
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              '${widget.userData['VEREINNAME'] ?? ''}',
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
+              '${userData['VEREINNAME'] ?? ''}',
+              style: UIConstants.bodyStyle
+                  .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
             Text(
               'Erstverein',
               style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
+            Container(
+              height: 100,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: UIConstants.news,
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              ),
+              child: const Center(
+                child: Text(
+                  'Hier könnten News stehen',
+                  style: TextStyle(
+                    color: UIConstants.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: UIConstants.defaultSpacing),
             const Text(
               'Angemeldete Schulungen:',
               style: UIConstants.titleStyle,
             ),
-            isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: UIConstants.defaultAppColor,
-                      strokeWidth: 2.0,
-                    ),
-                  )
-                : schulungen.isEmpty
-                    ? Text(
-                        'Keine Schulungen gefunden.',
-                        style: UIConstants.bodyStyle.copyWith(
-                          color: UIConstants.grey,
-                        ),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: schulungen.length,
-                          itemBuilder: (context, index) {
-                            final schulung = schulungen[index];
-                            final datum = DateTime.parse(schulung['DATUM']);
-                            final online = schulung['ONLINE'] as bool? ?? false;
-                            final personId = widget.userData['PERSONID'];
+            const SizedBox(height: UIConstants.smallSpacing),
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (schulungen.isEmpty)
+              const Text(
+                'Keine Schulungen gefunden.',
+                style: TextStyle(color: UIConstants.grey),
+              )
+            else
+              Expanded(
+                child: ListView.separated(
+                  itemCount: schulungen.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final schulung = schulungen[index];
+                    final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
+                        DateTime.now();
+                    final formattedDate =
+                        '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+                    final description = schulung['BEZEICHNUNG'] ?? 'N/A';
+                    final isOnline = schulung['ONLINE'] ?? false;
 
-                            final formattedDatum =
-                                "${datum.day.toString().padLeft(2, '0')}.${datum.month.toString().padLeft(2, '0')}.${datum.year}";
-                            return Card(
-                              margin: const EdgeInsets.only(
-                                bottom: UIConstants.smallSpacing,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: UIConstants.smallSpacing,
-                                  horizontal: UIConstants.smallSpacing,
-                                ),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 90,
-                                      child: Text(
-                                        formattedDatum,
-                                        style: UIConstants.bodyStyle.copyWith(
-                                          fontSize:
-                                              UIConstants.subtitleFontSize,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: UIConstants.smallSpacing,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        schulung['BEZEICHNUNG'] ?? 'N/A',
-                                        style: UIConstants.bodyStyle.copyWith(
-                                          fontSize:
-                                              UIConstants.subtitleFontSize,
-                                        ),
-                                      ),
-                                    ),
-                                    if (online)
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          color: UIConstants.defaultAppColor,
-                                        ),
-                                        onPressed: () {
-                                          if (personId != null &&
-                                              schulung[
-                                                      'SCHULUNGENTEILNEHMERID'] !=
-                                                  null) {
-                                            _handleDeleteSchulung(
-                                              schulung[
-                                                  'SCHULUNGENTEILNEHMERID'],
-                                              index,
-                                              schulung['BEZEICHNUNG'],
-                                            );
-                                          } else {
-                                            LoggerService.logError(
-                                              "personId or schulungId is null. personId: $personId, schulungenTeilnehmerID: ${schulung['SCHULUNGENTEILNEHMERID']}",
-                                            );
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Ein unerwarteter Fehler ist aufgetreten.',
-                                                ),
-                                                duration: UIConstants
-                                                    .snackBarDuration,
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                    return ListTile(
+                      tileColor: UIConstants.tileColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      leading: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isOnline ? Icons.laptop : Icons.location_on,
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ],
+                      ),
+                      title: Text(description, style: UIConstants.bodyStyle),
+                      subtitle: Text(
+                        formattedDate,
+                        style: const TextStyle(color: UIConstants.grey),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: UIConstants.deleteIcon,
+                        ),
+                        onPressed: () {
+                          final id = schulung['SCHULUNGENTEILNEHMERID'];
+                          if (id != null) {
+                            _handleDeleteSchulung(id, index, description);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
           ],
         ),
       ),
