@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart'; 
+import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
@@ -104,7 +104,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             ).colorScheme.copyWith(primary: UIConstants.defaultAppColor),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: UIConstants.defaultAppColor,
+                foregroundColor: UIConstants.sendButtonText,
+                backgroundColor: UIConstants.acceptButton,
               ),
             ),
           ),
