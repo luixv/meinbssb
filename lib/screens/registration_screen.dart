@@ -478,6 +478,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 children: [
                   Checkbox(
                     key: const Key('privacyCheckbox'),
+                    activeColor: UIConstants.defaultAppColor,
                     value: _privacyAccepted,
                     onChanged: (bool? value) => setState(() {
                       _privacyAccepted = value!;
@@ -523,12 +524,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   onPressed:
                       isFormValid() && !_isLoading ? _registerUser : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: UIConstants.backgroundColor,
+                    backgroundColor: UIConstants.acceptButtonBackground,
                     padding: UIConstants.buttonPadding,
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(
-                          color: UIConstants.submitButtonText,
+                          color: UIConstants.circularProgressIndicator,
                         )
                       : Text(
                           'Registrieren',
