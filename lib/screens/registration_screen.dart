@@ -102,6 +102,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             colorScheme: Theme.of(
               context,
             ).colorScheme.copyWith(primary: UIConstants.defaultAppColor),
+            datePickerTheme: const DatePickerThemeData(
+              headerBackgroundColor: UIConstants.calendarBackgroundColor,
+              backgroundColor: UIConstants.calendarBackgroundColor,
+              headerForegroundColor: Colors.black,
+            ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: UIConstants.submitButtonText,

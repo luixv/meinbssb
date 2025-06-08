@@ -66,6 +66,41 @@ class UIConstants {
   static const Color boxDecorationColor = Colors.white;
   static const Color cursorColor = Colors.black;
 
+  // Calendar Properties
+  static const Color calendarBackgroundColor = backgroundColor;
+  static const Color calendarHeaderColor = Colors.lightGreen;
+  static const Color calendarHeaderTextColor = defaultAppColor;
+  static const Color calendarTextColor = Colors.black;
+  static const Color calendarTodayColor = Colors.white;
+  static const Color calendarTodayTextColor = Colors.black;
+  static const Color calendarWeekendColor = Colors.white;
+  static const Color calendarWeekendTextColor = Colors.black;
+  static const Color calendarSelectedTextColor = Colors.white;
+  static const Color calendarSelectedBackgroundColor = defaultAppColor;
+  static const Color calendarDisabledTextColor = Colors.grey;
+  static const Color calendarDisabledBackgroundColor = Colors.white;
+  static const Color calendarDisabledSelectedTextColor = Colors.white;
+  static const Color calendarDisabledSelectedBackgroundColor = Colors.grey;
+  static const Color calendarHeaderBorderColor = Colors.black;
+  static const Color calendarBorderColor = Colors.black;
+  static const Color calendarTodayBorderColor = Colors.black;
+  static const Color calendarWeekendBorderColor = Colors.black;
+  static const Color calendarDisabledBorderColor = Colors.grey;
+  static const Color calendarDisabledSelectedBorderColor = Colors.grey;
+  static const Color calendarHeaderTextBorderColor = Colors.black;
+  static const Color calendarTextBorderColor = Colors.black;
+  static const Color calendarTodayTextBorderColor = Colors.black;
+  static const Color calendarWeekendTextBorderColor = Colors.black;
+  static const Color calendarSelectedTextBorderColor = Colors.white;
+  static const Color calendarSelectedBackgroundBorderColor = defaultAppColor;
+  static const Color calendarDisabledTextBorderColor = Colors.grey;
+  static const Color calendarDisabledBackgroundBorderColor = Colors.white;
+  static const Color calendarDisabledSelectedTextBorderColor = Colors.white;
+  static const Color calendarDisabledSelectedBackgroundBorderColor =
+      Colors.grey;
+  static const Color calendarHeaderTextColorBorder = Colors.black;
+  static const Color calendarTextColorBorder = Colors.black;
+
   static const Color calendarColor = Colors.black;
   static const Color calendarSelectedColor = defaultAppColor;
 
