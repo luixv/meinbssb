@@ -17,14 +17,12 @@ void main() {
   late MockHttpClient mockHttpClient;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
-  late MockLoggerService mockLoggerService;
   late TrainingService trainingService;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
-    mockLoggerService = MockLoggerService();
 
     trainingService = TrainingService(
       httpClient: mockHttpClient,
@@ -37,7 +35,6 @@ void main() {
     reset(mockHttpClient);
     reset(mockCacheService);
     reset(mockNetworkService);
-    reset(mockLoggerService);
   });
 
   group('fetchAngemeldeteSchulungen', () {

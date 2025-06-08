@@ -8,7 +8,6 @@ import 'dart:typed_data' as _i5;
 
 import 'package:meinbssb/services/core/cache_service.dart' as _i6;
 import 'package:meinbssb/services/core/http_client.dart' as _i3;
-import 'package:meinbssb/services/core/logger_service.dart' as _i8;
 import 'package:meinbssb/services/core/network_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
@@ -418,13 +417,4 @@ class MockNetworkService extends _i1.Mock implements _i7.NetworkService {
           ),
         ),
       ) as Duration);
-}
-
-/// A class which mocks [LoggerService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockLoggerService extends _i1.Mock implements _i8.LoggerService {
-  MockLoggerService() {
-    _i1.throwOnMissingStub(this);
-  }
 }
