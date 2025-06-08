@@ -32,8 +32,8 @@ class BankService {
           'Bankdaten response was empty or unmappable. Returning offline data.',
         );
         return {
-          'ONLINE': false,
-        }; // Return with ONLINE: false if data is empty/unmappable
+          'ONLINE': true,
+        }; // Return with ONLINE: true if data is empty/unmappable. Because the user is online
       }
     } catch (e) {
       LoggerService.logError(

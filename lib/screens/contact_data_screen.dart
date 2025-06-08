@@ -165,7 +165,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButtonBackground,
+                        backgroundColor: UIConstants.deleteButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
@@ -173,17 +173,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
-                            Icons.check,
-                            color: UIConstants.checkIcon,
+                            Icons.delete_forever,
+                            color: UIConstants.deletetButtonBackground,
                             size: UIConstants.bodyFontSize,
                           ), // OK icon
                           const SizedBox(width: UIConstants.defaultSpacing / 2),
                           Text(
-                            'Löschen', // Changed to Löschen
+                            'Löschen',
                             style: UIConstants.bodyStyle.copyWith(
                               color: UIConstants.deleteButtonText,
-                              fontSize: UIConstants
-                                  .bodyFontSize, // Ensure font size consistency
                             ),
                           ),
                         ],
@@ -453,7 +451,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             'Abbrechen',
                             style: UIConstants.bodyStyle.copyWith(
                               fontSize: UIConstants.bodyFontSize,
-                              color: UIConstants.cancelButtonText,
                             ),
                           ),
                         ],

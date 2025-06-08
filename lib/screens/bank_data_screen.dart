@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '../services/core/logger_service.dart';
 import '/services/api/bank_service.dart';
-import '/services/api_service.dart';
-import 'package:provider/provider.dart';
+import '/services/api_service.dart' hide NetworkException;
 import '/screens/bank_data_result_screen.dart';
+import '/exceptions/network_exception.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -47,7 +48,9 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     setState(() {
       _isLoading = true;
-      _isOnline = false; // Assume offline until data is successfully fetched
+      _isOnline =
+          true; // Assume online initially, will be set to false if NetworkException occurs
+      _dataLoadedOnce = false; // Reset for a new load attempt
     });
 
     try {
@@ -55,20 +58,31 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         setState(() {
           _dataLoadedOnce = true; // Mark that data loading attempt has occurred
-          if (bankData.isNotEmpty) {
-            _kontoinhaberController.text =
-                bankData['KONTOINHABER']?.toString() ?? '';
-            _ibanController.text = bankData['IBAN']?.toString() ?? '';
-            _bicController.text = bankData['BIC']?.toString() ?? '';
-            _isOnline = bankData['ONLINE'] as bool? ?? true;
-          } else {
-            LoggerService.logWarning(
-              'No bank data found for webloginId: ${widget.webloginId}',
+
+          // Populate controllers regardless of whether data is truly "empty" or not.
+          // If bankData is {'ONLINE': true}, these will become empty strings.
+          _kontoinhaberController.text =
+              bankData['KONTOINHABER']?.toString() ?? '';
+          _ibanController.text = bankData['IBAN']?.toString() ?? '';
+          _bicController.text = bankData['BIC']?.toString() ?? '';
+
+          // Determine _isOnline status based on the API response's 'ONLINE' flag
+          _isOnline = bankData['ONLINE'] as bool? ??
+              true; // Default to true if not present
+
+          // Determine _isEditing: if any key fields are empty, go to edit mode
+          if (_kontoinhaberController.text.isEmpty &&
+              _ibanController.text.isEmpty &&
+              _bicController.text.isEmpty) {
+            _isEditing = true; // No data found, allow editing
+            LoggerService.logInfo(
+              'No bank data found, switching to edit mode.',
             );
-            // If API returned empty data, but the API call itself was successful,
-            // we still consider ourselves "online" to show an empty form or allow entry.
-            // If 'ONLINE' was false here, it means a network error occurred.
-            _isOnline = bankData['ONLINE'] as bool? ?? true;
+          } else {
+            _isEditing = false; // Data found, stay in read-only
+            LoggerService.logInfo(
+              'Bank data loaded, staying in read-only mode.',
+            );
           }
         });
       }
@@ -77,9 +91,28 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         setState(() {
           _dataLoadedOnce = true; // Mark that data loading attempt has occurred
-          _isOnline = false; // Set to offline on error
+          // The crucial change: only set _isOnline to false if it's a genuine NetworkException
+          if (error is NetworkException) {
+            _isOnline = false; // Genuine network error, so go offline
+            LoggerService.logWarning(
+              'Network error during bank data fetch, showing offline message.',
+            );
+          } else {
+            // Any other error (e.g., server returned 404, or malformed data that wasn't a NetworkException)
+            // We assume the network is available, but no data was found or there was an issue with the data itself.
+            _isOnline = true; // Assume online for non-network errors
+            _isEditing =
+                true; // Allow editing if data couldn't be loaded/parsed
+            _kontoinhaberController
+                .clear(); // Ensure fields are clear for new input
+            _ibanController.clear();
+            _bicController.clear();
+            LoggerService.logWarning(
+              'Non-network error during bank data fetch, switching to edit mode.',
+            );
+          }
         });
-        // We only show snackbar for network errors, not if just empty data
+        // Show snackbar for all errors during load, as a fallback message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Laden der Bankdaten: $error'),
@@ -184,6 +217,167 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
   }
 
+  Future<void> _handleDeleteBankData() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    final bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: Text(
+              'Bankdaten löschen',
+              style: TextStyle(
+                color: UIConstants.defaultAppColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIConstants.bodyStyle.copyWith(
+                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.tableContentColor,
+              ),
+              children: <TextSpan>[
+                const TextSpan(
+                  text: 'Sind Sie sicher, dass Sie Ihre Bankdaten ',
+                ),
+                TextSpan(
+                  text: _ibanController.text, // Show the IBAN for confirmation
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const TextSpan(text: ' löschen möchten?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.defaultPadding,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(false);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: UIConstants.cancelButtonBackground,
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.close, color: UIConstants.closeIcon),
+                          SizedBox(width: 8),
+                          Text(
+                            'Abbrechen',
+                            style:
+                                TextStyle(color: UIConstants.cancelButtonText),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(true);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: UIConstants
+                            .deleteIcon, // Use delete color for confirm
+                        padding: UIConstants.buttonPadding,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.delete_forever,
+                            color: Colors.white,
+                          ), // Delete icon on confirm button
+                          SizedBox(width: 8),
+                          Text(
+                            'Löschen',
+                            style:
+                                TextStyle(color: UIConstants.deleteButtonText),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete != true) return; // If cancelled, do nothing
+
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    try {
+      final success = await apiService.deleteBankdaten(widget.webloginId);
+      if (mounted) {
+        if (success) {
+          LoggerService.logInfo(
+            'Bank data deleted successfully for webloginId: ${widget.webloginId}',
+          );
+          // Clear fields and reset state to reflect deletion
+          _kontoinhaberController.clear();
+          _ibanController.clear();
+          _bicController.clear();
+          setState(() {
+            _isEditing = true; // Allow new data entry after deletion
+            _isOnline =
+                true; // Assume online since deletion was successful via API
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Bankdaten erfolgreich gelöscht.'),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+        } else {
+          LoggerService.logError(
+            'Failed to delete bank data: API returned unsuccessful.',
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Löschen der Bankdaten.'),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bank data: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     _kontoinhaberController.dispose();
@@ -221,7 +415,8 @@ class BankDataScreenState extends State<BankDataScreen> {
             const SizedBox(height: UIConstants.defaultSpacing / 2),
             Text(
               'Bitte überprüfen Sie Ihre Verbindung.',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.greySubtitleText),
+              style: UIConstants.bodyStyle
+                  .copyWith(color: UIConstants.greySubtitleText),
             ),
           ],
         ),
@@ -300,25 +495,62 @@ class BankDataScreenState extends State<BankDataScreen> {
       ),
       body: bodyContent, // Use the dynamically determined body content
       // --- Floating Action Button (FAB) ---
-      floatingActionButton: _isOnline
-          ? FloatingActionButton(
-              onPressed: _isLoading ? null : _handleFabPressed,
-              backgroundColor: UIConstants.defaultAppColor,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        UIConstants.circularProgressIndicator,
-                      ),
-                    )
-                  : Icon(
-                      _isEditing
-                          ? Icons.save // Show save icon when in edit mode
-                          : Icons.edit, // Show edit icon when in read-only mode
-                      color: UIConstants.saveEditIcon,
-                      size: UIConstants.bodyFontSize + 4.0,
-                    ),
-            )
-          : null, // Hide FAB if offline
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end, // Align FABs to the right
+        children: [
+          // Existing Edit/Save FAB
+          _isOnline
+              ? FloatingActionButton(
+                  heroTag: 'editSaveFab', // Important for multiple FABs
+                  onPressed: _isLoading ? null : _handleFabPressed,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.circularProgressIndicator,
+                          ),
+                        )
+                      : Icon(
+                          _isEditing
+                              ? Icons.save // Show save icon when in edit mode
+                              : Icons
+                                  .edit, // Show edit icon when in read-only mode
+                          color: UIConstants.saveEditIcon,
+                          size: UIConstants.bodyFontSize + 4.0,
+                        ),
+                )
+              : const SizedBox.shrink(), // Hide if offline
+
+          // Spacing between FABs (only if both are potentially visible)
+          if (_isOnline &&
+              !_isEditing &&
+              _kontoinhaberController.text.isNotEmpty)
+            const SizedBox(height: 16),
+
+          // New Delete FAB
+          (_isOnline && !_isEditing && _kontoinhaberController.text.isNotEmpty)
+              ? FloatingActionButton(
+                  heroTag: 'deleteFab', // Important for multiple FABs
+                  onPressed:
+                      _isLoading ? null : _handleDeleteBankData, // New handler
+                  backgroundColor:
+                      UIConstants.deleteIcon, // Use a delete-appropriate color
+                  child:
+                      _isLoading // If global isLoading, might want specific delete loading state
+                          ? const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            )
+                          : const Icon(
+                              Icons.delete_forever, // Stronger delete icon
+                              color: Colors.white,
+                            ),
+                )
+              : const SizedBox
+                  .shrink(), // Hide if offline, or in editing mode, or no data
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       // ---
     );

@@ -13,7 +13,12 @@ class UIConstants {
 
   // Button Properties
   static const Color cancelButtonBackground = Colors.lightGreen;
-  static const Color acceptButtonBackground = Colors.lightGreen;
+  static const Color deleteButtonBackground = defaultAppColor;
+
+  static const Color acceptButtonBackground = Colors.white;
+  static const Color deletetButtonBackground = Colors.white;
+  static const Color loginButtonBackground = Colors.lightGreen;
+
   static const Color submitButtonText = Colors.white;
   static const Color cancelButtonText = Colors.white;
   static const Color deleteButtonText = Colors.white;
@@ -135,8 +140,8 @@ class UIConstants {
 
   // Logo Size
   static const double logoSize = 100.0;
-
   static const double cornerRadius = 8.0;
+  static const int fabHeight = 16;
 
   // Text Styles
   static const TextStyle headerStyle = TextStyle(

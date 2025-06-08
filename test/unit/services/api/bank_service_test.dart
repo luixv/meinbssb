@@ -117,7 +117,7 @@ void main() {
         final result = await bankService.fetchBankdaten(webloginId);
 
         // Assert
-        expect(result, {'ONLINE': false});
+        expect(result, {'ONLINE': true});
       });
 
       test('should return empty map for non-list/non-map response', () async {
@@ -133,7 +133,7 @@ void main() {
         final result = await bankService.fetchBankdaten(webloginId);
 
         // Assert
-        expect(result, {'ONLINE': false});
+        expect(result, {'ONLINE': true});
       });
     });
 
@@ -297,19 +297,24 @@ void main() {
         // Arrange
         const int webloginId = 789;
         // Mock the delete with one parameter (endpoint) and optional body
-        when(mockHttpClient.delete('BankdatenMyBSSB/$webloginId',
-                body: anyNamed('body'),),)
-            .thenAnswer((_) async => {}); // Empty map for successful deletion
+        when(
+          mockHttpClient.delete(
+            'BankdatenMyBSSB/$webloginId',
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => {}); // Empty map for successful deletion
 
         // Act
         final result = await bankService.deleteBankdaten(webloginId);
 
         // Assert
         expect(result, isTrue);
-        verify(mockHttpClient.delete(
-          'BankdatenMyBSSB/$webloginId',
-          body: {},
-        ),).called(1);
+        verify(
+          mockHttpClient.delete(
+            'BankdatenMyBSSB/$webloginId',
+            body: {},
+          ),
+        ).called(1);
       });
 
       test('should return false and log error on HTTP exception', () async {
