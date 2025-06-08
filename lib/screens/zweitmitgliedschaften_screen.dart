@@ -74,7 +74,7 @@ class _ZweitmitgliedschaftenScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: UIConstants.red),
+          const Icon(Icons.error_outline, size: 48, color: UIConstants.error),
           const SizedBox(height: UIConstants.defaultSpacing),
           Text(
             message,
@@ -91,10 +91,10 @@ class _ZweitmitgliedschaftenScreenState
     final Widget displayedLogo = widget.logoWidget ?? const LogoWidget();
 
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title:
             const Text('Zweitmitgliedschaften', style: UIConstants.titleStyle),
         actions: [
@@ -119,30 +119,32 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
-              "${_userData['VORNAME']} ${_userData['NAMEN']}", 
+              "${_userData['VORNAME']} ${_userData['NAMEN']}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              _userData['PASSNUMMER'], 
+              _userData['PASSNUMMER'],
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
             Text(
               'Schützenpassnummer',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle
+                  .copyWith(color: UIConstants.greySubtitleText),
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
-              _userData['VEREINNAME'], 
+              _userData['VEREINNAME'],
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
             Text(
               'Erstverein',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle
+                  .copyWith(color: UIConstants.greySubtitleText),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),

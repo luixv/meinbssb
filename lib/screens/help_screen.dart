@@ -18,7 +18,7 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('FAQ', style: UIConstants.titleStyle),
@@ -38,7 +38,7 @@ class HelpScreen extends StatelessWidget {
       // Ändere die Hintergrundfarbe des Bodys
       body: Container(
         color: UIConstants
-            .backgroundGreen, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
+            .backgroundColor, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
         child: const SingleChildScrollView(
           padding: EdgeInsets.all(UIConstants.defaultPadding),
           child: Column(
@@ -263,7 +263,7 @@ class _LinkText extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: Colors.blue,
+            color: UIConstants.linkColor,
             decoration: TextDecoration.underline,
           ),
         ),

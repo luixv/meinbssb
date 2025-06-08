@@ -13,8 +13,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          UIConstants.backgroundGreen, 
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         title:
             const Text('Passwort zurückgesetzt', style: UIConstants.titleStyle),

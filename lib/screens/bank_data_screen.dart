@@ -208,20 +208,20 @@ class BankDataScreenState extends State<BankDataScreen> {
             const Icon(
               Icons.cloud_off,
               size: 80,
-              color: UIConstants.grey,
+              color: UIConstants.greySubtitleText,
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Internet ist nicht zu Verfügung.',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.grey,
+                color: UIConstants.greySubtitleText,
               ),
             ),
             const SizedBox(height: UIConstants.defaultSpacing / 2),
             Text(
               'Bitte überprüfen Sie Ihre Verbindung.',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle.copyWith(color: UIConstants.greySubtitleText),
             ),
           ],
         ),
@@ -277,10 +277,10 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
 
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Zahlungsart',
           style: UIConstants.titleStyle,
@@ -306,14 +306,15 @@ class BankDataScreenState extends State<BankDataScreen> {
               backgroundColor: UIConstants.defaultAppColor,
               child: _isLoading
                   ? const CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(UIConstants.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        UIConstants.circularProgressIndicator,
+                      ),
                     )
                   : Icon(
                       _isEditing
                           ? Icons.save // Show save icon when in edit mode
                           : Icons.edit, // Show edit icon when in read-only mode
-                      color: UIConstants.white,
+                      color: UIConstants.saveEditIcon,
                       size: UIConstants.bodyFontSize + 4.0,
                     ),
             )

@@ -38,10 +38,10 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Digitaler Schützenausweis',
           style: UIConstants.titleStyle,

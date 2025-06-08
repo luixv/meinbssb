@@ -61,10 +61,10 @@ class AbsolvierteSchulungenScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Absolvierte Schulungen', // Screen title
           style: UIConstants.titleStyle,
@@ -113,7 +113,7 @@ class AbsolvierteSchulungenScreenState
                   final schulung = schulungen[index];
                   // Display AUSGESTELLTAM, BEZEICHNUNG, GUELTIGBIS
                   return Card(
-                    color: UIConstants.white, // Example card color
+                    color: UIConstants.cardColor, // Example card color
                     margin: const EdgeInsets.only(
                       bottom: UIConstants.defaultSpacing,
                     ),
@@ -164,7 +164,7 @@ class AbsolvierteSchulungenScreenState
       text: TextSpan(
         style: const TextStyle(
           fontSize: UIConstants.bodyFontSize,
-          color: UIConstants.black,
+          color: Colors.black,
         ),
         children: <TextSpan>[
           TextSpan(

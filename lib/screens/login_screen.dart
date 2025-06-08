@@ -217,14 +217,14 @@ class LoginScreenState extends State<LoginScreen> {
         child: _isLoading
             ? const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  UIConstants.white,
+                  UIConstants.circularProgressIndicator,
                 ),
               )
             : const Text(
                 'Anmelden',
                 style: TextStyle(
                   fontSize: UIConstants.bodyFontSize,
-                  color: UIConstants.sendButton,
+                  color: UIConstants.sendButtonText,
                 ),
               ),
       ),
@@ -301,7 +301,7 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Hier wird die Hintergrundfarbe des Scaffolds geändert.
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(

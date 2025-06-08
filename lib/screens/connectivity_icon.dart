@@ -67,11 +67,11 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  UIConstants.green,
+                  Colors.green,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.wifi, color: UIConstants.green);
+            : const Icon(Icons.wifi, color: Colors.green);
         tooltip = 'Connected to Wi-Fi';
         break;
       case ConnectivityResult.mobile:
@@ -81,11 +81,14 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  UIConstants.green,
+                  UIConstants.connectivityIcon,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.signal_cellular_4_bar, color: UIConstants.green);
+            : const Icon(
+                Icons.signal_cellular_4_bar,
+                color: UIConstants.connectivityIcon,
+              );
         tooltip = 'Connected to Mobile Data';
         break;
       case ConnectivityResult.ethernet:
@@ -96,14 +99,14 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  UIConstants.green,
+                  UIConstants.connectivityIcon,
                   BlendMode.srcIn,
                 ),
               )
             : const Icon(
                 Icons
                     .network_check, // Using a more widely available network icon
-                color: UIConstants.green,
+                color: UIConstants.connectivityIcon,
               );
         tooltip = 'Connected to Ethernet';
         break;
@@ -114,24 +117,25 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: 24,
                 height: 24,
                 colorFilter: const ColorFilter.mode(
-                  UIConstants.red,
+                  UIConstants.noConnectivityIcon,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.wifi_off, color: UIConstants.red);
+            : const Icon(Icons.wifi_off, color: UIConstants.noConnectivityIcon);
         tooltip = 'No Internet Connection';
         break;
       case ConnectivityResult
             .bluetooth: // You might want to handle this differently
-        icon = const Icon(Icons.bluetooth_connected, color: UIConstants.grey);
+        icon = const Icon(Icons.bluetooth_connected,
+            color: UIConstants.bluetoothConnected,);
         tooltip = 'Connected via Bluetooth (No Internet)';
         break;
       case ConnectivityResult.vpn: //  treat this as connected
-        icon = const Icon(Icons.vpn_lock, color: UIConstants.green);
+        icon = const Icon(Icons.vpn_lock, color: UIConstants.connectivityIcon);
         tooltip = 'Connected via VPN';
         break;
       case ConnectivityResult.other: // Handle other types as needed
-        icon = const Icon(Icons.network_check, color: UIConstants.grey);
+        icon = const Icon(Icons.network_check, color: UIConstants.networkCheck);
         tooltip = 'Other Connection Type';
         break;
     }

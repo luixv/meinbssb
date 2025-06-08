@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
+import '/screens/connectivity_icon.dart'; 
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
@@ -101,10 +101,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(
               context,
-            ).colorScheme.copyWith(primary: UIConstants.lightGreen),
+            ).colorScheme.copyWith(primary: UIConstants.defaultAppColor),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: UIConstants.lightGreen,
+                foregroundColor: UIConstants.defaultAppColor,
               ),
             ),
           ),
@@ -323,10 +323,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text('Registrierung', style: UIConstants.titleStyle),
         actions: [
           // --- Added ConnectivityIcon here ---
@@ -346,7 +346,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         ],
       ),
       body: Container(
-        color: UIConstants.backgroundGreen,
+        color: UIConstants.backgroundColor,
         child: SingleChildScrollView(
           padding: UIConstants.screenPadding,
           child: Column(
@@ -444,8 +444,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                               ).format(_selectedDate!),
                         style: UIConstants.bodyStyle.copyWith(
                           color: _selectedDate != null
-                              ? UIConstants.lightGreen
-                              : UIConstants.black,
+                              ? UIConstants.calendarSelectedColor
+                              : UIConstants.calendarColor,
                         ),
                       ),
                       const Icon(Icons.calendar_today),
@@ -489,7 +489,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                           TextSpan(
                             text: 'Datenschutzbestimmungen',
                             style: UIConstants.linkStyle.copyWith(
-                              color: UIConstants.lightGreen,
+                              color: UIConstants.linkColor,
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
@@ -517,17 +517,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   onPressed:
                       isFormValid() && !_isLoading ? _registerUser : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: UIConstants.backgroundGreen,
+                    backgroundColor: UIConstants.backgroundColor,
                     padding: UIConstants.buttonPadding,
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(
-                          color: UIConstants.white,
+                          color: UIConstants.sendButtonText,
                         )
                       : Text(
                           'Registrieren',
                           style: UIConstants.bodyStyle.copyWith(
-                            color: UIConstants.sendButton,
+                            color: UIConstants.disabledSubmitButtonText,
                           ),
                         ),
                 ),

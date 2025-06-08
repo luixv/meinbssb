@@ -91,7 +91,7 @@ class StartScreenState extends State<StartScreen> {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: UIConstants.backgroundGreen,
+          backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: Text(
               'Schulung abmelden',
@@ -106,7 +106,7 @@ class StartScreenState extends State<StartScreen> {
             text: TextSpan(
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.black,
+                color: UIConstants.tableContentColor,
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie die Schulung '),
@@ -140,11 +140,12 @@ class StartScreenState extends State<StartScreen> {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close, color: UIConstants.white),
+                          Icon(Icons.close, color: UIConstants.closeIcon),
                           SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: TextStyle(color: UIConstants.white),
+                            style:
+                                TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
@@ -163,11 +164,12 @@ class StartScreenState extends State<StartScreen> {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check, color: UIConstants.white),
+                          Icon(Icons.check, color: UIConstants.checkIcon),
                           SizedBox(width: 8),
                           Text(
                             'Löschen',
-                            style: TextStyle(color: UIConstants.white),
+                            style:
+                                TextStyle(color: UIConstants.deleteButtonText),
                           ),
                         ],
                       ),
@@ -218,10 +220,10 @@ class StartScreenState extends State<StartScreen> {
     final userData = widget.userData;
 
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text('Home', style: UIConstants.titleStyle),
         actions: [
           const Padding(
@@ -255,7 +257,8 @@ class StartScreenState extends State<StartScreen> {
             ),
             Text(
               'Schützenpassnummer',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle
+                  .copyWith(color: UIConstants.greySubtitleText),
             ),
             const SizedBox(height: UIConstants.smallSpacing),
             Text(
@@ -265,7 +268,8 @@ class StartScreenState extends State<StartScreen> {
             ),
             Text(
               'Erstverein',
-              style: UIConstants.bodyStyle.copyWith(color: UIConstants.grey),
+              style: UIConstants.bodyStyle
+                  .copyWith(color: UIConstants.greySubtitleText),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Container(
@@ -279,7 +283,7 @@ class StartScreenState extends State<StartScreen> {
                 child: Text(
                   'Hier könnten News stehen',
                   style: TextStyle(
-                    color: UIConstants.white,
+                    color: UIConstants.newsText,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -297,7 +301,7 @@ class StartScreenState extends State<StartScreen> {
             else if (schulungen.isEmpty)
               const Text(
                 'Keine Schulungen gefunden.',
-                style: TextStyle(color: UIConstants.grey),
+                style: TextStyle(color: UIConstants.greySubtitleText),
               )
             else
               Expanded(
@@ -330,7 +334,8 @@ class StartScreenState extends State<StartScreen> {
                       title: Text(description, style: UIConstants.bodyStyle),
                       subtitle: Text(
                         formattedDate,
-                        style: const TextStyle(color: UIConstants.grey),
+                        style: const TextStyle(
+                            color: UIConstants.greySubtitleText,),
                       ),
                       trailing: IconButton(
                         icon: const Icon(

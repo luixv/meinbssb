@@ -74,10 +74,10 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Passworrt zurücksetzen',
           style: UIConstants.titleStyle,
@@ -135,14 +135,14 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 child: _isLoading
                     ? const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.white,
+                          UIConstants.circularProgressIndicator,
                         ),
                       )
                     : const Text(
                         'Passwort zurücksetzen',
                         style: TextStyle(
                           fontSize: UIConstants.bodyFontSize,
-                          color: UIConstants.sendButton,
+                          color: UIConstants.sendButtonText,
                         ),
                       ),
               ),

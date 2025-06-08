@@ -48,54 +48,51 @@ class _CookieConsentState extends State<CookieConsent> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {}, // Absorb taps without doing anything
-              child: Container(
-                color: UIConstants.black,
-                child: Center(
-                  child: Material(
-                    color: UIConstants.transparent,
-                    child: Container(
-                      margin: const EdgeInsets.all(UIConstants.defaultSpacing),
-                      padding: const EdgeInsets.all(UIConstants.defaultPadding),
-                      decoration: BoxDecoration(
-                        color: UIConstants.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Wir verwenden Cookies',
-                            style: UIConstants.headerStyle.copyWith(
-                              color: UIConstants.defaultAppColor,
-                            ),
+              child: Center(
+                child: Material(
+                  color: UIConstants.cookiesDialogColor,
+                  child: Container(
+                    margin: const EdgeInsets.all(UIConstants.defaultSpacing),
+                    padding: const EdgeInsets.all(UIConstants.defaultPadding),
+                    decoration: BoxDecoration(
+                      color: UIConstants.boxDecorationColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Wir verwenden Cookies',
+                          style: UIConstants.headerStyle.copyWith(
+                            color: UIConstants.defaultAppColor,
                           ),
-                          const SizedBox(height: UIConstants.largeSpacing),
-                          Text(
-                            'Um diese App offline nutzen zu können, verwenden wir Cookies.', // \n Durch die weitere Nutzung der App akzeptieren Sie unsere Verwendung von Cookies.
-                            textAlign: TextAlign.center,
-                            style: UIConstants.bodyStyle.copyWith(
-                              backgroundColor: UIConstants.transparent,
-                            ),
+                        ),
+                        const SizedBox(height: UIConstants.largeSpacing),
+                        Text(
+                          'Um diese App offline nutzen zu können, verwenden wir Cookies.', // \n Durch die weitere Nutzung der App akzeptieren Sie unsere Verwendung von Cookies.
+                          textAlign: TextAlign.center,
+                          style: UIConstants.bodyStyle.copyWith(
+                            backgroundColor: UIConstants.cookiesDialogColor,
                           ),
-                          const SizedBox(height: UIConstants.defaultSpacing),
-                          SizedBox(
-                            width: 200.0,
-                            child: ElevatedButton(
-                              onPressed: _acceptConsent,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: UIConstants.acceptButton,
-                                padding: UIConstants.buttonPadding,
-                              ),
-                              child: Text(
-                                'Zustimmen',
-                                style: UIConstants.bodyStyle.copyWith(
-                                  color: UIConstants.white,
-                                ),
+                        ),
+                        const SizedBox(height: UIConstants.defaultSpacing),
+                        SizedBox(
+                          width: 200.0,
+                          child: ElevatedButton(
+                            onPressed: _acceptConsent,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: UIConstants.acceptButton,
+                              padding: UIConstants.buttonPadding,
+                            ),
+                            child: Text(
+                              'Zustimmen',
+                              style: UIConstants.bodyStyle.copyWith(
+                                color: UIConstants.acceptButton,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

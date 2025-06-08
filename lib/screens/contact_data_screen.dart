@@ -81,14 +81,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   Future<void> _onDeleteContact(
     int kontaktId,
     int kontaktTyp,
-    String contactValue, 
-    String contactLabel, 
+    String contactValue,
+    String contactLabel,
   ) async {
     final bool? confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          backgroundColor: UIConstants.backgroundGreen,
+          backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: Text(
               'Kontakt löschen',
@@ -104,7 +104,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             text: TextSpan(
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.black,
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie den Kontakt '),
@@ -141,14 +140,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(
                             Icons.close,
-                            color: UIConstants.white,
+                            color: UIConstants.closeIcon,
                             size: UIConstants.bodyFontSize,
                           ), // X icon
                           const SizedBox(width: UIConstants.defaultSpacing / 2),
                           Text(
                             'Abbrechen',
                             style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
+                              color: UIConstants.cancelButtonText,
                               fontSize: UIConstants
                                   .bodyFontSize, // Ensure font size consistency
                             ),
@@ -175,14 +174,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(
                             Icons.check,
-                            color: UIConstants.white,
+                            color: UIConstants.checkIcon,
                             size: UIConstants.bodyFontSize,
                           ), // OK icon
                           const SizedBox(width: UIConstants.defaultSpacing / 2),
                           Text(
                             'Löschen', // Changed to Löschen
                             style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.white,
+                              color: UIConstants.deleteButtonText,
                               fontSize: UIConstants
                                   .bodyFontSize, // Ensure font size consistency
                             ),
@@ -372,7 +371,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       builder: (BuildContext dialogContext) {
         // Use dialogContext to avoid conflicts
         return AlertDialog(
-          backgroundColor: UIConstants.backgroundGreen,
+          backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             // Center the title
             child: Text(
@@ -446,16 +445,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(
                             Icons.close,
-                            color: UIConstants.white,
+                            color: UIConstants.closeIcon,
                             size: UIConstants.bodyFontSize,
                           ), // X icon
                           const SizedBox(width: UIConstants.defaultSpacing / 2),
                           Text(
                             'Abbrechen',
                             style: UIConstants.bodyStyle.copyWith(
-                              fontSize: UIConstants
-                                  .bodyFontSize, // Ensure font size consistency
-                              color: UIConstants.white,
+                              fontSize: UIConstants.bodyFontSize,
+                              color: UIConstants.cancelButtonText,
                             ),
                           ),
                         ],
@@ -476,7 +474,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: _isAdding
                           ? const CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.white,
+                                UIConstants.circularProgressIndicator,
                               ),
                               strokeWidth: 2,
                             )
@@ -486,7 +484,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                               children: [
                                 const Icon(
                                   Icons.check,
-                                  color: UIConstants.white,
+                                  color: UIConstants.checkIcon,
                                   size: UIConstants.bodyFontSize + 4.0,
                                 ),
                                 // OK icon
@@ -498,7 +496,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                   style: UIConstants.bodyStyle.copyWith(
                                     fontSize: UIConstants
                                         .bodyFontSize, // Ensure font size consistency
-                                    color: UIConstants.white,
+                                    color: UIConstants.sendButtonText,
                                   ),
                                 ),
                               ],
@@ -532,10 +530,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Kontaktdaten',
           style: UIConstants.titleStyle,
@@ -605,7 +603,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
           Icons.add,
-          color: UIConstants.white,
+          color: UIConstants.addIcon,
           size: UIConstants.bodyFontSize + 4.0,
         ),
       ),

@@ -83,9 +83,9 @@ class MyAppState extends State<MyApp> {
         fontFamily: UIConstants.defaultFontFamily,
         primarySwatch: Colors.blue,
         textSelectionTheme: const TextSelectionThemeData(
-          selectionColor: UIConstants.transparent,
-          selectionHandleColor: UIConstants.transparent,
-          cursorColor: UIConstants.black,
+          selectionColor: UIConstants.selectionColor,
+          selectionHandleColor: UIConstants.selectionHandleColor,
+          cursorColor: UIConstants.cursorColor,
         ),
       ),
       localizationsDelegates: const [
@@ -99,11 +99,11 @@ class MyAppState extends State<MyApp> {
         return Theme(
           data: Theme.of(context).copyWith(
             textSelectionTheme: const TextSelectionThemeData(
-              selectionColor: UIConstants.transparent,
-              cursorColor: UIConstants.black,
+              selectionColor: UIConstants.selectionColor,
+              cursorColor: UIConstants.cursorColor,
             ),
-            highlightColor: UIConstants.transparent,
-            splashColor: UIConstants.transparent,
+            highlightColor: UIConstants.highlightColor,
+            splashColor: UIConstants.splashColor,
           ),
           child: CookieConsent(
             child: Material(

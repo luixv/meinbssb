@@ -18,10 +18,10 @@ class ImpressumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Impressum',
           style: UIConstants.titleStyle,
@@ -42,7 +42,7 @@ class ImpressumScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        color: UIConstants.backgroundGreen,
+        color: UIConstants.backgroundColor,
         child: const SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -272,7 +272,7 @@ class _LinkText extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: UIConstants.blue,
+          color: UIConstants.linkColor,
           decoration: TextDecoration.underline,
         ),
       ),

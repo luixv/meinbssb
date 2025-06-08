@@ -8,30 +8,66 @@ class UIConstants {
   // Colors "apiBackground": "e2f0d9",
 
   static const Color defaultAppColor = Color(0xFF006400); // Main green color
-  static const Color backgroundGreen = Color(0xFFe2f0d9);
-  static const Color lightGreen = Colors.lightGreen;
-  static const Color black = Colors.black;
-  static const Color white = Colors.white;
-  static const Color green = Colors.green;
-  static const Color grey = Colors.grey;
-  static const Color red = Colors.red;
-  static const Color blue = Colors.blue;
-  static const Color transparent = Colors.transparent;
+  static const Color backgroundColor = Color(0xFFe2f0d9);
+  static const Color foregroundColor = Colors.lightGreen;
 
-  static const Color cancelButton =
-      Colors.lightGreen; //Color.fromARGB(255, 92, 26, 22);
+  // Button Properties
+  static const Color cancelButton = Colors.lightGreen;
   static const Color acceptButton = Colors.lightGreen;
-  static const Color sendButton = Colors.white;
-  static const Color deleteIcon = defaultAppColor;
+  static const Color sendButtonText = Colors.white;
+  static const Color cancelButtonText = Colors.white;
+  static const Color deleteButtonText = Colors.white;
 
+  static const Color disabledSubmitButtonText = Colors.white;
+
+  // Icon Properties
+  static const Color deleteIcon = defaultAppColor;
+  static const Color closeIcon = Colors.white;
+  static const Color checkIcon = Colors.white;
+  static const Color addIcon = Colors.white;
+  static const Color saveEditIcon = Colors.white;
+  static const Color connectivityIcon = Colors.green;
+  static const Color noConnectivityIcon = Colors.red;
+  static const Color bluetoothConnected = Colors.grey;
+  static const Color networkCheck = Colors.grey;
+
+  static const Color circularProgressIndicator = Colors.white;
+  static const Color cardColor = Colors.white;
+
+  static const Color primarySwatch = Colors.blue;
+  static const Color greySubtitleText = Colors.grey;
+
+//Selection Properties
+  static const Color selectionColor = Colors.transparent;
+  static const Color selectionHandleColor = Colors.transparent;
+  static const Color highlightColor = Colors.transparent;
+  static const Color splashColor = Colors.transparent;
+
+// Errors Properties
   static const Color error = Colors.red;
   static const Color success = Colors.green;
 
-  static const Color news = Color(0xFFF4B183);
+// Cookies Dialog color
+  static const Color cookiesDialogColor = Colors.transparent;
 
+// Link Color
+  static const Color linkColor = Colors.lightGreen;
+
+// News Properties
+  static const Color news = Color(0xFFF4B183);
+  static const Color newsText = Colors.white;
+
+//Table Properties
   static const Color tableBackground = Colors.white;
   static const Color tableBorder = Colors.white;
+  static const Color tableContentColor = Colors.black;
   static const Color tileColor = Colors.white;
+
+  static const Color boxDecorationColor = Colors.white;
+  static const Color cursorColor = Colors.black;
+
+  static const Color calendarColor = Colors.black;
+  static const Color calendarSelectedColor = defaultAppColor;
 
   // Font Properties  Arial, Calibri, OpenSans, Roboto (no more)
   static const String defaultFontFamily = 'OpenSans'; //
@@ -52,7 +88,6 @@ class UIConstants {
 
   static const double topPadding = 60.0; // Top padding in scroll view
 
-  // Button Properties
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 16.0);
 
   // Screen Padding
@@ -86,7 +121,7 @@ class UIConstants {
     fontSize: titleFontSize,
     fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
-    color: black,
+    color: Colors.black,
     backgroundColor: Colors.transparent,
     decorationColor: Colors.transparent,
   );
@@ -94,7 +129,7 @@ class UIConstants {
   static const TextStyle bodyStyle = TextStyle(
     fontSize: bodyFontSize,
     fontFamily: defaultFontFamily,
-    color: black,
+    color: Colors.black,
     fontWeight: FontWeight.normal,
     backgroundColor: Colors.transparent,
     decorationColor: Colors.transparent,
@@ -110,7 +145,7 @@ class UIConstants {
   static const TextStyle successStyle = TextStyle(
     fontSize: bodyFontSize,
     fontFamily: defaultFontFamily,
-    color: green,
+    color: Colors.green,
   );
 
   static const TextStyle errorStyle = TextStyle(

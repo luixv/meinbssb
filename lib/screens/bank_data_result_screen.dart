@@ -23,14 +23,14 @@ class BankDataResultScreen extends StatelessWidget {
         : 'Ihre Bankdaten konnten nicht aktualisiert werden.';
 
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         title: const Text(
           'Zahlungsart Aktualisierung',
           style: UIConstants.titleStyle,
         ),
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
@@ -52,14 +52,14 @@ class BankDataResultScreen extends StatelessWidget {
             children: [
               Icon(
                 success ? Icons.check_circle_outline : Icons.error_outline,
-                color: success ? UIConstants.lightGreen : UIConstants.red,
+                color: success ? UIConstants.success : UIConstants.error,
                 size: 100,
               ),
               const SizedBox(height: UIConstants.defaultSpacing * 2),
               Text(
                 success ? 'Erfolg!' : 'Fehler!',
                 style: UIConstants.titleStyle.copyWith(
-                  color: success ? UIConstants.lightGreen : UIConstants.red,
+                  color: success ? UIConstants.success : UIConstants.error,
                 ),
               ),
               const SizedBox(height: UIConstants.defaultSpacing),
@@ -68,7 +68,7 @@ class BankDataResultScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: UIConstants.bodyFontSize,
-                  color: UIConstants.black, // <--- CHANGED TO UIConstants.black
+                  color: Colors.black,
                 ),
               ),
             ],

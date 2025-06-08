@@ -252,10 +252,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: UIConstants.backgroundGreen,
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundGreen,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Persönliche Daten',
           style: UIConstants.titleStyle,
@@ -319,7 +319,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   child: Icon(
                                     Icons.info_outline,
                                     size: UIConstants.subtitleStyle.fontSize,
-                                    color: UIConstants.black,
                                   ),
                                 ),
                               ),
@@ -412,14 +411,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               backgroundColor: UIConstants.defaultAppColor,
               child: _isLoading
                   ? const CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(UIConstants.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        UIConstants.circularProgressIndicator,
+                      ),
                     )
                   : Icon(
                       _isEditing
                           ? Icons.save
                           : Icons.edit, // Icon changes based on mode
-                      color: UIConstants.white,
+                      color: UIConstants.saveEditIcon,
                     ),
             )
           : null, // <-- Render nothing if offline
