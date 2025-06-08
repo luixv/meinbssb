@@ -104,7 +104,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             ).colorScheme.copyWith(primary: UIConstants.defaultAppColor),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: UIConstants.sendButtonText,
+                foregroundColor: UIConstants.submitButtonText,
                 backgroundColor: UIConstants.acceptButtonBackground,
               ),
             ),
@@ -523,7 +523,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(
-                          color: UIConstants.sendButtonText,
+                          color: UIConstants.submitButtonText,
                         )
                       : Text(
                           'Registrieren',

@@ -496,7 +496,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                   style: UIConstants.bodyStyle.copyWith(
                                     fontSize: UIConstants
                                         .bodyFontSize, // Ensure font size consistency
-                                    color: UIConstants.sendButtonText,
+                                    color: UIConstants.submitButtonText,
                                   ),
                                 ),
                               ],

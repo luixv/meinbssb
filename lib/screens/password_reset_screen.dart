@@ -142,7 +142,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                         'Passwort zurücksetzen',
                         style: TextStyle(
                           fontSize: UIConstants.bodyFontSize,
-                          color: UIConstants.sendButtonText,
+                          color: UIConstants.submitButtonText,
                         ),
                       ),
               ),

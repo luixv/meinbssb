@@ -14,7 +14,7 @@ class UIConstants {
   // Button Properties
   static const Color cancelButtonBackground = Colors.lightGreen;
   static const Color acceptButtonBackground = Colors.lightGreen;
-  static const Color sendButtonText = Colors.white;
+  static const Color submitButtonText = Colors.white;
   static const Color cancelButtonText = Colors.white;
   static const Color deleteButtonText = Colors.white;
 
