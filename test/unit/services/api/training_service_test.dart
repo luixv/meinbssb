@@ -238,7 +238,7 @@ void main() {
           'SchulungenTeilnehmer/$testTeilnehmerId',
           body: {},
         ),
-      ).thenAnswer((_) async => {'ResultType': 1});
+      ).thenAnswer((_) async => {'result': true});
 
       final result =
           await trainingService.unregisterFromSchulung(testTeilnehmerId);
