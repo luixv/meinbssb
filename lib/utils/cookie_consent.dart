@@ -81,13 +81,14 @@ class _CookieConsentState extends State<CookieConsent> {
                           child: ElevatedButton(
                             onPressed: _acceptConsent,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: UIConstants.acceptButton,
+                              backgroundColor:
+                                  UIConstants.acceptButtonBackground,
                               padding: UIConstants.buttonPadding,
                             ),
                             child: Text(
                               'Zustimmen',
                               style: UIConstants.bodyStyle.copyWith(
-                                color: UIConstants.acceptButton,
+                                color: UIConstants.acceptButtonBackground,
                               ),
                             ),
                           ),

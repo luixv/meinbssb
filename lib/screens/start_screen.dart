@@ -134,7 +134,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(false);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButton,
+                        backgroundColor: UIConstants.cancelButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: const Row(
@@ -158,7 +158,7 @@ class StartScreenState extends State<StartScreen> {
                         Navigator.of(dialogContext).pop(true);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButton,
+                        backgroundColor: UIConstants.acceptButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: const Row(
@@ -335,7 +335,8 @@ class StartScreenState extends State<StartScreen> {
                       subtitle: Text(
                         formattedDate,
                         style: const TextStyle(
-                            color: UIConstants.greySubtitleText,),
+                          color: UIConstants.greySubtitleText,
+                        ),
                       ),
                       trailing: IconButton(
                         icon: const Icon(

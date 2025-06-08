@@ -105,7 +105,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: UIConstants.sendButtonText,
-                backgroundColor: UIConstants.acceptButton,
+                backgroundColor: UIConstants.acceptButtonBackground,
               ),
             ),
           ),

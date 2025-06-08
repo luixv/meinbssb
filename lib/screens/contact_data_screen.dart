@@ -131,7 +131,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(false); // Do not delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButton,
+                        backgroundColor: UIConstants.cancelButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
@@ -165,7 +165,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop(true); // Confirm delete
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButton,
+                        backgroundColor: UIConstants.acceptButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
@@ -436,7 +436,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         Navigator.of(dialogContext).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButton,
+                        backgroundColor: UIConstants.cancelButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
@@ -468,7 +468,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButton,
+                        backgroundColor: UIConstants.acceptButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
                       child: _isAdding
