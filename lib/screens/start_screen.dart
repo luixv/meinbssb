@@ -282,11 +282,7 @@ class StartScreenState extends State<StartScreen> {
               child: const Center(
                 child: Text(
                   'Hier könnten News stehen',
-                  style: TextStyle(
-                    color: UIConstants.newsText,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: UIConstants.newsStyle,
                 ),
               ),
             ),
@@ -315,18 +311,19 @@ class StartScreenState extends State<StartScreen> {
                     final formattedDate =
                         '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
                     final description = schulung['BEZEICHNUNG'] ?? 'N/A';
-                    final isOnline = schulung['ONLINE'] ?? false;
+                    final isOnline =
+                        schulung['ONLINE'] ?? false; // Your online check
 
                     return ListTile(
                       tileColor: UIConstants.tileColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      leading: Column(
+                      leading: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            isOnline ? Icons.laptop : Icons.location_on,
+                            Icons.school_outlined,
                             color: UIConstants.defaultAppColor,
                           ),
                         ],
@@ -338,18 +335,26 @@ class StartScreenState extends State<StartScreen> {
                           color: UIConstants.greySubtitleText,
                         ),
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: UIConstants.deleteIcon,
-                        ),
-                        onPressed: () {
-                          final id = schulung['SCHULUNGENTEILNEHMERID'];
-                          if (id != null) {
-                            _handleDeleteSchulung(id, index, description);
-                          }
-                        },
-                      ),
+                      trailing:
+                          isOnline // Only show IconButton if isOnline is true
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_outline_outlined,
+                                    color: UIConstants.deleteIcon,
+                                  ),
+                                  onPressed: () {
+                                    final id =
+                                        schulung['SCHULUNGENTEILNEHMERID'];
+                                    if (id != null) {
+                                      _handleDeleteSchulung(
+                                        id,
+                                        index,
+                                        description,
+                                      );
+                                    }
+                                  },
+                                )
+                              : null, // Show nothing if isOnline is false
                     );
                   },
                 ),

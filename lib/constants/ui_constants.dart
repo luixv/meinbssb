@@ -170,6 +170,15 @@ class UIConstants {
     decorationColor: Colors.transparent,
   );
 
+  static const TextStyle newsStyle = TextStyle(
+    fontSize: 16.0,
+    fontFamily: defaultFontFamily,
+    color: newsText,
+    fontWeight: FontWeight.bold,
+    backgroundColor: news,
+    decorationColor: Colors.transparent,
+  );
+
   static const TextStyle linkStyle = TextStyle(
     fontSize: bodyFontSize,
     fontFamily: defaultFontFamily,
