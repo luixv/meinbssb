@@ -9,279 +9,223 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/api_service.dart' hide NetworkException;
+import 'package:meinbssb/screens/bank_data_screen.dart';
+import 'package:meinbssb/screens/bank_data_result_screen.dart';
+import 'package:meinbssb/exceptions/network_exception.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 
-// Generate the mock
+// Generate mocks for services that will be overridden
 class MockNetworkService extends Mock implements NetworkService {}
+
+class MockApiService extends Mock implements ApiService {} // Mock ApiService
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Flow Integration Tests', () {
-    debugPrint('Test 1 started!\n\n\n');
+    // These late initializations will now get their values from AppInitializer
     late ConfigService configService;
+    late NetworkService networkService; // Declare networkService
+    late HttpClient httpClient; // Declare httpClient
+    late CacheService cacheService; // Declare cacheService
+
+    late MockApiService mockApiService; // Declare mock ApiService
+
     setUpAll(() async {
-      // Initialize the app's service providers
+      // Initialize the app's service providers.
+      // This will set the static variables in AppInitializer.
       await AppInitializer.init();
-      // Load ConfigService
-      configService = await ConfigService.load(
-        'config/app_config.json',
-      ); // Load config
+      // Assign the initialized services from AppInitializer's static getters
+      configService = AppInitializer.configService;
+      networkService = AppInitializer.networkService;
+      httpClient = AppInitializer.httpClient;
+      cacheService = AppInitializer.cacheService;
     });
 
-    setUp(() {});
+    setUp(() {
+      mockApiService =
+          MockApiService(); // Initialize mock ApiService before each test
+    });
 
-    testWidgets('Access the Passwort vergessen?', (tester) async {
-      debugPrint('Test 2 started!\n\n\n');
+    // Helper function to pump until a widget is found
 
-      // Build our app and trigger a frame
+    // Helper to build the app with a mocked ApiService
+    Widget buildAppWithMockApiService(
+      WidgetTester tester,
+      MockApiService apiService,
+    ) {
+      return MultiProvider(
+        providers: [
+          Provider<ConfigService>.value(value: configService),
+          // Use the real, initialized services from AppInitializer
+          Provider<NetworkService>.value(value: networkService),
+          Provider<HttpClient>.value(value: httpClient),
+          Provider<CacheService>.value(value: cacheService),
+          Provider<ApiService>.value(
+            value: apiService,
+          ), // Override ApiService with mock
+        ],
+        child:
+            const MyApp(), // Use MyApp directly, as MyAppWrapper already provides services in main.dart
+      );
+    }
+
+    testWidgets('\n\n\nTEST_1. Access the Passwort vergessen?\n\n\n',
+        (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => NetworkService(configService: configService),
-          child: const MyAppWrapper(),
+          create: (context) => networkService, // Use the real networkService
+          child:
+              const MyAppWrapper(), // MyAppWrapper provides the actual ApiService
         ),
       );
 
-      await tester.pumpAndSettle();
-
-      // Verify we're on the login screen
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
 
-      // Tap the "Passwort vergessen?" link.  Find the RichText by text.
       await tester.tap(find.text('Passwort vergessen?'));
-      await tester.pumpAndSettle();
-
-      // Verify that the new page is present by checking for the key
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byKey(const Key('passwordResetTitle')), findsOneWidget);
-      // Back to login
-      await tester.tap(
-        find.byType(PopupMenuButton<String>),
-      ); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.text('Zurück zum Login'),
-      ); // Corrected text to match the menu
-      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(PopupMenuButton<String>));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Zurück zum Login'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('Access the help page', (tester) async {
-      debugPrint('Test 3 started!\n\n\n');
-      // Build our app and trigger a frame
+    testWidgets('\n\n\nTEST_2. Access the help page\n\n\n', (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => NetworkService(configService: configService),
+          create: (context) => networkService, // Use the real networkService
           child: const MyAppWrapper(),
         ),
       );
 
-      await tester.pumpAndSettle();
-
-      // Verify we're on the login screen
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
 
-      // Tap the "Hilfe" link.  Find the RichText by text.
       await tester.tap(find.text('Hilfe'));
-      await tester.pumpAndSettle();
-
-      // Verify that the new page contains the text "FAQ"
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.text('FAQ'), findsOneWidget);
 
-      // Back to login
-      await tester.tap(
-        find.byType(PopupMenuButton<String>),
-      ); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.text('Zurück zum Login'),
-      ); // Corrected text to match the menu
-      await tester.pumpAndSettle();
+      await tester.tap(find.byType(PopupMenuButton<String>));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Zurück zum Login'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('Access the Registration page', (tester) async {
-      debugPrint('Test 4 started!\n\n\n');
-
-      // Build our app and trigger a frame
+    testWidgets('\n\n\nTEST_3. Access the Registration page\n\n\n',
+        (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => NetworkService(configService: configService),
+          create: (context) => networkService, // Use the real networkService
           child: const MyAppWrapper(),
         ),
       );
 
-      await tester.pumpAndSettle();
-
-      // Verify we're on the login screen
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
 
-      // Tap the "Hilfe" link.  Find the RichText by text.
       await tester.tap(find.text('Registrieren'));
-      await tester.pumpAndSettle();
-
-      // Verify that the new page contains the text "FAQ"
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.text('Hier Registrieren'), findsOneWidget);
 
-      // Back to login
-      await tester.tap(
-        find.byType(PopupMenuButton<String>),
-      ); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.text('Zurück zum Login'),
-      ); // Corrected text to match the menu
-      await tester.pumpAndSettle();
+      await tester.tap(find.byType(PopupMenuButton<String>));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Zurück zum Login'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('Complete user flow from login to accessing data', (
-      tester,
-    ) async {
-      // Build our app and trigger a frame
-      debugPrint('Test 5 started!\n\n\n');
-
+    testWidgets(
+        '\n\n\nTEST_4. Complete user flow from login to accessing data\n\n\n',
+        (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => NetworkService(configService: configService),
-          child: const MyAppWrapper(),
+          create: (context) => networkService, // Use the real networkService
+          child: const MyAppWrapper(), // Use the real services for basic flow
         ),
       );
+      await tester.pumpAndSettle(const Duration(seconds: 1)); // Initial pump
 
-      await tester.pumpAndSettle();
-
-      // Verify we're on the login screen
-      expect(find.byType(LoginScreen), findsOneWidget);
-
-      // Enter login credentials
+      // Login
       await tester.enterText(
         find.byKey(const Key('usernameField')),
         'kostas@rizoudis1.de',
       );
       await tester.enterText(find.byKey(const Key('passwordField')), 'a');
-
-      // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      debugPrint('Login button found!\n\n\n');
-
-      await tester.pumpAndSettle();
-
-      // Verify we're on the start screen after successful login
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(StartScreen), findsOneWidget);
-      debugPrint('Login done!\n\n\n');
 
       // Verify user data is displayed
       expect(find.text('Kostas Rizoudis'), findsOneWidget);
       expect(find.text('40100709'), findsOneWidget);
-      debugPrint('User found!\n\n');
 
-      // Test accessing Schuetzenausweis
-      // Access Schuetzenausweis
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      debugPrint('Menu icon found!\n\n\n');
-
-      await tester.tap(
-        find.text('Digitaler Schützenausweis'),
-      ); // Tap the menu item
-      await tester.pumpAndSettle();
-      find.byKey(const Key('schuetzenausweis'));
-
-      debugPrint('Image found!\n\n');
-/*
-      // Access Zweitmitgliedschaften
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Zweitmitgliedschaften')); // Tap the menu item
-      await tester.pumpAndSettle();
-      expect(find.text('Zweitmitgliedschaften'), findsOneWidget);
-*/
       // Access Impressum
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Impressum')); // Tap the menu item
-      debugPrint('Impressum menu  found!\n\n\n');
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Impressum').first,
-        findsOneWidget,
-      );
-      debugPrint('Impressum found!\n\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Impressum'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Impressum').first, findsOneWidget);
 
       // Access Kontaktdaten
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Kontaktdaten')); // Tap the menu item
-      debugPrint('Kontaktdaten menu found!\n\n\n');
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Kontaktdaten').first,
-        findsOneWidget,
-      );
-      debugPrint('Kontaktdaten found!\n\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Kontaktdaten'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Kontaktdaten').first, findsOneWidget);
 
-      // Access Stammdaten
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Persönliche Daten')); // Tap the menu item
-      debugPrint('Persönliche Daten menu found!\n\n\n');
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Persönliche Daten').first,
-        findsOneWidget,
-      );
-      debugPrint('Persönliche Daten found!\n\n');
-
-      // Access Zahlungsart
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Zahlungsart')); // Tap the menu item
-      debugPrint('Zahlungsart!\n\n');
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Zahlungsart').first,
-        findsOneWidget,
-      );
-      debugPrint('Zahlungsart!\n\n');
+      // Access Persönliche Daten (Stammdaten)
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Persönliche Daten'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Persönliche Daten').first, findsOneWidget);
 
       // Access Absolvierte Schulungen
-      await tester.tap(find.byIcon(Icons.menu)); // Open the PopupMenuButton
-      await tester.pumpAndSettle();
-      await tester
-          .tap(find.text('Absolvierte Schulungen')); // Tap the menu item
-      debugPrint('Absolvierte Schulungen!\n\n');
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Absolvierte Schulungen').first,
-        findsOneWidget,
-      );
-      debugPrint('Absolvierte Schulungen!\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Absolvierte Schulungen'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Absolvierte Schulungen').first, findsOneWidget);
+
+      // Access Schützenausweiss
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Schützenausweiss'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Digitaler Schützenausweiss').first, findsOneWidget);
+
+      // Access Zahlungsart (Bankdaten)
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Zahlungsart'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Zahlungsart').first, findsOneWidget);
 
       // Test logout
       await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       await tester.tap(find.text('Abmelden'));
-      await tester.pumpAndSettle();
-      debugPrint('Abmelden found!\n\n');
+      await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('Error handling during login', (tester) async {
-      debugPrint('Test 6 started!\n\n');
-
-      // Build our app and trigger a frame
+    testWidgets('\n\n\nTEST_5. Error handling during login\n\n\n',
+        (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => NetworkService(configService: configService),
+          create: (context) => networkService, // Use the real networkService
           child: const MyAppWrapper(),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
 
-      // Verify we're on the login screen
-      expect(find.byType(LoginScreen), findsOneWidget);
-
-      // Enter invalid credentials
       await tester.enterText(
         find.byKey(const Key('usernameField')),
         'invalid@example.com',
@@ -290,15 +234,10 @@ void main() {
         find.byKey(const Key('passwordField')),
         'wrongpassword',
       );
-
-      // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 1));
 
-      // Verify either the online or offline error message is displayed
-      final onlineErrorFinder =
-          //find.text('Benutzername oder Passwort ist falsch');
-          find.text('MyBSSB Login nicht vorhanden');
+      final onlineErrorFinder = find.text('MyBSSB Login nicht vorhanden');
       final offlineErrorFinder = find.text(
         'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
       );
@@ -309,38 +248,355 @@ void main() {
         isTrue,
       );
     });
+
+/*
+    group('BankDataScreen', () {
+      final Map<String, dynamic> testUserData = {
+        'PERSONID': 123,
+        'WEBLOGINID': 456,
+        'VORNAME': 'Test',
+        'NAMEN': 'User',
+      };
+
+      final Map<String, dynamic> existingBankData = {
+        'KONTOINHABER': 'John Doe',
+        'IBAN': 'DE12345678901234567890',
+        'BIC': 'DABAIE2DXXX',
+        'ONLINE': true,
+      };
+
+      testWidgets(
+          '\n\n\nTEST_6. should load existing bank data and display in read-only mode\n\n\n',
+          (tester) async {
+        await tester
+            .pumpWidget(buildAppWithMockApiService(tester, mockApiService));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Simulate login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Mock fetchBankdaten to return existing data
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer((_) async => existingBankData);
+
+        // Navigate to BankDataScreen
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester.pumpAndSettle(
+          const Duration(seconds: 1),
+        ); // Wait for data to load and setState
+
+        expect(find.byType(BankDataScreen), findsOneWidget);
+        expect(find.text('John Doe'), findsOneWidget);
+        expect(find.text('DE12345678901234567890'), findsOneWidget);
+        expect(find.text('DABAIE2DXXX'), findsOneWidget);
+
+        // Verify that fields are read-only
+        // Use `find.widgetWithText` and then `tester.widget` to access the TextFormField
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'Kontoinhaber'),
+          ),
+          isTrue,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'IBAN'),
+          ),
+          isTrue,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'BIC'),
+          ),
+          isTrue,
+        );
+
+        // Verify edit FAB is visible and delete FAB is visible (since data exists and not in edit mode)
+        expect(find.byIcon(Icons.edit), findsOneWidget);
+        expect(find.byIcon(Icons.delete_forever), findsOneWidget);
+      });
+
+      testWidgets(
+          '\n\n\nTEST_7. should switch to edit mode and hide delete FAB on edit button tap\n\n\n',
+          (tester) async {
+        await tester
+            .pumpWidget(buildAppWithMockApiService(tester, mockApiService));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Simulate login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Mock fetchBankdaten to return existing data
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer((_) async => existingBankData);
+
+        // Navigate to BankDataScreen
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester
+            .pumpAndSettle(const Duration(seconds: 1)); // Wait for data to load
+
+        // Tap the edit FAB
+        await tester.tap(find.byIcon(Icons.edit));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Verify fields are now editable
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'Kontoinhaber'),
+          ),
+          isFalse,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'IBAN'),
+          ),
+          isFalse,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'BIC'),
+          ),
+          isFalse,
+        );
+
+        // Verify FAB changes to save icon
+        expect(find.byIcon(Icons.save), findsOneWidget);
+        expect(find.byIcon(Icons.edit), findsNothing);
+
+        // Verify delete FAB is hidden in edit mode
+        expect(find.byIcon(Icons.delete_forever), findsNothing);
+      });
+
+      testWidgets(
+          '\n\n\nTEST_8. should show empty form and edit mode if no bank data is found on load\n\n\n',
+          (tester) async {
+        await tester
+            .pumpWidget(buildAppWithMockApiService(tester, mockApiService));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Simulate login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Mock fetchBankdaten to return empty data (simulating no bank data existing)
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer(
+          (_) async => {
+            'ONLINE': true,
+          },
+        ); // Simulate successful online API call with no data
+
+        // Navigate to BankDataScreen
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(
+          const Duration(seconds: 1),
+        ); // Wait for data to load and setState
+
+        expect(find.byType(BankDataScreen), findsOneWidget);
+        expect(
+          find.widgetWithText(TextFormField, 'Kontoinhaber'),
+          findsOneWidget,
+        );
+        expect(
+          tester
+              .widget<TextFormField>(
+                find.widgetWithText(TextFormField, 'Kontoinhaber'),
+              )
+              .controller!
+              .text,
+          isEmpty,
+        );
+
+        // Verify that fields are editable (because no data was found)
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'Kontoinhaber'),
+          ),
+          isFalse,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'IBAN'),
+          ),
+          isFalse,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'BIC'),
+          ),
+          isFalse,
+        );
+
+        // Verify FAB is save icon and delete FAB is hidden
+        expect(find.byIcon(Icons.save), findsOneWidget);
+        expect(find.byIcon(Icons.edit), findsNothing);
+        expect(find.byIcon(Icons.delete_forever), findsNothing);
+      });
+
+      testWidgets(
+          '\n\n\nTEST_9. should handle bank data deletion correctly (show empty form on return)\n\n\n',
+          (tester) async {
+        await tester
+            .pumpWidget(buildAppWithMockApiService(tester, mockApiService));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Simulate login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // 1. Load with existing data
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer((_) async => existingBankData);
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('John Doe'), findsOneWidget); // Verify data is loaded
+
+        // 2. Tap delete FAB
+        expect(
+          find.byIcon(Icons.delete_forever),
+          findsOneWidget,
+        ); // Ensure delete FAB is visible
+        await tester.tap(find.byIcon(Icons.delete_forever));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // 3. Verify confirmation dialog
+        expect(find.text('Bankdaten löschen'), findsOneWidget);
+        expect(
+          find.textContaining('Sind Sie sicher, dass Sie Ihre Bankdaten'),
+          findsOneWidget,
+        );
+
+        // 4. Mock deleteBankdaten success
+        when(mockApiService.deleteBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer((_) async => true);
+
+        // 5. Tap 'Löschen' button in dialog
+        await tester.tap(find.text('Löschen'));
+        await tester.pumpAndSettle(
+          const Duration(seconds: 1),
+        ); // Wait for deletion and navigation
+
+        // 6. Verify BankDataResultScreen (success)
+        expect(find.byType(BankDataResultScreen), findsOneWidget);
+        expect(find.text('Operation erfolgreich!'), findsOneWidget);
+
+        // 7. Navigate back to StartScreen
+        await tester.tap(
+          find.byIcon(Icons.home),
+        ); // Assuming back button or home button
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.byType(StartScreen), findsOneWidget);
+
+        // 8. Navigate back to BankDataScreen
+        // IMPORTANT: Re-mock fetchBankdaten to return empty data this time
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenAnswer(
+          (_) async => {'ONLINE': true},
+        ); // Simulating no data found but online
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // 9. Verify empty form is displayed and in edit mode
+        expect(find.byType(BankDataScreen), findsOneWidget);
+        expect(
+          find.text('Kontoinhaber'),
+          findsOneWidget,
+        ); // Label should be present
+        expect(
+          tester
+              .widget<TextFormField>(
+                find.widgetWithText(TextFormField, 'Kontoinhaber'),
+              )
+              .controller!
+              .text,
+          isEmpty,
+        );
+        expect(
+          tester.widget<TextFormField>(
+            find.widgetWithText(TextFormField, 'Kontoinhaber'),
+          ),
+          isFalse,
+        ); // Should be editable
+        expect(
+          find.byIcon(Icons.save),
+          findsOneWidget,
+        ); // FAB should be save icon
+        expect(
+          find.byIcon(Icons.delete_forever),
+          findsNothing,
+        ); // Delete FAB should be hidden
+      });
+
+      testWidgets(
+          '\n\n\nTEST_10. should display offline message if initial fetch fails due to network\n\n\n',
+          (tester) async {
+        await tester
+            .pumpWidget(buildAppWithMockApiService(tester, mockApiService));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Simulate login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+
+        // Mock fetchBankdaten to throw a NetworkException
+        when(mockApiService.fetchBankdaten(testUserData['WEBLOGINID']))
+            .thenThrow(NetworkException());
+
+        // Navigate to BankDataScreen
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester.pumpAndSettle(
+          const Duration(
+            seconds: 1,
+          ),
+        ); // Wait for error to propagate and setState
+
+        expect(find.byType(BankDataScreen), findsOneWidget);
+        expect(find.text('Internet ist nicht zu Verfügung.'), findsOneWidget);
+        expect(find.byIcon(Icons.cloud_off), findsOneWidget);
+
+        // Verify FABs are hidden when offline
+        expect(find.byIcon(Icons.edit), findsNothing);
+        expect(find.byIcon(Icons.save), findsNothing);
+        expect(find.byIcon(Icons.delete_forever), findsNothing);
+      });
+    });
+    */
   });
-}
-
-// Consider implementing environment-specific configuration
-class AppConfig {
-  static const String apiUrl = String.fromEnvironment('API_URL');
-  static const bool isDebug = bool.fromEnvironment('DEBUG');
-}
-
-// Consider implementing a custom exception class
-class AppException implements Exception {
-  AppException(this.message, {this.code});
-  final String message;
-  final int? code;
-}
-
-// Consider implementing a base service class
-abstract class BaseService {
-  BaseService(this.httpClient, this.cacheService);
-  final HttpClient httpClient;
-  final CacheService cacheService;
-
-  // Common methods can be implemented here
-}
-
-// Consider adding test utilities
-class TestHelper {
-  static Future<void> pumpUntilFound(
-    WidgetTester tester,
-    Finder finder, {
-    Duration timeout = const Duration(seconds: 30),
-  }) async {
-    // Implementation
-  }
 }

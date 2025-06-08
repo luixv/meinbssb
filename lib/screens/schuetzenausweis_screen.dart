@@ -43,7 +43,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
-          'Digitaler Schützenausweis',
+          'Schützenausweis',
           style: UIConstants.titleStyle,
         ),
         actions: [

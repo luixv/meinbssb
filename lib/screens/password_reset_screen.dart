@@ -129,7 +129,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 key: const Key('forgotPasswordButton'),
                 onPressed: _isLoading ? null : _resetPassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: UIConstants.acceptButtonBackground,
+                  backgroundColor: UIConstants.submitButtonBackground,
                   padding: UIConstants.buttonPadding,
                 ),
                 child: _isLoading

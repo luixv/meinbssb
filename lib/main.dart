@@ -27,39 +27,39 @@ void main() async {
 }
 
 class AppInitializer {
-  static late ConfigService _configService;
-  static late ApiService _apiService;
-  static late NetworkService _networkService;
-  static late CacheService _cacheService;
-  static late HttpClient _httpClient;
-  static late ImageService _imageService;
-  static late TrainingService _trainingService;
-  static late UserService _userService;
-  static late AuthService _authService;
-  static late BankService _bankService;
-  static late TokenService _tokenService; // Make sure it's here
+  static late ConfigService configService;
+  static late ApiService apiService;
+  static late NetworkService networkService;
+  static late CacheService cacheService;
+  static late HttpClient httpClient;
+  static late ImageService imageService;
+  static late TrainingService trainingService;
+  static late UserService userService;
+  static late AuthService authService;
+  static late BankService bankService;
+  static late TokenService tokenService; 
 
   static Future<void> init() async {
     LoggerService.init();
-    _configService = await ConfigService.load('assets/config.json');
+    configService = await ConfigService.load('assets/config.json');
 
-    final serverTimeout = _configService.getInt('serverTimeout', 'theme') ?? 10;
-    final protocol = _configService.getString('apiProtocol', 'api') ?? 'https';
+    final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
+    final protocol = configService.getString('apiProtocol', 'api') ?? 'https';
     final baseIP =
-        _configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
-    final port = _configService.getString('apiPort', 'api') ?? '56400';
+        configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
+    final port = configService.getString('apiPort', 'api') ?? '56400';
     final path =
-        _configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
+        configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
 
-    _imageService = ImageService();
+    imageService = ImageService();
 
     final prefs = await SharedPreferences.getInstance();
 
-    _cacheService = CacheService(
+    cacheService = CacheService(
       prefs: prefs,
-      configService: _configService,
+      configService: configService,
     );
-    _networkService = NetworkService(configService: _configService);
+    networkService = NetworkService(configService: configService);
 
     String baseUrl =
         '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
@@ -69,55 +69,55 @@ class AppInitializer {
     final baseHttpClient = http.Client();
 
     // 1. Initialize TokenService FIRST
-    _tokenService = TokenService(
-      configService: _configService,
-      cacheService: _cacheService,
+    tokenService = TokenService(
+      configService: configService,
+      cacheService: cacheService,
       client: baseHttpClient, // Pass the shared http.Client
     );
 
     // 2. Then, initialize HttpClient, passing the now-initialized _tokenService
-    _httpClient = HttpClient(
+    httpClient = HttpClient(
       baseUrl: baseUrl,
       serverTimeout: serverTimeout,
-      tokenService: _tokenService, // This is now initialized!
-      configService: _configService,
-      cacheService: _cacheService,
+      tokenService: tokenService, // This is now initialized!
+      configService: configService,
+      cacheService: cacheService,
       client: baseHttpClient, // Pass the shared http.Client
     );
     // --- FIX ENDS HERE ---
 
-    _trainingService = TrainingService(
-      httpClient: _httpClient,
-      cacheService: _cacheService,
-      networkService: _networkService,
+    trainingService = TrainingService(
+      httpClient: httpClient,
+      cacheService: cacheService,
+      networkService: networkService,
     );
 
-    _userService = UserService(
-      httpClient: _httpClient,
-      cacheService: _cacheService,
-      networkService: _networkService,
+    userService = UserService(
+      httpClient: httpClient,
+      cacheService: cacheService,
+      networkService: networkService,
     );
 
-    _authService = AuthService(
-      httpClient: _httpClient,
-      cacheService: _cacheService,
-      networkService: _networkService,
+    authService = AuthService(
+      httpClient: httpClient,
+      cacheService: cacheService,
+      networkService: networkService,
     );
 
-    _bankService = BankService(
-      httpClient: _httpClient,
+    bankService = BankService(
+      httpClient: httpClient,
     );
 
-    _apiService = ApiService(
-      configService: _configService,
-      httpClient: _httpClient,
-      imageService: _imageService,
-      cacheService: _cacheService,
-      networkService: _networkService,
-      trainingService: _trainingService,
-      userService: _userService,
-      authService: _authService,
-      bankService: _bankService,
+    apiService = ApiService(
+      configService: configService,
+      httpClient: httpClient,
+      imageService: imageService,
+      cacheService: cacheService,
+      networkService: networkService,
+      trainingService: trainingService,
+      userService: userService,
+      authService: authService,
+      bankService: bankService,
     );
 
     _registerProviders();
@@ -125,7 +125,7 @@ class AppInitializer {
 
   static void _registerProviders() {
     configServiceProvider = Provider<ConfigService>(
-      create: (context) => _configService,
+      create: (context) => configService,
     );
     emailSenderProvider = Provider<EmailSender>(
       create: (context) => MailerEmailSender(),
@@ -137,26 +137,26 @@ class AppInitializer {
       ),
     );
     authServiceProvider = Provider<AuthService>(
-      create: (context) => _authService,
+      create: (context) => authService,
     );
-    apiServiceProvider = Provider<ApiService>(create: (context) => _apiService);
+    apiServiceProvider = Provider<ApiService>(create: (context) => apiService);
     networkServiceProvider = Provider<NetworkService>(
-      create: (context) => _networkService,
+      create: (context) => networkService,
     );
     cacheServiceProvider = Provider<CacheService>(
-      create: (context) => _cacheService,
+      create: (context) => cacheService,
     );
     trainingServiceProvider = Provider<TrainingService>(
-      create: (context) => _trainingService,
+      create: (context) => trainingService,
     );
     userServiceProvider = Provider<UserService>(
-      create: (context) => _userService,
+      create: (context) => userService,
     );
 
 // This is just in case the token_service is needed elsewhere.
 // In fact the only place where it is used is in the HttpClient
     tokenServiceProvider = Provider<TokenService>(
-      create: (context) => _tokenService,
+      create: (context) => tokenService,
     );
   }
 
