@@ -166,8 +166,15 @@ class TrainingService {
         body: {},
       );
 
-      // --- FIX HERE: Check ResultType from the API response ---
-      if (response != null && response['ResultType'] == 1) {
+      bool responseNotNull = response != null;
+      bool responseHasResult =
+          response is Map && response.containsKey('result');
+      bool responseIsTrue = response['result'] == true;
+
+      bool responseDeleteCondition =
+          responseNotNull && responseHasResult && responseIsTrue;
+
+      if (responseDeleteCondition) {
         LoggerService.logInfo(
           'Successfully unregistered from Schulung. Response: $response',
         );
@@ -178,7 +185,6 @@ class TrainingService {
         );
         return false;
       }
-      // --- END FIX ---
     } catch (e) {
       LoggerService.logError(
         'Error unregistering from Schulung $schulungenTeilnehmerID: $e',
