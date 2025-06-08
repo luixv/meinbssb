@@ -8,13 +8,7 @@ import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/api_service.dart' hide NetworkException;
-import 'package:meinbssb/screens/bank_data_screen.dart';
-import 'package:meinbssb/screens/bank_data_result_screen.dart';
-import 'package:meinbssb/exceptions/network_exception.dart';
-import 'package:meinbssb/services/core/http_client.dart';
-import 'package:meinbssb/services/core/cache_service.dart';
 
 // Generate mocks for services that will be overridden
 class MockNetworkService extends Mock implements NetworkService {}
@@ -26,57 +20,23 @@ void main() {
 
   group('App Flow Integration Tests', () {
     // These late initializations will now get their values from AppInitializer
-    late ConfigService configService;
     late NetworkService networkService; // Declare networkService
-    late HttpClient httpClient; // Declare httpClient
-    late CacheService cacheService; // Declare cacheService
-
-    late MockApiService mockApiService; // Declare mock ApiService
 
     setUpAll(() async {
       // Initialize the app's service providers.
       // This will set the static variables in AppInitializer.
       await AppInitializer.init();
       // Assign the initialized services from AppInitializer's static getters
-      configService = AppInitializer.configService;
       networkService = AppInitializer.networkService;
-      httpClient = AppInitializer.httpClient;
-      cacheService = AppInitializer.cacheService;
     });
 
-    setUp(() {
-      mockApiService =
-          MockApiService(); // Initialize mock ApiService before each test
-    });
-
-    // Helper function to pump until a widget is found
-
-    // Helper to build the app with a mocked ApiService
-    Widget buildAppWithMockApiService(
-      WidgetTester tester,
-      MockApiService apiService,
-    ) {
-      return MultiProvider(
-        providers: [
-          Provider<ConfigService>.value(value: configService),
-          // Use the real, initialized services from AppInitializer
-          Provider<NetworkService>.value(value: networkService),
-          Provider<HttpClient>.value(value: httpClient),
-          Provider<CacheService>.value(value: cacheService),
-          Provider<ApiService>.value(
-            value: apiService,
-          ), // Override ApiService with mock
-        ],
-        child:
-            const MyApp(), // Use MyApp directly, as MyAppWrapper already provides services in main.dart
-      );
-    }
+    setUp(() {});
 
     testWidgets('\n\n\nTEST_1. Access the Passwort vergessen?\n\n\n',
         (tester) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
-          create: (context) => networkService, // Use the real networkService
+          create: (context) => networkService,
           child:
               const MyAppWrapper(), // MyAppWrapper provides the actual ApiService
         ),
@@ -166,49 +126,56 @@ void main() {
       expect(find.text('Kostas Rizoudis'), findsOneWidget);
       expect(find.text('40100709'), findsOneWidget);
 
-      // Access Impressum
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Impressum'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Impressum').first, findsOneWidget);
-
-      // Access Kontaktdaten
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Kontaktdaten'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Kontaktdaten').first, findsOneWidget);
-
-      // Access Persönliche Daten (Stammdaten)
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Persönliche Daten'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Persönliche Daten').first, findsOneWidget);
-
       // Access Absolvierte Schulungen
+      debugPrint('Test 4 Access Absolvierte Schulungen!\n\n\n');
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       await tester.tap(find.text('Absolvierte Schulungen'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.text('Absolvierte Schulungen').first, findsOneWidget);
 
-      // Access Schützenausweiss
+      // Access Schützenausweis
+      debugPrint('Test 4 Access Schützenausweis!\n\n\n');
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Schützenausweiss'));
+      await tester.tap(find.text('Schützenausweis'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Digitaler Schützenausweiss').first, findsOneWidget);
+      expect(find.text('Schützenausweis').first, findsOneWidget);
+
+      // Access Persönliche Daten (Stammdaten)
+      debugPrint('Test 4 Access Persönliche Daten!\n\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Persönliche Daten'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Persönliche Daten').first, findsOneWidget);
+
+      // Access Kontaktdaten
+      debugPrint('Test 4 Access Kontaktdaten!\n\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Kontaktdaten'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Kontaktdaten').first, findsOneWidget);
 
       // Access Zahlungsart (Bankdaten)
+      debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       await tester.tap(find.text('Zahlungsart'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.text('Zahlungsart').first, findsOneWidget);
 
+      // Access Impressum
+      debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      await tester.tap(find.text('Impressum'));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text('Impressum').first, findsOneWidget);
+
       // Test logout
+      debugPrint('Test 4 Access Abmelden!\n\n\n');
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       await tester.tap(find.text('Abmelden'));
