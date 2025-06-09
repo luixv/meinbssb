@@ -27,16 +27,8 @@ class ContactDataScreen extends StatefulWidget {
 
 class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
-  final _formKey = GlobalKey<FormState>();
   bool _isDeleting = false;
   bool _isAdding = false;
-  bool _isEditing = false;
-
-  // Text controllers for address fields
-  final TextEditingController _strasseController = TextEditingController();
-  final TextEditingController _hausnummerController = TextEditingController();
-  final TextEditingController _plzController = TextEditingController();
-  final TextEditingController _ortController = TextEditingController();
 
   // Mapping for contact types (used in the dropdown)
   final Map<int, String> _contactTypeLabels = {
@@ -74,7 +66,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _contactDataFuture = apiService.fetchKontakte(widget.personId).then((data) {
+      _contactDataFuture =
+          apiService.fetchKontakte(widget.personId).then((data) {
         LoggerService.logInfo('Contact data structure: $data');
         return data;
       });
@@ -537,10 +530,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               ),
             );
           } else if (snapshot.hasData && snapshot.data != null) {
-            final List<Map<String, dynamic>> categorizedContactData = snapshot.data!;
+            final List<Map<String, dynamic>> categorizedContactData =
+                snapshot.data!;
 
-            final bool hasContacts = categorizedContactData
-                .any((group) => (group['contacts'] as List?)?.isNotEmpty ?? false);
+            final bool hasContacts = categorizedContactData.any(
+              (group) => (group['contacts'] as List?)?.isNotEmpty ?? false,
+            );
 
             if (!hasContacts) {
               return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
@@ -557,7 +552,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       if ((category['contacts'] as List?)?.isNotEmpty ?? false)
                         _buildContactGroup(
                           category['category']?.toString() ?? 'Unbekannt',
-                          (category['contacts'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+                          (category['contacts'] as List?)
+                                  ?.cast<Map<String, dynamic>>() ??
+                              [],
                         ),
                   ],
                 ),
@@ -579,18 +576,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
-  }
-
-  // Helper method to safely cast dynamic values
-  T? _safeCast<T>(dynamic value) {
-    if (value == null) return null;
-    if (value is T) return value;
-    if (T == String) return value.toString() as T;
-    if (T == int) {
-      if (value is num) return value.toInt() as T;
-      if (value is String) return int.tryParse(value) as T?;
-    }
-    return null;
   }
 
   // Helper method to build a contact group (e.g., "Privat")
@@ -629,7 +614,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }) {
     final displayValue = value.isNotEmpty ? value : '-';
     final displayLabel = label.isNotEmpty ? label : 'Unbekannt';
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingM / 2),
       child: TextFormField(

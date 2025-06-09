@@ -102,7 +102,8 @@ class UIConstants {
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
-  static const double defaultSpacing = 4.0;
+  static const double defaultSpacing = 6.0;
+  static const double listItemInterSpace = 3.0;
 
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
@@ -219,8 +220,9 @@ class UIConstants {
   );
 
   static const TextStyle newsStyle = TextStyle(
-    fontSize: bodyFontSize,
+    fontSize: titleFontSize,
     fontFamily: defaultFontFamily,
+    fontWeight: FontWeight.bold,
     color: Colors.white,
   );
 
@@ -292,7 +294,7 @@ class UIConstants {
 
   static const TextStyle linkStyle = TextStyle(
     decoration: TextDecoration.underline,
-    fontWeight: FontWeight.w500,
+    //fontWeight: FontWeight.w500,
     fontSize: UIConstants.bodyFontSize,
   );
 

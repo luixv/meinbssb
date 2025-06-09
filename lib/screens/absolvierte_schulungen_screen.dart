@@ -127,14 +127,14 @@ class AbsolvierteSchulungenScreenState
                             value: schulung['AUSGESTELLTAM'],
                           ),
                           const SizedBox(
-                            height: UIConstants.defaultSpacing / 4,
+                            height: UIConstants.listItemInterSpace,
                           ),
                           _buildInfoText(
                             label: 'Bezeichnung:',
                             value: schulung['BEZEICHNUNG'],
                           ),
                           const SizedBox(
-                            height: UIConstants.defaultSpacing / 4,
+                            height: UIConstants.listItemInterSpace,
                           ),
                           _buildInfoText(
                             label: 'Gültig bis:',
