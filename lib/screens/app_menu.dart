@@ -7,8 +7,6 @@ import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/personal_data_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/bank_data_screen.dart';
 import '/screens/absolvierte_schulungen_screen.dart';
 
 class AppMenu extends StatelessWidget {
@@ -61,24 +59,6 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-  void _openContactDataScreen(int personId) {
-    // Function to open ContactDataScreen
-    // call the api_service for the contact data
-    // and pass the data to the ContactDataScreen
-    //fetchKontakte(personId);
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ContactDataScreen(
-          userData, // Pass the userData
-          personId: personId,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout,
-        ),
-      ),
-    );
-  }
 
   void _openAbsolvierteSchulungenScreen(int personId) {
     // Function to open AbsolvierteSchulungenScreen
@@ -99,24 +79,6 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-  void _openBanktDataScreen(int webloginId) {
-    // Function to open BankDataScreen
-    // call the api_service for the bank data
-    // and pass the data to the BankDataScreen
-    //fetchBankdata(webloginId);
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BankDataScreen(
-          userData, // Pass the userData
-          webloginId: webloginId,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout,
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,13 +98,13 @@ class AppMenu extends StatelessWidget {
           _openImpressumScreen();
         } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
-          _openContactDataScreen(userData['PERSONID']);
+          // _openContactDataScreen(userData['PERSONID']);
         } else if (value == 'absolvierte_schulungen') {
           // Call the function to open AbsolvierteSchulungenScreen
           _openAbsolvierteSchulungenScreen(userData['PERSONID']);
         } else if (value == 'zahlungsart') {
           // Call the function to open BankdatenScreen
-          _openBanktDataScreen(userData['WEBLOGINID']);
+          // _openBanktDataScreen(userData['WEBLOGINID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
           _openPersonalDataScreen();
