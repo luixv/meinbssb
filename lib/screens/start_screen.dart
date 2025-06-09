@@ -141,7 +141,7 @@ class StartScreenState extends State<StartScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
-                          SizedBox(width: 8),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
                             style:
@@ -165,7 +165,7 @@ class StartScreenState extends State<StartScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.check, color: UIConstants.checkIcon),
-                          SizedBox(width: 8),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
                             style:
@@ -247,7 +247,7 @@ class StartScreenState extends State<StartScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            UIConstants.verticalSpacingM,
             Text(
               "${userData['VORNAME'] ?? ''} ${userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,

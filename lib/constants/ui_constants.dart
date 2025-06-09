@@ -357,4 +357,54 @@ class UIConstants {
       vertical: smallSpacing,
     ),
   );
+
+  // Spacing
+  static const double spacingXS = 4.0;
+  static const double spacingS = 8.0;
+  static const double spacingM = 16.0;
+  static const double spacingL = 24.0;
+  static const double spacingXL = 32.0;
+
+  // Dialog Styles
+  static final dialogTitleStyle = TextStyle(
+    fontSize: titleFontSize,
+    fontWeight: FontWeight.bold,
+    color: textColor,
+  );
+
+  static final dialogContentStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: textColor,
+  );
+
+  static final dialogButtonStyle = TextStyle(
+    fontSize: buttonFontSize,
+    fontWeight: FontWeight.bold,
+    color: primaryColor,
+  );
+
+  static const dialogPadding = EdgeInsets.all(spacingM);
+  static const dialogButtonPadding = EdgeInsets.symmetric(
+    horizontal: spacingM,
+    vertical: spacingS,
+  );
+
+  // Common Widgets
+  static const SizedBox spacingXS = SizedBox(width: spacingXS, height: spacingXS);
+  static const SizedBox spacingS = SizedBox(width: spacingS, height: spacingS);
+  static const SizedBox spacingM = SizedBox(width: spacingM, height: spacingM);
+  static const SizedBox spacingL = SizedBox(width: spacingL, height: spacingL);
+  static const SizedBox spacingXL = SizedBox(width: spacingXL, height: spacingXL);
+
+  static const SizedBox horizontalSpacingXS = SizedBox(width: spacingXS);
+  static const SizedBox horizontalSpacingS = SizedBox(width: spacingS);
+  static const SizedBox horizontalSpacingM = SizedBox(width: spacingM);
+  static const SizedBox horizontalSpacingL = SizedBox(width: spacingL);
+  static const SizedBox horizontalSpacingXL = SizedBox(width: spacingXL);
+
+  static const SizedBox verticalSpacingXS = SizedBox(height: spacingXS);
+  static const SizedBox verticalSpacingS = SizedBox(height: spacingS);
+  static const SizedBox verticalSpacingM = SizedBox(height: spacingM);
+  static const SizedBox verticalSpacingL = SizedBox(height: spacingL);
+  static const SizedBox verticalSpacingXL = SizedBox(height: spacingXL);
 }
