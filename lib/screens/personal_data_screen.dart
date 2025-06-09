@@ -413,6 +413,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       // Modified Floating Action Button
       floatingActionButton: _isOnline // <-- Conditionally render FAB
           ? FloatingActionButton(
+              heroTag: 'personalDataFab', // Add unique hero tag
               onPressed:
                   _isLoading ? null : _handleFabPressed, // Call the new handler
               backgroundColor: UIConstants.defaultAppColor,
