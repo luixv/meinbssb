@@ -656,33 +656,4 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       ),
     );
   }
-
-  // New helper method to build a text field with validation
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required bool isReadOnly,
-    required Function(String?) validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-      child: TextFormField(
-        controller: controller,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: UIConstants.bodyFontSize,
-        ),
-        decoration: UIConstants.formInputDecoration.copyWith(
-          labelText: label,
-          labelStyle: UIConstants.formLabelStyle,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isReadOnly ? null : label,
-          //fillColor: UIConstants.formInputBackgroundColor,
-          filled: true,
-        ),
-        validator: validator,
-        readOnly: isReadOnly,
-      ),
-    );
-  }
 }
