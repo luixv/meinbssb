@@ -92,27 +92,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           title: const Center(
             child: Text(
               'Kontakt löschen',
-              style: TextStyle(
-                color: UIConstants.defaultAppColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.tableContentColor,
-              ),
+              style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie den Kontakt '),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: UIConstants.tableContentColor,
-                  ),
+                  style: UIConstants.dialogBoldContentStyle,
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -129,19 +120,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(dialogContext).pop(false); // Do not delete
+                        Navigator.of(dialogContext).pop(false);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
+                      style: UIConstants.cancelButtonStyle,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.close,
-                            color: UIConstants.closeIcon,
-                          ),
+                          Icon(Icons.close, color: UIConstants.closeIcon),
                           SizedBox(width: 8),
                           Text(
                             'Abbrechen',
@@ -151,18 +136,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: UIConstants.defaultSpacing,
-                  ),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(dialogContext).pop(true); // Confirm delete
+                        Navigator.of(dialogContext).pop(true);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.deleteButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
+                      style: UIConstants.deleteButtonStyle,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

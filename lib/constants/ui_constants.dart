@@ -161,11 +161,42 @@ class UIConstants {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle dialogTitleStyle = TextStyle(
+    color: defaultAppColor,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle dialogContentStyle = TextStyle(
+    fontSize: subtitleFontSize,
+    color: tableContentColor,
+  );
+
+  static const TextStyle dialogBoldContentStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    color: tableContentColor,
+  );
+
+  static const TextStyle sectionTitleStyle = TextStyle(
+    fontSize: subtitleFontSize,
+    fontWeight: FontWeight.bold,
+    color: defaultAppColor,
+  );
+
+  static const TextStyle formLabelStyle = TextStyle(
+    fontSize: subtitleFontSize,
+    color: tableContentColor,
+  );
+
+  static const TextStyle formValueStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: bodyFontSize,
+  );
+
   static const TextStyle subtitleStyle = TextStyle(
-    fontSize: 18.0, // Example size, adjust as needed
-    fontWeight: FontWeight.w600, // Example weight, adjust as needed
+    fontSize: 18.0,
+    fontWeight: FontWeight.w600,
     fontFamily: defaultFontFamily,
-    color: Colors.black87, // Default color, can be overridden
+    color: Colors.black87,
   );
 
   static const TextStyle titleStyle = TextStyle(
@@ -227,4 +258,31 @@ class UIConstants {
   // Duration Constants
   static const Duration snackBarDuration = Duration(seconds: 5);
   static const Duration loadingDelay = Duration(milliseconds: 100);
+
+  // Button Styles
+  static final ButtonStyle cancelButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: cancelButtonBackground,
+    padding: buttonPadding,
+  );
+
+  static final ButtonStyle deleteButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: deleteButtonBackground,
+    padding: buttonPadding,
+  );
+
+  static final ButtonStyle acceptButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: acceptButtonBackground,
+    padding: buttonPadding,
+  );
+
+  static final ButtonStyle submitButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: submitButtonBackground,
+    padding: buttonPadding,
+  );
+
+  // Icon Styles
+  static const IconThemeData defaultIconTheme = IconThemeData(
+    color: Colors.white,
+    size: defaultIconSize,
+  );
 }
