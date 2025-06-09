@@ -262,7 +262,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         ),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
+            padding: UIConstants.defaultHorizontalPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -276,13 +276,18 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
-              ? Center(child: Text(_errorMessage!, style: UIConstants.errorMessageStyle))
+              ? Center(
+                  child: Text(
+                    _errorMessage!,
+                    //             style: UIConstants.errorMessageStyle,
+                  ),
+                )
               : _currentPassData == null && !_isLoading
                   ? const Center(
                       child: Text('Keine persönlichen Daten verfügbar.'),
                     )
                   : Padding(
-                      padding: const EdgeInsets.all(UIConstants.defaultPadding),
+                      padding: UIConstants.defaultPadding,
                       child: Form(
                         key: _formKey,
                         child: SingleChildScrollView(

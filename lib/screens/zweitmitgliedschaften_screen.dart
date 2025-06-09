@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
@@ -74,7 +76,8 @@ class _ZweitmitgliedschaftenScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: UIConstants.defaultIconSize, color: UIConstants.error),
+          const Icon(Icons.error_outline,
+              size: UIConstants.defaultIconSize, color: UIConstants.errorColor),
           const SizedBox(height: UIConstants.defaultSpacing),
           Text(
             message,
@@ -109,7 +112,7 @@ class _ZweitmitgliedschaftenScreenState
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -117,14 +120,14 @@ class _ZweitmitgliedschaftenScreenState
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               'Mein BSSB',
-              style: UIConstants.headerStyle.copyWith(color: _appColor),
+              style: UIConstants.titleStyle.copyWith(color: _appColor),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               "${_userData['VORNAME']} ${_userData['NAMEN']}",
               style: UIConstants.titleStyle,
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               _userData['PASSNUMMER'],
               style: UIConstants.bodyStyle.copyWith(
@@ -136,7 +139,7 @@ class _ZweitmitgliedschaftenScreenState
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleText),
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               _userData['VEREINNAME'],
               style: UIConstants.bodyStyle.copyWith(
@@ -150,7 +153,7 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
-            const SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<List<dynamic>>(
               future: _zweitmitgliedschaftenFuture,
               builder: (context, snapshot) {
@@ -186,7 +189,7 @@ class _ZweitmitgliedschaftenScreenState
                     final item = snapshot.data![index];
                     return Card(
                       margin: const EdgeInsets.only(
-                        bottom: UIConstants.smallSpacing,
+                        bottom: UIConstants.spacingS,
                       ),
                       child: ListTile(
                         title: Row(
@@ -218,7 +221,7 @@ class _ZweitmitgliedschaftenScreenState
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             const Text('Disziplinen:', style: UIConstants.titleStyle),
-            const SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<List<dynamic>>(
               future: _passdatenZVEFuture,
               builder: (context, snapshot) {
@@ -254,12 +257,12 @@ class _ZweitmitgliedschaftenScreenState
                     final item = snapshot.data![index];
                     return Card(
                       margin: const EdgeInsets.only(
-                        bottom: UIConstants.smallSpacing,
+                        bottom: UIConstants.spacingS,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: UIConstants.smallSpacing,
-                          horizontal: UIConstants.smallSpacing,
+                          vertical: UIConstants.spacingS,
+                          horizontal: UIConstants.spacingS,
                         ),
                         child: Row(
                           children: [
@@ -272,7 +275,7 @@ class _ZweitmitgliedschaftenScreenState
                                 ),
                               ),
                             ),
-                            const SizedBox(width: UIConstants.smallSpacing),
+                            const SizedBox(width: UIConstants.spacingS),
                             SizedBox(
                               width: 120,
                               child: Text(
@@ -282,7 +285,7 @@ class _ZweitmitgliedschaftenScreenState
                                 ),
                               ),
                             ),
-                            const SizedBox(width: UIConstants.smallSpacing),
+                            const SizedBox(width: UIConstants.spacingS),
                             Expanded(
                               child: Text(
                                 item['VEREINNAME'] ?? 'N/A',

@@ -40,7 +40,7 @@ class HelpScreen extends StatelessWidget {
         color: UIConstants
             .backgroundColor, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
         child: const SingleChildScrollView(
-          padding: EdgeInsets.all(UIConstants.defaultPadding),
+          padding: UIConstants.defaultPadding,
           child: Column(
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
@@ -48,7 +48,7 @@ class HelpScreen extends StatelessWidget {
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Allgemein',
                 questions: [
@@ -72,7 +72,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Funktionen der App',
                 questions: [
@@ -110,7 +110,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Technische Fragen',
                 questions: [
@@ -135,7 +135,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Kontakt und Hilfe',
                 questions: [
@@ -159,7 +159,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              SizedBox(height: UIConstants.helpSpacing),
             ],
           ),
         ),

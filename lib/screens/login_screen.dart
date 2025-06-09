@@ -315,7 +315,7 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             _buildEmailField(),
-            const SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             _buildPasswordField(),
             const SizedBox(height: UIConstants.defaultSpacing * 2),
             if (_errorMessage.isNotEmpty)

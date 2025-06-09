@@ -53,7 +53,7 @@ class _CookieConsentState extends State<CookieConsent> {
                   color: UIConstants.cookiesDialogColor,
                   child: Container(
                     margin: const EdgeInsets.all(UIConstants.defaultSpacing),
-                    padding: const EdgeInsets.all(UIConstants.defaultPadding),
+                    padding: const EdgeInsets.all(UIConstants.defaultSpacing),
                     decoration: BoxDecoration(
                       color: UIConstants.boxDecorationColor,
                       borderRadius: BorderRadius.circular(16),
@@ -63,11 +63,11 @@ class _CookieConsentState extends State<CookieConsent> {
                       children: [
                         Text(
                           'Wir verwenden Cookies',
-                          style: UIConstants.headerStyle.copyWith(
+                          style: UIConstants.titleStyle.copyWith(
                             color: UIConstants.defaultAppColor,
                           ),
                         ),
-                        const SizedBox(height: UIConstants.largeSpacing),
+                        const SizedBox(height: UIConstants.spacingL),
                         Text(
                           'Um diese App offline nutzen zu können, verwenden wir Cookies.', // \n Durch die weitere Nutzung der App akzeptieren Sie unsere Verwendung von Cookies.
                           textAlign: TextAlign.center,

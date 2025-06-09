@@ -92,7 +92,7 @@ class StartScreenState extends State<StartScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: Center(
+          title: const Center(
             child: Text(
               'Schulung abmelden',
               style: UIConstants.dialogTitleStyle,
@@ -129,7 +129,7 @@ class StartScreenState extends State<StartScreen> {
                       child: Row(
                         mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
-                          Icon(Icons.close, color: UIConstants.closeIcon),
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
@@ -151,7 +151,7 @@ class StartScreenState extends State<StartScreen> {
                       child: Row(
                         mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
-                          Icon(Icons.check, color: UIConstants.checkIcon),
+                          const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
@@ -216,7 +216,7 @@ class StartScreenState extends State<StartScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
-        title: Text(
+        title: const Text(
           'Start',
           style: UIConstants.appBarTitleStyle,
         ),
@@ -274,7 +274,7 @@ class StartScreenState extends State<StartScreen> {
                 color: UIConstants.news,
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Hier könnten News stehen',
                   style: UIConstants.newsStyle,
@@ -282,7 +282,7 @@ class StartScreenState extends State<StartScreen> {
               ),
             ),
             const SizedBox(height: UIConstants.spacingM),
-            Text(
+            const Text(
               'Angemeldete Schulungen:',
               style: UIConstants.titleStyle,
             ),
@@ -290,7 +290,7 @@ class StartScreenState extends State<StartScreen> {
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else if (schulungen.isEmpty)
-              Text(
+              const Text(
                 'Keine Schulungen gefunden.',
                 style: TextStyle(color: UIConstants.greySubtitleText),
               )
@@ -314,7 +314,7 @@ class StartScreenState extends State<StartScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
                       ),
-                      leading: Column(
+                      leading: const Column(
                         mainAxisAlignment: UIConstants.listItemLeadingAlignment,
                         children: [
                           Icon(
@@ -331,7 +331,7 @@ class StartScreenState extends State<StartScreen> {
                       trailing:
                           isOnline
                               ? IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete_outline_outlined,
                                     color: UIConstants.deleteIcon,
                                   ),

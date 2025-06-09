@@ -106,19 +106,19 @@ class AbsolvierteSchulungenScreenState
             }
 
             return Padding(
-              padding: const EdgeInsets.all(UIConstants.defaultPadding),
+              padding: UIConstants.defaultPadding,
               child: ListView.builder(
                 itemCount: schulungen.length,
                 itemBuilder: (context, index) {
                   final schulung = schulungen[index];
                   // Display AUSGESTELLTAM, BEZEICHNUNG, GUELTIGBIS
                   return Card(
-                    color: UIConstants.cardColor, // Example card color
+                    color: UIConstants.cardColor,
                     margin: const EdgeInsets.only(
                       bottom: UIConstants.defaultSpacing,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(UIConstants.defaultPadding),
+                      padding: UIConstants.defaultPadding,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

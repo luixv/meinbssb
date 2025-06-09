@@ -49,7 +49,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         actions: [
           // --- Added ConnectivityIcon here ---
           const Padding(
-            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
+            padding: UIConstants.defaultHorizontalPadding,
             child: ConnectivityIcon(),
           ),
           // --- End ConnectivityIcon addition ---
@@ -62,7 +62,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -46,20 +46,23 @@ class BankDataResultScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(UIConstants.defaultPadding),
+          padding: UIConstants.defaultPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 success ? Icons.check_circle_outline : Icons.error_outline,
-                color: success ? UIConstants.success : UIConstants.error,
+                color:
+                    success ? UIConstants.successColor : UIConstants.errorColor,
                 size: 100,
               ),
               const SizedBox(height: UIConstants.defaultSpacing * 2),
               Text(
                 success ? 'Erfolg!' : 'Fehler!',
                 style: UIConstants.titleStyle.copyWith(
-                  color: success ? UIConstants.success : UIConstants.error,
+                  color: success
+                      ? UIConstants.successColor
+                      : UIConstants.errorColor,
                 ),
               ),
               const SizedBox(height: UIConstants.defaultSpacing),

@@ -225,7 +225,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: Center(
+          title: const Center(
             child: Text(
               'Bankdaten löschen',
               style: UIConstants.dialogTitleStyle,
@@ -262,7 +262,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close, color: UIConstants.closeIcon),
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
@@ -284,7 +284,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check, color: UIConstants.checkIcon),
+                          const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',

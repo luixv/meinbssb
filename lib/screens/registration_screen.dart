@@ -340,7 +340,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         actions: [
           // --- Added ConnectivityIcon here ---
           const Padding(
-            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
+            padding: UIConstants.defaultHorizontalPadding,
             child: ConnectivityIcon(),
           ),
           // --- End ConnectivityIcon addition ---
@@ -373,7 +373,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               if (_successMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: UIConstants.smallSpacing,
+                    vertical: UIConstants.spacingS,
                   ),
                   child: Text(_successMessage, style: UIConstants.successStyle),
                 ),
@@ -385,7 +385,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               TextField(
                 key: const Key('lastNameField'),
                 controller: _lastNameController,
@@ -394,7 +394,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               TextField(
                 key: const Key('passNumberField'),
                 controller: _passNumberController,
@@ -408,7 +408,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   });
                 },
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               TextField(
                 key: const Key('emailField'),
                 controller: _emailController,
@@ -434,7 +434,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   });
                 },
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               InkWell(
                 onTap: () => _selectDate(context),
                 child: InputDecorator(
@@ -453,7 +453,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                               ).format(_selectedDate!),
                         style: UIConstants.formValueStyle.copyWith(
                           color: _selectedDate != null
-                              ? UIConstants.calendarSelectedColor
+                              ? UIConstants.calendarSelectedTextColor
                               : UIConstants.calendarTextColor,
                         ),
                       ),
@@ -462,7 +462,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               TextField(
                 key: const Key('zipCodeField'),
                 controller: _zipCodeController,
@@ -476,7 +476,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   });
                 },
               ),
-              const SizedBox(height: UIConstants.smallSpacing),
+              const SizedBox(height: UIConstants.spacingXS),
               Row(
                 children: [
                   Checkbox(

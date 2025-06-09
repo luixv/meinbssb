@@ -20,17 +20,20 @@ class UIConstants {
   static const Color greySubtitleText = Colors.grey;
   static const Color news = Colors.lightGreen;
   static const Color defaultAppColor = primaryColor;
+  static const Color cookiesDialogColor = Colors.black;
 
   // Button Colors
   static const Color cancelButtonBackground = Colors.lightGreen;
   static const Color acceptButtonBackground = Colors.white;
   static const Color deleteButtonBackground = primaryColor;
   static const Color submitButtonBackground = Colors.lightGreen;
+  static const Color disabledBackgroundColor = Colors.grey;
 
   static const Color buttonTextColor = Colors.white;
   static const Color cancelButtonText = Colors.white;
   static const Color deleteButtonText = Colors.white;
   static const Color submitButtonText = Colors.white;
+  static const Color disabledSubmitButtonText = Colors.white;
 
   // Icon Colors
   static const Color deleteIcon = primaryColor;
@@ -99,6 +102,7 @@ class UIConstants {
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
+  static const double defaultSpacing = 4.0;
 
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
@@ -115,10 +119,13 @@ class UIConstants {
 
   // Padding
   static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
-  static const EdgeInsets defaultHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
-  static const EdgeInsets defaultVerticalPadding = EdgeInsets.symmetric(vertical: 16.0);
+  static const EdgeInsets defaultHorizontalPadding =
+      EdgeInsets.symmetric(horizontal: 16.0);
+  static const EdgeInsets defaultVerticalPadding =
+      EdgeInsets.symmetric(vertical: 16.0);
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 16.0);
-  static const EdgeInsets screenPadding = EdgeInsets.fromLTRB(16.0, 60.0, 16.0, 16.0);
+  static const EdgeInsets screenPadding =
+      EdgeInsets.fromLTRB(16.0, 60.0, 16.0, 16.0);
   static const EdgeInsets appBarRightPadding = EdgeInsets.only(right: 16.0);
   static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
@@ -283,6 +290,17 @@ class UIConstants {
     ),
   );
 
+  static const TextStyle linkStyle = TextStyle(
+    decoration: TextDecoration.underline,
+    fontWeight: FontWeight.w500,
+    fontSize: UIConstants.bodyFontSize,
+  );
+
+  static const TextStyle headerStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: UIConstants.headerFontSize,
+  );
+
   // Form Styles
   static final InputDecoration formInputDecoration = InputDecoration(
     filled: true,
@@ -307,11 +325,13 @@ class UIConstants {
       borderRadius: BorderRadius.circular(cornerRadius),
       borderSide: const BorderSide(color: errorColor),
     ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+    contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
   );
 
   // Duration
   static const Duration snackBarDuration = Duration(seconds: 3);
+  static const Duration loadingDelay = Duration(seconds: 10);
 
   // Container heights
   static const double newsContainerHeight = 100.0;
@@ -319,8 +339,11 @@ class UIConstants {
   static const double bankDataSpacing = 16.0;
 
   // Alignment constants
-  static const MainAxisAlignment listItemLeadingAlignment = MainAxisAlignment.center;
+  static const MainAxisAlignment listItemLeadingAlignment =
+      MainAxisAlignment.center;
   static const MainAxisAlignment centerAlignment = MainAxisAlignment.center;
-  static const MainAxisAlignment spaceBetweenAlignment = MainAxisAlignment.spaceBetween;
-  static const CrossAxisAlignment startCrossAlignment = CrossAxisAlignment.start;
+  static const MainAxisAlignment spaceBetweenAlignment =
+      MainAxisAlignment.spaceBetween;
+  static const CrossAxisAlignment startCrossAlignment =
+      CrossAxisAlignment.start;
 }

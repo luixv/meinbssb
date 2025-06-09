@@ -31,7 +31,7 @@ class PrivacyScreen extends StatelessWidget {
         ],
       ),
       body: const Padding(
-        padding: EdgeInsets.all(UIConstants.defaultPadding),
+        padding: UIConstants.defaultPadding,
         child: Text(
           'Hier stehen die Datenschutzbestimmungen des BSSB.',
           style: UIConstants.bodyStyle,

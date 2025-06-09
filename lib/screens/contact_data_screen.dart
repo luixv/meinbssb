@@ -89,7 +89,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: Center(
+          title: const Center(
             child: Text(
               'Kontaktdaten löschen',
               style: UIConstants.dialogTitleStyle,
@@ -100,7 +100,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             text: TextSpan(
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(text: 'Sind Sie sicher, dass Sie die Kontaktdaten '),
+                const TextSpan(
+                  text: 'Sind Sie sicher, dass Sie die Kontaktdaten ',
+                ),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
                   style: const TextStyle(
@@ -126,7 +128,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close, color: UIConstants.closeIcon),
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
@@ -148,7 +150,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check, color: UIConstants.checkIcon),
+                          const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
@@ -342,7 +344,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         // Use dialogContext to avoid conflicts
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: Center(
+          title: const Center(
             child: Text(
               'Neuen Kontakt hinzufügen',
               style: UIConstants.dialogTitleStyle,
@@ -386,7 +388,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: UIConstants.spacingM,
               ),
               child: Row(
@@ -413,7 +415,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Abbrechen',
-                            style: TextStyle(color: UIConstants.cancelButtonText),
+                            style:
+                                TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
@@ -650,7 +653,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required bool isDeleting,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: UIConstants.spacingM / 2),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingM / 2),
       child: TextFormField(
         initialValue: value.isNotEmpty ? value : '-',
         readOnly: true,
@@ -685,10 +688,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   // --- Helper method for section titles (kept as before) ---
   Widget _buildSectionTitle(String title, {Color? color}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: UIConstants.spacingM),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: Text(
         title,
-        style: UIConstants.sectionTitleStyle.copyWith(
+        style: UIConstants.titleStyle.copyWith(
           color: color,
         ),
       ),
@@ -703,7 +706,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required Function(String?) validator,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: UIConstants.spacingM),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: TextFormField(
         controller: controller,
         style: const TextStyle(
@@ -715,7 +718,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,
-          fillColor: UIConstants.formInputBackgroundColor,
+          //fillColor: UIConstants.formInputBackgroundColor,
           filled: true,
         ),
         validator: validator,

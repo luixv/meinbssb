@@ -47,7 +47,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               message,
-              style: UIConstants.successMessageStyle,
+              style: UIConstants.successStyle,
             ),
           ],
         ),
