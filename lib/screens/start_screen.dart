@@ -222,7 +222,7 @@ class StartScreenState extends State<StartScreen> {
         ),
         actions: [
           const Padding(
-            padding: UIConstants.defaultHorizontalPadding,
+            padding: UIConstants.appBarRightPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -234,17 +234,17 @@ class StartScreenState extends State<StartScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.spacingM),
         child: Column(
           crossAxisAlignment: UIConstants.startCrossAlignment,
           children: [
             const LogoWidget(),
-            UIConstants.verticalSpacingM,
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               "${userData['VORNAME'] ?? ''} ${userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               '${userData['PASSNUMMER'] ?? ''}',
               style: UIConstants.bodyStyle
@@ -255,7 +255,7 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleText),
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               '${userData['VEREINNAME'] ?? ''}',
               style: UIConstants.bodyStyle
@@ -266,7 +266,7 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleText),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingM),
             Container(
               height: UIConstants.newsContainerHeight,
               width: double.infinity,
@@ -281,12 +281,12 @@ class StartScreenState extends State<StartScreen> {
                 ),
               ),
             ),
-            SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               'Angemeldete Schulungen:',
               style: UIConstants.titleStyle,
             ),
-            SizedBox(height: UIConstants.smallSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else if (schulungen.isEmpty)
@@ -298,7 +298,7 @@ class StartScreenState extends State<StartScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: schulungen.length,
-                  separatorBuilder: (_, __) => SizedBox(height: UIConstants.defaultSeparatorHeight),
+                  separatorBuilder: (_, __) => const SizedBox(height: UIConstants.defaultSeparatorHeight),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
@@ -307,7 +307,7 @@ class StartScreenState extends State<StartScreen> {
                         '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
                     final description = schulung['BEZEICHNUNG'] ?? 'N/A';
                     final isOnline =
-                        schulung['ONLINE'] ?? false; // Your online check
+                        schulung['ONLINE'] ?? false;
 
                     return ListTile(
                       tileColor: UIConstants.tileColor,
@@ -329,7 +329,7 @@ class StartScreenState extends State<StartScreen> {
                         style: UIConstants.listItemSubtitleStyle,
                       ),
                       trailing:
-                          isOnline // Only show IconButton if isOnline is true
+                          isOnline
                               ? IconButton(
                                   icon: Icon(
                                     Icons.delete_outline_outlined,
@@ -347,7 +347,7 @@ class StartScreenState extends State<StartScreen> {
                                     }
                                   },
                                 )
-                              : null, // Show nothing if isOnline is false
+                              : null,
                     );
                   },
                 ),

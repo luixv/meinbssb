@@ -118,7 +118,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               Text(_successMessage, style: UIConstants.successStyle),
             TextField(
               controller: _passNumberController,
-              decoration: UIConstants.defaultInputDecoration.copyWith(
+              decoration: UIConstants.formInputDecoration.copyWith(
                 labelText: 'Schützenausweisnummer',
               ),
             ),

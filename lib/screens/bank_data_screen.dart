@@ -406,18 +406,18 @@ class BankDataScreenState extends State<BankDataScreen> {
     } else {
       // Show the form if online and data loaded (or no data but online)
       bodyContent = Padding(
-        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        padding: const EdgeInsets.all(UIConstants.spacingM),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: UIConstants.startCrossAlignment,
               children: <Widget>[
-                const SizedBox(height: UIConstants.bankDataSpacing),
+                const SizedBox(height: UIConstants.spacingM),
                 _buildTextField(
                   label: 'Kontoinhaber',
                   controller: _kontoinhaberController,
-                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  isReadOnly: !_isEditing,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Kontoinhaber ist erforderlich';
@@ -428,7 +428,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 _buildTextField(
                   label: 'IBAN',
                   controller: _ibanController,
-                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  isReadOnly: !_isEditing,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'IBAN ist erforderlich';
@@ -442,10 +442,10 @@ class BankDataScreenState extends State<BankDataScreen> {
                 _buildTextField(
                   label: 'BIC',
                   controller: _bicController,
-                  isReadOnly: !_isEditing, // Read-only based on _isEditing
+                  isReadOnly: !_isEditing,
                   validator: BankService.validateBIC,
                 ),
-                const SizedBox(height: UIConstants.bankDataSpacing),
+                const SizedBox(height: UIConstants.spacingM),
               ],
             ),
           ),
@@ -564,7 +564,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.bankDataSpacing),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,

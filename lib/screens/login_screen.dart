@@ -105,7 +105,7 @@ class LoginScreenState extends State<LoginScreen> {
       };
       _userData = completeUserData;
       _isLoggedIn =
-          true; // Update the login state.  Crucial for passing to PasswordReset.
+          true; // Update the login state.  Crucial for passing to PasswordReset.
       widget.onLoginSuccess(completeUserData);
 
       await apiService.fetchSchuetzenausweis(personId);
@@ -157,12 +157,12 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _handleLogout() {
     setState(() {
-      _isLoggedIn = false; //  Update local state.
+      _isLoggedIn = false; //  Update local state.
       _userData = {};
     });
     Navigator.of(context).pushReplacementNamed(
       '/login',
-    ); // Navigate back to login.  Use pushReplacementNamed
+    ); // Navigate back to login.  Use pushReplacementNamed
   }
 
   Widget _buildEmailField() {
@@ -170,7 +170,7 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('usernameField'),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      decoration: UIConstants.defaultInputDecoration.copyWith(
+      decoration: UIConstants.formInputDecoration.copyWith(
         labelText: 'E-mail',
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
@@ -182,7 +182,7 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('passwordField'),
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
-      decoration: UIConstants.defaultInputDecoration.copyWith(
+      decoration: UIConstants.formInputDecoration.copyWith(
         labelText: 'Passwort',
         suffixIcon: IconButton(
           icon: Icon(

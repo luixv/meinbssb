@@ -17,6 +17,9 @@ class UIConstants {
   static const Color linkColor = Colors.lightGreen;
   static const Color greyColor = Colors.grey;
   static const Color whiteColor = Colors.white;
+  static const Color greySubtitleText = Colors.grey;
+  static const Color news = Colors.lightGreen;
+  static const Color defaultAppColor = primaryColor;
 
   // Button Colors
   static const Color cancelButtonBackground = Colors.lightGreen;
@@ -114,14 +117,10 @@ class UIConstants {
   static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
   static const EdgeInsets defaultHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
   static const EdgeInsets defaultVerticalPadding = EdgeInsets.symmetric(vertical: 16.0);
-  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: spacingM);
-  static const EdgeInsets screenPadding = EdgeInsets.fromLTRB(
-    spacingM,
-    60.0,
-    spacingM,
-    spacingM,
-  );
+  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 16.0);
+  static const EdgeInsets screenPadding = EdgeInsets.fromLTRB(16.0, 60.0, 16.0, 16.0);
   static const EdgeInsets appBarRightPadding = EdgeInsets.only(right: 16.0);
+  static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
   // Sizes
   static const double logoSize = 100.0;
@@ -251,16 +250,64 @@ class UIConstants {
     color: textColor,
   );
 
-  // Form Styles
-  static final formInputDecoration = InputDecoration(
-    labelStyle: formLabelStyle,
-    hintStyle: formLabelStyle,
-    errorStyle: errorStyle,
-    border: const OutlineInputBorder(),
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: spacingM,
-      vertical: spacingS,
+  // Button Styles
+  static final ButtonStyle dialogCancelButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: cancelButtonBackground,
+    padding: buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
     ),
+  );
+
+  static final ButtonStyle dialogAcceptButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: acceptButtonBackground,
+    padding: buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+    ),
+  );
+
+  static final ButtonStyle dialogDeleteButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: deleteButtonBackground,
+    padding: buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+    ),
+  );
+
+  static final ButtonStyle dialogSubmitButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: submitButtonBackground,
+    padding: buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+    ),
+  );
+
+  // Form Styles
+  static final InputDecoration formInputDecoration = InputDecoration(
+    filled: true,
+    fillColor: Colors.white,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      borderSide: const BorderSide(color: Colors.grey),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      borderSide: const BorderSide(color: Colors.grey),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      borderSide: const BorderSide(color: primaryColor),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      borderSide: const BorderSide(color: errorColor),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+      borderSide: const BorderSide(color: errorColor),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
   );
 
   // Duration

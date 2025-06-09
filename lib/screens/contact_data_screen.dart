@@ -342,24 +342,19 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         // Use dialogContext to avoid conflicts
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            // Center the title
+          title: Center(
             child: Text(
               'Neuen Kontakt hinzufügen',
-              style: TextStyle(
-                color: UIConstants.defaultAppColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.dialogTitleStyle,
             ),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 DropdownButtonFormField<int>(
-                  decoration: UIConstants.defaultInputDecoration.copyWith(
+                  decoration: UIConstants.formInputDecoration.copyWith(
                     labelText: 'Kontakttyp',
-                    floatingLabelBehavior:
-                        FloatingLabelBehavior.auto, // Apply auto behavior
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
                   value: _selectedKontaktTyp,
                   items: _contactTypeLabels.entries.map((entry) {
@@ -375,14 +370,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     });
                   },
                 ),
-                const SizedBox(height: UIConstants.defaultSpacing),
+                const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: _kontaktController,
-                  decoration: UIConstants.defaultInputDecoration.copyWith(
+                  decoration: UIConstants.formInputDecoration.copyWith(
                     labelText: 'Kontakt',
                     hintText: 'z.B. email@beispiel.de oder 0123 456789',
-                    floatingLabelBehavior:
-                        FloatingLabelBehavior.auto, // Apply auto behavior
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
                   keyboardType: TextInputType
                       .text, // Set based on type, can be dynamic later
@@ -392,9 +386,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.defaultPadding,
-              ), // Add horizontal padding to the row
+              padding: EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment
                     .spaceBetween, // Distribute space between buttons
@@ -416,7 +410,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             Icons.close,
                             color: UIConstants.closeIcon,
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Abbrechen',
                             style: TextStyle(color: UIConstants.cancelButtonText),
@@ -426,7 +420,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     ),
                   ),
                   const SizedBox(
-                    width: UIConstants.defaultSpacing,
+                    width: UIConstants.spacingM,
                   ), // Space between buttons
                   Expanded(
                     // "Hinzufügen" button takes available space
@@ -454,13 +448,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                 ),
                                 // OK icon
                                 const SizedBox(
-                                  width: UIConstants.defaultSpacing / 2,
+                                  width: UIConstants.spacingS,
                                 ),
                                 Text(
                                   'Hinzufügen',
-                                  style: UIConstants.bodyStyle.copyWith(
-                                    fontSize: UIConstants
-                                        .bodyFontSize, // Ensure font size consistency
+                                  style: UIConstants.dialogButtonStyle.copyWith(
                                     color: UIConstants.submitButtonText,
                                   ),
                                 ),
@@ -526,8 +518,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               'Error loading contact data in FutureBuilder: ${snapshot.error}',
             );
             return Center(
-              child:
-                  Text('Fehler beim Laden der Kontaktdaten: ${snapshot.error}'),
+              child: Text(
+                'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
+                style: UIConstants.errorStyle,
+              ),
             );
           } else if (snapshot.hasData && snapshot.data != null) {
             final List<Map<String, dynamic>> categorizedContactData =
@@ -541,19 +535,64 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             }
 
             return Padding(
-              padding: const EdgeInsets.all(UIConstants.defaultPadding),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: UIConstants.startCrossAlignment,
-                  children: <Widget>[
-                    for (var categoryGroup in categorizedContactData)
-                      if ((categoryGroup['contacts'] as List).isNotEmpty)
-                        _buildContactGroup(
-                          categoryGroup['category'] as String,
-                          categoryGroup['contacts']
-                              as List<Map<String, dynamic>>,
-                        ),
-                  ],
+              padding: const EdgeInsets.all(UIConstants.spacingM),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: UIConstants.startCrossAlignment,
+                    children: <Widget>[
+                      const SizedBox(height: UIConstants.spacingM),
+                      _buildTextField(
+                        label: 'Straße',
+                        controller: _strasseController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Straße ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        label: 'Hausnummer',
+                        controller: _hausnummerController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Hausnummer ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        label: 'PLZ',
+                        controller: _plzController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'PLZ ist erforderlich';
+                          }
+                          if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+                            return 'PLZ muss 5 Ziffern lang sein';
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        label: 'Ort',
+                        controller: _ortController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ort ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -595,7 +634,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             onDelete: _onDeleteContact, // Pass the delete callback
             isDeleting: _isDeleting, // Pass the global deleting state
           ),
-        const SizedBox(height: UIConstants.defaultSpacing),
+        const SizedBox(height: UIConstants.spacingM),
       ],
     );
   }
@@ -611,7 +650,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required bool isDeleting,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
+      padding: EdgeInsets.only(bottom: UIConstants.spacingM / 2),
       child: TextFormField(
         initialValue: value.isNotEmpty ? value : '-',
         readOnly: true,
@@ -619,9 +658,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           fontWeight: FontWeight.bold,
           fontSize: UIConstants.bodyFontSize,
         ),
-        decoration: UIConstants.defaultInputDecoration.copyWith(
+        decoration: UIConstants.formInputDecoration.copyWith(
           labelText: label,
+          labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: isDeleting ? null : label,
+          fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
+          filled: isDeleting ? false : null,
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),
             color: UIConstants.deleteIcon, // Example color
@@ -642,14 +685,41 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   // --- Helper method for section titles (kept as before) ---
   Widget _buildSectionTitle(String title, {Color? color}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing / 2),
+      padding: EdgeInsets.only(bottom: UIConstants.spacingM),
       child: Text(
         title,
-        style: TextStyle(
-          fontSize: UIConstants.titleFontSize,
-          fontWeight: FontWeight.bold,
+        style: UIConstants.sectionTitleStyle.copyWith(
           color: color,
         ),
+      ),
+    );
+  }
+
+  // New helper method to build a text field with validation
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required bool isReadOnly,
+    required Function(String?) validator,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: UIConstants.spacingM),
+      child: TextFormField(
+        controller: controller,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: UIConstants.bodyFontSize,
+        ),
+        decoration: UIConstants.formInputDecoration.copyWith(
+          labelText: label,
+          labelStyle: UIConstants.formLabelStyle,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: isReadOnly ? null : label,
+          fillColor: UIConstants.formInputBackgroundColor,
+          filled: true,
+        ),
+        validator: validator,
+        readOnly: isReadOnly,
       ),
     );
   }
