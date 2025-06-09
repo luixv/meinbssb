@@ -100,33 +100,39 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: UIConstants.defaultAppColor,
-              onPrimary: UIConstants.whiteColor,
-              surface: UIConstants.calendarBackgroundColor,
-              onSurface: UIConstants.textColor,
-            ),
-            textButtonTheme: TextButtonThemeData(
+                  primary: UIConstants.defaultAppColor,
+                  onPrimary: UIConstants.whiteColor,
+                  surface: UIConstants.calendarBackgroundColor,
+                  onSurface: UIConstants.textColor,
+                ),
+            textButtonTheme: const TextButtonThemeData(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(UIConstants.cancelButtonBackground),
-                foregroundColor: MaterialStatePropertyAll(UIConstants.whiteColor),
-                padding: MaterialStatePropertyAll(const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-                textStyle: MaterialStatePropertyAll(UIConstants.buttonStyle),
-                minimumSize: MaterialStatePropertyAll(const Size(120, 48)),
+                backgroundColor:
+                    WidgetStatePropertyAll(UIConstants.cancelButtonBackground),
+                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                textStyle: WidgetStatePropertyAll(UIConstants.buttonStyle),
+                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
               ),
             ),
-            datePickerTheme: DatePickerThemeData(
+            datePickerTheme: const DatePickerThemeData(
               headerBackgroundColor: UIConstants.calendarBackgroundColor,
               backgroundColor: UIConstants.calendarBackgroundColor,
               headerForegroundColor: UIConstants.textColor,
-              dayStyle: const TextStyle(color: UIConstants.textColor),
-              yearStyle: const TextStyle(color: UIConstants.textColor),
-              weekdayStyle: const TextStyle(color: UIConstants.textColor),
+              dayStyle: TextStyle(color: UIConstants.textColor),
+              yearStyle: TextStyle(color: UIConstants.textColor),
+              weekdayStyle: TextStyle(color: UIConstants.textColor),
               confirmButtonStyle: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(UIConstants.primaryColor),
-                foregroundColor: MaterialStatePropertyAll(UIConstants.whiteColor),
-                padding: MaterialStatePropertyAll(const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-                textStyle: MaterialStatePropertyAll(UIConstants.buttonStyle),
-                minimumSize: MaterialStatePropertyAll(const Size(120, 48)),
+                backgroundColor:
+                    WidgetStatePropertyAll(UIConstants.primaryColor),
+                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                textStyle: WidgetStatePropertyAll(UIConstants.buttonStyle),
+                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
               ),
             ),
           ),
