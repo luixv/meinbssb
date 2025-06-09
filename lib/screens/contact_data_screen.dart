@@ -99,19 +99,20 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             ),
           ),
           content: RichText(
-            // Use RichText for mixed styles
             textAlign: TextAlign.center,
             text: TextSpan(
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.tableContentColor,
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie den Kontakt '),
                 TextSpan(
-                  text: '$contactLabel: $contactValue', // No quotes here
+                  text: '$contactLabel: $contactValue',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                  ), // Bold the contact info
+                    color: UIConstants.tableContentColor,
+                  ),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
