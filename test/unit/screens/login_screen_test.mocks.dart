@@ -273,10 +273,10 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i2.Future<List<dynamic>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i2.Future<List<dynamic>> fetchAbsolvierteSeminare(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchAbsolvierteSchulungen,
+          #fetchAbsolvierteSeminare,
           [personId],
         ),
         returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),

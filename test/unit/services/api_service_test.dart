@@ -93,14 +93,16 @@ void main() {
 
   group('ApiService - AuthService Delegation', () {
     test('register calls authService.register', () async {
-      when(mockAuthService.register(
-        firstName: anyNamed('firstName'),
-        lastName: anyNamed('lastName'),
-        passNumber: anyNamed('passNumber'),
-        email: anyNamed('email'),
-        birthDate: anyNamed('birthDate'),
-        zipCode: anyNamed('zipCode'),
-      ),).thenAnswer((_) async => {'ResultType': 1});
+      when(
+        mockAuthService.register(
+          firstName: anyNamed('firstName'),
+          lastName: anyNamed('lastName'),
+          passNumber: anyNamed('passNumber'),
+          email: anyNamed('email'),
+          birthDate: anyNamed('birthDate'),
+          zipCode: anyNamed('zipCode'),
+        ),
+      ).thenAnswer((_) async => {'ResultType': 1});
 
       await apiService.register(
         firstName: 'John',
@@ -111,14 +113,16 @@ void main() {
         zipCode: '12345',
       );
 
-      verify(mockAuthService.register(
-        firstName: 'John',
-        lastName: 'Doe',
-        passNumber: '12345678',
-        email: 'john.doe@example.com',
-        birthDate: '2000-01-01',
-        zipCode: '12345',
-      ),).called(1);
+      verify(
+        mockAuthService.register(
+          firstName: 'John',
+          lastName: 'Doe',
+          passNumber: '12345678',
+          email: 'john.doe@example.com',
+          birthDate: '2000-01-01',
+          zipCode: '12345',
+        ),
+      ).called(1);
     });
 
     test('login calls authService.login on success', () async {
@@ -206,16 +210,18 @@ void main() {
     test(
         'updateKritischeFelderUndAdresse calls userService.updateKritischeFelderUndAdresse',
         () async {
-      when(mockUserService.updateKritischeFelderUndAdresse(
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-      ),).thenAnswer((_) async => true);
+      when(
+        mockUserService.updateKritischeFelderUndAdresse(
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => true);
 
       final result = await apiService.updateKritischeFelderUndAdresse(
         testPersonId,
@@ -229,16 +235,18 @@ void main() {
       );
 
       expect(result, true);
-      verify(mockUserService.updateKritischeFelderUndAdresse(
-        testPersonId,
-        'Dr.',
-        'Doe',
-        'John',
-        1,
-        'Main St',
-        '12345',
-        'City',
-      ),).called(1);
+      verify(
+        mockUserService.updateKritischeFelderUndAdresse(
+          testPersonId,
+          'Dr.',
+          'Doe',
+          'John',
+          1,
+          'Main St',
+          '12345',
+          'City',
+        ),
+      ).called(1);
     });
 
     test(
@@ -294,20 +302,24 @@ void main() {
     test(
         'fetchSchuetzenausweis calls imageService.fetchAndCacheSchuetzenausweis',
         () async {
-      when(mockImageService.fetchAndCacheSchuetzenausweis(
-        testPersonId,
-        any, // fetchData function
-        any, // validityDuration
-      ),).thenAnswer((_) async => testImageData);
+      when(
+        mockImageService.fetchAndCacheSchuetzenausweis(
+          testPersonId,
+          any, // fetchData function
+          any, // validityDuration
+        ),
+      ).thenAnswer((_) async => testImageData);
 
       final result = await apiService.fetchSchuetzenausweis(testPersonId);
 
       expect(result, testImageData);
-      verify(mockImageService.fetchAndCacheSchuetzenausweis(
-        testPersonId,
-        any,
-        any,
-      ),).called(1);
+      verify(
+        mockImageService.fetchAndCacheSchuetzenausweis(
+          testPersonId,
+          any,
+          any,
+        ),
+      ).called(1);
     });
   });
 
@@ -332,7 +344,7 @@ void main() {
       when(mockTrainingService.fetchAbsolvierteSchulungen(testPersonId))
           .thenAnswer((_) async => testSchulungenList);
 
-      final result = await apiService.fetchAbsolvierteSchulungen(testPersonId);
+      final result = await apiService.fetchAbsolvierteSeminare(testPersonId);
 
       expect(result, testSchulungenList);
       verify(mockTrainingService.fetchAbsolvierteSchulungen(testPersonId))
@@ -353,17 +365,25 @@ void main() {
     test(
         'fetchAngemeldeteSchulungen calls trainingService.fetchAngemeldeteSchulungen',
         () async {
-      when(mockTrainingService.fetchAngemeldeteSchulungen(
-              testPersonId, testAbDatum,),)
-          .thenAnswer((_) async => testSchulungenList);
+      when(
+        mockTrainingService.fetchAngemeldeteSchulungen(
+          testPersonId,
+          testAbDatum,
+        ),
+      ).thenAnswer((_) async => testSchulungenList);
 
       final result = await apiService.fetchAngemeldeteSchulungen(
-          testPersonId, testAbDatum,);
+        testPersonId,
+        testAbDatum,
+      );
 
       expect(result, testSchulungenList);
-      verify(mockTrainingService.fetchAngemeldeteSchulungen(
-              testPersonId, testAbDatum,),)
-          .called(1);
+      verify(
+        mockTrainingService.fetchAngemeldeteSchulungen(
+          testPersonId,
+          testAbDatum,
+        ),
+      ).called(1);
     });
 
     test(
@@ -380,32 +400,38 @@ void main() {
 
     test('unregisterFromSchulung calls trainingService.unregisterFromSchulung',
         () async {
-      when(mockTrainingService
-              .unregisterFromSchulung(testSchulungenTeilnehmerID),)
-          .thenAnswer((_) async => true);
+      when(
+        mockTrainingService.unregisterFromSchulung(testSchulungenTeilnehmerID),
+      ).thenAnswer((_) async => true);
 
       final result =
           await apiService.unregisterFromSchulung(testSchulungenTeilnehmerID);
 
       expect(result, true);
-      verify(mockTrainingService
-              .unregisterFromSchulung(testSchulungenTeilnehmerID),)
-          .called(1);
+      verify(
+        mockTrainingService.unregisterFromSchulung(testSchulungenTeilnehmerID),
+      ).called(1);
     });
 
     test('registerFromSchulung calls trainingService.registerForSchulung',
         () async {
-      when(mockTrainingService.registerForSchulung(
-              testPersonId, testSchulungId,),)
-          .thenAnswer((_) async => true);
+      when(
+        mockTrainingService.registerForSchulung(
+          testPersonId,
+          testSchulungId,
+        ),
+      ).thenAnswer((_) async => true);
 
       final result =
           await apiService.registerFromSchulung(testPersonId, testSchulungId);
 
       expect(result, true);
-      verify(mockTrainingService.registerForSchulung(
-              testPersonId, testSchulungId,),)
-          .called(1);
+      verify(
+        mockTrainingService.registerForSchulung(
+          testPersonId,
+          testSchulungId,
+        ),
+      ).called(1);
     });
   });
 
@@ -427,12 +453,14 @@ void main() {
     });
 
     test('registerBankdaten calls bankService.registerBankdaten', () async {
-      when(mockBankService.registerBankdaten(
-        testWebloginId,
-        'Holder Name',
-        'DE12345',
-        'BICXYZ',
-      ),).thenAnswer((_) async => {'BankdatenWebID': 1});
+      when(
+        mockBankService.registerBankdaten(
+          testWebloginId,
+          'Holder Name',
+          'DE12345',
+          'BICXYZ',
+        ),
+      ).thenAnswer((_) async => {'BankdatenWebID': 1});
 
       final result = await apiService.registerBankdaten(
         testWebloginId,
@@ -442,12 +470,14 @@ void main() {
       );
 
       expect(result, {'BankdatenWebID': 1});
-      verify(mockBankService.registerBankdaten(
-        testWebloginId,
-        'Holder Name',
-        'DE12345',
-        'BICXYZ',
-      ),).called(1);
+      verify(
+        mockBankService.registerBankdaten(
+          testWebloginId,
+          'Holder Name',
+          'DE12345',
+          'BICXYZ',
+        ),
+      ).called(1);
     });
 
     test('deleteBankdaten calls bankService.deleteBankdaten', () async {

@@ -5,9 +5,11 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
+import '/screens/contact_data_screen.dart';
+import '/screens/bank_data_screen.dart';
 import '/screens/impressum_screen.dart';
-import '/screens/personal_data_screen.dart';
-import '/screens/absolvierte_schulungen_screen.dart';
+//import '/screens/personal_data_screen.dart';
+import 'absolvierte_seminare_screen.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -45,6 +47,45 @@ class AppMenu extends StatelessWidget {
     );
   }
 
+  void _openContactDataScreen(int personId) {
+    // Function to open ContactDataScreen
+    // call the api_service for the contact data
+    // and pass the data to the ContactDataScreen
+    //fetchKontakte(personId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactDataScreen(
+          userData, // Pass the userData
+          personId: personId,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
+  void _openBanktDataScreen(int webloginId) {
+    // Function to open BankDataScreen
+    // call the api_service for the bank data
+    // and pass the data to the BankDataScreen
+    //fetchBankdata(webloginId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BankDataScreen(
+          userData, // Pass the userData
+          webloginId: webloginId,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout,
+        ),
+      ),
+    );
+  }
+
+/*
   void _openPersonalDataScreen() {
     // Function to open PersonDataScreen
     Navigator.push(
@@ -58,18 +99,17 @@ class AppMenu extends StatelessWidget {
       ),
     );
   }
-
-
-  void _openAbsolvierteSchulungenScreen(int personId) {
-    // Function to open AbsolvierteSchulungenScreen
-    // call the api_service for the Absolvierte Schulungen data
-    // and pass the data to the AbsolvierteSchulungenScreen
-    //fetchAbsolvierteSchulungen(personId);
+*/
+  void _openAbsolvierteSeminareScreen(int personId) {
+    // Function to open AbsolvierteSeminareScreen
+    // call the api_service for the Absolvierte Seminare data
+    // and pass the data to the AbsolvierteSeminareScreen
+    //fetchAbsolvierteSeminare(personId);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AbsolvierteSchulungenScreen(
+        builder: (context) => AbsolvierteSeminareScreen(
           userData, // Pass the userData
           personId: personId,
           isLoggedIn: isLoggedIn,
@@ -78,7 +118,6 @@ class AppMenu extends StatelessWidget {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,16 +137,16 @@ class AppMenu extends StatelessWidget {
           _openImpressumScreen();
         } else if (value == 'kontaktdaten') {
           // Call the function to open KontaktdatenScreen
-          // _openContactDataScreen(userData['PERSONID']);
-        } else if (value == 'absolvierte_schulungen') {
-          // Call the function to open AbsolvierteSchulungenScreen
-          _openAbsolvierteSchulungenScreen(userData['PERSONID']);
+          _openContactDataScreen(userData['PERSONID']);
+        } else if (value == 'absolvierte_seminare') {
+          // Call the function to open AbsolvierteSeminareScreen
+          _openAbsolvierteSeminareScreen(userData['PERSONID']);
         } else if (value == 'zahlungsart') {
           // Call the function to open BankdatenScreen
-          // _openBanktDataScreen(userData['WEBLOGINID']);
+          _openBanktDataScreen(userData['WEBLOGINID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
-          _openPersonalDataScreen();
+          //_openPersonalDataScreen();
         }
       },
       itemBuilder: (BuildContext context) {
@@ -140,14 +179,14 @@ class AppMenu extends StatelessWidget {
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'absolvierte_schulungen',
+              value: 'absolvierte_seminare',
               child: Text(
-                'Absolvierte Schulungen',
+                'Absolvierte Seminare',
                 style: UIConstants.bodyStyle,
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'digitaler_schuetzenausweis',
+              value: 'schuetzenausweis',
               child: Text(
                 'Schützenausweis',
                 style: UIConstants.bodyStyle,
@@ -156,14 +195,21 @@ class AppMenu extends StatelessWidget {
             const PopupMenuItem<String>(
               value: 'aenderung_schuetzenausweis',
               child: Text(
-                'Änderung Schützenausweis',
+                'Startrechete Ändern',
                 style: UIConstants.bodyStyle,
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'physischer_schuetzenausweis',
+              value: 'ausweis_neu_ausstellen',
               child: Text(
-                'Physischer Schützenausweis',
+                'Ausweis neu ausstellen',
+                style: UIConstants.bodyStyle,
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'oktoberfestlandesschiessen',
+              child: Text(
+                'Oktoberfestlandesschiessen',
                 style: UIConstants.bodyStyle,
               ),
             ),
@@ -176,16 +222,16 @@ class AppMenu extends StatelessWidget {
               child: Text('Kontaktdaten', style: UIConstants.bodyStyle),
             ),
             const PopupMenuItem<String>(
-              value: 'oktoberfestlandesschiessen',
+              value: 'zahlungsart',
               child: Text(
-                'Oktoberfestlandesschiessen',
+                'Zahlungsart',
                 style: UIConstants.bodyStyle,
               ),
             ),
             const PopupMenuItem<String>(
-              value: 'zahlungsart',
+              value: 'profilbild',
               child: Text(
-                'Zahlungsart',
+                'Profilbild',
                 style: UIConstants.bodyStyle,
               ),
             ),

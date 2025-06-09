@@ -217,7 +217,7 @@ class StartScreenState extends State<StartScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
-          'Start',
+          'Home',
           style: UIConstants.appBarTitleStyle,
         ),
         actions: [
@@ -299,7 +299,8 @@ class StartScreenState extends State<StartScreen> {
                 child: ListView.separated(
                   itemCount: schulungen.length,
                   separatorBuilder: (_, __) => const SizedBox(
-                      height: UIConstants.defaultSeparatorHeight,),
+                    height: UIConstants.defaultSeparatorHeight,
+                  ),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
@@ -324,8 +325,10 @@ class StartScreenState extends State<StartScreen> {
                           ),
                         ],
                       ),
-                      title: Text(description,
-                          style: UIConstants.listItemTitleStyle,),
+                      title: Text(
+                        description,
+                        style: UIConstants.listItemTitleStyle,
+                      ),
                       subtitle: Text(
                         formattedDate,
                         style: UIConstants.listItemSubtitleStyle,

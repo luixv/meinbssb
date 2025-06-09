@@ -6,8 +6,8 @@ import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
 import '../services/core/logger_service.dart';
 
-class AbsolvierteSchulungenScreen extends StatefulWidget {
-  const AbsolvierteSchulungenScreen(
+class AbsolvierteSeminareScreen extends StatefulWidget {
+  const AbsolvierteSeminareScreen(
     this.userData, {
     required this.personId,
     required this.isLoggedIn,
@@ -21,39 +21,38 @@ class AbsolvierteSchulungenScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  AbsolvierteSchulungenScreenState createState() =>
-      AbsolvierteSchulungenScreenState();
+  AbsolvierteSeminareScreenState createState() =>
+      AbsolvierteSeminareScreenState();
 }
 
-class AbsolvierteSchulungenScreenState
-    extends State<AbsolvierteSchulungenScreen> {
-  late Future<List<dynamic>> _absolvierteSchulungenFuture;
+class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
+  late Future<List<dynamic>> _absolvierteSeminareFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadSchulungenData();
+    _loadSeminareData();
   }
 
-  void _loadSchulungenData() {
+  void _loadSeminareData() {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _absolvierteSchulungenFuture =
-          apiService.fetchAbsolvierteSchulungen(widget.personId);
+      _absolvierteSeminareFuture =
+          apiService.fetchAbsolvierteSeminare(widget.personId);
       LoggerService.logInfo(
-        'AbsolvierteSchulungenScreen: Initiating completed trainings data fetch.',
+        'AbsolvierteSeminareScreen: Initiating completed trainings data fetch.',
       );
     } catch (e) {
       LoggerService.logError(
         'Error setting up completed trainings data fetch: $e',
       );
-      _absolvierteSchulungenFuture =
+      _absolvierteSeminareFuture =
           Future.value([]); // Return empty list on error
     }
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user from AbsolvierteSchulungenScreen');
+    LoggerService.logInfo('Logging out user from AbsolvierteSeminareScreen');
     widget.onLogout(); // Call the logout function provided by the parent.
     Navigator.of(context).pushReplacementNamed('/login');
   }
@@ -66,7 +65,7 @@ class AbsolvierteSchulungenScreenState
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
-          'Absolvierte Schulungen', // Screen title
+          'Absolvierte Seminare', // Screen title
           style: UIConstants.titleStyle,
         ),
         actions: [
@@ -83,7 +82,7 @@ class AbsolvierteSchulungenScreenState
         ],
       ),
       body: FutureBuilder<List<dynamic>>(
-        future: _absolvierteSchulungenFuture,
+        future: _absolvierteSeminareFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -93,27 +92,27 @@ class AbsolvierteSchulungenScreenState
             );
             return Center(
               child: Text(
-                'Fehler beim Laden der Schulungsdaten: ${snapshot.error}',
+                'Fehler beim Laden der Seminardaten: ${snapshot.error}',
               ),
             );
           } else if (snapshot.hasData && snapshot.data != null) {
-            final List<dynamic> schulungen = snapshot.data!;
+            final List<dynamic> seminare = snapshot.data!;
 
-            if (schulungen.isEmpty) {
+            if (seminare.isEmpty) {
               return const Center(
-                child: Text('Keine absolvierten Schulungen gefunden.'),
+                child: Text('Keine absolvierten Seminare gefunden.'),
               );
             }
 
             return Padding(
               padding: UIConstants.defaultPadding,
               child: ListView.separated(
-                itemCount: schulungen.length,
+                itemCount: seminare.length,
                 separatorBuilder: (_, __) => const SizedBox(
                   height: UIConstants.defaultSeparatorHeight,
                 ),
                 itemBuilder: (context, index) {
-                  final schulung = schulungen[index];
+                  final schulung = seminare[index];
                   return ListTile(
                     tileColor: UIConstants.tileColor,
                     shape: RoundedRectangleBorder(
@@ -153,7 +152,7 @@ class AbsolvierteSchulungenScreenState
           } else {
             // This case handles when snapshot.data is null (though covered by hasData check)
             return const Center(
-              child: Text('Keine absolvierten Schulungen verfügbar.'),
+              child: Text('Keine absolvierten Seminare verfügbar.'),
             );
           }
         },
