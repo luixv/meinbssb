@@ -44,7 +44,6 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   Map<String, dynamic> _userData = {};
-  bool _showSplash = true;
 
   @override
   void initState() {
@@ -77,20 +76,8 @@ class MyAppState extends State<MyApp> {
     });
   }
 
-  void _onSplashFinish() {
-    setState(() {
-      _showSplash = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_showSplash) {
-      return MaterialApp(
-        home: SplashScreen(onFinish: _onSplashFinish),
-      );
-    }
-
     return MaterialApp(
       title: 'Mein BSSB',
       theme: ThemeData(
@@ -108,7 +95,7 @@ class MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
-      initialRoute: _isLoggedIn ? '/home' : '/login',
+      initialRoute: '/splash',
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -128,6 +115,13 @@ class MyAppState extends State<MyApp> {
         );
       },
       routes: {
+        '/splash': (context) => SplashScreen(
+              onFinish: () {
+                Navigator.of(context).pushReplacementNamed(
+                  _isLoggedIn ? '/home' : '/login',
+                );
+              },
+            ),
         '/login': (context) => LoginScreen(
               onLoginSuccess: (userData) => _setLoggedIn(true, userData),
             ),
