@@ -78,7 +78,7 @@ class _ZweitmitgliedschaftenScreenState
         children: [
           const Icon(Icons.error_outline,
               size: UIConstants.defaultIconSize, color: UIConstants.errorColor),
-          const SizedBox(height: UIConstants.defaultSpacing),
+          const SizedBox(height: UIConstants.spacingS),
           Text(
             message,
             textAlign: TextAlign.center,
@@ -117,12 +117,12 @@ class _ZweitmitgliedschaftenScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             displayedLogo, // Use the potentially mocked logo
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               'Mein BSSB',
               style: UIConstants.titleStyle.copyWith(color: _appColor),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               "${_userData['VORNAME']} ${_userData['NAMEN']}",
               style: UIConstants.titleStyle,
@@ -151,7 +151,7 @@ class _ZweitmitgliedschaftenScreenState
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),
             const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<List<dynamic>>(
@@ -219,7 +219,7 @@ class _ZweitmitgliedschaftenScreenState
                 );
               },
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             const Text('Disziplinen:', style: UIConstants.titleStyle),
             const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<List<dynamic>>(

@@ -44,7 +44,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const LogoWidget(),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               message,
               style: UIConstants.successStyle,

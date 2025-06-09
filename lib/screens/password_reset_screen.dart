@@ -103,7 +103,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             Text(
               'Passwort zurücksetzen',
               key: const Key('passwordResetTitle'),
@@ -111,7 +111,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 color: UIConstants.defaultAppColor,
               ),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             if (_errorMessage.isNotEmpty)
               Text(_errorMessage, style: UIConstants.errorStyle),
             if (_successMessage.isNotEmpty)
@@ -122,7 +122,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 labelText: 'Schützenausweisnummer',
               ),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

@@ -295,7 +295,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               const SizedBox(
-                                height: UIConstants.defaultSpacing,
+                                height: UIConstants.spacingS,
                               ),
                               // Read-only fields with FloatingLabelBehavior.always for clarity
                               _buildTextField(
@@ -402,7 +402,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                 inputTextStyle: UIConstants.formValueStyle,
                               ),
                               const SizedBox(
-                                height: UIConstants.defaultSpacing,
+                                height: UIConstants.spacingS,
                               ),
                             ],
                           ),
@@ -452,7 +452,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         : UIConstants.formValueStyle;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,
