@@ -334,7 +334,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                     !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Vorname ist erforderlich';
+                                    return 'Bitte geben Sie Ihren Vornamen ein';
                                   }
                                   return null;
                                 },
@@ -347,7 +347,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                     !_isEditing, // Read-only if not editing
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Nachname ist erforderlich';
+                                    return 'Bitte geben Sie Ihren Nachnamen ein';
                                   }
                                   return null;
                                 },
@@ -441,29 +441,17 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     Widget? suffixIcon,
     TextInputType? keyboardType,
   }) {
-    // Determine the text style based on mode and read-only status
-    TextStyle effectiveTextStyle;
-    if (!isReadOnly) {
-      // Editable fields: default style or you can customize further
-      effectiveTextStyle = inputTextStyle ??
-          const TextStyle(
-            fontSize: UIConstants.bodyFontSize,
-          );
-    } else {
-      // Read-only fields: bold if in view mode
-      effectiveTextStyle = inputTextStyle ??
-          const TextStyle(
-            fontSize: UIConstants.bodyFontSize,
-            fontWeight: FontWeight.bold,
-          );
-    }
+    // Use UIConstants form styles
+    final effectiveTextStyle = isReadOnly
+        ? UIConstants.formValueBoldStyle
+        : UIConstants.formValueStyle;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,
-        decoration: UIConstants.defaultInputDecoration.copyWith(
+        decoration: UIConstants.formInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: floatingLabelBehavior,
           hintText: isReadOnly ? null : label,

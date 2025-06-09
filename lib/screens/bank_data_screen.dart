@@ -225,7 +225,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
+          title: Center(
             child: Text(
               'Bankdaten löschen',
               style: UIConstants.dialogTitleStyle,
@@ -236,12 +236,12 @@ class BankDataScreenState extends State<BankDataScreen> {
             text: TextSpan(
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(
-                  text: 'Sind Sie sicher, dass Sie Ihre Bankdaten ',
-                ),
+                const TextSpan(text: 'Sind Sie sicher, dass Sie die Bankdaten '),
                 TextSpan(
                   text: _ibanController.text,
-                  style: UIConstants.dialogBoldContentStyle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -249,9 +249,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.defaultPadding,
-              ),
+              padding: UIConstants.dialogPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -260,38 +258,39 @@ class BankDataScreenState extends State<BankDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: UIConstants.cancelButtonStyle,
-                      child: const Row(
+                      style: UIConstants.dialogCancelButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
-                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style: TextStyle(color: UIConstants.cancelButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: UIConstants.defaultHorizontalPadding),
+                  UIConstants.horizontalSpacingM,
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: UIConstants.deleteButtonStyle,
-                      child: const Row(
+                      style: UIConstants.dialogAcceptButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.delete_forever,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
+                          Icon(Icons.check, color: UIConstants.checkIcon),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style: TextStyle(color: UIConstants.deleteButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
                           ),
                         ],
                       ),

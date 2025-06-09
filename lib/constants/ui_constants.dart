@@ -365,6 +365,14 @@ class UIConstants {
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
 
+  // Colors
+  static const Color primaryColor = defaultAppColor;
+  static const Color textColor = tableContentColor;
+  static const Color errorColor = Color(0xFFD32F2F);
+  static const Color successColor = Color(0xFF4CAF50);
+  static const Color warningColor = Color(0xFFFFA000);
+  static const Color infoColor = Color(0xFF2196F3);
+
   // Dialog Styles
   static final dialogTitleStyle = TextStyle(
     fontSize: titleFontSize,
@@ -407,4 +415,63 @@ class UIConstants {
   static const SizedBox verticalSpacingM = SizedBox(height: spacingM);
   static const SizedBox verticalSpacingL = SizedBox(height: spacingL);
   static const SizedBox verticalSpacingXL = SizedBox(height: spacingXL);
+
+  // Dialog Button Styles
+  static final dialogAcceptButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: acceptButtonBackground,
+    padding: buttonPadding,
+  );
+
+  static final dialogCancelButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: cancelButtonBackground,
+    padding: buttonPadding,
+  );
+
+  // Form Styles
+  static final formLabelStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: textColor,
+  );
+
+  static final formValueStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: textColor,
+  );
+
+  static final formValueBoldStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontWeight: FontWeight.bold,
+    color: textColor,
+  );
+
+  static final formErrorStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: errorColor,
+  );
+
+  // Message Styles
+  static final errorMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: errorColor,
+  );
+
+  static final successMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: successColor,
+  );
+
+  static final warningMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: warningColor,
+  );
+
+  static final infoMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: infoColor,
+  );
+
+  static final offlineMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: warningColor,
+  );
 }

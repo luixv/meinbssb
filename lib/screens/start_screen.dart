@@ -92,22 +92,16 @@ class StartScreenState extends State<StartScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
+          title: Center(
             child: Text(
               'Schulung abmelden',
-              style: TextStyle(
-                color: UIConstants.defaultAppColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.tableContentColor,
-              ),
+              style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie die Schulung '),
                 TextSpan(
@@ -122,9 +116,7 @@ class StartScreenState extends State<StartScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.defaultPadding,
-              ),
+              padding: UIConstants.dialogPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -133,43 +125,39 @@ class StartScreenState extends State<StartScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
-                      child: const Row(
+                      style: UIConstants.dialogCancelButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style:
-                                TextStyle(color: UIConstants.cancelButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  UIConstants.horizontalSpacingM,
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
-                      child: const Row(
+                      style: UIConstants.dialogAcceptButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style:
-                                TextStyle(color: UIConstants.deleteButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
                           ),
                         ],
                       ),

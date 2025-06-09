@@ -89,9 +89,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
+          title: Center(
             child: Text(
-              'Kontakt löschen',
+              'Kontaktdaten löschen',
               style: UIConstants.dialogTitleStyle,
             ),
           ),
@@ -100,10 +100,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             text: TextSpan(
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(text: 'Sind Sie sicher, dass Sie den Kontakt '),
+                const TextSpan(text: 'Sind Sie sicher, dass Sie die Kontaktdaten '),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
-                  style: UIConstants.dialogBoldContentStyle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -111,9 +113,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.defaultPadding,
-              ),
+              padding: UIConstants.dialogPadding,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -122,38 +122,39 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: UIConstants.cancelButtonStyle,
-                      child: const Row(
+                      style: UIConstants.dialogCancelButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
-                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style: TextStyle(color: UIConstants.cancelButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: UIConstants.defaultHorizontalPadding),
+                  UIConstants.horizontalSpacingM,
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: UIConstants.deleteButtonStyle,
-                      child: const Row(
+                      style: UIConstants.dialogAcceptButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.delete_forever,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
+                          Icon(Icons.check, color: UIConstants.checkIcon),
+                          UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style: TextStyle(color: UIConstants.deleteButtonText),
+                            style: UIConstants.dialogButtonStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
                           ),
                         ],
                       ),
