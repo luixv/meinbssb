@@ -516,6 +516,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                             text: 'Datenschutzbestimmungen',
                             style: UIConstants.linkStyle.copyWith(
                               color: UIConstants.linkColor,
+                              decoration: TextDecoration.underline,
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {

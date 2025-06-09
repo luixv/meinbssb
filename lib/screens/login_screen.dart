@@ -240,8 +240,8 @@ class LoginScreenState extends State<LoginScreen> {
             child: Text(
               'Passwort vergessen?',
               style: UIConstants.linkStyle.copyWith(
-                color: _appColor,
-                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.linkColor,
+                decoration: TextDecoration.underline,
               ),
             ),
           ),
@@ -263,8 +263,8 @@ class LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'Registrieren',
                     style: UIConstants.linkStyle.copyWith(
-                      color: _appColor,
-                      fontSize: UIConstants.subtitleFontSize,
+                      color: UIConstants.linkColor,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
@@ -287,8 +287,8 @@ class LoginScreenState extends State<LoginScreen> {
             child: Text(
               'Hilfe',
               style: UIConstants.linkStyle.copyWith(
-                color: _appColor,
-                fontSize: UIConstants.subtitleFontSize,
+                color: UIConstants.linkColor,
+                decoration: TextDecoration.underline,
               ),
             ),
           ),
