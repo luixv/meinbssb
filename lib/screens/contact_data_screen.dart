@@ -135,18 +135,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.cancelButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.close,
                             color: UIConstants.closeIcon,
-                            size: UIConstants.bodyFontSize,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: const TextStyle(color: UIConstants.cancelButtonText),
+                            style: TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
@@ -164,18 +163,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.deleteButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.delete_forever,
                             color: Colors.white,
-                            size: UIConstants.bodyFontSize,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Löschen',
-                            style: const TextStyle(color: UIConstants.deleteButtonText),
+                            style: TextStyle(color: UIConstants.deleteButtonText),
                           ),
                         ],
                       ),
@@ -430,18 +428,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         backgroundColor: UIConstants.cancelButtonBackground,
                         padding: UIConstants.buttonPadding,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.close,
                             color: UIConstants.closeIcon,
-                            size: UIConstants.bodyFontSize,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: const TextStyle(color: UIConstants.cancelButtonText),
+                            style: TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
