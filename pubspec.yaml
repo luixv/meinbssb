@@ -96,5 +96,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/myBSSB-logo.png
+    - assets/images/BSSB_Wappen.png
     - assets/config.json
 
