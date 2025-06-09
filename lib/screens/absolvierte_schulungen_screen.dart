@@ -107,41 +107,43 @@ class AbsolvierteSchulungenScreenState
 
             return Padding(
               padding: UIConstants.defaultPadding,
-              child: ListView.builder(
+              child: ListView.separated(
                 itemCount: schulungen.length,
+                separatorBuilder: (_, __) => const SizedBox(
+                  height: UIConstants.defaultSeparatorHeight,
+                ),
                 itemBuilder: (context, index) {
                   final schulung = schulungen[index];
-                  // Display AUSGESTELLTAM, BEZEICHNUNG, GUELTIGBIS
-                  return Card(
-                    color: UIConstants.cardColor,
-                    margin: const EdgeInsets.only(
-                      bottom: UIConstants.defaultSpacing,
+                  return ListTile(
+                    tileColor: UIConstants.tileColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
                     ),
-                    child: Padding(
-                      padding: UIConstants.defaultPadding,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoText(
-                            label: 'Ausgestellt am:',
-                            value: schulung['AUSGESTELLTAM'],
-                          ),
-                          const SizedBox(
-                            height: UIConstants.listItemInterSpace,
-                          ),
-                          _buildInfoText(
-                            label: 'Bezeichnung:',
-                            value: schulung['BEZEICHNUNG'],
-                          ),
-                          const SizedBox(
-                            height: UIConstants.listItemInterSpace,
-                          ),
-                          _buildInfoText(
-                            label: 'Gültig bis:',
-                            value: schulung['GUELTIGBIS'],
-                          ),
-                        ],
-                      ),
+                    leading: const Column(
+                      mainAxisAlignment: UIConstants.listItemLeadingAlignment,
+                      children: [
+                        Icon(
+                          Icons.school_outlined,
+                          color: UIConstants.defaultAppColor,
+                        ),
+                      ],
+                    ),
+                    title: Text(
+                      schulung['BEZEICHNUNG'] ?? 'N/A',
+                      style: UIConstants.listItemTitleStyle,
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ausgestellt am: ${schulung['AUSGESTELLTAM'] ?? 'N/A'}',
+                          style: UIConstants.listItemSubtitleStyle,
+                        ),
+                        Text(
+                          'Gültig bis: ${schulung['GUELTIGBIS'] ?? 'N/A'}',
+                          style: UIConstants.listItemSubtitleStyle,
+                        ),
+                      ],
                     ),
                   );
                 },
