@@ -74,7 +74,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _contactDataFuture = apiService.fetchKontakte(widget.personId);
+      _contactDataFuture = apiService.fetchKontakte(widget.personId).then((data) {
+        LoggerService.logInfo('Contact data structure: $data');
+        return data;
+      });
       LoggerService.logInfo(
         'ContactDataScreen: Initiating contact data fetch.',
       );
@@ -537,7 +540,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             final List<Map<String, dynamic>> categorizedContactData = snapshot.data!;
 
             final bool hasContacts = categorizedContactData
-                .any((group) => (group['contacts'] as List).isNotEmpty);
+                .any((group) => (group['contacts'] as List?)?.isNotEmpty ?? false);
 
             if (!hasContacts) {
               return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
@@ -551,10 +554,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   children: [
                     // Display categorized contacts
                     for (var category in categorizedContactData)
-                      if ((category['contacts'] as List).isNotEmpty)
+                      if ((category['contacts'] as List?)?.isNotEmpty ?? false)
                         _buildContactGroup(
-                          category['title'] as String,
-                          category['contacts'] as List<Map<String, dynamic>>,
+                          category['category']?.toString() ?? 'Unbekannt',
+                          (category['contacts'] as List?)?.cast<Map<String, dynamic>>() ?? [],
                         ),
                   ],
                 ),
@@ -578,6 +581,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
   }
 
+  // Helper method to safely cast dynamic values
+  T? _safeCast<T>(dynamic value) {
+    if (value == null) return null;
+    if (value is T) return value;
+    if (T == String) return value.toString() as T;
+    if (T == int) {
+      if (value is num) return value.toInt() as T;
+      if (value is String) return int.tryParse(value) as T?;
+    }
+    return null;
+  }
+
   // Helper method to build a contact group (e.g., "Privat")
   Widget _buildContactGroup(
     String categoryTitle,
@@ -588,14 +603,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       children: [
         _buildSectionTitle(categoryTitle, color: UIConstants.defaultAppColor),
         for (var contact in contacts)
-          _buildReadOnlyTextField(
-            label: contact['type'] as String,
-            value: contact['value'] as String,
-            kontaktId: contact['kontaktId'] as int,
-            rawKontaktTyp: contact['rawKontaktTyp'] as int,
-            onDelete: _onDeleteContact,
-            isDeleting: _isDeleting,
-          ),
+          if (contact['type'] != null && contact['value'] != null)
+            _buildReadOnlyTextField(
+              label: contact['type'].toString(),
+              value: contact['value'].toString(),
+              kontaktId: contact['kontaktId'] as int? ?? 0,
+              rawKontaktTyp: contact['rawKontaktTyp'] as int? ?? 0,
+              onDelete: _onDeleteContact,
+              isDeleting: _isDeleting,
+            ),
         const SizedBox(height: UIConstants.spacingM),
       ],
     );
@@ -608,36 +624,39 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required int kontaktId,
     required int rawKontaktTyp,
     required Function(int kontaktId, int kontaktTyp, String value, String label)
-        onDelete, // Updated signature
+        onDelete,
     required bool isDeleting,
   }) {
+    final displayValue = value.isNotEmpty ? value : '-';
+    final displayLabel = label.isNotEmpty ? label : 'Unbekannt';
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingM / 2),
       child: TextFormField(
-        initialValue: value.isNotEmpty ? value : '-',
+        initialValue: displayValue,
         readOnly: true,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: UIConstants.bodyFontSize,
         ),
         decoration: UIConstants.formInputDecoration.copyWith(
-          labelText: label,
+          labelText: displayLabel,
           labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isDeleting ? null : label,
+          hintText: isDeleting ? null : displayLabel,
           fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
           filled: isDeleting ? false : null,
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),
-            color: UIConstants.deleteIcon, // Example color
+            color: UIConstants.deleteIcon,
             onPressed: isDeleting
-                ? null // Disable button while deleting
+                ? null
                 : () => onDelete(
                       kontaktId,
                       rawKontaktTyp,
-                      value, // Pass contact value
-                      label, // Pass contact label
-                    ), // Call delete handler
+                      displayValue,
+                      displayLabel,
+                    ),
           ),
         ),
       ),
