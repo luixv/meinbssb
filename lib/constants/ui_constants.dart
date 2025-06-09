@@ -152,6 +152,8 @@ class UIConstants {
   static const double defaultHorizontalPadding = 16.0;
   static const double defaultSeparatorHeight = 10.0;
 
+  static const double defaultIconSize = 16.0;
+
   // Text Styles
   static const TextStyle headerStyle = TextStyle(
     fontSize: headerFontSize,
