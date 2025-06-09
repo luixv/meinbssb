@@ -279,7 +279,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               ? Center(
                   child: Text(
                     _errorMessage!,
-                    //             style: UIConstants.errorMessageStyle,
                   ),
                 )
               : _currentPassData == null && !_isLoading
@@ -297,11 +296,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               const SizedBox(
                                 height: UIConstants.spacingS,
                               ),
-                              // Read-only fields with FloatingLabelBehavior.always for clarity
                               _buildTextField(
                                 label: 'Passnummer',
                                 controller: _passnummerController,
-                                isReadOnly: true, // Always read-only
+                                isReadOnly: true,
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
                                 inputTextStyle: UIConstants.formValueStyle,
@@ -309,7 +307,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Geburtsdatum',
                                 controller: _geburtsdatumController,
-                                isReadOnly: true, // Always read-only
+                                isReadOnly: true,
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
                                 inputTextStyle: UIConstants.formValueStyle,
@@ -323,23 +321,20 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   ),
                                 ),
                               ),
-                              // Editable fields will now depend on _isEditing
                               _buildTextField(
                                 label: 'Titel',
                                 controller: _titelController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
+                                isReadOnly: !_isEditing,
                                 validator: (value) => null,
                                 inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Vorname',
                                 controller: _vornameController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
+                                isReadOnly: !_isEditing,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Bitte geben Sie Ihren Vornamen ein';
+                                    return 'Vorname ist erforderlich';
                                   }
                                   return null;
                                 },
@@ -348,21 +343,19 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Nachname',
                                 controller: _nachnameController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
+                                isReadOnly: !_isEditing,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Bitte geben Sie Ihren Nachnamen ein';
+                                    return 'Nachname ist erforderlich';
                                   }
                                   return null;
                                 },
                                 inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
-                                label: 'Straße + Hausnummer',
+                                label: 'Straße und Hausnummer',
                                 controller: _strasseHausnummerController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
+                                isReadOnly: !_isEditing,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Straße und Hausnummer sind erforderlich';
@@ -374,15 +367,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Postleitzahl',
                                 controller: _postleitzahlController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
-                                keyboardType: TextInputType.number,
+                                isReadOnly: !_isEditing,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Postleitzahl ist erforderlich';
-                                  }
-                                  if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-                                    return 'Ungültige Postleitzahl';
                                   }
                                   return null;
                                 },
@@ -391,8 +379,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                               _buildTextField(
                                 label: 'Ort',
                                 controller: _ortController,
-                                isReadOnly:
-                                    !_isEditing, // Read-only if not editing
+                                isReadOnly: !_isEditing,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Ort ist erforderlich';
@@ -409,13 +396,10 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         ),
                       ),
                     ),
-      // ---
-      // Modified Floating Action Button
-      floatingActionButton: _isOnline // <-- Conditionally render FAB
+      floatingActionButton: _isOnline
           ? FloatingActionButton(
-              heroTag: 'personalDataFab', // Add unique hero tag
-              onPressed:
-                  _isLoading ? null : _handleFabPressed, // Call the new handler
+              heroTag: 'personalDataEditFab',
+              onPressed: _isLoading ? null : _handleFabPressed,
               backgroundColor: UIConstants.defaultAppColor,
               child: _isLoading
                   ? const CircularProgressIndicator(
@@ -424,15 +408,12 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                       ),
                     )
                   : Icon(
-                      _isEditing
-                          ? Icons.save
-                          : Icons.edit, // Icon changes based on mode
+                      _isEditing ? Icons.save : Icons.edit,
                       color: UIConstants.saveEditIcon,
                     ),
             )
-          : null, // <-- Render nothing if offline
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // ---
     );
   }
 
