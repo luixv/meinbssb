@@ -42,7 +42,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   Map<String, dynamic>? _currentPassData;
   String? _errorMessage;
   bool _isEditing = false; // State variable for edit mode
-  bool _isOnline = false; // <-- New state variable for online status
+  bool _isOnline = false;
 
   @override
   void initState() {

@@ -8,7 +8,7 @@ import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '../services/core/error_service.dart';
 import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
+import '/screens/connectivity_icon.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({

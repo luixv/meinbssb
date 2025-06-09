@@ -6,7 +6,7 @@ import 'dart:developer'
 import '../core/cache_service.dart';
 import '../core/http_client.dart';
 import '../core/network_service.dart';
-import '../core/logger_service.dart'; // Assuming you have this for logging
+import '../core/logger_service.dart';
 
 class UserService {
   UserService({

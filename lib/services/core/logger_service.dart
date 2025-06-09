@@ -7,13 +7,13 @@ class LoggerService {
   // Initialize the logger
   static void init() {
     // Set the log level
-    Logger.root.level = Level
-        .ALL; //  Level.OFF to disable logging or to Level.INFO to limit logs
+    //  Level.OFF to disable logging or to Level.INFO to limit logs
+    Logger.root.level = Level.ALL;
 
     // Log to the console or a desired output
     Logger.root.onRecord.listen((record) {
       debugPrint('${record.level.name}: ${record.time}: ${record.message}');
-      // Here you can redirect log messages to a file if needed
+      // Here  log messages cyn be redirected to a file or to a remote server if needed
     });
   }
 
