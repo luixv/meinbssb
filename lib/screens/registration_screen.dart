@@ -100,28 +100,27 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: UIConstants.defaultAppColor,
-                  onPrimary: Colors.white,
-                  surface: UIConstants.calendarBackgroundColor,
-                  onSurface: Colors.black,
-                ),
+              primary: UIConstants.defaultAppColor,
+              onPrimary: UIConstants.whiteColor,
+              surface: UIConstants.calendarBackgroundColor,
+              onSurface: UIConstants.textColor,
+            ),
             textButtonTheme: TextButtonThemeData(
               style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(
-                  UIConstants.cancelButtonBackground,
-                ),
-                foregroundColor: WidgetStateProperty.all(Colors.white),
-                padding: WidgetStateProperty.all(UIConstants.buttonPadding),
-                textStyle: WidgetStateProperty.all(UIConstants.buttonStyle),
+                backgroundColor: MaterialStateProperty.all(UIConstants.cancelButtonBackground),
+                foregroundColor: MaterialStateProperty.all(UIConstants.whiteColor),
+                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+                textStyle: MaterialStateProperty.all(UIConstants.buttonStyle),
+                minimumSize: MaterialStateProperty.all(const Size(120, 48)),
               ),
             ),
             datePickerTheme: const DatePickerThemeData(
               headerBackgroundColor: UIConstants.calendarBackgroundColor,
               backgroundColor: UIConstants.calendarBackgroundColor,
-              headerForegroundColor: Colors.black,
-              dayStyle: TextStyle(color: Colors.black),
-              yearStyle: TextStyle(color: Colors.black),
-              weekdayStyle: TextStyle(color: Colors.black),
+              headerForegroundColor: UIConstants.textColor,
+              dayStyle: TextStyle(color: UIConstants.textColor),
+              yearStyle: TextStyle(color: UIConstants.textColor),
+              weekdayStyle: TextStyle(color: UIConstants.textColor),
             ),
           ),
           child: child!,
