@@ -5,7 +5,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
@@ -101,25 +100,28 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: UIConstants.defaultAppColor,
-              onPrimary: Colors.white,
-              surface: UIConstants.calendarBackgroundColor,
-              onSurface: Colors.black,
-            ),
+                  primary: UIConstants.defaultAppColor,
+                  onPrimary: Colors.white,
+                  surface: UIConstants.calendarBackgroundColor,
+                  onSurface: Colors.black,
+                ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: UIConstants.defaultAppColor,
-                backgroundColor: UIConstants.cancelButtonBackground,
-                padding: UIConstants.buttonPadding,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                  UIConstants.cancelButtonBackground,
+                ),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                padding: WidgetStateProperty.all(UIConstants.buttonPadding),
+                textStyle: WidgetStateProperty.all(UIConstants.buttonStyle),
               ),
             ),
-            datePickerTheme: DatePickerThemeData(
+            datePickerTheme: const DatePickerThemeData(
               headerBackgroundColor: UIConstants.calendarBackgroundColor,
               backgroundColor: UIConstants.calendarBackgroundColor,
               headerForegroundColor: Colors.black,
-              dayStyle: const TextStyle(color: Colors.black),
-              yearStyle: const TextStyle(color: Colors.black),
-              weekdayStyle: const TextStyle(color: Colors.black),
+              dayStyle: TextStyle(color: Colors.black),
+              yearStyle: TextStyle(color: Colors.black),
+              weekdayStyle: TextStyle(color: Colors.black),
             ),
           ),
           child: child!,
@@ -131,6 +133,33 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         _selectedDate = picked;
       });
     }
+  }
+
+  Widget _buildDateField() {
+    return InkWell(
+      onTap: () => _selectDate(context),
+      child: InputDecorator(
+        decoration: UIConstants.formInputDecoration.copyWith(
+          labelText: 'Geburtsdatum',
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              _selectedDate == null
+                  ? 'Wählen Sie Ihr Geburtsdatum'
+                  : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
+              style: UIConstants.formValueStyle.copyWith(
+                color: _selectedDate != null
+                    ? UIConstants.defaultAppColor
+                    : UIConstants.greySubtitleTextColor,
+              ),
+            ),
+            const Icon(Icons.calendar_today),
+          ],
+        ),
+      ),
+    );
   }
 
   bool validateEmail(String value) {
@@ -346,12 +375,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           style: UIConstants.appBarTitleStyle,
         ),
         actions: [
-          // --- Added ConnectivityIcon here ---
           const Padding(
             padding: UIConstants.defaultHorizontalPadding,
             child: ConnectivityIcon(),
           ),
-          // --- End ConnectivityIcon addition ---
           AppMenu(
             context: context,
             userData: userData,
@@ -420,56 +447,28 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 key: const Key('emailField'),
                 controller: _emailController,
-                focusNode: _emailFocusNode, // Assign the FocusNode
+                focusNode: _emailFocusNode,
                 decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'E-mail',
-                  errorText: _emailFieldTouched
-                      ? emailError
-                      : null, // Only show error if touched
+                  errorText: _emailFieldTouched ? emailError : null,
                 ),
                 onChanged: (value) {
                   setState(() {
                     if (_emailFieldTouched || value.isNotEmpty) {
                       validateEmail(value);
                     } else {
-                      emailError = null; // Clear error if untouched and empty
+                      emailError = null;
                     }
                   });
                 },
                 onTap: () {
                   setState(() {
-                    _emailFieldTouched = true; // Mark as touched when focused
+                    _emailFieldTouched = true;
                   });
                 },
               ),
               const SizedBox(height: UIConstants.spacingS),
-              InkWell(
-                onTap: () => _selectDate(context),
-                child: InputDecorator(
-                  decoration: UIConstants.formInputDecoration.copyWith(
-                    labelText: 'Geburtsdatum',
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        _selectedDate == null
-                            ? 'Wählen Sie Ihr Geburtsdatum'
-                            : DateFormat(
-                                'dd.MM.yyyy',
-                                'de_DE',
-                              ).format(_selectedDate!),
-                        style: UIConstants.formValueStyle.copyWith(
-                          color: _selectedDate != null
-                              ? UIConstants.calendarSelectedTextColor
-                              : UIConstants.calendarTextColor,
-                        ),
-                      ),
-                      const Icon(Icons.calendar_today),
-                    ],
-                  ),
-                ),
-              ),
+              _buildDateField(),
               const SizedBox(height: UIConstants.spacingS),
               TextField(
                 key: const Key('zipCodeField'),
@@ -500,10 +499,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       text: TextSpan(
                         style: UIConstants.bodyStyle,
                         children: <TextSpan>[
-                          const TextSpan(
-                            text:
-                                'Ich habe die ', // Directly using the hardcoded text
-                          ),
+                          const TextSpan(text: 'Ich habe die '),
                           TextSpan(
                             text: 'Datenschutzbestimmungen',
                             style: UIConstants.linkStyle.copyWith(
@@ -542,11 +538,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ? const CircularProgressIndicator(
                           color: UIConstants.circularProgressIndicator,
                         )
-                      : Text(
+                      : const Text(
                           'Registrieren',
-                          style: UIConstants.bodyStyle.copyWith(
-                            color: UIConstants.disabledSubmitButtonText,
-                          ),
+                          style: UIConstants.buttonStyle,
                         ),
                 ),
               ),

@@ -236,7 +236,8 @@ class BankDataScreenState extends State<BankDataScreen> {
             text: TextSpan(
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(text: 'Sind Sie sicher, dass Sie die Bankdaten '),
+                const TextSpan(
+                    text: 'Sind Sie sicher, dass Sie die Bankdaten ',),
                 TextSpan(
                   text: _ibanController.text,
                   style: const TextStyle(
@@ -384,21 +385,21 @@ class BankDataScreenState extends State<BankDataScreen> {
             const Icon(
               Icons.cloud_off,
               size: 80,
-              color: UIConstants.greySubtitleText,
+              color: UIConstants.greySubtitleTextColor,
             ),
             const SizedBox(height: UIConstants.bankDataSpacing),
             Text(
               'Internet ist nicht zu Verfügung.',
               style: UIConstants.bodyStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.greySubtitleText,
+                color: UIConstants.greySubtitleTextColor,
               ),
             ),
             const SizedBox(height: UIConstants.bankDataSpacing / 2),
             Text(
               'Bitte überprüfen Sie Ihre Verbindung.',
               style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleText),
+                  .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
           ],
         ),

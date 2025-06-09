@@ -253,7 +253,7 @@ class StartScreenState extends State<StartScreen> {
             Text(
               'Schützenpassnummer',
               style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleText),
+                  .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
@@ -264,7 +264,7 @@ class StartScreenState extends State<StartScreen> {
             Text(
               'Erstverein',
               style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleText),
+                  .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingM),
             Container(
@@ -292,13 +292,14 @@ class StartScreenState extends State<StartScreen> {
             else if (schulungen.isEmpty)
               const Text(
                 'Keine Schulungen gefunden.',
-                style: TextStyle(color: UIConstants.greySubtitleText),
+                style: TextStyle(color: UIConstants.greySubtitleTextColor),
               )
             else
               Expanded(
                 child: ListView.separated(
                   itemCount: schulungen.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: UIConstants.defaultSeparatorHeight),
+                  separatorBuilder: (_, __) => const SizedBox(
+                      height: UIConstants.defaultSeparatorHeight,),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
@@ -306,13 +307,13 @@ class StartScreenState extends State<StartScreen> {
                     final formattedDate =
                         '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
                     final description = schulung['BEZEICHNUNG'] ?? 'N/A';
-                    final isOnline =
-                        schulung['ONLINE'] ?? false;
+                    final isOnline = schulung['ONLINE'] ?? false;
 
                     return ListTile(
                       tileColor: UIConstants.tileColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
                       ),
                       leading: const Column(
                         mainAxisAlignment: UIConstants.listItemLeadingAlignment,
@@ -323,31 +324,30 @@ class StartScreenState extends State<StartScreen> {
                           ),
                         ],
                       ),
-                      title: Text(description, style: UIConstants.listItemTitleStyle),
+                      title: Text(description,
+                          style: UIConstants.listItemTitleStyle,),
                       subtitle: Text(
                         formattedDate,
                         style: UIConstants.listItemSubtitleStyle,
                       ),
-                      trailing:
-                          isOnline
-                              ? IconButton(
-                                  icon: const Icon(
-                                    Icons.delete_outline_outlined,
-                                    color: UIConstants.deleteIcon,
-                                  ),
-                                  onPressed: () {
-                                    final id =
-                                        schulung['SCHULUNGENTEILNEHMERID'];
-                                    if (id != null) {
-                                      _handleDeleteSchulung(
-                                        id,
-                                        index,
-                                        description,
-                                      );
-                                    }
-                                  },
-                                )
-                              : null,
+                      trailing: isOnline
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.delete_outline_outlined,
+                                color: UIConstants.deleteIcon,
+                              ),
+                              onPressed: () {
+                                final id = schulung['SCHULUNGENTEILNEHMERID'];
+                                if (id != null) {
+                                  _handleDeleteSchulung(
+                                    id,
+                                    index,
+                                    description,
+                                  );
+                                }
+                              },
+                            )
+                          : null,
                     );
                   },
                 ),

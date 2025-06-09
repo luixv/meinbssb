@@ -137,7 +137,7 @@ class _ZweitmitgliedschaftenScreenState
             Text(
               'Schützenpassnummer',
               style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleText),
+                  .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
@@ -149,7 +149,7 @@ class _ZweitmitgliedschaftenScreenState
             Text(
               'Erstverein',
               style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleText),
+                  .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             const Text('Zweitmitgliedschaften:', style: UIConstants.titleStyle),

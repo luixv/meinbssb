@@ -17,7 +17,9 @@ class UIConstants {
   static const Color linkColor = Colors.lightGreen;
   static const Color greyColor = Colors.grey;
   static const Color whiteColor = Colors.white;
-  static const Color greySubtitleText = Colors.grey;
+  static const Color greySubtitleTextColor = Colors.grey;
+  static const Color labelTextColor = Colors.grey;
+
   static const Color news = Colors.lightGreen;
   static const Color defaultAppColor = primaryColor;
   static const Color cookiesDialogColor = Colors.black;
