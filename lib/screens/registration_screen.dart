@@ -409,14 +409,14 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const LogoWidget(),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               Text(
                 'Hier Registrieren',
                 style: UIConstants.headerStyle.copyWith(
                   color: UIConstants.defaultAppColor,
                 ),
               ),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               if (_successMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -535,7 +535,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

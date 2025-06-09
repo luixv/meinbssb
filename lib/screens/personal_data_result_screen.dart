@@ -59,7 +59,7 @@ class PersonDataResultScreen extends StatelessWidget {
                     success ? UIConstants.successColor : UIConstants.errorColor,
                 size: 100,
               ),
-              const SizedBox(height: UIConstants.defaultSpacing * 2),
+              const SizedBox(height: UIConstants.spacingS * 2),
               Text(
                 success ? 'Erfolg!' : 'Fehler!',
                 style: UIConstants.titleStyle.copyWith(
@@ -68,7 +68,7 @@ class PersonDataResultScreen extends StatelessWidget {
                       : UIConstants.errorColor,
                 ),
               ),
-              const SizedBox(height: UIConstants.defaultSpacing),
+              const SizedBox(height: UIConstants.spacingS),
               Text(
                 displayMessage,
                 textAlign: TextAlign.center,

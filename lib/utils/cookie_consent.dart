@@ -52,8 +52,8 @@ class _CookieConsentState extends State<CookieConsent> {
                 child: Material(
                   color: UIConstants.cookiesDialogColor,
                   child: Container(
-                    margin: const EdgeInsets.all(UIConstants.defaultSpacing),
-                    padding: const EdgeInsets.all(UIConstants.defaultSpacing),
+                    margin: const EdgeInsets.all(UIConstants.spacingS),
+                    padding: const EdgeInsets.all(UIConstants.spacingS),
                     decoration: BoxDecoration(
                       color: UIConstants.boxDecorationColor,
                       borderRadius: BorderRadius.circular(16),
@@ -75,7 +75,7 @@ class _CookieConsentState extends State<CookieConsent> {
                             backgroundColor: UIConstants.cookiesDialogColor,
                           ),
                         ),
-                        const SizedBox(height: UIConstants.defaultSpacing),
+                        const SizedBox(height: UIConstants.spacingS),
                         SizedBox(
                           width: 200.0,
                           child: ElevatedButton(

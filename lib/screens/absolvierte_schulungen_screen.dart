@@ -117,7 +117,8 @@ class AbsolvierteSchulungenScreenState
                   return ListTile(
                     tileColor: UIConstants.tileColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+                      borderRadius:
+                          BorderRadius.circular(UIConstants.cornerRadius),
                     ),
                     leading: const Column(
                       mainAxisAlignment: UIConstants.listItemLeadingAlignment,
@@ -161,21 +162,4 @@ class AbsolvierteSchulungenScreenState
   }
 
   // Helper method to build read-only info text lines
-  Widget _buildInfoText({required String label, required String? value}) {
-    return RichText(
-      text: TextSpan(
-        style: const TextStyle(
-          fontSize: UIConstants.bodyFontSize,
-          color: Colors.black,
-        ),
-        children: <TextSpan>[
-          TextSpan(
-            text: '$label ',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          TextSpan(text: value ?? 'N/A'), // Display 'N/A' if value is null
-        ],
-      ),
-    );
-  }
 }

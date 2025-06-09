@@ -104,7 +104,6 @@ class UIConstants {
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
-  static const double defaultSpacing = 6.0;
   static const double listItemInterSpace = 3.0;
 
   // Common Widgets - Using getters instead of const

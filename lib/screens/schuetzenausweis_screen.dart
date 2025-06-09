@@ -67,7 +67,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(), // Display the logo at the top
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<Uint8List>(
               future: _schuetzenausweisFuture,
               builder: (context, snapshot) {
@@ -107,7 +107,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                 );
               },
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.spacingS),
           ],
         ),
       ),
