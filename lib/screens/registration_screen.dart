@@ -333,7 +333,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
-        title: const Text('Registrierung', style: UIConstants.titleStyle),
+        title: const Text(
+          'Registrierung',
+          style: UIConstants.appBarTitleStyle,
+        ),
         actions: [
           // --- Added ConnectivityIcon here ---
           const Padding(
@@ -377,7 +380,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 key: const Key('firstNameField'),
                 controller: _firstNameController,
-                decoration: UIConstants.defaultInputDecoration.copyWith(
+                decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'Vorname',
                 ),
                 onChanged: (_) => setState(() {}),
@@ -386,7 +389,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 key: const Key('lastNameField'),
                 controller: _lastNameController,
-                decoration: UIConstants.defaultInputDecoration.copyWith(
+                decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'Nachname',
                 ),
                 onChanged: (_) => setState(() {}),
@@ -395,7 +398,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 key: const Key('passNumberField'),
                 controller: _passNumberController,
-                decoration: UIConstants.defaultInputDecoration.copyWith(
+                decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'Schützenausweisnummer',
                   errorText: passNumberError,
                 ),
@@ -410,7 +413,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 key: const Key('emailField'),
                 controller: _emailController,
                 focusNode: _emailFocusNode, // Assign the FocusNode
-                decoration: UIConstants.defaultInputDecoration.copyWith(
+                decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'E-mail',
                   errorText: _emailFieldTouched
                       ? emailError
@@ -435,7 +438,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               InkWell(
                 onTap: () => _selectDate(context),
                 child: InputDecorator(
-                  decoration: UIConstants.defaultInputDecoration.copyWith(
+                  decoration: UIConstants.formInputDecoration.copyWith(
                     labelText: 'Geburtsdatum',
                   ),
                   child: Row(
@@ -448,10 +451,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                 'dd.MM.yyyy',
                                 'de_DE',
                               ).format(_selectedDate!),
-                        style: UIConstants.bodyStyle.copyWith(
+                        style: UIConstants.formValueStyle.copyWith(
                           color: _selectedDate != null
                               ? UIConstants.calendarSelectedColor
-                              : UIConstants.calendarColor,
+                              : UIConstants.calendarTextColor,
                         ),
                       ),
                       const Icon(Icons.calendar_today),
@@ -463,7 +466,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 key: const Key('zipCodeField'),
                 controller: _zipCodeController,
-                decoration: UIConstants.defaultInputDecoration.copyWith(
+                decoration: UIConstants.formInputDecoration.copyWith(
                   labelText: 'Postleitzahl',
                   errorText: zipCodeError,
                 ),

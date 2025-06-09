@@ -44,7 +44,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Schützenausweis',
-          style: UIConstants.titleStyle,
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           // --- Added ConnectivityIcon here ---

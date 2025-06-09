@@ -224,7 +224,10 @@ class StartScreenState extends State<StartScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
-        title: const Text('Home', style: UIConstants.titleStyle),
+        title: const Text(
+          'Start',
+          style: UIConstants.appBarTitleStyle,
+        ),
         actions: [
           const Padding(
             padding: EdgeInsets.only(right: 16.0),
@@ -328,12 +331,10 @@ class StartScreenState extends State<StartScreen> {
                           ),
                         ],
                       ),
-                      title: Text(description, style: UIConstants.bodyStyle),
+                      title: Text(description, style: UIConstants.listItemTitleStyle),
                       subtitle: Text(
                         formattedDate,
-                        style: const TextStyle(
-                          color: UIConstants.greySubtitleText,
-                        ),
+                        style: UIConstants.listItemSubtitleStyle,
                       ),
                       trailing:
                           isOnline // Only show IconButton if isOnline is true

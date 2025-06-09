@@ -16,8 +16,8 @@ class PrivacyScreen extends StatelessWidget {
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         title: const Text(
-          'Datenschutzbestimmungen',
-          style: UIConstants.titleStyle,
+          'Datenschutz',
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           AppMenu(

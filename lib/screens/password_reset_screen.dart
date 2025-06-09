@@ -79,8 +79,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
-          'Passworrt zurücksetzen',
-          style: UIConstants.titleStyle,
+          'Passwort zurücksetzen',
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           // --- Added ConnectivityIcon here ---

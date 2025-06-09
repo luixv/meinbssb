@@ -228,28 +228,20 @@ class BankDataScreenState extends State<BankDataScreen> {
           title: const Center(
             child: Text(
               'Bankdaten löschen',
-              style: TextStyle(
-                color: UIConstants.defaultAppColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: UIConstants.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.tableContentColor,
-              ),
+              style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
                   text: 'Sind Sie sicher, dass Sie Ihre Bankdaten ',
                 ),
                 TextSpan(
-                  text: _ibanController.text, // Show the IBAN for confirmation
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  text: _ibanController.text,
+                  style: UIConstants.dialogBoldContentStyle,
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -268,47 +260,38 @@ class BankDataScreenState extends State<BankDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
+                      style: UIConstants.cancelButtonStyle,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
-                          SizedBox(width: 8),
+                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
                           Text(
                             'Abbrechen',
-                            style:
-                                TextStyle(color: UIConstants.cancelButtonText),
+                            style: TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: UIConstants.defaultHorizontalPadding),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants
-                            .deleteIcon, // Use delete color for confirm
-                        padding: UIConstants.buttonPadding,
-                      ),
+                      style: UIConstants.deleteButtonStyle,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.delete_forever,
                             color: Colors.white,
-                          ), // Delete icon on confirm button
-                          SizedBox(width: 8),
+                          ),
+                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
                           Text(
                             'Löschen',
-                            style:
-                                TextStyle(color: UIConstants.deleteButtonText),
+                            style: TextStyle(color: UIConstants.deleteButtonText),
                           ),
                         ],
                       ),
@@ -477,8 +460,8 @@ class BankDataScreenState extends State<BankDataScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
-          'Zahlungsart',
-          style: UIConstants.titleStyle,
+          'Bankdaten',
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           const Padding(
@@ -586,11 +569,9 @@ class BankDataScreenState extends State<BankDataScreen> {
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,
-        decoration: UIConstants.defaultInputDecoration.copyWith(
+        decoration: UIConstants.formInputDecoration.copyWith(
           labelText: label,
-          labelStyle: const TextStyle(
-            fontSize: UIConstants.subtitleFontSize,
-          ),
+          labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,
           fillColor: backgroundColor,

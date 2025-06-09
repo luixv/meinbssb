@@ -258,7 +258,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Persönliche Daten',
-          style: UIConstants.titleStyle,
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           const Padding(
@@ -276,7 +276,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
-              ? Center(child: Text(_errorMessage!))
+              ? Center(child: Text(_errorMessage!, style: UIConstants.errorMessageStyle))
               : _currentPassData == null && !_isLoading
                   ? const Center(
                       child: Text('Keine persönlichen Daten verfügbar.'),
@@ -299,9 +299,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                 isReadOnly: true, // Always read-only
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
-                                inputTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Geburtsdatum',
@@ -309,9 +307,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                 isReadOnly: true, // Always read-only
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
-                                inputTextStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                inputTextStyle: UIConstants.formValueStyle,
                                 suffixIcon: Tooltip(
                                   message:
                                       'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
@@ -329,6 +325,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                 isReadOnly:
                                     !_isEditing, // Read-only if not editing
                                 validator: (value) => null,
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Vorname',
@@ -341,6 +338,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   }
                                   return null;
                                 },
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Nachname',
@@ -353,6 +351,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   }
                                   return null;
                                 },
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Straße + Hausnummer',
@@ -365,6 +364,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   }
                                   return null;
                                 },
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Postleitzahl',
@@ -381,6 +381,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   }
                                   return null;
                                 },
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               _buildTextField(
                                 label: 'Ort',
@@ -393,6 +394,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                                   }
                                   return null;
                                 },
+                                inputTextStyle: UIConstants.formValueStyle,
                               ),
                               const SizedBox(
                                 height: UIConstants.defaultSpacing,

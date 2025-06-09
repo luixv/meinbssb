@@ -22,7 +22,10 @@ class RegistrationSuccessScreen extends StatelessWidget {
       // Ändere die Hintergrundfarbe des Scaffolds.
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        title: const Text('Registrierung', style: UIConstants.titleStyle),
+        title: const Text(
+          'Registrierung erfolgreich',
+          style: UIConstants.appBarTitleStyle,
+        ),
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
         actions: [
@@ -44,9 +47,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.defaultSpacing),
             Text(
               message,
-              style: UIConstants.successStyle.copyWith(
-                fontSize: UIConstants.titleFontSize,
-              ),
+              style: UIConstants.successMessageStyle,
             ),
           ],
         ),

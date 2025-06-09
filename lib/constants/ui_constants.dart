@@ -192,6 +192,38 @@ class UIConstants {
     fontSize: bodyFontSize,
   );
 
+  static const TextStyle appBarTitleStyle = TextStyle(
+    fontSize: titleFontSize,
+    fontWeight: FontWeight.bold,
+    color: defaultAppColor,
+  );
+
+  static const TextStyle listItemTitleStyle = TextStyle(
+    fontSize: subtitleFontSize,
+    fontWeight: FontWeight.bold,
+    color: tableContentColor,
+  );
+
+  static const TextStyle listItemSubtitleStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: greySubtitleText,
+  );
+
+  static const TextStyle errorMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: error,
+  );
+
+  static const TextStyle successMessageStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: success,
+  );
+
+  static const TextStyle offlineMessageStyle = TextStyle(
+    fontSize: subtitleFontSize,
+    color: greySubtitleText,
+  );
+
   static const TextStyle subtitleStyle = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.w600,
@@ -284,5 +316,45 @@ class UIConstants {
   static const IconThemeData defaultIconTheme = IconThemeData(
     color: Colors.white,
     size: defaultIconSize,
+  );
+
+  static const IconThemeData errorIconTheme = IconThemeData(
+    color: error,
+    size: defaultIconSize,
+  );
+
+  static const IconThemeData successIconTheme = IconThemeData(
+    color: success,
+    size: defaultIconSize,
+  );
+
+  // Input Decoration Styles
+  static const InputDecoration formInputDecoration = InputDecoration(
+    contentPadding: EdgeInsets.symmetric(
+      vertical: smallSpacing,
+      horizontal: defaultPadding,
+    ),
+    border: OutlineInputBorder(),
+    errorStyle: errorStyle,
+    filled: true,
+    fillColor: backgroundColor,
+  );
+
+  // Card Styles
+  static final CardTheme defaultCardTheme = CardTheme(
+    color: cardColor,
+    elevation: 2.0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(cornerRadius),
+    ),
+  );
+
+  // List Tile Styles
+  static final ListTileThemeData defaultListTileTheme = ListTileThemeData(
+    tileColor: tileColor,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: defaultPadding,
+      vertical: smallSpacing,
+    ),
   );
 }

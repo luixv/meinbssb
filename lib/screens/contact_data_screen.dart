@@ -127,7 +127,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
-                          SizedBox(width: 8),
+                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
                           Text(
                             'Abbrechen',
                             style: TextStyle(color: UIConstants.cancelButtonText),
@@ -136,7 +136,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: UIConstants.defaultHorizontalPadding),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -150,7 +150,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             Icons.delete_forever,
                             color: Colors.white,
                           ),
-                          SizedBox(width: 8),
+                          SizedBox(width: UIConstants.defaultHorizontalSpacing),
                           Text(
                             'Löschen',
                             style: TextStyle(color: UIConstants.deleteButtonText),
@@ -500,7 +500,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         backgroundColor: UIConstants.backgroundColor,
         title: const Text(
           'Kontaktdaten',
-          style: UIConstants.titleStyle,
+          style: UIConstants.appBarTitleStyle,
         ),
         actions: [
           const Padding(
