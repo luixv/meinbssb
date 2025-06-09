@@ -49,7 +49,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         actions: [
           // --- Added ConnectivityIcon here ---
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
             child: ConnectivityIcon(),
           ),
           // --- End ConnectivityIcon addition ---
@@ -75,7 +75,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                   return const Center(
                     child: CircularProgressIndicator(
                       color: UIConstants.defaultAppColor,
-                      strokeWidth: 2.0,
+                      strokeWidth: UIConstants.defaultStrokeWidth,
                     ),
                   );
                 }

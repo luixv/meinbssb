@@ -262,7 +262,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         ),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
             child: ConnectivityIcon(),
           ),
           AppMenu(

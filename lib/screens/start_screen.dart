@@ -303,7 +303,7 @@ class StartScreenState extends State<StartScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: schulungen.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, __) => const SizedBox(height: UIConstants.defaultSeparatorHeight),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??

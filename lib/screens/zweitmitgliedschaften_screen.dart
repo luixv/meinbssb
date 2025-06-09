@@ -74,7 +74,7 @@ class _ZweitmitgliedschaftenScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: UIConstants.error),
+          const Icon(Icons.error_outline, size: UIConstants.defaultIconSize, color: UIConstants.error),
           const SizedBox(height: UIConstants.defaultSpacing),
           Text(
             message,
@@ -156,7 +156,7 @@ class _ZweitmitgliedschaftenScreenState
                   return const Center(
                     child: CircularProgressIndicator(
                       color: UIConstants.defaultAppColor,
-                      strokeWidth: 2.0,
+                      strokeWidth: UIConstants.defaultStrokeWidth,
                     ),
                   );
                 }
@@ -224,7 +224,7 @@ class _ZweitmitgliedschaftenScreenState
                   return const Center(
                     child: CircularProgressIndicator(
                       color: UIConstants.defaultAppColor,
-                      strokeWidth: 2.0,
+                      strokeWidth: UIConstants.defaultStrokeWidth,
                     ),
                   );
                 }

@@ -143,6 +143,15 @@ class UIConstants {
   static const double cornerRadius = 8.0;
   static const int fabHeight = 16;
 
+  // Additional UI Constants
+  static const double defaultStrokeWidth = 2.0;
+  static const double defaultIconWidth = 60.0;
+  static const double defaultButtonWidth = 120.0;
+  static const double defaultImageHeight = 100.0;
+  static const double defaultHorizontalSpacing = 8.0;
+  static const double defaultHorizontalPadding = 16.0;
+  static const double defaultSeparatorHeight = 10.0;
+
   // Text Styles
   static const TextStyle headerStyle = TextStyle(
     fontSize: headerFontSize,

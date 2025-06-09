@@ -337,7 +337,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         actions: [
           // --- Added ConnectivityIcon here ---
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: EdgeInsets.only(right: UIConstants.defaultHorizontalPadding),
             child: ConnectivityIcon(),
           ),
           // --- End ConnectivityIcon addition ---
