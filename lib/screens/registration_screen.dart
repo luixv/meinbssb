@@ -120,18 +120,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               dayStyle: const TextStyle(color: Colors.black),
               yearStyle: const TextStyle(color: Colors.black),
               weekdayStyle: const TextStyle(color: Colors.black),
-              dayBackgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                if (states.contains(MaterialState.selected)) {
-                  return UIConstants.defaultAppColor;
-                }
-                return Colors.transparent;
-              }),
-              dayForegroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                if (states.contains(MaterialState.selected)) {
-                  return Colors.white;
-                }
-                return Colors.black;
-              }),
+              selectedDayBackgroundColor: UIConstants.defaultAppColor,
+              selectedDayForegroundColor: Colors.white,
             ),
           ),
           child: child!,
