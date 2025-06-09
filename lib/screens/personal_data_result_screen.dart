@@ -80,20 +80,6 @@ class PersonDataResultScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
-        ),
-      ),
     );
   }
 }
