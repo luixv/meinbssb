@@ -253,19 +253,33 @@ class _LinkText extends StatelessWidget {
         } else {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Could not launch URL')),
+              const SnackBar(
+                content: Text('URL konnte nicht geöffnet werden'),
+                duration: UIConstants.snackBarDuration,
+              ),
             );
           }
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: UIConstants.linkColor,
-            decoration: TextDecoration.underline,
-          ),
+        padding: const EdgeInsets.symmetric(vertical: UIConstants.spacingS),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              text,
+              style: UIConstants.linkStyle.copyWith(
+                color: UIConstants.linkColor,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            const SizedBox(width: UIConstants.spacingXS),
+            const Icon(
+              Icons.open_in_new,
+              size: 16,
+              color: UIConstants.linkColor,
+            ),
+          ],
         ),
       ),
     );
