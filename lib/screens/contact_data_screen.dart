@@ -27,9 +27,16 @@ class ContactDataScreen extends StatefulWidget {
 
 class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
-
+  final _formKey = GlobalKey<FormState>();
   bool _isDeleting = false;
-  bool _isAdding = false; // New: State variable for add contact loading
+  bool _isAdding = false;
+  bool _isEditing = false;
+
+  // Text controllers for address fields
+  final TextEditingController _strasseController = TextEditingController();
+  final TextEditingController _hausnummerController = TextEditingController();
+  final TextEditingController _plzController = TextEditingController();
+  final TextEditingController _ortController = TextEditingController();
 
   // Mapping for contact types (used in the dropdown)
   final Map<int, String> _contactTypeLabels = {
@@ -527,8 +534,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               ),
             );
           } else if (snapshot.hasData && snapshot.data != null) {
-            final List<Map<String, dynamic>> categorizedContactData =
-                snapshot.data!;
+            final List<Map<String, dynamic>> categorizedContactData = snapshot.data!;
 
             final bool hasContacts = categorizedContactData
                 .any((group) => (group['contacts'] as List).isNotEmpty);
@@ -539,63 +545,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
             return Padding(
               padding: const EdgeInsets.all(UIConstants.spacingM),
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: UIConstants.startCrossAlignment,
-                    children: <Widget>[
-                      const SizedBox(height: UIConstants.spacingM),
-                      _buildTextField(
-                        label: 'Straße',
-                        controller: _strasseController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Straße ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        label: 'Hausnummer',
-                        controller: _hausnummerController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Hausnummer ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        label: 'PLZ',
-                        controller: _plzController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'PLZ ist erforderlich';
-                          }
-                          if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-                            return 'PLZ muss 5 Ziffern lang sein';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        label: 'Ort',
-                        controller: _ortController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ort ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                    ],
-                  ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: UIConstants.startCrossAlignment,
+                  children: [
+                    // Display categorized contacts
+                    for (var category in categorizedContactData)
+                      if ((category['contacts'] as List).isNotEmpty)
+                        _buildContactGroup(
+                          category['title'] as String,
+                          category['contacts'] as List<Map<String, dynamic>>,
+                        ),
+                  ],
                 ),
               ),
             );
@@ -604,7 +565,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           }
         },
       ),
-      // --- Floating Action Button (FAB) ---
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
@@ -631,11 +591,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           _buildReadOnlyTextField(
             label: contact['type'] as String,
             value: contact['value'] as String,
-            kontaktId: contact['kontaktId'] as int, // Pass kontaktId
-            rawKontaktTyp:
-                contact['rawKontaktTyp'] as int, // Pass rawKontaktTyp
-            onDelete: _onDeleteContact, // Pass the delete callback
-            isDeleting: _isDeleting, // Pass the global deleting state
+            kontaktId: contact['kontaktId'] as int,
+            rawKontaktTyp: contact['rawKontaktTyp'] as int,
+            onDelete: _onDeleteContact,
+            isDeleting: _isDeleting,
           ),
         const SizedBox(height: UIConstants.spacingM),
       ],
