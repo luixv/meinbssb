@@ -21,6 +21,7 @@ class HelpScreen extends StatelessWidget {
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: UIConstants.backgroundColor,
         title: const Text('FAQ', style: UIConstants.titleStyle),
         actions: [
           const Padding(
