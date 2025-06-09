@@ -5,6 +5,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
@@ -99,19 +100,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(
-              context,
-            ).colorScheme.copyWith(primary: UIConstants.defaultAppColor),
-            datePickerTheme: const DatePickerThemeData(
-              headerBackgroundColor: UIConstants.calendarBackgroundColor,
-              backgroundColor: UIConstants.calendarBackgroundColor,
-              headerForegroundColor: Colors.black,
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: UIConstants.defaultAppColor,
+              onPrimary: Colors.white,
+              surface: UIConstants.calendarBackgroundColor,
+              onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: UIConstants.submitButtonText,
-                backgroundColor: UIConstants.acceptButtonBackground,
+                foregroundColor: UIConstants.defaultAppColor,
               ),
+            ),
+            datePickerTheme: DatePickerThemeData(
+              headerBackgroundColor: UIConstants.calendarBackgroundColor,
+              backgroundColor: UIConstants.calendarBackgroundColor,
+              headerForegroundColor: Colors.black,
+              dayStyle: const TextStyle(color: Colors.black),
+              yearStyle: const TextStyle(color: Colors.black),
+              weekdayStyle: const TextStyle(color: Colors.black),
             ),
           ),
           child: child!,
