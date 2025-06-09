@@ -14,7 +14,7 @@ class UIConstants {
   static const Color successColor = Colors.green;
   static const Color warningColor = Color(0xFFFFA000);
   static const Color infoColor = Color(0xFF2196F3);
-  static const Color linkColor = Colors.lightGreen;
+  static const Color linkColor = primaryColor;
   static const Color greyColor = Colors.grey;
   static const Color whiteColor = Colors.white;
   static const Color greySubtitleTextColor = Colors.grey;
@@ -295,13 +295,13 @@ class UIConstants {
 
   static const TextStyle linkStyle = TextStyle(
     decoration: TextDecoration.underline,
-    //fontWeight: FontWeight.w500,
-    fontSize: UIConstants.bodyFontSize,
+    color: linkColor,
+    fontSize: bodyFontSize,
   );
 
   static const TextStyle headerStyle = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: UIConstants.headerFontSize,
+    fontSize: headerFontSize,
   );
 
   // Form Styles
