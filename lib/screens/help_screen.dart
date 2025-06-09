@@ -48,7 +48,7 @@ class HelpScreen extends StatelessWidget {
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Allgemein',
                 questions: [
@@ -72,7 +72,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Funktionen der App',
                 questions: [
@@ -110,7 +110,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Technische Fragen',
                 questions: [
@@ -135,7 +135,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
                 title: 'Kontakt und Hilfe',
                 questions: [
@@ -159,7 +159,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),
         ),

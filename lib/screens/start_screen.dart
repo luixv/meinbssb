@@ -118,7 +118,7 @@ class StartScreenState extends State<StartScreen> {
             Padding(
               padding: UIConstants.dialogPadding,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: UIConstants.spaceBetweenAlignment,
                 children: [
                   Expanded(
                     child: ElevatedButton(
@@ -127,7 +127,7 @@ class StartScreenState extends State<StartScreen> {
                       },
                       style: UIConstants.dialogCancelButtonStyle,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
                           Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
@@ -149,7 +149,7 @@ class StartScreenState extends State<StartScreen> {
                       },
                       style: UIConstants.dialogAcceptButtonStyle,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
                           Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
@@ -187,6 +187,7 @@ class StartScreenState extends State<StartScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Abmelden von der Schulung.'),
+              duration: UIConstants.snackBarDuration,
             ),
           );
         }
@@ -195,7 +196,10 @@ class StartScreenState extends State<StartScreen> {
       LoggerService.logError('Unregister error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            duration: UIConstants.snackBarDuration,
+          ),
         );
       }
     } finally {
@@ -218,7 +222,7 @@ class StartScreenState extends State<StartScreen> {
         ),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: UIConstants.defaultHorizontalPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -232,7 +236,7 @@ class StartScreenState extends State<StartScreen> {
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.defaultPadding),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: UIConstants.startCrossAlignment,
           children: [
             const LogoWidget(),
             UIConstants.verticalSpacingM,
@@ -264,14 +268,14 @@ class StartScreenState extends State<StartScreen> {
             ),
             const SizedBox(height: UIConstants.defaultSpacing),
             Container(
-              height: 100,
+              height: UIConstants.newsContainerHeight,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: UIConstants.news,
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
-              child: const Center(
-                child: Text(
+              child: Center(
+                child: const Text(
                   'Hier könnten News stehen',
                   style: UIConstants.newsStyle,
                 ),
@@ -308,12 +312,12 @@ class StartScreenState extends State<StartScreen> {
                     return ListTile(
                       tileColor: UIConstants.tileColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
                       ),
-                      leading: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      leading: Column(
+                        mainAxisAlignment: UIConstants.listItemLeadingAlignment,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.school_outlined,
                             color: UIConstants.defaultAppColor,
                           ),

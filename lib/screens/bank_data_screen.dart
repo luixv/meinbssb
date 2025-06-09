@@ -386,7 +386,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               size: 80,
               color: UIConstants.greySubtitleText,
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            const SizedBox(height: UIConstants.bankDataSpacing),
             Text(
               'Internet ist nicht zu Verfügung.',
               style: UIConstants.bodyStyle.copyWith(
@@ -394,7 +394,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 color: UIConstants.greySubtitleText,
               ),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing / 2),
+            const SizedBox(height: UIConstants.bankDataSpacing / 2),
             Text(
               'Bitte überprüfen Sie Ihre Verbindung.',
               style: UIConstants.bodyStyle
@@ -413,7 +413,7 @@ class BankDataScreenState extends State<BankDataScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const SizedBox(height: UIConstants.defaultSpacing),
+                const SizedBox(height: UIConstants.bankDataSpacing),
                 _buildTextField(
                   label: 'Kontoinhaber',
                   controller: _kontoinhaberController,
@@ -445,7 +445,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   isReadOnly: !_isEditing, // Read-only based on _isEditing
                   validator: BankService.validateBIC,
                 ),
-                const SizedBox(height: UIConstants.defaultSpacing),
+                const SizedBox(height: UIConstants.bankDataSpacing),
               ],
             ),
           ),
@@ -464,7 +464,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: UIConstants.appBarRightPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -508,7 +508,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           if (_isOnline &&
               !_isEditing &&
               _kontoinhaberController.text.isNotEmpty)
-            const SizedBox(height: 16),
+            const SizedBox(height: UIConstants.bankDataSpacing),
 
           // New Delete FAB
           (_isOnline && !_isEditing && _kontoinhaberController.text.isNotEmpty)
@@ -564,7 +564,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.defaultSpacing),
+      padding: const EdgeInsets.only(bottom: UIConstants.bankDataSpacing),
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,

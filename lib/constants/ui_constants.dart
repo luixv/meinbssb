@@ -90,36 +90,30 @@ class UIConstants {
   static const double subtitleFontSize = 16.0;
   static const double buttonFontSize = 16.0;
 
-  // Spacing
+  // Spacing constants
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
 
-  // Common Widgets
-  static const SizedBox spacingXS = SizedBox(width: spacingXS, height: spacingXS);
-  static const SizedBox spacingS = SizedBox(width: spacingS, height: spacingS);
-  static const SizedBox spacingM = SizedBox(width: spacingM, height: spacingM);
-  static const SizedBox spacingL = SizedBox(width: spacingL, height: spacingL);
-  static const SizedBox spacingXL = SizedBox(width: spacingXL, height: spacingXL);
+  // Common Widgets - Using getters instead of const
+  static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
+  static SizedBox get horizontalSpacingS => const SizedBox(width: spacingS);
+  static SizedBox get horizontalSpacingM => const SizedBox(width: spacingM);
+  static SizedBox get horizontalSpacingL => const SizedBox(width: spacingL);
+  static SizedBox get horizontalSpacingXL => const SizedBox(width: spacingXL);
 
-  static const SizedBox horizontalSpacingXS = SizedBox(width: spacingXS);
-  static const SizedBox horizontalSpacingS = SizedBox(width: spacingS);
-  static const SizedBox horizontalSpacingM = SizedBox(width: spacingM);
-  static const SizedBox horizontalSpacingL = SizedBox(width: spacingL);
-  static const SizedBox horizontalSpacingXL = SizedBox(width: spacingXL);
-
-  static const SizedBox verticalSpacingXS = SizedBox(height: spacingXS);
-  static const SizedBox verticalSpacingS = SizedBox(height: spacingS);
-  static const SizedBox verticalSpacingM = SizedBox(height: spacingM);
-  static const SizedBox verticalSpacingL = SizedBox(height: spacingL);
-  static const SizedBox verticalSpacingXL = SizedBox(height: spacingXL);
+  static SizedBox get verticalSpacingXS => const SizedBox(height: spacingXS);
+  static SizedBox get verticalSpacingS => const SizedBox(height: spacingS);
+  static SizedBox get verticalSpacingM => const SizedBox(height: spacingM);
+  static SizedBox get verticalSpacingL => const SizedBox(height: spacingL);
+  static SizedBox get verticalSpacingXL => const SizedBox(height: spacingXL);
 
   // Padding
-  static const EdgeInsets defaultPadding = EdgeInsets.all(spacingM);
-  static const EdgeInsets defaultHorizontalPadding = EdgeInsets.symmetric(horizontal: spacingM);
-  static const EdgeInsets defaultVerticalPadding = EdgeInsets.symmetric(vertical: spacingM);
+  static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
+  static const EdgeInsets defaultHorizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
+  static const EdgeInsets defaultVerticalPadding = EdgeInsets.symmetric(vertical: 16.0);
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: spacingM);
   static const EdgeInsets screenPadding = EdgeInsets.fromLTRB(
     spacingM,
@@ -127,6 +121,7 @@ class UIConstants {
     spacingM,
     spacingM,
   );
+  static const EdgeInsets appBarRightPadding = EdgeInsets.only(right: 16.0);
 
   // Sizes
   static const double logoSize = 100.0;
@@ -288,4 +283,18 @@ class UIConstants {
       vertical: spacingS,
     ),
   );
+
+  // Duration
+  static const Duration snackBarDuration = Duration(seconds: 3);
+
+  // Container heights
+  static const double newsContainerHeight = 100.0;
+  static const double helpSpacing = 8.0;
+  static const double bankDataSpacing = 16.0;
+
+  // Alignment constants
+  static const MainAxisAlignment listItemLeadingAlignment = MainAxisAlignment.center;
+  static const MainAxisAlignment centerAlignment = MainAxisAlignment.center;
+  static const MainAxisAlignment spaceBetweenAlignment = MainAxisAlignment.spaceBetween;
+  static const CrossAxisAlignment startCrossAlignment = CrossAxisAlignment.start;
 }
