@@ -10,6 +10,7 @@ import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
 import 'screens/impressum_screen.dart';
+import 'screens/splash_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 
@@ -43,6 +44,7 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   Map<String, dynamic> _userData = {};
+  bool _showSplash = true;
 
   @override
   void initState() {
@@ -75,8 +77,20 @@ class MyAppState extends State<MyApp> {
     });
   }
 
+  void _onSplashFinish() {
+    setState(() {
+      _showSplash = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_showSplash) {
+      return MaterialApp(
+        home: SplashScreen(onFinish: _onSplashFinish),
+      );
+    }
+
     return MaterialApp(
       title: 'Mein BSSB',
       theme: ThemeData(
