@@ -136,22 +136,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
-                        // <-- Row for icon and text
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             Icons.close,
                             color: UIConstants.closeIcon,
                             size: UIConstants.bodyFontSize,
-                          ), // X icon
-                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                              fontSize: UIConstants
-                                  .bodyFontSize, // Ensure font size consistency
-                            ),
+                            style: const TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
@@ -170,20 +165,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
-                        // <-- Row for icon and text
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             Icons.delete_forever,
-                            color: UIConstants.deletetButtonBackground,
+                            color: Colors.white,
                             size: UIConstants.bodyFontSize,
-                          ), // OK icon
-                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             'Löschen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
-                            ),
+                            style: const TextStyle(color: UIConstants.deleteButtonText),
                           ),
                         ],
                       ),
@@ -439,20 +431,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         padding: UIConstants.buttonPadding,
                       ),
                       child: Row(
-                        // <-- Row for icon and text
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             Icons.close,
                             color: UIConstants.closeIcon,
                             size: UIConstants.bodyFontSize,
-                          ), // X icon
-                          const SizedBox(width: UIConstants.defaultSpacing / 2),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             'Abbrechen',
-                            style: UIConstants.bodyStyle.copyWith(
-                              fontSize: UIConstants.bodyFontSize,
-                            ),
+                            style: const TextStyle(color: UIConstants.cancelButtonText),
                           ),
                         ],
                       ),
