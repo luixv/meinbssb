@@ -505,7 +505,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: UIConstants.appBarRightPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -544,7 +544,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               padding: const EdgeInsets.all(UIConstants.defaultPadding),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: UIConstants.startCrossAlignment,
                   children: <Widget>[
                     for (var categoryGroup in categorizedContactData)
                       if ((categoryGroup['contacts'] as List).isNotEmpty)
@@ -582,7 +582,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     List<Map<String, dynamic>> contacts,
   ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: UIConstants.startCrossAlignment,
       children: [
         _buildSectionTitle(categoryTitle, color: UIConstants.defaultAppColor),
         for (var contact in contacts)

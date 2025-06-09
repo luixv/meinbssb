@@ -42,7 +42,7 @@ class HelpScreen extends StatelessWidget {
         child: const SingleChildScrollView(
           padding: EdgeInsets.all(UIConstants.defaultPadding),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
               Text(
                 'Häufig gestellte Fragen (FAQ)',

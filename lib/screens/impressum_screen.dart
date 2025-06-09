@@ -46,7 +46,7 @@ class ImpressumScreen extends StatelessWidget {
         child: const SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
               SizedBox(height: 16),
               Text(
@@ -69,7 +69,7 @@ class ImpressumScreen extends StatelessWidget {
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
               _LinkText('Website: https://www.bssb.de', 'https://www.bssb.de'),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Realisierung des Internetauftritts',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -94,7 +94,7 @@ class ImpressumScreen extends StatelessWidget {
               ),
               Text('jeder erste Donnerstag im Monat, 16 bis 18 Uhr'),
               _LinkText('Telefon: (07451) 6 25 42 40', 'tel:074516254240'),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Inhaltlich verantwortlich für die Teilbereiche',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -152,7 +152,7 @@ class ImpressumScreen extends StatelessWidget {
               Text(
                 'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
               ),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Bezirke / Gaue / Vereine',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -167,7 +167,7 @@ class ImpressumScreen extends StatelessWidget {
                 'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Haftung für weiterführende Links',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -181,7 +181,7 @@ class ImpressumScreen extends StatelessWidget {
               Text(
                 'Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
               ),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
               Text(
                 'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -240,7 +240,7 @@ class ImpressumScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text('DE 129514004'),
-              SizedBox(height: 16),
+              SizedBox(height: UIConstants.defaultSpacing),
             ],
           ),
         ),

@@ -134,149 +134,128 @@ class UIConstants {
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
 
-  // Text Styles
-  static final titleStyle = TextStyle(
+  // Text styles
+  static const TextStyle appBarTitleStyle = TextStyle(
+    fontSize: 20.0,
+    fontFamily: defaultFontFamily,
+    fontWeight: FontWeight.bold,
+    color: textColor,
+  );
+
+  static const TextStyle titleStyle = TextStyle(
     fontSize: titleFontSize,
     fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
     color: textColor,
   );
 
-  static final subtitleStyle = TextStyle(
+  static const TextStyle subtitleStyle = TextStyle(
     fontSize: subtitleFontSize,
     fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: textColor,
   );
 
-  static final bodyStyle = TextStyle(
+  static const TextStyle bodyStyle = TextStyle(
     fontSize: bodyFontSize,
     fontFamily: defaultFontFamily,
     color: textColor,
   );
 
-  static final headerStyle = TextStyle(
-    fontSize: headerFontSize,
+  static const TextStyle buttonStyle = TextStyle(
+    fontSize: buttonFontSize,
+    fontFamily: defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
+  );
+
+  static const TextStyle formLabelStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
+    color: textColor,
+  );
+
+  static const TextStyle formValueStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
+    color: textColor,
+  );
+
+  static const TextStyle formValueBoldStyle = TextStyle(
+    fontSize: bodyFontSize,
     fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
-  );
-
-  static final appBarTitleStyle = TextStyle(
-    fontSize: titleFontSize,
-    fontWeight: FontWeight.bold,
-    color: primaryColor,
-  );
-
-  static final listItemTitleStyle = TextStyle(
-    fontSize: subtitleFontSize,
-    fontWeight: FontWeight.bold,
-    color: tableContentColor,
-  );
-
-  static final listItemSubtitleStyle = TextStyle(
-    fontSize: bodyFontSize,
-    color: greyColor,
-  );
-
-  // Form Styles
-  static final formLabelStyle = TextStyle(
-    fontSize: subtitleFontSize,
     color: textColor,
   );
 
-  static final formValueStyle = TextStyle(
+  static const TextStyle errorStyle = TextStyle(
     fontSize: bodyFontSize,
-    color: textColor,
-  );
-
-  static final formValueBoldStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontWeight: FontWeight.bold,
-    color: textColor,
-  );
-
-  static final formErrorStyle = TextStyle(
-    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: errorColor,
   );
 
-  // Message Styles
-  static final errorMessageStyle = TextStyle(
+  static const TextStyle successStyle = TextStyle(
     fontSize: bodyFontSize,
-    color: errorColor,
-  );
-
-  static final successMessageStyle = TextStyle(
-    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: successColor,
   );
 
-  static final warningMessageStyle = TextStyle(
+  static const TextStyle warningStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: warningColor,
   );
 
-  static final infoMessageStyle = TextStyle(
+  static const TextStyle infoStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: infoColor,
   );
 
-  static final offlineMessageStyle = TextStyle(
-    fontSize: subtitleFontSize,
+  static const TextStyle newsStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
+    color: Colors.white,
+  );
+
+  static const TextStyle listItemTitleStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: textColor,
+  );
+
+  static const TextStyle listItemSubtitleStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: greyColor,
   );
 
-  // Dialog Styles
-  static final dialogTitleStyle = TextStyle(
+  static const TextStyle dialogTitleStyle = TextStyle(
     fontSize: titleFontSize,
+    fontFamily: defaultFontFamily,
     fontWeight: FontWeight.bold,
     color: textColor,
   );
 
-  static final dialogContentStyle = TextStyle(
+  static const TextStyle dialogContentStyle = TextStyle(
     fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
     color: textColor,
   );
 
-  static final dialogButtonStyle = TextStyle(
-    fontSize: buttonFontSize,
-    fontWeight: FontWeight.bold,
-    color: primaryColor,
+  static const TextStyle dialogButtonStyle = TextStyle(
+    fontSize: bodyFontSize,
+    fontFamily: defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: textColor,
   );
 
-  static const dialogPadding = EdgeInsets.all(spacingM);
-  static const dialogButtonPadding = EdgeInsets.symmetric(
-    horizontal: spacingM,
-    vertical: spacingS,
-  );
-
-  // Dialog Button Styles
-  static final dialogAcceptButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: acceptButtonBackground,
-    padding: buttonPadding,
-  );
-
-  static final dialogCancelButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: cancelButtonBackground,
-    padding: buttonPadding,
-  );
-
-  // Button Styles
-  static final primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: primaryColor,
-    padding: buttonPadding,
-  );
-
-  static final secondaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: backgroundColor,
-    padding: buttonPadding,
-  );
-
-  // Input Decoration
+  // Form Styles
   static final formInputDecoration = InputDecoration(
     labelStyle: formLabelStyle,
     hintStyle: formLabelStyle,
-    errorStyle: formErrorStyle,
+    errorStyle: errorStyle,
     border: const OutlineInputBorder(),
     contentPadding: const EdgeInsets.symmetric(
       horizontal: spacingM,

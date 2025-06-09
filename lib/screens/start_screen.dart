@@ -216,7 +216,7 @@ class StartScreenState extends State<StartScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
+        title: Text(
           'Start',
           style: UIConstants.appBarTitleStyle,
         ),
@@ -244,7 +244,7 @@ class StartScreenState extends State<StartScreen> {
               "${userData['VORNAME'] ?? ''} ${userData['NAMEN'] ?? ''}",
               style: UIConstants.titleStyle,
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               '${userData['PASSNUMMER'] ?? ''}',
               style: UIConstants.bodyStyle
@@ -255,7 +255,7 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleText),
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             Text(
               '${userData['VEREINNAME'] ?? ''}',
               style: UIConstants.bodyStyle
@@ -266,7 +266,7 @@ class StartScreenState extends State<StartScreen> {
               style: UIConstants.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleText),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
+            SizedBox(height: UIConstants.defaultSpacing),
             Container(
               height: UIConstants.newsContainerHeight,
               width: double.infinity,
@@ -275,22 +275,22 @@ class StartScreenState extends State<StartScreen> {
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
               child: Center(
-                child: const Text(
+                child: Text(
                   'Hier könnten News stehen',
                   style: UIConstants.newsStyle,
                 ),
               ),
             ),
-            const SizedBox(height: UIConstants.defaultSpacing),
-            const Text(
+            SizedBox(height: UIConstants.defaultSpacing),
+            Text(
               'Angemeldete Schulungen:',
               style: UIConstants.titleStyle,
             ),
-            const SizedBox(height: UIConstants.smallSpacing),
+            SizedBox(height: UIConstants.smallSpacing),
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else if (schulungen.isEmpty)
-              const Text(
+              Text(
                 'Keine Schulungen gefunden.',
                 style: TextStyle(color: UIConstants.greySubtitleText),
               )
@@ -298,7 +298,7 @@ class StartScreenState extends State<StartScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: schulungen.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: UIConstants.defaultSeparatorHeight),
+                  separatorBuilder: (_, __) => SizedBox(height: UIConstants.defaultSeparatorHeight),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
@@ -317,7 +317,7 @@ class StartScreenState extends State<StartScreen> {
                       leading: Column(
                         mainAxisAlignment: UIConstants.listItemLeadingAlignment,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.school_outlined,
                             color: UIConstants.defaultAppColor,
                           ),
@@ -331,7 +331,7 @@ class StartScreenState extends State<StartScreen> {
                       trailing:
                           isOnline // Only show IconButton if isOnline is true
                               ? IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.delete_outline_outlined,
                                     color: UIConstants.deleteIcon,
                                   ),
