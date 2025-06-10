@@ -398,7 +398,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     ),
       floatingActionButton: _isOnline
           ? FloatingActionButton(
-              heroTag: 'personalDataScreenFab_${DateTime.now().millisecondsSinceEpoch}',
+              heroTag:
+                  'personalDataScreenFab_${DateTime.now().millisecondsSinceEpoch}',
               onPressed: _isLoading ? null : _handleFabPressed,
               backgroundColor: UIConstants.defaultAppColor,
               child: _isLoading

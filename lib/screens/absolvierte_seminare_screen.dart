@@ -157,8 +157,20 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'personalDataResultFab',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+            arguments: {'isLoggedIn': true},
+          );
+        },
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.home,
+          color: UIConstants.whiteColor,
+        ),
+      ),
     );
   }
-
-  // Helper method to build read-only info text lines
 }

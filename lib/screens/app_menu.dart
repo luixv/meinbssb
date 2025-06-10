@@ -8,7 +8,7 @@ import '/screens/schuetzenausweis_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/impressum_screen.dart';
-//import '/screens/personal_data_screen.dart';
+import '/screens/personal_data_screen.dart';
 import 'absolvierte_seminare_screen.dart';
 
 class AppMenu extends StatelessWidget {
@@ -85,7 +85,6 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-/*
   void _openPersonalDataScreen() {
     // Function to open PersonDataScreen
     Navigator.push(
@@ -99,7 +98,7 @@ class AppMenu extends StatelessWidget {
       ),
     );
   }
-*/
+
   void _openAbsolvierteSeminareScreen(int personId) {
     // Function to open AbsolvierteSeminareScreen
     // call the api_service for the Absolvierte Seminare data
@@ -131,7 +130,7 @@ class AppMenu extends StatelessWidget {
             '/home',
             arguments: {'userData': userData, 'isLoggedIn': true},
           );
-        } else if (value == 'digitaler_schuetzenausweis') {
+        } else if (value == 'schuetzenausweis') {
           _displaySchuetzenausweis(userData['PERSONID']);
         } else if (value == 'impressum') {
           _openImpressumScreen();
@@ -146,7 +145,7 @@ class AppMenu extends StatelessWidget {
           _openBanktDataScreen(userData['WEBLOGINID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
-          //_openPersonalDataScreen();
+          _openPersonalDataScreen();
         }
       },
       itemBuilder: (BuildContext context) {

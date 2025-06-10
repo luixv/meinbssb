@@ -111,6 +111,20 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'personalDataResultFab',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+            arguments: {'isLoggedIn': true},
+          );
+        },
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.home,
+          color: UIConstants.whiteColor,
+        ),
+      ),
     );
   }
 }
