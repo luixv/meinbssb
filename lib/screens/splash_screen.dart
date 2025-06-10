@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// Ensure LoggerService is correctly imported
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.onFinish});
@@ -16,24 +17,26 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    // Removed LoggerService.logInfo from initState as per request context.
 
     _controller = AnimationController(
-      duration: const Duration(
-        seconds: 2,
-      ),
+      duration:
+          const Duration(seconds: 3), // Increased duration for a longer fade-in
       vsync: this,
     );
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      // Changed to fade-in (0.0 to 1.0)
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeIn,
+        curve: Curves.easeIn, // Using easeIn for a smoother fade-in
       ),
     );
 
-    // Start the animation and then immediately call onFinish without extra delay.
-    // This will make the splash screen transition quickly.
+    // Start the animation (fade-in). The onFinish callback is now called
+    // immediately after the fade-in animation completes, without an additional delay.
     _controller.forward().then((_) {
+      // Removed LoggerService.logInfo from here as per request context.
       widget.onFinish();
     });
   }
@@ -41,6 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void dispose() {
     _controller.dispose();
+    // Removed LoggerService.logInfo from dispose as per request context.
     super.dispose();
   }
 

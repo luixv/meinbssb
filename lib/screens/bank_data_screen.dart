@@ -237,7 +237,8 @@ class BankDataScreenState extends State<BankDataScreen> {
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
-                    text: 'Sind Sie sicher, dass Sie die Bankdaten ',),
+                  text: 'Sind Sie sicher, dass Sie die Bankdaten ',
+                ),
                 TextSpan(
                   text: _ibanController.text,
                   style: const TextStyle(
@@ -545,7 +546,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     String? Function(String?)? validator,
     bool isReadOnly = false,
     TextStyle? inputTextStyle,
-    Color? backgroundColor,
     Widget? suffixIcon,
   }) {
     // Determine the effective text style
@@ -571,11 +571,9 @@ class BankDataScreenState extends State<BankDataScreen> {
         style: effectiveTextStyle,
         decoration: UIConstants.formInputDecoration.copyWith(
           labelText: label,
-          labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,
-          fillColor: backgroundColor,
-          filled: backgroundColor != null,
+          filled: true, // Always set to true for the fillColor to apply
           suffixIcon: suffixIcon,
         ),
         validator: validator,

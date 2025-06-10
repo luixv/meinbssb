@@ -626,7 +626,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ),
         decoration: UIConstants.formInputDecoration.copyWith(
           labelText: displayLabel,
-          labelStyle: UIConstants.formLabelStyle,
+          //labelStyle: UIConstants.formLabelStyle,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isDeleting ? null : displayLabel,
           fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/contact_data_screen.dart';
-//import '/screens/bank_data_screen.dart';
+import '/screens/bank_data_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/personal_data_screen.dart';
 import 'absolvierte_seminare_screen.dart';
@@ -66,7 +66,6 @@ class AppMenu extends StatelessWidget {
     );
   }
 
-/*
   void _openBanktDataScreen(int webloginId) {
     // Function to open BankDataScreen
     // call the api_service for the bank data
@@ -85,7 +84,7 @@ class AppMenu extends StatelessWidget {
       ),
     );
   }
-*/
+
 
   void _openPersonalDataScreen() {
     // Function to open PersonDataScreen
@@ -144,7 +143,8 @@ class AppMenu extends StatelessWidget {
           _openAbsolvierteSeminareScreen(userData['PERSONID']);
         } else if (value == 'zahlungsart') {
           // Call the function to open BankdatenScreen
-          // _openBanktDataScreen(userData['WEBLOGINID']);
+          
+           _openBanktDataScreen(userData['WEBLOGINID']);
         } else if (value == 'stammdaten') {
           // Call the function to open Persönliche Daten
           _openPersonalDataScreen();

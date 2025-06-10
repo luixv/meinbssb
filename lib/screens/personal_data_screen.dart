@@ -425,7 +425,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     bool isReadOnly = false,
     FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
     TextStyle? inputTextStyle,
-    Color? backgroundColor,
     Widget? suffixIcon,
     TextInputType? keyboardType,
   }) {
@@ -443,8 +442,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           labelText: label,
           floatingLabelBehavior: floatingLabelBehavior,
           hintText: isReadOnly ? null : label,
-          fillColor: backgroundColor,
-          filled: backgroundColor != null,
+          filled: true, //backgroundColor != null,
           suffixIcon: suffixIcon,
         ),
         validator: validator,
