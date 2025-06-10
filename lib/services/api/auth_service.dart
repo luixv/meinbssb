@@ -232,8 +232,8 @@ Ergebnis der Abfrage:
     final testCachedPersonId = cachedPersonId != null;
     final testCachedTimestamp = cachedTimestamp != null;
     final today = DateTime.now();
-    final testExpirationDate = testCachedTimestamp &&
-        today.isBefore(expirationTime); // Check timestamp before comparing
+    final testExpirationDate =
+        testCachedTimestamp && today.isBefore(expirationTime);
 
     final isCacheValid = testCachedUsername &&
         testCachedPassword &&

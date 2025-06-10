@@ -22,7 +22,7 @@ class UIConstants {
 
   static const Color news = Colors.lightGreen;
   static const Color defaultAppColor = primaryColor;
-  static const Color cookiesDialogColor = Colors.black;
+  static const Color cookiesDialogColor = Colors.transparent;
 
   // Button Colors
   static const Color cancelButtonBackground = Colors.lightGreen;

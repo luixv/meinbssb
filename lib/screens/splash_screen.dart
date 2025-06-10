@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/services/core/logger_service.dart'; // Ensure LoggerService is correctly imported
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.onFinish});
@@ -16,8 +17,14 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    LoggerService.logInfo(
+      'SplashScreen: initState called. Starting animation.',
+    );
+
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(
+        seconds: 1,
+      ),
       vsync: this,
     );
 
@@ -28,18 +35,20 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+    // Start the animation and then immediately call onFinish without extra delay.
+    // This will make the splash screen transition quickly.
     _controller.forward().then((_) {
-      Future.delayed(const Duration(seconds: 1), () {
-        _controller.reverse().then((_) {
-          widget.onFinish();
-        });
-      });
+      LoggerService.logInfo(
+        'SplashScreen: Animation forward complete. Calling onFinish.',
+      );
+      widget.onFinish();
     });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    LoggerService.logInfo('SplashScreen: disposed.');
     super.dispose();
   }
 

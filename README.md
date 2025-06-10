@@ -100,6 +100,9 @@ For the web version go to project root and at a shell run the following:
 
 $ python.exe -m http.server 8080 --directory build/web
 
+Previously you have to generate the web page(s) running:
+$ flutter build web
+
 Then with a web browser address the URL: localhost:8080 et voila!
 
 For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
