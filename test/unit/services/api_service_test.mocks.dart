@@ -12,6 +12,7 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i12;
 import 'package:meinbssb/services/api/bank_service.dart' as _i15;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
 import 'package:meinbssb/services/api/user_service.dart' as _i14;
+import 'package:meinbssb/services/api/verein_service.dart' as _i16;
 import 'package:meinbssb/services/core/cache_service.dart' as _i9;
 import 'package:meinbssb/services/core/config_service.dart' as _i4;
 import 'package:meinbssb/services/core/http_client.dart' as _i5;
@@ -1213,4 +1214,34 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+}
+
+/// A class which mocks [VereinService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockVereinService extends _i1.Mock implements _i16.VereinService {
+  MockVereinService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchVereine() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchVereine,
+          [],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchVerein,
+          [vereinsNr],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 }

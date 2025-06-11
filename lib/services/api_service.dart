@@ -8,6 +8,7 @@ import '/services/api/auth_service.dart';
 import '/services/api/training_service.dart';
 import '/services/api/user_service.dart';
 import '/services/api/bank_service.dart';
+import '/services/api/verein_service.dart';
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
@@ -33,13 +34,15 @@ class ApiService {
     required UserService userService,
     required AuthService authService,
     required BankService bankService,
+    required VereinService vereinService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
         _userService = userService,
         _authService = authService,
-        _bankService = bankService;
+        _bankService = bankService,
+        _vereinService = vereinService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -48,6 +51,7 @@ class ApiService {
   final UserService _userService;
   final AuthService _authService;
   final BankService _bankService;
+  final VereinService _vereinService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -180,14 +184,6 @@ class ApiService {
     return _trainingService.fetchAvailableSchulungen();
   }
 
-  Future<List<dynamic>> fetchVereine() async {
-    return _trainingService.fetchVereine();
-  }
-
-  Future<List<Map<String, dynamic>>> fetchVerein(int vereinsNr) async {
-    return _trainingService.fetchVerein(vereinsNr);
-  }
-
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
     return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
@@ -217,5 +213,13 @@ class ApiService {
 
   Future<bool> deleteBankdaten(int webloginId) async {
     return _bankService.deleteBankdaten(webloginId);
+  }
+
+  Future<List<dynamic>> fetchVereine() async {
+    return _vereinService.fetchVereine();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchVerein(int vereinsNr) async {
+    return _vereinService.fetchVerein(vereinsNr);
   }
 }

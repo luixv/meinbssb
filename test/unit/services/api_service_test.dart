@@ -15,6 +15,7 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
+import 'package:meinbssb/services/api/verein_service.dart';
 import 'api_service_test.mocks.dart';
 
 @GenerateMocks([
@@ -28,6 +29,7 @@ import 'api_service_test.mocks.dart';
   TrainingService,
   UserService,
   BankService,
+  VereinService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +44,7 @@ void main() {
   late MockTrainingService mockTrainingService;
   late MockUserService mockUserService;
   late MockBankService mockBankService;
+  late MockVereinService mockVereinService;
 
   setUp(() {
     mockConfigService = MockConfigService();
@@ -53,6 +56,7 @@ void main() {
     mockTrainingService = MockTrainingService();
     mockUserService = MockUserService();
     mockBankService = MockBankService();
+    mockVereinService = MockVereinService();
 
     // Add this line to set a default stub for getCacheExpirationDuration
     when(mockNetworkService.getCacheExpirationDuration())
@@ -68,6 +72,7 @@ void main() {
       trainingService: mockTrainingService,
       userService: mockUserService,
       bankService: mockBankService,
+      vereinService: mockVereinService,
     );
   });
 

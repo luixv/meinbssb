@@ -439,6 +439,26 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<List<dynamic>> fetchVereine() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchVereine,
+          [],
+        ),
+        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i2.Future<List<dynamic>>);
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchVerein,
+          [vereinsNr],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [EmailService].

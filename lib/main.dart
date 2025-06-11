@@ -8,6 +8,7 @@ import 'services/api/user_service.dart';
 import 'services/api_service.dart';
 import 'services/api/training_service.dart';
 import 'services/api/bank_service.dart';
+import 'services/api/verein_service.dart';
 import 'services/core/email_service.dart';
 import 'services/core/image_service.dart';
 import 'services/core/http_client.dart';
@@ -35,6 +36,7 @@ class AppInitializer {
   static late UserService userService;
   static late AuthService authService;
   static late BankService bankService;
+  static late VereinService vereinService;
   static late TokenService tokenService;
 
   static Future<void> init() async {
@@ -106,6 +108,10 @@ class AppInitializer {
       httpClient: httpClient,
     );
 
+    vereinService = VereinService(
+      httpClient: httpClient,
+    );
+
     apiService = ApiService(
       configService: configService,
       httpClient: httpClient,
@@ -116,6 +122,7 @@ class AppInitializer {
       userService: userService,
       authService: authService,
       bankService: bankService,
+      vereinService: vereinService,
     );
 
     _registerProviders();
