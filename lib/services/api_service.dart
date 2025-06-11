@@ -192,6 +192,10 @@ class ApiService {
     return _trainingService.registerForSchulung(personId, schulungId);
   }
 
+  Future<List<dynamic>> fetchDisziplinen() async {
+    return _trainingService.fetchDisziplinen();
+  }
+
 // Bank Service
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     return _bankService.fetchBankdaten(webloginId);

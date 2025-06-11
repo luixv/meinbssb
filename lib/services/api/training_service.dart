@@ -228,4 +228,35 @@ class TrainingService {
     }
     return [];
   }
+
+  /// Fetches a list of Disziplinen (disciplines).
+  /// This method retrieves data from the '/Disziplinen' endpoint.
+  Future<List<Map<String, dynamic>>> fetchDisziplinen() async {
+    try {
+      final response = await _httpClient.get('Disziplinen');
+      return _mapDisziplinenResponse(response);
+    } catch (e) {
+      LoggerService.logError('Error fetching Disziplinen: $e');
+      return []; // Return an empty list on error
+    }
+  }
+
+  /// Maps the dynamic API response for Disziplinen into a consistent List<Map<String, dynamic>> format.
+  List<Map<String, dynamic>> _mapDisziplinenResponse(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
+        return {
+          'DISZIPLINID': typedItem['DISZIPLINID'],
+          'DISZIPLINNR': typedItem['DISZIPLINNR'],
+          'DISZIPLIN': typedItem['DISZIPLIN'],
+        };
+      }).toList();
+    }
+    LoggerService.logWarning(
+      'Disziplinen response is not a List: ${response.runtimeType}',
+    );
+    return [];
+  }
 }

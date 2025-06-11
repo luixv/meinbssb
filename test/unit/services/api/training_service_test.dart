@@ -260,4 +260,70 @@ void main() {
       expect(result, isFalse);
     });
   });
+
+  group('fetchDisziplinen', () {
+    final testResponse = [
+      {'DISZIPLINID': 1, 'DISZIPLINNR': '1.10', 'DISZIPLIN': 'Luftgewehr'},
+      {'DISZIPLINID': 2, 'DISZIPLINNR': '1.11', 'DISZIPLIN': 'Kleinkaliber'},
+    ];
+
+    test('returns mapped Disziplinen list from API', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result.length, 2);
+      expect(result[0]['DISZIPLIN'], 'Luftgewehr');
+      expect(result[1]['DISZIPLINNR'], '1.11');
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('returns empty list when API returns an empty list', () async {
+      when(mockHttpClient.get('Disziplinen')).thenAnswer((_) async => []);
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('returns empty list when API returns non-list response', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenAnswer((_) async => {'error': 'Invalid format'});
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('returns empty list and logs error when exception occurs', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenThrow(Exception('Network error for Disziplinen'));
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('handles partial Disziplinen data correctly', () async {
+      final partialResponse = [
+        {'DISZIPLINID': 3, 'DISZIPLIN': 'Pistole (Partial)'},
+        // Missing DISZIPLINNR
+      ];
+
+      when(mockHttpClient.get('Disziplinen'))
+          .thenAnswer((_) async => partialResponse);
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result.length, 1);
+      expect(result[0]['DISZIPLIN'], 'Pistole (Partial)');
+      expect(result[0]['DISZIPLINNR'], isNull); // Should be null if missing
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+  });
 }
