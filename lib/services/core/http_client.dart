@@ -4,16 +4,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'logger_service.dart';
-import 'config_service.dart'; 
-import 'cache_service.dart'; 
-import 'token_service.dart'; 
+import 'config_service.dart';
+import 'cache_service.dart';
+import 'token_service.dart';
 
 class HttpClient {
   HttpClient({
     required this.baseUrl,
     required this.serverTimeout,
-    required TokenService tokenService, 
-    required ConfigService configService, 
+    required TokenService tokenService,
+    required ConfigService configService,
     required CacheService
         cacheService, // Keep to pass to TokenService, or for specific cache clear actions if needed
     http.Client? client,
@@ -24,17 +24,16 @@ class HttpClient {
   final String baseUrl;
   final int serverTimeout;
   final http.Client _client;
-  final TokenService _tokenService; 
-  final ConfigService _configService; 
+  final TokenService _tokenService;
+  final ConfigService _configService;
 
   // Method to make HTTP requests with token handling
   Future<dynamic> _makeRequest(
     String method,
     String url,
     Map<String, String>? headers,
-    dynamic body, {
-    bool retry = true,
-  }) async {
+    dynamic body,
+  ) async {
     try {
       // Get the token from the TokenService
       final token = await _tokenService.getAuthToken();
@@ -42,6 +41,13 @@ class HttpClient {
       // Add Authorization header
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
+
+      // Add CORS headers
+      requestHeaders['Access-Control-Allow-Origin'] = '*';
+      requestHeaders['Access-Control-Allow-Methods'] =
+          'GET, POST, PUT, DELETE, OPTIONS';
+      requestHeaders['Access-Control-Allow-Headers'] =
+          'Content-Type, Authorization';
 
       http.Response response;
       if (method == 'POST') {
@@ -87,63 +93,38 @@ class HttpClient {
           LoggerService.logInfo('HttpClient: Body: $body');
 
           final streamedResponse = await _client.send(request);
-          response =
-              await http.Response.fromStream(streamedResponse).timeout(Duration(
-            seconds: serverTimeout,
-          ),);
+          response = await http.Response.fromStream(streamedResponse).timeout(
+            Duration(
+              seconds: serverTimeout,
+            ),
+          );
         }
       } else {
         throw Exception('Unsupported HTTP method: $method');
       }
 
-      LoggerService.logInfo(
-        'HttpClient: Response status: ${response.statusCode}, url: ${response.request?.url}',
-      );
-      LoggerService.logInfo('HttpClient: Response body: ${response.body}');
-
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        // For 204 No Content, body might be empty. Only decode if body is not empty.
-        if (response.body.isNotEmpty) {
-          return jsonDecode(response.body);
-        }
-        return {}; // Return empty map for 204 or empty body
-      } else if (response.statusCode == 401 || response.statusCode == 403) {
-        // Handle token expiration/invalidation
-        if (retry) {
-          LoggerService.logWarning(
-              'HttpClient: Token expired, attempting to refresh via TokenService',);
-          await _tokenService
-              .clearToken(); // Tell TokenService to clear its cached token
-          final newToken = await _tokenService
-              .requestToken(); // Request a new token from TokenService
-
-          if (newToken.isEmpty) {
-            // If token refresh failed
-            throw Exception(
-                'HttpClient: Token refresh failed: ${response.statusCode}, body: ${response.body}',);
-          }
-          // Retry the request once with the new token
-          // Pass original headers as Authorization will be re-added by _makeRequest
-          return _makeRequest(
-            method,
-            url,
-            headers,
-            body,
-            retry: false,
-          );
-        } else {
-          throw Exception(
-            'HttpClient: Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
-          );
-        }
+      // Check for CORS preflight response
+      if (response.statusCode == 204 || response.statusCode == 200) {
+        return _parseResponse(response);
       } else {
         throw Exception(
-          'HttpClient: Request failed: ${response.statusCode}, body: ${response.body}',
-        );
+            'HttpClient: Request failed with status: ${response.statusCode}',);
       }
     } catch (e) {
-      LoggerService.logError('HttpClient: Exception in _makeRequest: $e');
+      LoggerService.logError('HttpClient: Error in _makeRequest: $e');
       rethrow;
+    }
+  }
+
+  dynamic _parseResponse(http.Response response) {
+    if (response.body.isEmpty) {
+      return null;
+    }
+    try {
+      return jsonDecode(response.body);
+    } catch (e) {
+      LoggerService.logError('HttpClient: Error parsing response: $e');
+      return response.body;
     }
   }
 
@@ -187,7 +168,8 @@ class HttpClient {
           if (newToken.isEmpty) {
             // If token refresh failed
             throw Exception(
-                'HttpClient: Token refresh failed for bytes request: ${response.statusCode}, body: ${response.body}',);
+              'HttpClient: Token refresh failed for bytes request: ${response.statusCode}, body: ${response.body}',
+            );
           }
           return _makeBytesRequest(method, url, headers, retry: false);
         } else {
@@ -197,11 +179,13 @@ class HttpClient {
         }
       } else {
         throw Exception(
-            'HttpClient: Failed to load bytes: ${response.statusCode}',);
+          'HttpClient: Failed to load bytes: ${response.statusCode}',
+        );
       }
     } catch (e) {
       LoggerService.logError(
-          'HttpClient: Error fetching bytes in _makeBytesRequest: $e',);
+        'HttpClient: Error fetching bytes in _makeBytesRequest: $e',
+      );
       rethrow;
     }
   }
