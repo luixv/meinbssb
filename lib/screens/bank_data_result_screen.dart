@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/screens/base_screen_layout.dart';
+import '/constants/ui_constants.dart';
 
 class BankDataResultScreen extends StatelessWidget {
   const BankDataResultScreen({
@@ -39,6 +40,20 @@ class BankDataResultScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'schuetzenausweisFab',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+            arguments: {'userData': userData, 'isLoggedIn': true},
+          );
+        },
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.home,
+          color: UIConstants.whiteColor,
         ),
       ),
     );
