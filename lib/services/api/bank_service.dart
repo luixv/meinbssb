@@ -1,163 +1,88 @@
 // In lib/services/api/bank_service.dart
 
-import 'dart:convert';
-import '../core/http_client.dart';
-import '../core/logger_service.dart';
+import '/models/bank_data.dart';
+import '/services/core/http_client.dart';
+import '/services/core/logger_service.dart';
 
+/// Service for handling bank data operations.
 class BankService {
-  BankService({required HttpClient httpClient}) : _httpClient = httpClient;
+  /// Creates a new instance of [BankService].
+  const BankService(this._httpClient);
+
   final HttpClient _httpClient;
 
   /// Fetches bank data for a given weblogin ID.
-  /// Assumes _httpClient.get directly returns the JSON-decoded data (List or Map).
-  ///
-  /// Returns a Map<String, dynamic> including an 'ONLINE' field:
-  /// - 'ONLINE': true if data was fetched successfully from the network.
-  /// - 'ONLINE': false if an error occurred during network fetch (implies offline or network issue).
-  Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
+  Future<List<BankData>> fetchBankData(int webloginId) async {
     try {
-      final dynamic responseData =
+      final dynamic response =
           await _httpClient.get('BankdatenMyBSSB/$webloginId');
-
-      final mappedResponse = _mapBankdatenResponse(responseData);
-
-      // If the response is not empty, and we successfully mapped it,
-      // it means we were online and got data.
-      if (mappedResponse.isNotEmpty) {
-        LoggerService.logInfo('Successfully fetched Bankdaten from network.');
-        return {...mappedResponse, 'ONLINE': true}; // Add ONLINE: true
-      } else {
-        // If responseData was empty or couldn't be mapped, consider it offline for this specific data.
-        LoggerService.logWarning(
-          'Bankdaten response was empty or unmappable. Returning offline data.',
-        );
-        return {
-          'ONLINE': true,
-        }; // Return with ONLINE: true if data is empty/unmappable. Because the user is online
+      if (response is List) {
+        return response
+            .map((item) {
+              if (item is Map<String, dynamic>) {
+                return BankData.fromJson(item);
+              }
+              LoggerService.logWarning(
+                'Bank data list contains non-map item: ${item.runtimeType}',
+              );
+              return null;
+            })
+            .whereType<BankData>()
+            .toList();
       }
+      return [];
     } catch (e) {
-      LoggerService.logError(
-        'Error fetching Bankdaten: $e. Returning offline data.',
-      );
-      // If any error occurs during the network request, assume offline status
-      return {'ONLINE': false}; // Return with ONLINE: false
+      LoggerService.logError('Error fetching bank data: $e');
+      return [];
     }
-  }
-
-  /// Maps the dynamic API response for bank data into a consistent Map<String, dynamic> format.
-  Map<String, dynamic> _mapBankdatenResponse(dynamic response) {
-    if (response is List) {
-      if (response.isNotEmpty) {
-        if (response.first is Map<String, dynamic>) {
-          final Map<String, dynamic> data =
-              response.first as Map<String, dynamic>;
-          return {
-            'BANKDATENWEBID': data['BANKDATENWEBID'],
-            'WEBLOGINID': data['WEBLOGINID'],
-            'KONTOINHABER': data['KONTOINHABER'],
-            'BANKNAME': data['BANKNAME'],
-            'IBAN': data['IBAN'],
-            'BIC': data['BIC'],
-            'MANDATNR': data['MANDATNR'],
-            'LETZTENUTZUNG': data['LETZTENUTZUNG'],
-            'MANDATNAME': data['MANDATNAME'],
-            'MANDATSEQ': data['MANDATSEQ'],
-            'UNGUELTIG': data['UNGUELTIG'],
-          };
-        } else {
-          LoggerService.logWarning(
-            'Bankdaten response list contains non-map element: ${response.first.runtimeType}',
-          );
-          return {};
-        }
-      } else {
-        LoggerService.logWarning('Bankdaten response is an empty list.');
-        return {};
-      }
-    } else if (response is Map<String, dynamic>) {
-      return {
-        'BANKDATENWEBID': response['BANKDATENWEBID'],
-        'WEBLOGINID': response['WEBLOGINID'],
-        'KONTOINHABER': response['KONTOINHABER'],
-        'BANKNAME': response['BANKNAME'],
-        'IBAN': response['IBAN'],
-        'BIC': response['BIC'],
-        'MANDATNR': response['MANDATNR'],
-        'LETZTENUTZUNG': response['LETZTENUTZUNG'],
-        'MANDATNAME': response['MANDATNAME'],
-        'MANDATSEQ': response['MANDATSEQ'],
-        'UNGUELTIG': response['UNGUELTIG'],
-      };
-    }
-    LoggerService.logWarning(
-      'Bankdaten response is neither a List nor a Map: ${response.runtimeType}',
-    );
-    return {};
   }
 
   /// Registers new bank data.
-  /// Assumes _httpClient.post directly returns the JSON-decoded data (Map<String, dynamic>).
-  Future<Map<String, dynamic>> registerBankdaten(
-    int webloginId,
-    String kontoinhaber,
-    String iban,
-    String bic,
-  ) async {
+  Future<bool> registerBankData(BankData bankData) async {
     try {
-      final dynamic decodedResponse =
-          await _httpClient.post('BankdatenMyBSSB', {
-        'WebloginID': webloginId,
-        'Kontoinhaber': kontoinhaber,
-        'Bankname': '',
-        'IBAN': iban,
-        'BIC': bic,
-        'MandatNr': '',
-        'MandatSeq': 2,
-      });
+      final Map<String, dynamic> response = await _httpClient.post(
+        'BankdatenMyBSSB',
+        bankData.toJson(),
+      );
 
-      if (decodedResponse is Map<String, dynamic>) {
-        if (decodedResponse.isNotEmpty &&
-            decodedResponse.containsKey('BankdatenWebID')) {
-          LoggerService.logInfo(
-            'Successfully registered bankdaten. Response: ${jsonEncode(decodedResponse)}',
-          );
-          return decodedResponse;
-        } else {
-          LoggerService.logWarning(
-            'registerBankdaten: API returned a map, but not with expected success structure: $decodedResponse',
-          );
-          return {};
-        }
+      if (response.isNotEmpty && response.containsKey('BankdatenWebID')) {
+        LoggerService.logInfo(
+          'Bank data registered successfully for webloginId: ${bankData.webloginId}',
+        );
+        return true;
       } else {
         LoggerService.logWarning(
-          'registerBankdaten: Expected a Map response, but received: ${decodedResponse.runtimeType} -> $decodedResponse',
+          'registerBankData: API indicated failure or unexpected response. Response: $response',
         );
-        return {};
+        return false;
       }
     } catch (e) {
-      LoggerService.logError('Error while registering bankdaten: $e');
-      return {};
+      LoggerService.logError('Error registering bank data: $e');
+      return false;
     }
   }
 
-  Future<bool> deleteBankdaten(int webloginID) async {
-    LoggerService.logInfo(
-      'Attempting to delete Bankdaten with ID: $webloginID',
-    );
+  /// Deletes bank data.
+  Future<bool> deleteBankData(BankData bankData) async {
     try {
-      final response = await _httpClient.delete(
-        'BankdatenMyBSSB/$webloginID',
+      final Map<String, dynamic> response = await _httpClient.delete(
+        'BankdatenMyBSSB/${bankData.webloginId}',
         body: {},
       );
 
-      LoggerService.logInfo(
-        'Successfully deleted Bankdaten. Response: $response',
-      );
-      return true;
+      if (response['result'] == true) {
+        LoggerService.logInfo(
+          'Bank data deleted successfully for webloginId: ${bankData.webloginId}',
+        );
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'deleteBankData: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
     } catch (e) {
-      LoggerService.logError(
-        'Error while deleting Bankdaten $webloginID: $e',
-      );
+      LoggerService.logError('Error deleting bank data: $e');
       return false;
     }
   }

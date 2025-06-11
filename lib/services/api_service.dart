@@ -9,6 +9,7 @@ import '/services/api/training_service.dart';
 import '/services/api/user_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api/verein_service.dart';
+import '/models/bank_data.dart';
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
@@ -197,26 +198,36 @@ class ApiService {
   }
 
 // Bank Service
+  Future<List<BankData>> fetchBankData(int webloginId) async {
+    return _bankService.fetchBankData(webloginId);
+  }
+
+  Future<bool> registerBankData(BankData bankData) async {
+    return _bankService.registerBankData(bankData);
+  }
+
+  Future<bool> deleteBankData(BankData bankData) async {
+    return _bankService.deleteBankData(bankData);
+  }
+
+  // Legacy method - keep for backward compatibility
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
-    return _bankService.fetchBankdaten(webloginId);
-  }
-
-  Future<Map<String, dynamic>> registerBankdaten(
-    int webloginId,
-    String kontoinhaber,
-    String iban,
-    String bic,
-  ) async {
-    return _bankService.registerBankdaten(
-      webloginId,
-      kontoinhaber,
-      iban,
-      bic,
-    );
-  }
-
-  Future<bool> deleteBankdaten(int webloginId) async {
-    return _bankService.deleteBankdaten(webloginId);
+    final bankDataList = await _bankService.fetchBankData(webloginId);
+    if (bankDataList.isEmpty) {
+      return {'ONLINE': true};
+    }
+    final firstBankData = bankDataList.first;
+    return {
+      'ONLINE': true,
+      'KONTOINHABER': firstBankData.kontoinhaber,
+      'IBAN': firstBankData.iban,
+      'BIC': firstBankData.bic,
+      'BANKNAME': firstBankData.bankName,
+      'MANDATNR': firstBankData.mandatNr,
+      'MANDATNAME': firstBankData.mandatName,
+      'MANDATSEQ': firstBankData.mandatSeq,
+      'LETZTENUTZUNG': firstBankData.letzteNutzung?.toIso8601String(),
+    };
   }
 
   Future<List<dynamic>> fetchVereine() async {

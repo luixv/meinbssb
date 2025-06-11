@@ -6,8 +6,9 @@
 import 'dart:async' as _i3;
 import 'dart:typed_data' as _i4;
 
+import 'package:meinbssb/models/bank_data.dart' as _i5;
 import 'package:meinbssb/services/api_service.dart' as _i2;
-import 'package:meinbssb/services/core/config_service.dart' as _i5;
+import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -313,6 +314,45 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<bool>);
 
   @override
+  _i3.Future<List<dynamic>> fetchDisziplinen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchDisziplinen,
+          [],
+        ),
+        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i3.Future<List<dynamic>>);
+
+  @override
+  _i3.Future<List<_i5.BankData>> fetchBankData(int? webloginId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBankData,
+          [webloginId],
+        ),
+        returnValue: _i3.Future<List<_i5.BankData>>.value(<_i5.BankData>[]),
+      ) as _i3.Future<List<_i5.BankData>>);
+
+  @override
+  _i3.Future<bool> registerBankData(_i5.BankData? bankData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerBankData,
+          [bankData],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<bool> deleteBankData(_i5.BankData? bankData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteBankData,
+          [bankData],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -322,36 +362,6 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
         returnValue:
             _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> registerBankdaten(
-    int? webloginId,
-    String? kontoinhaber,
-    String? iban,
-    String? bic,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #registerBankdaten,
-          [
-            webloginId,
-            kontoinhaber,
-            iban,
-            bic,
-          ],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<bool> deleteBankdaten(int? webloginId) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteBankdaten,
-          [webloginId],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
 
   @override
   _i3.Future<List<dynamic>> fetchVereine() => (super.noSuchMethod(
@@ -377,7 +387,7 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i5.ConfigService {
+class MockConfigService extends _i1.Mock implements _i6.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
