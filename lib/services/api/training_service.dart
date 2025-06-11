@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: training_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -230,6 +226,42 @@ class TrainingService {
         };
       }).toList();
     }
+    return [];
+  }
+
+  /// Fetches a list of Vereine (clubs/associations).
+  /// This method retrieves data from the '/Vereine' endpoint.
+  Future<List<Map<String, dynamic>>> fetchVereine() async {
+    try {
+      final response = await _httpClient.get('Vereine');
+      return _mapVereineResponse(response);
+    } catch (e) {
+      LoggerService.logError('Error fetching Vereine: $e');
+      return []; // Return an empty list on error
+    }
+  }
+
+  /// Maps the dynamic API response for Vereine into a consistent List<Map<String, dynamic>> format.
+  List<Map<String, dynamic>> _mapVereineResponse(dynamic response) {
+    if (response is List) {
+      return response.map((item) {
+        final Map<String, dynamic> typedItem =
+            Map<String, dynamic>.from(item as Map);
+        return {
+          'VEREINID': typedItem['VEREINID'],
+          'GAUID': typedItem['GAUID'],
+          'GAUNR': typedItem['GAUNR'],
+          'VEREINNR': typedItem['VEREINNR'],
+          'VEREINNAME': typedItem['VEREINNAME'],
+          'LAT': typedItem['LAT'],
+          'LON': typedItem['LON'],
+          'GEOCODEQUELLE': typedItem['GEOCODEQUELLE'],
+        };
+      }).toList();
+    }
+    LoggerService.logWarning(
+      'Vereine response is not a List: ${response.runtimeType}',
+    );
     return [];
   }
 }

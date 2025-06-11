@@ -230,6 +230,74 @@ void main() {
   });
 
   group('unregisterFromSchulung', () {
+    group('fetchVereine', () {
+      test('returns mapped vereine list from API', () async {
+        final testResponse = [
+          {
+            'VEREINID': 1,
+            'GAUID': 101,
+            'GAUNR': 'GAU01',
+            'VEREINNR': 'V001',
+            'VEREINNAME': 'Test Verein',
+            'LAT': 48.1351,
+            'LON': 11.5820,
+            'GEOCODEQUELLE': 'Google',
+          }
+        ];
+
+        when(mockHttpClient.get('Vereine'))
+            .thenAnswer((_) async => testResponse);
+
+        final result = await trainingService.fetchVereine();
+
+        expect(result, isA<List<Map<String, dynamic>>>());
+        expect(result.length, 1);
+        expect(result[0]['VEREINNAME'], 'Test Verein');
+        expect(result[0]['LAT'], 48.1351);
+        verify(mockHttpClient.get('Vereine')).called(1);
+      });
+
+      test('returns empty list when API returns non-list response', () async {
+        when(mockHttpClient.get('Vereine'))
+            .thenAnswer((_) async => {'error': 'Invalid data'});
+
+        final result = await trainingService.fetchVereine();
+
+        expect(result, isEmpty);
+        verify(mockHttpClient.get('Vereine')).called(1);
+      });
+
+      test('returns empty list and logs error when exception occurs', () async {
+        when(mockHttpClient.get('Vereine'))
+            .thenThrow(Exception('Network error'));
+
+        final result = await trainingService.fetchVereine();
+
+        expect(result, isEmpty);
+        verify(mockHttpClient.get('Vereine')).called(1);
+      });
+
+      test('handles partial data correctly', () async {
+        final testResponse = [
+          {
+            'VEREINID': 2,
+            'VEREINNAME': 'Partial Data Club',
+            // Missing other fields
+          }
+        ];
+
+        when(mockHttpClient.get('Vereine'))
+            .thenAnswer((_) async => testResponse);
+
+        final result = await trainingService.fetchVereine();
+
+        expect(result.length, 1);
+        expect(result[0]['VEREINNAME'], 'Partial Data Club');
+        expect(result[0]['GAUID'],
+            isNull,); // Should handle missing fields gracefully
+      });
+    });
+
     const testTeilnehmerId = 789;
 
     test('returns true when unregistration is successful', () async {
