@@ -180,6 +180,14 @@ class ApiService {
     return _trainingService.fetchAvailableSchulungen();
   }
 
+  Future<List<dynamic>> fetchVereine() async {
+    return _trainingService.fetchVereine();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchVerein(int vereinsNr) async {
+    return _trainingService.fetchVerein(vereinsNr);
+  }
+
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
     return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
