@@ -14,8 +14,7 @@ class HttpClient {
     required this.serverTimeout,
     required TokenService tokenService,
     required ConfigService configService,
-    required CacheService
-        cacheService, // Keep to pass to TokenService, or for specific cache clear actions if needed
+    required CacheService cacheService,
     http.Client? client,
   })  : _client = client ?? http.Client(),
         _tokenService = tokenService,
@@ -42,12 +41,13 @@ class HttpClient {
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
 
-      // Add CORS headers
+      /* Add CORS headers
       requestHeaders['Access-Control-Allow-Origin'] = '*';
       requestHeaders['Access-Control-Allow-Methods'] =
           'GET, POST, PUT, DELETE, OPTIONS';
       requestHeaders['Access-Control-Allow-Headers'] =
           'Content-Type, Authorization';
+      */
 
       http.Response response;
       if (method == 'POST') {
@@ -108,7 +108,8 @@ class HttpClient {
         return _parseResponse(response);
       } else {
         throw Exception(
-            'HttpClient: Request failed with status: ${response.statusCode}',);
+          'HttpClient: Request failed with status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       LoggerService.logError('HttpClient: Error in _makeRequest: $e');

@@ -30,7 +30,7 @@ class BaseScreenLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         backgroundColor: UIConstants.backgroundColor,
         title: Text(
           title,
@@ -61,4 +61,4 @@ class BaseScreenLayout extends StatelessWidget {
       floatingActionButton: floatingActionButton,
     );
   }
-} 
+}

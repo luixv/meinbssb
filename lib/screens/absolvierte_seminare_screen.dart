@@ -97,7 +97,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
                   ),
                   child: ListTile(
                     leading: const Icon(
-                      Icons.school,
+                      Icons.task_alt,
                       color: UIConstants.defaultAppColor,
                     ),
                     title: Text(

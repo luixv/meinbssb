@@ -74,6 +74,8 @@ class AppDrawer extends StatelessWidget {
                     fontSize: 24,
                   ),
                 ),
+
+                /*
                 const SizedBox(height: 8),
                 Text(
                   isLoggedIn ? 'Angemeldet' : 'Nicht angemeldet',
@@ -82,6 +84,7 @@ class AppDrawer extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
+                */
               ],
             ),
           ),
@@ -103,7 +106,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school),
+              leading: const Icon(Icons.task_alt),
               title: const Text('Absolvierte Seminare'),
               onTap: () {
                 Navigator.pop(context);
