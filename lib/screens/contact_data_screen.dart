@@ -3,10 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
 import '../services/core/logger_service.dart';
+import '/screens/base_screen_layout.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -492,28 +491,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Kontaktdaten',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          const Padding(
-            padding: UIConstants.appBarRightPadding,
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Kontaktdaten',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: _handleLogout,
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _contactDataFuture,
         builder: (context, snapshot) {
@@ -532,49 +514,19 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           } else if (snapshot.hasData && snapshot.data != null) {
             final List<Map<String, dynamic>> categorizedContactData =
                 snapshot.data!;
-
-            final bool hasContacts = categorizedContactData.any(
-              (group) => (group['contacts'] as List?)?.isNotEmpty ?? false,
-            );
-
-            if (!hasContacts) {
-              return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(UIConstants.spacingM),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: UIConstants.startCrossAlignment,
-                  children: [
-                    // Display categorized contacts
-                    for (var category in categorizedContactData)
-                      if ((category['contacts'] as List?)?.isNotEmpty ?? false)
-                        _buildContactGroup(
-                          category['category']?.toString() ?? 'Unbekannt',
-                          (category['contacts'] as List?)
-                                  ?.cast<Map<String, dynamic>>() ??
-                              [],
-                        ),
-                  ],
-                ),
-              ),
-            );
+            return _buildContactDataList(categorizedContactData);
           } else {
-            return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
+            return const Center(
+              child: Text('Keine Kontaktdaten gefunden.'),
+            );
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.add,
-          color: UIConstants.addIcon,
-          size: UIConstants.bodyFontSize + 4.0,
-        ),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -656,6 +608,37 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         title,
         style: UIConstants.titleStyle.copyWith(
           color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactDataList(
+      List<Map<String, dynamic>> categorizedContactData,) {
+    final bool hasContacts = categorizedContactData.any(
+      (group) => (group['contacts'] as List?)?.isNotEmpty ?? false,
+    );
+
+    if (!hasContacts) {
+      return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(UIConstants.spacingM),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: UIConstants.startCrossAlignment,
+          children: [
+            // Display categorized contacts
+            for (var category in categorizedContactData)
+              if ((category['contacts'] as List?)?.isNotEmpty ?? false)
+                _buildContactGroup(
+                  category['category']?.toString() ?? 'Unbekannt',
+                  (category['contacts'] as List?)
+                          ?.cast<Map<String, dynamic>>() ??
+                      [],
+                ),
+          ],
         ),
       ),
     );

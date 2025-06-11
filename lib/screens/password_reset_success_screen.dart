@@ -4,49 +4,51 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
+import '/screens/logo_widget.dart';
+import '/screens/base_screen_layout.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
-  const PasswordResetSuccessScreen({super.key, required this.userData});
-  final Map<String, dynamic> userData;
+  const PasswordResetSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        title:
-            const Text('Passwort zurückgesetzt', style: UIConstants.titleStyle),
-        actions: [
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: false,
-            onLogout: () {
-              // Navigate back to the login screen.
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text(
-          'Ihr Passwort wurde erfolgreich zurückgesetzt.',
-          style: UIConstants.bodyStyle,
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
+    return BaseScreenLayout(
+      title: 'Passwort zurücksetzen',
+      userData: const {},
+      isLoggedIn: false,
+      onLogout: () {},
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const LogoWidget(),
+            const SizedBox(height: UIConstants.spacingL),
+            const Icon(
+              Icons.check_circle_outline,
+              size: UIConstants.defaultIconSize,
+              color: UIConstants.successColor,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            const Text(
+              'Passwort erfolgreich zurückgesetzt',
+              style: UIConstants.titleStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            const Text(
+              'Sie können sich jetzt mit Ihrem neuen Passwort anmelden.',
+              style: UIConstants.bodyStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: UIConstants.spacingL),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              style: UIConstants.primaryButtonStyle,
+              child: const Text('Zurück zum Login'),
+            ),
+          ],
         ),
       ),
     );

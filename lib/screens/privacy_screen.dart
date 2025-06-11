@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
+import '/screens/base_screen_layout.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key, required this.userData});
@@ -12,24 +12,13 @@ class PrivacyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'Datenschutz',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: false,
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Datenschutz',
+      userData: userData,
+      isLoggedIn: false,
+      onLogout: () {
+        Navigator.pushReplacementNamed(context, '/login');
+      },
       body: const Padding(
         padding: UIConstants.defaultPadding,
         child: Text(

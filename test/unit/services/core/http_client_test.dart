@@ -1,4 +1,3 @@
-// test/services/http_client_test.dart
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -96,7 +95,7 @@ void main() {
       test('should handle POST request with 204 status', () async {
         // Arrange
         final response = http.Response(
-          '',
+          '', // Empty body for 204
           204,
           request: http.Request('POST', Uri.parse('$baseUrl/users')),
         );
@@ -112,8 +111,8 @@ void main() {
         // Act
         final result = await httpClient.post('users', {'name': 'John'});
 
-        // Assert
-        expect(result, equals({}));
+        // Assert: Expect null for empty body with 204 status
+        expect(result, isNull); // Changed from equals({}) to isNull
         verify(mockTokenService.getAuthToken()).called(1);
         verify(
           mockHttpClient.post(
@@ -200,7 +199,7 @@ void main() {
           if (tokenGetCallCount == 1) {
             return authToken;
           }
-          return 'mock_new_token'; // Doesn't matter, requestToken fails
+          return 'mock_new_token'; // Doesn't matter, requestToken returns empty
         });
 
         when(mockTokenService.clearToken()).thenAnswer((_) async {});
@@ -210,11 +209,18 @@ void main() {
         // Act & Assert
         await expectLater(
           () => httpClient.post('users', {'name': 'John'}),
-          throwsA(isA<Exception>()),
+          throwsA(
+            predicate(
+              (e) =>
+                  e is Exception &&
+                  e.toString().contains(
+                      'HttpClient: Token refresh failed for request: 401, body: Unauthorized',), // Updated predicate
+            ),
+          ),
         );
 
         // Verifications after the exception has been caught by expectLater
-        verify(mockTokenService.getAuthToken()).called(1); // Initial call
+        verify(mockTokenService.getAuthToken()).called(1); // Initial call only
         verify(
           mockHttpClient.post(
             any,
@@ -296,7 +302,7 @@ void main() {
     group('DELETE requests', () {
       test('should make successful DELETE request without body', () async {
         // Arrange
-        final response = http.Response('', 204);
+        final response = http.Response('', 204); // Empty body for 204
 
         when(
           mockHttpClient.delete(
@@ -312,8 +318,8 @@ void main() {
         // Act
         final result = await httpClient.delete('users/123');
 
-        // Assert
-        expect(result, equals({}));
+        // Assert: Expect null for empty body with 204 status
+        expect(result, isNull); // Changed from equals({}) to isNull
         verify(mockTokenService.getAuthToken()).called(1);
         verify(
           mockHttpClient.delete(
@@ -420,6 +426,7 @@ void main() {
             .thenReturn('webintern.bssb.bayern');
         when(mockConfigService.getString('apiPort', 'api')).thenReturn('56400');
 
+        // Mock the send method of the http.Client
         when(mockHttpClient.send(any))
             .thenAnswer((_) async => mockStreamedResponse);
 
@@ -432,7 +439,7 @@ void main() {
         verify(mockTokenService.getAuthToken()).called(1);
         verify(mockConfigService.getString('apiBaseServer', 'api')).called(1);
         verify(mockConfigService.getString('apiPort', 'api')).called(1);
-        verify(mockHttpClient.send(any)).called(1);
+        verify(mockHttpClient.send(any)).called(1); // Verify send is called
       });
 
       test('should use default config values when not found', () async {
@@ -447,6 +454,7 @@ void main() {
             .thenReturn(null);
         when(mockConfigService.getString('apiPort', 'api')).thenReturn(null);
 
+        // Mock the send method of the http.Client
         when(mockHttpClient.send(any))
             .thenAnswer((_) async => mockStreamedResponse);
 
@@ -459,7 +467,7 @@ void main() {
         verify(mockTokenService.getAuthToken()).called(1);
         verify(mockConfigService.getString('apiBaseServer', 'api')).called(1);
         verify(mockConfigService.getString('apiPort', 'api')).called(1);
-        verify(mockHttpClient.send(any)).called(1);
+        verify(mockHttpClient.send(any)).called(1); // Verify send is called
       });
     });
 
@@ -650,10 +658,9 @@ void main() {
               (e) =>
                   e is Exception &&
                   e.toString().contains(
-                        'HttpClient: Token refresh failed: 401, body: Unauthorized',
-                      ),
+                      'HttpClient: Token refresh failed for request: 401, body: Unauthorized',), // Updated predicate
             ),
-          ), // Updated predicate
+          ),
         );
 
         // Verify that the request was made once (original call only)

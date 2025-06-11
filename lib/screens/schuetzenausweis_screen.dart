@@ -2,19 +2,22 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
+import '/screens/base_screen_layout.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
   const SchuetzenausweisScreen({
     super.key,
     required this.personId,
     required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
   });
   final int personId;
   final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   State<SchuetzenausweisScreen> createState() => _SchuetzenausweisScreenState();
@@ -31,42 +34,22 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
 
   void _loadInitialData() {
     final apiService = Provider.of<ApiService>(context, listen: false);
-
     _schuetzenausweisFuture = apiService.fetchSchuetzenausweis(widget.personId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Schützenausweis',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          // --- Added ConnectivityIcon here ---
-          const Padding(
-            padding: UIConstants.defaultHorizontalPadding,
-            child: ConnectivityIcon(),
-          ),
-          // --- End ConnectivityIcon addition ---
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: true,
-            onLogout: () => Navigator.pushReplacementNamed(context, '/login'),
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Schützenausweis',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: SingleChildScrollView(
         padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const LogoWidget(), // Display the logo at the top
+            const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
             FutureBuilder<Uint8List>(
               future: _schuetzenausweisFuture,
@@ -112,11 +95,11 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
+        heroTag: 'schuetzenausweisFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',
-            arguments: {'isLoggedIn': true},
+            arguments: {'userData': widget.userData, 'isLoggedIn': true},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,

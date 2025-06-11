@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '../services/core/logger_service.dart';
+import '/screens/base_screen_layout.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -211,28 +210,11 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     final userData = widget.userData;
 
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Home',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          const Padding(
-            padding: UIConstants.appBarRightPadding,
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Home',
+      userData: userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: _handleLogout,
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
         child: Column(

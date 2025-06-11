@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -34,6 +33,10 @@ void main() {
   Widget createWidgetUnderTest({
     required int personId,
     required Map<String, dynamic> userData,
+    // Add these required parameters to the test utility function
+    bool isLoggedIn = true, // Provide a default value or make it configurable
+    VoidCallback?
+        onLogout, // Provide a default no-op function or make it configurable
   }) {
     return MultiProvider(
       providers: [
@@ -44,6 +47,8 @@ void main() {
         home: SchuetzenausweisScreen(
           personId: personId,
           userData: userData,
+          isLoggedIn: isLoggedIn, // Pass the new parameter
+          onLogout: onLogout ?? () {}, // Pass the new parameter
         ),
       ),
     );

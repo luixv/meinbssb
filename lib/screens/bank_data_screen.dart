@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '../services/core/logger_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api_service.dart' hide NetworkException;
 import '/screens/bank_data_result_screen.dart';
 import '/exceptions/network_exception.dart';
+import '/screens/base_screen_layout.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -455,88 +454,55 @@ class BankDataScreenState extends State<BankDataScreen> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Bankdaten',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          const Padding(
-            padding: UIConstants.appBarRightPadding,
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
-          ),
-        ],
-      ),
-      body: bodyContent, // Use the dynamically determined body content
-      // --- Floating Action Button (FAB) ---
+    return BaseScreenLayout(
+      title: 'Bankdaten',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: _handleLogout,
+      body: bodyContent,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end, // Align FABs to the right
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Existing Edit/Save FAB
-          _isOnline
-              ? FloatingActionButton(
-                  heroTag: 'editSaveFab', // Important for multiple FABs
-                  onPressed: _isLoading ? null : _handleFabPressed,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.circularProgressIndicator,
-                          ),
-                        )
-                      : Icon(
-                          _isEditing
-                              ? Icons.save // Show save icon when in edit mode
-                              : Icons
-                                  .edit, // Show edit icon when in read-only mode
-                          color: UIConstants.saveEditIcon,
-                          size: UIConstants.bodyFontSize + 4.0,
-                        ),
-                )
-              : const SizedBox.shrink(), // Hide if offline
-
-          // Spacing between FABs (only if both are potentially visible)
+          if (_isOnline &&
+              !_isEditing &&
+              _kontoinhaberController.text.isNotEmpty)
+            FloatingActionButton(
+              heroTag: 'deleteFab',
+              onPressed: _isLoading ? null : _handleDeleteBankData,
+              backgroundColor: UIConstants.deleteIcon,
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Icon(
+                      Icons.delete_forever,
+                      color: Colors.white,
+                    ),
+            ),
           if (_isOnline &&
               !_isEditing &&
               _kontoinhaberController.text.isNotEmpty)
             const SizedBox(height: UIConstants.bankDataSpacing),
-
-          // New Delete FAB
-          (_isOnline && !_isEditing && _kontoinhaberController.text.isNotEmpty)
-              ? FloatingActionButton(
-                  heroTag: 'deleteFab', // Important for multiple FABs
-                  onPressed:
-                      _isLoading ? null : _handleDeleteBankData, // New handler
-                  backgroundColor:
-                      UIConstants.deleteIcon, // Use a delete-appropriate color
-                  child:
-                      _isLoading // If global isLoading, might want specific delete loading state
-                          ? const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : const Icon(
-                              Icons.delete_forever, // Stronger delete icon
-                              color: Colors.white,
-                            ),
-                )
-              : const SizedBox
-                  .shrink(), // Hide if offline, or in editing mode, or no data
+          if (_isOnline)
+            FloatingActionButton(
+              heroTag: 'editSaveFab',
+              onPressed: _isLoading ? null : _handleFabPressed,
+              backgroundColor: UIConstants.defaultAppColor,
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        UIConstants.circularProgressIndicator,
+                      ),
+                    )
+                  : Icon(
+                      _isEditing ? Icons.save : Icons.edit,
+                      color: Colors.white,
+                      size: UIConstants.bodyFontSize + 4.0,
+                    ),
+            ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // ---
     );
   }
 

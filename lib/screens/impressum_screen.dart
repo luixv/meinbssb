@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:meinbssb/screens/app_menu.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/screens/connectivity_icon.dart'; // Import the ConnectivityIcon
+import '/constants/ui_constants.dart';
+import '/screens/base_screen_layout.dart';
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -17,30 +16,11 @@ class ImpressumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Impressum',
-          style: UIConstants.titleStyle,
-        ),
-        actions: [
-          // --- Added ConnectivityIcon here ---
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(), // The ConnectivityIcon
-          ),
-          // --- End ConnectivityIcon addition ---
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: isLoggedIn,
-            onLogout: onLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Impressum',
+      userData: userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
       body: Container(
         color: UIConstants.backgroundColor,
         child: const SingleChildScrollView(
@@ -264,33 +244,20 @@ class _LinkText extends StatelessWidget {
         } else {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('URL konnte nicht geöffnet werden'),
-                duration: UIConstants.snackBarDuration,
-              ),
+              const SnackBar(content: Text('Could not launch URL')),
             );
           }
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: UIConstants.spacingS),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              text,
-              style: UIConstants.linkStyle.copyWith(
-                color: UIConstants.linkColor,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            const SizedBox(width: UIConstants.spacingXS),
-            const Icon(
-              Icons.open_in_new,
-              size: 16,
-              color: UIConstants.linkColor,
-            ),
-          ],
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: UIConstants.linkColor,
+            fontSize: UIConstants.bodyFontSize,
+            decoration: TextDecoration.underline,
+          ),
         ),
       ),
     );
