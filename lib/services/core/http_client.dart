@@ -1,4 +1,3 @@
-// lib/services/http_client.dart
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -26,13 +25,14 @@ class HttpClient {
   final TokenService _tokenService;
   final ConfigService _configService;
 
-  // Method to make HTTP requests with token handling
+  // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
     String method,
     String url,
     Map<String, String>? headers,
-    dynamic body,
-  ) async {
+    dynamic body, {
+    bool retry = true, // Added retry parameter for consistency
+  }) async {
     try {
       // Get the token from the TokenService
       final token = await _tokenService.getAuthToken();
@@ -40,14 +40,6 @@ class HttpClient {
       // Add Authorization header
       final requestHeaders = headers ?? {};
       requestHeaders['Authorization'] = 'Bearer $token';
-
-      /* Add CORS headers
-      requestHeaders['Access-Control-Allow-Origin'] = '*';
-      requestHeaders['Access-Control-Allow-Methods'] =
-          'GET, POST, PUT, DELETE, OPTIONS';
-      requestHeaders['Access-Control-Allow-Headers'] =
-          'Content-Type, Authorization';
-      */
 
       http.Response response;
       if (method == 'POST') {
@@ -103,9 +95,32 @@ class HttpClient {
         throw Exception('Unsupported HTTP method: $method');
       }
 
-      // Check for CORS preflight response
+      // Check for CORS preflight response and handle token expiration
       if (response.statusCode == 204 || response.statusCode == 200) {
         return _parseResponse(response);
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        if (retry) {
+          LoggerService.logWarning(
+            'HttpClient: Token expired, attempting to refresh for request via TokenService. URL: $url, Status: ${response.statusCode}',
+          );
+          await _tokenService
+              .clearToken(); // Tell TokenService to clear its cached token
+          final newToken = await _tokenService
+              .requestToken(); // Request a new token from TokenService
+
+          if (newToken.isEmpty) {
+            // If token refresh failed
+            throw Exception(
+              'HttpClient: Token refresh failed for request: ${response.statusCode}, body: ${response.body}',
+            );
+          }
+          // Retry the request with the new token
+          return _makeRequest(method, url, headers, body, retry: false);
+        } else {
+          throw Exception(
+            'HttpClient: Request failed after token refresh: ${response.statusCode}, body: ${response.body}',
+          );
+        }
       } else {
         throw Exception(
           'HttpClient: Request failed with status: ${response.statusCode}',
@@ -113,7 +128,7 @@ class HttpClient {
       }
     } catch (e) {
       LoggerService.logError('HttpClient: Error in _makeRequest: $e');
-      rethrow;
+      rethrow; // Rethrow the original exception
     }
   }
 
@@ -125,11 +140,14 @@ class HttpClient {
       return jsonDecode(response.body);
     } catch (e) {
       LoggerService.logError('HttpClient: Error parsing response: $e');
-      return response.body;
+      // Rethrow the FormatException directly
+      rethrow;
     }
   }
 
   // Method to make HTTP requests to get bytes with token handling
+  // This method now largely mirrors _makeRequest for consistency,
+  // but specifically handles byte responses.
   Future<Uint8List> _makeBytesRequest(
     String method,
     String url,
@@ -145,7 +163,9 @@ class HttpClient {
       http.Response response;
 
       if (method == 'GET') {
-        response = await _client.get(Uri.parse(url), headers: requestHeaders);
+        response = await _client
+            .get(Uri.parse(url), headers: requestHeaders)
+            .timeout(Duration(seconds: serverTimeout)); // Added timeout
       } else {
         throw Exception('Method not supported for byte requests');
       }
@@ -282,6 +302,7 @@ class HttpClient {
   Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
+    // Using _makeBytesRequest specifically for byte responses, maintaining its unique behavior
     return _makeBytesRequest('GET', apiUrl, null);
   }
 }

@@ -58,34 +58,33 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.zero, // Important: Removes default ListView padding
         children: <Widget>[
-          DrawerHeader(
+          // Custom header to replace DrawerHeader for more control over space
+          Container(
+            height: 120.0, // Adjust this height to reduce or increase space
             decoration: const BoxDecoration(
               color: UIConstants.defaultAppColor,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Mein BSSB',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+            child: const Padding(
+              padding: EdgeInsets.only(
+                  left: 16.0,
+                  top: 40.0,
+                  bottom: 8.0,), // Adjust padding within the header
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Mein BSSB',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold, // Added bold for prominence
+                    ),
                   ),
-                ),
-
-                /*
-                const SizedBox(height: 8),
-                Text(
-                  isLoggedIn ? 'Angemeldet' : 'Nicht angemeldet',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                */
-              ],
+                  // Removed the commented-out SizedBox and Text for "Angemeldet"
+                ],
+              ),
             ),
           ),
           if (isLoggedIn) ...[

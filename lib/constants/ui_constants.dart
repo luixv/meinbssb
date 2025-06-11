@@ -359,7 +359,8 @@ class UIConstants {
   static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: defaultAppColor,
     foregroundColor: whiteColor,
-    padding: const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
+    padding:
+        const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.0),
     ),
@@ -368,7 +369,8 @@ class UIConstants {
   static final ButtonStyle secondaryButtonStyle = OutlinedButton.styleFrom(
     foregroundColor: defaultAppColor,
     side: const BorderSide(color: defaultAppColor),
-    padding: const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
+    padding:
+        const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.0),
     ),
@@ -377,18 +379,19 @@ class UIConstants {
   // Input Decoration
   static const InputDecoration defaultInputDecoration = InputDecoration(
     border: OutlineInputBorder(),
-    contentPadding: EdgeInsets.symmetric(horizontal: spacingM, vertical: spacingS),
+    contentPadding:
+        EdgeInsets.symmetric(horizontal: spacingM, vertical: spacingS),
   );
 
   // Card Styles
   static final BoxDecoration cardDecoration = BoxDecoration(
     color: whiteColor,
     borderRadius: BorderRadius.circular(8.0),
-    boxShadow: [
+    boxShadow: const [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black,
         blurRadius: 4.0,
-        offset: const Offset(0, 2),
+        offset: Offset(0, 2),
       ),
     ],
   );
