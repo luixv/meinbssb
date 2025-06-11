@@ -2,11 +2,10 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
+import '/screens/base_screen_layout.dart';
 
-class PersonDataResultScreen extends StatelessWidget {
-  const PersonDataResultScreen({
+class PersonalDataResultScreen extends StatelessWidget {
+  const PersonalDataResultScreen({
     super.key,
     required this.success,
     required this.userData,
@@ -21,63 +20,29 @@ class PersonDataResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String displayMessage = success
-        ? 'Ihre persönlichen Daten wurden erfolgreich aktualisiert.'
-        : 'Ihre persönlichen Daten konnten nicht aktualisiert werden.';
-
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'Daten Aktualisierung',
-          style: UIConstants.titleStyle,
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: isLoggedIn,
-            onLogout: onLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Persönliche Daten',
+      userData: userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
       body: Center(
-        child: Padding(
-          padding: UIConstants.defaultPadding,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                success ? Icons.check_circle_outline : Icons.error_outline,
-                color:
-                    success ? UIConstants.successColor : UIConstants.errorColor,
-                size: 100,
-              ),
-              const SizedBox(height: UIConstants.spacingS * 2),
-              Text(
-                success ? 'Erfolg!' : 'Fehler!',
-                style: UIConstants.titleStyle.copyWith(
-                  color: success
-                      ? UIConstants.successColor
-                      : UIConstants.errorColor,
-                ),
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              Text(
-                displayMessage,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: UIConstants.bodyFontSize,
-                ),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              success ? Icons.check_circle : Icons.error,
+              color: success ? Colors.green : Colors.red,
+              size: 64,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              success
+                  ? 'Ihre persönlichen Daten wurden erfolgreich gespeichert.'
+                  : 'Es ist ein Fehler aufgetreten.',
+              style: const TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

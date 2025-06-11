@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '/services/api_service.dart';
 import '../services/core/logger_service.dart';
+import '/screens/base_screen_layout.dart';
 
 class AbsolvierteSeminareScreen extends StatefulWidget {
   const AbsolvierteSeminareScreen(
@@ -59,28 +58,11 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Absolvierte Seminare', // Screen title
-          style: UIConstants.titleStyle,
-        ),
-        actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Absolvierte Seminare',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: _handleLogout,
       body: FutureBuilder<List<dynamic>>(
         future: _absolvierteSeminareFuture,
         builder: (context, snapshot) {
@@ -104,55 +86,44 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
               );
             }
 
-            return Padding(
-              padding: UIConstants.defaultPadding,
-              child: ListView.separated(
-                itemCount: seminare.length,
-                separatorBuilder: (_, __) => const SizedBox(
-                  height: UIConstants.defaultSeparatorHeight,
-                ),
-                itemBuilder: (context, index) {
-                  final schulung = seminare[index];
-                  return ListTile(
-                    tileColor: UIConstants.tileColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(UIConstants.cornerRadius),
-                    ),
-                    leading: const Column(
-                      mainAxisAlignment: UIConstants.listItemLeadingAlignment,
-                      children: [
-                        Icon(
-                          Icons.school_outlined,
-                          color: UIConstants.defaultAppColor,
-                        ),
-                      ],
+            return ListView.builder(
+              itemCount: seminare.length,
+              itemBuilder: (context, index) {
+                final seminar = seminare[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: UIConstants.spacingM,
+                    vertical: UIConstants.spacingS,
+                  ),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.school,
+                      color: UIConstants.defaultAppColor,
                     ),
                     title: Text(
-                      schulung['BEZEICHNUNG'] ?? 'N/A',
-                      style: UIConstants.listItemTitleStyle,
+                      seminar['BEZEICHNUNG'] ?? 'Unbekanntes Seminar',
+                      style: UIConstants.subtitleStyle,
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Ausgestellt am: ${schulung['AUSGESTELLTAM'] ?? 'N/A'}',
-                          style: UIConstants.listItemSubtitleStyle,
+                          'Ausgestellt am: ${seminar['AUSGESTELLTAM'] ?? 'Unbekannt'}',
+                          style: UIConstants.bodyStyle,
                         ),
                         Text(
-                          'Gültig bis: ${schulung['GUELTIGBIS'] ?? 'N/A'}',
-                          style: UIConstants.listItemSubtitleStyle,
+                          'Gültig bis: ${seminar['GUELTIGBIS'] ?? 'Unbekannt'}',
+                          style: UIConstants.bodyStyle,
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             );
           } else {
-            // This case handles when snapshot.data is null (though covered by hasData check)
             return const Center(
-              child: Text('Keine absolvierten Seminare verfügbar.'),
+              child: Text('Keine Seminardaten verfügbar.'),
             );
           }
         },

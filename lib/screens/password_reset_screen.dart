@@ -7,8 +7,7 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '../services/core/error_service.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
+import '/screens/base_screen_layout.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
@@ -73,30 +72,11 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Passwort zurücksetzen',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          // --- Added ConnectivityIcon here ---
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: ConnectivityIcon(), // The ConnectivityIcon
-          ),
-          // --- End ConnectivityIcon addition ---
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: widget.onLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Passwort zurücksetzen',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(

@@ -349,4 +349,47 @@ class UIConstants {
       MainAxisAlignment.spaceBetween;
   static const CrossAxisAlignment startCrossAlignment =
       CrossAxisAlignment.start;
+
+  static const TextStyle menuItemStyle = TextStyle(
+    fontSize: bodyFontSize,
+    color: Colors.black87,
+  );
+
+  // Button Styles
+  static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: defaultAppColor,
+    foregroundColor: whiteColor,
+    padding: const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  );
+
+  static final ButtonStyle secondaryButtonStyle = OutlinedButton.styleFrom(
+    foregroundColor: defaultAppColor,
+    side: const BorderSide(color: defaultAppColor),
+    padding: const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  );
+
+  // Input Decoration
+  static const InputDecoration defaultInputDecoration = InputDecoration(
+    border: OutlineInputBorder(),
+    contentPadding: EdgeInsets.symmetric(horizontal: spacingM, vertical: spacingS),
+  );
+
+  // Card Styles
+  static final BoxDecoration cardDecoration = BoxDecoration(
+    color: whiteColor,
+    borderRadius: BorderRadius.circular(8.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 4.0,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
 }

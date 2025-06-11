@@ -3,12 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
-import '/screens/connectivity_icon.dart';
 import '/screens/personal_data_result_screen.dart';
 import '../services/core/logger_service.dart';
 import '/services/api_service.dart';
 import 'package:intl/intl.dart';
+import '/screens/base_screen_layout.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -130,66 +129,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     _ortController.text = data['ORT']?.toString() ?? '';
   }
 
-  void _handleLogout() {
-    LoggerService.logInfo('Logging out user from PersonalDataScreen');
-    widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  /// Handles the action when the Floating Action Button is pressed.
-  /// Toggles edit mode, or submits the form if currently in edit mode.
-  Future<void> _handleFabPressed() async {
-    if (_isLoading) {
-      return; // Do nothing if already loading/submitting
-    }
-
-    if (_isEditing) {
-      // If currently in edit mode, attempt to submit the form
-      await _submitForm();
-    } else {
-      // If not in edit mode, switch to edit mode
+  Future<void> _handleSave() async {
+    if (_formKey.currentState!.validate()) {
       setState(() {
-        _isEditing = true;
+        _isLoading = true;
       });
-      LoggerService.logInfo('Switched to edit mode.');
-    }
-  }
 
-  Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      LoggerService.logInfo('Form validation failed. Not submitting.');
-      return; // Stop if validation fails
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    bool updateSuccess = false;
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final int? personId = widget.userData['PERSONID'] as int?;
-
-      if (personId == null) {
-        LoggerService.logError(
-          'Person ID is null for update. Cannot submit form.',
-        );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Fehler: Person ID nicht verfügbar. Bitte erneut anmelden.',
-              ),
-              duration: UIConstants.snackBarDuration,
-            ),
-          );
-        }
-        updateSuccess = false;
-      } else {
-        updateSuccess = await apiService.updateKritischeFelderUndAdresse(
-          personId,
+      try {
+        final apiService = Provider.of<ApiService>(context, listen: false);
+        final success = await apiService.updateKritischeFelderUndAdresse(
+          widget.userData['PERSONID'],
           _titelController.text,
           _nachnameController.text,
           _vornameController.text,
@@ -199,39 +148,38 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           _ortController.text,
         );
 
-        if (updateSuccess) {
-          LoggerService.logInfo(
-            'Personal data updated successfully. Re-fetching new data...',
-          );
-          await _fetchAndPopulateData(); // Re-fetch to confirm update and populate with fresh data
-          if (mounted) {
+        if (mounted) {
+          if (success) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PersonalDataResultScreen(
+                  success: true,
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+              ),
+            );
+          } else {
             setState(() {
-              _isEditing = false; // Exit edit mode on successful submission
+              _errorMessage = 'Fehler beim Speichern der Daten';
             });
           }
-        } else {
-          LoggerService.logError('Failed to update personal data.');
         }
-      }
-    } catch (error) {
-      LoggerService.logError('Exception during personal data update: $error');
-      updateSuccess = false;
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        // Navigate to result screen after submission attempt
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PersonDataResultScreen(
-              success: updateSuccess,
-              userData: widget.userData,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-            ),
-          ),
-        );
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'Fehler beim Speichern der Daten: $e';
+          });
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isEditing = false;
+          });
+        }
       }
     }
   }
@@ -251,171 +199,151 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Persönliche Daten',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          const Padding(
-            padding: UIConstants.defaultHorizontalPadding,
-            child: ConnectivityIcon(),
-          ),
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: _handleLogout,
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Persönliche Daten',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? Center(
-                  child: Text(
-                    _errorMessage!,
-                  ),
-                )
-              : _currentPassData == null && !_isLoading
-                  ? const Center(
-                      child: Text('Keine persönlichen Daten verfügbar.'),
-                    )
-                  : Padding(
-                      padding: UIConstants.defaultPadding,
-                      child: Form(
-                        key: _formKey,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(
-                                height: UIConstants.spacingS,
-                              ),
-                              _buildTextField(
-                                label: 'Passnummer',
-                                controller: _passnummerController,
-                                isReadOnly: true,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Geburtsdatum',
-                                controller: _geburtsdatumController,
-                                isReadOnly: true,
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                inputTextStyle: UIConstants.formValueStyle,
-                                suffixIcon: Tooltip(
-                                  message:
-                                      'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                                  preferBelow: false,
-                                  child: Icon(
-                                    Icons.info_outline,
-                                    size: UIConstants.subtitleStyle.fontSize,
-                                  ),
-                                ),
-                              ),
-                              _buildTextField(
-                                label: 'Titel',
-                                controller: _titelController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) => null,
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Vorname',
-                                controller: _vornameController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Vorname ist erforderlich';
-                                  }
-                                  return null;
-                                },
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Nachname',
-                                controller: _nachnameController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Nachname ist erforderlich';
-                                  }
-                                  return null;
-                                },
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Straße und Hausnummer',
-                                controller: _strasseHausnummerController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Straße und Hausnummer sind erforderlich';
-                                  }
-                                  return null;
-                                },
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Postleitzahl',
-                                controller: _postleitzahlController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Postleitzahl ist erforderlich';
-                                  }
-                                  return null;
-                                },
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              _buildTextField(
-                                label: 'Ort',
-                                controller: _ortController,
-                                isReadOnly: !_isEditing,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Ort ist erforderlich';
-                                  }
-                                  return null;
-                                },
-                                inputTextStyle: UIConstants.formValueStyle,
-                              ),
-                              const SizedBox(
-                                height: UIConstants.spacingS,
-                              ),
-                            ],
+          : _buildPersonalDataForm(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _isEditing
+            ? _handleSave
+            : () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+        backgroundColor: UIConstants.defaultAppColor,
+        child: Icon(
+          _isEditing ? Icons.save : Icons.edit,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPersonalDataForm() {
+    return _errorMessage != null
+        ? Center(
+            child: Text(
+              _errorMessage!,
+            ),
+          )
+        : _currentPassData == null && !_isLoading
+            ? const Center(
+                child: Text('Keine persönlichen Daten verfügbar.'),
+              )
+            : Padding(
+                padding: UIConstants.defaultPadding,
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const SizedBox(
+                          height: UIConstants.spacingS,
+                        ),
+                        _buildTextField(
+                          label: 'Passnummer',
+                          controller: _passnummerController,
+                          isReadOnly: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Geburtsdatum',
+                          controller: _geburtsdatumController,
+                          isReadOnly: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          inputTextStyle: UIConstants.formValueStyle,
+                          suffixIcon: Tooltip(
+                            message:
+                                'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                            preferBelow: false,
+                            child: Icon(
+                              Icons.info_outline,
+                              size: UIConstants.subtitleStyle.fontSize,
+                            ),
                           ),
                         ),
-                      ),
+                        _buildTextField(
+                          label: 'Titel',
+                          controller: _titelController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) => null,
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Vorname',
+                          controller: _vornameController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vorname ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Nachname',
+                          controller: _nachnameController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Nachname ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Straße und Hausnummer',
+                          controller: _strasseHausnummerController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Straße und Hausnummer sind erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Postleitzahl',
+                          controller: _postleitzahlController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Postleitzahl ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Ort',
+                          controller: _ortController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ort ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIConstants.formValueStyle,
+                        ),
+                        const SizedBox(
+                          height: UIConstants.spacingS,
+                        ),
+                      ],
                     ),
-      floatingActionButton: _isOnline
-          ? FloatingActionButton(
-              heroTag:
-                  'personalDataScreenFab_${DateTime.now().millisecondsSinceEpoch}',
-              onPressed: _isLoading ? null : _handleFabPressed,
-              backgroundColor: UIConstants.defaultAppColor,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        UIConstants.circularProgressIndicator,
-                      ),
-                    )
-                  : Icon(
-                      _isEditing ? Icons.save : Icons.edit,
-                      color: UIConstants.saveEditIcon,
-                    ),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
+                  ),
+                ),
+              );
   }
 
   Widget _buildTextField({

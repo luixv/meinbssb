@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/app_menu.dart';
+import '/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
@@ -18,27 +18,13 @@ class RegistrationSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Ändere die Hintergrundfarbe des Scaffolds.
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'Registrierung erfolgreich',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        actions: [
-          AppMenu(
-            context: context,
-            userData: userData,
-            isLoggedIn: false,
-            onLogout: () {
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Registrierung erfolgreich',
+      userData: userData,
+      isLoggedIn: false,
+      onLogout: () {
+        Navigator.pushReplacementNamed(context, '/login');
+      },
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,21 +36,6 @@ class RegistrationSuccessScreen extends StatelessWidget {
               style: UIConstants.successStyle,
             ),
           ],
-        ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
         ),
       ),
     );

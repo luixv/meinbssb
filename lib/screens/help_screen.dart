@@ -22,10 +22,10 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: UIConstants.backgroundColor,
-        title: const Text('FAQ', style: UIConstants.titleStyle),
+        title: const Text('FAQ', style: UIConstants.appBarTitleStyle),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 16.0),
+            padding: UIConstants.appBarRightPadding,
             child: ConnectivityIcon(),
           ),
           AppMenu(
@@ -36,10 +36,13 @@ class HelpScreen extends StatelessWidget {
           ),
         ],
       ),
-      // Ändere die Hintergrundfarbe des Bodys
+      endDrawer: AppDrawer(
+        userData: userData,
+        isLoggedIn: isLoggedIn,
+        onLogout: onLogout,
+      ),
       body: Container(
-        color: UIConstants
-            .backgroundColor, // Setze die Hintergrundfarbe auf den Wert aus UIConstants
+        color: UIConstants.backgroundColor,
         child: const SingleChildScrollView(
           padding: UIConstants.defaultPadding,
           child: Column(
@@ -215,13 +218,13 @@ class _AccordionItem extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(
             color: Colors.grey,
-          ), // For customizing the border color
+          ),
         ),
         child: const Center(
           child: Icon(
             Icons.add,
             size: 18,
-            color: Colors.grey, // For customizing the icon color
+            color: Colors.grey,
           ),
         ),
       ),

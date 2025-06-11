@@ -4,20 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
-import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 import '../services/core/config_service.dart';
 import '../services/core/logger_service.dart';
+import '/screens/base_screen_layout.dart';
 
 class ZweitmitgliedschaftenScreen extends StatefulWidget {
   const ZweitmitgliedschaftenScreen({
     super.key,
     required this.personId,
     required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
     this.logoWidget,
   });
   final int personId;
   final Map<String, dynamic> userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
   final Widget? logoWidget;
 
   @override
@@ -30,13 +34,11 @@ class _ZweitmitgliedschaftenScreenState
   late Future<List<dynamic>> _zweitmitgliedschaftenFuture;
   late Future<List<dynamic>> _passdatenZVEFuture;
   Color _appColor = UIConstants.defaultAppColor;
-  // Add the _userData variable
   Map<String, dynamic> _userData = {};
 
   @override
   void initState() {
     super.initState();
-    // Assign the user data.
     _userData = widget.userData['data'] ?? {};
     _loadData();
     _loadAppColor();
@@ -55,7 +57,7 @@ class _ZweitmitgliedschaftenScreenState
   void _loadData() {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final passDataId = _userData['PASSDATENID']; // Use _userData
+      final passDataId = _userData['PASSDATENID'];
 
       _zweitmitgliedschaftenFuture = apiService.fetchZweitmitgliedschaften(
         widget.personId,
@@ -93,30 +95,17 @@ class _ZweitmitgliedschaftenScreenState
   Widget build(BuildContext context) {
     final Widget displayedLogo = widget.logoWidget ?? const LogoWidget();
 
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Text(
-          'Zweitmitgliedschaften',
-          style: UIConstants.appBarTitleStyle,
-        ),
-        actions: [
-          AppMenu(
-            context: context,
-            userData: widget.userData,
-            isLoggedIn: true,
-            onLogout: () => Navigator.pushReplacementNamed(context, '/login'),
-          ),
-        ],
-      ),
+    return BaseScreenLayout(
+      title: 'Zweitmitgliedschaften',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: SingleChildScrollView(
         padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            displayedLogo, // Use the potentially mocked logo
+            displayedLogo,
             const SizedBox(height: UIConstants.spacingS),
             Text(
               'Mein BSSB',
@@ -259,42 +248,12 @@ class _ZweitmitgliedschaftenScreenState
                       margin: const EdgeInsets.only(
                         bottom: UIConstants.spacingS,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: UIConstants.spacingS,
-                          horizontal: UIConstants.spacingS,
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              child: Text(
-                                item['DISZIPLINNR'] ?? 'N/A',
-                                style: UIConstants.bodyStyle.copyWith(
-                                  fontSize: UIConstants.subtitleFontSize,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingS),
-                            SizedBox(
-                              width: 120,
-                              child: Text(
-                                item['DISZIPLIN'] ?? 'N/A',
-                                style: UIConstants.bodyStyle.copyWith(
-                                  fontSize: UIConstants.subtitleFontSize,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingS),
-                            Expanded(
-                              child: Text(
-                                item['VEREINNAME'] ?? 'N/A',
-                                style: UIConstants.bodyStyle.copyWith(
-                                  fontSize: UIConstants.subtitleFontSize,
-                                ),
-                              ),
-                            ),
-                          ],
+                      child: ListTile(
+                        title: Text(
+                          item['BEZEICHNUNG'] ?? 'Unbekannte Disziplin',
+                          style: UIConstants.bodyStyle.copyWith(
+                            fontSize: UIConstants.subtitleFontSize,
+                          ),
                         ),
                       ),
                     );
