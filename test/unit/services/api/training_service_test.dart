@@ -5,6 +5,7 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/models/schulung.dart';
 
 @GenerateMocks([
   HttpClient,
@@ -42,14 +43,56 @@ void main() {
     const testAbDatum = '2023-01-01';
     final testResponse = [
       {
-        'DATUM': '2023-01-15',
+        'SCHULUNGID': 1,
         'BEZEICHNUNG': 'Basic Training',
+        'DATUM': '2023-01-15',
+        'AUSGESTELLTAM': '2023-01-01',
         'SCHULUNGENTEILNEHMERID': 1,
+        'SCHULUNGSARTID': 1,
+        'SCHULUNGSARTBEZEICHNUNG': 'Basic',
+        'SCHULUNGSARTKURZBEZEICHNUNG': 'BSC',
+        'SCHULUNGSARTBESCHREIBUNG': 'Basic Training Course',
+        'MAXTEILNEHMER': 20,
+        'ANZAHLTEILNEHMER': 15,
+        'ORT': 'Training Center',
+        'UHRZEIT': '09:00',
+        'DAUER': '8 Stunden',
+        'PREIS': '100€',
+        'ZIELGRUPPE': 'Anfänger',
+        'VORAUSSETZUNGEN': 'Keine',
+        'INHALT': 'Grundlagen',
+        'ABSCHLUSS': 'Zertifikat',
+        'ANMERKUNGEN': 'Bitte mitbringen: Schreibzeug',
+        'ISONLINE': false,
+        'LINK': '',
+        'STATUS': 'Aktiv',
+        'GUELTIGBIS': '2023-12-31',
       },
       {
-        'DATUM': '2023-02-20',
+        'SCHULUNGID': 2,
         'BEZEICHNUNG': 'Advanced Training',
+        'DATUM': '2023-02-20',
+        'AUSGESTELLTAM': '2023-02-01',
         'SCHULUNGENTEILNEHMERID': 2,
+        'SCHULUNGSARTID': 2,
+        'SCHULUNGSARTBEZEICHNUNG': 'Advanced',
+        'SCHULUNGSARTKURZBEZEICHNUNG': 'ADV',
+        'SCHULUNGSARTBESCHREIBUNG': 'Advanced Training Course',
+        'MAXTEILNEHMER': 15,
+        'ANZAHLTEILNEHMER': 10,
+        'ORT': 'Training Center',
+        'UHRZEIT': '10:00',
+        'DAUER': '16 Stunden',
+        'PREIS': '200€',
+        'ZIELGRUPPE': 'Fortgeschrittene',
+        'VORAUSSETZUNGEN': 'Basic Training',
+        'INHALT': 'Erweiterte Themen',
+        'ABSCHLUSS': 'Zertifikat',
+        'ANMERKUNGEN': 'Bitte mitbringen: Laptop',
+        'ISONLINE': true,
+        'LINK': 'https://example.com',
+        'STATUS': 'Aktiv',
+        'GUELTIGBIS': '2023-12-31',
       },
     ];
 
@@ -68,9 +111,7 @@ void main() {
         final fetchData =
             invocation.positionalArguments[2] as Future<dynamic> Function();
         final response = await fetchData();
-        return (response as List)
-            .map((item) => Map<String, dynamic>.from(item))
-            .toList();
+        return response;
       });
 
       when(
@@ -82,33 +123,55 @@ void main() {
         testAbDatum,
       );
 
-      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result, isA<List<Schulung>>());
       expect(result.length, 2);
-      expect(result[0]['BEZEICHNUNG'], 'Basic Training');
-      expect(result[0]['SCHULUNGENTEILNEHMERID'], 1);
+      expect(result[0].bezeichnung, 'Basic Training');
+      expect(result[0].teilnehmerId, 1);
+      expect(result[0].schulungsartBezeichnung, 'Basic');
+      expect(result[0].isOnline, false);
+      expect(result[1].bezeichnung, 'Advanced Training');
+      expect(result[1].teilnehmerId, 2);
+      expect(result[1].schulungsartBezeichnung, 'Advanced');
+      expect(result[1].isOnline, true);
     });
 
-    test('handles null SCHULUNGENTEILNEHMERID through public API', () async {
-      const testPersonId = 123;
-      const testAbDatum = '2023-01-01';
-
+    test('handles null values correctly', () async {
       when(mockNetworkService.getCacheExpirationDuration())
           .thenReturn(const Duration(hours: 1));
 
-      // Mock the HTTP client to return data with null SCHULUNGENTEILNEHMERID
       when(
         mockHttpClient.get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),
       ).thenAnswer(
         (_) async => [
           {
-            'DATUM': '2023-01-15',
-            'BEZEICHNUNG': 'Training',
+            'SCHULUNGID': null,
+            'BEZEICHNUNG': null,
+            'DATUM': null,
+            'AUSGESTELLTAM': null,
             'SCHULUNGENTEILNEHMERID': null,
+            'SCHULUNGSARTID': null,
+            'SCHULUNGSARTBEZEICHNUNG': null,
+            'SCHULUNGSARTKURZBEZEICHNUNG': null,
+            'SCHULUNGSARTBESCHREIBUNG': null,
+            'MAXTEILNEHMER': null,
+            'ANZAHLTEILNEHMER': null,
+            'ORT': null,
+            'UHRZEIT': null,
+            'DAUER': null,
+            'PREIS': null,
+            'ZIELGRUPPE': null,
+            'VORAUSSETZUNGEN': null,
+            'INHALT': null,
+            'ABSCHLUSS': null,
+            'ANMERKUNGEN': null,
+            'ISONLINE': null,
+            'LINK': null,
+            'STATUS': null,
+            'GUELTIGBIS': null,
           }
         ],
       );
 
-      // Mock cache service to pass through the fetch function
       when(
         mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
           any,
@@ -119,10 +182,8 @@ void main() {
       ).thenAnswer((invocation) async {
         final fetchData =
             invocation.positionalArguments[2] as Future<dynamic> Function();
-        final processResponse =
-            invocation.positionalArguments[3] as dynamic Function(dynamic);
         final response = await fetchData();
-        return processResponse(response);
+        return response;
       });
 
       final result = await trainingService.fetchAngemeldeteSchulungen(
@@ -130,7 +191,31 @@ void main() {
         testAbDatum,
       );
 
-      expect(result[0]['SCHULUNGENTEILNEHMERID'], 0);
+      expect(result.length, 1);
+      expect(result[0].id, 0);
+      expect(result[0].bezeichnung, '');
+      expect(result[0].datum, '');
+      expect(result[0].ausgestelltAm, '');
+      expect(result[0].teilnehmerId, 0);
+      expect(result[0].schulungsartId, 0);
+      expect(result[0].schulungsartBezeichnung, '');
+      expect(result[0].schulungsartKurzbezeichnung, '');
+      expect(result[0].schulungsartBeschreibung, '');
+      expect(result[0].maxTeilnehmer, 0);
+      expect(result[0].anzahlTeilnehmer, 0);
+      expect(result[0].ort, '');
+      expect(result[0].uhrzeit, '');
+      expect(result[0].dauer, '');
+      expect(result[0].preis, '');
+      expect(result[0].zielgruppe, '');
+      expect(result[0].voraussetzungen, '');
+      expect(result[0].inhalt, '');
+      expect(result[0].abschluss, '');
+      expect(result[0].anmerkungen, '');
+      expect(result[0].isOnline, false);
+      expect(result[0].link, '');
+      expect(result[0].status, '');
+      expect(result[0].gueltigBis, '');
     });
   });
 
@@ -143,6 +228,68 @@ void main() {
 
       expect(result, isEmpty);
     });
+
+    test('maps available Schulungen correctly', () async {
+      final testResponse = [
+        {
+          'SCHULUNGID': 1,
+          'BEZEICHNUNG': 'Training 1',
+          'DATUM': '2023-01-15',
+          'AUSGESTELLTAM': '2023-01-01',
+          'SCHULUNGENTEILNEHMERID': 1,
+          'SCHULUNGSARTID': 1,
+          'SCHULUNGSARTBEZEICHNUNG': 'Basic',
+          'SCHULUNGSARTKURZBEZEICHNUNG': 'BSC',
+          'SCHULUNGSARTBESCHREIBUNG': 'Basic Training Course',
+          'MAXTEILNEHMER': 20,
+          'ANZAHLTEILNEHMER': 15,
+          'ORT': 'Training Center',
+          'UHRZEIT': '09:00',
+          'DAUER': '8 Stunden',
+          'PREIS': '100€',
+          'ZIELGRUPPE': 'Anfänger',
+          'VORAUSSETZUNGEN': 'Keine',
+          'INHALT': 'Grundlagen',
+          'ABSCHLUSS': 'Zertifikat',
+          'ANMERKUNGEN': 'Bitte mitbringen: Schreibzeug',
+          'ISONLINE': false,
+          'LINK': '',
+          'STATUS': 'Aktiv',
+          'GUELTIGBIS': '2023-12-31',
+        }
+      ];
+
+      when(mockHttpClient.get('AvailableSchulungen'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await trainingService.fetchAvailableSchulungen();
+
+      expect(result.length, 1);
+      expect(result[0].id, 1);
+      expect(result[0].bezeichnung, 'Training 1');
+      expect(result[0].datum, '2023-01-15');
+      expect(result[0].ausgestelltAm, '2023-01-01');
+      expect(result[0].teilnehmerId, 1);
+      expect(result[0].schulungsartId, 1);
+      expect(result[0].schulungsartBezeichnung, 'Basic');
+      expect(result[0].schulungsartKurzbezeichnung, 'BSC');
+      expect(result[0].schulungsartBeschreibung, 'Basic Training Course');
+      expect(result[0].maxTeilnehmer, 20);
+      expect(result[0].anzahlTeilnehmer, 15);
+      expect(result[0].ort, 'Training Center');
+      expect(result[0].uhrzeit, '09:00');
+      expect(result[0].dauer, '8 Stunden');
+      expect(result[0].preis, '100€');
+      expect(result[0].zielgruppe, 'Anfänger');
+      expect(result[0].voraussetzungen, 'Keine');
+      expect(result[0].inhalt, 'Grundlagen');
+      expect(result[0].abschluss, 'Zertifikat');
+      expect(result[0].anmerkungen, 'Bitte mitbringen: Schreibzeug');
+      expect(result[0].isOnline, false);
+      expect(result[0].link, '');
+      expect(result[0].status, 'Aktiv');
+      expect(result[0].gueltigBis, '2023-12-31');
+    });
   });
 
   group('fetchSchulungsarten', () {
@@ -151,18 +298,8 @@ void main() {
         {
           'SCHULUNGSARTID': 1,
           'BEZEICHNUNG': 'Type 1',
-          'TYP': 'Basic',
-          'KOSTEN': 100.0,
-          'UE': 8,
-          'OMKATEGORIEID': 2,
-          'RECHNUNGAN': 'Account',
-          'VERPFLEGUNGSKOSTEN': 50.0,
-          'UEBERNACHTUNGSKOSTEN': 200.0,
-          'LEHRMATERIALKOSTEN': 30.0,
-          'LEHRGANGSINHALT': 'Content',
-          'LEHRGANGSINHALTHTML': '<p>Content</p>',
-          'WEBGRUPPE': 'Group',
-          'FUERVERLAENGERUNGEN': 'Extensions',
+          'KURZBEZEICHNUNG': 'T1',
+          'BESCHREIBUNG': 'Description 1',
         }
       ];
 
@@ -172,8 +309,30 @@ void main() {
       final result = await trainingService.fetchSchulungsarten();
 
       expect(result.length, 1);
-      expect(result[0]['BEZEICHNUNG'], 'Type 1');
-      expect(result[0]['LEHRGANGSINHALTHTML'], '<p>Content</p>');
+      expect(result[0].id, 1);
+      expect(result[0].bezeichnung, 'Type 1');
+      expect(result[0].schulungsartId, 1);
+      expect(result[0].schulungsartBezeichnung, 'Type 1');
+      expect(result[0].schulungsartKurzbezeichnung, 'T1');
+      expect(result[0].schulungsartBeschreibung, 'Description 1');
+      expect(result[0].datum, '');
+      expect(result[0].ausgestelltAm, '');
+      expect(result[0].teilnehmerId, 0);
+      expect(result[0].maxTeilnehmer, 0);
+      expect(result[0].anzahlTeilnehmer, 0);
+      expect(result[0].ort, '');
+      expect(result[0].uhrzeit, '');
+      expect(result[0].dauer, '');
+      expect(result[0].preis, '');
+      expect(result[0].zielgruppe, '');
+      expect(result[0].voraussetzungen, '');
+      expect(result[0].inhalt, '');
+      expect(result[0].abschluss, '');
+      expect(result[0].anmerkungen, '');
+      expect(result[0].isOnline, false);
+      expect(result[0].link, '');
+      expect(result[0].status, '');
+      expect(result[0].gueltigBis, '');
     });
   });
 
@@ -195,12 +354,30 @@ void main() {
       final result =
           await trainingService.fetchAbsolvierteSchulungen(testPersonId);
 
-      expect(result[0]['AUSGESTELLTAM'], 'invalid-date');
-      expect(result[0]['GUELTIGBIS'], 'another-invalid-date');
+      expect(result[0].bezeichnung, 'Training');
+      expect(result[0].datum, 'invalid-date');
+    });
+
+    test('formats valid dates correctly', () async {
+      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
+          .thenAnswer(
+        (_) async => [
+          {
+            'AUSGESTELLTAM': '2023-01-15',
+            'BEZEICHNUNG': 'Training',
+            'GUELTIGBIS': '2024-01-15',
+          }
+        ],
+      );
+
+      final result =
+          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+
+      expect(result[0].bezeichnung, 'Training');
+      expect(result[0].datum, '15.01.2023');
     });
   });
 
-  // Other test groups remain the same as in previous version...
   group('registerForSchulung', () {
     const testPersonId = 123;
     const testSchulungId = 456;
