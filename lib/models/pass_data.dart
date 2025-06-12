@@ -51,4 +51,41 @@ class PassData {
       'GESCHLECHT': geschlecht,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is PassData &&
+        other.personId == personId &&
+        other.passnummer == passnummer &&
+        other.geburtsdatum == geburtsdatum &&
+        other.titel == titel &&
+        other.vorname == vorname &&
+        other.namen == namen &&
+        other.strasse == strasse &&
+        other.plz == plz &&
+        other.ort == ort &&
+        other.geschlecht == geschlecht;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      personId,
+      passnummer,
+      geburtsdatum,
+      titel,
+      vorname,
+      namen,
+      strasse,
+      plz,
+      ort,
+      geschlecht,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'PassData(personId: $personId, passnummer: $passnummer, geburtsdatum: $geburtsdatum, titel: $titel, vorname: $vorname, namen: $namen, strasse: $strasse, plz: $plz, ort: $ort, geschlecht: $geschlecht)';
+  }
 }
