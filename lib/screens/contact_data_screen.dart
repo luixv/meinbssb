@@ -4,21 +4,10 @@
 
 // Flutter/Dart core imports
 import 'package:flutter/material.dart';
-
-// Third-party package imports
 import 'package:provider/provider.dart';
-
-// Local imports
-// Constants
 import '/constants/ui_constants.dart';
-
-// Models
 import '/models/contact.dart';
-
-// Screens
 import '/screens/base_screen_layout.dart';
-
-// Services
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 

@@ -10,6 +10,7 @@ import '/services/api/user_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api/verein_service.dart';
 import '/models/bank_data.dart';
+import '/models/schulung.dart';
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
@@ -138,7 +139,7 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
-  Future<List<dynamic>> fetchAbsolvierteSeminare(int personId) async {
+  Future<List<Schulung>> fetchAbsolvierteSeminare(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }
 
@@ -170,18 +171,18 @@ class ApiService {
   }
 
 // Training Service
-  Future<List<dynamic>> fetchSchulungsarten() async {
+  Future<List<Schulung>> fetchSchulungsarten() async {
     return _trainingService.fetchSchulungsarten();
   }
 
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  Future<List<Schulung>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
   ) async {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<dynamic>> fetchAvailableSchulungen() async {
+  Future<List<Schulung>> fetchAvailableSchulungen() async {
     return _trainingService.fetchAvailableSchulungen();
   }
 
@@ -193,7 +194,7 @@ class ApiService {
     return _trainingService.registerForSchulung(personId, schulungId);
   }
 
-  Future<List<dynamic>> fetchDisziplinen() async {
+  Future<List<Map<String, dynamic>>> fetchDisziplinen() async {
     return _trainingService.fetchDisziplinen();
   }
 

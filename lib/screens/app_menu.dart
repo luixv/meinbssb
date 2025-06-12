@@ -73,9 +73,7 @@ class AppDrawer extends StatelessWidget {
           // Custom header to replace DrawerHeader for more control over space
           Container(
             height: 120.0, // Adjust this height to reduce or increase space
-            decoration: const BoxDecoration(
-              color: UIConstants.defaultAppColor,
-            ),
+            decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
             child: const Padding(
               padding: EdgeInsets.only(
                 left: 16.0,
@@ -125,7 +123,6 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => AbsolvierteSeminareScreen(
                       userData,
-                      personId: userData['PERSONID'],
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),
@@ -250,10 +247,14 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Registrieren'),
               onTap: () {
                 Navigator.pop(context);
-                final authService =
-                    Provider.of<AuthService>(context, listen: false);
-                final emailService =
-                    Provider.of<EmailService>(context, listen: false);
+                final authService = Provider.of<AuthService>(
+                  context,
+                  listen: false,
+                );
+                final emailService = Provider.of<EmailService>(
+                  context,
+                  listen: false,
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -270,8 +271,10 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Passwort zurücksetzen'),
               onTap: () {
                 Navigator.pop(context);
-                final authService =
-                    Provider.of<AuthService>(context, listen: false);
+                final authService = Provider.of<AuthService>(
+                  context,
+                  listen: false,
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(

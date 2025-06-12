@@ -10,56 +10,65 @@ class Schulung {
   /// Creates a [Schulung] instance from a JSON map.
   factory Schulung.fromJson(Map<String, dynamic> json) {
     return Schulung(
-      id: json['SCHULUNGID'] ?? 0,
-      teilnehmerId: json['SCHULUNGENTEILNEHMERID'] ?? 0,
-      bezeichnung: json['BEZEICHNUNG'] ?? '',
-      datum: json['DATUM'] ?? '',
-      ort: json['ORT'] ?? '',
-      maxTeilnehmer: json['MAXTEILNEHMER'] ?? 0,
-      teilnehmer: json['TEILNEHMER'] ?? 0,
-      typ: json['TYP'] ?? '',
-      kosten: json['KOSTEN'] ?? 0.0,
-      ue: json['UE'] ?? 0,
-      omKategorieId: json['OMKATEGORIEID'] ?? 0,
-      rechnungAn: json['RECHNUNGAN'] ?? '',
-      verpflegungskosten: json['VERPFLEGUNGSKOSTEN'] ?? 0.0,
-      uebernachtungskosten: json['UEBERNACHTUNGSKOSTEN'] ?? 0.0,
-      lehrmaterialkosten: json['LEHRMATERIALKOSTEN'] ?? 0.0,
-      lehrgangsinhalt: json['LEHRGANGSINHALT'] ?? '',
-      lehrgangsinhaltHtml: json['LEHRGANGSINHALTHTML'] ?? '',
-      webgruppe: json['WEBGRUPPE'] ?? '',
-      fuerVerlaengerungen: json['FUERVERLAENGERUNGEN'] ?? false,
+      id: json['ID'] as int? ?? 0,
+      bezeichnung: json['BEZEICHNUNG'] as String? ?? '',
+      datum: json['DATUM']?.toString() ?? '',
+      ausgestelltAm: json['AUSGESTELLTAM']?.toString() ?? '',
+      teilnehmerId: json['TEILNEHMERID'] as int? ?? 0,
+      schulungsartId: json['SCHULUNGSARTID'] as int? ?? 0,
+      schulungsartBezeichnung: json['SCHULUNGSARTBEZEICHNUNG'] as String? ?? '',
+      schulungsartKurzbezeichnung:
+          json['SCHULUNGSARTKURZBEZEICHNUNG'] as String? ?? '',
+      schulungsartBeschreibung:
+          json['SCHULUNGSARTBESCHREIBUNG'] as String? ?? '',
+      maxTeilnehmer: json['MAXTEILNEHMER'] as int? ?? 0,
+      anzahlTeilnehmer: json['ANZAHLTEILNEHMER'] as int? ?? 0,
+      ort: json['ORT'] as String? ?? '',
+      uhrzeit: json['UHRZEIT']?.toString() ?? '',
+      dauer: json['DAUER']?.toString() ?? '',
+      preis: json['PREIS']?.toString() ?? '',
+      zielgruppe: json['ZIELGRUPPE'] as String? ?? '',
+      voraussetzungen: json['VORAUSSETZUNGEN'] as String? ?? '',
+      inhalt: json['INHALT'] as String? ?? '',
+      abschluss: json['ABSCHLUSS'] as String? ?? '',
+      anmerkungen: json['ANMERKUNGEN'] as String? ?? '',
+      isOnline: json['ISONLINE'] as bool? ?? false,
+      link: json['LINK'] as String? ?? '',
+      status: json['STATUS'] as String? ?? '',
+      gueltigBis: json['GUELTIGBIS']?.toString() ?? '',
     );
   }
 
   /// Creates a new instance of [Schulung].
   const Schulung({
     required this.id,
-    required this.teilnehmerId,
     required this.bezeichnung,
     required this.datum,
-    required this.ort,
+    required this.ausgestelltAm,
+    required this.teilnehmerId,
+    required this.schulungsartId,
+    required this.schulungsartBezeichnung,
+    required this.schulungsartKurzbezeichnung,
+    required this.schulungsartBeschreibung,
     required this.maxTeilnehmer,
-    required this.teilnehmer,
-    required this.typ,
-    required this.kosten,
-    required this.ue,
-    required this.omKategorieId,
-    required this.rechnungAn,
-    required this.verpflegungskosten,
-    required this.uebernachtungskosten,
-    required this.lehrmaterialkosten,
-    required this.lehrgangsinhalt,
-    required this.lehrgangsinhaltHtml,
-    required this.webgruppe,
-    required this.fuerVerlaengerungen,
+    required this.anzahlTeilnehmer,
+    required this.ort,
+    required this.uhrzeit,
+    required this.dauer,
+    required this.preis,
+    required this.zielgruppe,
+    required this.voraussetzungen,
+    required this.inhalt,
+    required this.abschluss,
+    required this.anmerkungen,
+    required this.isOnline,
+    required this.link,
+    required this.status,
+    required this.gueltigBis,
   });
 
   /// The unique identifier of the training.
   final int id;
-
-  /// The unique identifier of the training participant.
-  final int teilnehmerId;
 
   /// The name/description of the training.
   final String bezeichnung;
@@ -67,77 +76,100 @@ class Schulung {
   /// The date of the training.
   final String datum;
 
-  /// The location of the training.
-  final String ort;
+  /// The date the training was issued.
+  final String ausgestelltAm;
+
+  /// The unique identifier of the training participant.
+  final int teilnehmerId;
+
+  /// The unique identifier of the training type.
+  final int schulungsartId;
+
+  /// The name of the training type.
+  final String schulungsartBezeichnung;
+
+  /// The short name of the training type.
+  final String schulungsartKurzbezeichnung;
+
+  /// The description of the training type.
+  final String schulungsartBeschreibung;
 
   /// The maximum number of participants allowed.
   final int maxTeilnehmer;
 
   /// The current number of participants.
-  final int teilnehmer;
+  final int anzahlTeilnehmer;
 
-  /// The type of training.
-  final String typ;
+  /// The location of the training.
+  final String ort;
 
-  /// The cost of the training.
-  final double kosten;
+  /// The time of the training.
+  final String uhrzeit;
 
-  /// The number of teaching units (UE).
-  final int ue;
+  /// The duration of the training.
+  final String dauer;
 
-  /// The OM category ID.
-  final int omKategorieId;
+  /// The price of the training.
+  final String preis;
 
-  /// The billing address.
-  final String rechnungAn;
+  /// The target group for the training.
+  final String zielgruppe;
 
-  /// The cost for food.
-  final double verpflegungskosten;
-
-  /// The cost for accommodation.
-  final double uebernachtungskosten;
-
-  /// The cost for teaching materials.
-  final double lehrmaterialkosten;
+  /// The prerequisites for the training.
+  final String voraussetzungen;
 
   /// The content of the training course.
-  final String lehrgangsinhalt;
+  final String inhalt;
 
-  /// The HTML content of the training course.
-  final String lehrgangsinhaltHtml;
+  /// The conclusion of the training.
+  final String abschluss;
 
-  /// The web group.
-  final String webgruppe;
+  /// Additional notes about the training.
+  final String anmerkungen;
 
-  /// Whether the training is for extensions.
-  final bool fuerVerlaengerungen;
+  /// Whether the training is online.
+  final bool isOnline;
+
+  /// The link to the training.
+  final String link;
+
+  /// The status of the training.
+  final String status;
+
+  /// The validity period of the training.
+  final String gueltigBis;
 
   /// Converts this [Schulung] instance to a JSON map.
   Map<String, dynamic> toJson() => {
-        'SCHULUNGID': id,
-        'SCHULUNGENTEILNEHMERID': teilnehmerId,
+        'ID': id,
         'BEZEICHNUNG': bezeichnung,
         'DATUM': datum,
-        'ORT': ort,
+        'AUSGESTELLTAM': ausgestelltAm,
+        'TEILNEHMERID': teilnehmerId,
+        'SCHULUNGSARTID': schulungsartId,
+        'SCHULUNGSARTBEZEICHNUNG': schulungsartBezeichnung,
+        'SCHULUNGSARTKURZBEZEICHNUNG': schulungsartKurzbezeichnung,
+        'SCHULUNGSARTBESCHREIBUNG': schulungsartBeschreibung,
         'MAXTEILNEHMER': maxTeilnehmer,
-        'TEILNEHMER': teilnehmer,
-        'TYP': typ,
-        'KOSTEN': kosten,
-        'UE': ue,
-        'OMKATEGORIEID': omKategorieId,
-        'RECHNUNGAN': rechnungAn,
-        'VERPFLEGUNGSKOSTEN': verpflegungskosten,
-        'UEBERNACHTUNGSKOSTEN': uebernachtungskosten,
-        'LEHRMATERIALKOSTEN': lehrmaterialkosten,
-        'LEHRGANGSINHALT': lehrgangsinhalt,
-        'LEHRGANGSINHALTHTML': lehrgangsinhaltHtml,
-        'WEBGRUPPE': webgruppe,
-        'FUERVERLAENGERUNGEN': fuerVerlaengerungen,
+        'ANZAHLTEILNEHMER': anzahlTeilnehmer,
+        'ORT': ort,
+        'UHRZEIT': uhrzeit,
+        'DAUER': dauer,
+        'PREIS': preis,
+        'ZIELGRUPPE': zielgruppe,
+        'VORAUSSETZUNGEN': voraussetzungen,
+        'INHALT': inhalt,
+        'ABSCHLUSS': abschluss,
+        'ANMERKUNGEN': anmerkungen,
+        'ISONLINE': isOnline,
+        'LINK': link,
+        'STATUS': status,
+        'GUELTIGBIS': gueltigBis,
       };
 
   @override
   String toString() {
-    return 'Schulung(id: $id, bezeichnung: $bezeichnung, datum: $datum)';
+    return 'Schulung(id: $id, bezeichnung: $bezeichnung, datum: $datum, ausgestelltAm: $ausgestelltAm, teilnehmerId: $teilnehmerId, schulungsartId: $schulungsartId, schulungsartBezeichnung: $schulungsartBezeichnung, schulungsartKurzbezeichnung: $schulungsartKurzbezeichnung, schulungsartBeschreibung: $schulungsartBeschreibung, maxTeilnehmer: $maxTeilnehmer, anzahlTeilnehmer: $anzahlTeilnehmer, ort: $ort, uhrzeit: $uhrzeit, dauer: $dauer, preis: $preis, zielgruppe: $zielgruppe, voraussetzungen: $voraussetzungen, inhalt: $inhalt, abschluss: $abschluss, anmerkungen: $anmerkungen, isOnline: $isOnline, link: $link, status: $status, gueltigBis: $gueltigBis)';
   }
 
   @override
@@ -145,46 +177,58 @@ class Schulung {
     if (identical(this, other)) return true;
     return other is Schulung &&
         other.id == id &&
-        other.teilnehmerId == teilnehmerId &&
         other.bezeichnung == bezeichnung &&
         other.datum == datum &&
-        other.ort == ort &&
+        other.ausgestelltAm == ausgestelltAm &&
+        other.teilnehmerId == teilnehmerId &&
+        other.schulungsartId == schulungsartId &&
+        other.schulungsartBezeichnung == schulungsartBezeichnung &&
+        other.schulungsartKurzbezeichnung == schulungsartKurzbezeichnung &&
+        other.schulungsartBeschreibung == schulungsartBeschreibung &&
         other.maxTeilnehmer == maxTeilnehmer &&
-        other.teilnehmer == teilnehmer &&
-        other.typ == typ &&
-        other.kosten == kosten &&
-        other.ue == ue &&
-        other.omKategorieId == omKategorieId &&
-        other.rechnungAn == rechnungAn &&
-        other.verpflegungskosten == verpflegungskosten &&
-        other.uebernachtungskosten == uebernachtungskosten &&
-        other.lehrmaterialkosten == lehrmaterialkosten &&
-        other.lehrgangsinhalt == lehrgangsinhalt &&
-        other.lehrgangsinhaltHtml == lehrgangsinhaltHtml &&
-        other.webgruppe == webgruppe &&
-        other.fuerVerlaengerungen == fuerVerlaengerungen;
+        other.anzahlTeilnehmer == anzahlTeilnehmer &&
+        other.ort == ort &&
+        other.uhrzeit == uhrzeit &&
+        other.dauer == dauer &&
+        other.preis == preis &&
+        other.zielgruppe == zielgruppe &&
+        other.voraussetzungen == voraussetzungen &&
+        other.inhalt == inhalt &&
+        other.abschluss == abschluss &&
+        other.anmerkungen == anmerkungen &&
+        other.isOnline == isOnline &&
+        other.link == link &&
+        other.status == status &&
+        other.gueltigBis == gueltigBis;
   }
 
   @override
-  int get hashCode => Object.hash(
-        id,
-        teilnehmerId,
-        bezeichnung,
-        datum,
-        ort,
-        maxTeilnehmer,
-        teilnehmer,
-        typ,
-        kosten,
-        ue,
-        omKategorieId,
-        rechnungAn,
-        verpflegungskosten,
-        uebernachtungskosten,
-        lehrmaterialkosten,
-        lehrgangsinhalt,
-        lehrgangsinhaltHtml,
-        webgruppe,
-        fuerVerlaengerungen,
-      );
+  int get hashCode {
+    return Object.hashAll([
+      id,
+      bezeichnung,
+      datum,
+      ausgestelltAm,
+      teilnehmerId,
+      schulungsartId,
+      schulungsartBezeichnung,
+      schulungsartKurzbezeichnung,
+      schulungsartBeschreibung,
+      maxTeilnehmer,
+      anzahlTeilnehmer,
+      ort,
+      uhrzeit,
+      dauer,
+      preis,
+      zielgruppe,
+      voraussetzungen,
+      inhalt,
+      abschluss,
+      anmerkungen,
+      isOnline,
+      link,
+      status,
+      gueltigBis,
+    ]);
+  }
 }

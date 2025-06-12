@@ -5,6 +5,7 @@ import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/schulung.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -22,7 +23,7 @@ class StartScreen extends StatefulWidget {
 }
 
 class StartScreenState extends State<StartScreen> {
-  List<dynamic> schulungen = [];
+  List<Schulung> schulungen = [];
   bool isLoading = true;
 
   @override
@@ -285,12 +286,10 @@ class StartScreenState extends State<StartScreen> {
                   ),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
-                    final date = DateTime.tryParse(schulung['DATUM'] ?? '') ??
-                        DateTime.now();
+                    final date =
+                        DateTime.tryParse(schulung.datum) ?? DateTime.now();
                     final formattedDate =
                         '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
-                    final description = schulung['BEZEICHNUNG'] ?? 'N/A';
-                    final isOnline = schulung['ONLINE'] ?? false;
 
                     return ListTile(
                       tileColor: UIConstants.tileColor,
@@ -308,31 +307,28 @@ class StartScreenState extends State<StartScreen> {
                         ],
                       ),
                       title: Text(
-                        description,
+                        schulung.bezeichnung,
                         style: UIConstants.listItemTitleStyle,
                       ),
                       subtitle: Text(
                         formattedDate,
                         style: UIConstants.listItemSubtitleStyle,
                       ),
-                      trailing: isOnline
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.delete_outline_outlined,
-                                color: UIConstants.deleteIcon,
-                              ),
-                              onPressed: () {
-                                final id = schulung['SCHULUNGENTEILNEHMERID'];
-                                if (id != null) {
-                                  _handleDeleteSchulung(
-                                    id,
-                                    index,
-                                    description,
-                                  );
-                                }
-                              },
-                            )
-                          : null,
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline_outlined,
+                          color: UIConstants.deleteIcon,
+                        ),
+                        onPressed: () {
+                          if (schulung.teilnehmerId > 0) {
+                            _handleDeleteSchulung(
+                              schulung.teilnehmerId,
+                              index,
+                              schulung.bezeichnung,
+                            );
+                          }
+                        },
+                      ),
                     );
                   },
                 ),
