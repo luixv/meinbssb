@@ -74,6 +74,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 2,
+          'VEREINNR': 'V002',
           'VEREINNAME': 'Partial Data Club',
           // Missing other fields
         }
@@ -86,13 +87,14 @@ void main() {
       expect(result.length, 1);
       expect(result[0].name, 'Partial Data Club');
       expect(
-          result[0].gauId, isNull,); // Should handle missing fields gracefully
+          result[0].gauId, isNull); // Should handle missing fields gracefully
     });
 
     test('filters out invalid items', () async {
       final testResponse = [
         {
           'VEREINID': 1,
+          'VEREINNR': 'V001',
           'VEREINNAME': 'Valid Club',
         },
         'Invalid item', // Non-map item
@@ -188,6 +190,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 2,
+          'VEREINNR': 'V002',
           'VEREINNAME': 'Partial Data Club',
           // Missing many fields
         }
@@ -226,6 +229,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 1,
+          'VEREINNR': 'V001',
           'VEREINNAME': 'Valid Club',
         },
         'Invalid item', // Non-map item
