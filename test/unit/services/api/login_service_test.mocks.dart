@@ -1052,17 +1052,6 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
         returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i2.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i2.Future<List<Map<String, dynamic>>> fetchDisziplinen() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchDisziplinen,
-          [],
-        ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [UserService].
