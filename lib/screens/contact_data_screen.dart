@@ -600,7 +600,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(
-        bottom: UIConstants.spacingM / 2,
+        bottom: UIConstants.spacingS,
       ),
       child: TextFormField(
         initialValue: displayValueFormatted,

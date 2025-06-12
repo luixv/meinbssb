@@ -45,12 +45,14 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   void _loadInitialData() {
     setState(() {
-      _bankDataFuture = Future.value(null); // Clear current data to show spinner
+      _bankDataFuture =
+          Future.value(null); // Clear current data to show spinner
       _hasBankData = false;
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _bankDataFuture = apiService.fetchBankData(widget.webloginId).then((list) {
+      _bankDataFuture =
+          apiService.fetchBankData(widget.webloginId).then((list) {
         final hasData = list.isNotEmpty;
         if (mounted) {
           setState(() {
@@ -399,7 +401,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     bool isReadOnly = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
       child: TextFormField(
         controller: controller,
         readOnly: isReadOnly,
@@ -444,8 +446,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   )
                 : const Icon(Icons.delete_forever, color: Colors.white),
           ),
-        if (_hasBankData)
-          const SizedBox(height: UIConstants.spacingM),
+        if (_hasBankData) const SizedBox(height: UIConstants.spacingM),
         FloatingActionButton(
           heroTag: 'editFab',
           onPressed: () {
