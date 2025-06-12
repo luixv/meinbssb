@@ -312,6 +312,15 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<bool>);
 
   @override
+  _i3.Future<List<dynamic>> fetchDisziplinen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchDisziplinen,
+          [],
+        ),
+        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i3.Future<List<dynamic>>);
+
+  @override
   _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -650,6 +659,15 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<List<dynamic>> fetchDisziplinen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchDisziplinen,
+          [],
+        ),
+        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i3.Future<List<dynamic>>);
 
   @override
   _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
