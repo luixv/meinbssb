@@ -8,11 +8,15 @@ import 'dart:typed_data' as _i6;
 
 import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
+import 'package:meinbssb/models/bank_data.dart' as _i18;
+import 'package:meinbssb/models/contact.dart' as _i16;
+import 'package:meinbssb/models/schulung.dart' as _i14;
+import 'package:meinbssb/models/verein.dart' as _i20;
 import 'package:meinbssb/services/api/auth_service.dart' as _i11;
-import 'package:meinbssb/services/api/bank_service.dart' as _i15;
+import 'package:meinbssb/services/api/bank_service.dart' as _i17;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
-import 'package:meinbssb/services/api/user_service.dart' as _i14;
-import 'package:meinbssb/services/api/verein_service.dart' as _i16;
+import 'package:meinbssb/services/api/user_service.dart' as _i15;
+import 'package:meinbssb/services/api/verein_service.dart' as _i19;
 import 'package:meinbssb/services/core/cache_service.dart' as _i8;
 import 'package:meinbssb/services/core/config_service.dart' as _i12;
 import 'package:meinbssb/services/core/http_client.dart' as _i4;
@@ -968,7 +972,7 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
   }
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchAngemeldeteSchulungen(
+  _i2.Future<List<_i14.Schulung>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -980,31 +984,37 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
             abDatum,
           ],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i14.Schulung>>.value(<_i14.Schulung>[]),
+      ) as _i2.Future<List<_i14.Schulung>>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchAvailableSchulungen() =>
+  _i2.Future<List<_i14.Schulung>> fetchAvailableSchulungen() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAvailableSchulungen,
           [],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i14.Schulung>>.value(<_i14.Schulung>[]),
+      ) as _i2.Future<List<_i14.Schulung>>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchSchulungsarten() =>
-      (super.noSuchMethod(
+  _i2.Future<List<_i14.Schulung>> fetchSchulungsarten() => (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungsarten,
           [],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i14.Schulung>>.value(<_i14.Schulung>[]),
+      ) as _i2.Future<List<_i14.Schulung>>);
+
+  @override
+  _i2.Future<List<_i14.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAbsolvierteSchulungen,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<_i14.Schulung>>.value(<_i14.Schulung>[]),
+      ) as _i2.Future<List<_i14.Schulung>>);
 
   @override
   _i2.Future<bool> registerForSchulung(
@@ -1023,22 +1033,21 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
+  _i2.Future<bool> unregisterFromSchulung(int? teilnehmerId) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
-          [schulungenTeilnehmerID],
+          [teilnehmerId],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchAbsolvierteSchulungen(
-          int? personId) =>
+  _i2.Future<List<Map<String, dynamic>>> fetchDisziplinen() =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchAbsolvierteSchulungen,
-          [personId],
+          #fetchDisziplinen,
+          [],
         ),
         returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
@@ -1059,7 +1068,7 @@ class MockTrainingService extends _i1.Mock implements _i13.TrainingService {
 /// A class which mocks [UserService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserService extends _i1.Mock implements _i14.UserService {
+class MockUserService extends _i1.Mock implements _i15.UserService {
   MockUserService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1141,37 +1150,28 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
       ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i2.Future<bool> addKontakt(
-    int? personId,
-    int? kontaktTyp,
-    String? kontakt,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> addKontakt(_i16.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
-          [
-            personId,
-            kontaktTyp,
-            kontakt,
-          ],
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteKontakt(
-    int? personId,
-    int? kontaktId,
-    int? kontaktTyp,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> deleteKontakt(_i16.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
-          [
-            personId,
-            kontaktId,
-            kontaktTyp,
-          ],
+          [contact],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> updateKontakt(_i16.Contact? contact) => (super.noSuchMethod(
+        Invocation.method(
+          #updateKontakt,
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -1180,48 +1180,37 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
 /// A class which mocks [BankService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBankService extends _i1.Mock implements _i15.BankService {
+class MockBankService extends _i1.Mock implements _i17.BankService {
   MockBankService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
+  _i2.Future<List<_i18.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchBankdaten,
+          #fetchBankData,
           [webloginId],
         ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
+        returnValue: _i2.Future<List<_i18.BankData>>.value(<_i18.BankData>[]),
+      ) as _i2.Future<List<_i18.BankData>>);
 
   @override
-  _i2.Future<Map<String, dynamic>> registerBankdaten(
-    int? webloginId,
-    String? kontoinhaber,
-    String? iban,
-    String? bic,
-  ) =>
+  _i2.Future<bool> registerBankData(_i18.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
-          #registerBankdaten,
-          [
-            webloginId,
-            kontoinhaber,
-            iban,
-            bic,
-          ],
+          #registerBankData,
+          [bankData],
         ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBankdaten(int? webloginID) => (super.noSuchMethod(
+  _i2.Future<bool> deleteBankData(_i18.BankData? bankData) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #deleteBankdaten,
-          [webloginID],
+          #deleteBankData,
+          [bankData],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -1230,29 +1219,27 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
 /// A class which mocks [VereinService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVereinService extends _i1.Mock implements _i16.VereinService {
+class MockVereinService extends _i1.Mock implements _i19.VereinService {
   MockVereinService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchVereine() => (super.noSuchMethod(
+  _i2.Future<List<_i20.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i20.Verein>>.value(<_i20.Verein>[]),
+      ) as _i2.Future<List<_i20.Verein>>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+  _i2.Future<List<_i20.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i20.Verein>>.value(<_i20.Verein>[]),
+      ) as _i2.Future<List<_i20.Verein>>);
 }

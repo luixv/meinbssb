@@ -104,9 +104,7 @@ class AppInitializer {
       networkService: networkService,
     );
 
-    bankService = BankService(
-      httpClient: httpClient,
-    );
+    bankService = BankService(httpClient);
 
     vereinService = VereinService(
       httpClient: httpClient,

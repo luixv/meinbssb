@@ -9,11 +9,16 @@ import '/services/api/training_service.dart';
 import '/services/api/user_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/api/verein_service.dart';
+import '/models/bank_data.dart';
+import '/models/schulung.dart';
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart';
 import 'core/network_service.dart';
+import 'core/logger_service.dart';
+import '/models/contact.dart';
+import '/models/verein.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -134,7 +139,7 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
-  Future<List<dynamic>> fetchAbsolvierteSeminare(int personId) async {
+  Future<List<Schulung>> fetchAbsolvierteSeminare(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }
 
@@ -143,20 +148,17 @@ class ApiService {
     return _userService.fetchKontakte(personId);
   }
 
-  Future<bool> addKontakt(int personId, int kontaktTyp, String kontakt) async {
-    return _userService.addKontakt(
-      personId,
-      kontaktTyp,
-      kontakt,
-    );
+  Future<bool> addKontakt(Contact contact) async {
+    return _userService.addKontakt(contact);
   }
 
-  Future<bool> deleteKontakt(
-    int personId,
-    int kontaktId,
-    int kontaktTyp,
-  ) async {
-    return _userService.deleteKontakt(personId, kontaktId, kontaktTyp);
+  Future<bool> deleteKontakt(Contact contact) async {
+    try {
+      return await _userService.deleteKontakt(contact);
+    } catch (e) {
+      LoggerService.logError('Error deleting contact: $e');
+      rethrow;
+    }
   }
 
 // Image Service
@@ -169,18 +171,18 @@ class ApiService {
   }
 
 // Training Service
-  Future<List<dynamic>> fetchSchulungsarten() async {
+  Future<List<Schulung>> fetchSchulungsarten() async {
     return _trainingService.fetchSchulungsarten();
   }
 
-  Future<List<dynamic>> fetchAngemeldeteSchulungen(
+  Future<List<Schulung>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
   ) async {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<dynamic>> fetchAvailableSchulungen() async {
+  Future<List<Schulung>> fetchAvailableSchulungen() async {
     return _trainingService.fetchAvailableSchulungen();
   }
 
@@ -192,38 +194,64 @@ class ApiService {
     return _trainingService.registerForSchulung(personId, schulungId);
   }
 
-  Future<List<dynamic>> fetchDisziplinen() async {
+  Future<List<Map<String, dynamic>>> fetchDisziplinen() async {
     return _trainingService.fetchDisziplinen();
   }
 
 // Bank Service
+  Future<List<BankData>> fetchBankData(int webloginId) async {
+    return _bankService.fetchBankData(webloginId);
+  }
+
+  Future<bool> registerBankData(BankData bankData) async {
+    return _bankService.registerBankData(bankData);
+  }
+
+  Future<bool> deleteBankData(BankData bankData) async {
+    return _bankService.deleteBankData(bankData);
+  }
+
+  // Legacy method - keep for backward compatibility
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
-    return _bankService.fetchBankdaten(webloginId);
+    final bankDataList = await _bankService.fetchBankData(webloginId);
+    if (bankDataList.isEmpty) {
+      return {'ONLINE': true};
+    }
+    final firstBankData = bankDataList.first;
+    return {
+      'ONLINE': true,
+      'KONTOINHABER': firstBankData.kontoinhaber,
+      'IBAN': firstBankData.iban,
+      'BIC': firstBankData.bic,
+      'BANKNAME': firstBankData.bankName,
+      'MANDATNR': firstBankData.mandatNr,
+      'MANDATNAME': firstBankData.mandatName,
+      'MANDATSEQ': firstBankData.mandatSeq,
+      'LETZTENUTZUNG': firstBankData.letzteNutzung?.toIso8601String(),
+    };
   }
 
-  Future<Map<String, dynamic>> registerBankdaten(
-    int webloginId,
-    String kontoinhaber,
-    String iban,
-    String bic,
-  ) async {
-    return _bankService.registerBankdaten(
-      webloginId,
-      kontoinhaber,
-      iban,
-      bic,
-    );
+  /// Fetches a list of all Vereine (clubs/associations).
+  /// Returns a list of [Verein] objects containing basic club information.
+  Future<List<Verein>> fetchVereine() async {
+    try {
+      return await _vereinService.fetchVereine();
+    } catch (e) {
+      LoggerService.logError('Error in ApiService.fetchVereine: $e');
+      return [];
+    }
   }
 
-  Future<bool> deleteBankdaten(int webloginId) async {
-    return _bankService.deleteBankdaten(webloginId);
-  }
-
-  Future<List<dynamic>> fetchVereine() async {
-    return _vereinService.fetchVereine();
-  }
-
-  Future<List<Map<String, dynamic>>> fetchVerein(int vereinsNr) async {
-    return _vereinService.fetchVerein(vereinsNr);
+  /// Fetches detailed information for a specific Verein by its Vereinsnummer.
+  /// Returns a list containing a single [Verein] object with complete club details.
+  ///
+  /// [vereinsNr] The registration number of the Verein to fetch.
+  Future<List<Verein>> fetchVerein(int vereinsNr) async {
+    try {
+      return await _vereinService.fetchVerein(vereinsNr);
+    } catch (e) {
+      LoggerService.logError('Error in ApiService.fetchVerein: $e');
+      return [];
+    }
   }
 }

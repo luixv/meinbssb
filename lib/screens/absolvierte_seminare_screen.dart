@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/services/api_service.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/schulung.dart';
 
 class AbsolvierteSeminareScreen extends StatefulWidget {
   const AbsolvierteSeminareScreen(
     this.userData, {
-    required this.personId,
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
-
   final Map<String, dynamic> userData;
-  final int personId;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -25,35 +23,77 @@ class AbsolvierteSeminareScreen extends StatefulWidget {
 }
 
 class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
-  late Future<List<dynamic>> _absolvierteSeminareFuture;
+  List<Schulung> absolvierteSeminare = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadSeminareData();
+    fetchAbsolvierteSeminare();
   }
 
-  void _loadSeminareData() {
+  Future<void> fetchAbsolvierteSeminare() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final personId = widget.userData['PERSONID'];
+
+    if (personId == null) {
+      LoggerService.logError('PERSONID is null');
+      if (mounted) setState(() => isLoading = false);
+      return;
+    }
+
     try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      _absolvierteSeminareFuture =
-          apiService.fetchAbsolvierteSeminare(widget.personId);
-      LoggerService.logInfo(
-        'AbsolvierteSeminareScreen: Initiating completed trainings data fetch.',
-      );
+      final result = await apiService.fetchAbsolvierteSeminare(personId);
+      if (mounted) {
+        setState(() {
+          // Sort the results by ausgestelltAm in descending order (oldest first)
+          absolvierteSeminare = result
+            ..sort((a, b) {
+              // Get dates, handling all possible cases
+              DateTime? dateA;
+              DateTime? dateB;
+
+              if (a.ausgestelltAm.isNotEmpty && a.ausgestelltAm != '-') {
+                dateA = DateTime.tryParse(a.ausgestelltAm);
+              }
+
+              if (b.ausgestelltAm.isNotEmpty && b.ausgestelltAm != '-') {
+                dateB = DateTime.tryParse(b.ausgestelltAm);
+              }
+
+              // If both dates are valid, compare them
+              if (dateA != null && dateB != null) {
+                return dateB
+                    .compareTo(dateA); // Descending order (oldest first)
+              }
+
+              // If only one date is valid, prioritize it
+              if (dateA != null) return -1; // Valid date comes first
+              if (dateB != null) return 1; // Valid date comes first
+
+              // If neither date is valid, maintain original order
+              return 0;
+            });
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      LoggerService.logError(
-        'Error setting up completed trainings data fetch: $e',
-      );
-      _absolvierteSeminareFuture =
-          Future.value([]); // Return empty list on error
+      LoggerService.logError('Error fetching absolvierte Seminare: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          absolvierteSeminare = [];
+        });
+      }
     }
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user from AbsolvierteSeminareScreen');
-    widget.onLogout(); // Call the logout function provided by the parent.
-    Navigator.of(context).pushReplacementNamed('/login');
+    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
+    widget.onLogout();
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override
@@ -63,73 +103,76 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
-      body: FutureBuilder<List<dynamic>>(
-        future: _absolvierteSeminareFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            LoggerService.logError(
-              'Error loading completed trainings data in FutureBuilder: ${snapshot.error}',
-            );
-            return Center(
-              child: Text(
-                'Fehler beim Laden der Seminardaten: ${snapshot.error}',
+      body: Padding(
+        padding: const EdgeInsets.all(UIConstants.spacingM),
+        child: Column(
+          crossAxisAlignment: UIConstants.startCrossAlignment,
+          children: [
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (absolvierteSeminare.isEmpty)
+              const Text(
+                'Keine absolvierten Seminare gefunden.',
+                style: TextStyle(color: UIConstants.greySubtitleTextColor),
+              )
+            else
+              Expanded(
+                child: ListView.separated(
+                  itemCount: absolvierteSeminare.length,
+                  separatorBuilder: (_, __) => const SizedBox(
+                    height: UIConstants.defaultSeparatorHeight,
+                  ),
+                  itemBuilder: (context, index) {
+                    final seminar = absolvierteSeminare[index];
+                    final ausgestelltAm =
+                        DateTime.tryParse(seminar.ausgestelltAm);
+                    final formattedAusgestelltAm = ausgestelltAm == null ||
+                            seminar.ausgestelltAm.isEmpty ||
+                            seminar.ausgestelltAm == '-'
+                        ? 'Unbekannt'
+                        : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
+
+                    return ListTile(
+                      tileColor: UIConstants.tileColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
+                      ),
+                      leading: const Column(
+                        mainAxisAlignment: UIConstants.listItemLeadingAlignment,
+                        children: [
+                          Icon(
+                            Icons.task_alt,
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ],
+                      ),
+                      title: Text(
+                        seminar.bezeichnung,
+                        style: UIConstants.subtitleStyle,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ausgestellt am: $formattedAusgestelltAm',
+                            style: UIConstants.listItemSubtitleStyle,
+                          ),
+                          Text(
+                            'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
+                            style: UIConstants.listItemSubtitleStyle,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
-            );
-          } else if (snapshot.hasData && snapshot.data != null) {
-            final List<dynamic> seminare = snapshot.data!;
-
-            if (seminare.isEmpty) {
-              return const Center(
-                child: Text('Keine absolvierten Seminare gefunden.'),
-              );
-            }
-
-            return ListView.builder(
-              itemCount: seminare.length,
-              itemBuilder: (context, index) {
-                final seminar = seminare[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingM,
-                    vertical: UIConstants.spacingS,
-                  ),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.task_alt,
-                      color: UIConstants.defaultAppColor,
-                    ),
-                    title: Text(
-                      seminar['BEZEICHNUNG'] ?? 'Unbekanntes Seminar',
-                      style: UIConstants.subtitleStyle,
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ausgestellt am: ${seminar['AUSGESTELLTAM'] ?? 'Unbekannt'}',
-                          style: UIConstants.bodyStyle,
-                        ),
-                        Text(
-                          'Gültig bis: ${seminar['GUELTIGBIS'] ?? 'Unbekannt'}',
-                          style: UIConstants.bodyStyle,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          } else {
-            return const Center(
-              child: Text('Keine Seminardaten verfügbar.'),
-            );
-          }
-        },
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
+        heroTag: 'absolvierteSeminareFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',

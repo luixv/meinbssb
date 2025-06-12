@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '../services/core/logger_service.dart';
+import '/models/bank_data.dart';
+import '/services/api_service.dart';
 import '/services/api/bank_service.dart';
-import '/services/api_service.dart' hide NetworkException;
-import '/screens/bank_data_result_screen.dart';
-import '/exceptions/network_exception.dart';
+import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/screens/bank_data_result_screen.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -26,15 +26,16 @@ class BankDataScreen extends StatefulWidget {
 }
 
 class BankDataScreenState extends State<BankDataScreen> {
+  late Future<BankData?> _bankDataFuture;
+  bool _isDeleting = false;
+  bool _isEditing = false;
+  bool _isSaving = false;
+  bool _hasBankData = false;
+
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
   final TextEditingController _bicController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
-  bool _isEditing = false; // New state variable for edit mode
-  bool _isOnline = false; // New state variable for online status
-  bool _dataLoadedOnce = false; // To track if data has been attempted to load
 
   @override
   void initState() {
@@ -42,183 +43,37 @@ class BankDataScreenState extends State<BankDataScreen> {
     _loadInitialData();
   }
 
-  Future<void> _loadInitialData() async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-
+  void _loadInitialData() {
     setState(() {
-      _isLoading = true;
-      _isOnline =
-          true; // Assume online initially, will be set to false if NetworkException occurs
-      _dataLoadedOnce = false; // Reset for a new load attempt
+      _bankDataFuture = Future.value(null); // Clear current data to show spinner
+      _hasBankData = false;
     });
-
-    try {
-      final bankData = await apiService.fetchBankdaten(widget.webloginId);
-      if (mounted) {
-        setState(() {
-          _dataLoadedOnce = true; // Mark that data loading attempt has occurred
-
-          // Populate controllers regardless of whether data is truly "empty" or not.
-          // If bankData is {'ONLINE': true}, these will become empty strings.
-          _kontoinhaberController.text =
-              bankData['KONTOINHABER']?.toString() ?? '';
-          _ibanController.text = bankData['IBAN']?.toString() ?? '';
-          _bicController.text = bankData['BIC']?.toString() ?? '';
-
-          // Determine _isOnline status based on the API response's 'ONLINE' flag
-          _isOnline = bankData['ONLINE'] as bool? ??
-              true; // Default to true if not present
-
-          // Determine _isEditing: if any key fields are empty, go to edit mode
-          if (_kontoinhaberController.text.isEmpty &&
-              _ibanController.text.isEmpty &&
-              _bicController.text.isEmpty) {
-            _isEditing = true; // No data found, allow editing
-            LoggerService.logInfo(
-              'No bank data found, switching to edit mode.',
-            );
-          } else {
-            _isEditing = false; // Data found, stay in read-only
-            LoggerService.logInfo(
-              'Bank data loaded, staying in read-only mode.',
-            );
-          }
-        });
-      }
-    } catch (error) {
-      LoggerService.logError('Error fetching bank data: $error');
-      if (mounted) {
-        setState(() {
-          _dataLoadedOnce = true; // Mark that data loading attempt has occurred
-          // The crucial change: only set _isOnline to false if it's a genuine NetworkException
-          if (error is NetworkException) {
-            _isOnline = false; // Genuine network error, so go offline
-            LoggerService.logWarning(
-              'Network error during bank data fetch, showing offline message.',
-            );
-          } else {
-            // Any other error (e.g., server returned 404, or malformed data that wasn't a NetworkException)
-            // We assume the network is available, but no data was found or there was an issue with the data itself.
-            _isOnline = true; // Assume online for non-network errors
-            _isEditing =
-                true; // Allow editing if data couldn't be loaded/parsed
-            _kontoinhaberController
-                .clear(); // Ensure fields are clear for new input
-            _ibanController.clear();
-            _bicController.clear();
-            LoggerService.logWarning(
-              'Non-network error during bank data fetch, switching to edit mode.',
-            );
-          }
-        });
-        // Show snackbar for all errors during load, as a fallback message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Laden der Bankdaten: $error'),
-            duration: UIConstants.snackBarDuration,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-
-    LoggerService.logInfo('BankDataScreen initialized');
-  }
-
-  void _handleLogout() {
-    LoggerService.logInfo('Logging out user from BankDataScreen');
-    widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  /// Handles the action when the Floating Action Button is pressed.
-  /// Toggles edit mode, or submits the form if currently in edit mode.
-  Future<void> _handleFabPressed() async {
-    if (_isLoading) {
-      return; // Do nothing if already loading/submitting
-    }
-
-    if (_isEditing) {
-      // If currently in edit mode, attempt to submit the form
-      await _submitForm();
-    } else {
-      // If not in edit mode, switch to edit mode
-      setState(() {
-        _isEditing = true;
-      });
-      LoggerService.logInfo('Switched to edit mode.');
-    }
-  }
-
-  Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      LoggerService.logInfo('Form validation failed. Not submitting.');
-      return; // Stop if validation fails
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    bool registrationSuccess = false;
-
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final response = await apiService.registerBankdaten(
-        widget.webloginId,
-        _kontoinhaberController.text,
-        _ibanController.text,
-        _bicController.text,
+      _bankDataFuture = apiService.fetchBankData(widget.webloginId).then((list) {
+        final hasData = list.isNotEmpty;
+        if (mounted) {
+          setState(() {
+            _hasBankData = hasData;
+          });
+        }
+        return hasData ? list.first : null;
+      });
+      LoggerService.logInfo(
+        'BankDataScreen: Initiating bank data fetch.',
       );
-
-      if (response.isNotEmpty && response.containsKey('BankdatenWebID')) {
-        final int bankdatenWebId = response['BankdatenWebID'];
-        LoggerService.logInfo(
-          'Bank data updated successfully, ID: $bankdatenWebId',
-        );
-        registrationSuccess = true;
-      } else {
-        LoggerService.logError(
-          'Failed to update bank data: Unexpected API response',
-        );
-        registrationSuccess = false;
-      }
-    } catch (error) {
-      LoggerService.logError('Error updating bank data: $error');
-      registrationSuccess = false;
-    } finally {
+    } catch (e) {
+      LoggerService.logError('Error setting up bank data fetch: $e');
+      _bankDataFuture = Future.value(null); // Provide null on error
       if (mounted) {
         setState(() {
-          _isLoading = false;
-          // Revert to read-only mode after submission attempt
-          _isEditing = false;
+          _hasBankData = false;
         });
-        // Navigate to result screen after submission attempt
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => BankDataResultScreen(
-              success: registrationSuccess,
-              // Pass the required arguments from BankDataScreen's widget
-              userData: widget.userData,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-            ),
-          ),
-        );
       }
     }
   }
 
-  Future<void> _handleDeleteBankData() async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-
+  Future<void> _onDeleteBankData() async {
     final bool? confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -236,10 +91,10 @@ class BankDataScreenState extends State<BankDataScreen> {
               style: UIConstants.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
-                  text: 'Sind Sie sicher, dass Sie die Bankdaten ',
+                  text: 'Sind Sie sicher, dass Sie die Bankdaten für ',
                 ),
                 TextSpan(
-                  text: _ibanController.text,
+                  text: _kontoinhaberController.text,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -305,38 +160,46 @@ class BankDataScreenState extends State<BankDataScreen> {
       },
     );
 
-    if (confirmDelete != true) return; // If cancelled, do nothing
+    if (!mounted) return;
+
+    if (confirmDelete == null || !confirmDelete) {
+      LoggerService.logInfo('Bank data deletion cancelled by user.');
+      if (mounted) {
+        setState(() {
+          _isDeleting = false;
+        });
+      }
+      return;
+    }
 
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isDeleting = true;
     });
 
     try {
-      final success = await apiService.deleteBankdaten(widget.webloginId);
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final bankData = BankData(
+        id: 0, // Will be assigned by the server
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+      );
+      final bool success = await apiService.deleteBankData(bankData);
+
       if (mounted) {
         if (success) {
-          LoggerService.logInfo(
-            'Bank data deleted successfully for webloginId: ${widget.webloginId}',
-          );
-          // Clear fields and reset state to reflect deletion
-          _kontoinhaberController.clear();
-          _ibanController.clear();
-          _bicController.clear();
-          setState(() {
-            _isEditing = true; // Allow new data entry after deletion
-            _isOnline =
-                true; // Assume online since deletion was successful via API
-          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Bankdaten erfolgreich gelöscht.'),
               duration: UIConstants.snackBarDuration,
             ),
           );
+          _kontoinhaberController.clear();
+          _ibanController.clear();
+          _bicController.clear();
+          _loadInitialData();
         } else {
-          LoggerService.logError(
-            'Failed to delete bank data: API returned unsuccessful.',
-          );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Bankdaten.'),
@@ -346,18 +209,92 @@ class BankDataScreenState extends State<BankDataScreen> {
         }
       }
     } catch (e) {
-      LoggerService.logError('Error deleting bank data: $e');
+      LoggerService.logError('Exception during bank data deletion: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Ein Fehler ist aufgetreten: $e'),
+            duration: UIConstants.snackBarDuration,
+          ),
         );
       }
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isDeleting = false;
         });
       }
+    }
+  }
+
+  Future<void> _onSaveBankData() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final bankData = BankData(
+        id: 0, // Will be assigned by the server
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+        mandatSeq: 2,
+      );
+
+      final bool success = await apiService.registerBankData(bankData);
+
+      if (mounted) {
+        if (success) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => BankDataResultScreen(
+                success: true,
+                userData: widget.userData,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Speichern der Bankdaten.'),
+              duration: UIConstants.snackBarDuration,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data save: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ein Fehler ist aufgetreten: $e'),
+            duration: UIConstants.snackBarDuration,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _isEditing = false;
+        });
+      }
+    }
+  }
+
+  void _handleLogout() {
+    LoggerService.logInfo('Logging out user from BankDataScreen');
+    widget.onLogout();
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
     }
   }
 
@@ -371,137 +308,86 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget bodyContent;
-
-    if (_isLoading && !_dataLoadedOnce) {
-      // Show loading indicator only initially, before first data attempt
-      bodyContent = const Center(child: CircularProgressIndicator());
-    } else if (!_isOnline) {
-      // Show offline message if not online after initial load attempt
-      bodyContent = Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.cloud_off,
-              size: 80,
-              color: UIConstants.greySubtitleTextColor,
-            ),
-            const SizedBox(height: UIConstants.bankDataSpacing),
-            Text(
-              'Internet ist nicht zu Verfügung.',
-              style: UIConstants.bodyStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-                color: UIConstants.greySubtitleTextColor,
-              ),
-            ),
-            const SizedBox(height: UIConstants.bankDataSpacing / 2),
-            Text(
-              'Bitte überprüfen Sie Ihre Verbindung.',
-              style: UIConstants.bodyStyle
-                  .copyWith(color: UIConstants.greySubtitleTextColor),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Show the form if online and data loaded (or no data but online)
-      bodyContent = Padding(
-        padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: UIConstants.startCrossAlignment,
-              children: <Widget>[
-                const SizedBox(height: UIConstants.spacingM),
-                _buildTextField(
-                  label: 'Kontoinhaber',
-                  controller: _kontoinhaberController,
-                  isReadOnly: !_isEditing,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Kontoinhaber ist erforderlich';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'IBAN',
-                  controller: _ibanController,
-                  isReadOnly: !_isEditing,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'IBAN ist erforderlich';
-                    }
-                    if (!BankService.validateIBAN(value)) {
-                      return 'Ungültige IBAN';
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  label: 'BIC',
-                  controller: _bicController,
-                  isReadOnly: !_isEditing,
-                  validator: BankService.validateBIC,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
     return BaseScreenLayout(
       title: 'Bankdaten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
-      body: bodyContent,
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (_isOnline &&
-              !_isEditing &&
-              _kontoinhaberController.text.isNotEmpty)
-            FloatingActionButton(
-              heroTag: 'deleteFab',
-              onPressed: _isLoading ? null : _handleDeleteBankData,
-              backgroundColor: UIConstants.deleteIcon,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : const Icon(
-                      Icons.delete_forever,
-                      color: Colors.white,
-                    ),
-            ),
-          if (_isOnline &&
-              !_isEditing &&
-              _kontoinhaberController.text.isNotEmpty)
-            const SizedBox(height: UIConstants.bankDataSpacing),
-          if (_isOnline)
-            FloatingActionButton(
-              heroTag: 'editSaveFab',
-              onPressed: _isLoading ? null : _handleFabPressed,
-              backgroundColor: UIConstants.defaultAppColor,
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        UIConstants.circularProgressIndicator,
-                      ),
-                    )
-                  : Icon(
-                      _isEditing ? Icons.save : Icons.edit,
-                      color: Colors.white,
-                      size: UIConstants.bodyFontSize + 4.0,
-                    ),
-            ),
-        ],
+      body: FutureBuilder<BankData?>(
+        future: _bankDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            LoggerService.logError(
+              'Error loading bank data in FutureBuilder: ${snapshot.error}',
+            );
+            return Center(
+              child: Text(
+                'Fehler beim Laden der Bankdaten: ${snapshot.error}',
+                style: UIConstants.errorStyle,
+              ),
+            );
+          } else if (snapshot.hasData && snapshot.data != null) {
+            final bankData = snapshot.data!;
+            if (!_isEditing) {
+              _kontoinhaberController.text = bankData.kontoinhaber;
+              _ibanController.text = bankData.iban;
+              _bicController.text = bankData.bic;
+            }
+            return _buildBankDataForm();
+          } else {
+            return _buildBankDataForm();
+          }
+        },
+      ),
+      floatingActionButton: _buildFloatingActionButtons(),
+    );
+  }
+
+  Widget _buildBankDataForm() {
+    return Padding(
+      padding: const EdgeInsets.all(UIConstants.spacingM),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: UIConstants.startCrossAlignment,
+            children: [
+              _buildTextField(
+                label: 'Kontoinhaber',
+                controller: _kontoinhaberController,
+                isReadOnly: !_isEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Kontoinhaber ist erforderlich';
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                label: 'IBAN',
+                controller: _ibanController,
+                isReadOnly: !_isEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'IBAN ist erforderlich';
+                  }
+                  if (!BankService.validateIBAN(value)) {
+                    return 'Ungültige IBAN';
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                label: 'BIC',
+                controller: _bicController,
+                isReadOnly: !_isEditing,
+                validator: BankService.validateBIC,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -511,40 +397,66 @@ class BankDataScreenState extends State<BankDataScreen> {
     required TextEditingController controller,
     String? Function(String?)? validator,
     bool isReadOnly = false,
-    TextStyle? inputTextStyle,
-    Widget? suffixIcon,
   }) {
-    // Determine the effective text style
-    TextStyle effectiveTextStyle;
-    if (!_isEditing) {
-      effectiveTextStyle = inputTextStyle ??
-          const TextStyle(
-            fontSize: UIConstants.bodyFontSize,
-            fontWeight: FontWeight.bold,
-          );
-    } else {
-      effectiveTextStyle = inputTextStyle ??
-          TextStyle(
-            fontSize: UIConstants.bodyFontSize,
-            fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
-          );
-    }
-
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: TextFormField(
         controller: controller,
-        style: effectiveTextStyle,
+        readOnly: isReadOnly,
+        style: TextStyle(
+          fontSize: UIConstants.bodyFontSize,
+          fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
+        ),
         decoration: UIConstants.formInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,
-          filled: true, // Always set to true for the fillColor to apply
-          suffixIcon: suffixIcon,
         ),
         validator: validator,
-        readOnly: isReadOnly,
       ),
+    );
+  }
+
+  Widget _buildFloatingActionButtons() {
+    if (_isEditing) {
+      return FloatingActionButton(
+        onPressed: _isSaving ? null : _onSaveBankData,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: _isSaving
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              )
+            : const Icon(Icons.save, color: Colors.white),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (_hasBankData)
+          FloatingActionButton(
+            heroTag: 'deleteFab',
+            onPressed: _isDeleting ? null : _onDeleteBankData,
+            backgroundColor: UIConstants.deleteIcon,
+            child: _isDeleting
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                : const Icon(Icons.delete_forever, color: Colors.white),
+          ),
+        if (_hasBankData)
+          const SizedBox(height: UIConstants.spacingM),
+        FloatingActionButton(
+          heroTag: 'editFab',
+          onPressed: () {
+            setState(() {
+              _isEditing = true;
+            });
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.edit, color: Colors.white),
+        ),
+      ],
     );
   }
 }

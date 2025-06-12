@@ -7,6 +7,7 @@ import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'start_screen_test.mocks.dart';
+import 'package:meinbssb/models/schulung.dart';
 
 // Mock ConfigService para Provider
 class MockConfigService extends Mock implements ConfigService {}
@@ -85,24 +86,38 @@ void main() {
       (WidgetTester tester) async {
     final mockApiService = CustomMockApiService();
 
-    final schulungenMock = [
-      {
-        'DATUM': '2025-05-26',
-        'BEZEICHNUNG': 'Test Schulung 1',
-        'ONLINE': true,
-        'SCHULUNGENTEILNEHMERID': 111,
-      },
-      {
-        'DATUM': '2025-05-27',
-        'BEZEICHNUNG': 'Test Schulung 2',
-        'ONLINE': false,
-        'SCHULUNGENTEILNEHMERID': 222,
-      },
-    ];
-
     when(
       mockApiService.fetchAngemeldeteSchulungen(any, any),
-    ).thenAnswer((_) async => schulungenMock);
+    ).thenAnswer(
+      (_) async => [
+        const Schulung(
+          id: 1,
+          bezeichnung: 'Training 1',
+          datum: '2023-01-15',
+          ausgestelltAm: '2023-01-01',
+          teilnehmerId: 1,
+          schulungsartId: 1,
+          schulungsartBezeichnung: 'Basic',
+          schulungsartKurzbezeichnung: 'BSC',
+          schulungsartBeschreibung: 'Basic Training Course',
+          maxTeilnehmer: 20,
+          anzahlTeilnehmer: 10,
+          ort: 'Location 1',
+          uhrzeit: '09:00',
+          dauer: '8 Stunden',
+          preis: '100€',
+          zielgruppe: 'Anfänger',
+          voraussetzungen: 'Keine',
+          inhalt: 'Grundlagen',
+          abschluss: 'Zertifikat',
+          anmerkungen: 'Bitte mitbringen: Schreibzeug',
+          isOnline: false,
+          link: '',
+          status: 'Aktiv',
+          gueltigBis: '2023-12-31',
+        ),
+      ],
+    );
 
     await tester.pumpWidget(
       MaterialApp(
@@ -119,8 +134,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verificamos que los nombres de las Schulungen estén en pantalla
-    expect(find.text('Test Schulung 1'), findsOneWidget);
-    expect(find.text('Test Schulung 2'), findsOneWidget);
+    expect(find.text('Training 1'), findsOneWidget);
 
     // También que el texto de 'Keine Schulungen gefunden.' no está
     expect(find.text('Keine Schulungen gefunden.'), findsNothing);

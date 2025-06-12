@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
-import '/constants/ui_constants.dart';
+
 import '/screens/connectivity_icon.dart';
+import '/constants/ui_constants.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({
@@ -20,8 +21,13 @@ class HelpScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         backgroundColor: UIConstants.backgroundColor,
+        leading: IconButton(
+          icon:
+              const Icon(Icons.arrow_back, color: UIConstants.defaultAppColor),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text('FAQ', style: UIConstants.appBarTitleStyle),
         actions: [
           const Padding(

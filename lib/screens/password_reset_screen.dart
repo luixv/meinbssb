@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
-import '../services/core/error_service.dart';
+import '/services/core/error_service.dart';
 import '/screens/base_screen_layout.dart';
 
 class PasswordResetScreen extends StatefulWidget {
