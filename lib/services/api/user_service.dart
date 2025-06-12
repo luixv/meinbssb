@@ -283,7 +283,7 @@ class UserService {
         // Categorize contacts
         final List<Map<String, dynamic>> categorizedContacts = [
           {
-            'category': 'Private Kontaktdaten',
+            'category': 'Privat',
             'contacts': contactList
                 .where((contact) => contact.isPrivate)
                 .map(
@@ -297,7 +297,7 @@ class UserService {
                 .toList(),
           },
           {
-            'category': 'Geschäftliche Kontaktdaten',
+            'category': 'Geschäftlich',
             'contacts': contactList
                 .where((contact) => contact.isBusiness)
                 .map(

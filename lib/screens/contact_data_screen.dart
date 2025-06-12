@@ -536,50 +536,52 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         onDelete,
     bool isDeleting,
   ) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: contactData.length,
-      itemBuilder: (context, index) {
-        final category = contactData[index];
-        final contacts = category['contacts'] as List<dynamic>;
-        final categoryName = category['category'] as String;
+    return Padding(
+      padding: UIConstants.defaultPadding,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: contactData.length,
+        itemBuilder: (context, index) {
+          final category = contactData[index];
+          final contacts = category['contacts'] as List<dynamic>;
+          final categoryName = category['category'] as String;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: UIConstants.spacingS,
-                horizontal: UIConstants.spacingM,
-              ),
-              child: Text(
-                categoryName,
-                style: UIConstants.subtitleStyle.copyWith(
-                  color: UIConstants.primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: UIConstants.titleFontSize,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: UIConstants.spacingS,
+                ),
+                child: Text(
+                  categoryName,
+                  style: UIConstants.subtitleStyle.copyWith(
+                    color: UIConstants.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: UIConstants.titleFontSize,
+                  ),
                 ),
               ),
-            ),
-            ...contacts.map((contact) {
-              final kontaktId = contact['kontaktId'] as int;
-              final rawKontaktTyp = contact['rawKontaktTyp'] as int;
-              final displayValue = contact['value'] as String;
-              final displayLabel = contact['type'] as String;
+              ...contacts.map((contact) {
+                final kontaktId = contact['kontaktId'] as int;
+                final rawKontaktTyp = contact['rawKontaktTyp'] as int;
+                final displayValue = contact['value'] as String;
+                final displayLabel = contact['type'] as String;
 
-              return _buildContactTile(
-                kontaktId: kontaktId,
-                rawKontaktTyp: rawKontaktTyp,
-                displayValue: displayValue,
-                displayLabel: displayLabel,
-                onDelete: onDelete,
-                isDeleting: isDeleting,
-              );
-            }),
-          ],
-        );
-      },
+                return _buildContactTile(
+                  kontaktId: kontaktId,
+                  rawKontaktTyp: rawKontaktTyp,
+                  displayValue: displayValue,
+                  displayLabel: displayLabel,
+                  onDelete: onDelete,
+                  isDeleting: isDeleting,
+                );
+              }),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -599,8 +601,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: UIConstants.spacingM / 2,
-        left: UIConstants.spacingS,
-        right: UIConstants.spacingS,
       ),
       child: TextFormField(
         initialValue: displayValueFormatted,

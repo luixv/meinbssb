@@ -641,7 +641,7 @@ void main() {
 
         expect(result, [
           {
-            'category': 'Private Kontaktdaten',
+            'category': 'Privat',
             'contacts': [
               {
                 'kontaktId': 1,
@@ -658,7 +658,7 @@ void main() {
             ],
           },
           {
-            'category': 'Geschäftliche Kontaktdaten',
+            'category': 'Geschäftlich',
             'contacts': [],
           },
         ]);
@@ -671,11 +671,11 @@ void main() {
 
         expect(result, [
           {
-            'category': 'Private Kontaktdaten',
+            'category': 'Privat',
             'contacts': [],
           },
           {
-            'category': 'Geschäftliche Kontaktdaten',
+            'category': 'Geschäftlich',
             'contacts': [],
           },
         ]);
@@ -701,7 +701,7 @@ void main() {
 
         expect(result, [
           {
-            'category': 'Private Kontaktdaten',
+            'category': 'Privat',
             'contacts': [
               {
                 'kontaktId': 1,
@@ -712,7 +712,7 @@ void main() {
             ],
           },
           {
-            'category': 'Geschäftliche Kontaktdaten',
+            'category': 'Geschäftlich',
             'contacts': [],
           },
         ]);
