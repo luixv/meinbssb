@@ -2,18 +2,28 @@
 // Filename: app_menu.dart
 // Author: Luis Mandel / NTT DATA
 
+// Flutter/Dart core imports
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/screens/schuetzenausweis_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/bank_data_screen.dart';
-import '/screens/impressum_screen.dart';
-import '/screens/personal_data_screen.dart';
-import 'absolvierte_seminare_screen.dart';
-import '/screens/help_screen.dart';
-import '/screens/registration_screen.dart';
-import '/screens/password_reset_screen.dart';
+
+// Third-party package imports
 import 'package:provider/provider.dart';
+
+// Local imports
+// Constants
+import '/constants/ui_constants.dart';
+
+// Screens
+import '/screens/absolvierte_seminare_screen.dart';
+import '/screens/bank_data_screen.dart';
+import '/screens/contact_data_screen.dart';
+import '/screens/help_screen.dart';
+import '/screens/impressum_screen.dart';
+import '/screens/password_reset_screen.dart';
+import '/screens/personal_data_screen.dart';
+import '/screens/registration_screen.dart';
+import '/screens/schuetzenausweis_screen.dart';
+
+// Services
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 
@@ -68,9 +78,10 @@ class AppDrawer extends StatelessWidget {
             ),
             child: const Padding(
               padding: EdgeInsets.only(
-                  left: 16.0,
-                  top: 40.0,
-                  bottom: 8.0,), // Adjust padding within the header
+                left: 16.0,
+                top: 40.0,
+                bottom: 8.0,
+              ), // Adjust padding within the header
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 
 class StartScreen extends StatefulWidget {

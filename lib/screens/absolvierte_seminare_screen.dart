@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/services/api_service.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 
 class AbsolvierteSeminareScreen extends StatefulWidget {

@@ -1,12 +1,26 @@
-// In lib/screens/contact_data_screen.dart
+// Project: Mein BSSB
+// Filename: contact_data_screen.dart
+// Author: Luis Mandel / NTT DATA
 
+// Flutter/Dart core imports
 import 'package:flutter/material.dart';
+
+// Third-party package imports
 import 'package:provider/provider.dart';
+
+// Local imports
+// Constants
 import '/constants/ui_constants.dart';
-import '/services/api_service.dart';
-import '../services/core/logger_service.dart';
-import '/screens/base_screen_layout.dart';
+
+// Models
 import '/models/contact.dart';
+
+// Screens
+import '/screens/base_screen_layout.dart';
+
+// Services
+import '/services/api_service.dart';
+import '/services/core/logger_service.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(

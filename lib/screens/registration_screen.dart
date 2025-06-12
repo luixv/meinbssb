@@ -10,9 +10,9 @@ import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
 import '/services/api/auth_service.dart';
-import '../services/core/email_service.dart';
-import '../services/core/error_service.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/email_service.dart';
+import '/services/core/error_service.dart';
+import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -394,7 +394,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: UIConstants.spacingS),
               Text(
                 'Registrierung',
-                style: UIConstants.headerStyle.copyWith(color: UIConstants.defaultAppColor),
+                style: UIConstants.headerStyle
+                    .copyWith(color: UIConstants.defaultAppColor),
               ),
               const SizedBox(height: UIConstants.spacingS),
               _buildRegistrationForm(),
@@ -533,8 +534,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           width: double.infinity,
           child: ElevatedButton(
             key: const Key('submitButton'),
-            onPressed:
-                isFormValid() && !_isLoading ? _registerUser : null,
+            onPressed: isFormValid() && !_isLoading ? _registerUser : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: UIConstants.defaultAppColor,
               foregroundColor: Colors.white,

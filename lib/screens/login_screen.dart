@@ -11,8 +11,8 @@ import '/screens/password_reset_screen.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
-import '../services/core/email_service.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/email_service.dart';
+import '/services/core/logger_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({

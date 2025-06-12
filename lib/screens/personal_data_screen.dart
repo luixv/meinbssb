@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/personal_data_result_screen.dart';
-import '../services/core/logger_service.dart';
+import '/services/core/logger_service.dart';
 import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
