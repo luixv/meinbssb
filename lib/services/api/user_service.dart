@@ -283,7 +283,7 @@ class UserService {
         // Categorize contacts
         final List<Map<String, dynamic>> categorizedContacts = [
           {
-            'category': 'Privat',
+            'category': 'Private Kontaktdaten',
             'contacts': contactList
                 .where((contact) => contact.isPrivate)
                 .map(
@@ -297,7 +297,7 @@ class UserService {
                 .toList(),
           },
           {
-            'category': 'Geschäftlich',
+            'category': 'Geschäftliche Kontaktdaten',
             'contacts': contactList
                 .where((contact) => contact.isBusiness)
                 .map(
@@ -348,8 +348,8 @@ class UserService {
 
       LoggerService.logInfo('addKontakt API response: $response');
 
-      // Explicitly check that the response is a Map and the 'ResultType' is 1
-      if (response['result']) {
+      // Check if response is a Map and has a 'result' field
+      if (response is Map<String, dynamic> && response['result'] == true) {
         return true;
       } else {
         LoggerService.logWarning(
@@ -376,13 +376,13 @@ class UserService {
       );
 
       if (response is Map<String, dynamic>) {
-        if (response.containsKey('error')) {
+        if (response.containsKey('error') || response['result'] == false) {
           LoggerService.logError(
-            'Failed to delete contact: ${response['error']}',
+            'Failed to delete contact: ${response['error'] ?? 'Unknown error'}',
           );
           return false;
         }
-        return true;
+        return response['result'] == true;
       } else {
         LoggerService.logError(
           'Invalid response type from deleteKontakt: ${response.runtimeType}',
@@ -411,13 +411,13 @@ class UserService {
       LoggerService.logInfo('Update contact response: $response');
 
       if (response is Map<String, dynamic>) {
-        if (response.containsKey('error')) {
+        if (response.containsKey('error') || response['result'] == false) {
           LoggerService.logError(
-            'Failed to update contact: ${response['error']}',
+            'Failed to update contact: ${response['error'] ?? 'Unknown error'}',
           );
           return false;
         }
-        return true;
+        return response['result'] == true;
       } else {
         LoggerService.logError(
           'Invalid response type from updateKontakt: ${response.runtimeType}',

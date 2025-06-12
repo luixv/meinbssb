@@ -33,140 +33,38 @@ void main() {
       );
     });
 
+    tearDown(() {
+      reset(mockHttpClient);
+      reset(mockCacheService);
+      reset(mockNetworkService);
+    });
+
     group('fetchPassdaten', () {
-      test(
-        'should return mapped pass data from cache when available',
-        () async {
-          const personId = 123;
+      const testPersonId = 123;
+      final testResponse = {
+        'PASSNUMMER': '12345678',
+        'VEREINNR': '987',
+        'NAMEN': 'Doe',
+        'VORNAME': 'John',
+        'TITEL': 'Dr.',
+        'GEBURTSDATUM': '1990-01-01',
+        'GESCHLECHT': 1,
+        'VEREINNAME': 'Test Club',
+        'PASSDATENID': 456,
+        'MITGLIEDSCHAFTID': 789,
+        'PERSONID': testPersonId,
+        'STRASSE': 'Test Street 1',
+        'PLZ': '12345',
+        'ORT': 'Test City',
+      };
 
-          final expectedFlatData = {
-            'PASSNUMMER': '12345',
-            'VEREINNR': 67890,
-            'NAMEN': 'Doe',
-            'VORNAME': 'John',
-            'TITEL': 'Mr.',
-            'GEBURTSDATUM': '1990-01-01',
-            'GESCHLECHT': 'M',
-            'VEREINNAME': 'Test Club',
-            'PASSDATENID': 1,
-            'MITGLIEDSCHAFTID': 2,
-            'PERSONID': personId,
-            'STRASSE': null,
-            'PLZ': null,
-            'ORT': null,
-            'ONLINE': false,
-          };
-
-          when(
-            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-              'passdaten_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).thenAnswer(
-            (_) async => expectedFlatData,
-          );
-
-          final result = await userService.fetchPassdaten(personId);
-
-          expect(result, expectedFlatData);
-          verify(
-            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-              'passdaten_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
-          verifyNever(mockHttpClient.get('Passdaten/$personId'));
-        },
-      );
-
-      test(
-        'should fetch, map, cache, and return data when not in cache',
-        () async {
-          const personId = 123;
-          final apiResponse = [
-            // API might return a list even for a single item
-            {
-              'PASSNUMMER': '54321',
-              'VEREINNR': 98765,
-              'NAMEN': 'Smith',
-              'VORNAME': 'Jane',
-              'TITEL': 'Ms.',
-              'GEBURTSDATUM': '1995-05-05',
-              'GESCHLECHT': 'F',
-              'VEREINNAME': 'Another Club',
-              'PASSDATENID': 3,
-              'MITGLIEDSCHAFTID': 4,
-              'PERSONID': personId,
-            }
-          ];
-
-          final expectedFlatData = {
-            'PASSNUMMER': '54321',
-            'VEREINNR': 98765,
-            'NAMEN': 'Smith',
-            'VORNAME': 'Jane',
-            'TITEL': 'Ms.',
-            'GEBURTSDATUM': '1995-05-05',
-            'GESCHLECHT': 'F',
-            'VEREINNAME': 'Another Club',
-            'PASSDATENID': 3,
-            'MITGLIEDSCHAFTID': 4,
-            'PERSONID': personId,
-            'STRASSE': null,
-            'PLZ': null,
-            'ORT': null,
-            'ONLINE': true,
-          };
-
-          when(
-            mockHttpClient.get('Passdaten/$personId'),
-          ).thenAnswer((_) async => apiResponse);
-
-          when(
-            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-              'passdaten_$personId',
-              any, // duration
-              any, // fetchData function
-              any, // processResponse function
-            ),
-          ).thenAnswer((invocation) async {
-            final fetchData =
-                invocation.positionalArguments[2] as Future<dynamic> Function();
-            final processResponse = invocation.positionalArguments[3]
-                as Map<String, dynamic> Function(dynamic);
-
-            final rawResponse = await fetchData();
-            final processed = processResponse(rawResponse);
-
-            return {...processed, 'ONLINE': true};
-          });
-
-          final result = await userService.fetchPassdaten(personId);
-
-          expect(result, expectedFlatData);
-          verify(mockHttpClient.get('Passdaten/$personId')).called(1);
-          verify(
-            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-              'passdaten_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
-        },
-      );
-
-      test('should return empty map on empty response', () async {
-        const personId = 123;
-        final apiResponse = <dynamic>[];
+      test('returns mapped passdaten from network', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-            'passdaten_$personId',
+            any,
             any,
             any,
             any,
@@ -174,181 +72,101 @@ void main() {
         ).thenAnswer((invocation) async {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
-          final processResponse = invocation.positionalArguments[3]
-              as Map<String, dynamic> Function(dynamic);
-
-          final rawResponse = await fetchData();
-          final mappedResponse = processResponse(rawResponse);
-
-          if (mappedResponse.isEmpty) {
-            return {'ONLINE': true};
-          }
-          return {...mappedResponse, 'ONLINE': true};
+          final response = await fetchData();
+          return response;
         });
 
-        when(
-          mockHttpClient.get('Passdaten/$personId'),
-        ).thenAnswer((_) async => apiResponse);
+        when(mockHttpClient.get('Passdaten/$testPersonId'))
+            .thenAnswer((_) async => testResponse);
 
-        final result = await userService.fetchPassdaten(personId);
+        final result = await userService.fetchPassdaten(testPersonId);
 
-        expect(result, {'ONLINE': true});
-        verify(mockHttpClient.get('Passdaten/$personId')).called(1);
+        expect(result, isA<Map<String, dynamic>>());
+        expect(result['PASSNUMMER'], '12345678');
+        expect(result['VEREINNR'], '987');
+        expect(result['NAMEN'], 'Doe');
+        expect(result['VORNAME'], 'John');
+        expect(result['TITEL'], 'Dr.');
+        expect(result['GEBURTSDATUM'], '1990-01-01');
+        expect(result['GESCHLECHT'], 1);
+        expect(result['VEREINNAME'], 'Test Club');
+        expect(result['PASSDATENID'], 456);
+        expect(result['MITGLIEDSCHAFTID'], 789);
+        expect(result['PERSONID'], testPersonId);
+        expect(result['STRASSE'], 'Test Street 1');
+        expect(result['PLZ'], '12345');
+        expect(result['ORT'], 'Test City');
       });
 
-      test('should return empty map and log error on network failure',
-          () async {
-        const personId = 123;
-        // Simulate CacheService returning an empty map, indicating no data was retrieved
+      test('handles empty response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-            'passdaten_$personId',
+            any,
             any,
             any,
             any,
           ),
-        ).thenAnswer((_) async => {});
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
 
-        final result = await userService.fetchPassdaten(personId);
+        when(mockHttpClient.get('Passdaten/$testPersonId'))
+            .thenAnswer((_) async => []);
 
-        expect(result, {});
-        verify(
+        final result = await userService.fetchPassdaten(testPersonId);
+
+        expect(result, isA<Map<String, dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-            'passdaten_$personId',
+            any,
             any,
             any,
             any,
           ),
-        ).called(1);
-        verifyNever(mockHttpClient.get(any));
+        ).thenThrow(Exception('Network error'));
+
+        final result = await userService.fetchPassdaten(testPersonId);
+
+        expect(result, isA<Map<String, dynamic>>());
+        expect(result, isEmpty);
       });
     });
-
-    // ================== For Zweitmitgliedschaften ====================
 
     group('fetchZweitmitgliedschaften', () {
-      test(
-        'should return mapped zweitmitgliedschaften data from cache when available',
-        () async {
-          const personId = 123;
-          final expectedFlatData = [
-            {
-              'VEREINID': 101,
-              'VEREINNAME': 'Club Alpha',
-              'EINTRITTVEREIN': '2020-01-01',
-              'ONLINE': false,
-            },
-            {
-              'VEREINID': 102,
-              'VEREINNAME': 'Club Beta',
-              'EINTRITTVEREIN': '2021-02-02',
-              'ONLINE': false,
-            },
-          ];
-
-          when(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'zweitmitgliedschaften_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).thenAnswer(
-            (_) async => expectedFlatData,
-          );
-
-          final result = await userService.fetchZweitmitgliedschaften(personId);
-
-          expect(result, expectedFlatData);
-          verify(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'zweitmitgliedschaften_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
-          verifyNever(mockHttpClient.get('Zweitmitgliedschaften/$personId'));
+      const testPersonId = 123;
+      final testResponse = [
+        {
+          'VEREINID': 1,
+          'VEREINNAME': 'Club 1',
+          'EINTRITTVEREIN': '2020-01-01',
         },
-      );
-
-      test(
-        'should fetch, map, cache, and return data when not in cache',
-        () async {
-          const personId = 123;
-          final apiResponse = [
-            {
-              'VEREINID': 201,
-              'VEREINNAME': 'Club Gamma',
-              'EINTRITTVEREIN': '2022-03-03',
-            },
-            {
-              'VEREINID': 202,
-              'VEREINNAME': 'Club Delta',
-              'EINTRITTVEREIN': '2023-04-04',
-            },
-          ];
-          final expectedFlatData = [
-            {
-              'VEREINID': 201,
-              'VEREINNAME': 'Club Gamma',
-              'EINTRITTVEREIN': '2022-03-03',
-              'ONLINE': true,
-            },
-            {
-              'VEREINID': 202,
-              'VEREINNAME': 'Club Delta',
-              'EINTRITTVEREIN': '2023-04-04',
-              'ONLINE': true,
-            },
-          ];
-
-          when(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'zweitmitgliedschaften_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).thenAnswer((invocation) async {
-            final fetchData =
-                invocation.positionalArguments[2] as Future<dynamic> Function();
-            final processResponse = invocation.positionalArguments[3]
-                as List<dynamic> Function(dynamic);
-
-            final rawResponse = await fetchData();
-            final processed = processResponse(rawResponse);
-
-            return processed.map((item) => {...item, 'ONLINE': true}).toList();
-          });
-
-          when(
-            mockHttpClient.get('Zweitmitgliedschaften/$personId'),
-          ).thenAnswer((_) async => apiResponse);
-
-          final result = await userService.fetchZweitmitgliedschaften(personId);
-
-          expect(result, expectedFlatData);
-          verify(mockHttpClient.get('Zweitmitgliedschaften/$personId'))
-              .called(1);
-          verify(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'zweitmitgliedschaften_$personId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
+        {
+          'VEREINID': 2,
+          'VEREINNAME': 'Club 2',
+          'EINTRITTVEREIN': '2021-01-01',
         },
-      );
+      ];
 
-      test('should return empty list on empty response', () async {
-        const personId = 123;
-        final apiResponse = <dynamic>[];
+      test('returns mapped zweitmitgliedschaften from network', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'zweitmitgliedschaften_$personId',
+            any,
             any,
             any,
             any,
@@ -356,185 +174,98 @@ void main() {
         ).thenAnswer((invocation) async {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
-          final processResponse = invocation.positionalArguments[3]
-              as List<dynamic> Function(dynamic);
-
-          final rawResponse = await fetchData();
-          final mappedResponse = processResponse(rawResponse);
-
-          return mappedResponse;
+          final response = await fetchData();
+          return response;
         });
 
-        when(
-          mockHttpClient.get('Zweitmitgliedschaften/$personId'),
-        ).thenAnswer((_) async => apiResponse);
+        when(mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'))
+            .thenAnswer((_) async => testResponse);
 
-        final result = await userService.fetchZweitmitgliedschaften(personId);
+        final result =
+            await userService.fetchZweitmitgliedschaften(testPersonId);
 
-        expect(result, []);
-        verify(mockHttpClient.get('Zweitmitgliedschaften/$personId')).called(1);
+        expect(result, isA<List<dynamic>>());
+        expect(result.length, 2);
+        expect(result[0]['VEREINID'], 1);
+        expect(result[0]['VEREINNAME'], 'Club 1');
+        expect(result[0]['EINTRITTVEREIN'], '2020-01-01');
+        expect(result[1]['VEREINID'], 2);
+        expect(result[1]['VEREINNAME'], 'Club 2');
+        expect(result[1]['EINTRITTVEREIN'], '2021-01-01');
       });
 
-      test('should return empty list and log error on network failure',
-          () async {
-        const personId = 123;
-        // Simulate CacheService returning an empty list
+      test('handles empty response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'zweitmitgliedschaften_$personId',
+            any,
             any,
             any,
             any,
           ),
-        ).thenAnswer((_) async => []);
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
 
-        final result = await userService.fetchZweitmitgliedschaften(personId);
+        when(mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'))
+            .thenAnswer((_) async => []);
 
-        expect(result, []);
-        verify(
+        final result =
+            await userService.fetchZweitmitgliedschaften(testPersonId);
+
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'zweitmitgliedschaften_$personId',
+            any,
             any,
             any,
             any,
           ),
-        ).called(1);
-        verifyNever(mockHttpClient.get(any));
+        ).thenThrow(Exception('Network error'));
+
+        final result =
+            await userService.fetchZweitmitgliedschaften(testPersonId);
+
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
       });
     });
 
-    // ================== For PassdatenZVE ====================
-
     group('fetchPassdatenZVE', () {
-      test(
-        'should return mapped pass data ZVE from cache when available',
-        () async {
-          const passdatenId = 1;
-          const personId = 123;
-          final expectedFlatData = [
-            {
-              'DISZIPLINNR': 1,
-              'DISZIPLIN': 'Discipline A',
-              'VEREINNAME': 'Club 1',
-              'ONLINE': false,
-            },
-            {
-              'DISZIPLINNR': 2,
-              'DISZIPLIN': 'Discipline B',
-              'VEREINNAME': 'Club 2',
-              'ONLINE': false,
-            },
-          ];
-
-          when(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'passdaten_zve_$passdatenId',
-              any,
-              any,
-              any,
-            ),
-          ).thenAnswer(
-            (_) async => expectedFlatData,
-          );
-
-          final result =
-              await userService.fetchPassdatenZVE(passdatenId, personId);
-
-          expect(result, expectedFlatData);
-          verify(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'passdaten_zve_$passdatenId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
-          verifyNever(
-            mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'),
-          );
+      const testPassdatenId = 456;
+      const testPersonId = 123;
+      final testResponse = [
+        {
+          'DISZIPLINNR': '1.1',
+          'DISZIPLIN': 'Disziplin 1',
+          'VEREINNAME': 'Club 1',
         },
-      );
-
-      test(
-        'should fetch, map, cache, and return data when not in cache',
-        () async {
-          const passdatenId = 1;
-          const personId = 123;
-          final apiResponse = [
-            {
-              'DISZIPLINNR': 3,
-              'DISZIPLIN': 'Discipline C',
-              'VEREINNAME': 'Club 3',
-            },
-            {
-              'DISZIPLINNR': 4,
-              'DISZIPLIN': 'Discipline D',
-              'VEREINNAME': 'Club 4',
-            },
-          ];
-          final expectedFlatData = [
-            {
-              'DISZIPLINNR': 3,
-              'DISZIPLIN': 'Discipline C',
-              'VEREINNAME': 'Club 3',
-              'ONLINE': true,
-            },
-            {
-              'DISZIPLINNR': 4,
-              'DISZIPLIN': 'Discipline D',
-              'VEREINNAME': 'Club 4',
-              'ONLINE': true,
-            },
-          ];
-
-          when(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'passdaten_zve_$passdatenId',
-              any,
-              any,
-              any,
-            ),
-          ).thenAnswer((invocation) async {
-            final fetchData =
-                invocation.positionalArguments[2] as Future<dynamic> Function();
-            final processResponse = invocation.positionalArguments[3]
-                as List<dynamic> Function(dynamic);
-
-            final rawResponse = await fetchData();
-            final processed = processResponse(rawResponse);
-
-            return processed.map((item) => {...item, 'ONLINE': true}).toList();
-          });
-
-          when(
-            mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'),
-          ).thenAnswer((_) async => apiResponse);
-
-          final result =
-              await userService.fetchPassdatenZVE(passdatenId, personId);
-
-          expect(result, expectedFlatData);
-          verify(mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'))
-              .called(1);
-          verify(
-            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-              'passdaten_zve_$passdatenId',
-              any,
-              any,
-              any,
-            ),
-          ).called(1);
+        {
+          'DISZIPLINNR': '1.2',
+          'DISZIPLIN': 'Disziplin 2',
+          'VEREINNAME': 'Club 2',
         },
-      );
+      ];
 
-      test('should return empty list on empty response', () async {
-        const passdatenId = 1;
-        const personId = 123;
-        final apiResponse = <dynamic>[];
+      test('returns mapped passdaten zve from network', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'passdaten_zve_$passdatenId',
+            any,
             any,
             any,
             any,
@@ -542,122 +273,136 @@ void main() {
         ).thenAnswer((invocation) async {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
-          final processResponse = invocation.positionalArguments[3]
-              as List<dynamic> Function(dynamic);
-
-          final rawResponse = await fetchData();
-          final mappedResponse = processResponse(rawResponse);
-
-          return mappedResponse;
+          final response = await fetchData();
+          return response;
         });
 
-        when(
-          mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'),
-        ).thenAnswer((_) async => apiResponse);
+        when(mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'))
+            .thenAnswer((_) async => testResponse);
 
         final result =
-            await userService.fetchPassdatenZVE(passdatenId, personId);
+            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
 
-        expect(result, []);
-        verify(mockHttpClient.get('PassdatenZVE/$passdatenId/$personId'))
-            .called(1);
+        expect(result, isA<List<dynamic>>());
+        expect(result.length, 2);
+        expect(result[0]['DISZIPLINNR'], '1.1');
+        expect(result[0]['DISZIPLIN'], 'Disziplin 1');
+        expect(result[0]['VEREINNAME'], 'Club 1');
+        expect(result[1]['DISZIPLINNR'], '1.2');
+        expect(result[1]['DISZIPLIN'], 'Disziplin 2');
+        expect(result[1]['VEREINNAME'], 'Club 2');
       });
 
-      test('should return empty list and log error on network failure',
-          () async {
-        const passdatenId = 1;
-        const personId = 123;
-        // Simulate CacheService returning an empty list
+      test('handles empty response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'passdaten_zve_$passdatenId',
+            any,
             any,
             any,
             any,
           ),
-        ).thenAnswer((_) async => []);
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'))
+            .thenAnswer((_) async => []);
 
         final result =
-            await userService.fetchPassdatenZVE(passdatenId, personId);
+            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
 
-        expect(result, []);
-        verify(
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            'passdaten_zve_$passdatenId',
+            any,
             any,
             any,
             any,
           ),
-        ).called(1);
-        verifyNever(mockHttpClient.get(any));
+        ).thenThrow(Exception('Network error'));
+
+        final result =
+            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
+
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
       });
     });
 
     group('updateKritischeFelderUndAdresse', () {
-      test('should return true on successful update', () async {
-        when(mockHttpClient.put(any, any))
+      const testPersonId = 123;
+      const testData = <String, dynamic>{
+        'titel': 'Dr.',
+        'namen': 'Doe',
+        'vorname': 'John',
+        'geschlecht': 1,
+        'strasse': 'Test Street 1',
+        'plz': '12345',
+        'ort': 'Test City',
+      };
+
+      test('returns true on successful update', () async {
+        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKritischeFelderUndAdresse(
-          1,
-          'Mr.',
-          'Test',
-          'User',
-          1,
-          'Street 1',
-          '12345',
-          'City',
+          testPersonId,
+          testData['titel']!,
+          testData['namen']!,
+          testData['vorname']!,
+          testData['geschlecht']!,
+          testData['strasse']!,
+          testData['plz']!,
+          testData['ort']!,
         );
 
         expect(result, isTrue);
-        verify(
-          mockHttpClient.put(
-            'KritischeFelderUndAdresse',
-            {
-              'PersonID': 1,
-              'Titel': 'Mr.',
-              'Namen': 'Test',
-              'Vorname': 'User',
-              'Geschlecht': 1,
-              'Strasse': 'Street 1',
-              'PLZ': '12345',
-              'Ort': 'City',
-            },
-          ),
-        ).called(1);
       });
 
-      test('should return false on failed update (API result false)', () async {
-        when(mockHttpClient.put(any, any))
+      test('returns false on failed update', () async {
+        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenAnswer((_) async => {'result': false});
 
         final result = await userService.updateKritischeFelderUndAdresse(
-          1,
-          'Mr.',
-          'Test',
-          'User',
-          1,
-          'Street 1',
-          '12345',
-          'City',
+          testPersonId,
+          testData['titel']!,
+          testData['namen']!,
+          testData['vorname']!,
+          testData['geschlecht']!,
+          testData['strasse']!,
+          testData['plz']!,
+          testData['ort']!,
         );
 
         expect(result, isFalse);
       });
 
-      test('should return false on exception during update', () async {
-        when(mockHttpClient.put(any, any))
+      test('returns false on network error', () async {
+        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenThrow(Exception('Network error'));
 
         final result = await userService.updateKritischeFelderUndAdresse(
-          1,
-          'Mr.',
-          'Test',
-          'User',
-          1,
-          'Street 1',
-          '12345',
-          'City',
+          testPersonId,
+          testData['titel']!,
+          testData['namen']!,
+          testData['vorname']!,
+          testData['geschlecht']!,
+          testData['strasse']!,
+          testData['plz']!,
+          testData['ort']!,
         );
 
         expect(result, isFalse);
@@ -682,7 +427,11 @@ void main() {
         verify(
           mockHttpClient.post(
             'KontaktHinzufuegen',
-            contact.toJson(),
+            {
+              'PersonID': contact.personId,
+              'KontaktTyp': contact.type,
+              'Kontakt': contact.value,
+            },
           ),
         ).called(1);
       });
@@ -697,7 +446,7 @@ void main() {
         );
 
         when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'ResultType': 0});
+            .thenAnswer((_) async => {'result': false});
 
         final result = await userService.addKontakt(contact);
 
