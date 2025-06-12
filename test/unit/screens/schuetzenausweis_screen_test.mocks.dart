@@ -8,8 +8,9 @@ import 'dart:typed_data' as _i5;
 
 import 'package:meinbssb/models/bank_data.dart' as _i6;
 import 'package:meinbssb/models/contact.dart' as _i4;
+import 'package:meinbssb/models/verein.dart' as _i7;
 import 'package:meinbssb/services/api_service.dart' as _i2;
-import 'package:meinbssb/services/core/config_service.dart' as _i7;
+import 'package:meinbssb/services/core/config_service.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -347,30 +348,29 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<List<dynamic>> fetchVereine() => (super.noSuchMethod(
+  _i3.Future<List<_i7.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i3.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i3.Future<List<dynamic>>);
+        returnValue: _i3.Future<List<_i7.Verein>>.value(<_i7.Verein>[]),
+      ) as _i3.Future<List<_i7.Verein>>);
 
   @override
-  _i3.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+  _i3.Future<List<_i7.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
+        returnValue: _i3.Future<List<_i7.Verein>>.value(<_i7.Verein>[]),
+      ) as _i3.Future<List<_i7.Verein>>);
 }
 
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i7.ConfigService {
+class MockConfigService extends _i1.Mock implements _i8.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

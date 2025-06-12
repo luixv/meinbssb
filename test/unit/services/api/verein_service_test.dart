@@ -3,6 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/models/verein.dart';
 
 @GenerateMocks([
   HttpClient,
@@ -15,10 +16,7 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-
-    vereinService = VereinService(
-      httpClient: mockHttpClient,
-    );
+    vereinService = VereinService(httpClient: mockHttpClient);
   });
 
   tearDown(() {
@@ -44,10 +42,12 @@ void main() {
 
       final result = await vereinService.fetchVereine();
 
-      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result, isA<List<Verein>>());
       expect(result.length, 1);
-      expect(result[0]['VEREINNAME'], 'Test Verein');
-      expect(result[0]['LAT'], 48.1351);
+      expect(result[0].id, 1);
+      expect(result[0].name, 'Test Verein');
+      expect(result[0].lat, 48.1351);
+      expect(result[0].lon, 11.5820);
       verify(mockHttpClient.get('Vereine')).called(1);
     });
 
@@ -84,11 +84,29 @@ void main() {
       final result = await vereinService.fetchVereine();
 
       expect(result.length, 1);
-      expect(result[0]['VEREINNAME'], 'Partial Data Club');
+      expect(result[0].name, 'Partial Data Club');
       expect(
-        result[0]['GAUID'],
-        isNull,
-      ); // Should handle missing fields gracefully
+          result[0].gauId, isNull,); // Should handle missing fields gracefully
+    });
+
+    test('filters out invalid items', () async {
+      final testResponse = [
+        {
+          'VEREINID': 1,
+          'VEREINNAME': 'Valid Club',
+        },
+        'Invalid item', // Non-map item
+        {
+          'VEREINNAME': 'Missing ID', // Missing required field
+        },
+      ];
+
+      when(mockHttpClient.get('Vereine')).thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchVereine();
+
+      expect(result.length, 1);
+      expect(result[0].name, 'Valid Club');
     });
   });
 
@@ -137,11 +155,12 @@ void main() {
 
       final result = await vereinService.fetchVerein(testVereinsNr);
 
-      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result, isA<List<Verein>>());
       expect(result.length, 1);
-      expect(result[0]['VEREINNAME'], 'Test Verein');
-      expect(result[0]['EMAIL'], 'test@verein.de');
-      expect(result[0]['ANZAHLMITGLIEDER'], 100);
+      expect(result[0].id, 1);
+      expect(result[0].name, 'Test Verein');
+      expect(result[0].email, 'test@verein.de');
+      expect(result[0].anzahlMitglieder, 100);
       verify(mockHttpClient.get('Verein/$testVereinsNr')).called(1);
     });
 
@@ -180,8 +199,8 @@ void main() {
       final result = await vereinService.fetchVerein(testVereinsNr);
 
       expect(result.length, 1);
-      expect(result[0]['VEREINNAME'], 'Partial Data Club');
-      expect(result[0]['EMAIL'], isNull); // Missing field should be null
+      expect(result[0].name, 'Partial Data Club');
+      expect(result[0].email, isNull); // Missing field should be null
     });
 
     test('returns empty list and logs error when exception occurs', () async {
@@ -201,6 +220,27 @@ void main() {
 
       expect(result, isEmpty);
       verify(mockHttpClient.get('Verein/$invalidVereinsNr')).called(1);
+    });
+
+    test('filters out invalid items in response', () async {
+      final testResponse = [
+        {
+          'VEREINID': 1,
+          'VEREINNAME': 'Valid Club',
+        },
+        'Invalid item', // Non-map item
+        {
+          'VEREINNAME': 'Missing ID', // Missing required field
+        },
+      ];
+
+      when(mockHttpClient.get('Verein/$testVereinsNr'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchVerein(testVereinsNr);
+
+      expect(result.length, 1);
+      expect(result[0].name, 'Valid Club');
     });
   });
 }

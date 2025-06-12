@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/models/bank_data.dart' as _i17;
 import 'package:meinbssb/models/contact.dart' as _i15;
+import 'package:meinbssb/models/verein.dart' as _i19;
 import 'package:meinbssb/services/api/auth_service.dart' as _i11;
 import 'package:meinbssb/services/api/bank_service.dart' as _i16;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
@@ -1218,23 +1219,21 @@ class MockVereinService extends _i1.Mock implements _i18.VereinService {
   }
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchVereine() => (super.noSuchMethod(
+  _i2.Future<List<_i19.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i19.Verein>>.value(<_i19.Verein>[]),
+      ) as _i2.Future<List<_i19.Verein>>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+  _i2.Future<List<_i19.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i19.Verein>>.value(<_i19.Verein>[]),
+      ) as _i2.Future<List<_i19.Verein>>);
 }

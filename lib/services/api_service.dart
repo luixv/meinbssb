@@ -17,6 +17,7 @@ import 'core/image_service.dart';
 import 'core/network_service.dart';
 import 'core/logger_service.dart';
 import '/models/contact.dart';
+import '/models/verein.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -229,11 +230,27 @@ class ApiService {
     };
   }
 
-  Future<List<dynamic>> fetchVereine() async {
-    return _vereinService.fetchVereine();
+  /// Fetches a list of all Vereine (clubs/associations).
+  /// Returns a list of [Verein] objects containing basic club information.
+  Future<List<Verein>> fetchVereine() async {
+    try {
+      return await _vereinService.fetchVereine();
+    } catch (e) {
+      LoggerService.logError('Error in ApiService.fetchVereine: $e');
+      return [];
+    }
   }
 
-  Future<List<Map<String, dynamic>>> fetchVerein(int vereinsNr) async {
-    return _vereinService.fetchVerein(vereinsNr);
+  /// Fetches detailed information for a specific Verein by its Vereinsnummer.
+  /// Returns a list containing a single [Verein] object with complete club details.
+  ///
+  /// [vereinsNr] The registration number of the Verein to fetch.
+  Future<List<Verein>> fetchVerein(int vereinsNr) async {
+    try {
+      return await _vereinService.fetchVerein(vereinsNr);
+    } catch (e) {
+      LoggerService.logError('Error in ApiService.fetchVerein: $e');
+      return [];
+    }
   }
 }

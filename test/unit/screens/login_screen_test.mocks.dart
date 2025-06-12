@@ -8,13 +8,14 @@ import 'dart:typed_data' as _i6;
 
 import 'package:meinbssb/models/bank_data.dart' as _i7;
 import 'package:meinbssb/models/contact.dart' as _i5;
+import 'package:meinbssb/models/verein.dart' as _i8;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
-import 'package:meinbssb/services/core/cache_service.dart' as _i10;
-import 'package:meinbssb/services/core/config_service.dart' as _i9;
-import 'package:meinbssb/services/core/email_service.dart' as _i8;
+import 'package:meinbssb/services/core/cache_service.dart' as _i11;
+import 'package:meinbssb/services/core/config_service.dart' as _i10;
+import 'package:meinbssb/services/core/email_service.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i12;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -434,30 +435,29 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i2.Future<List<dynamic>> fetchVereine() => (super.noSuchMethod(
+  _i2.Future<List<_i8.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i2.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i2.Future<List<dynamic>>);
+        returnValue: _i2.Future<List<_i8.Verein>>.value(<_i8.Verein>[]),
+      ) as _i2.Future<List<_i8.Verein>>);
 
   @override
-  _i2.Future<List<Map<String, dynamic>>> fetchVerein(int? vereinsNr) =>
+  _i2.Future<List<_i8.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i2.Future<List<Map<String, dynamic>>>);
+        returnValue: _i2.Future<List<_i8.Verein>>.value(<_i8.Verein>[]),
+      ) as _i2.Future<List<_i8.Verein>>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i8.EmailService {
+class MockEmailService extends _i1.Mock implements _i9.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -517,7 +517,7 @@ class MockEmailService extends _i1.Mock implements _i8.EmailService {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i9.ConfigService {
+class MockConfigService extends _i1.Mock implements _i10.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -552,7 +552,7 @@ class MockConfigService extends _i1.Mock implements _i9.ConfigService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i10.CacheService {
+class MockCacheService extends _i1.Mock implements _i11.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -713,8 +713,8 @@ class MockCacheService extends _i1.Mock implements _i10.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i11.ifNotNull(
-              _i11.dummyValueOrNull<T>(
+        returnValue: _i12.ifNotNull(
+              _i12.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -755,8 +755,8 @@ class MockCacheService extends _i1.Mock implements _i10.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i11.ifNotNull(
-              _i11.dummyValueOrNull<T>(
+        returnValue: _i12.ifNotNull(
+              _i12.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,
