@@ -5,11 +5,24 @@ import 'package:flutter/foundation.dart';
 class Contact {
   /// Creates a [Contact] instance from a JSON map.
   factory Contact.fromJson(Map<String, dynamic> json) {
+    // Handle different possible field names
+    final id = json['KontaktID'] ?? json['KONTAKTID'];
+    final personId = json['PersonID'] ?? json['PERSONID'];
+    final type = json['KontaktTyp'] ?? json['KONTAKTTYP'];
+    final value = json['Kontakt'] ?? json['KONTAKT'];
+
+    // Validate required fields
+    if (id == null || personId == null || type == null || value == null) {
+      throw FormatException(
+        'Invalid contact data: missing required fields. JSON: $json',
+      );
+    }
+
     return Contact(
-      id: json['KONTAKTID'] as int,
-      personId: json['PERSONID'] as int,
-      type: json['KONTAKTTYP'] as int,
-      value: json['KONTAKT'] as String,
+      id: id,
+      personId: personId,
+      type: type,
+      value: value,
     );
   }
 
@@ -42,14 +55,12 @@ class Contact {
   final String value;
 
   /// Converts this [Contact] instance to a JSON map.
-  Map<String, dynamic> toJson() {
-    return {
-      'KONTAKTID': id,
-      'PERSONID': personId,
-      'KONTAKTTYP': type,
-      'KONTAKT': value,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'KONTAKTID': id,
+        'PERSONID': personId,
+        'KONTAKTTYP': type,
+        'KONTAKT': value,
+      };
 
   /// Creates a copy of this [Contact] with the given fields replaced with the new values.
   Contact copyWith({
@@ -96,6 +107,9 @@ class Contact {
   /// Returns whether this contact is a fax number (type 3 or 7).
   bool get isFax => type == 3 || type == 7;
 
+  /// Validates if a contact type is valid (between 1 and 8)
+  static bool isValidType(int type) => type >= 1 && type <= 8;
+
   @override
   String toString() {
     return 'Contact(id: $id, personId: $personId, type: $type, value: $value)';
@@ -113,4 +127,4 @@ class Contact {
 
   @override
   int get hashCode => Object.hash(id, personId, type, value);
-} 
+}

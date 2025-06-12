@@ -15,6 +15,8 @@ import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart';
 import 'core/network_service.dart';
+import 'core/logger_service.dart';
+import '/models/contact.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -144,20 +146,17 @@ class ApiService {
     return _userService.fetchKontakte(personId);
   }
 
-  Future<bool> addKontakt(int personId, int kontaktTyp, String kontakt) async {
-    return _userService.addKontakt(
-      personId,
-      kontaktTyp,
-      kontakt,
-    );
+  Future<bool> addKontakt(Contact contact) async {
+    return _userService.addKontakt(contact);
   }
 
-  Future<bool> deleteKontakt(
-    int personId,
-    int kontaktId,
-    int kontaktTyp,
-  ) async {
-    return _userService.deleteKontakt(personId, kontaktId, kontaktTyp);
+  Future<bool> deleteKontakt(Contact contact) async {
+    try {
+      return await _userService.deleteKontakt(contact);
+    } catch (e) {
+      LoggerService.logError('Error deleting contact: $e');
+      rethrow;
+    }
   }
 
 // Image Service

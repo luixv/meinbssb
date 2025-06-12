@@ -134,10 +134,17 @@ class HttpClient {
 
   dynamic _parseResponse(http.Response response) {
     if (response.body.isEmpty) {
+      LoggerService.logInfo('HttpClient: Empty response body');
       return null;
     }
     try {
-      return jsonDecode(response.body);
+      LoggerService.logInfo('HttpClient: Raw response body: ${response.body}');
+      final decoded = jsonDecode(response.body);
+      LoggerService.logInfo('HttpClient: Decoded response: $decoded');
+      LoggerService.logInfo(
+        'HttpClient: Decoded response type: ${decoded.runtimeType}',
+      );
+      return decoded;
     } catch (e) {
       LoggerService.logError('HttpClient: Error parsing response: $e');
       // Rethrow the FormatException directly

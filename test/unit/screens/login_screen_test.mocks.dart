@@ -4,16 +4,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i5;
+import 'dart:typed_data' as _i6;
 
-import 'package:meinbssb/models/bank_data.dart' as _i6;
+import 'package:meinbssb/models/bank_data.dart' as _i7;
+import 'package:meinbssb/models/contact.dart' as _i5;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
-import 'package:meinbssb/services/core/cache_service.dart' as _i9;
-import 'package:meinbssb/services/core/config_service.dart' as _i8;
-import 'package:meinbssb/services/core/email_service.dart' as _i7;
+import 'package:meinbssb/services/core/cache_service.dart' as _i10;
+import 'package:meinbssb/services/core/config_service.dart' as _i9;
+import 'package:meinbssb/services/core/email_service.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i10;
+import 'package:mockito/src/dummies.dart' as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -295,50 +296,32 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i2.Future<bool> addKontakt(
-    int? personId,
-    int? kontaktTyp,
-    String? kontakt,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> addKontakt(_i5.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
-          [
-            personId,
-            kontaktTyp,
-            kontakt,
-          ],
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteKontakt(
-    int? personId,
-    int? kontaktId,
-    int? kontaktTyp,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> deleteKontakt(_i5.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
-          [
-            personId,
-            kontaktId,
-            kontaktTyp,
-          ],
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<_i5.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i2.Future<_i6.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchuetzenausweis,
           [personId],
         ),
-        returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i2.Future<_i5.Uint8List>);
+        returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
+      ) as _i2.Future<_i6.Uint8List>);
 
   @override
   _i2.Future<List<dynamic>> fetchSchulungsarten() => (super.noSuchMethod(
@@ -410,17 +393,17 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<List<dynamic>>);
 
   @override
-  _i2.Future<List<_i6.BankData>> fetchBankData(int? webloginId) =>
+  _i2.Future<List<_i7.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankData,
           [webloginId],
         ),
-        returnValue: _i2.Future<List<_i6.BankData>>.value(<_i6.BankData>[]),
-      ) as _i2.Future<List<_i6.BankData>>);
+        returnValue: _i2.Future<List<_i7.BankData>>.value(<_i7.BankData>[]),
+      ) as _i2.Future<List<_i7.BankData>>);
 
   @override
-  _i2.Future<bool> registerBankData(_i6.BankData? bankData) =>
+  _i2.Future<bool> registerBankData(_i7.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #registerBankData,
@@ -430,7 +413,7 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBankData(_i6.BankData? bankData) =>
+  _i2.Future<bool> deleteBankData(_i7.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteBankData,
@@ -474,7 +457,7 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i7.EmailService {
+class MockEmailService extends _i1.Mock implements _i8.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -534,7 +517,7 @@ class MockEmailService extends _i1.Mock implements _i7.EmailService {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i8.ConfigService {
+class MockConfigService extends _i1.Mock implements _i9.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -569,7 +552,7 @@ class MockConfigService extends _i1.Mock implements _i8.ConfigService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i9.CacheService {
+class MockCacheService extends _i1.Mock implements _i10.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -730,8 +713,8 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i10.ifNotNull(
-              _i10.dummyValueOrNull<T>(
+        returnValue: _i11.ifNotNull(
+              _i11.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -772,8 +755,8 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i10.ifNotNull(
-              _i10.dummyValueOrNull<T>(
+        returnValue: _i11.ifNotNull(
+              _i11.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,

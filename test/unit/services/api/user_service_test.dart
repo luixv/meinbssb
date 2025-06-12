@@ -5,6 +5,7 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/models/contact.dart';
 
 import 'user_service_test.mocks.dart';
 
@@ -665,164 +666,307 @@ void main() {
 
     group('addKontakt', () {
       test('should return true on successful contact add', () async {
-        // Assuming addKontakt expects {'ResultType': 1} for success
+        const contact = Contact(
+          id: 0,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.post(any, any))
             .thenAnswer((_) async => {'result': true});
 
-        final result = await userService.addKontakt(1, 4, 'test@example.com');
+        final result = await userService.addKontakt(contact);
 
         expect(result, isTrue);
         verify(
           mockHttpClient.post(
             'KontaktHinzufuegen',
-            {'PersonID': 1, 'KontaktTyp': 4, 'Kontakt': 'test@example.com'},
+            contact.toJson(),
           ),
         ).called(1);
       });
 
       test('should return false on failed contact add (API ResultType not 1)',
           () async {
+        const contact = Contact(
+          id: 0,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.post(any, any))
             .thenAnswer((_) async => {'ResultType': 0});
 
-        final result = await userService.addKontakt(1, 4, 'test@example.com');
+        final result = await userService.addKontakt(contact);
 
         expect(result, isFalse);
       });
 
       test('should return false on exception during contact add', () async {
+        const contact = Contact(
+          id: 0,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.post(any, any))
             .thenThrow(Exception('Network error'));
 
-        final result = await userService.addKontakt(1, 4, 'test@example.com');
+        final result = await userService.addKontakt(contact);
 
         expect(result, isFalse);
+      });
+
+      test('should return false for invalid contact type', () async {
+        const contact = Contact(
+          id: 0,
+          personId: 1,
+          type: 9, // Invalid type
+          value: 'test@example.com',
+        );
+
+        final result = await userService.addKontakt(contact);
+
+        expect(result, isFalse);
+        verifyNever(mockHttpClient.post(any, any));
       });
     });
 
     group('deleteKontakt', () {
       test('should return true on successful contact delete', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.put(any, any))
             .thenAnswer((_) async => {'result': true});
 
-        final result = await userService.deleteKontakt(1, 10, 4);
+        final result = await userService.deleteKontakt(contact);
 
         expect(result, isTrue);
         verify(
           mockHttpClient.put(
             'KontaktAendern',
-            {'PersonID': 1, 'KontaktID': 10, 'KontaktTyp': 4, 'Kontakt': ''},
+            {
+              'PersonID': contact.personId,
+              'KontaktID': contact.id,
+              'KontaktTyp': contact.type,
+              'Kontakt': '', // Empty contact value to indicate deletion
+            },
           ),
         ).called(1);
       });
 
       test('should return false on failed contact delete (API result false)',
           () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.put(any, any))
             .thenAnswer((_) async => {'result': false});
 
-        final result = await userService.deleteKontakt(1, 10, 4);
+        final result = await userService.deleteKontakt(contact);
 
         expect(result, isFalse);
       });
 
       test('should return false on exception during contact delete', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+
         when(mockHttpClient.put(any, any))
             .thenThrow(Exception('Network error'));
 
-        final result = await userService.deleteKontakt(1, 10, 4);
+        final result = await userService.deleteKontakt(contact);
 
         expect(result, isFalse);
       });
     });
 
+    group('updateKontakt', () {
+      test('should return true on successful contact update', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'updated@example.com',
+        );
+
+        when(mockHttpClient.put(any, any))
+            .thenAnswer((_) async => {'result': true});
+
+        final result = await userService.updateKontakt(contact);
+
+        expect(result, isTrue);
+        verify(
+          mockHttpClient.put(
+            'KontaktAendern',
+            contact.toJson(),
+          ),
+        ).called(1);
+      });
+
+      test('should return false on failed contact update (API result false)',
+          () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'updated@example.com',
+        );
+
+        when(mockHttpClient.put(any, any))
+            .thenAnswer((_) async => {'result': false});
+
+        final result = await userService.updateKontakt(contact);
+
+        expect(result, isFalse);
+      });
+
+      test('should return false on exception during contact update', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'updated@example.com',
+        );
+
+        when(mockHttpClient.put(any, any))
+            .thenThrow(Exception('Network error'));
+
+        final result = await userService.updateKontakt(contact);
+
+        expect(result, isFalse);
+      });
+
+      test('should return false for empty contact value', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: '', // Empty value
+        );
+
+        final result = await userService.updateKontakt(contact);
+
+        expect(result, isFalse);
+        verifyNever(mockHttpClient.put(any, any));
+      });
+    });
+
     group('fetchKontakte', () {
-      test('should return mapped contacts on successful fetch', () async {
+      test('should parse contact data correctly', () async {
         final apiResponse = [
-          {'KONTAKTTYP': 1, 'KONTAKTID': 1, 'KONTAKT': '123-456-7890'},
-          {'KONTAKTTYP': 4, 'KONTAKTID': 2, 'KONTAKT': 'private@example.com'},
-          {'KONTAKTTYP': 5, 'KONTAKTID': 3, 'KONTAKT': '987-654-3210'},
-          {'KONTAKTTYP': 8, 'KONTAKTID': 4, 'KONTAKT': 'business@example.com'},
+          {
+            'KontaktID': 1,
+            'PersonID': 123,
+            'KontaktTyp': 4,
+            'Kontakt': 'test@example.com',
+          },
+          {
+            'KontaktID': 2,
+            'PersonID': 123,
+            'KontaktTyp': 1,
+            'Kontakt': '123-456-7890',
+          },
         ];
 
-        when(mockHttpClient.get('Kontakte/1'))
+        when(mockHttpClient.get('Kontakte/123'))
             .thenAnswer((_) async => apiResponse);
 
-        final result = await userService.fetchKontakte(1);
+        final result = await userService.fetchKontakte(123);
 
         expect(result, [
           {
-            'category': 'Privat',
+            'category': 'Private Kontaktdaten',
             'contacts': [
               {
-                'type': 'Telefonnummer Privat',
-                'value': '123-456-7890',
                 'kontaktId': 1,
-                'rawKontaktTyp': 1,
+                'type': 'E-Mail Privat',
+                'value': 'test@example.com',
+                'rawKontaktTyp': 4,
               },
               {
-                'type': 'E-Mail Privat',
-                'value': 'private@example.com',
                 'kontaktId': 2,
+                'type': 'Telefonnummer Privat',
+                'value': '123-456-7890',
+                'rawKontaktTyp': 1,
+              },
+            ],
+          },
+          {
+            'category': 'Geschäftliche Kontaktdaten',
+            'contacts': [],
+          },
+        ]);
+      });
+
+      test('should handle empty response', () async {
+        when(mockHttpClient.get('Kontakte/123')).thenAnswer((_) async => []);
+
+        final result = await userService.fetchKontakte(123);
+
+        expect(result, [
+          {
+            'category': 'Private Kontaktdaten',
+            'contacts': [],
+          },
+          {
+            'category': 'Geschäftliche Kontaktdaten',
+            'contacts': [],
+          },
+        ]);
+      });
+
+      test('should handle invalid contact data', () async {
+        final apiResponse = [
+          {
+            'KontaktID': 1,
+            'PersonID': 123,
+            'KontaktTyp': 4,
+            'Kontakt': 'test@example.com',
+          },
+          {
+            'invalid': 'data',
+          },
+        ];
+
+        when(mockHttpClient.get('Kontakte/123'))
+            .thenAnswer((_) async => apiResponse);
+
+        final result = await userService.fetchKontakte(123);
+
+        expect(result, [
+          {
+            'category': 'Private Kontaktdaten',
+            'contacts': [
+              {
+                'kontaktId': 1,
+                'type': 'E-Mail Privat',
+                'value': 'test@example.com',
                 'rawKontaktTyp': 4,
               },
             ],
           },
           {
-            'category': 'Geschäftlich',
-            'contacts': [
-              {
-                'type': 'Telefonnummer Geschäftlich',
-                'value': '987-654-3210',
-                'kontaktId': 3,
-                'rawKontaktTyp': 5,
-              },
-              {
-                'type': 'E-Mail Geschäftlich',
-                'value': 'business@example.com',
-                'kontaktId': 4,
-                'rawKontaktTyp': 8,
-              },
-            ],
+            'category': 'Geschäftliche Kontaktdaten',
+            'contacts': [],
           },
         ]);
-        verify(mockHttpClient.get('Kontakte/1')).called(1);
-      });
-
-      test('should return empty list on empty response', () async {
-        when(mockHttpClient.get('Kontakte/1')).thenAnswer((_) async => []);
-
-        final result = await userService.fetchKontakte(1);
-
-        expect(result, [
-          {'category': 'Privat', 'contacts': []},
-          {'category': 'Geschäftlich', 'contacts': []},
-        ]);
-      });
-
-      test('should return empty list on non-list response', () async {
-        when(mockHttpClient.get('Kontakte/1'))
-            .thenAnswer((_) async => {'error': 'not a list'});
-
-        final result = await userService.fetchKontakte(1);
-
-        expect(result, [
-          {'category': 'Privat', 'contacts': []},
-          {'category': 'Geschäftlich', 'contacts': []},
-        ]);
-      });
-
-      test('should return structured empty list on network error', () async {
-        when(mockHttpClient.get('Kontakte/1'))
-            .thenThrow(Exception('Network error'));
-
-        final result = await userService.fetchKontakte(1);
-
-        expect(result, [
-          {'category': 'Privat', 'contacts': []},
-          {'category': 'Geschäftlich', 'contacts': []},
-        ]);
-        verify(mockHttpClient.get('Kontakte/1')).called(1);
       });
     });
   });

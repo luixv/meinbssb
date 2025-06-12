@@ -8,12 +8,13 @@ import 'dart:typed_data' as _i6;
 
 import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
-import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/bank_data.dart' as _i17;
+import 'package:meinbssb/models/contact.dart' as _i15;
 import 'package:meinbssb/services/api/auth_service.dart' as _i11;
-import 'package:meinbssb/services/api/bank_service.dart' as _i15;
+import 'package:meinbssb/services/api/bank_service.dart' as _i16;
 import 'package:meinbssb/services/api/training_service.dart' as _i13;
 import 'package:meinbssb/services/api/user_service.dart' as _i14;
-import 'package:meinbssb/services/api/verein_service.dart' as _i17;
+import 'package:meinbssb/services/api/verein_service.dart' as _i18;
 import 'package:meinbssb/services/core/cache_service.dart' as _i8;
 import 'package:meinbssb/services/core/config_service.dart' as _i12;
 import 'package:meinbssb/services/core/http_client.dart' as _i4;
@@ -1142,37 +1143,28 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
       ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i2.Future<bool> addKontakt(
-    int? personId,
-    int? kontaktTyp,
-    String? kontakt,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> addKontakt(_i15.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
-          [
-            personId,
-            kontaktTyp,
-            kontakt,
-          ],
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteKontakt(
-    int? personId,
-    int? kontaktId,
-    int? kontaktTyp,
-  ) =>
-      (super.noSuchMethod(
+  _i2.Future<bool> deleteKontakt(_i15.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
-          [
-            personId,
-            kontaktId,
-            kontaktTyp,
-          ],
+          [contact],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> updateKontakt(_i15.Contact? contact) => (super.noSuchMethod(
+        Invocation.method(
+          #updateKontakt,
+          [contact],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -1181,23 +1173,23 @@ class MockUserService extends _i1.Mock implements _i14.UserService {
 /// A class which mocks [BankService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBankService extends _i1.Mock implements _i15.BankService {
+class MockBankService extends _i1.Mock implements _i16.BankService {
   MockBankService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<_i16.BankData>> fetchBankData(int? webloginId) =>
+  _i2.Future<List<_i17.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankData,
           [webloginId],
         ),
-        returnValue: _i2.Future<List<_i16.BankData>>.value(<_i16.BankData>[]),
-      ) as _i2.Future<List<_i16.BankData>>);
+        returnValue: _i2.Future<List<_i17.BankData>>.value(<_i17.BankData>[]),
+      ) as _i2.Future<List<_i17.BankData>>);
 
   @override
-  _i2.Future<bool> registerBankData(_i16.BankData? bankData) =>
+  _i2.Future<bool> registerBankData(_i17.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #registerBankData,
@@ -1207,7 +1199,7 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBankData(_i16.BankData? bankData) =>
+  _i2.Future<bool> deleteBankData(_i17.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteBankData,
@@ -1220,7 +1212,7 @@ class MockBankService extends _i1.Mock implements _i15.BankService {
 /// A class which mocks [VereinService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVereinService extends _i1.Mock implements _i17.VereinService {
+class MockVereinService extends _i1.Mock implements _i18.VereinService {
   MockVereinService() {
     _i1.throwOnMissingStub(this);
   }

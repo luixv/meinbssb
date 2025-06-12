@@ -7,6 +7,7 @@ import '../core/cache_service.dart';
 import '../core/http_client.dart';
 import '../core/network_service.dart';
 import '../core/logger_service.dart';
+import 'package:meinbssb/models/contact.dart';
 
 class UserService {
   UserService({
@@ -248,104 +249,100 @@ class UserService {
   }
 
   Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
-    // Initialize the expected structured list of categories at the very beginning.
-    // This ensures that even if the API call fails or returns no data,
-    // the method always returns the expected structure.
-    final List<Map<String, dynamic>> categories = [
-      {'category': 'Privat', 'contacts': <Map<String, dynamic>>[]},
-      {'category': 'Geschäftlich', 'contacts': <Map<String, dynamic>>[]},
-    ];
-
     try {
-      final dynamic response = await _httpClient.get('Kontakte/$personId');
+      final data = await _httpClient.get('Kontakte/$personId');
 
-      // Only process the response if it's actually a List.
-      // If it's not a List, or if it's null, the 'categories' list
-      // will remain empty (but structured) and will be returned.
-      if (response is List) {
-        for (var item in response) {
-          if (item is Map<String, dynamic>) {
-            int? kontaktTyp = item['KONTAKTTYP'];
-            int? kontaktId = item['KONTAKTID'];
-            String? kontaktValue = item['KONTAKT'];
+      if (data is List) {
+        // Convert to Contact objects and filter out empty values and invalid entries
+        final List<Contact> contactList = data
+            .map((item) {
+              try {
+                if (item is! Map<String, dynamic>) {
+                  LoggerService.logWarning(
+                    'Contact item is not a Map: ${item.runtimeType}',
+                  );
+                  return null;
+                }
 
-            // Add null checks for all critical pieces of data
-            if (kontaktTyp != null &&
-                kontaktValue != null &&
-                kontaktValue.isNotEmpty &&
-                kontaktId != null) {
-              final String label = _getContactTypeLabel(kontaktTyp);
-              final Map<String, dynamic> contactEntry = {
-                'type': label,
-                'value': kontaktValue,
-                'kontaktId': kontaktId,
-                'rawKontaktTyp': kontaktTyp,
-              };
-
-              // Assign to appropriate category
-              if (kontaktTyp >= 1 && kontaktTyp <= 4) {
-                (categories[0]['contacts'] as List).add(contactEntry);
-              } else if (kontaktTyp >= 5 && kontaktTyp <= 8) {
-                (categories[1]['contacts'] as List).add(contactEntry);
-              } else {
+                final contact = Contact.fromJson(item);
+                return contact;
+              } catch (e) {
                 LoggerService.logWarning(
-                  'Unknown KONTAKTTYP: $kontaktTyp for contact: $kontaktValue',
+                  'Failed to parse contact: $e. Item: $item',
                 );
+                return null;
               }
-            } else {
-              LoggerService.logWarning(
-                'Skipping contact due to missing data (KONTAKTTYP, KONTAKT, or KONTAKTID): $item',
-              );
-            }
-          } else {
-            LoggerService.logWarning(
-              'Contact list contains non-map item: ${item.runtimeType}',
-            );
-          }
-        }
+            })
+            .where((contact) {
+              final isValid = contact != null && contact.value.isNotEmpty;
+              return isValid;
+            })
+            .cast<Contact>()
+            .toList();
+
+        // Categorize contacts
+        final List<Map<String, dynamic>> categorizedContacts = [
+          {
+            'category': 'Privat',
+            'contacts': contactList
+                .where((contact) => contact.isPrivate)
+                .map(
+                  (contact) => {
+                    'kontaktId': contact.id,
+                    'type': contact.typeLabel,
+                    'value': contact.value,
+                    'rawKontaktTyp': contact.type,
+                  },
+                )
+                .toList(),
+          },
+          {
+            'category': 'Geschäftlich',
+            'contacts': contactList
+                .where((contact) => contact.isBusiness)
+                .map(
+                  (contact) => {
+                    'kontaktId': contact.id,
+                    'type': contact.typeLabel,
+                    'value': contact.value,
+                    'rawKontaktTyp': contact.type,
+                  },
+                )
+                .toList(),
+          },
+        ];
+
+        return categorizedContacts;
       } else {
-        LoggerService.logWarning(
-          'fetchKontakte: API response was not a List: ${response.runtimeType}',
+        LoggerService.logError(
+          'Failed to fetch contacts: Invalid response type ${data.runtimeType}',
         );
+        return [];
       }
     } catch (e) {
-      // Log the error. The 'categories' list will still be returned as initialized.
-      LoggerService.logError('Error fetching Kontakte: $e');
+      LoggerService.logError('Error fetching contacts: $e');
+      return [];
     }
-    // Always return the structured list, whether populated or empty.
-    return categories;
   }
 
-  // Helper for contact type labels
-  String _getContactTypeLabel(int kontaktTyp) {
-    const Map<int, String> contactTypeLabels = {
-      1: 'Telefonnummer Privat',
-      2: 'Mobilnummer Privat',
-      3: 'Fax Privat',
-      4: 'E-Mail Privat',
-      5: 'Telefonnummer Geschäftlich',
-      6: 'Mobilnummer Geschäftlich',
-      7: 'Fax Geschäftlich',
-      8: 'E-Mail Geschäftlich',
-    };
-    return contactTypeLabels[kontaktTyp] ?? 'Unbekannter Kontakt ($kontaktTyp)';
-  }
-
-  Future<bool> addKontakt(
-    int personId,
-    int kontaktTyp,
-    String kontakt,
-  ) async {
+  Future<bool> addKontakt(Contact contact) async {
     try {
-      LoggerService.logInfo('Attempting to add contact with body: '
-          '{PersonID: $personId, KontaktTyp: $kontaktTyp, Kontakt: $kontakt}');
+      LoggerService.logInfo(
+        'Adding contact for person ID: ${contact.personId}',
+      );
 
-      final Map<String, dynamic> response = await _httpClient.post(
+      // Validate contact type
+      if (!Contact.isValidType(contact.type)) {
+        LoggerService.logError('Invalid contact type: ${contact.type}');
+        return false;
+      }
+
+      final response = await _httpClient.post(
         'KontaktHinzufuegen',
         {
-          'PersonID': personId,
-          'KontaktTyp': kontaktTyp,
-          'Kontakt': kontakt,
+          'PersonID': contact.personId,
+          'KontaktTyp': contact.type,
+          'Kontakt': contact.value,
         },
       );
 
@@ -353,9 +350,6 @@ class UserService {
 
       // Explicitly check that the response is a Map and the 'ResultType' is 1
       if (response['result']) {
-        LoggerService.logInfo(
-          'Contact added successfully for PersonID: $personId',
-        );
         return true;
       } else {
         LoggerService.logWarning(
@@ -365,47 +359,74 @@ class UserService {
       }
     } catch (e) {
       LoggerService.logError('Error adding contact: $e');
-      return false; // Return false on any error during the API call
+      return false;
     }
   }
 
-  Future<bool> deleteKontakt(
-    int personId,
-    int kontaktId,
-    int kontaktTyp,
-  ) async {
+  Future<bool> deleteKontakt(Contact contact) async {
     try {
-      final Map<String, dynamic> body = {
-        'PersonID': personId,
-        'KontaktID': kontaktId,
-        'KontaktTyp': kontaktTyp,
-        'Kontakt': '', // Kontakt must be empty for deletion.
-      };
-
-      LoggerService.logInfo('Attempting to delete contact with body: $body');
-
-      final Map<String, dynamic> response = await _httpClient.put(
+      final response = await _httpClient.put(
         'KontaktAendern',
-        body,
+        {
+          'PersonID': contact.personId,
+          'KontaktID': contact.id,
+          'KontaktTyp': contact.type,
+          'Kontakt': '', // Empty contact value to indicate deletion
+        },
       );
 
-      LoggerService.logInfo('KontaktAendern (DELETE) API response: $response');
-
-      // Check the 'result' field in the response
-      if (response['result'] == true) {
-        LoggerService.logInfo(
-          'Contact deleted successfully for PersonID: $personId',
-        );
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('error')) {
+          LoggerService.logError(
+            'Failed to delete contact: ${response['error']}',
+          );
+          return false;
+        }
         return true;
       } else {
-        LoggerService.logWarning(
-          'deleteKontakt: API indicated failure or unexpected response. Response: $response',
+        LoggerService.logError(
+          'Invalid response type from deleteKontakt: ${response.runtimeType}',
         );
         return false;
       }
     } catch (e) {
       LoggerService.logError('Error deleting contact: $e');
-      return false; // Return false on any error during the API call
+      return false;
+    }
+  }
+
+  Future<bool> updateKontakt(Contact contact) async {
+    try {
+      // Validate input
+      if (contact.value.trim().isEmpty) {
+        LoggerService.logError('Cannot update contact with empty value');
+        return false;
+      }
+
+      final response = await _httpClient.put(
+        'KontaktAendern',
+        contact.toJson(),
+      );
+
+      LoggerService.logInfo('Update contact response: $response');
+
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('error')) {
+          LoggerService.logError(
+            'Failed to update contact: ${response['error']}',
+          );
+          return false;
+        }
+        return true;
+      } else {
+        LoggerService.logError(
+          'Invalid response type from updateKontakt: ${response.runtimeType}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating contact: $e');
+      return false;
     }
   }
 }

@@ -6,6 +6,7 @@ import '/constants/ui_constants.dart';
 import '/services/api_service.dart';
 import '../services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/contact.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -29,22 +30,19 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   bool _isDeleting = false;
   bool _isAdding = false;
 
-  // Mapping for contact types (used in the dropdown)
+  // Use Contact model's type constants
   final Map<int, String> _contactTypeLabels = {
-    1: 'Telefonnummer Privat',
-    2: 'Mobilnummer Privat',
-    3: 'Fax Privat',
-    4: 'E-Mail Privat',
-    5: 'Telefonnummer Geschäftlich',
-    6: 'Mobilnummer Geschäftlich',
-    7: 'Fax Geschäftlich',
-    8: 'E-Mail Geschäftlich',
+    for (var type in [1, 2, 3, 4, 5, 6, 7, 8])
+      type: Contact(
+        id: 0,
+        personId: 0,
+        type: type,
+        value: '',
+      ).typeLabel,
   };
 
-  int?
-      _selectedKontaktTyp; // To store the selected contact type from the dropdown
-  final TextEditingController _kontaktController =
-      TextEditingController(); // Controller for the contact string
+  int? _selectedKontaktTyp;
+  final TextEditingController _kontaktController = TextEditingController();
 
   // Regex for email validation
   final RegExp _emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -60,8 +58,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   // --- Data Loading and Refresh ---
   void _loadInitialData() {
     setState(() {
-      _contactDataFuture =
-          Future.value([]); // Clear current data to show spinner
+      _contactDataFuture = Future.value([]);
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
@@ -75,7 +72,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       );
     } catch (e) {
       LoggerService.logError('Error setting up contact data fetch: $e');
-      _contactDataFuture = Future.value([]); // Provide an empty list on error
+      _contactDataFuture = Future.value([]);
     }
   }
 
@@ -117,7 +114,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: UIConstants.dialogPadding,
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -172,14 +171,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       },
     );
 
-    // FIX: Add mounted check before using context after await
     if (!mounted) return;
 
     if (confirmDelete == null || !confirmDelete) {
       LoggerService.logInfo('Contact deletion cancelled by user.');
-      // If deletion is cancelled, ensure _isDeleting is reset if it was set beforehand.
       if (mounted) {
-        // Already checked above, but good to be explicit if this block is executed after an async call
         setState(() {
           _isDeleting = false;
         });
@@ -188,17 +184,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
 
     setState(() {
-      _isDeleting =
-          true; // Show loading indicator (e.g., disable delete buttons)
+      _isDeleting = true;
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bool success = await apiService.deleteKontakt(
-        widget.personId, // personId
-        kontaktId, // kontaktId
-        kontaktTyp, // kontaktTyp
+      final contact = Contact(
+        id: kontaktId,
+        personId: widget.personId,
+        type: kontaktTyp,
+        value: '', // Value is not needed for deletion
       );
+      final bool success = await apiService.deleteKontakt(contact);
 
       if (mounted) {
         if (success) {
@@ -208,7 +205,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               duration: UIConstants.snackBarDuration,
             ),
           );
-          _loadInitialData(); // Refresh the list after successful deletion
+          _loadInitialData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -231,7 +228,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     } finally {
       if (mounted) {
         setState(() {
-          _isDeleting = false; // Hide loading indicator
+          _isDeleting = false;
         });
       }
     }
@@ -243,7 +240,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     if (_selectedKontaktTyp == null || kontaktValue.isEmpty) {
       if (mounted) {
-        // FIX: Add mounted check
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
@@ -254,16 +250,22 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       return;
     }
 
-    // Input Validation based on KontaktTyp
+    // Create a temporary Contact object for validation
+    final contact = Contact(
+      id: 0, // Temporary ID for new contact
+      personId: widget.personId,
+      type: _selectedKontaktTyp!,
+      value: kontaktValue,
+    );
+
+    // Input Validation based on Contact type
     String? validationErrorMessage;
-    if (_selectedKontaktTyp == 4 || _selectedKontaktTyp == 8) {
-      // E-Mail Privat or E-Mail Geschäftlich
+    if (contact.isEmail) {
       if (!_emailRegex.hasMatch(kontaktValue)) {
         validationErrorMessage =
             'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
       }
-    } else if ([1, 2, 3, 5, 6, 7].contains(_selectedKontaktTyp)) {
-      // Phone, Mobile, Fax types
+    } else if (contact.isPhone || contact.isFax) {
       if (!_phoneFaxMobileRegex.hasMatch(kontaktValue)) {
         validationErrorMessage =
             'Bitte geben Sie eine gültige Telefon-/Faxnummer ein (nur Ziffern, +, -, (, ) erlaubt).';
@@ -272,7 +274,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     if (validationErrorMessage != null) {
       if (mounted) {
-        // FIX: Add mounted check
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(validationErrorMessage),
@@ -284,16 +285,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
 
     setState(() {
-      _isAdding = true; // Set loading state for add operation
+      _isAdding = true;
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bool success = await apiService.addKontakt(
-        widget.personId, // personId
-        _selectedKontaktTyp!, // kontaktTyp
-        kontaktValue, // kontakt
-      );
+      final bool success = await apiService.addKontakt(contact);
 
       if (mounted) {
         if (success) {
@@ -303,9 +300,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               duration: UIConstants.snackBarDuration,
             ),
           );
-          _kontaktController.clear(); // Clear text field
-          _selectedKontaktTyp = null; // Reset dropdown
-          _loadInitialData(); // Refresh the list after successful addition
+          _kontaktController.clear();
+          _selectedKontaktTyp = null;
+          _loadInitialData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -328,22 +325,21 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     } finally {
       if (mounted) {
         setState(() {
-          _isAdding = false; // Reset loading state
+          _isAdding = false;
         });
-        Navigator.of(context).pop(); // Close the add contact dialog
+        Navigator.of(context).pop();
       }
     }
   }
 
   // --- Display Add Contact Form ---
   void _showAddContactForm() {
-    _selectedKontaktTyp = null; // Reset selected type
-    _kontaktController.clear(); // Clear previous input
+    _selectedKontaktTyp = null;
+    _kontaktController.clear();
 
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        // Use dialogContext to avoid conflicts
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
@@ -369,7 +365,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   }).toList(),
                   onChanged: (int? newValue) {
                     setState(() {
-                      // setState for dialog's own state
                       _selectedKontaktTyp = newValue;
                     });
                   },
@@ -382,8 +377,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     hintText: 'z.B. email@beispiel.de oder 0123 456789',
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
-                  keyboardType: TextInputType
-                      .text, // Set based on type, can be dynamic later
+                  keyboardType: TextInputType.text,
                 ),
               ],
             ),
@@ -394,11 +388,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 horizontal: UIConstants.spacingM,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Distribute space between buttons
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    // "Abbrechen" button takes available space
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
@@ -424,11 +416,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: UIConstants.spacingM,
-                  ), // Space between buttons
+                  const SizedBox(width: UIConstants.spacingM),
                   Expanded(
-                    // "Hinzufügen" button takes available space
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: ElevatedButton.styleFrom(
@@ -443,7 +432,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                               strokeWidth: 2,
                             )
                           : Row(
-                              // <-- Row for icon and text
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
@@ -451,10 +439,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                   color: UIConstants.checkIcon,
                                   size: UIConstants.bodyFontSize + 4.0,
                                 ),
-                                // OK icon
-                                const SizedBox(
-                                  width: UIConstants.spacingS,
-                                ),
+                                const SizedBox(width: UIConstants.spacingS),
                                 Text(
                                   'Hinzufügen',
                                   style: UIConstants.dialogButtonStyle.copyWith(
@@ -485,7 +470,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   void dispose() {
-    _kontaktController.dispose(); // Dispose the controller
+    _kontaktController.dispose();
     super.dispose();
   }
 
@@ -514,7 +499,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           } else if (snapshot.hasData && snapshot.data != null) {
             final List<Map<String, dynamic>> categorizedContactData =
                 snapshot.data!;
-            return _buildContactDataList(categorizedContactData);
+            return _buildContactDataList(
+              categorizedContactData,
+              widget.personId,
+              _onDeleteContact,
+              _isDeleting,
+            );
           } else {
             return const Center(
               child: Text('Keine Kontaktdaten gefunden.'),
@@ -531,56 +521,95 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }
 
   // Helper method to build a contact group (e.g., "Privat")
-  Widget _buildContactGroup(
-    String categoryTitle,
-    List<Map<String, dynamic>> contacts,
+
+  // A dedicated helper for read-only text fields with a delete icon
+
+  // --- Helper method for section titles (kept as before) ---
+
+  Widget _buildContactDataList(
+    List<Map<String, dynamic>> contactData,
+    int personId,
+    Function(int kontaktId, int kontaktTyp, String value, String label)
+        onDelete,
+    bool isDeleting,
   ) {
-    return Column(
-      crossAxisAlignment: UIConstants.startCrossAlignment,
-      children: [
-        _buildSectionTitle(categoryTitle, color: UIConstants.defaultAppColor),
-        for (var contact in contacts)
-          if (contact['type'] != null && contact['value'] != null)
-            _buildReadOnlyTextField(
-              label: contact['type'].toString(),
-              value: contact['value'].toString(),
-              kontaktId: contact['kontaktId'] as int? ?? 0,
-              rawKontaktTyp: contact['rawKontaktTyp'] as int? ?? 0,
-              onDelete: _onDeleteContact,
-              isDeleting: _isDeleting,
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: contactData.length,
+      itemBuilder: (context, index) {
+        final category = contactData[index];
+        final contacts = category['contacts'] as List<dynamic>;
+        final categoryName = category['category'] as String;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: UIConstants.spacingS,
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Text(
+                categoryName,
+                style: UIConstants.subtitleStyle.copyWith(
+                  color: UIConstants.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: UIConstants.titleFontSize,
+                ),
+              ),
             ),
-        const SizedBox(height: UIConstants.spacingM),
-      ],
+            ...contacts.map((contact) {
+              final kontaktId = contact['kontaktId'] as int;
+              final rawKontaktTyp = contact['rawKontaktTyp'] as int;
+              final displayValue = contact['value'] as String;
+              final displayLabel = contact['type'] as String;
+
+              return _buildContactTile(
+                kontaktId: kontaktId,
+                rawKontaktTyp: rawKontaktTyp,
+                displayValue: displayValue,
+                displayLabel: displayLabel,
+                onDelete: onDelete,
+                isDeleting: isDeleting,
+              );
+            }),
+          ],
+        );
+      },
     );
   }
 
-  // A dedicated helper for read-only text fields with a delete icon
-  Widget _buildReadOnlyTextField({
-    required String label,
-    required String value,
+  Widget _buildContactTile({
     required int kontaktId,
     required int rawKontaktTyp,
+    required String displayValue,
+    required String displayLabel,
     required Function(int kontaktId, int kontaktTyp, String value, String label)
         onDelete,
     required bool isDeleting,
   }) {
-    final displayValue = value.isNotEmpty ? value : '-';
-    final displayLabel = label.isNotEmpty ? label : 'Unbekannt';
+    final displayValueFormatted = displayValue.isNotEmpty ? displayValue : '-';
+    final displayLabelFormatted =
+        displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingM / 2),
+      padding: const EdgeInsets.only(
+        bottom: UIConstants.spacingM / 2,
+        left: UIConstants.spacingS,
+        right: UIConstants.spacingS,
+      ),
       child: TextFormField(
-        initialValue: displayValue,
+        initialValue: displayValueFormatted,
         readOnly: true,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: UIConstants.bodyFontSize,
         ),
         decoration: UIConstants.formInputDecoration.copyWith(
-          labelText: displayLabel,
-          //labelStyle: UIConstants.formLabelStyle,
+          labelText: displayLabelFormatted,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isDeleting ? null : displayLabel,
+          hintText: isDeleting ? null : displayLabelFormatted,
           fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
           filled: isDeleting ? false : null,
           suffixIcon: IconButton(
@@ -595,50 +624,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       displayLabel,
                     ),
           ),
-        ),
-      ),
-    );
-  }
-
-  // --- Helper method for section titles (kept as before) ---
-  Widget _buildSectionTitle(String title, {Color? color}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-      child: Text(
-        title,
-        style: UIConstants.titleStyle.copyWith(
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactDataList(
-      List<Map<String, dynamic>> categorizedContactData,) {
-    final bool hasContacts = categorizedContactData.any(
-      (group) => (group['contacts'] as List?)?.isNotEmpty ?? false,
-    );
-
-    if (!hasContacts) {
-      return const Center(child: Text('Keine Kontaktdaten verfügbar.'));
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(UIConstants.spacingM),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: UIConstants.startCrossAlignment,
-          children: [
-            // Display categorized contacts
-            for (var category in categorizedContactData)
-              if ((category['contacts'] as List?)?.isNotEmpty ?? false)
-                _buildContactGroup(
-                  category['category']?.toString() ?? 'Unbekannt',
-                  (category['contacts'] as List?)
-                          ?.cast<Map<String, dynamic>>() ??
-                      [],
-                ),
-          ],
         ),
       ),
     );
