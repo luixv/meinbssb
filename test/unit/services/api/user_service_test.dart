@@ -252,20 +252,26 @@ void main() {
     group('fetchPassdatenZVE', () {
       const testPassdatenId = 456;
       const testPersonId = 123;
-      final testResponse = [
-        {
-          'DISZIPLINNR': '1.1',
-          'DISZIPLIN': 'Disziplin 1',
-          'VEREINNAME': 'Club 1',
-        },
-        {
-          'DISZIPLINNR': '1.2',
-          'DISZIPLIN': 'Disziplin 2',
-          'VEREINNAME': 'Club 2',
-        },
-      ];
 
-      test('returns mapped passdaten zve from network', () async {
+      test('fetchPassdatenZVE returns mapped data', () async {
+        // Arrange
+        final mockResponse = [
+          {
+            'PASSDATENZVID': 34527,
+            'ZVEREINID': 2420,
+            'VVEREINNR': 421037,
+            'DISZIPLINNR': 'B.91',
+            'GAUID': 57,
+            'BEZIRKID': 4,
+            'DISZIAUSBLENDEN': 0,
+            'ERSAETZENDURCHID': 0,
+            'ZVMITGLIEDSCHAFTID': 510039,
+            'VEREINNAME': 'SV Alpenrose Grimolzhausen',
+            'DISZIPLIN': 'RWK Luftpistole',
+            'DISZIPLINID': 94,
+          }
+        ];
+
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
 
@@ -284,19 +290,26 @@ void main() {
         });
 
         when(mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'))
-            .thenAnswer((_) async => testResponse);
+            .thenAnswer((_) async => mockResponse);
 
+        // Act
         final result =
             await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
 
-        expect(result, isA<List<dynamic>>());
-        expect(result.length, 2);
-        expect(result[0]['DISZIPLINNR'], '1.1');
-        expect(result[0]['DISZIPLIN'], 'Disziplin 1');
-        expect(result[0]['VEREINNAME'], 'Club 1');
-        expect(result[1]['DISZIPLINNR'], '1.2');
-        expect(result[1]['DISZIPLIN'], 'Disziplin 2');
-        expect(result[1]['VEREINNAME'], 'Club 2');
+        // Assert
+        expect(result.length, 1);
+        expect(result[0].passdatenZvId, 34527);
+        expect(result[0].zvVereinId, 2420);
+        expect(result[0].vVereinNr, 421037);
+        expect(result[0].disziplinNr, 'B.91');
+        expect(result[0].gauId, 57);
+        expect(result[0].bezirkId, 4);
+        expect(result[0].disziAusblenden, 0);
+        expect(result[0].ersaetzendurchId, 0);
+        expect(result[0].zvMitgliedschaftId, 510039);
+        expect(result[0].vereinName, 'SV Alpenrose Grimolzhausen');
+        expect(result[0].disziplin, 'RWK Luftpistole');
+        expect(result[0].disziplinId, 94);
       });
 
       test('handles empty response', () async {

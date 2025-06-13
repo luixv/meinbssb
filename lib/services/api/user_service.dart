@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:developer'
-    as dev_log; // Using dev_log to avoid conflict with `log`
-// if you have a custom LoggerService.log.
 
-import '../core/cache_service.dart';
-import '../core/http_client.dart';
-import '../core/network_service.dart';
-import '../core/logger_service.dart';
+import '/services/core/cache_service.dart';
+import '/services/core/http_client.dart';
+import '/services/core/network_service.dart';
+import '/services/core/logger_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/pass_data.dart';
+import 'package:meinbssb/models/pass_data_zve.dart';
 
 class UserService {
   UserService({
@@ -43,8 +41,6 @@ class UserService {
           return _mapPassdatenResponse(rawResponse); // Use the robust mapper
         },
       );
-      // Debug log to inspect the structure of 'result'
-      dev_log.log('fetchPassdaten result: $result');
 
       if (result.isEmpty) {
         return null;
@@ -205,9 +201,10 @@ class UserService {
     return [];
   }
 
-  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
-    // The result from cacheAndRetrieveData will now directly be a List<dynamic>
-    // with the 'ONLINE' flag included in each item.
+  Future<List<PassDataZVE>> fetchPassdatenZVE(
+    int passdatenId,
+    int personId,
+  ) async {
     try {
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -217,8 +214,7 @@ class UserService {
             await _httpClient.get('PassdatenZVE/$passdatenId/$personId'),
         (dynamic rawResponse) => _mapPassdatenZVEResponse(rawResponse),
       );
-      // The 'ONLINE' flag is already merged into `result` by CacheService.
-      return result;
+      return result.map((json) => PassDataZVE.fromJson(json)).toList();
     } catch (e) {
       LoggerService.logError('Error fetching PassdatenZVE: $e');
       return []; // Return empty list on error
@@ -232,9 +228,18 @@ class UserService {
             // Ensure item is a Map before accessing keys
             if (item is Map<String, dynamic>) {
               return {
+                'PASSDATENZVID': item['PASSDATENZVID'],
+                'ZVEREINID': item['ZVEREINID'],
+                'VVEREINNR': item['VVEREINNR'],
                 'DISZIPLINNR': item['DISZIPLINNR'],
-                'DISZIPLIN': item['DISZIPLIN'],
+                'GAUID': item['GAUID'],
+                'BEZIRKID': item['BEZIRKID'],
+                'DISZIAUSBLENDEN': item['DISZIAUSBLENDEN'],
+                'ERSAETZENDURCHID': item['ERSAETZENDURCHID'],
+                'ZVMITGLIEDSCHAFTID': item['ZVMITGLIEDSCHAFTID'],
                 'VEREINNAME': item['VEREINNAME'],
+                'DISZIPLIN': item['DISZIPLIN'],
+                'DISZIPLINID': item['DISZIPLINID'],
               };
             }
             LoggerService.logWarning(
