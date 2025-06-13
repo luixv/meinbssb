@@ -106,4 +106,31 @@ void main() {
       expect(state.validateEmail('invalid'), isFalse);
     });
   });
+
+  group('RegistrationScreen', () {
+    testWidgets('renders correctly', (WidgetTester tester) async {
+      // Act
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<ConfigService>.value(value: mockConfigService),
+          ],
+          child: MaterialApp(
+            home: RegistrationScreen(
+              authService: mockAuthService,
+              emailService: mockEmailService,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.text('Registrierung'), findsWidgets);
+      expect(find.byKey(const Key('firstNameField')), findsOneWidget);
+      expect(find.byKey(const Key('lastNameField')), findsOneWidget);
+      expect(find.byKey(const Key('emailField')), findsOneWidget);
+      expect(find.byKey(const Key('submitButton')), findsOneWidget);
+    });
+  });
 }

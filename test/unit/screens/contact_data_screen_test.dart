@@ -16,7 +16,7 @@ void main() {
 
   setUp(() {
     mockApiService = MockApiService();
-    testUserData = UserData(
+    testUserData = const UserData(
       personId: 123,
       webLoginId: 456,
       passnummer: '12345678',

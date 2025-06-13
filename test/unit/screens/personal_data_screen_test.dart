@@ -4,11 +4,11 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/screens/bank_data_screen.dart';
+import 'package:meinbssb/screens/personal_data_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 @GenerateMocks([ApiService])
-import 'bank_data_screen_test.mocks.dart';
+import 'personal_data_screen_test.mocks.dart';
 
 void main() {
   late MockApiService mockApiService;
@@ -29,18 +29,16 @@ void main() {
     );
   });
 
-  Widget createBankDataScreen({
+  Widget createPersonalDataScreen({
     UserData? userData,
-    int webloginId = 456,
     bool isLoggedIn = true,
     VoidCallback? onLogout,
   }) {
     return MaterialApp(
       home: Provider<ApiService>.value(
         value: mockApiService,
-        child: BankDataScreen(
+        child: PersonDataScreen(
           userData,
-          webloginId: webloginId,
           isLoggedIn: isLoggedIn,
           onLogout: onLogout ?? () {},
         ),
@@ -48,32 +46,32 @@ void main() {
     );
   }
 
-  group('BankDataScreen', () {
+  group('PersonalDataScreen', () {
     testWidgets('renders correctly with user data',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.value([]),
+      when(mockApiService.fetchPassdaten(any)).thenAnswer(
+        (_) => Future.value(null),
       );
 
       // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
+      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
       await tester.pump();
       await tester.pumpAndSettle();
 
       // Assert
-      expect(find.text('Bankdaten'), findsOneWidget);
+      expect(find.text('Persönliche Daten'), findsOneWidget);
     });
 
-    testWidgets('shows loading state while fetching bank data',
+    testWidgets('shows loading state while fetching personal data',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.delayed(const Duration(milliseconds: 100), () => []),
+      when(mockApiService.fetchPassdaten(any)).thenAnswer(
+        (_) => Future.delayed(const Duration(milliseconds: 100), () => null),
       );
 
       // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
+      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
       await tester.pump();
 
       // Assert
@@ -85,16 +83,16 @@ void main() {
     testWidgets('shows error message when fetch fails',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any))
+      when(mockApiService.fetchPassdaten(any))
           .thenThrow(Exception('Test error'));
 
       // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
+      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
       await tester.pump();
       await tester.pumpAndSettle();
 
       // Assert
-      expect(find.text('Bankdaten'), findsOneWidget);
+      expect(find.text('Persönliche Daten'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
   });
