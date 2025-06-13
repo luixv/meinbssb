@@ -6,6 +6,7 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
+import 'package:meinbssb/models/disziplin.dart';
 // Import for date formatting
 
 @GenerateMocks([
@@ -590,13 +591,10 @@ void main() {
 
       final result = await trainingService.fetchDisziplinen();
 
-      expect(
-        result,
-        isA<List<Map<String, dynamic>>>(),
-      ); // Still returns Map as no Disziplin model given
+      expect(result, isA<List<Disziplin>>());
       expect(result.length, 2);
-      expect(result[0]['DISZIPLIN'], 'Luftgewehr');
-      expect(result[1]['DISZIPLINNR'], '1.11');
+      expect(result[0].disziplin, 'Luftgewehr');
+      expect(result[1].disziplinNr, '1.11');
       verify(mockHttpClient.get('Disziplinen')).called(1);
     });
 
@@ -641,8 +639,8 @@ void main() {
       final result = await trainingService.fetchDisziplinen();
 
       expect(result.length, 1);
-      expect(result[0]['DISZIPLIN'], 'Pistole (Partial)');
-      expect(result[0]['DISZIPLINNR'], isNull); // Should be null if missing
+      expect(result[0].disziplin, 'Pistole (Partial)');
+      expect(result[0].disziplinNr, ''); // Should be empty string if missing
       verify(mockHttpClient.get('Disziplinen')).called(1);
     });
   });

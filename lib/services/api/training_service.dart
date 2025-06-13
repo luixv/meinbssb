@@ -1,5 +1,6 @@
 import 'dart:async';
 import '/models/schulung.dart';
+import '/models/disziplin.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
@@ -340,13 +341,30 @@ class TrainingService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchDisziplinen() async {
+  Future<List<Disziplin>> fetchDisziplinen() async {
     try {
       final response = await _httpClient.get('Disziplinen');
       if (response is! List) {
+        LoggerService.logError('Expected List but got ${response.runtimeType}');
         return [];
       }
-      return response.map((item) => Map<String, dynamic>.from(item)).toList();
+      return response
+          .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return Disziplin.fromJson(item);
+              }
+              LoggerService.logWarning(
+                'Disziplin item is not a Map: ${item.runtimeType}',
+              );
+              return null;
+            } catch (e) {
+              LoggerService.logError('Error mapping Disziplin: $e');
+              return null;
+            }
+          })
+          .whereType<Disziplin>()
+          .toList();
     } catch (e) {
       LoggerService.logError('Error fetching Disziplinen: $e');
       return [];

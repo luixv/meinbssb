@@ -11,6 +11,9 @@ import '/services/api/bank_service.dart';
 import '/services/api/verein_service.dart';
 import '/models/bank_data.dart';
 import '/models/schulung.dart';
+import '/models/zweitmitgliedschaft_data.dart';
+import '/models/disziplin.dart';
+
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
@@ -118,7 +121,9 @@ class ApiService {
     return _userService.updateKritischeFelderUndAdresse(userData);
   }
 
-  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
+  Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+    int personId,
+  ) async {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
@@ -177,7 +182,7 @@ class ApiService {
     return _trainingService.registerForSchulung(personId, schulungId);
   }
 
-  Future<List<Map<String, dynamic>>> fetchDisziplinen() async {
+  Future<List<Disziplin>> fetchDisziplinen() async {
     return _trainingService.fetchDisziplinen();
   }
 
