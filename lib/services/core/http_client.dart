@@ -140,10 +140,7 @@ class HttpClient {
     try {
       LoggerService.logInfo('HttpClient: Raw response body: ${response.body}');
       final decoded = jsonDecode(response.body);
-      LoggerService.logInfo('HttpClient: Decoded response: $decoded');
-      LoggerService.logInfo(
-        'HttpClient: Decoded response type: ${decoded.runtimeType}',
-      );
+
       return decoded;
     } catch (e) {
       LoggerService.logError('HttpClient: Error parsing response: $e');

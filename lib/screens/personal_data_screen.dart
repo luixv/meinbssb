@@ -8,6 +8,7 @@ import '/services/core/logger_service.dart';
 import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -17,7 +18,7 @@ class PersonDataScreen extends StatefulWidget {
     super.key,
   });
 
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -50,7 +51,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }
 
   Future<void> _fetchAndPopulateData() async {
-    final int? personId = widget.userData['PERSONID'] as int?;
+    final int? personId = widget.userData?.personId;
 
     if (personId == null) {
       LoggerService.logError(
@@ -76,13 +77,12 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
       if (mounted) {
         setState(() {
-          _currentPassData = response;
+          _currentPassData = response?.toJson();
           // Extract and set the online status
-          _isOnline = _currentPassData?['ONLINE'] as bool? ??
-              false; // <-- Set _isOnline here
-          _populateFields(
-            _currentPassData!,
-          );
+          _isOnline = response?.isOnline ?? false;
+          if (response != null) {
+            _populateFields(response.toJson());
+          }
         });
         LoggerService.logInfo(
           'Personal data fetched and fields populated successfully. Online status: $_isOnline',
@@ -137,16 +137,29 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
-        final success = await apiService.updateKritischeFelderUndAdresse(
-          widget.userData['PERSONID'],
-          _titelController.text,
-          _nachnameController.text,
-          _vornameController.text,
-          _currentPassData?['GESCHLECHT'] as int? ?? 0,
-          _strasseHausnummerController.text,
-          _postleitzahlController.text,
-          _ortController.text,
+        final userData = UserData(
+          personId: widget.userData?.personId ?? 0,
+          webLoginId: widget.userData?.webLoginId ?? 0,
+          passnummer: widget.userData?.passnummer ?? '',
+          vereinNr: widget.userData?.vereinNr ?? 0,
+          namen: _nachnameController.text,
+          vorname: _vornameController.text,
+          titel: _titelController.text,
+          geburtsdatum: widget.userData?.geburtsdatum,
+          geschlecht: _currentPassData?['GESCHLECHT'] is int
+              ? _currentPassData!['GESCHLECHT'] as int
+              : 0,
+          vereinName: widget.userData?.vereinName ?? '',
+          passdatenId: widget.userData?.passdatenId ?? 0,
+          mitgliedschaftId: widget.userData?.mitgliedschaftId ?? 0,
+          strasse: _strasseHausnummerController.text,
+          plz: _postleitzahlController.text,
+          ort: _ortController.text,
+          isOnline: widget.userData?.isOnline ?? false,
         );
+
+        final success =
+            await apiService.updateKritischeFelderUndAdresse(userData);
 
         if (mounted) {
           if (success) {

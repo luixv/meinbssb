@@ -8,6 +8,7 @@ import '../core/http_client.dart';
 import '../core/network_service.dart';
 import '../core/logger_service.dart';
 import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 class UserService {
   UserService({
@@ -22,7 +23,7 @@ class UserService {
   final CacheService _cacheService;
   final NetworkService _networkService;
 
-  Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+  Future<UserData?> fetchPassdaten(int personId) async {
     try {
       // cacheAndRetrieveData now returns the flattened map directly,
       // with 'ONLINE' flag merged into it by CacheService.
@@ -43,33 +44,29 @@ class UserService {
       );
       // Debug log to inspect the structure of 'result'
       dev_log.log('fetchPassdaten result: $result');
-      return result; // 'result' already contains the mapped data and 'ONLINE' flag.
+
+      if (result.isEmpty) {
+        return null;
+      }
+
+      return UserData.fromJson(result);
     } catch (e) {
       LoggerService.logError('Error fetching Passdaten: $e');
-      return {}; // Return empty map on any error during the API call or caching
+      return null; // Return null on any error during the API call or caching
     }
   }
 
-  Future<bool> updateKritischeFelderUndAdresse(
-    int personId,
-    String titel,
-    String namen,
-    String vorname,
-    int geschlecht,
-    String strasse,
-    String plz,
-    String ort,
-  ) async {
+  Future<bool> updateKritischeFelderUndAdresse(UserData userData) async {
     try {
       final Map<String, dynamic> body = {
-        'PersonID': personId,
-        'Titel': titel,
-        'Namen': namen,
-        'Vorname': vorname,
-        'Geschlecht': geschlecht,
-        'Strasse': strasse,
-        'PLZ': plz,
-        'Ort': ort,
+        'PersonID': userData.personId,
+        'Titel': userData.titel,
+        'Namen': userData.namen,
+        'Vorname': userData.vorname,
+        'Geschlecht': userData.geschlecht,
+        'Strasse': userData.strasse,
+        'PLZ': userData.plz,
+        'Ort': userData.ort,
       };
 
       LoggerService.logInfo(
@@ -88,7 +85,7 @@ class UserService {
       // Check the 'result' field in the response
       if (response['result'] == true) {
         LoggerService.logInfo(
-          'KritischeFelderUndAdresse UPDATED successfully for PersonID: $personId',
+          'KritischeFelderUndAdresse UPDATED successfully for PersonID: ${userData.personId}',
         );
         return true;
       } else {
@@ -159,6 +156,7 @@ class UserService {
       'STRASSE': dataToProcess['STRASSE'],
       'PLZ': dataToProcess['PLZ'],
       'ORT': dataToProcess['ORT'],
+      // WEBLOGINID is not part of the Passdaten response, it comes from the login response
       // The 'ONLINE' key should NOT be added here. CacheService adds it.
     };
   }

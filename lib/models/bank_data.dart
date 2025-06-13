@@ -7,12 +7,17 @@ import 'package:flutter/foundation.dart';
 class BankData {
   /// Creates a [BankData] instance from a JSON map.
   factory BankData.fromJson(Map<String, dynamic> json) {
+    final webloginId = json['WEBLOGINID'] as int?;
+    if (webloginId == null || webloginId == 0) {
+      throw Exception('WEBLOGINID is required and cannot be 0');
+    }
+
     return BankData(
-      id: json['BANKDATENWEBID'] as int,
-      webloginId: json['WEBLOGINID'] as int,
-      kontoinhaber: json['KONTOINHABER'] as String,
-      iban: json['IBAN'] as String,
-      bic: json['BIC'] as String,
+      id: json['BANKDATENWEBID'] as int? ?? 0,
+      webloginId: webloginId,
+      kontoinhaber: json['KONTOINHABER'] as String? ?? '',
+      iban: json['IBAN'] as String? ?? '',
+      bic: json['BIC'] as String? ?? '',
       bankName: json['BANKNAME'] as String? ?? '',
       mandatNr: json['MANDATNR'] as String? ?? '',
       mandatName: json['MANDATNAME'] as String? ?? '',

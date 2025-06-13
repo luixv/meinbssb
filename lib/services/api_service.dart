@@ -19,6 +19,7 @@ import 'core/network_service.dart';
 import 'core/logger_service.dart';
 import '/models/contact.dart';
 import '/models/verein.dart';
+import '/models/user_data.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -105,7 +106,7 @@ class ApiService {
   }
 
 // User Service
-  Future<Map<String, dynamic>> fetchPassdaten(int personId) async {
+  Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
   }
 
@@ -113,26 +114,8 @@ class ApiService {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
-  Future<bool> updateKritischeFelderUndAdresse(
-    int personId,
-    String titel,
-    String namen,
-    String vorname,
-    int geschlecht,
-    String strasse,
-    String plz,
-    String ort,
-  ) async {
-    return _userService.updateKritischeFelderUndAdresse(
-      personId,
-      titel,
-      namen,
-      vorname,
-      geschlecht,
-      strasse,
-      plz,
-      ort,
-    );
+  Future<bool> updateKritischeFelderUndAdresse(UserData userData) async {
+    return _userService.updateKritischeFelderUndAdresse(userData);
   }
 
   Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {

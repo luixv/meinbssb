@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '/constants/ui_constants.dart';
+import '/models/user_data.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -38,12 +39,12 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  MyAppState createState() => MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
-  Map<String, dynamic> _userData = {};
+  UserData? _userData;
 
   @override
   void initState() {
@@ -55,10 +56,11 @@ class MyAppState extends State<MyApp> {
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     final userDataString = prefs.getString('userData');
-    Map<String, dynamic> userData = {};
+    UserData? userData;
     if (userDataString != null) {
       try {
-        userData = jsonDecode(userDataString) as Map<String, dynamic>;
+        final jsonData = jsonDecode(userDataString) as Map<String, dynamic>;
+        userData = UserData.fromJson(jsonData);
       } catch (e) {
         debugPrint('Error decoding user data: $e');
       }
@@ -69,10 +71,17 @@ class MyAppState extends State<MyApp> {
     });
   }
 
-  void _setLoggedIn(bool isLoggedIn, Map<String, dynamic> userData) {
+  void _handleLogin(UserData userData) {
     setState(() {
-      _isLoggedIn = isLoggedIn;
+      _isLoggedIn = true;
       _userData = userData;
+    });
+  }
+
+  void _handleLogout() {
+    setState(() {
+      _isLoggedIn = false;
+      _userData = null;
     });
   }
 
@@ -123,30 +132,22 @@ class MyAppState extends State<MyApp> {
               },
             ),
         '/login': (context) => LoginScreen(
-              onLoginSuccess: (userData) => _setLoggedIn(true, userData),
+              onLoginSuccess: _handleLogin,
             ),
-        '/home': (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments
-              as Map<String, dynamic>?;
-          final userData =
-              arguments?['userData'] as Map<String, dynamic>? ?? _userData;
-          final isLoggedIn = arguments?['isLoggedIn'] as bool? ?? _isLoggedIn;
-
-          return StartScreen(
-            userData,
-            isLoggedIn: isLoggedIn,
-            onLogout: () => _setLoggedIn(false, {}),
-          );
-        },
+        '/home': (context) => StartScreen(
+              _userData,
+              isLoggedIn: _isLoggedIn,
+              onLogout: _handleLogout,
+            ),
         '/help': (context) => HelpScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
+              onLogout: _handleLogout,
             ),
         '/impressum': (context) => ImpressumScreen(
               userData: _userData,
               isLoggedIn: _isLoggedIn,
-              onLogout: () => _setLoggedIn(false, {}),
+              onLogout: _handleLogout,
             ),
       },
     );

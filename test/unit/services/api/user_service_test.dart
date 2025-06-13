@@ -6,6 +6,7 @@ import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 import 'user_service_test.mocks.dart';
 
@@ -40,30 +41,31 @@ void main() {
     });
 
     group('fetchPassdaten', () {
-      const testPersonId = 123;
+      const testPersonId = 439287;
       final testResponse = {
-        'PASSNUMMER': '12345678',
-        'VEREINNR': '987',
-        'NAMEN': 'Doe',
-        'VORNAME': 'John',
-        'TITEL': 'Dr.',
-        'GEBURTSDATUM': '1990-01-01',
+        'PASSNUMMER': '40100709',
+        'VEREINNR': 401051,
+        'NAMEN': 'Schürz',
+        'VORNAME': 'Lukas',
+        'TITEL': '',
+        'GEBURTSDATUM': '1955-07-16T00:00:00.000+02:00',
         'GESCHLECHT': 1,
-        'VEREINNAME': 'Test Club',
-        'PASSDATENID': 456,
-        'MITGLIEDSCHAFTID': 789,
+        'VEREINNAME': 'Feuerschützen Kühbach',
+        'PASSDATENID': 2000009155,
+        'MITGLIEDSCHAFTID': 439287,
         'PERSONID': testPersonId,
-        'STRASSE': 'Test Street 1',
-        'PLZ': '12345',
-        'ORT': 'Test City',
+        'STRASSE': 'Aichacher Strasse 21',
+        'PLZ': '86574',
+        'ORT': 'Alsmoos',
+        'ONLINE': true,
       };
 
-      test('returns mapped passdaten from network', () async {
+      test('returns UserData from network', () async {
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          mockCacheService.cacheAndRetrieveData<UserData>(
             any,
             any,
             any,
@@ -81,21 +83,25 @@ void main() {
 
         final result = await userService.fetchPassdaten(testPersonId);
 
-        expect(result, isA<Map<String, dynamic>>());
-        expect(result['PASSNUMMER'], '12345678');
-        expect(result['VEREINNR'], '987');
-        expect(result['NAMEN'], 'Doe');
-        expect(result['VORNAME'], 'John');
-        expect(result['TITEL'], 'Dr.');
-        expect(result['GEBURTSDATUM'], '1990-01-01');
-        expect(result['GESCHLECHT'], 1);
-        expect(result['VEREINNAME'], 'Test Club');
-        expect(result['PASSDATENID'], 456);
-        expect(result['MITGLIEDSCHAFTID'], 789);
-        expect(result['PERSONID'], testPersonId);
-        expect(result['STRASSE'], 'Test Street 1');
-        expect(result['PLZ'], '12345');
-        expect(result['ORT'], 'Test City');
+        expect(result, isA<UserData>());
+        expect(result?.passnummer, '40100709');
+        expect(result?.vereinNr, 401051);
+        expect(result?.namen, 'Schürz');
+        expect(result?.vorname, 'Lukas');
+        expect(result?.titel, '');
+        expect(
+          result?.geburtsdatum,
+          DateTime.parse('1955-07-16T00:00:00.000+02:00'),
+        );
+        expect(result?.geschlecht, 1);
+        expect(result?.vereinName, 'Feuerschützen Kühbach');
+        expect(result?.passdatenId, 2000009155);
+        expect(result?.mitgliedschaftId, 439287);
+        expect(result?.personId, testPersonId);
+        expect(result?.strasse, 'Aichacher Strasse 21');
+        expect(result?.plz, '86574');
+        expect(result?.ort, 'Alsmoos');
+        expect(result?.isOnline, true);
       });
 
       test('handles empty response', () async {
@@ -103,7 +109,7 @@ void main() {
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          mockCacheService.cacheAndRetrieveData<UserData>(
             any,
             any,
             any,
@@ -121,8 +127,7 @@ void main() {
 
         final result = await userService.fetchPassdaten(testPersonId);
 
-        expect(result, isA<Map<String, dynamic>>());
-        expect(result, isEmpty);
+        expect(result, isNull);
       });
 
       test('handles error response', () async {
@@ -130,7 +135,7 @@ void main() {
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+          mockCacheService.cacheAndRetrieveData<UserData>(
             any,
             any,
             any,
@@ -140,8 +145,7 @@ void main() {
 
         final result = await userService.fetchPassdaten(testPersonId);
 
-        expect(result, isA<Map<String, dynamic>>());
-        expect(result, isEmpty);
+        expect(result, isNull);
       });
     });
 
@@ -343,49 +347,47 @@ void main() {
     });
 
     group('updateKritischeFelderUndAdresse', () {
-      const testPersonId = 123;
-      const testData = <String, dynamic>{
-        'titel': 'Dr.',
-        'namen': 'Doe',
-        'vorname': 'John',
-        'geschlecht': 1,
-        'strasse': 'Test Street 1',
-        'plz': '12345',
-        'ort': 'Test City',
-      };
+      const testUserData = UserData(
+        personId: 439287,
+        webLoginId: 13901,
+        passnummer: '40100709',
+        vereinNr: 401051,
+        namen: 'Schürz',
+        vorname: 'Lukas',
+        titel: '',
+        geburtsdatum: null,
+        geschlecht: 1,
+        vereinName: 'Feuerschützen Kühbach',
+        passdatenId: 2000009155,
+        mitgliedschaftId: 439287,
+        strasse: 'Aichacher Strasse 21',
+        plz: '86574',
+        ort: 'Alsmoos',
+        isOnline: false,
+      );
 
       test('returns true on successful update', () async {
         when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenAnswer((_) async => {'result': true});
 
-        final result = await userService.updateKritischeFelderUndAdresse(
-          testPersonId,
-          testData['titel']!,
-          testData['namen']!,
-          testData['vorname']!,
-          testData['geschlecht']!,
-          testData['strasse']!,
-          testData['plz']!,
-          testData['ort']!,
-        );
+        final result =
+            await userService.updateKritischeFelderUndAdresse(testUserData);
 
         expect(result, isTrue);
+        verify(
+          mockHttpClient.put(
+            'KritischeFelderUndAdresse',
+            testUserData.toJson(),
+          ),
+        ).called(1);
       });
 
       test('returns false on failed update', () async {
         when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenAnswer((_) async => {'result': false});
 
-        final result = await userService.updateKritischeFelderUndAdresse(
-          testPersonId,
-          testData['titel']!,
-          testData['namen']!,
-          testData['vorname']!,
-          testData['geschlecht']!,
-          testData['strasse']!,
-          testData['plz']!,
-          testData['ort']!,
-        );
+        final result =
+            await userService.updateKritischeFelderUndAdresse(testUserData);
 
         expect(result, isFalse);
       });
@@ -394,16 +396,8 @@ void main() {
         when(mockHttpClient.put('KritischeFelderUndAdresse', any))
             .thenThrow(Exception('Network error'));
 
-        final result = await userService.updateKritischeFelderUndAdresse(
-          testPersonId,
-          testData['titel']!,
-          testData['namen']!,
-          testData['vorname']!,
-          testData['geschlecht']!,
-          testData['strasse']!,
-          testData['plz']!,
-          testData['ort']!,
-        );
+        final result =
+            await userService.updateKritischeFelderUndAdresse(testUserData);
 
         expect(result, isFalse);
       });

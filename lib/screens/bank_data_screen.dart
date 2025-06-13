@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/models/bank_data.dart';
+import '/models/user_data.dart';
 import '/services/api_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/core/logger_service.dart';
@@ -16,7 +17,7 @@ class BankDataScreen extends StatefulWidget {
     required this.onLogout,
     super.key,
   });
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final int webloginId;
   final bool isLoggedIn;
   final Function() onLogout;
@@ -49,6 +50,15 @@ class BankDataScreenState extends State<BankDataScreen> {
           Future.value(null); // Clear current data to show spinner
       _hasBankData = false;
     });
+
+    if (widget.webloginId == 0) {
+      setState(() {
+        _bankDataFuture =
+            Future.error('WebLoginID is required to fetch bank data');
+      });
+      return;
+    }
+
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       _bankDataFuture =
@@ -292,14 +302,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
   }
 
-  void _handleLogout() {
-    LoggerService.logInfo('Logging out user from BankDataScreen');
-    widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
   @override
   void dispose() {
     _kontoinhaberController.dispose();
@@ -310,27 +312,85 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.webloginId == 0) {
+      return BaseScreenLayout(
+        title: 'Bankdaten',
+        userData: widget.userData,
+        isLoggedIn: widget.isLoggedIn,
+        onLogout: widget.onLogout,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Fehler beim Laden der Bankdaten',
+                style: UIConstants.headerStyle,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
+                textAlign: TextAlign.center,
+                style: UIConstants.bodyStyle,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  widget.onLogout();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: const Text('Zurück zum Login'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return BaseScreenLayout(
       title: 'Bankdaten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
-      onLogout: _handleLogout,
+      onLogout: widget.onLogout,
       body: FutureBuilder<BankData?>(
         future: _bankDataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            LoggerService.logError(
-              'Error loading bank data in FutureBuilder: ${snapshot.error}',
-            );
+          }
+
+          if (snapshot.hasError) {
             return Center(
-              child: Text(
-                'Fehler beim Laden der Bankdaten: ${snapshot.error}',
-                style: UIConstants.errorStyle,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 48,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Fehler beim Laden der Bankdaten',
+                    style: UIConstants.headerStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    snapshot.error.toString(),
+                    textAlign: TextAlign.center,
+                    style: UIConstants.bodyStyle,
+                  ),
+                ],
               ),
             );
-          } else if (snapshot.hasData && snapshot.data != null) {
+          }
+
+          if (snapshot.hasData && snapshot.data != null) {
             final bankData = snapshot.data!;
             if (!_isEditing) {
               _kontoinhaberController.text = bankData.kontoinhaber;

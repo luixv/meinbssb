@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '/screens/base_screen_layout.dart';
 import '/constants/ui_constants.dart';
+import '/models/user_data.dart';
 
 class BankDataResultScreen extends StatelessWidget {
   const BankDataResultScreen({
@@ -11,7 +12,7 @@ class BankDataResultScreen extends StatelessWidget {
     required this.onLogout,
   });
   final bool success;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 

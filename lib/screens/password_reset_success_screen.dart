@@ -6,17 +6,26 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
-  const PasswordResetSuccessScreen({super.key});
+  const PasswordResetSuccessScreen({
+    super.key,
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
+  });
+  final UserData? userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
 
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
       title: 'Passwort zurücksetzen',
-      userData: const {},
-      isLoggedIn: false,
-      onLogout: () {},
+      userData: userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -13,15 +13,16 @@ import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
+import '/models/user_data.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
     required this.onLoginSuccess,
     this.logoWidget,
     super.key,
-  }); // Added optional logoWidget
-  final Function(Map<String, dynamic>) onLoginSuccess;
-  final Widget? logoWidget; // Define the optional logoWidget
+  });
+  final Function(UserData) onLoginSuccess;
+  final Widget? logoWidget;
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -34,7 +35,7 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   String _errorMessage = '';
   final Color _appColor = UIConstants.defaultAppColor;
-  Map<String, dynamic> _userData = {};
+  UserData? _userData;
   bool _isLoggedIn = false;
 
   @override
@@ -97,25 +98,17 @@ class LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    if (passdaten.isNotEmpty) {
-      final completeUserData = {
-        ...passdaten,
-        'PERSONID': personId,
-        'WEBLOGINID': webloginId,
-      };
-      _userData = completeUserData;
-      _isLoggedIn =
-          true; // Update the login state.  Crucial for passing to PasswordReset.
-      widget.onLoginSuccess(completeUserData);
+    if (passdaten != null) {
+      _userData = passdaten.copyWith(webLoginId: webloginId);
+      _isLoggedIn = true;
+      widget.onLoginSuccess(_userData!);
 
       await apiService.fetchSchuetzenausweis(personId);
-
-      // Get the famous Token :-)
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(
           '/home',
-          arguments: {'userData': completeUserData, 'isLoggedIn': true},
+          arguments: {'userData': _userData!.toJson(), 'isLoggedIn': true},
         );
       }
     } else {
@@ -157,12 +150,10 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _handleLogout() {
     setState(() {
-      _isLoggedIn = false; //  Update local state.
-      _userData = {};
+      _isLoggedIn = false;
+      _userData = null;
     });
-    Navigator.of(context).pushReplacementNamed(
-      '/login',
-    ); // Navigate back to login.  Use pushReplacementNamed
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   Widget _buildEmailField() {

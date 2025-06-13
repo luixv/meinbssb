@@ -5,6 +5,7 @@ import '/constants/ui_constants.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
   const SchuetzenausweisScreen({
@@ -15,7 +16,7 @@ class SchuetzenausweisScreen extends StatefulWidget {
     required this.onLogout,
   });
   final int personId;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 

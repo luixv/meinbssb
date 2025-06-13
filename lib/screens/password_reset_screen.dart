@@ -8,6 +8,7 @@ import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/error_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
@@ -18,7 +19,7 @@ class PasswordResetScreen extends StatefulWidget {
     required this.onLogout,
   });
   final AuthService authService;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 

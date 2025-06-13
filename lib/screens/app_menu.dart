@@ -26,6 +26,7 @@ import '/screens/schuetzenausweis_screen.dart';
 // Services
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
+import '/models/user_data.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -37,7 +38,7 @@ class AppMenu extends StatelessWidget {
   });
 
   final BuildContext context;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -60,7 +61,7 @@ class AppDrawer extends StatelessWidget {
     super.key,
   });
 
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -139,7 +140,7 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SchuetzenausweisScreen(
-                      personId: userData['PERSONID'],
+                      personId: userData?.personId ?? 0,
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -199,7 +200,6 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => ContactDataScreen(
                       userData,
-                      personId: userData['PERSONID'],
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),
@@ -217,7 +217,7 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BankDataScreen(
                       userData,
-                      webloginId: userData['WEBLOGINID'],
+                      webloginId: userData?.webLoginId ?? 0,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),

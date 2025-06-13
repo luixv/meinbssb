@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
+import '/models/user_data.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
   const RegistrationSuccessScreen({
@@ -14,7 +15,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
     required this.userData,
   });
   final String message;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
 
   @override
   Widget build(BuildContext context) {

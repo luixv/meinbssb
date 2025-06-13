@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
-
 import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
+import '/models/user_data.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({
@@ -12,7 +12,7 @@ class HelpScreen extends StatelessWidget {
     required this.isLoggedIn,
     required this.onLogout,
   });
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 

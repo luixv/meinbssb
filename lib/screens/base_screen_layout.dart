@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
+import '/models/user_data.dart';
 
 class BaseScreenLayout extends StatelessWidget {
   const BaseScreenLayout({
@@ -17,7 +18,7 @@ class BaseScreenLayout extends StatelessWidget {
   });
 
   final String title;
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
   final Widget body;

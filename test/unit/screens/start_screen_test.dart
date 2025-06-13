@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'start_screen_test.mocks.dart';
 import 'package:meinbssb/models/schulung.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 // Mock ConfigService para Provider
 class MockConfigService extends Mock implements ConfigService {}
@@ -17,14 +18,25 @@ class MockConfigService extends Mock implements ConfigService {}
   customMocks: [MockSpec<ApiService>(as: #CustomMockApiService)],
 )
 void main() {
-  // CORRECTED: Flatten the userData map structure
-  final userData = {
-    'PERSONID': 123,
-    'VORNAME': 'John',
-    'NAMEN': 'Doe',
-    'PASSNUMMER': 'ABC123',
-    'VEREINNAME': 'My Vereinsname',
-  };
+  // Create a UserData instance for testing
+  const userData = UserData(
+    personId: 439287,
+    webLoginId: 13901,
+    passnummer: '40100709',
+    vereinNr: 401051,
+    namen: 'Schürz',
+    vorname: 'Lukas',
+    titel: '',
+    geburtsdatum: null,
+    geschlecht: 1,
+    vereinName: 'Feuerschützen Kühbach',
+    passdatenId: 2000009155,
+    mitgliedschaftId: 439287,
+    strasse: 'Aichacher Strasse 21',
+    plz: '86574',
+    ort: 'Alsmoos',
+    isOnline: false,
+  );
 
   testWidgets('StartScreen displays loading spinner while fetching data',
       (WidgetTester tester) async {

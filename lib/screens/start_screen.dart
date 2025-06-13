@@ -6,6 +6,7 @@ import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/schulung.dart';
+import '/models/user_data.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -14,7 +15,7 @@ class StartScreen extends StatefulWidget {
     required this.onLogout,
     super.key,
   });
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -37,7 +38,7 @@ class StartScreenState extends State<StartScreen> {
 
   Future<void> fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final personId = widget.userData['PERSONID'];
+    final personId = widget.userData?.personId;
 
     if (personId == null) {
       LoggerService.logError('PERSONID is null');
@@ -73,7 +74,7 @@ class StartScreenState extends State<StartScreen> {
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
+    LoggerService.logInfo('Logging out user: ${widget.userData?.vorname}');
     widget.onLogout();
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/login');
@@ -224,12 +225,12 @@ class StartScreenState extends State<StartScreen> {
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingM),
             Text(
-              "${userData['VORNAME'] ?? ''} ${userData['NAMEN'] ?? ''}",
+              "${userData?.vorname ?? ''} ${userData?.namen ?? ''}",
               style: UIConstants.titleStyle,
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
-              '${userData['PASSNUMMER'] ?? ''}',
+              userData?.passnummer ?? '',
               style: UIConstants.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
@@ -240,7 +241,7 @@ class StartScreenState extends State<StartScreen> {
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
-              '${userData['VEREINNAME'] ?? ''}',
+              userData?.vereinName ?? '',
               style: UIConstants.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),

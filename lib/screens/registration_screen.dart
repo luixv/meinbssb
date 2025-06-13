@@ -14,6 +14,7 @@ import '/services/core/email_service.dart';
 import '/services/core/error_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({
@@ -41,7 +42,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? emailError;
   bool _isLoading = false;
   String _successMessage = '';
-  Map<String, dynamic> userData = {};
+  UserData? userData;
   final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
   bool _emailFieldTouched = false; // New flag
 
@@ -251,28 +252,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         _privacyAccepted;
   }
 
-  Future<void> _registerUser() async {
+  bool _validateForm() {
+    return isFormValid();
+  }
+
+  Future<void> _register() async {
+    if (!_validateForm()) return;
+
     setState(() {
       _isLoading = true;
       _successMessage = '';
     });
-
-    await Future.delayed(UIConstants.loadingDelay);
-
-    if (_selectedDate == null || !_selectedDate!.isBefore(DateTime.now())) {
-      if (mounted) {
-        ErrorService.showErrorSnackBar(
-          context,
-          'Bitte wählen Sie ein gültiges Geburtsdatum in der Vergangenheit.',
-        );
-      }
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
     try {
       final response = await widget.authService.register(
@@ -280,67 +270,34 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,
         email: _emailController.text,
-        birthDate: formattedDate,
         zipCode: _zipCodeController.text,
+        birthDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
       );
 
-      if (response['ResultType'] == 1) {
-        LoggerService.logInfo(
-          "Registration successful: ${response['ResultMessage']}",
-        );
-        bool emailSent = false;
+      userData = UserData.fromJson(response);
+      setState(() {
+        _successMessage = 'Registrierung erfolgreich!';
+      });
 
-        try {
-          await _sendRegistrationEmail();
-          emailSent = true;
-        } catch (e) {
-          LoggerService.logError('Email sending error: $e');
-          if (mounted) {
-            ErrorService.showErrorSnackBar(
-              context,
-              'Registrierung fehlgeschlagen! Bitte versuchen Sie es später noch einmal.',
-            );
-          }
-        }
+      if (!mounted) return;
 
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RegistrationSuccessScreen(
-                message: emailSent
-                    ? 'Registrierung erfolgreich!'
-                    : 'Registrierung nicht erfolgreich! versuchen Sie es später erneut.',
-                userData: userData,
-              ),
-            ),
-          );
-        }
-      } else {
-        LoggerService.logError(
-          "Registration failed: ${response['ResultMessage']}",
-        );
-        if (mounted) {
-          ErrorService.showErrorSnackBar(
-            context,
-            ErrorService.formatApiError(response),
-          );
-        }
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RegistrationSuccessScreen(
+            message: _successMessage,
+            userData: userData,
+          ),
+        ),
+      );
     } catch (e) {
-      LoggerService.logError('Error during registration: $e');
-      if (mounted) {
-        ErrorService.showErrorSnackBar(
-          context,
-          ErrorService.handleNetworkError(e),
-        );
-      }
+      setState(() {
+        _successMessage = 'Fehler bei der Registrierung: $e';
+      });
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -534,7 +491,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           width: double.infinity,
           child: ElevatedButton(
             key: const Key('submitButton'),
-            onPressed: isFormValid() && !_isLoading ? _registerUser : null,
+            onPressed: isFormValid() && !_isLoading ? _register : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: UIConstants.defaultAppColor,
               foregroundColor: Colors.white,

@@ -5,6 +5,7 @@ import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/schulung.dart';
+import '/models/user_data.dart';
 
 class AbsolvierteSeminareScreen extends StatefulWidget {
   const AbsolvierteSeminareScreen(
@@ -13,7 +14,7 @@ class AbsolvierteSeminareScreen extends StatefulWidget {
     required this.onLogout,
     super.key,
   });
-  final Map<String, dynamic> userData;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -34,7 +35,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
 
   Future<void> fetchAbsolvierteSeminare() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final personId = widget.userData['PERSONID'];
+    final personId = widget.userData?.personId;
 
     if (personId == null) {
       LoggerService.logError('PERSONID is null');
@@ -89,7 +90,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
   }
 
   void _handleLogout() {
-    LoggerService.logInfo('Logging out user: ${widget.userData['VORNAME']}');
+    LoggerService.logInfo('Logging out user: ${widget.userData?.vorname}');
     widget.onLogout();
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/login');

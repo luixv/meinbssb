@@ -5,10 +5,11 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
+import '/models/user_data.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key, required this.userData});
-  final Map<String, dynamic> userData;
+  final UserData? userData;
 
   @override
   Widget build(BuildContext context) {

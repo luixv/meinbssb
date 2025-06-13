@@ -15,6 +15,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -30,7 +31,7 @@ class MockLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(width: 100, height: 50); // A simple placeholder
+    return const SizedBox.shrink();
   }
 }
 
@@ -40,7 +41,7 @@ void main() {
   late MockEmailService mockEmailService;
   late MockConfigService mockConfigService;
   late MockCacheService mockCacheService;
-  late void Function(Map<String, dynamic>) onLoginSuccessCallback;
+  late void Function(UserData) onLoginSuccessCallback;
 
   setUp(() {
     mockAuthService = MockAuthService();
@@ -55,33 +56,24 @@ void main() {
         .thenAnswer((_) async => Uint8List(0));
 
     when(mockApiService.fetchPassdaten(any)).thenAnswer(
-      (_) async => {
-        'PASSNUMMER': '40100709',
-        'VEREINNR': 401051,
-        'NAMEN': 'Schürz',
-        'VORNAME': 'Lukas',
-        'TITEL': '',
-        'GEBURTSDATUM': '1955-07-16T00:00:00.000+02:00',
-        'GESCHLECHT': 1,
-        'EINTRITTBSSB': '2001-11-01T00:00:00.000+01:00',
-        'VEREINNAME': 'Feuerschützen Kühbach',
-        'STRASSE': 'Aichacher Strasse 21',
-        'PLZ': '86574',
-        'ORT': 'Alsmoos',
-        'LAND': '',
-        'NATIONALITAET': 'GRC',
-        'PASSSTATUS': 1,
-        'PASSDATENID': 2000009155,
-        'EINTRITTVEREIN': '2008-03-07T00:00:00.000+01:00',
-        'AUSTRITTVEREIN': '',
-        'MITGLIEDSCHAFTID': 439287,
-        'TELEFON': '08232-9978250',
-        'PERSONID': 439287,
-        'ERSTLANDESVERBANDID': 0,
-        'PRODUKTIONSDATUM': '2023-06-20T00:00:00.000+02:00',
-        'ERSTVEREINID': 1511,
-        'DIGITALERPASS': 0,
-      },
+      (_) async => UserData(
+        personId: 439287,
+        webLoginId: 13901,
+        passnummer: '40100709',
+        vereinNr: 401051,
+        namen: 'Schürz',
+        vorname: 'Lukas',
+        titel: '',
+        geburtsdatum: DateTime.parse('1955-07-16T00:00:00.000+02:00'),
+        geschlecht: 1,
+        vereinName: 'Feuerschützen Kühbach',
+        passdatenId: 2000009155,
+        mitgliedschaftId: 439287,
+        strasse: 'Aichacher Strasse 21',
+        plz: '86574',
+        ort: 'Alsmoos',
+        isOnline: false,
+      ),
     );
 
     when(mockConfigService.getString('logoName', 'appTheme'))
@@ -176,11 +168,22 @@ void main() {
       await tester.pumpAndSettle(); // Wait for login and navigation to complete
     });
 
-    testWidgets('calls authService with correct credentials',
+    testWidgets(
+        'calls authService with correct credentials and handles UserData',
         (WidgetTester tester) async {
       when(mockAuthService.login(any, any)).thenAnswer(
         (_) async => {'ResultType': 1, 'PersonID': 123, 'WebLoginID': 456},
       );
+
+      bool loginSuccessCalled = false;
+      onLoginSuccessCallback = (userData) {
+        loginSuccessCalled = true;
+        expect(userData.personId, 439287);
+        expect(userData.webLoginId, 13901);
+        expect(userData.vorname, 'Lukas');
+        expect(userData.namen, 'Schürz');
+        expect(userData.passnummer, '40100709');
+      };
 
       await tester.pumpWidget(createLoginScreen());
 
@@ -193,11 +196,11 @@ void main() {
         'password123',
       );
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester
-          .pumpAndSettle(); // Wait for all async ops to complete before verifying
+      await tester.pumpAndSettle();
 
       verify(mockAuthService.login('test@example.com', 'password123'))
           .called(1);
+      expect(loginSuccessCalled, isTrue);
     });
 
     testWidgets('shows error on invalid login', (WidgetTester tester) async {
@@ -238,15 +241,11 @@ void main() {
                 return LoginScreen(
                   onLoginSuccess: (userData) {
                     loginSuccessCalled = true;
-
-                    expect(userData['PERSONID'], 123);
-                    expect(userData['WEBLOGINID'], 456);
-                    expect(
-                      userData['VORNAME'],
-                      'Lukas',
-                    ); // Check a field from the mocked passdaten
-                    expect(userData['NAMEN'], 'Schürz');
-                    expect(userData['PASSNUMMER'], '40100709');
+                    expect(userData.personId, 123);
+                    expect(userData.webLoginId, 456);
+                    expect(userData.vorname, 'Lukas');
+                    expect(userData.namen, 'Schürz');
+                    expect(userData.passnummer, '40100709');
                   },
                   logoWidget: const MockLogoWidget(),
                 );
@@ -279,6 +278,202 @@ void main() {
       expect(loginSuccessCalled, isTrue);
       // Verify navigation to '/home' by checking for the Placeholder widget
       expect(find.byType(Placeholder), findsOneWidget);
+    });
+
+    testWidgets('login screen shows error on failed login',
+        (WidgetTester tester) async {
+      when(mockAuthService.login(any, any)).thenAnswer(
+        (_) async => {
+          'ResultType': 0,
+          'ResultMessage': 'Invalid credentials',
+        },
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              Provider<AuthService>(create: (_) => mockAuthService),
+              Provider<ApiService>(create: (_) => mockApiService),
+              Provider<EmailService>(create: (_) => mockEmailService),
+              Provider<ConfigService>(create: (_) => mockConfigService),
+              Provider<CacheService>(create: (_) => mockCacheService),
+            ],
+            child: LoginScreen(
+              onLoginSuccess: (_) {},
+              logoWidget: const MockLogoWidget(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const Key('usernameField')),
+        'test@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Invalid credentials'), findsOneWidget);
+    });
+
+    testWidgets('login screen navigates on successful login',
+        (WidgetTester tester) async {
+      bool loginSuccessCalled = false;
+
+      when(mockAuthService.login(any, any)).thenAnswer(
+        (_) async => {
+          'ResultType': 1,
+          'PersonID': 123,
+          'WebLoginID': 456,
+        },
+      );
+
+      const testUserData = UserData(
+        personId: 439287,
+        webLoginId: 13901,
+        passnummer: '40100709',
+        vereinNr: 401051,
+        namen: 'Schürz',
+        vorname: 'Lukas',
+        titel: '',
+        geburtsdatum: null,
+        geschlecht: 1,
+        vereinName: 'Feuerschützen Kühbach',
+        passdatenId: 2000009155,
+        mitgliedschaftId: 439287,
+        strasse: 'Aichacher Strasse 21',
+        plz: '86574',
+        ort: 'Alsmoos',
+        isOnline: false,
+      );
+
+      when(mockApiService.fetchPassdaten(any)).thenAnswer(
+        (_) async => testUserData,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              Provider<AuthService>(create: (_) => mockAuthService),
+              Provider<ApiService>(create: (_) => mockApiService),
+              Provider<EmailService>(create: (_) => mockEmailService),
+              Provider<ConfigService>(create: (_) => mockConfigService),
+              Provider<CacheService>(create: (_) => mockCacheService),
+            ],
+            child: Builder(
+              builder: (context) {
+                return LoginScreen(
+                  onLoginSuccess: (userData) {
+                    loginSuccessCalled = true;
+                    expect(userData.personId, 439287);
+                    expect(userData.webLoginId, 13901);
+                    expect(userData.vorname, 'Lukas');
+                    expect(userData.namen, 'Schürz');
+                    expect(userData.passnummer, '40100709');
+                  },
+                  logoWidget: const MockLogoWidget(),
+                );
+              },
+            ),
+          ),
+          routes: {
+            '/home': (context) => const Placeholder(),
+          },
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const Key('usernameField')),
+        'user@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+
+      expect(loginSuccessCalled, isTrue);
+    });
+
+    testWidgets('handles login failure', (WidgetTester tester) async {
+      when(mockAuthService.login(any, any)).thenAnswer(
+        (_) async => {'ResultType': 0, 'ResultMessage': 'Invalid credentials'},
+      );
+
+      await tester.pumpWidget(createLoginScreen());
+
+      await tester.enterText(
+        find.byKey(const Key('usernameField')),
+        'test@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Invalid credentials'), findsOneWidget);
+    });
+
+    testWidgets('handles network error', (WidgetTester tester) async {
+      when(mockAuthService.login(any, any))
+          .thenThrow(Exception('Network error'));
+
+      await tester.pumpWidget(createLoginScreen());
+
+      await tester.enterText(
+        find.byKey(const Key('usernameField')),
+        'test@example.com',
+      );
+      await tester.enterText(
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
+      await tester.tap(find.byKey(const Key('loginButton')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+            'Netzwerkfehler oder Server nicht erreichbar: Exception: Network error',),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('navigates to password reset screen',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createLoginScreen());
+
+      await tester.tap(find.byKey(const Key('forgotPasswordButton')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Passwort zurücksetzen'), findsOneWidget);
+    });
+
+    testWidgets('navigates to help screen', (WidgetTester tester) async {
+      await tester.pumpWidget(createLoginScreen());
+
+      await tester.tap(find.byKey(const Key('helpButton')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hilfe'), findsOneWidget);
+    });
+
+    testWidgets('navigates to registration screen',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createLoginScreen());
+
+      await tester.tap(find.byKey(const Key('registerButton')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Registrierung'), findsOneWidget);
     });
   });
 }

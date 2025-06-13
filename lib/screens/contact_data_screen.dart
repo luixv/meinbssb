@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/models/contact.dart';
+import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
@@ -14,13 +15,11 @@ import '/services/core/logger_service.dart';
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
     this.userData, {
-    required this.personId,
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
-  final Map<String, dynamic> userData;
-  final int personId;
+  final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -55,18 +54,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    _fetchContacts();
   }
 
-  // --- Data Loading and Refresh ---
-  void _loadInitialData() {
+  Future<void> _fetchContacts() async {
+    final int personId = widget.userData?.personId ?? 0;
     setState(() {
       _contactDataFuture = Future.value([]);
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _contactDataFuture =
-          apiService.fetchKontakte(widget.personId).then((data) {
+      _contactDataFuture = apiService.fetchKontakte(personId).then((data) {
         LoggerService.logInfo('Contact data structure: $data');
         return data;
       });
@@ -194,7 +192,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final contact = Contact(
         id: kontaktId,
-        personId: widget.personId,
+        personId: widget.userData?.personId ?? 0,
         type: kontaktTyp,
         value: '', // Value is not needed for deletion
       );
@@ -208,7 +206,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               duration: UIConstants.snackBarDuration,
             ),
           );
-          _loadInitialData();
+          _fetchContacts();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -256,7 +254,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     // Create a temporary Contact object for validation
     final contact = Contact(
       id: 0, // Temporary ID for new contact
-      personId: widget.personId,
+      personId: widget.userData?.personId ?? 0,
       type: _selectedKontaktTyp!,
       value: kontaktValue,
     );
@@ -305,7 +303,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           );
           _kontaktController.clear();
           _selectedKontaktTyp = null;
-          _loadInitialData();
+          _fetchContacts();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -504,7 +502,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 snapshot.data!;
             return _buildContactDataList(
               categorizedContactData,
-              widget.personId,
+              widget.userData?.personId ?? 0,
               _onDeleteContact,
               _isDeleting,
             );
