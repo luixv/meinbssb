@@ -174,12 +174,14 @@ void main() {
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
 
-        when(mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-          any,
-          any,
-          any,
-          any,
-        ),).thenAnswer((invocation) async {
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
           final response = await fetchData();
@@ -199,15 +201,21 @@ void main() {
         expect(result[0].vereinId, 1474);
         expect(result[0].vereinNr, 401006);
         expect(
-            result[0].vereinName, 'Vereinigte Sportschützen Paartal Aichach',);
-        expect(result[0].eintrittVerein,
-            DateTime.parse('2012-02-26T00:00:00.000+01:00'),);
+          result[0].vereinName,
+          'Vereinigte Sportschützen Paartal Aichach',
+        );
+        expect(
+          result[0].eintrittVerein,
+          DateTime.parse('2012-02-26T00:00:00.000+01:00'),
+        );
 
         expect(result[1].vereinId, 2420);
         expect(result[1].vereinNr, 421037);
         expect(result[1].vereinName, 'SV Alpenrose Grimolzhausen');
-        expect(result[1].eintrittVerein,
-            DateTime.parse('2001-11-01T00:00:00.000+01:00'),);
+        expect(
+          result[1].eintrittVerein,
+          DateTime.parse('2001-11-01T00:00:00.000+01:00'),
+        );
       });
 
       test('handles empty response', () async {
@@ -277,7 +285,13 @@ void main() {
             'ERSAETZENDURCHID': 0,
             'ZVMITGLIEDSCHAFTID': 510039,
             'VEREINNAME': 'SV Alpenrose Grimolzhausen',
-            'DISZIPLIN': 'RWK Luftpistole',
+            'DISZIPLIN': [
+              {
+                'DISZIPLINID': 94,
+                'DISZIPLINNR': 'R.1',
+                'DISZIPLIN': 'RWK Luftpistole'
+              }
+            ],
             'DISZIPLINID': 94,
           }
         ];
@@ -318,7 +332,9 @@ void main() {
         expect(result[0].ersaetzendurchId, 0);
         expect(result[0].zvMitgliedschaftId, 510039);
         expect(result[0].vereinName, 'SV Alpenrose Grimolzhausen');
-        expect(result[0].disziplin, 'RWK Luftpistole');
+        expect(result[0].disziplin.length, 1);
+        expect(result[0].disziplin[0].disziplin, 'RWK Luftpistole');
+        expect(result[0].disziplin[0].disziplinNr, 'R.1');
         expect(result[0].disziplinId, 94);
       });
 

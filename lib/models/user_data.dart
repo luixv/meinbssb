@@ -26,6 +26,7 @@ class UserData {
       ort: json['ORT']?.toString(),
       webLoginId: (json['WEBLOGINID'] is int) ? json['WEBLOGINID'] as int : 0,
       isOnline: json['ONLINE'] as bool? ?? false,
+      disziplin: json['DISZIPLIN']?.toString(),
     );
   }
 
@@ -57,6 +58,7 @@ class UserData {
     this.erstVereinId = 0,
     this.digitalerPass = 0,
     this.isOnline = false,
+    this.disziplin,
   });
 
   /// The unique identifier for the person.
@@ -137,6 +139,9 @@ class UserData {
   /// Whether the data was fetched from online source.
   final bool isOnline;
 
+  /// The discipline of the member.
+  final String? disziplin;
+
   /// Converts the [UserData] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
@@ -166,6 +171,7 @@ class UserData {
       'ERSTVEREINID': erstVereinId,
       'DIGITALERPASS': digitalerPass,
       'ONLINE': isOnline,
+      'DISZIPLIN': disziplin,
     };
   }
 
@@ -197,6 +203,7 @@ class UserData {
     int? erstVereinId,
     int? digitalerPass,
     bool? isOnline,
+    String? disziplin,
   }) {
     return UserData(
       personId: personId ?? this.personId,
@@ -225,6 +232,7 @@ class UserData {
       erstVereinId: erstVereinId ?? this.erstVereinId,
       digitalerPass: digitalerPass ?? this.digitalerPass,
       isOnline: isOnline ?? this.isOnline,
+      disziplin: disziplin ?? this.disziplin,
     );
   }
 
@@ -257,12 +265,13 @@ class UserData {
         other.produktionsDatum == produktionsDatum &&
         other.erstVereinId == erstVereinId &&
         other.digitalerPass == digitalerPass &&
-        other.isOnline == isOnline;
+        other.isOnline == isOnline &&
+        other.disziplin == disziplin;
   }
 
   @override
   int get hashCode {
-    return Object.hash(
+    return Object.hashAll([
       personId,
       webLoginId,
       passnummer,
@@ -283,11 +292,18 @@ class UserData {
       eintrittVerein,
       austrittVerein,
       mitgliedschaftId,
-    );
+      telefon,
+      erstLandesverbandId,
+      produktionsDatum,
+      erstVereinId,
+      digitalerPass,
+      isOnline,
+      disziplin,
+    ]);
   }
 
   @override
   String toString() {
-    return 'UserData(personId: $personId, webLoginId: $webLoginId, passnummer: $passnummer, vereinNr: $vereinNr, namen: $namen, vorname: $vorname, titel: $titel, geburtsdatum: $geburtsdatum, geschlecht: $geschlecht, vereinName: $vereinName, strasse: $strasse, plz: $plz, ort: $ort, land: $land, nationalitaet: $nationalitaet, passStatus: $passStatus, passdatenId: $passdatenId, eintrittVerein: $eintrittVerein, austrittVerein: $austrittVerein, mitgliedschaftId: $mitgliedschaftId, telefon: $telefon, erstLandesverbandId: $erstLandesverbandId, produktionsDatum: $produktionsDatum, erstVereinId: $erstVereinId, digitalerPass: $digitalerPass, isOnline: $isOnline)';
+    return 'UserData(personId: $personId, webLoginId: $webLoginId, passnummer: $passnummer, vereinNr: $vereinNr, namen: $namen, vorname: $vorname, titel: $titel, geburtsdatum: $geburtsdatum, geschlecht: $geschlecht, vereinName: $vereinName, strasse: $strasse, plz: $plz, ort: $ort, land: $land, nationalitaet: $nationalitaet, passStatus: $passStatus, passdatenId: $passdatenId, eintrittVerein: $eintrittVerein, austrittVerein: $austrittVerein, mitgliedschaftId: $mitgliedschaftId, telefon: $telefon, erstLandesverbandId: $erstLandesverbandId, produktionsDatum: $produktionsDatum, erstVereinId: $erstVereinId, digitalerPass: $digitalerPass, isOnline: $isOnline, disziplin: $disziplin)';
   }
 }

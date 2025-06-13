@@ -29,6 +29,8 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.apiServiceProvider,
         AppInitializer.networkServiceProvider,
         AppInitializer.cacheServiceProvider,
+        AppInitializer.userServiceProvider,
+        AppInitializer.trainingServiceProvider,
       ],
       child: const MyApp(),
     );

@@ -22,6 +22,7 @@ import '/screens/password_reset_screen.dart';
 import '/screens/personal_data_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
+import '/screens/starting_rights_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -154,7 +155,16 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Startrechte Ändern'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Startrechte Ändern functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StartingRightsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(

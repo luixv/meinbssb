@@ -35,4 +35,9 @@ class Disziplin {
 
   @override
   int get hashCode => Object.hash(disziplinId, disziplinNr, disziplin);
+
+  @override
+  String toString() {
+    return 'Disziplin(disziplinId: $disziplinId, disziplinNr: $disziplinNr, disziplin: $disziplin)';
+  }
 }

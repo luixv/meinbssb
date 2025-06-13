@@ -155,6 +155,7 @@ class AppInitializer {
     userServiceProvider = Provider<UserService>(
       create: (context) => userService,
     );
+    LoggerService.logInfo('UserService provider registered.');
 
 // This is just in case the token_service is needed elsewhere.
 // In fact the only place where it is used is in the HttpClient

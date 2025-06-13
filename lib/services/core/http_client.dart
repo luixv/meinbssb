@@ -138,7 +138,6 @@ class HttpClient {
       return null;
     }
     try {
-      LoggerService.logInfo('HttpClient: Raw response body: ${response.body}');
       final decoded = jsonDecode(response.body);
 
       return decoded;
