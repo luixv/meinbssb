@@ -153,31 +153,33 @@ void main() {
 
     group('fetchZweitmitgliedschaften', () {
       const testPersonId = 123;
-      final testResponse = [
-        {
-          'VEREINID': 1,
-          'VEREINNAME': 'Club 1',
-          'EINTRITTVEREIN': '2020-01-01',
-        },
-        {
-          'VEREINID': 2,
-          'VEREINNAME': 'Club 2',
-          'EINTRITTVEREIN': '2021-01-01',
-        },
-      ];
 
-      test('returns mapped zweitmitgliedschaften from network', () async {
+      test('fetchZweitmitgliedschaften returns mapped data', () async {
+        // Arrange
+        final mockResponse = [
+          {
+            'VEREINID': 1474,
+            'VEREINNR': 401006,
+            'VEREINNAME': 'Vereinigte Sportschützen Paartal Aichach',
+            'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+          },
+          {
+            'VEREINID': 2420,
+            'VEREINNR': 421037,
+            'VEREINNAME': 'SV Alpenrose Grimolzhausen',
+            'EINTRITTVEREIN': '2001-11-01T00:00:00.000+01:00',
+          },
+        ];
+
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
 
-        when(
-          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            any,
-            any,
-            any,
-            any,
-          ),
-        ).thenAnswer((invocation) async {
+        when(mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),).thenAnswer((invocation) async {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
           final response = await fetchData();
@@ -185,19 +187,27 @@ void main() {
         });
 
         when(mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'))
-            .thenAnswer((_) async => testResponse);
+            .thenAnswer((_) async => mockResponse);
 
+        // Act
         final result =
             await userService.fetchZweitmitgliedschaften(testPersonId);
 
-        expect(result, isA<List<dynamic>>());
+        // Assert
         expect(result.length, 2);
-        expect(result[0]['VEREINID'], 1);
-        expect(result[0]['VEREINNAME'], 'Club 1');
-        expect(result[0]['EINTRITTVEREIN'], '2020-01-01');
-        expect(result[1]['VEREINID'], 2);
-        expect(result[1]['VEREINNAME'], 'Club 2');
-        expect(result[1]['EINTRITTVEREIN'], '2021-01-01');
+
+        expect(result[0].vereinId, 1474);
+        expect(result[0].vereinNr, 401006);
+        expect(
+            result[0].vereinName, 'Vereinigte Sportschützen Paartal Aichach',);
+        expect(result[0].eintrittVerein,
+            DateTime.parse('2012-02-26T00:00:00.000+01:00'),);
+
+        expect(result[1].vereinId, 2420);
+        expect(result[1].vereinNr, 421037);
+        expect(result[1].vereinName, 'SV Alpenrose Grimolzhausen');
+        expect(result[1].eintrittVerein,
+            DateTime.parse('2001-11-01T00:00:00.000+01:00'),);
       });
 
       test('handles empty response', () async {

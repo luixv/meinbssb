@@ -8,6 +8,7 @@ import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/pass_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 
 class UserService {
   UserService({
@@ -159,9 +160,8 @@ class UserService {
     };
   }
 
-  Future<List<dynamic>> fetchZweitmitgliedschaften(int personId) async {
-    // The result from cacheAndRetrieveData will now directly be a List<dynamic>
-    // with the 'ONLINE' flag included in each item.
+  Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+      int personId,) async {
     try {
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -170,8 +170,9 @@ class UserService {
         () async => await _httpClient.get('Zweitmitgliedschaften/$personId'),
         (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
       );
-      // The 'ONLINE' flag is already merged into `result` by CacheService.
-      return result;
+      return result
+          .map((json) => ZweitmitgliedschaftData.fromJson(json))
+          .toList();
     } catch (e) {
       LoggerService.logError('Error fetching Zweitmitgliedschaften: $e');
       return []; // Return empty list on error
@@ -186,6 +187,7 @@ class UserService {
             if (item is Map<String, dynamic>) {
               return {
                 'VEREINID': item['VEREINID'],
+                'VEREINNR': item['VEREINNR'],
                 'VEREINNAME': item['VEREINNAME'],
                 'EINTRITTVEREIN': item['EINTRITTVEREIN'],
               };
