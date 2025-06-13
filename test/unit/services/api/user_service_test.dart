@@ -65,7 +65,7 @@ void main() {
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<UserData>(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
             any,
             any,
             any,
@@ -75,11 +75,13 @@ void main() {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
           final response = await fetchData();
-          return response;
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
         });
 
         when(mockHttpClient.get('Passdaten/$testPersonId'))
-            .thenAnswer((_) async => testResponse);
+            .thenAnswer((_) async => [testResponse]);
 
         final result = await userService.fetchPassdaten(testPersonId);
 
@@ -109,7 +111,7 @@ void main() {
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<UserData>(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
             any,
             any,
             any,
@@ -135,7 +137,7 @@ void main() {
             .thenReturn(const Duration(hours: 1));
 
         when(
-          mockCacheService.cacheAndRetrieveData<UserData>(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
             any,
             any,
             any,
@@ -347,38 +349,58 @@ void main() {
     });
 
     group('updateKritischeFelderUndAdresse', () {
-      const testUserData = UserData(
-        personId: 439287,
-        webLoginId: 13901,
-        passnummer: '40100709',
-        vereinNr: 401051,
-        namen: 'Schürz',
-        vorname: 'Lukas',
-        titel: '',
-        geburtsdatum: null,
-        geschlecht: 1,
-        vereinName: 'Feuerschützen Kühbach',
-        passdatenId: 2000009155,
-        mitgliedschaftId: 439287,
-        strasse: 'Aichacher Strasse 21',
-        plz: '86574',
-        ort: 'Alsmoos',
-        isOnline: false,
-      );
+      late UserData testUserData;
+
+      setUp(() {
+        testUserData = UserData(
+          passnummer: '40100709',
+          vereinNr: 401051,
+          namen: 'Schürz',
+          vorname: 'Lukas',
+          titel: '',
+          geburtsdatum: DateTime.parse('1955-07-16T00:00:00.000+02:00'),
+          geschlecht: 1,
+          vereinName: 'Feuerschützen Kühbach',
+          passdatenId: 2000009155,
+          mitgliedschaftId: 439287,
+          personId: 439287,
+          strasse: 'Aichacher Strasse 21',
+          plz: '86574',
+          ort: 'Alsmoos',
+          isOnline: true,
+          webLoginId: 13901,
+        );
+      });
 
       test('returns true on successful update', () async {
-        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put('KritischeFelderUndAdresse', {
+            'PersonID': testUserData.personId,
+            'Titel': testUserData.titel,
+            'Namen': testUserData.namen,
+            'Vorname': testUserData.vorname,
+            'Geschlecht': testUserData.geschlecht,
+            'Strasse': testUserData.strasse,
+            'PLZ': testUserData.plz,
+            'Ort': testUserData.ort,
+          }),
+        ).thenAnswer((_) async => {'result': true});
 
         final result =
             await userService.updateKritischeFelderUndAdresse(testUserData);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.put(
-            'KritischeFelderUndAdresse',
-            testUserData.toJson(),
-          ),
+          mockHttpClient.put('KritischeFelderUndAdresse', {
+            'PersonID': testUserData.personId,
+            'Titel': testUserData.titel,
+            'Namen': testUserData.namen,
+            'Vorname': testUserData.vorname,
+            'Geschlecht': testUserData.geschlecht,
+            'Strasse': testUserData.strasse,
+            'PLZ': testUserData.plz,
+            'Ort': testUserData.ort,
+          }),
         ).called(1);
       });
 

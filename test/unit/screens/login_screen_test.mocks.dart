@@ -14,8 +14,8 @@ import 'package:meinbssb/models/verein.dart' as _i10;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
 import 'package:meinbssb/services/core/cache_service.dart' as _i13;
-import 'package:meinbssb/services/core/config_service.dart' as _i12;
-import 'package:meinbssb/services/core/email_service.dart' as _i11;
+import 'package:meinbssb/services/core/config_service.dart' as _i11;
+import 'package:meinbssb/services/core/email_service.dart' as _i12;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i14;
 
@@ -440,10 +440,45 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<List<_i10.Verein>>);
 }
 
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i11.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
+}
+
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i11.EmailService {
+class MockEmailService extends _i1.Mock implements _i12.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -498,41 +533,6 @@ class MockEmailService extends _i1.Mock implements _i11.EmailService {
         ),
         returnValue: _i2.Future<String?>.value(),
       ) as _i2.Future<String?>);
-}
-
-/// A class which mocks [ConfigService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i12.ConfigService {
-  MockConfigService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [
-          key,
-          section,
-        ],
-      )) as int?);
-
-  @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getString,
-        [
-          key,
-          section,
-        ],
-      )) as String?);
 }
 
 /// A class which mocks [CacheService].

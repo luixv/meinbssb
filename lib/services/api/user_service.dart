@@ -156,8 +156,7 @@ class UserService {
       'STRASSE': dataToProcess['STRASSE'],
       'PLZ': dataToProcess['PLZ'],
       'ORT': dataToProcess['ORT'],
-      // WEBLOGINID is not part of the Passdaten response, it comes from the login response
-      // The 'ONLINE' key should NOT be added here. CacheService adds it.
+      'ONLINE': dataToProcess['ONLINE'],
     };
   }
 
