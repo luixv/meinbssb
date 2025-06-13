@@ -1,75 +1,72 @@
-class PassData {
-  factory PassData.fromJson(Map<String, dynamic> json) {
-    return PassData(
+class PassdataZVE {
+  factory PassdataZVE.fromJson(Map<String, dynamic> json) {
+    return PassdataZVE(
+      passdatenId: json['PASSDATENID'] as int,
       personId: json['PERSONID'] as int,
       passnummer: json['PASSNUMMER'] as String?,
       vereinNr: json['VEREINNR'] as int?,
       vereinName: json['VEREINNAME'] as String?,
-      passdatenId: json['PASSDATENID'] as int?,
-      mitgliedschaftId: json['MITGLIEDSCHAFTID'] as int?,
+      namen: json['NAMEN'] as String?,
+      vorname: json['VORNAME'] as String?,
+      titel: json['TITEL'] as String?,
       geburtsdatum: json['GEBURTSDATUM'] != null
           ? DateTime.parse(json['GEBURTSDATUM']).toUtc()
           : null,
-      titel: json['TITEL'] as String?,
-      vorname: json['VORNAME'] as String?,
-      namen: json['NAMEN'] as String?,
+      geschlecht: json['GESCHLECHT'] as int?,
       strasse: json['STRASSE'] as String?,
       plz: json['PLZ'] as String?,
       ort: json['ORT'] as String?,
-      geschlecht: json['GESCHLECHT'] as int?,
       isOnline: json['ONLINE'] as bool? ?? false,
     );
   }
 
-  PassData({
+  PassdataZVE({
+    required this.passdatenId,
     required this.personId,
     this.passnummer,
     this.vereinNr,
     this.vereinName,
-    this.passdatenId,
-    this.mitgliedschaftId,
-    this.geburtsdatum,
-    this.titel,
-    this.vorname,
     this.namen,
+    this.vorname,
+    this.titel,
+    this.geburtsdatum,
+    this.geschlecht,
     this.strasse,
     this.plz,
     this.ort,
-    this.geschlecht,
     this.isOnline = false,
   });
+
+  final int passdatenId;
   final int personId;
   final String? passnummer;
   final int? vereinNr;
   final String? vereinName;
-  final int? passdatenId;
-  final int? mitgliedschaftId;
-  final DateTime? geburtsdatum;
-  final String? titel;
-  final String? vorname;
   final String? namen;
+  final String? vorname;
+  final String? titel;
+  final DateTime? geburtsdatum;
+  final int? geschlecht;
   final String? strasse;
   final String? plz;
   final String? ort;
-  final int? geschlecht;
   final bool isOnline;
 
   Map<String, dynamic> toJson() {
     return {
+      'PASSDATENID': passdatenId,
       'PERSONID': personId,
       'PASSNUMMER': passnummer,
       'VEREINNR': vereinNr,
       'VEREINNAME': vereinName,
-      'PASSDATENID': passdatenId,
-      'MITGLIEDSCHAFTID': mitgliedschaftId,
-      'GEBURTSDATUM': geburtsdatum?.toIso8601String(),
-      'TITEL': titel,
-      'VORNAME': vorname,
       'NAMEN': namen,
+      'VORNAME': vorname,
+      'TITEL': titel,
+      'GEBURTSDATUM': geburtsdatum?.toIso8601String(),
+      'GESCHLECHT': geschlecht,
       'STRASSE': strasse,
       'PLZ': plz,
       'ORT': ort,
-      'GESCHLECHT': geschlecht,
       'ONLINE': isOnline,
     };
   }
@@ -77,43 +74,45 @@ class PassData {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is PassData &&
+    return other is PassdataZVE &&
+        other.passdatenId == passdatenId &&
         other.personId == personId &&
         other.passnummer == passnummer &&
-        other.geburtsdatum == geburtsdatum &&
-        other.titel == titel &&
-        other.vorname == vorname &&
+        other.vereinNr == vereinNr &&
+        other.vereinName == vereinName &&
         other.namen == namen &&
+        other.vorname == vorname &&
+        other.titel == titel &&
+        other.geburtsdatum == geburtsdatum &&
+        other.geschlecht == geschlecht &&
         other.strasse == strasse &&
         other.plz == plz &&
         other.ort == ort &&
-        other.geschlecht == geschlecht &&
         other.isOnline == isOnline;
   }
 
   @override
   int get hashCode {
     return Object.hash(
+      passdatenId,
       personId,
       passnummer,
       vereinNr,
       vereinName,
-      passdatenId,
-      mitgliedschaftId,
-      geburtsdatum,
-      titel,
-      vorname,
       namen,
+      vorname,
+      titel,
+      geburtsdatum,
+      geschlecht,
       strasse,
       plz,
       ort,
-      geschlecht,
       isOnline,
     );
   }
 
   @override
   String toString() {
-    return 'PassData(personId: $personId, passnummer: $passnummer, vereinNr: $vereinNr, vereinName: $vereinName, passdatenId: $passdatenId, mitgliedschaftId: $mitgliedschaftId, geburtsdatum: $geburtsdatum, titel: $titel, vorname: $vorname, namen: $namen, strasse: $strasse, plz: $plz, ort: $ort, geschlecht: $geschlecht, isOnline: $isOnline)';
+    return 'PassdataZVE(passdatenId: $passdatenId, personId: $personId, passnummer: $passnummer, vereinNr: $vereinNr, vereinName: $vereinName, namen: $namen, vorname: $vorname, titel: $titel, geburtsdatum: $geburtsdatum, geschlecht: $geschlecht, strasse: $strasse, plz: $plz, ort: $ort, isOnline: $isOnline)';
   }
 }

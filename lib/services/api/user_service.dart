@@ -9,6 +9,7 @@ import '../core/network_service.dart';
 import '../core/logger_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/pass_data.dart';
 
 class UserService {
   UserService({
@@ -140,23 +141,25 @@ class UserService {
       return {}; // Return an empty map directly if there's no valid data to process.
     }
 
-    // Safely extract values from dataToProcess.
+    // Create a PassData instance from the response
+    final passData = PassData.fromJson(dataToProcess);
+    // Convert PassData to a map for UserData.fromJson
     return {
-      'PASSNUMMER': dataToProcess['PASSNUMMER'],
-      'VEREINNR': dataToProcess['VEREINNR'],
-      'NAMEN': dataToProcess['NAMEN'],
-      'VORNAME': dataToProcess['VORNAME'],
-      'TITEL': dataToProcess['TITEL'],
-      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM'],
-      'GESCHLECHT': dataToProcess['GESCHLECHT'],
-      'VEREINNAME': dataToProcess['VEREINNAME'],
-      'PASSDATENID': dataToProcess['PASSDATENID'],
-      'MITGLIEDSCHAFTID': dataToProcess['MITGLIEDSCHAFTID'],
-      'PERSONID': dataToProcess['PERSONID'],
-      'STRASSE': dataToProcess['STRASSE'],
-      'PLZ': dataToProcess['PLZ'],
-      'ORT': dataToProcess['ORT'],
-      'ONLINE': dataToProcess['ONLINE'],
+      'PASSNUMMER': passData.passnummer,
+      'VEREINNR': passData.vereinNr,
+      'NAMEN': passData.namen,
+      'VORNAME': passData.vorname,
+      'TITEL': passData.titel,
+      'GEBURTSDATUM': passData.geburtsdatum?.toIso8601String(),
+      'GESCHLECHT': passData.geschlecht,
+      'VEREINNAME': passData.vereinName,
+      'PASSDATENID': passData.passdatenId,
+      'MITGLIEDSCHAFTID': passData.mitgliedschaftId,
+      'PERSONID': passData.personId,
+      'STRASSE': passData.strasse,
+      'PLZ': passData.plz,
+      'ORT': passData.ort,
+      'ONLINE': passData.isOnline,
     };
   }
 

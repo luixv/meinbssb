@@ -7,7 +7,7 @@ void main() {
       final json = {
         'PERSONID': 1,
         'PASSNUMMER': 'P123456',
-        'GEBURTSDATUM': '1990-01-01',
+        'GEBURTSDATUM': '1990-01-01T00:00:00.000Z',
         'TITEL': 'Dr.',
         'VORNAME': 'John',
         'NAMEN': 'Doe',
@@ -21,7 +21,10 @@ void main() {
 
       expect(passData.personId, 1);
       expect(passData.passnummer, 'P123456');
-      expect(passData.geburtsdatum, '1990-01-01');
+      expect(
+        passData.geburtsdatum,
+        DateTime.parse('1990-01-01T00:00:00.000Z'),
+      );
       expect(passData.titel, 'Dr.');
       expect(passData.vorname, 'John');
       expect(passData.namen, 'Doe');
@@ -35,14 +38,17 @@ void main() {
       final json = {
         'PERSONID': 1,
         'PASSNUMMER': 'P123456',
-        'GEBURTSDATUM': '1990-01-01',
+        'GEBURTSDATUM': '1990-01-01T00:00:00.000Z',
       };
 
       final passData = PassData.fromJson(json);
 
       expect(passData.personId, 1);
       expect(passData.passnummer, 'P123456');
-      expect(passData.geburtsdatum, '1990-01-01');
+      expect(
+        passData.geburtsdatum,
+        DateTime.parse('1990-01-01T00:00:00.000Z'),
+      );
       expect(passData.titel, null);
       expect(passData.vorname, null);
       expect(passData.namen, null);
@@ -56,7 +62,7 @@ void main() {
       final passData = PassData(
         personId: 1,
         passnummer: 'P123456',
-        geburtsdatum: '1990-01-01',
+        geburtsdatum: DateTime.parse('1990-01-01T00:00:00.000Z'),
         titel: 'Dr.',
         vorname: 'John',
         namen: 'Doe',
@@ -70,7 +76,7 @@ void main() {
 
       expect(json['PERSONID'], 1);
       expect(json['PASSNUMMER'], 'P123456');
-      expect(json['GEBURTSDATUM'], '1990-01-01');
+      expect(json['GEBURTSDATUM'], '1990-01-01T00:00:00.000Z');
       expect(json['TITEL'], 'Dr.');
       expect(json['VORNAME'], 'John');
       expect(json['NAMEN'], 'Doe');
@@ -84,19 +90,19 @@ void main() {
       final passData1 = PassData(
         personId: 1,
         passnummer: 'P123456',
-        geburtsdatum: '1990-01-01',
+        geburtsdatum: DateTime.parse('1990-01-01T00:00:00.000Z'),
       );
 
       final passData2 = PassData(
         personId: 1,
         passnummer: 'P123456',
-        geburtsdatum: '1990-01-01',
+        geburtsdatum: DateTime.parse('1990-01-01T00:00:00.000Z'),
       );
 
       final passData3 = PassData(
         personId: 2,
         passnummer: 'P123456',
-        geburtsdatum: '1990-01-01',
+        geburtsdatum: DateTime.parse('1990-01-01T00:00:00.000Z'),
       );
 
       expect(passData1, passData2);
@@ -109,7 +115,7 @@ void main() {
       final passData = PassData(
         personId: 1,
         passnummer: 'P123456',
-        geburtsdatum: '1990-01-01',
+        geburtsdatum: DateTime.parse('1990-01-01T00:00:00.000Z'),
         titel: 'Dr.',
         vorname: 'John',
         namen: 'Doe',
