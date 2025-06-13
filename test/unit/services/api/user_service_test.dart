@@ -289,7 +289,7 @@ void main() {
               {
                 'DISZIPLINID': 94,
                 'DISZIPLINNR': 'R.1',
-                'DISZIPLIN': 'RWK Luftpistole'
+                'DISZIPLIN': 'RWK Luftpistole',
               }
             ],
             'DISZIPLINID': 94,

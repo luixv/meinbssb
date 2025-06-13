@@ -8,6 +8,8 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
 import 'package:meinbssb/models/disziplin.dart';
 // Import for date formatting
+import 'dart:async';
+import 'dart:io';
 
 @GenerateMocks([
   HttpClient,
@@ -518,67 +520,6 @@ void main() {
     });
   });
 
-  group('registerForSchulung', () {
-    const testPersonId = 123;
-    const testSchulungId = 456;
-
-    test('returns true when registration is successful', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenAnswer((_) async => {'ResultType': 1});
-
-      final result = await trainingService.registerForSchulung(
-        testPersonId,
-        testSchulungId,
-      );
-
-      expect(result, isTrue);
-    });
-
-    test('returns false and logs error on failure', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenThrow(Exception('Registration error'));
-
-      final result = await trainingService.registerForSchulung(
-        testPersonId,
-        testSchulungId,
-      );
-
-      expect(result, isFalse); // Now returns false on error
-    });
-  });
-
-  group('unregisterFromSchulung', () {
-    const testTeilnehmerId = 789;
-
-    test('returns true when unregistration is successful', () async {
-      when(
-        mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
-        ),
-      ).thenAnswer((_) async => {'result': true});
-
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
-
-      expect(result, isTrue);
-    });
-
-    test('returns false and logs error on exception', () async {
-      when(
-        mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
-        ),
-      ).thenThrow(Exception('Network error'));
-
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
-
-      expect(result, isFalse);
-    });
-  });
-
   group('fetchDisziplinen', () {
     final testResponse = [
       {'DISZIPLINID': 1, 'DISZIPLINNR': '1.10', 'DISZIPLIN': 'Luftgewehr'},
@@ -627,6 +568,59 @@ void main() {
       verify(mockHttpClient.get('Disziplinen')).called(1);
     });
 
+    test('handles network timeout exception', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenThrow(TimeoutException('Request timed out'));
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('handles socket exception', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenThrow(const SocketException('Failed to connect'));
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('handles http exception', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenThrow(const HttpException('Server error'));
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('handles format exception in response', () async {
+      when(mockHttpClient.get('Disziplinen'))
+          .thenAnswer((_) async => 'Invalid JSON response');
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
+    test('handles malformed JSON in response', () async {
+      when(mockHttpClient.get('Disziplinen')).thenAnswer(
+        (_) async => [
+          {'DISZIPLINID': 'invalid', 'DISZIPLIN': 123},
+        ],
+      );
+
+      final result = await trainingService.fetchDisziplinen();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+
     test('handles partial Disziplinen data correctly', () async {
       final partialResponse = [
         {'DISZIPLINID': 3, 'DISZIPLIN': 'Pistole (Partial)'},
@@ -640,8 +634,148 @@ void main() {
 
       expect(result.length, 1);
       expect(result[0].disziplin, 'Pistole (Partial)');
-      expect(result[0].disziplinNr, ''); // Should be empty string if missing
+      expect(result[0].disziplinNr, isNull); // Should be null if missing
       verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+  });
+
+  group('registerForSchulung', () {
+    const testPersonId = 123;
+    const testSchulungId = 456;
+
+    test('returns true when registration is successful', () async {
+      when(mockHttpClient.post('RegisterForSchulung', any))
+          .thenAnswer((_) async => {'ResultType': 1});
+
+      final result = await trainingService.registerForSchulung(
+        testPersonId,
+        testSchulungId,
+      );
+
+      expect(result, isTrue);
+    });
+
+    test('returns false and logs error on failure', () async {
+      when(mockHttpClient.post('RegisterForSchulung', any))
+          .thenThrow(Exception('Registration error'));
+
+      final result = await trainingService.registerForSchulung(
+        testPersonId,
+        testSchulungId,
+      );
+
+      expect(result, isFalse);
+    });
+
+    test('handles network timeout during registration', () async {
+      when(mockHttpClient.post('RegisterForSchulung', any))
+          .thenThrow(TimeoutException('Request timed out'));
+
+      final result = await trainingService.registerForSchulung(
+        testPersonId,
+        testSchulungId,
+      );
+
+      expect(result, isFalse);
+    });
+
+    test('handles server error response', () async {
+      when(mockHttpClient.post('RegisterForSchulung', any)).thenAnswer(
+        (_) async => {'ResultType': 0, 'ResultMessage': 'Server error'},
+      );
+
+      final result = await trainingService.registerForSchulung(
+        testPersonId,
+        testSchulungId,
+      );
+
+      expect(result, isFalse);
+    });
+
+    test('handles invalid response format', () async {
+      when(mockHttpClient.post('RegisterForSchulung', any))
+          .thenAnswer((_) async => {'invalid': 'response'});
+
+      final result = await trainingService.registerForSchulung(
+        testPersonId,
+        testSchulungId,
+      );
+
+      expect(result, isFalse);
+    });
+  });
+
+  group('unregisterFromSchulung', () {
+    const testTeilnehmerId = 789;
+
+    test('returns true when unregistration is successful', () async {
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'result': true});
+
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      expect(result, isTrue);
+    });
+
+    test('returns false and logs error on exception', () async {
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenThrow(Exception('Network error'));
+
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      expect(result, isFalse);
+    });
+
+    test('handles network timeout during unregistration', () async {
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenThrow(TimeoutException('Request timed out'));
+
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      expect(result, isFalse);
+    });
+
+    test('handles server error response', () async {
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'result': false, 'error': 'Server error'});
+
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      expect(result, isFalse);
+    });
+
+    test('handles invalid response format', () async {
+      when(
+        mockHttpClient.delete(
+          'SchulungenTeilnehmer/$testTeilnehmerId',
+          body: {},
+        ),
+      ).thenAnswer((_) async => {'invalid': 'response'});
+
+      final result =
+          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+
+      expect(result, isFalse);
     });
   });
 }

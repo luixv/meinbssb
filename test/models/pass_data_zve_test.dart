@@ -71,7 +71,7 @@ void main() {
     });
 
     test('should convert PassDataZVE to JSON with single discipline', () {
-      final disziplin = Disziplin(
+      const disziplin = Disziplin(
         disziplinId: 94,
         disziplinNr: 'R.1',
         disziplin: 'Luftgewehr',
@@ -101,12 +101,12 @@ void main() {
     });
 
     test('should convert PassDataZVE to JSON with multiple disciplines', () {
-      final disziplin1 = Disziplin(
+      const disziplin1 = Disziplin(
         disziplinId: 94,
         disziplinNr: 'R.1',
         disziplin: 'Luftgewehr',
       );
-      final disziplin2 = Disziplin(
+      const disziplin2 = Disziplin(
         disziplinId: 112,
         disziplinNr: 'R.2',
         disziplin: 'Luftpistole',
@@ -157,12 +157,12 @@ void main() {
     });
 
     test('should implement equality correctly', () {
-      final disziplin1 = Disziplin(
+      const disziplin1 = Disziplin(
         disziplinId: 94,
         disziplinNr: 'R.1',
         disziplin: 'Luftgewehr',
       );
-      final disziplin2 = Disziplin(
+      const disziplin2 = Disziplin(
         disziplinId: 112,
         disziplinNr: 'R.2',
         disziplin: 'Luftpistole',
@@ -220,7 +220,7 @@ void main() {
     });
 
     test('should have correct string representation', () {
-      final disziplin1 = Disziplin(
+      const disziplin1 = Disziplin(
         disziplinId: 94,
         disziplinNr: 'R.1',
         disziplin: 'Luftgewehr',

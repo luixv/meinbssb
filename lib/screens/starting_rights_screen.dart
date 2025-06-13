@@ -249,7 +249,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    selectedDisziplin.disziplin,
+                                                    selectedDisziplin
+                                                            .disziplin ??
+                                                        'N/A',
                                                     style:
                                                         UIConstants.bodyStyle,
                                                   ),
@@ -311,24 +313,26 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       }
                                       return _disciplines
                                           .where((Disziplin option) {
-                                        return option.disziplin
-                                                .toLowerCase()
+                                        return (option.disziplin
+                                                        ?.toLowerCase() ??
+                                                    '')
                                                 .contains(
-                                                  textEditingValue.text
-                                                      .toLowerCase(),
-                                                ) ||
-                                            option.disziplinNr
-                                                .toLowerCase()
+                                              textEditingValue.text
+                                                  .toLowerCase(),
+                                            ) ||
+                                            (option.disziplinNr
+                                                        ?.toLowerCase() ??
+                                                    '')
                                                 .contains(
-                                                  textEditingValue.text
-                                                      .toLowerCase(),
-                                                );
+                                              textEditingValue.text
+                                                  .toLowerCase(),
+                                            );
                                       });
                                     },
                                     displayStringForOption: (
                                       Disziplin option,
                                     ) =>
-                                        '${option.disziplinNr} - ${option.disziplin}',
+                                        '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
                                     fieldViewBuilder: (
                                       BuildContext context,
                                       TextEditingController
