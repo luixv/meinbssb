@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/registration_screen.dart';
-import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
@@ -204,11 +203,11 @@ class LoginScreenState extends State<LoginScreen> {
         style: UIStyles.defaultButtonStyle,
         child: _isLoading
             ? UIConstants.defaultLoadingIndicator
-            : Row(
+            : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.login, color: Colors.white),
-                  const SizedBox(width: UIConstants.spacingS),
+                  Icon(Icons.login, color: Colors.white),
+                  SizedBox(width: UIConstants.spacingS),
                   ScaledText(
                     UIConstants.loginButtonLabel,
                     style: UIStyles.buttonStyle,
@@ -226,11 +225,11 @@ class LoginScreenState extends State<LoginScreen> {
         key: const Key('registerButton'),
         onPressed: _navigateToRegistrationPage,
         style: UIStyles.secondaryButtonStyle,
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.app_registration, color: Colors.white),
-            const SizedBox(width: UIConstants.spacingS),
+            Icon(Icons.app_registration, color: Colors.white),
+            SizedBox(width: UIConstants.spacingS),
             ScaledText(
               UIConstants.registerButtonLabel,
               style: UIStyles.buttonStyle,
@@ -246,7 +245,7 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('forgotPasswordButton'),
       onPressed: _navigateToPasswordReset,
       style: UIStyles.textButtonStyle,
-      child: ScaledText(
+      child: const ScaledText(
         UIConstants.forgotPasswordLabel,
         style: UIStyles.linkStyle,
       ),

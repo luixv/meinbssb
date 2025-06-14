@@ -30,7 +30,7 @@ class HelpScreen extends StatelessWidget {
               const Icon(Icons.arrow_back, color: UIConstants.defaultAppColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: ScaledText(
+        title: const ScaledText(
           UIConstants.helpTitle,
           style: UIStyles.appBarTitleStyle,
         ),
@@ -226,7 +226,6 @@ class _AccordionItem extends StatefulWidget {
 }
 
 class _AccordionItemState extends State<_AccordionItem> {
-  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {

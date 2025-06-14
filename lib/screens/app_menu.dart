@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 // Local imports
 // Constants
 import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
 
 // Screens
 import '/screens/absolvierte_seminare_screen.dart';
