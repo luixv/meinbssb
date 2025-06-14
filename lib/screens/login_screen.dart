@@ -15,6 +15,7 @@ import '/services/api_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -198,31 +199,19 @@ class LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        key: const Key(
-          'loginButton',
-        ), // Name of the button, used for the integration test
+        key: const Key('loginButton'),
         onPressed: _isLoading ? null : _handleLogin,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: UIConstants.submitButtonBackground,
-          padding: UIConstants.buttonPadding,
-        ),
+        style: UIStyles.defaultButtonStyle,
         child: _isLoading
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  UIConstants.circularProgressIndicator,
-                ),
-              )
-            : const Row(
+            ? UIConstants.defaultLoadingIndicator
+            : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.login, color: UIConstants.submitButtonText),
-                  SizedBox(width: UIConstants.spacingS),
-                  Text(
-                    'Anmelden',
-                    style: TextStyle(
-                      fontSize: UIConstants.bodyFontSize,
-                      color: UIConstants.submitButtonText,
-                    ),
+                  const Icon(Icons.login, color: Colors.white),
+                  const SizedBox(width: UIConstants.spacingS),
+                  ScaledText(
+                    UIConstants.loginButtonLabel,
+                    style: UIStyles.buttonStyle,
                   ),
                 ],
               ),
@@ -230,65 +219,36 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildNavigationLinks() {
-    return Center(
-      child: Column(
-        children: [
-          TextButton(
-            onPressed: _navigateToPasswordReset,
-            child: Text(
-              'Passwort vergessen?',
-              style: UIStyles.linkStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
+  Widget _buildRegisterButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        key: const Key('registerButton'),
+        onPressed: _navigateToRegistrationPage,
+        style: UIStyles.secondaryButtonStyle,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.app_registration, color: Colors.white),
+            const SizedBox(width: UIConstants.spacingS),
+            ScaledText(
+              UIConstants.registerButtonLabel,
+              style: UIStyles.buttonStyle,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  'Noch kein Konto?',
-                  style: UIStyles.bodyStyle.copyWith(
-                    fontSize: UIConstants.subtitleFontSize,
-                  ),
-                ),
-              ),
-              Flexible(
-                child: TextButton(
-                  onPressed: _navigateToRegistrationPage,
-                  child: Text(
-                    'Registrieren',
-                    style: UIStyles.linkStyle.copyWith(
-                      fontSize: UIConstants.subtitleFontSize,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HelpScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
-                ),
-              );
-            },
-            child: Text(
-              'Hilfe',
-              style: UIStyles.linkStyle.copyWith(
-                fontSize: UIConstants.subtitleFontSize,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPasswordButton() {
+    return TextButton(
+      key: const Key('forgotPasswordButton'),
+      onPressed: _navigateToPasswordReset,
+      style: UIStyles.textButtonStyle,
+      child: ScaledText(
+        UIConstants.forgotPasswordLabel,
+        style: UIStyles.linkStyle,
       ),
     );
   }
@@ -296,7 +256,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Hier wird die Hintergrundfarbe des Scaffolds geändert.
       backgroundColor: UIConstants.backgroundColor,
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
@@ -305,20 +264,28 @@ class LoginScreenState extends State<LoginScreen> {
           children: [
             widget.logoWidget ?? const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
-            Text(
-              'Hier anmelden',
-              style: UIStyles.headerStyle.copyWith(color: _appColor),
+            ScaledText(
+              UIConstants.loginTitle,
+              style: UIStyles.headerStyle.copyWith(
+                color: _appColor,
+              ),
             ),
             const SizedBox(height: UIConstants.spacingS),
+            if (_errorMessage.isNotEmpty)
+              ScaledText(
+                _errorMessage,
+                style: UIStyles.errorStyle,
+              ),
+            const SizedBox(height: UIConstants.spacingM),
             _buildEmailField(),
             const SizedBox(height: UIConstants.spacingS),
             _buildPasswordField(),
-            const SizedBox(height: UIConstants.spacingS * 2),
-            if (_errorMessage.isNotEmpty)
-              Text(_errorMessage, style: UIStyles.errorStyle),
+            const SizedBox(height: UIConstants.spacingM),
             _buildLoginButton(),
+            const SizedBox(height: UIConstants.spacingM),
+            _buildRegisterButton(),
             const SizedBox(height: UIConstants.spacingS),
-            _buildNavigationLinks(),
+            _buildForgotPasswordButton(),
           ],
         ),
       ),

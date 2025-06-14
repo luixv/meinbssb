@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -30,66 +31,66 @@ class ImpressumScreen extends StatelessWidget {
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
               SizedBox(height: 16),
-              Text(
+              ScaledText(
                 'Für den Inhalt verantwortlich sind:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Gesamtverantwortung',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Bayerischer Sportschützenbund e.V.'),
-              Text('1. Landesschützenmeister'),
+              ScaledText('Bayerischer Sportschützenbund e.V.'),
+              ScaledText('1. Landesschützenmeister'),
               SizedBox(height: 4),
-              Text('Christian Kühn'),
-              Text('Olympia-Schießanlage Hochbrück'),
-              Text('Ingolstädter Landstraße 110'),
-              Text('85748 Garching'),
+              ScaledText('Christian Kühn'),
+              ScaledText('Olympia-Schießanlage Hochbrück'),
+              ScaledText('Ingolstädter Landstraße 110'),
+              ScaledText('85748 Garching'),
               SizedBox(height: 8),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
               _LinkText('Website: https://www.bssb.de', 'https://www.bssb.de'),
               SizedBox(height: UIConstants.spacingS),
-              Text(
+              ScaledText(
                 'Realisierung des Internetauftritts',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Datenschutzbeauftragter',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Herbert Isdebski'),
-              Text('Scheibenhalde 1'),
-              Text('72160 Horb-Nordstetten'),
+              ScaledText('Herbert Isdebski'),
+              ScaledText('Scheibenhalde 1'),
+              ScaledText('72160 Horb-Nordstetten'),
               SizedBox(height: 8),
               _LinkText(
                 'E-Mail: datenschutz@bssb.de',
                 'mailto:datenschutz@bssb.de',
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Telefon-Sprechstunde für BSSB-Mitglieder:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('jeder erste Donnerstag im Monat, 16 bis 18 Uhr'),
+              ScaledText('jeder erste Donnerstag im Monat, 16 bis 18 Uhr'),
               _LinkText('Telefon: (07451) 6 25 42 40', 'tel:074516254240'),
               SizedBox(height: UIConstants.spacingS),
-              Text(
+              ScaledText(
                 'Inhaltlich verantwortlich für die Teilbereiche',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Verband',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Bayerischer Sportschützenbund e.V.'),
-              Text('Herr Alexander Heidel'),
-              Text('Olympia-Schießanlage Hochbrück'),
-              Text('Ingolstädter Landstraße 110'),
-              Text('85748 Garching'),
+              ScaledText('Bayerischer Sportschützenbund e.V.'),
+              ScaledText('Herr Alexander Heidel'),
+              ScaledText('Olympia-Schießanlage Hochbrück'),
+              ScaledText('Ingolstädter Landstraße 110'),
+              ScaledText('85748 Garching'),
               SizedBox(height: 8),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
@@ -97,16 +98,16 @@ class ImpressumScreen extends StatelessWidget {
                 'mailto:alexander.heidel@bssb.bayern',
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Sport',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Einstellen der Ergebnisse'),
-              Text('Bayerischer Sportschützenbund e.V.'),
-              Text('Herr Josef Lederer'),
-              Text('Olympia-Schießanlage Hochbrück'),
-              Text('Ingolstädter Landstraße 110'),
-              Text('85748 Garching'),
+              ScaledText('Einstellen der Ergebnisse'),
+              ScaledText('Bayerischer Sportschützenbund e.V.'),
+              ScaledText('Herr Josef Lederer'),
+              ScaledText('Olympia-Schießanlage Hochbrück'),
+              ScaledText('Ingolstädter Landstraße 110'),
+              ScaledText('85748 Garching'),
               SizedBox(height: 8),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
@@ -114,15 +115,15 @@ class ImpressumScreen extends StatelessWidget {
                 'mailto:josef.lederer@bssb.bayern',
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Jugend',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Bayerischer Sportschützenbund e.V.'),
-              Text('Herr Markus Maas'),
-              Text('Olympia-Schießanlage Hochbrück'),
-              Text('Ingolstädter Landstraße 110'),
-              Text('85748 Garching'),
+              ScaledText('Bayerischer Sportschützenbund e.V.'),
+              ScaledText('Herr Markus Maas'),
+              ScaledText('Olympia-Schießanlage Hochbrück'),
+              ScaledText('Ingolstädter Landstraße 110'),
+              ScaledText('85748 Garching'),
               SizedBox(height: 8),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
@@ -130,57 +131,57 @@ class ImpressumScreen extends StatelessWidget {
                 'mailto:jugend@bssb.bayern',
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
               ),
               SizedBox(height: UIConstants.spacingS),
-              Text(
+              ScaledText(
                 'Bezirke / Gaue / Vereine',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              ScaledText(
                 'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
               ),
-              Text(
+              ScaledText(
                 'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
               ),
-              Text(
+              ScaledText(
                 'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: UIConstants.spacingS),
-              Text(
+              ScaledText(
                 'Haftung für weiterführende Links',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              ScaledText(
                 'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung.',
               ),
-              Text(
+              ScaledText(
                 'Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an.',
               ),
-              Text(
+              ScaledText(
                 'Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
               ),
               SizedBox(height: UIConstants.spacingS),
-              Text(
+              ScaledText(
                 'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Bayerischer Sportschützenbund e.V.',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              ScaledText(
                 'eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
               ),
               SizedBox(height: 8),
-              Text('Postanschrift der Geschäftsstelle:'),
-              Text('Ingolstädter Landstrasse 110'),
-              Text('85748 Garching'),
+              ScaledText('Postanschrift der Geschäftsstelle:'),
+              ScaledText('Ingolstädter Landstrasse 110'),
+              ScaledText('85748 Garching'),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Kommunikation',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -191,36 +192,36 @@ class ImpressumScreen extends StatelessWidget {
                 'https://www.bssb.de/',
               ),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Geschäftsführer',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('Alexander Heidel'),
+              ScaledText('Alexander Heidel'),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Vorstand i.S. §26 BGB',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('1. Landesschützenmeister: Christian Kühn'),
-              Text('2. Landesschützenmeister: Dieter Vierlbeck'),
-              Text('3. Landesschützenmeister: Hans Hainthaler'),
-              Text('4. Landesschützenmeister: Albert Euba'),
-              Text('5. Landesschützenmeister: Stefan Fersch'),
+              ScaledText('1. Landesschützenmeister: Christian Kühn'),
+              ScaledText('2. Landesschützenmeister: Dieter Vierlbeck'),
+              ScaledText('3. Landesschützenmeister: Hans Hainthaler'),
+              ScaledText('4. Landesschützenmeister: Albert Euba'),
+              ScaledText('5. Landesschützenmeister: Stefan Fersch'),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Bankverbindung',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text(
+              ScaledText(
                 'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
               ),
-              Text('IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX'),
+              ScaledText('IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX'),
               SizedBox(height: 8),
-              Text(
+              ScaledText(
                 'Umsatzsteueridentifikationsnummer',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Text('DE 129514004'),
+              ScaledText('DE 129514004'),
               SizedBox(height: UIConstants.spacingS),
             ],
           ),
@@ -238,27 +239,18 @@ class _LinkText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        if (await canLaunchUrl(Uri.parse(url))) {
-          await launchUrl(Uri.parse(url));
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Could not launch URL')),
-            );
-          }
+    return TextButton(
+      onPressed: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: UIConstants.linkColor,
-            fontSize: UIConstants.bodyFontSize,
-            decoration: TextDecoration.underline,
-          ),
+      child: ScaledText(
+        text,
+        style: const TextStyle(
+          color: UIConstants.defaultAppColor,
+          decoration: TextDecoration.underline,
         ),
       ),
     );

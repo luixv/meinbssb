@@ -16,6 +16,7 @@ import '/services/core/email_service.dart';
 import '/services/core/error_service.dart';
 import '/services/core/logger_service.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({
@@ -306,195 +307,210 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Registrierung',
-      userData: userData,
+      title: UIConstants.registrationTitle,
+      userData: null,
       isLoggedIn: false,
-      onLogout: () {
-        Navigator.pushReplacementNamed(context, '/login');
-      },
-      body: Container(
-        color: UIConstants.backgroundColor,
-        child: SingleChildScrollView(
-          padding: UIConstants.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const LogoWidget(),
-              const SizedBox(height: UIConstants.spacingS),
-              Text(
-                'Registrierung',
-                style: UIStyles.headerStyle
-                    .copyWith(color: UIConstants.defaultAppColor),
+      onLogout: () {},
+      body: SingleChildScrollView(
+        padding: UIConstants.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const LogoWidget(),
+            const SizedBox(height: UIConstants.spacingS),
+            ScaledText(
+              UIConstants.registrationTitle,
+              style: UIStyles.headerStyle.copyWith(
+                color: UIConstants.defaultAppColor,
               ),
-              const SizedBox(height: UIConstants.spacingS),
-              _buildRegistrationForm(),
-            ],
-          ),
+            ),
+            const SizedBox(height: UIConstants.spacingS),
+            if (zipCodeError != null)
+              ScaledText(
+                zipCodeError!,
+                style: UIStyles.errorStyle,
+              ),
+            if (passNumberError != null)
+              ScaledText(
+                passNumberError!,
+                style: UIStyles.errorStyle,
+              ),
+            if (emailError != null)
+              ScaledText(
+                emailError!,
+                style: UIStyles.errorStyle,
+              ),
+            if (_successMessage.isNotEmpty)
+              ScaledText(
+                _successMessage,
+                style: UIStyles.successStyle,
+              ),
+            const SizedBox(height: UIConstants.spacingM),
+            _buildFirstNameField(),
+            const SizedBox(height: UIConstants.spacingS),
+            _buildLastNameField(),
+            const SizedBox(height: UIConstants.spacingS),
+            _buildPassNumberField(),
+            const SizedBox(height: UIConstants.spacingS),
+            _buildEmailField(),
+            const SizedBox(height: UIConstants.spacingS),
+            _buildZipCodeField(),
+            const SizedBox(height: UIConstants.spacingS),
+            _buildDateField(),
+            const SizedBox(height: UIConstants.spacingM),
+            _buildPrivacyCheckbox(),
+            const SizedBox(height: UIConstants.spacingM),
+            _buildRegisterButton(),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRegistrationForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildFirstNameField() {
+    return TextField(
+      key: const Key('firstNameField'),
+      controller: _firstNameController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Vorname',
+      ),
+      onChanged: (_) => setState(() {}),
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return TextField(
+      key: const Key('lastNameField'),
+      controller: _lastNameController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Nachname',
+      ),
+      onChanged: (_) => setState(() {}),
+    );
+  }
+
+  Widget _buildPassNumberField() {
+    return TextField(
+      key: const Key('passNumberField'),
+      controller: _passNumberController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Schützenausweisnummer',
+        errorText: passNumberError,
+      ),
+      onChanged: (value) {
+        setState(() {
+          validatePassNumber(value);
+        });
+      },
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextField(
+      key: const Key('emailField'),
+      controller: _emailController,
+      focusNode: _emailFocusNode,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'E-mail',
+        errorText: _emailFieldTouched ? emailError : null,
+      ),
+      onChanged: (value) {
+        setState(() {
+          if (_emailFieldTouched || value.isNotEmpty) {
+            validateEmail(value);
+          } else {
+            emailError = null;
+          }
+        });
+      },
+      onTap: () {
+        setState(() {
+          _emailFieldTouched = true;
+        });
+      },
+    );
+  }
+
+  Widget _buildZipCodeField() {
+    return TextField(
+      key: const Key('zipCodeField'),
+      controller: _zipCodeController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Postleitzahl',
+        errorText: zipCodeError,
+      ),
+      onChanged: (value) {
+        setState(() {
+          validateZipCode(value);
+        });
+      },
+    );
+  }
+
+  Widget _buildPrivacyCheckbox() {
+    return Row(
       children: [
-        if (_successMessage.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: UIConstants.spacingS,
-            ),
-            child: Text(_successMessage, style: UIStyles.successStyle),
-          ),
-        TextField(
-          key: const Key('firstNameField'),
-          controller: _firstNameController,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Vorname',
-          ),
-          onChanged: (_) => setState(() {}),
+        Checkbox(
+          key: const Key('privacyCheckbox'),
+          activeColor: UIConstants.defaultAppColor,
+          value: _privacyAccepted,
+          onChanged: (bool? value) => setState(() {
+            _privacyAccepted = value!;
+          }),
         ),
-        const SizedBox(height: UIConstants.spacingS),
-        TextField(
-          key: const Key('lastNameField'),
-          controller: _lastNameController,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Nachname',
-          ),
-          onChanged: (_) => setState(() {}),
-        ),
-        const SizedBox(height: UIConstants.spacingS),
-        TextField(
-          key: const Key('passNumberField'),
-          controller: _passNumberController,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Schützenausweisnummer',
-            errorText: passNumberError,
-          ),
-          onChanged: (value) {
-            setState(() {
-              validatePassNumber(value);
-            });
-          },
-        ),
-        const SizedBox(height: UIConstants.spacingS),
-        TextField(
-          key: const Key('emailField'),
-          controller: _emailController,
-          focusNode: _emailFocusNode,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'E-mail',
-            errorText: _emailFieldTouched ? emailError : null,
-          ),
-          onChanged: (value) {
-            setState(() {
-              if (_emailFieldTouched || value.isNotEmpty) {
-                validateEmail(value);
-              } else {
-                emailError = null;
-              }
-            });
-          },
-          onTap: () {
-            setState(() {
-              _emailFieldTouched = true;
-            });
-          },
-        ),
-        const SizedBox(height: UIConstants.spacingS),
-        _buildDateField(),
-        const SizedBox(height: UIConstants.spacingS),
-        TextField(
-          key: const Key('zipCodeField'),
-          controller: _zipCodeController,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Postleitzahl',
-            errorText: zipCodeError,
-          ),
-          onChanged: (value) {
-            setState(() {
-              validateZipCode(value);
-            });
-          },
-        ),
-        const SizedBox(height: UIConstants.spacingXS),
-        Row(
-          children: [
-            Checkbox(
-              key: const Key('privacyCheckbox'),
-              activeColor: UIConstants.defaultAppColor,
-              value: _privacyAccepted,
-              onChanged: (bool? value) => setState(() {
-                _privacyAccepted = value!;
-              }),
-            ),
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  style: UIStyles.bodyStyle,
-                  children: <TextSpan>[
-                    const TextSpan(text: 'Ich habe die '),
-                    TextSpan(
-                      text: 'Datenschutzbestimmungen',
-                      style: UIStyles.linkStyle.copyWith(
-                        color: UIConstants.linkColor,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  PrivacyScreen(userData: userData),
-                            ),
-                          );
-                        },
-                    ),
-                    const TextSpan(text: ' gelesen und akzeptiere sie.'),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: UIConstants.spacingS),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            key: const Key('submitButton'),
-            onPressed: isFormValid() && !_isLoading ? _register : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: UIConstants.defaultAppColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingL,
-                vertical: UIConstants.spacingM,
-              ),
-            ),
-            child: _isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.app_registration, color: Colors.white),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        UIConstants.registerButtonLabel,
-                        style: UIStyles.buttonStyle,
-                      ),
-                    ],
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: UIStyles.bodyStyle,
+              children: <TextSpan>[
+                const TextSpan(text: 'Ich habe die '),
+                TextSpan(
+                  text: 'Datenschutzbestimmungen',
+                  style: UIStyles.linkStyle.copyWith(
+                    color: UIConstants.linkColor,
+                    decoration: TextDecoration.underline,
                   ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PrivacyScreen(userData: userData),
+                        ),
+                      );
+                    },
+                ),
+                const TextSpan(text: ' gelesen und akzeptiere sie.'),
+              ],
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        key: const Key('registerButton'),
+        onPressed: _isLoading ? null : _register,
+        style: UIStyles.defaultButtonStyle,
+        child: _isLoading
+            ? UIConstants.defaultLoadingIndicator
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.app_registration, color: Colors.white),
+                  const SizedBox(width: UIConstants.spacingS),
+                  ScaledText(
+                    UIConstants.registerButtonLabel,
+                    style: UIStyles.buttonStyle,
+                  ),
+                ],
+              ),
+      ),
     );
   }
 

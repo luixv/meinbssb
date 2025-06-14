@@ -9,6 +9,7 @@ import '/models/pass_data_zve.dart';
 import '/services/core/logger_service.dart';
 import '/services/api/training_service.dart';
 import '/models/disziplin.dart';
+import '/widgets/scaled_text.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -119,7 +120,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
               ? Center(
-                  child: Text(
+                  child: ScaledText(
                     _errorMessage!,
                     style: UIStyles.errorStyle,
                     textAlign: TextAlign.center,
@@ -130,7 +131,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      ScaledText(
                         'Erstverein',
                         style: UIStyles.headerStyle.copyWith(
                           color: UIConstants.defaultAppColor,
@@ -170,12 +171,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           ],
                         )
                       else
-                        const Text(
+                        const ScaledText(
                           'Keine Erstvereinsdaten verfügbar.',
                           style: UIStyles.bodyStyle,
                         ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Text(
+                      ScaledText(
                         'Zweitvereine',
                         style: UIStyles.headerStyle.copyWith(
                           color: UIConstants.defaultAppColor,
@@ -382,7 +383,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           },
                         )
                       else
-                        const Text(
+                        const ScaledText(
                           'Keine Zweitvereinsdaten verfügbar.',
                           style: UIStyles.bodyStyle,
                         ),

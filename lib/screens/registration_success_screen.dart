@@ -8,6 +8,7 @@ import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class RegistrationSuccessScreen extends StatelessWidget {
   const RegistrationSuccessScreen({
@@ -33,7 +34,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
           children: <Widget>[
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
-            Text(
+            ScaledText(
               message,
               style: UIStyles.successStyle,
             ),

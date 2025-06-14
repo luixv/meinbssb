@@ -5,6 +5,7 @@ import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({
@@ -29,7 +30,7 @@ class HelpScreen extends StatelessWidget {
               const Icon(Icons.arrow_back, color: UIConstants.defaultAppColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: ScaledText(
           UIConstants.helpTitle,
           style: UIStyles.appBarTitleStyle,
         ),
@@ -58,7 +59,7 @@ class HelpScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
-              Text(
+              ScaledText(
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -68,19 +69,19 @@ class HelpScreen extends StatelessWidget {
                 questions: [
                   _AccordionItem(
                     question: 'Was ist Mein BSSB?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Mein BSSB ist die offizielle App des Bayerischen Sportschützenbundes e.V. Sie bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Wer kann die App nutzen?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Die App steht allen Mitgliedern des Bayerischen Sportschützenbundes e.V. zur Verfügung.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Wie erhalte ich meine Zugangsdaten?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Ihre Zugangsdaten (Mitgliedsnummer und Passwort) erhalten Sie in der Regel per E-Mail oder über Ihren Verein. Bei Problemen wenden Sie sich bitte an Ihren Verein oder die Geschäftsstelle des BSSB.',
                     ),
                   ),
@@ -92,33 +93,33 @@ class HelpScreen extends StatelessWidget {
                 questions: [
                   _AccordionItem(
                     question: 'Welche Bereiche gibt es in der App?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Die App umfasst verschiedene Bereiche wie News, Termine, Ergebnisse, mein Profil, Dokumente und mehr. Navigieren Sie einfach durch das Menü, um die gewünschten Informationen zu finden.',
                     ),
                   ),
                   _AccordionItem(
                     question:
                         'Wie kann ich meine persönlichen Daten einsehen und ändern?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Im Bereich "mein Profil" können Sie Ihre hinterlegten Daten einsehen. Änderungen können Sie in der Regel über die Webseite des BSSB oder über Ihren Verein vornehmen.',
                     ),
                   ),
                   _AccordionItem(
                     question:
                         'Wo finde ich aktuelle Termine und Veranstaltungen?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Unter dem Punkt "Termine" finden Sie eine Übersicht über alle wichtigen Veranstaltungen, Wettkämpfe und Schulungen.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Kann ich Ergebnisse von Wettkämpfen einsehen?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Ja, im Bereich "Ergebnisse" werden die Resultate von verschiedenen Wettkämpfen veröffentlicht.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Wo finde ich wichtige Dokumente und Formulare?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Im Bereich "Dokumente" stehen Ihnen wichtige Formulare, Ordnungen und andere Dokumente zum Download zur Verfügung.',
                     ),
                   ),
@@ -131,19 +132,19 @@ class HelpScreen extends StatelessWidget {
                   _AccordionItem(
                     question:
                         'Die App funktioniert nicht richtig. Was kann ich tun?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Ich habe mein Passwort vergessen. Was nun?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
                     ),
                   ),
                   _AccordionItem(
                     question: 'Unterstützt die App Benachrichtigungen?',
-                    answer: Text(
+                    answer: ScaledText(
                       'Ja, die App kann Benachrichtigungen für wichtige Termine oder Neuigkeiten senden. Sie können die Benachrichtigungseinstellungen in Ihrem Profil anpassen.',
                     ),
                   ),
@@ -158,14 +159,14 @@ class HelpScreen extends StatelessWidget {
                     answer: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        ScaledText(
                           'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an Ihren Verein oder direkt an die Geschäftsstelle des Bayerischen Sportschützenbundes e.V.',
                         ),
                         _LinkText(
                           'Zur Webseite des BSSB',
                           'https://www.bssb.de/',
                         ),
-                        Text(
+                        ScaledText(
                           'Kontaktdaten der Geschäftsstelle finden Sie im Impressum der App.',
                         ),
                       ],
@@ -196,18 +197,22 @@ class _AccordionSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        ScaledText(
           title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: UIConstants.defaultAppColor,
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: UIConstants.helpSpacing),
         ...questions,
       ],
     );
   }
 }
 
-class _AccordionItem extends StatelessWidget {
+class _AccordionItem extends StatefulWidget {
   const _AccordionItem({
     required this.question,
     required this.answer,
@@ -217,37 +222,31 @@ class _AccordionItem extends StatelessWidget {
   final Widget answer;
 
   @override
+  State<_AccordionItem> createState() => _AccordionItemState();
+}
+
+class _AccordionItemState extends State<_AccordionItem> {
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title:
-          Text(question, style: const TextStyle(fontWeight: FontWeight.bold)),
-      leading: Container(
-        width: 24,
-        height: 24,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.grey,
+    return Card(
+      margin: const EdgeInsets.only(bottom: UIConstants.helpSpacing),
+      child: ExpansionTile(
+        title: ScaledText(
+          widget.question,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        child: const Center(
-          child: Icon(
-            Icons.add,
-            size: 18,
-            color: Colors.grey,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(UIConstants.helpSpacing),
+            child: widget.answer,
           ),
-        ),
+        ],
       ),
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: answer,
-        ),
-      ],
-      onExpansionChanged: (bool expanded) {
-        // You could potentially change the leading icon here if desired
-        // based on the expanded state (e.g., to a minus sign in a circle).
-      },
     );
   }
 }
@@ -260,27 +259,18 @@ class _LinkText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        if (await canLaunchUrl(Uri.parse(url))) {
-          await launchUrl(Uri.parse(url));
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Could not launch URL')),
-            );
-          }
+    return TextButton(
+      onPressed: () async {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: UIConstants.linkColor,
-            fontSize: UIConstants.bodyFontSize,
-            decoration: TextDecoration.underline,
-          ),
+      child: ScaledText(
+        text,
+        style: const TextStyle(
+          color: UIConstants.defaultAppColor,
+          decoration: TextDecoration.underline,
         ),
       ),
     );

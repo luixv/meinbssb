@@ -11,12 +11,12 @@ class ScaledText extends StatelessWidget {
 
   const ScaledText(
     this.text, {
-    Key? key,
+    super.key,
     this.style,
     this.textAlign,
     this.maxLines,
     this.overflow,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

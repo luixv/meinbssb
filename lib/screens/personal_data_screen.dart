@@ -10,6 +10,7 @@ import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -241,13 +242,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   Widget _buildPersonalDataForm() {
     return _errorMessage != null
         ? Center(
-            child: Text(
+            child: ScaledText(
               _errorMessage!,
             ),
           )
         : _currentPassData == null && !_isLoading
             ? const Center(
-                child: Text('Keine persönlichen Daten verfügbar.'),
+                child: ScaledText('Keine persönlichen Daten verfügbar.'),
               )
             : Padding(
                 padding: UIConstants.defaultPadding,

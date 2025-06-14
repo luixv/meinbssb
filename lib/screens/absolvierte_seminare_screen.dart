@@ -7,6 +7,7 @@ import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/schulung.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class AbsolvierteSeminareScreen extends StatefulWidget {
   const AbsolvierteSeminareScreen(
@@ -113,7 +114,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else if (absolvierteSeminare.isEmpty)
-              const Text(
+              const ScaledText(
                 'Keine absolvierten Seminare gefunden.',
                 style: TextStyle(color: UIConstants.greySubtitleTextColor),
               )
@@ -149,18 +150,18 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
                           ),
                         ],
                       ),
-                      title: Text(
+                      title: ScaledText(
                         seminar.bezeichnung,
                         style: UIStyles.subtitleStyle,
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          ScaledText(
                             'Ausgestellt am: $formattedAusgestelltAm',
                             style: UIStyles.listItemSubtitleStyle,
                           ),
-                          Text(
+                          ScaledText(
                             'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
                             style: UIStyles.listItemSubtitleStyle,
                           ),

@@ -10,6 +10,7 @@ import '/services/api/auth_service.dart';
 import '/services/core/error_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
@@ -86,7 +87,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
-            Text(
+            ScaledText(
               UIConstants.passwordResetTitle,
               key: const Key('passwordResetTitle'),
               style: UIStyles.headerStyle.copyWith(
@@ -95,9 +96,9 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             ),
             const SizedBox(height: UIConstants.spacingS),
             if (_errorMessage.isNotEmpty)
-              Text(_errorMessage, style: UIStyles.errorStyle),
+              ScaledText(_errorMessage, style: UIStyles.errorStyle),
             if (_successMessage.isNotEmpty)
-              Text(_successMessage, style: UIStyles.successStyle),
+              ScaledText(_successMessage, style: UIStyles.successStyle),
             TextField(
               controller: _passNumberController,
               decoration: UIStyles.formInputDecoration.copyWith(
@@ -113,12 +114,12 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 style: UIStyles.defaultButtonStyle,
                 child: _isLoading
                     ? UIConstants.defaultLoadingIndicator
-                    : const Row(
+                    : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.lock_reset, color: Colors.white),
-                          SizedBox(width: UIConstants.spacingS),
-                          Text(
+                          const Icon(Icons.lock_reset, color: Colors.white),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ScaledText(
                             UIConstants.resetPasswordButtonLabel,
                             style: UIStyles.buttonStyle,
                           ),

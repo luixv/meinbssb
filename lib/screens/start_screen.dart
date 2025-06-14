@@ -8,6 +8,7 @@ import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/schulung.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -95,7 +96,7 @@ class StartScreenState extends State<StartScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: Text(
+            child: ScaledText(
               'Schulung abmelden',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -133,7 +134,7 @@ class StartScreenState extends State<StartScreen> {
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
+                          ScaledText(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -155,7 +156,7 @@ class StartScreenState extends State<StartScreen> {
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
+                          ScaledText(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
@@ -187,9 +188,9 @@ class StartScreenState extends State<StartScreen> {
           setState(() => schulungen.removeAt(index));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler beim Abmelden von der Schulung.'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: ScaledText('Fehler beim Abmelden von der Schulung.'),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -199,13 +200,15 @@ class StartScreenState extends State<StartScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: ScaledText('Error: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
       }
     } finally {
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -225,28 +228,28 @@ class StartScreenState extends State<StartScreen> {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingM),
-            Text(
+            ScaledText(
               "${userData?.vorname ?? ''} ${userData?.namen ?? ''}",
               style: UIStyles.titleStyle,
             ),
             const SizedBox(height: UIConstants.spacingS),
-            Text(
+            ScaledText(
               userData?.passnummer ?? '',
               style: UIStyles.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
-            Text(
+            ScaledText(
               'Schützenpassnummer',
               style: UIStyles.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingS),
-            Text(
+            ScaledText(
               userData?.vereinName ?? '',
               style: UIStyles.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
-            Text(
+            ScaledText(
               'Erstverein',
               style: UIStyles.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleTextColor),
@@ -260,14 +263,14 @@ class StartScreenState extends State<StartScreen> {
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
               child: const Center(
-                child: Text(
+                child: ScaledText(
                   'Hier könnten News stehen',
                   style: UIStyles.newsStyle,
                 ),
               ),
             ),
             const SizedBox(height: UIConstants.spacingM),
-            const Text(
+            const ScaledText(
               'Angemeldete Schulungen:',
               style: UIStyles.titleStyle,
             ),
@@ -275,7 +278,7 @@ class StartScreenState extends State<StartScreen> {
             if (isLoading)
               const Center(child: CircularProgressIndicator())
             else if (schulungen.isEmpty)
-              const Text(
+              const ScaledText(
                 'Keine Schulungen gefunden.',
                 style: TextStyle(color: UIConstants.greySubtitleTextColor),
               )
@@ -308,11 +311,11 @@ class StartScreenState extends State<StartScreen> {
                           ),
                         ],
                       ),
-                      title: Text(
+                      title: ScaledText(
                         schulung.bezeichnung,
                         style: UIStyles.listItemTitleStyle,
                       ),
-                      subtitle: Text(
+                      subtitle: ScaledText(
                         formattedDate,
                         style: UIStyles.listItemSubtitleStyle,
                       ),

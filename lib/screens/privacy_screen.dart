@@ -7,6 +7,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key, required this.userData});
@@ -23,7 +24,7 @@ class PrivacyScreen extends StatelessWidget {
       },
       body: const Padding(
         padding: UIConstants.defaultPadding,
-        child: Text(
+        child: ScaledText(
           'Hier stehen die Datenschutzbestimmungen des BSSB.',
           style: UIStyles.bodyStyle,
         ),
