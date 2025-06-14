@@ -200,6 +200,23 @@ class UIStyles {
     backgroundColor: UIConstants.defaultAppColor,
     foregroundColor: UIConstants.whiteColor,
     padding: UIConstants.buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+    ),
+  );
+
+  static final ButtonStyle secondaryButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: UIConstants.cancelButtonBackground,
+    foregroundColor: UIConstants.whiteColor,
+    padding: UIConstants.buttonPadding,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+    ),
+  );
+
+  static final ButtonStyle textButtonStyle = TextButton.styleFrom(
+    foregroundColor: UIConstants.linkColor,
+    padding: UIConstants.buttonPadding,
   );
 
   static final ButtonStyle dialogCancelButtonStyle = ElevatedButton.styleFrom(
