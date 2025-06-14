@@ -294,10 +294,12 @@ class AppDrawer extends StatelessWidget {
               title: const ScaledText('Passwort zurücksetzen'),
               onTap: () {
                 Navigator.pop(context);
+                final authService = Provider.of<AuthService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => PasswordResetScreen(
+                      authService: authService,
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
