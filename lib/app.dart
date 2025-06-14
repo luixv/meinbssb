@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
             fontFamily: UIConstants.defaultFontFamily,
             primarySwatch: Colors.blue,
             textTheme: Theme.of(context).textTheme.apply(
-                  fontSizeFactor: fontSizeProvider?.scaleFactor ?? 1.0,
+                  fontSizeFactor: fontSizeProvider.scaleFactor,
                 ),
             textSelectionTheme: const TextSelectionThemeData(
               selectionColor: UIConstants.selectionColor,
@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
             return Theme(
               data: Theme.of(context).copyWith(
                 textTheme: Theme.of(context).textTheme.apply(
-                      fontSizeFactor: fontSizeProvider?.scaleFactor ?? 1.0,
+                      fontSizeFactor: fontSizeProvider.scaleFactor,
                     ),
                 textSelectionTheme: const TextSelectionThemeData(
                   selectionColor: UIConstants.selectionColor,
