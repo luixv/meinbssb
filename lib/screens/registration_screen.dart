@@ -6,14 +6,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
 import '/screens/registration_success_screen.dart';
+import '/screens/base_screen_layout.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/error_service.dart';
 import '/services/core/logger_service.dart';
-import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -107,13 +108,14 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
             textButtonTheme: const TextButtonThemeData(
               style: ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(UIConstants.cancelButtonBackground),
+                backgroundColor: WidgetStatePropertyAll(
+                  UIConstants.cancelButtonBackground,
+                ),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                textStyle: WidgetStatePropertyAll(UIConstants.buttonStyle),
+                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
               ),
             ),
@@ -131,7 +133,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                textStyle: WidgetStatePropertyAll(UIConstants.buttonStyle),
+                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
               ),
             ),
@@ -151,7 +153,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return InkWell(
       onTap: () => _selectDate(context),
       child: InputDecorator(
-        decoration: UIConstants.formInputDecoration.copyWith(
+        decoration: UIStyles.formInputDecoration.copyWith(
           labelText: 'Geburtsdatum',
         ),
         child: Row(
@@ -161,7 +163,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               _selectedDate == null
                   ? 'Wählen Sie Ihr Geburtsdatum'
                   : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
-              style: UIConstants.formValueStyle.copyWith(
+              style: UIStyles.formValueStyle.copyWith(
                 color: _selectedDate != null
                     ? UIConstants.defaultAppColor
                     : UIConstants.greySubtitleTextColor,
@@ -301,36 +303,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Future<void> _sendRegistrationEmail() async {
-    try {
-      final fromEmail = await widget.emailService.getFromEmail();
-      final subject = await widget.emailService.getRegistrationSubject();
-      final registrationContent =
-          await widget.emailService.getRegistrationContent();
-
-      if (fromEmail == null || subject == null || registrationContent == null) {
-        LoggerService.logWarning(
-          'Registration email content not fully configured.',
-        );
-        return;
-      }
-
-      final emailResponse = await widget.emailService.sendEmail(
-        from: fromEmail,
-        recipient: _emailController.text,
-        subject: subject,
-        body: registrationContent,
-      );
-
-      if (emailResponse['ResultType'] != 1) {
-        throw Exception(emailResponse['ResultMessage']);
-      }
-    } catch (e) {
-      LoggerService.logError('Error sending email: $e');
-      rethrow;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
@@ -351,7 +323,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: UIConstants.spacingS),
               Text(
                 'Registrierung',
-                style: UIConstants.headerStyle
+                style: UIStyles.headerStyle
                     .copyWith(color: UIConstants.defaultAppColor),
               ),
               const SizedBox(height: UIConstants.spacingS),
@@ -372,12 +344,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             padding: const EdgeInsets.symmetric(
               vertical: UIConstants.spacingS,
             ),
-            child: Text(_successMessage, style: UIConstants.successStyle),
+            child: Text(_successMessage, style: UIStyles.successStyle),
           ),
         TextField(
           key: const Key('firstNameField'),
           controller: _firstNameController,
-          decoration: UIConstants.formInputDecoration.copyWith(
+          decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'Vorname',
           ),
           onChanged: (_) => setState(() {}),
@@ -386,7 +358,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           key: const Key('lastNameField'),
           controller: _lastNameController,
-          decoration: UIConstants.formInputDecoration.copyWith(
+          decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'Nachname',
           ),
           onChanged: (_) => setState(() {}),
@@ -395,7 +367,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           key: const Key('passNumberField'),
           controller: _passNumberController,
-          decoration: UIConstants.formInputDecoration.copyWith(
+          decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'Schützenausweisnummer',
             errorText: passNumberError,
           ),
@@ -410,7 +382,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           key: const Key('emailField'),
           controller: _emailController,
           focusNode: _emailFocusNode,
-          decoration: UIConstants.formInputDecoration.copyWith(
+          decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'E-mail',
             errorText: _emailFieldTouched ? emailError : null,
           ),
@@ -435,7 +407,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           key: const Key('zipCodeField'),
           controller: _zipCodeController,
-          decoration: UIConstants.formInputDecoration.copyWith(
+          decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'Postleitzahl',
             errorText: zipCodeError,
           ),
@@ -459,12 +431,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             Expanded(
               child: RichText(
                 text: TextSpan(
-                  style: UIConstants.bodyStyle,
+                  style: UIStyles.bodyStyle,
                   children: <TextSpan>[
                     const TextSpan(text: 'Ich habe die '),
                     TextSpan(
                       text: 'Datenschutzbestimmungen',
-                      style: UIConstants.linkStyle.copyWith(
+                      style: UIStyles.linkStyle.copyWith(
                         color: UIConstants.linkColor,
                         decoration: TextDecoration.underline,
                       ),
@@ -509,10 +481,43 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
-                : const Text('Registrieren'),
+                : const Text(
+                    UIConstants.registerButtonLabel,
+                    style: UIStyles.buttonStyle,
+                  ),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _sendRegistrationEmail() async {
+    try {
+      final fromEmail = await widget.emailService.getFromEmail();
+      final subject = await widget.emailService.getRegistrationSubject();
+      final registrationContent =
+          await widget.emailService.getRegistrationContent();
+
+      if (fromEmail == null || subject == null || registrationContent == null) {
+        LoggerService.logWarning(
+          'Registration email content not fully configured.',
+        );
+        return;
+      }
+
+      final emailResponse = await widget.emailService.sendEmail(
+        from: fromEmail,
+        recipient: _emailController.text,
+        subject: subject,
+        body: registrationContent,
+      );
+
+      if (emailResponse['ResultType'] != 1) {
+        throw Exception(emailResponse['ResultMessage']);
+      }
+    } catch (e) {
+      LoggerService.logError('Error sending email: $e');
+      rethrow;
+    }
   }
 }

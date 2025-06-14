@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/models/bank_data.dart';
 import '/models/user_data.dart';
 import '/services/api_service.dart';
@@ -94,13 +95,13 @@ class BankDataScreenState extends State<BankDataScreen> {
           title: const Center(
             child: Text(
               'Bankdaten löschen',
-              style: UIConstants.dialogTitleStyle,
+              style: UIStyles.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.dialogContentStyle,
+              style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
                   text: 'Sind Sie sicher, dass Sie die Bankdaten für ',
@@ -117,7 +118,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: UIConstants.dialogPadding,
+              padding: const EdgeInsets.all(UIConstants.spacingM),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -126,7 +127,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: UIConstants.dialogCancelButtonStyle,
+                      style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -134,7 +135,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
                             ),
                           ),
@@ -148,7 +149,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: UIConstants.dialogAcceptButtonStyle,
+                      style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -156,7 +157,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
                             ),
                           ),
@@ -204,7 +205,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Bankdaten erfolgreich gelöscht.'),
-              duration: UIConstants.snackBarDuration,
+              duration: Duration(seconds: 3),
             ),
           );
           _kontoinhaberController.clear();
@@ -215,7 +216,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Bankdaten.'),
-              duration: UIConstants.snackBarDuration,
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -226,7 +227,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -277,7 +278,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Speichern der Bankdaten.'),
-              duration: UIConstants.snackBarDuration,
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -288,7 +289,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -330,13 +331,13 @@ class BankDataScreenState extends State<BankDataScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Fehler beim Laden der Bankdaten',
-                style: UIConstants.headerStyle,
+                style: UIStyles.headerStyle,
               ),
               const SizedBox(height: 8),
               const Text(
                 'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
                 textAlign: TextAlign.center,
-                style: UIConstants.bodyStyle,
+                style: UIStyles.bodyStyle,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -377,13 +378,13 @@ class BankDataScreenState extends State<BankDataScreen> {
                   const SizedBox(height: 16),
                   const Text(
                     'Fehler beim Laden der Bankdaten',
-                    style: UIConstants.headerStyle,
+                    style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     snapshot.error.toString(),
                     textAlign: TextAlign.center,
-                    style: UIConstants.bodyStyle,
+                    style: UIStyles.bodyStyle,
                   ),
                 ],
               ),
@@ -469,7 +470,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           fontSize: UIConstants.bodyFontSize,
           fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
         ),
-        decoration: UIConstants.formInputDecoration.copyWith(
+        decoration: UIStyles.formInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isReadOnly ? null : label,

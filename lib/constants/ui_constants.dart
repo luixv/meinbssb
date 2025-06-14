@@ -104,6 +104,8 @@ class UIConstants {
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
+  static const double spacingXXL = 48.0;
+  static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
 
   // Common Widgets - Using getters instead of const
@@ -142,257 +144,50 @@ class UIConstants {
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
 
-  // Text styles
-  static const TextStyle appBarTitleStyle = TextStyle(
-    fontSize: 20.0,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: textColor,
-  );
+  // Strings
+  static const String loginButtonLabel = 'Anmelden';
+  static const String forgotPasswordLabel = 'Passwort vergessen?';
+  static const String bankDataTitle = 'Bankdaten';
+  static const String bankDataSubtitle = 'Bitte geben Sie Ihre Bankdaten ein';
+  static const String homeTitle = 'Home';
+  static const String welcomeMessage = 'Willkommen';
+  static const String checkPassNumberButtonLabel = 'Passnummer prüfen';
+  static const String passwordResetTitle = 'Passwort zurücksetzen';
+  static const String passwordResetSuccessTitle =
+      'Passwort erfolgreich zurückgesetzt';
+  static const String passwordResetSuccessMessage =
+      'Sie können sich jetzt mit Ihrem neuen Passwort anmelden.';
+  static const String backToLoginButtonLabel = 'Zurück zum Login';
+  static const String passNumberLabel = 'Schützenausweisnummer';
+  static const String resetPasswordButtonLabel = 'Passwort zurücksetzen';
+  static const String logoutLabel = 'Abmelden';
+  static const String registerButtonLabel = 'Registrieren';
+  static const String cancelButtonLabel = 'Abbrechen';
 
-  static const TextStyle titleStyle = TextStyle(
-    fontSize: titleFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: textColor,
-  );
-
-  static const TextStyle subtitleStyle = TextStyle(
-    fontSize: subtitleFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: textColor,
-  );
-
-  static const TextStyle bodyStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: textColor,
-  );
-
-  static const TextStyle buttonStyle = TextStyle(
-    fontSize: buttonFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: Colors.white,
-  );
-
-  static const TextStyle formLabelStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: textColor,
-  );
-
-  static const TextStyle formValueStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: textColor,
-  );
-
-  static const TextStyle formValueBoldStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: textColor,
-  );
-
-  static const TextStyle errorStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: errorColor,
-  );
-
-  static const TextStyle successStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: successColor,
-  );
-
-  static const TextStyle warningStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: warningColor,
-  );
-
-  static const TextStyle infoStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: infoColor,
-  );
-
-  static const TextStyle newsStyle = TextStyle(
-    fontSize: titleFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
-
-  static const TextStyle listItemTitleStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: textColor,
-  );
-
-  static const TextStyle listItemSubtitleStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: greyColor,
-  );
-
-  static const TextStyle dialogTitleStyle = TextStyle(
-    fontSize: titleFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: textColor,
-  );
-
-  static const TextStyle dialogContentStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    color: textColor,
-  );
-
-  static const TextStyle dialogButtonStyle = TextStyle(
-    fontSize: bodyFontSize,
-    fontFamily: defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: textColor,
-  );
-
-  // Button Styles
-  static final ButtonStyle dialogCancelButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: cancelButtonBackground,
-    padding: buttonPadding,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-    ),
-  );
-
-  static final ButtonStyle dialogAcceptButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: acceptButtonBackground,
-    padding: buttonPadding,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-    ),
-  );
-
-  static final ButtonStyle dialogDeleteButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: deleteButtonBackground,
-    padding: buttonPadding,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-    ),
-  );
-
-  static final ButtonStyle dialogSubmitButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: submitButtonBackground,
-    padding: buttonPadding,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-    ),
-  );
-
-  static const TextStyle linkStyle = TextStyle(
-    decoration: TextDecoration.underline,
-    color: linkColor,
-    fontSize: bodyFontSize,
-  );
-
-  static const TextStyle headerStyle = TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: headerFontSize,
-  );
-
-  // Form Styles
-  static final InputDecoration formInputDecoration = InputDecoration(
-    filled: true,
-    fillColor: Colors.white,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-      borderSide: const BorderSide(color: Colors.grey),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-      borderSide: const BorderSide(color: Colors.grey),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-      borderSide: const BorderSide(color: primaryColor),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-      borderSide: const BorderSide(color: errorColor),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(cornerRadius),
-      borderSide: const BorderSide(color: errorColor),
-    ),
-    contentPadding:
-        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-  );
-
-  // Duration
-  static const Duration snackBarDuration = Duration(seconds: 3);
-  static const Duration loadingDelay = Duration(seconds: 10);
-
-  // Container heights
-  static const double newsContainerHeight = 100.0;
-  static const double helpSpacing = 8.0;
-  static const double bankDataSpacing = 16.0;
-
-  // Alignment constants
-  static const MainAxisAlignment listItemLeadingAlignment =
-      MainAxisAlignment.center;
-  static const MainAxisAlignment centerAlignment = MainAxisAlignment.center;
+  // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =
       MainAxisAlignment.spaceBetween;
+  static const MainAxisAlignment centerAlignment = MainAxisAlignment.center;
   static const CrossAxisAlignment startCrossAlignment =
       CrossAxisAlignment.start;
 
-  static const TextStyle menuItemStyle = TextStyle(
-    fontSize: bodyFontSize,
-    color: Colors.black87,
+  // Loading Indicator
+  static const Widget defaultLoadingIndicator = CircularProgressIndicator(
+    valueColor: AlwaysStoppedAnimation<Color>(circularProgressIndicator),
   );
 
-  // Button Styles
-  static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: defaultAppColor,
-    foregroundColor: whiteColor,
-    padding:
-        const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-  );
+  // Help screen
+  static const String helpTitle = 'FAQ';
 
-  static final ButtonStyle secondaryButtonStyle = OutlinedButton.styleFrom(
-    foregroundColor: defaultAppColor,
-    side: const BorderSide(color: defaultAppColor),
-    padding:
-        const EdgeInsets.symmetric(horizontal: spacingL, vertical: spacingM),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-  );
+  // Cookie Consent
+  static const String cookieConsentTitle = 'Wir verwenden Cookies';
+  static const String cookieConsentMessage =
+      'Um diese App offline nutzen zu können, verwenden wir Cookies.';
+  static const String cookieSettingsButtonLabel = 'Einstellungen';
+  static const String cookieAcceptAllButtonLabel = 'Alle akzeptieren';
 
-  // Input Decoration
-  static const InputDecoration defaultInputDecoration = InputDecoration(
-    border: OutlineInputBorder(),
-    contentPadding:
-        EdgeInsets.symmetric(horizontal: spacingM, vertical: spacingS),
-  );
-
-  // Card Styles
-  static final BoxDecoration cardDecoration = BoxDecoration(
-    color: whiteColor,
-    borderRadius: BorderRadius.circular(8.0),
-    boxShadow: const [
-      BoxShadow(
-        color: Colors.black,
-        blurRadius: 4.0,
-        offset: Offset(0, 2),
-      ),
-    ],
-  );
+  // Layout
+  static const double newsContainerHeight = 100.0;
+  static const MainAxisAlignment listItemLeadingAlignment =
+      MainAxisAlignment.start;
 }

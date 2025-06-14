@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
@@ -140,7 +141,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
                             BorderRadius.circular(UIConstants.cornerRadius),
                       ),
                       leading: const Column(
-                        mainAxisAlignment: UIConstants.listItemLeadingAlignment,
+                        mainAxisAlignment: UIStyles.listItemLeadingAlignment,
                         children: [
                           Icon(
                             Icons.task_alt,
@@ -150,18 +151,18 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
                       ),
                       title: Text(
                         seminar.bezeichnung,
-                        style: UIConstants.subtitleStyle,
+                        style: UIStyles.subtitleStyle,
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Ausgestellt am: $formattedAusgestelltAm',
-                            style: UIConstants.listItemSubtitleStyle,
+                            style: UIStyles.listItemSubtitleStyle,
                           ),
                           Text(
                             'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
-                            style: UIConstants.listItemSubtitleStyle,
+                            style: UIStyles.listItemSubtitleStyle,
                           ),
                         ],
                       ),

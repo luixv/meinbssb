@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/screens/base_screen_layout.dart';
@@ -71,7 +72,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                   return Center(
                     child: Text(
                       'Error beim Laden des Schützenausweises: $errorMessage',
-                      style: UIConstants.errorStyle,
+                      style: UIStyles.errorStyle,
                     ),
                   );
                 }
@@ -86,7 +87,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                 return const Center(
                   child: Text(
                     'Kein Schützenausweis verfügbar',
-                    style: UIConstants.bodyStyle,
+                    style: UIStyles.bodyStyle,
                   ),
                 );
               },

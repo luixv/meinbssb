@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/models/contact.dart';
 import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
@@ -92,13 +93,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           title: const Center(
             child: Text(
               'Kontaktdaten löschen',
-              style: UIConstants.dialogTitleStyle,
+              style: UIStyles.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.dialogContentStyle,
+              style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
                   text: 'Sind Sie sicher, dass Sie die Kontaktdaten ',
@@ -126,7 +127,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: UIConstants.dialogCancelButtonStyle,
+                      style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -134,7 +135,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
                             ),
                           ),
@@ -148,7 +149,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: UIConstants.dialogAcceptButtonStyle,
+                      style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -156,7 +157,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
                             ),
                           ),
@@ -202,16 +203,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Kontakt erfolgreich gelöscht.'),
-              duration: UIConstants.snackBarDuration,
+              content: Text('Kontaktdaten erfolgreich gelöscht.'),
+              duration: Duration(seconds: 3),
             ),
           );
           _fetchContacts();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Fehler beim Löschen des Kontakts.'),
-              duration: UIConstants.snackBarDuration,
+              content: Text('Fehler beim Löschen der Kontaktdaten.'),
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -222,7 +223,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -244,7 +245,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
-            duration: UIConstants.snackBarDuration,
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -278,7 +279,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(validationErrorMessage),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -297,8 +298,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Kontakt erfolgreich hinzugefügt.'),
-              duration: UIConstants.snackBarDuration,
+              content: Text('Kontaktdaten erfolgreich gespeichert.'),
+              duration: Duration(seconds: 3),
             ),
           );
           _kontaktController.clear();
@@ -307,8 +308,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Fehler beim Hinzufügen des Kontakts.'),
-              duration: UIConstants.snackBarDuration,
+              content: Text('Fehler beim Speichern der Kontaktdaten.'),
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -319,7 +320,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -346,14 +347,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           title: const Center(
             child: Text(
               'Neuen Kontakt hinzufügen',
-              style: UIConstants.dialogTitleStyle,
+              style: UIStyles.dialogTitleStyle,
             ),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 DropdownButtonFormField<int>(
-                  decoration: UIConstants.formInputDecoration.copyWith(
+                  decoration: UIStyles.formInputDecoration.copyWith(
                     labelText: 'Kontakttyp',
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
@@ -373,7 +374,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: _kontaktController,
-                  decoration: UIConstants.formInputDecoration.copyWith(
+                  decoration: UIStyles.formInputDecoration.copyWith(
                     labelText: 'Kontakt',
                     hintText: 'z.B. email@beispiel.de oder 0123 456789',
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -396,22 +397,20 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
-                      child: const Row(
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.close,
                             color: UIConstants.closeIcon,
                           ),
-                          SizedBox(width: UIConstants.spacingS),
+                          const SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Abbrechen',
-                            style:
-                                TextStyle(color: UIConstants.cancelButtonText),
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
                           ),
                         ],
                       ),
@@ -421,10 +420,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.acceptButtonBackground,
-                        padding: UIConstants.buttonPadding,
-                      ),
+                      style: UIStyles.dialogAcceptButtonStyle,
                       child: _isAdding
                           ? const CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
@@ -443,7 +439,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                 const SizedBox(width: UIConstants.spacingS),
                                 Text(
                                   'Hinzufügen',
-                                  style: UIConstants.dialogButtonStyle.copyWith(
+                                  style:
+                                      UIStyles.dialogButtonTextStyle.copyWith(
                                     color: UIConstants.submitButtonText,
                                   ),
                                 ),
@@ -494,7 +491,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             return Center(
               child: Text(
                 'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                style: UIConstants.errorStyle,
+                style: UIStyles.errorStyle,
               ),
             );
           } else if (snapshot.hasData && snapshot.data != null) {
@@ -554,7 +551,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 ),
                 child: Text(
                   categoryName,
-                  style: UIConstants.subtitleStyle.copyWith(
+                  style: UIStyles.subtitleStyle.copyWith(
                     color: UIConstants.primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: UIConstants.titleFontSize,
@@ -607,7 +604,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           fontWeight: FontWeight.bold,
           fontSize: UIConstants.bodyFontSize,
         ),
-        decoration: UIConstants.formInputDecoration.copyWith(
+        decoration: UIStyles.formInputDecoration.copyWith(
           labelText: displayLabelFormatted,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: isDeleting ? null : displayLabelFormatted,

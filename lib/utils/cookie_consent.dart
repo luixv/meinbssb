@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/services/core/logger_service.dart';
 
 class CookieConsent extends StatefulWidget {
@@ -113,22 +114,15 @@ class _CookieConsentState extends State<CookieConsent> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min, // Wrap content tightly
                       children: [
-                        Text(
-                          'Wir verwenden Cookies',
-                          style: UIConstants.dialogTitleStyle.copyWith(
-                            // Consistent title style
-                            color: UIConstants.defaultAppColor,
-                          ),
+                        const Text(
+                          UIConstants.cookieConsentTitle,
+                          style: UIStyles.dialogTitleStyle,
                         ),
                         const SizedBox(height: UIConstants.spacingL),
-                        Text(
-                          'Um diese App offline nutzen zu können, verwenden wir Cookies.',
+                        const Text(
+                          UIConstants.cookieConsentMessage,
                           textAlign: TextAlign.center,
-                          style: UIConstants.dialogContentStyle.copyWith(
-                            // Consistent content style
-                            color: UIConstants
-                                .textColor, // Replaced bodyTextColor with textColor
-                          ),
+                          style: UIStyles.dialogContentStyle,
                         ),
                         const SizedBox(height: UIConstants.spacingS),
                         Padding(
@@ -142,7 +136,7 @@ class _CookieConsentState extends State<CookieConsent> {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: _acceptConsent, // Handle accept
-                                  style: UIConstants
+                                  style: UIStyles
                                       .dialogAcceptButtonStyle, // Consistent accept button style
                                   child: Row(
                                     mainAxisAlignment:
@@ -155,7 +149,7 @@ class _CookieConsentState extends State<CookieConsent> {
                                       UIConstants.horizontalSpacingS,
                                       Text(
                                         'Zustimmen',
-                                        style: UIConstants.dialogButtonStyle
+                                        style: UIStyles.dialogButtonTextStyle
                                             .copyWith(
                                           color: UIConstants.submitButtonText,
                                         ),

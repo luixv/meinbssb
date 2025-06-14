@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 
@@ -24,7 +25,7 @@ class PrivacyScreen extends StatelessWidget {
         padding: UIConstants.defaultPadding,
         child: Text(
           'Hier stehen die Datenschutzbestimmungen des BSSB.',
-          style: UIConstants.bodyStyle,
+          style: UIStyles.bodyStyle,
         ),
       ),
     );

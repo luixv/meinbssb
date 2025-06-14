@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/services/api/user_service.dart';
@@ -120,7 +121,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
               ? Center(
                   child: Text(
                     _errorMessage!,
-                    style: UIConstants.errorStyle,
+                    style: UIStyles.errorStyle,
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -131,7 +132,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                     children: [
                       Text(
                         'Erstverein',
-                        style: UIConstants.headerStyle.copyWith(
+                        style: UIStyles.headerStyle.copyWith(
                           color: UIConstants.defaultAppColor,
                         ),
                       ),
@@ -145,18 +146,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 Expanded(
                                   child: RichText(
                                     text: TextSpan(
-                                      style: UIConstants.bodyStyle,
+                                      style: UIStyles.bodyStyle,
                                       children: <TextSpan>[
                                         TextSpan(
                                           text: _passData!.passnummer,
-                                          style: UIConstants.bodyStyle.copyWith(
+                                          style: UIStyles.bodyStyle.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         const TextSpan(text: ' - '),
                                         TextSpan(
                                           text: _passData!.vereinName,
-                                          style: UIConstants.bodyStyle.copyWith(
+                                          style: UIStyles.bodyStyle.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -171,12 +172,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       else
                         const Text(
                           'Keine Erstvereinsdaten verfügbar.',
-                          style: UIConstants.bodyStyle,
+                          style: UIStyles.bodyStyle,
                         ),
                       const SizedBox(height: UIConstants.spacingM),
                       Text(
                         'Zweitvereine',
-                        style: UIConstants.headerStyle.copyWith(
+                        style: UIStyles.headerStyle.copyWith(
                           color: UIConstants.defaultAppColor,
                         ),
                       ),
@@ -200,20 +201,20 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       Expanded(
                                         child: RichText(
                                           text: TextSpan(
-                                            style: UIConstants.bodyStyle,
+                                            style: UIStyles.bodyStyle,
                                             children: [
                                               TextSpan(
                                                 text: '${zve.vVereinNr}',
-                                                style: UIConstants.bodyStyle
-                                                    .copyWith(
+                                                style:
+                                                    UIStyles.bodyStyle.copyWith(
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               const TextSpan(text: ' - '),
                                               TextSpan(
                                                 text: zve.vereinName ?? 'N/A',
-                                                style: UIConstants.bodyStyle
-                                                    .copyWith(
+                                                style:
+                                                    UIStyles.bodyStyle.copyWith(
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -252,8 +253,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     selectedDisziplin
                                                             .disziplin ??
                                                         'N/A',
-                                                    style:
-                                                        UIConstants.bodyStyle,
+                                                    style: UIStyles.bodyStyle,
                                                   ),
                                                 ),
                                                 IconButton(
@@ -345,8 +345,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       return TextFormField(
                                         controller: textEditingController,
                                         focusNode: focusNode,
-                                        decoration: UIConstants
-                                            .formInputDecoration
+                                        decoration: UIStyles.formInputDecoration
                                             .copyWith(
                                           labelText: 'Disziplin suchen',
                                         ),
@@ -385,7 +384,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       else
                         const Text(
                           'Keine Zweitvereinsdaten verfügbar.',
-                          style: UIConstants.bodyStyle,
+                          style: UIStyles.bodyStyle,
                         ),
                     ],
                   ),

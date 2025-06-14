@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
 import '/models/user_data.dart';
@@ -34,7 +35,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingS),
             Text(
               message,
-              style: UIConstants.successStyle,
+              style: UIStyles.successStyle,
             ),
           ],
         ),

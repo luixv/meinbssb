@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/error_service.dart';
@@ -74,7 +75,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Passwort zurücksetzen',
+      title: UIConstants.passwordResetTitle,
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -86,21 +87,21 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
             Text(
-              'Passwort zurücksetzen',
+              UIConstants.passwordResetTitle,
               key: const Key('passwordResetTitle'),
-              style: UIConstants.headerStyle.copyWith(
+              style: UIStyles.headerStyle.copyWith(
                 color: UIConstants.defaultAppColor,
               ),
             ),
             const SizedBox(height: UIConstants.spacingS),
             if (_errorMessage.isNotEmpty)
-              Text(_errorMessage, style: UIConstants.errorStyle),
+              Text(_errorMessage, style: UIStyles.errorStyle),
             if (_successMessage.isNotEmpty)
-              Text(_successMessage, style: UIConstants.successStyle),
+              Text(_successMessage, style: UIStyles.successStyle),
             TextField(
               controller: _passNumberController,
-              decoration: UIConstants.formInputDecoration.copyWith(
-                labelText: 'Schützenausweisnummer',
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: UIConstants.passNumberLabel,
               ),
             ),
             const SizedBox(height: UIConstants.spacingS),
@@ -109,22 +110,12 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               child: ElevatedButton(
                 key: const Key('forgotPasswordButton'),
                 onPressed: _isLoading ? null : _resetPassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: UIConstants.submitButtonBackground,
-                  padding: UIConstants.buttonPadding,
-                ),
+                style: UIStyles.primaryButtonStyle,
                 child: _isLoading
-                    ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.circularProgressIndicator,
-                        ),
-                      )
+                    ? UIConstants.defaultLoadingIndicator
                     : const Text(
-                        'Passwort zurücksetzen',
-                        style: TextStyle(
-                          fontSize: UIConstants.bodyFontSize,
-                          color: UIConstants.submitButtonText,
-                        ),
+                        UIConstants.resetPasswordButtonLabel,
+                        style: UIStyles.buttonStyle,
                       ),
               ),
             ),

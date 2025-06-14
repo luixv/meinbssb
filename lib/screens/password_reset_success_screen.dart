@@ -4,9 +4,12 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import '/screens/login_screen.dart';
+import '/services/api/auth_service.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   const PasswordResetSuccessScreen({
@@ -14,10 +17,12 @@ class PasswordResetSuccessScreen extends StatelessWidget {
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
+    required this.authService,
   });
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
+  final AuthService authService;
 
   @override
   Widget build(BuildContext context) {
@@ -39,23 +44,34 @@ class PasswordResetSuccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Text(
-              'Passwort erfolgreich zurückgesetzt',
-              style: UIConstants.titleStyle,
+              UIConstants.passwordResetSuccessTitle,
+              style: UIStyles.titleStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Text(
-              'Sie können sich jetzt mit Ihrem neuen Passwort anmelden.',
-              style: UIConstants.bodyStyle,
+              UIConstants.passwordResetSuccessMessage,
+              style: UIStyles.bodyStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: UIConstants.spacingL),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(
+                      onLoginSuccess: (userData) {
+                        Navigator.of(context).pushReplacementNamed('/home');
+                      },
+                    ),
+                  ),
+                );
               },
-              style: UIConstants.primaryButtonStyle,
-              child: const Text('Zurück zum Login'),
+              style: UIStyles.primaryButtonStyle,
+              child: const Text(
+                UIConstants.backToLoginButtonLabel,
+                style: UIStyles.buttonStyle,
+              ),
             ),
           ],
         ),

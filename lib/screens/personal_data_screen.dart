@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/personal_data_result_screen.dart';
 import '/services/core/logger_service.dart';
 import '/services/api_service.dart';
@@ -264,21 +265,21 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           controller: _passnummerController,
                           isReadOnly: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Geburtsdatum',
                           controller: _geburtsdatumController,
                           isReadOnly: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                           suffixIcon: Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
                             preferBelow: false,
                             child: Icon(
                               Icons.info_outline,
-                              size: UIConstants.subtitleStyle.fontSize,
+                              size: UIStyles.subtitleStyle.fontSize,
                             ),
                           ),
                         ),
@@ -287,7 +288,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           controller: _titelController,
                           isReadOnly: !_isEditing,
                           validator: (value) => null,
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Vorname',
@@ -299,7 +300,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Nachname',
@@ -311,7 +312,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Straße und Hausnummer',
@@ -323,7 +324,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Postleitzahl',
@@ -335,7 +336,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Ort',
@@ -347,7 +348,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIConstants.formValueStyle,
+                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         const SizedBox(
                           height: UIConstants.spacingS,
@@ -370,16 +371,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     TextInputType? keyboardType,
   }) {
     // Use UIConstants form styles
-    final effectiveTextStyle = isReadOnly
-        ? UIConstants.formValueBoldStyle
-        : UIConstants.formValueStyle;
+    final effectiveTextStyle =
+        isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
       child: TextFormField(
         controller: controller,
         style: effectiveTextStyle,
-        decoration: UIConstants.formInputDecoration.copyWith(
+        decoration: UIStyles.formInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: floatingLabelBehavior,
           hintText: isReadOnly ? null : label,

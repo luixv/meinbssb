@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -28,7 +29,10 @@ class HelpScreen extends StatelessWidget {
               const Icon(Icons.arrow_back, color: UIConstants.defaultAppColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text('FAQ', style: UIConstants.appBarTitleStyle),
+        title: const Text(
+          UIConstants.helpTitle,
+          style: UIStyles.appBarTitleStyle,
+        ),
         actions: [
           const Padding(
             padding: UIConstants.appBarRightPadding,

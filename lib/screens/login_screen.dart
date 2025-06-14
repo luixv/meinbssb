@@ -4,7 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
+import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/registration_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/password_reset_screen.dart';
@@ -161,7 +162,7 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('usernameField'),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      decoration: UIConstants.formInputDecoration.copyWith(
+      decoration: UIStyles.formInputDecoration.copyWith(
         labelText: 'E-mail',
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
@@ -173,7 +174,7 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('passwordField'),
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
-      decoration: UIConstants.formInputDecoration.copyWith(
+      decoration: UIStyles.formInputDecoration.copyWith(
         labelText: 'Passwort',
         suffixIcon: IconButton(
           icon: Icon(
@@ -230,7 +231,7 @@ class LoginScreenState extends State<LoginScreen> {
             onPressed: _navigateToPasswordReset,
             child: Text(
               'Passwort vergessen?',
-              style: UIConstants.linkStyle.copyWith(
+              style: UIStyles.linkStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
@@ -242,7 +243,7 @@ class LoginScreenState extends State<LoginScreen> {
               Flexible(
                 child: Text(
                   'Noch kein Konto?',
-                  style: UIConstants.bodyStyle.copyWith(
+                  style: UIStyles.bodyStyle.copyWith(
                     fontSize: UIConstants.subtitleFontSize,
                   ),
                 ),
@@ -252,7 +253,7 @@ class LoginScreenState extends State<LoginScreen> {
                   onPressed: _navigateToRegistrationPage,
                   child: Text(
                     'Registrieren',
-                    style: UIConstants.linkStyle.copyWith(
+                    style: UIStyles.linkStyle.copyWith(
                       fontSize: UIConstants.subtitleFontSize,
                     ),
                   ),
@@ -275,7 +276,7 @@ class LoginScreenState extends State<LoginScreen> {
             },
             child: Text(
               'Hilfe',
-              style: UIConstants.linkStyle.copyWith(
+              style: UIStyles.linkStyle.copyWith(
                 fontSize: UIConstants.subtitleFontSize,
               ),
             ),
@@ -299,7 +300,7 @@ class LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: UIConstants.spacingS),
             Text(
               'Hier anmelden',
-              style: UIConstants.headerStyle.copyWith(color: _appColor),
+              style: UIStyles.headerStyle.copyWith(color: _appColor),
             ),
             const SizedBox(height: UIConstants.spacingS),
             _buildEmailField(),
@@ -307,7 +308,7 @@ class LoginScreenState extends State<LoginScreen> {
             _buildPasswordField(),
             const SizedBox(height: UIConstants.spacingS * 2),
             if (_errorMessage.isNotEmpty)
-              Text(_errorMessage, style: UIConstants.errorStyle),
+              Text(_errorMessage, style: UIStyles.errorStyle),
             _buildLoginButton(),
             const SizedBox(height: UIConstants.spacingS),
             _buildNavigationLinks(),

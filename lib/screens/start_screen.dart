@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
@@ -96,13 +97,13 @@ class StartScreenState extends State<StartScreen> {
           title: const Center(
             child: Text(
               'Schulung abmelden',
-              style: UIConstants.dialogTitleStyle,
+              style: UIStyles.dialogTitleStyle,
             ),
           ),
           content: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: UIConstants.dialogContentStyle,
+              style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(text: 'Sind Sie sicher, dass Sie die Schulung '),
                 TextSpan(
@@ -126,7 +127,7 @@ class StartScreenState extends State<StartScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(false);
                       },
-                      style: UIConstants.dialogCancelButtonStyle,
+                      style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
                         mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
@@ -134,7 +135,7 @@ class StartScreenState extends State<StartScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Abbrechen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
                             ),
                           ),
@@ -148,7 +149,7 @@ class StartScreenState extends State<StartScreen> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop(true);
                       },
-                      style: UIConstants.dialogAcceptButtonStyle,
+                      style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
                         mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
@@ -156,7 +157,7 @@ class StartScreenState extends State<StartScreen> {
                           UIConstants.horizontalSpacingS,
                           Text(
                             'Löschen',
-                            style: UIConstants.dialogButtonStyle.copyWith(
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
                             ),
                           ),
@@ -188,7 +189,7 @@ class StartScreenState extends State<StartScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Abmelden von der Schulung.'),
-              duration: UIConstants.snackBarDuration,
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -199,7 +200,7 @@ class StartScreenState extends State<StartScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
-            duration: UIConstants.snackBarDuration,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -226,28 +227,28 @@ class StartScreenState extends State<StartScreen> {
             const SizedBox(height: UIConstants.spacingM),
             Text(
               "${userData?.vorname ?? ''} ${userData?.namen ?? ''}",
-              style: UIConstants.titleStyle,
+              style: UIStyles.titleStyle,
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
               userData?.passnummer ?? '',
-              style: UIConstants.bodyStyle
+              style: UIStyles.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
             Text(
               'Schützenpassnummer',
-              style: UIConstants.bodyStyle
+              style: UIStyles.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingS),
             Text(
               userData?.vereinName ?? '',
-              style: UIConstants.bodyStyle
+              style: UIStyles.bodyStyle
                   .copyWith(fontSize: UIConstants.subtitleFontSize),
             ),
             Text(
               'Erstverein',
-              style: UIConstants.bodyStyle
+              style: UIStyles.bodyStyle
                   .copyWith(color: UIConstants.greySubtitleTextColor),
             ),
             const SizedBox(height: UIConstants.spacingM),
@@ -261,14 +262,14 @@ class StartScreenState extends State<StartScreen> {
               child: const Center(
                 child: Text(
                   'Hier könnten News stehen',
-                  style: UIConstants.newsStyle,
+                  style: UIStyles.newsStyle,
                 ),
               ),
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Text(
               'Angemeldete Schulungen:',
-              style: UIConstants.titleStyle,
+              style: UIStyles.titleStyle,
             ),
             const SizedBox(height: UIConstants.spacingS),
             if (isLoading)
@@ -309,11 +310,11 @@ class StartScreenState extends State<StartScreen> {
                       ),
                       title: Text(
                         schulung.bezeichnung,
-                        style: UIConstants.listItemTitleStyle,
+                        style: UIStyles.listItemTitleStyle,
                       ),
                       subtitle: Text(
                         formattedDate,
-                        style: UIConstants.listItemSubtitleStyle,
+                        style: UIStyles.listItemSubtitleStyle,
                       ),
                       trailing: IconButton(
                         icon: const Icon(

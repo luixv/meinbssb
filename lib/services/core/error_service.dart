@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/exceptions/api_exception.dart';
 import '/exceptions/authentication_exception.dart';
 import '/exceptions/network_exception.dart';
@@ -17,9 +18,9 @@ class ErrorService {
   static void showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: UIConstants.bodyStyle),
+        content: Text(message, style: UIStyles.bodyStyle),
         backgroundColor: UIConstants.errorColor,
-        duration: UIConstants.snackBarDuration,
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -28,9 +29,9 @@ class ErrorService {
   static void showSuccessSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: UIConstants.bodyStyle),
+        content: Text(message, style: UIStyles.bodyStyle),
         backgroundColor: UIConstants.successColor,
-        duration: UIConstants.snackBarDuration,
+        duration: const Duration(seconds: 3),
       ),
     );
   }

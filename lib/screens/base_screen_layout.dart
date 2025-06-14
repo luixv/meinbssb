@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
@@ -35,7 +36,7 @@ class BaseScreenLayout extends StatelessWidget {
         backgroundColor: UIConstants.backgroundColor,
         title: Text(
           title,
-          style: UIConstants.appBarTitleStyle,
+          style: UIStyles.appBarTitleStyle,
         ),
         actions: [
           ...actions,
