@@ -234,7 +234,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         style: UIStyles.errorStyle,
                       ),
                     const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
+                    const ScaledText(
                       UIConstants.personalDataSubtitle,
                       style: UIStyles.subtitleStyle,
                     ),
@@ -360,11 +360,11 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         style: UIStyles.defaultButtonStyle,
         child: _isLoading
             ? UIConstants.defaultLoadingIndicator
-            : Row(
+            : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.save, color: Colors.white),
-                  const SizedBox(width: UIConstants.spacingS),
+                  Icon(Icons.save, color: Colors.white),
+                  SizedBox(width: UIConstants.spacingS),
                   ScaledText(
                     'Speichern',
                     style: UIStyles.buttonStyle,
