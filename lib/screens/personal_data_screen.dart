@@ -260,6 +260,24 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 ),
               ),
             ),
+      floatingActionButtons: [
+        FloatingActionButton(
+          key: const Key('helpFab'),
+          onPressed: () {
+            Navigator.pushNamed(context, '/help');
+          },
+          backgroundColor: _appColor,
+          child: const Icon(Icons.help_outline),
+        ),
+        FloatingActionButton(
+          key: const Key('settingsFab'),
+          onPressed: () {
+            Navigator.pushNamed(context, '/settings');
+          },
+          backgroundColor: _appColor,
+          child: const Icon(Icons.settings),
+        ),
+      ],
     );
   }
 
