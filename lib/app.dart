@@ -90,68 +90,83 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mein BSSB',
-      theme: ThemeData(
-        fontFamily: UIConstants.defaultFontFamily,
-        primarySwatch: Colors.blue,
-        textSelectionTheme: const TextSelectionThemeData(
-          selectionColor: UIConstants.selectionColor,
-          selectionHandleColor: UIConstants.selectionHandleColor,
-          cursorColor: UIConstants.cursorColor,
-        ),
-      ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
-      initialRoute: '/splash',
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return MaterialApp(
+          title: 'Mein BSSB',
+          theme: ThemeData(
+            fontFamily: UIConstants.defaultFontFamily,
+            primarySwatch: Colors.blue,
+            textTheme: Theme.of(context).textTheme.apply(
+                  fontSizeFactor: fontSizeProvider.scaleFactor,
+                ),
             textSelectionTheme: const TextSelectionThemeData(
               selectionColor: UIConstants.selectionColor,
+              selectionHandleColor: UIConstants.selectionHandleColor,
               cursorColor: UIConstants.cursorColor,
             ),
-            highlightColor: UIConstants.highlightColor,
-            splashColor: UIConstants.splashColor,
           ),
-          child: CookieConsent(
-            child: Material(
-              type: MaterialType.transparency,
-              child: child ?? const SizedBox.shrink(),
-            ),
-          ),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
+          initialRoute: '/splash',
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                textTheme: Theme.of(context).textTheme.apply(
+                      fontSizeFactor: fontSizeProvider.scaleFactor,
+                    ),
+                textSelectionTheme: const TextSelectionThemeData(
+                  selectionColor: UIConstants.selectionColor,
+                  cursorColor: UIConstants.cursorColor,
+                ),
+                highlightColor: UIConstants.highlightColor,
+                splashColor: UIConstants.splashColor,
+              ),
+              child: CookieConsent(
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              ),
+            );
+          },
+          routes: {
+            '/splash': (context) => SplashScreen(
+                  onFinish: () {
+                    Navigator.of(context).pushReplacementNamed(
+                      _isLoggedIn ? '/home' : '/login',
+                    );
+                  },
+                ),
+            '/login': (context) => LoginScreen(
+                  onLoginSuccess: _handleLogin,
+                ),
+            '/home': (context) => StartScreen(
+                  _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
+            '/help': (context) => HelpScreen(
+                  userData: _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
+            '/impressum': (context) => ImpressumScreen(
+                  userData: _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
+            '/settings': (context) => SettingsScreen(
+                  userData: _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
+          },
         );
-      },
-      routes: {
-        '/splash': (context) => SplashScreen(
-              onFinish: () {
-                Navigator.of(context).pushReplacementNamed(
-                  _isLoggedIn ? '/home' : '/login',
-                );
-              },
-            ),
-        '/login': (context) => LoginScreen(
-              onLoginSuccess: _handleLogin,
-            ),
-        '/home': (context) => StartScreen(
-              _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: _handleLogout,
-            ),
-        '/help': (context) => HelpScreen(
-              userData: _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: _handleLogout,
-            ),
-        '/impressum': (context) => ImpressumScreen(
-              userData: _userData,
-              isLoggedIn: _isLoggedIn,
-              onLogout: _handleLogout,
-            ),
       },
     );
   }
