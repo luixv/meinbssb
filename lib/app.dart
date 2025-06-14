@@ -6,12 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '/constants/ui_constants.dart';
 import '/models/user_data.dart';
+import '/services/core/font_size_provider.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
 import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/settings_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 
@@ -98,7 +100,7 @@ class _MyAppState extends State<MyApp> {
             fontFamily: UIConstants.defaultFontFamily,
             primarySwatch: Colors.blue,
             textTheme: Theme.of(context).textTheme.apply(
-                  fontSizeFactor: fontSizeProvider.scaleFactor,
+                  fontSizeFactor: fontSizeProvider?.scaleFactor ?? 1.0,
                 ),
             textSelectionTheme: const TextSelectionThemeData(
               selectionColor: UIConstants.selectionColor,
@@ -117,7 +119,7 @@ class _MyAppState extends State<MyApp> {
             return Theme(
               data: Theme.of(context).copyWith(
                 textTheme: Theme.of(context).textTheme.apply(
-                      fontSizeFactor: fontSizeProvider.scaleFactor,
+                      fontSizeFactor: fontSizeProvider?.scaleFactor ?? 1.0,
                     ),
                 textSelectionTheme: const TextSelectionThemeData(
                   selectionColor: UIConstants.selectionColor,

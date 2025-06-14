@@ -276,13 +276,14 @@ class AppDrawer extends StatelessWidget {
               title: const ScaledText('Registrieren'),
               onTap: () {
                 Navigator.pop(context);
+                final authService = Provider.of<AuthService>(context, listen: false);
+                final emailService = Provider.of<EmailService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => RegistrationScreen(
-                      onLoginSuccess: (userData) {
-                        Navigator.pushReplacementNamed(context, '/home');
-                      },
+                      authService: authService,
+                      emailService: emailService,
                     ),
                   ),
                 );
@@ -296,7 +297,11 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PasswordResetScreen(),
+                    builder: (context) => PasswordResetScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
                   ),
                 );
               },
