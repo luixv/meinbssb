@@ -219,28 +219,6 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildRegisterButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        key: const Key('registerButton'),
-        onPressed: _navigateToRegistrationPage,
-        style: UIStyles.secondaryButtonStyle,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.app_registration, color: Colors.white),
-            const SizedBox(width: UIConstants.spacingS),
-            ScaledText(
-              UIConstants.registerButtonLabel,
-              style: UIStyles.buttonStyle,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildForgotPasswordButton() {
     return TextButton(
       key: const Key('forgotPasswordButton'),
@@ -248,6 +226,20 @@ class LoginScreenState extends State<LoginScreen> {
       style: UIStyles.textButtonStyle,
       child: ScaledText(
         UIConstants.forgotPasswordLabel,
+        style: UIStyles.linkStyle,
+      ),
+    );
+  }
+
+  Widget _buildHelpButton() {
+    return TextButton(
+      key: const Key('helpButton'),
+      onPressed: () {
+        Navigator.pushNamed(context, '/help');
+      },
+      style: UIStyles.textButtonStyle,
+      child: ScaledText(
+        UIConstants.helpTitle,
         style: UIStyles.linkStyle,
       ),
     );
@@ -282,10 +274,14 @@ class LoginScreenState extends State<LoginScreen> {
             _buildPasswordField(),
             const SizedBox(height: UIConstants.spacingM),
             _buildLoginButton(),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildRegisterButton(),
             const SizedBox(height: UIConstants.spacingS),
-            _buildForgotPasswordButton(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildForgotPasswordButton(),
+                _buildHelpButton(),
+              ],
+            ),
           ],
         ),
       ),

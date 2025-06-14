@@ -330,12 +330,12 @@ class BankDataScreenState extends State<BankDataScreen> {
                 size: 48,
               ),
               const SizedBox(height: 16),
-              const Text(
+              const ScaledText(
                 'Fehler beim Laden der Bankdaten',
                 style: UIStyles.headerStyle,
               ),
               const SizedBox(height: 8),
-              const Text(
+              const ScaledText(
                 'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
                 textAlign: TextAlign.center,
                 style: UIStyles.bodyStyle,
@@ -346,7 +346,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   widget.onLogout();
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: const Text('Zurück zum Login'),
+                child: const ScaledText('Zurück zum Login'),
               ),
             ],
           ),
@@ -377,12 +377,12 @@ class BankDataScreenState extends State<BankDataScreen> {
                     size: 48,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  const ScaledText(
                     'Fehler beim Laden der Bankdaten',
                     style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  ScaledText(
                     snapshot.error.toString(),
                     textAlign: TextAlign.center,
                     style: UIStyles.bodyStyle,

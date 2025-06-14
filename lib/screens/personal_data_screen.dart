@@ -215,181 +215,162 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Persönliche Daten',
+      title: UIConstants.personalDataTitle,
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: _isLoading && _currentPassData == null
+      child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _buildPersonalDataForm(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isEditing
-            ? _handleSave
-            : () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: Icon(
-          _isEditing ? Icons.save : Icons.edit,
-          color: Colors.white,
-        ),
+          : SingleChildScrollView(
+              padding: UIConstants.screenPadding,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_errorMessage != null)
+                      ScaledText(
+                        _errorMessage!,
+                        style: UIStyles.errorStyle,
+                      ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      UIConstants.personalDataSubtitle,
+                      style: UIStyles.subtitleStyle,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildPassnummerField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildGeburtsdatumField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildTitelField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildVornameField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildNachnameField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildStrasseHausnummerField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildPostleitzahlField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildOrtField(),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildSaveButton(),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildPassnummerField() {
+    return TextField(
+      key: const Key('passnummerField'),
+      controller: _passnummerController,
+      enabled: false,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Passnummer',
       ),
     );
   }
 
-  Widget _buildPersonalDataForm() {
-    return _errorMessage != null
-        ? Center(
-            child: ScaledText(
-              _errorMessage!,
-            ),
-          )
-        : _currentPassData == null && !_isLoading
-            ? const Center(
-                child: ScaledText('Keine persönlichen Daten verfügbar.'),
-              )
-            : Padding(
-                padding: UIConstants.defaultPadding,
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const SizedBox(
-                          height: UIConstants.spacingS,
-                        ),
-                        _buildTextField(
-                          label: 'Passnummer',
-                          controller: _passnummerController,
-                          isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Geburtsdatum',
-                          controller: _geburtsdatumController,
-                          isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
-                          suffixIcon: Tooltip(
-                            message:
-                                'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                            preferBelow: false,
-                            child: Icon(
-                              Icons.info_outline,
-                              size: UIStyles.subtitleStyle.fontSize,
-                            ),
-                          ),
-                        ),
-                        _buildTextField(
-                          label: 'Titel',
-                          controller: _titelController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) => null,
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Vorname',
-                          controller: _vornameController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Vorname ist erforderlich';
-                            }
-                            return null;
-                          },
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Nachname',
-                          controller: _nachnameController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Nachname ist erforderlich';
-                            }
-                            return null;
-                          },
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Straße und Hausnummer',
-                          controller: _strasseHausnummerController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Straße und Hausnummer sind erforderlich';
-                            }
-                            return null;
-                          },
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Postleitzahl',
-                          controller: _postleitzahlController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Postleitzahl ist erforderlich';
-                            }
-                            return null;
-                          },
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        _buildTextField(
-                          label: 'Ort',
-                          controller: _ortController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Ort ist erforderlich';
-                            }
-                            return null;
-                          },
-                          inputTextStyle: UIStyles.formValueStyle,
-                        ),
-                        const SizedBox(
-                          height: UIConstants.spacingS,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+  Widget _buildGeburtsdatumField() {
+    return TextField(
+      key: const Key('geburtsdatumField'),
+      controller: _geburtsdatumController,
+      enabled: false,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Geburtsdatum',
+      ),
+    );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
-    bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    TextStyle? inputTextStyle,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-  }) {
-    // Use UIConstants form styles
-    final effectiveTextStyle =
-        isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle;
+  Widget _buildTitelField() {
+    return TextField(
+      key: const Key('titelField'),
+      controller: _titelController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Titel',
+      ),
+    );
+  }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        style: effectiveTextStyle,
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: floatingLabelBehavior,
-          hintText: isReadOnly ? null : label,
-          filled: true, //backgroundColor != null,
-          suffixIcon: suffixIcon,
-        ),
-        validator: validator,
-        readOnly: isReadOnly,
-        keyboardType: keyboardType,
+  Widget _buildVornameField() {
+    return TextField(
+      key: const Key('vornameField'),
+      controller: _vornameController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Vorname',
+      ),
+    );
+  }
+
+  Widget _buildNachnameField() {
+    return TextField(
+      key: const Key('nachnameField'),
+      controller: _nachnameController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Nachname',
+      ),
+    );
+  }
+
+  Widget _buildStrasseHausnummerField() {
+    return TextField(
+      key: const Key('strasseHausnummerField'),
+      controller: _strasseHausnummerController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Straße und Hausnummer',
+      ),
+    );
+  }
+
+  Widget _buildPostleitzahlField() {
+    return TextField(
+      key: const Key('postleitzahlField'),
+      controller: _postleitzahlController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Postleitzahl',
+      ),
+    );
+  }
+
+  Widget _buildOrtField() {
+    return TextField(
+      key: const Key('ortField'),
+      controller: _ortController,
+      enabled: _isEditing,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: 'Ort',
+      ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        key: const Key('saveButton'),
+        onPressed: _isLoading ? null : _handleSave,
+        style: UIStyles.defaultButtonStyle,
+        child: _isLoading
+            ? UIConstants.defaultLoadingIndicator
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.save, color: Colors.white),
+                  const SizedBox(width: UIConstants.spacingS),
+                  ScaledText(
+                    'Speichern',
+                    style: UIStyles.buttonStyle,
+                  ),
+                ],
+              ),
       ),
     );
   }
