@@ -188,9 +188,9 @@ class StartScreenState extends State<StartScreen> {
           setState(() => schulungen.removeAt(index));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: ScaledText('Fehler beim Abmelden von der Schulung.'),
-              duration: const Duration(seconds: 3),
+              duration: Duration(seconds: 3),
             ),
           );
         }

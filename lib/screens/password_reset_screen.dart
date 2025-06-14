@@ -114,11 +114,11 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                 style: UIStyles.defaultButtonStyle,
                 child: _isLoading
                     ? UIConstants.defaultLoadingIndicator
-                    : Row(
+                    : const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.lock_reset, color: Colors.white),
-                          const SizedBox(width: UIConstants.spacingS),
+                          Icon(Icons.lock_reset, color: Colors.white),
+                          SizedBox(width: UIConstants.spacingS),
                           ScaledText(
                             UIConstants.resetPasswordButtonLabel,
                             style: UIStyles.buttonStyle,

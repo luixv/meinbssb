@@ -499,11 +499,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         style: UIStyles.defaultButtonStyle,
         child: _isLoading
             ? UIConstants.defaultLoadingIndicator
-            : Row(
+            : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.app_registration, color: Colors.white),
-                  const SizedBox(width: UIConstants.spacingS),
+                  Icon(Icons.app_registration, color: Colors.white),
+                  SizedBox(width: UIConstants.spacingS),
                   ScaledText(
                     UIConstants.registerButtonLabel,
                     style: UIStyles.buttonStyle,

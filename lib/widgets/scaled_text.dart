@@ -3,11 +3,6 @@ import 'package:provider/provider.dart';
 import '../services/core/font_size_provider.dart';
 
 class ScaledText extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-  final TextAlign? textAlign;
-  final int? maxLines;
-  final TextOverflow? overflow;
 
   const ScaledText(
     this.text, {
@@ -17,6 +12,11 @@ class ScaledText extends StatelessWidget {
     this.maxLines,
     this.overflow,
   });
+  final String text;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
