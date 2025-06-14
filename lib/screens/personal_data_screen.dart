@@ -219,7 +219,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      child: _isLoading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: UIConstants.screenPadding,
