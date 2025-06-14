@@ -4,6 +4,7 @@ import '/constants/ui_styles.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class BaseScreenLayout extends StatelessWidget {
   const BaseScreenLayout({
@@ -34,7 +35,7 @@ class BaseScreenLayout extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: UIConstants.backgroundColor,
-        title: Text(
+        title: ScaledText(
           title,
           style: UIStyles.appBarTitleStyle,
         ),

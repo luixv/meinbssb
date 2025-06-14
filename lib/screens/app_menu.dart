@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 // Local imports
 // Constants
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 
 // Screens
 import '/screens/absolvierte_seminare_screen.dart';
@@ -30,6 +31,7 @@ import '/screens/settings_screen.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 import '/models/user_data.dart';
+import '/widgets/scaled_text.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -72,30 +74,28 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        padding: EdgeInsets.zero, // Important: Removes default ListView padding
+        padding: EdgeInsets.zero,
         children: <Widget>[
-          // Custom header to replace DrawerHeader for more control over space
           Container(
-            height: 120.0, // Adjust this height to reduce or increase space
+            height: 120.0,
             decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
             child: const Padding(
               padding: EdgeInsets.only(
                 left: 16.0,
                 top: 40.0,
                 bottom: 8.0,
-              ), // Adjust padding within the header
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  ScaledText(
                     'Mein BSSB',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
-                      fontWeight: FontWeight.bold, // Added bold for prominence
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Removed the commented-out SizedBox and Text for "Angemeldet"
                 ],
               ),
             ),
@@ -103,7 +103,7 @@ class AppDrawer extends StatelessWidget {
           if (isLoggedIn) ...[
             ListTile(
               leading: const Icon(Icons.home),
-              title: const Text('Home'),
+              title: const ScaledText('Home'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/home');
@@ -111,7 +111,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.school),
-              title: const Text('Seminare buchen'),
+              title: const ScaledText('Seminare buchen'),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Seminare buchen functionality
@@ -119,7 +119,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.task_alt),
-              title: const Text('Absolvierte Seminare'),
+              title: const ScaledText('Absolvierte Seminare'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -136,7 +136,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.badge),
-              title: const Text('Schützenausweis'),
+              title: const ScaledText('Schützenausweis'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -153,8 +153,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.edit), // Icons.edit_calendar
-              title: const Text('Startrechte Ändern'),
+              leading: const Icon(Icons.edit),
+              title: const ScaledText('Startrechte Ändern'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -171,7 +171,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.celebration),
-              title: const Text('Oktoberfestlandensshiessen'),
+              title: const ScaledText('Oktoberfestlandensshiessen'),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Oktoberfestlandensshiessen functionality
@@ -179,7 +179,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title: const Text('Profilbild'),
+              title: const ScaledText('Profilbild'),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Profilbild functionality
@@ -187,7 +187,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Persönliche Daten'),
+              title: const ScaledText('Persönliche Daten'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -204,7 +204,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.contact_phone),
-              title: const Text('Kontaktdaten'),
+              title: const ScaledText('Kontaktdaten'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -221,7 +221,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.account_balance),
-              title: const Text('Bankdaten'),
+              title: const ScaledText('Bankdaten'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -238,60 +238,14 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Abmelden'),
+              leading: const Icon(Icons.settings),
+              title: const ScaledText('Einstellungen'),
               onTap: () {
                 Navigator.pop(context);
-                onLogout();
-              },
-            ),
-          ] else ...[
-            ListTile(
-              leading: const Icon(Icons.login),
-              title: const Text('Anmelden'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.app_registration),
-              title: const Text('Registrieren'),
-              onTap: () {
-                Navigator.pop(context);
-                final authService = Provider.of<AuthService>(
-                  context,
-                  listen: false,
-                );
-                final emailService = Provider.of<EmailService>(
-                  context,
-                  listen: false,
-                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegistrationScreen(
-                      authService: authService,
-                      emailService: emailService,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.lock_reset),
-              title: const Text('Passwort zurücksetzen'),
-              onTap: () {
-                Navigator.pop(context);
-                final authService = Provider.of<AuthService>(
-                  context,
-                  listen: false,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PasswordResetScreen(
-                      authService: authService,
+                    builder: (context) => SettingsScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -300,34 +254,64 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const ScaledText('Abmelden'),
+              onTap: () {
+                Navigator.pop(context);
+                onLogout();
+              },
+            ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(Icons.login),
+              title: const ScaledText('Anmelden'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.app_registration),
+              title: const ScaledText('Registrieren'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RegistrationScreen(
+                      onLoginSuccess: (userData) {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.lock_reset),
+              title: const ScaledText('Passwort zurücksetzen'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PasswordResetScreen(),
+                  ),
+                );
+              },
+            ),
           ],
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Einstellungen'),
+            leading: const Icon(Icons.help_outline),
+            title: const ScaledText('Hilfe'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.palette),
-            title: const Text('Styles'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => StylesScreen(
+                  builder: (context) => HelpScreen(
                     userData: userData,
                     isLoggedIn: isLoggedIn,
                     onLogout: onLogout,
@@ -338,30 +322,13 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('Impressum'),
+            title: const ScaledText('Impressum'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ImpressumScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const Text('Hilfe'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HelpScreen(
                     userData: userData,
                     isLoggedIn: isLoggedIn,
                     onLogout: onLogout,
