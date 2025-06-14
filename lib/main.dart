@@ -17,6 +17,7 @@ import 'services/core/config_service.dart';
 import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
+import 'services/core/font_size_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -162,6 +163,10 @@ class AppInitializer {
     tokenServiceProvider = Provider<TokenService>(
       create: (context) => tokenService,
     );
+
+    fontSizeProvider = ChangeNotifierProvider<FontSizeProvider>(
+      create: (context) => FontSizeProvider(),
+    );
   }
 
   // Public static provider instances
@@ -175,4 +180,5 @@ class AppInitializer {
   static late Provider<TrainingService> trainingServiceProvider;
   static late Provider<UserService> userServiceProvider;
   static late Provider<TokenService> tokenServiceProvider;
+  static late ChangeNotifierProvider<FontSizeProvider> fontSizeProvider;
 }

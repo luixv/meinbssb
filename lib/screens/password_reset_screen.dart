@@ -110,12 +110,19 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
               child: ElevatedButton(
                 key: const Key('forgotPasswordButton'),
                 onPressed: _isLoading ? null : _resetPassword,
-                style: UIStyles.primaryButtonStyle,
+                style: UIStyles.defaultButtonStyle,
                 child: _isLoading
                     ? UIConstants.defaultLoadingIndicator
-                    : const Text(
-                        UIConstants.resetPasswordButtonLabel,
-                        style: UIStyles.buttonStyle,
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.lock_reset, color: Colors.white),
+                          SizedBox(width: UIConstants.spacingS),
+                          Text(
+                            UIConstants.resetPasswordButtonLabel,
+                            style: UIStyles.buttonStyle,
+                          ),
+                        ],
                       ),
               ),
             ),

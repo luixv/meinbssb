@@ -138,16 +138,16 @@ class UIStyles {
     color: UIConstants.textColor,
   );
 
-  // Button Styles
-  static ButtonStyle get primaryButtonStyle => ElevatedButton.styleFrom(
-        backgroundColor: UIConstants.defaultAppColor,
-        foregroundColor: Colors.white,
-      );
+  static const TextStyle sectionTitleStyle = TextStyle(
+    fontSize: 20.0,
+    fontWeight: FontWeight.bold,
+    color: UIConstants.textColor,
+  );
 
-  static ButtonStyle get secondaryButtonStyle => ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey[200],
-        foregroundColor: Colors.grey[800],
-      );
+  static const TextStyle bodyTextStyle = TextStyle(
+    fontSize: 16.0,
+    color: UIConstants.textColor,
+  );
 
   // Form Input Decoration
   static InputDecoration get formInputDecoration => InputDecoration(
@@ -196,20 +196,20 @@ class UIStyles {
       );
 
   // Dialog Styles
-  static final ButtonStyle dialogButtonStyle = ElevatedButton.styleFrom(
+  static final ButtonStyle defaultButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: UIConstants.defaultAppColor,
     foregroundColor: UIConstants.whiteColor,
     padding: UIConstants.buttonPadding,
   );
 
   static final ButtonStyle dialogCancelButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Colors.grey[200],
-    foregroundColor: Colors.grey[800],
+    backgroundColor: Colors.lightGreen,
+    foregroundColor: Colors.white,
   );
 
   static final ButtonStyle dialogAcceptButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Colors.red[100],
-    foregroundColor: Colors.red[800],
+    backgroundColor: UIConstants.defaultAppColor,
+    foregroundColor: Colors.white,
   );
 
   // List Styles
@@ -308,4 +308,7 @@ class UIStyles {
   static const double warningMessageOpacity = 0.1;
   static const BorderRadius warningMessageBorderRadius =
       BorderRadius.all(Radius.circular(8.0));
+
+  static const IconData dialogCancelIcon = Icons.close;
+  static const IconData dialogAcceptIcon = Icons.check;
 }

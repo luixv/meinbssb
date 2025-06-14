@@ -481,9 +481,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
-                : const Text(
-                    UIConstants.registerButtonLabel,
-                    style: UIStyles.buttonStyle,
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.app_registration, color: Colors.white),
+                      SizedBox(width: UIConstants.spacingS),
+                      Text(
+                        UIConstants.registerButtonLabel,
+                        style: UIStyles.buttonStyle,
+                      ),
+                    ],
                   ),
           ),
         ),

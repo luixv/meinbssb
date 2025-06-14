@@ -23,6 +23,8 @@ import '/screens/personal_data_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
+import '/screens/styles_screen.dart';
+import '/screens/settings_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -300,6 +302,40 @@ class AppDrawer extends StatelessWidget {
             ),
           ],
           const Divider(),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Einstellungen'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(
+                    userData: userData,
+                    isLoggedIn: isLoggedIn,
+                    onLogout: onLogout,
+                  ),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.palette),
+            title: const Text('Styles'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StylesScreen(
+                    userData: userData,
+                    isLoggedIn: isLoggedIn,
+                    onLogout: onLogout,
+                  ),
+                ),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('Impressum'),

@@ -28,7 +28,7 @@ class UIConstants {
   static const Color cancelButtonBackground = Colors.lightGreen;
   static const Color acceptButtonBackground = primaryColor;
   static const Color deleteButtonBackground = primaryColor;
-  static const Color submitButtonBackground = Colors.lightGreen;
+  static const Color submitButtonBackground = primaryColor;
   static const Color disabledBackgroundColor = Colors.grey;
 
   static const Color buttonTextColor = Colors.white;
@@ -143,6 +143,7 @@ class UIConstants {
   static const double defaultButtonWidth = 120.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
+  static const double iconSizeL = 32.0;
 
   // Strings
   static const String loginButtonLabel = 'Anmelden';
@@ -190,4 +191,59 @@ class UIConstants {
   static const double newsContainerHeight = 100.0;
   static const MainAxisAlignment listItemLeadingAlignment =
       MainAxisAlignment.start;
+
+  static const double minFontScale = 0.8;
+  static const double maxFontScale = 2.0;
+  static const double fontScaleStep = 0.1;
+  static const double defaultFontScale = 1.0;
+
+  // Navigation Icons
+  static const IconData menuIcon = Icons.menu;
+  static const IconData homeIcon = Icons.home;
+  static const IconData backIcon = Icons.arrow_back;
+
+  // Action Icons
+  static const IconData addIconData = Icons.add;
+  static const IconData editIcon = Icons.edit;
+  static const IconData saveIcon = Icons.save;
+  static const IconData deleteIconData = Icons.delete_forever;
+  static const IconData deleteOutlineIcon = Icons.delete_outline;
+  static const IconData checkIconData = Icons.check;
+  static const IconData closeIconData = Icons.close;
+  static const IconData calendarIcon = Icons.calendar_today;
+
+  // Status Icons
+  static const IconData successIcon = Icons.check_circle;
+  static const IconData errorIcon = Icons.error;
+  static const IconData errorOutlineIcon = Icons.error_outline;
+  static const IconData infoIcon = Icons.info_outline;
+  static const IconData visibilityIcon = Icons.visibility;
+  static const IconData visibilityOffIcon = Icons.visibility_off;
+
+  // Connectivity Icons
+  static const IconData wifiIcon = Icons.wifi;
+  static const IconData wifiOffIcon = Icons.wifi_off;
+  static const IconData signalIcon = Icons.signal_cellular_4_bar;
+  static const IconData bluetoothIcon = Icons.bluetooth_connected;
+  static const IconData vpnIcon = Icons.vpn_lock;
+  static const IconData networkCheckIcon = Icons.network_check;
+  static const IconData cloudOffIcon = Icons.cloud_off;
+
+  // Menu Icons
+  static const IconData schoolIcon = Icons.school;
+  static const IconData taskIcon = Icons.task_alt;
+  static const IconData badgeIcon = Icons.badge;
+  static const IconData celebrationIcon = Icons.celebration;
+  static const IconData cameraIcon = Icons.photo_camera;
+  static const IconData personIcon = Icons.person;
+  static const IconData contactIcon = Icons.contact_phone;
+  static const IconData bankIcon = Icons.account_balance;
+  static const IconData logoutIcon = Icons.logout;
+  static const IconData loginIcon = Icons.login;
+  static const IconData registrationIcon = Icons.app_registration;
+  static const IconData lockResetIcon = Icons.lock_reset;
+  static const IconData helpIcon = Icons.help_outline;
+
+  // UI Icons
+  static const IconData circleIcon = Icons.circle;
 }

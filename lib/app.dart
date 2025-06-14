@@ -31,6 +31,7 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.cacheServiceProvider,
         AppInitializer.userServiceProvider,
         AppInitializer.trainingServiceProvider,
+        AppInitializer.fontSizeProvider,
       ],
       child: const MyApp(),
     );

@@ -67,7 +67,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
                   ),
                 );
               },
-              style: UIStyles.primaryButtonStyle,
+              style: UIStyles.defaultButtonStyle,
               child: const Text(
                 UIConstants.backToLoginButtonLabel,
                 style: UIStyles.buttonStyle,

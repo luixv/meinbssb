@@ -212,12 +212,19 @@ class LoginScreenState extends State<LoginScreen> {
                   UIConstants.circularProgressIndicator,
                 ),
               )
-            : const Text(
-                'Anmelden',
-                style: TextStyle(
-                  fontSize: UIConstants.bodyFontSize,
-                  color: UIConstants.submitButtonText,
-                ),
+            : const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.login, color: UIConstants.submitButtonText),
+                  SizedBox(width: UIConstants.spacingS),
+                  Text(
+                    'Anmelden',
+                    style: TextStyle(
+                      fontSize: UIConstants.bodyFontSize,
+                      color: UIConstants.submitButtonText,
+                    ),
+                  ),
+                ],
               ),
       ),
     );
