@@ -163,6 +163,7 @@ class UIConstants {
   static const String resetPasswordButtonLabel = 'Passwort zurücksetzen';
   static const String logoutLabel = 'Abmelden';
   static const String registerButtonLabel = 'Registrieren';
+  static const String registrationTitle = 'Registrierung';
   static const String cancelButtonLabel = 'Abbrechen';
 
   // Alignment
