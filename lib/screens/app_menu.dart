@@ -228,7 +228,6 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BankDataScreen(
                       userData,
-                      webloginId: userData?.webLoginId ?? 0,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),
