@@ -234,7 +234,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         style: UIStyles.errorStyle,
                       ),
                     const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
+                    const ScaledText(
                       UIConstants.personalDataSubtitle,
                       style: UIStyles.subtitleStyle,
                     ),
