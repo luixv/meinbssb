@@ -175,6 +175,9 @@ class UIConstants {
   static const String registrationTitle = 'Registrierung';
   static const String cancelButtonLabel = 'Abbrechen';
   static const String deleteBankDataConfirmation = 'Möchten Sie Ihre Bankdaten wirklich löschen?';
+  static const String deleteButtonLabel = 'Löschen';
+  static const String saveButtonLabel = 'Speichern';
+  static const String savingLabel = 'Wird gespeichert...';
 
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =

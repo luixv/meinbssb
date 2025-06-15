@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
+import '/models/bank_data.dart';
 import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
@@ -29,10 +30,9 @@ class BankDataScreen extends StatefulWidget {
 }
 
 class BankDataScreenState extends State<BankDataScreen> {
-  late Future<Map<String, dynamic>> _bankDataFuture;
   bool _isLoading = true;
   bool _isSaving = false;
-  final bool _hasBankData = false;
+  bool _hasBankData = false;
 
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
@@ -48,11 +48,14 @@ class BankDataScreenState extends State<BankDataScreen> {
   Future<void> _fetchBankData() async {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final data = await apiService.fetchBankData(widget.userData?.personId ?? 0);
+      final data = await apiService.fetchBankdaten(widget.userData?.personId ?? 0);
       if (data.isNotEmpty) {
-        _kontoinhaberController.text = data['kontoinhaber'] as String? ?? '';
-        _ibanController.text = data['iban'] as String? ?? '';
-        _bicController.text = data['bic'] as String? ?? '';
+        _kontoinhaberController.text = data['KONTOINHABER'] as String? ?? '';
+        _ibanController.text = data['IBAN'] as String? ?? '';
+        _bicController.text = data['BIC'] as String? ?? '';
+        setState(() {
+          _hasBankData = true;
+        });
       }
     } catch (e) {
       LoggerService.logError('Error setting up bank data fetch: $e');
@@ -79,14 +82,15 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bankData = {
-        'personId': widget.userData?.personId ?? 0,
-        'kontoinhaber': _kontoinhaberController.text,
-        'iban': _ibanController.text,
-        'bic': _bicController.text,
-      };
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.userData?.personId ?? 0,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+      );
 
-      final bool success = await apiService.saveBankData(bankData);
+      final bool success = await apiService.registerBankData(bankData);
 
       if (mounted) {
         if (success) {
@@ -132,7 +136,15 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bool success = await apiService.deleteBankData(widget.userData?.personId ?? 0);
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.userData?.personId ?? 0,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+      );
+
+      final bool success = await apiService.deleteBankData(bankData);
 
       if (mounted) {
         if (success) {
@@ -179,7 +191,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: ScaledText(
-              'Bankdaten löschen',
+              UIConstants.bankDataTitle,
               style: UIStyles.dialogTitleStyle,
             ),
           ),
@@ -196,7 +208,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   const Icon(Icons.close, color: UIConstants.closeIcon),
                   UIConstants.horizontalSpacingS,
                   ScaledText(
-                    'Abbrechen',
+                    UIConstants.cancelButtonLabel,
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.closeIcon,
                     ),
@@ -215,7 +227,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   const Icon(Icons.check, color: UIConstants.checkIcon),
                   UIConstants.horizontalSpacingS,
                   ScaledText(
-                    'Löschen',
+                    UIConstants.deleteButtonLabel,
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.checkIcon,
                     ),
@@ -269,72 +281,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     );
   }
 
-  Widget _buildIbanField() {
-    return TextFormField(
-      key: const Key('ibanField'),
-      controller: _ibanController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.ibanLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.ibanRequired;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildBicField() {
-    return TextFormField(
-      key: const Key('bicField'),
-      controller: _bicController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.bicLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.bicRequired;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildKontoinhaberField() {
-    return TextFormField(
-      key: const Key('kontoinhaberField'),
-      controller: _kontoinhaberController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.kontoinhaberLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.kontoinhaberRequired;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        key: const Key('saveButton'),
-        onPressed: _isSaving ? null : _saveBankData,
-        style: UIStyles.primaryButtonStyle,
-        child: ScaledText(
-          _isSaving ? UIConstants.savingLabel : UIConstants.saveLabel,
-          style: UIStyles.buttonTextStyle,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
@@ -345,7 +291,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: UIConstants.screenPadding,
+              padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -355,14 +301,72 @@ class BankDataScreenState extends State<BankDataScreen> {
                       UIConstants.bankDataSubtitle,
                       style: UIStyles.subtitleStyle,
                     ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    _buildIbanField(),
-                    const SizedBox(height: UIConstants.spacingS),
-                    _buildBicField(),
-                    const SizedBox(height: UIConstants.spacingS),
-                    _buildKontoinhaberField(),
-                    const SizedBox(height: UIConstants.spacingM),
-                    _buildSaveButton(),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _kontoinhaberController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: UIConstants.kontoinhaberLabel,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return UIConstants.kontoinhaberRequired;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _ibanController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: UIConstants.ibanLabel,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return UIConstants.ibanRequired;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _bicController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: UIConstants.bicLabel,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return UIConstants.bicRequired;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (_hasBankData)
+                          ElevatedButton(
+                            onPressed: _isSaving ? null : _showDeleteConfirmationDialog,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: UIConstants.errorColor,
+                            ),
+                            child: const ScaledText(
+                              UIConstants.deleteButtonLabel,
+                              style: UIStyles.buttonStyle,
+                            ),
+                          ),
+                        ElevatedButton(
+                          onPressed: _isSaving ? null : _saveBankData,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: UIConstants.primaryColor,
+                          ),
+                          child: ScaledText(
+                            _isSaving ? UIConstants.savingLabel : UIConstants.saveButtonLabel,
+                            style: UIStyles.buttonStyle,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
