@@ -260,4 +260,26 @@ class UIConstants {
 
   // UI Icons
   static const IconData circleIcon = Icons.circle;
+
+  // Contact Data Screen
+  static const String telefonLabel = 'Telefon';
+  static const String telefonRequired = 'Bitte geben Sie Ihre Telefonnummer ein';
+  static const String mobilLabel = 'Mobil';
+  static const String mobilRequired = 'Bitte geben Sie Ihre Mobilnummer ein';
+  static const String emailLabel = 'E-Mail';
+  static const String emailRequired = 'Bitte geben Sie Ihre E-Mail-Adresse ein';
+  static const String emailInvalid = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+  static const String contactTypeLabel = 'Kontakttyp';
+  static const String contactValueLabel = 'Kontaktwert';
+  static const String deleteContactDataConfirmation = 'Möchten Sie diese Kontaktdaten wirklich löschen?';
+  static const List<String> contactTypes = [
+    'Telefon',
+    'Mobil',
+    'E-Mail',
+    'Fax',
+    'Homepage',
+    'Facebook',
+    'Instagram',
+    'Twitter'
+  ];
 }

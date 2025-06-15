@@ -229,6 +229,22 @@ class UIStyles {
     foregroundColor: Colors.white,
   );
 
+  static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: UIConstants.primaryColor,
+    foregroundColor: UIConstants.whiteColor,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+  );
+
+  static const TextStyle buttonTextStyle = TextStyle(
+    fontSize: UIConstants.buttonFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: UIConstants.whiteColor,
+  );
+
   // List Styles
   static const MainAxisAlignment listItemLeadingAlignment =
       MainAxisAlignment.start;

@@ -33,6 +33,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
   bool _isDeleting = false;
   bool _isAdding = false;
+  bool _isSaving = false;
 
   // Use Contact model's type constants
   final Map<int, String> _contactTypeLabels = {
@@ -46,7 +47,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   };
 
   int? _selectedKontaktTyp;
+  String? _selectedContactType;
   final TextEditingController _kontaktController = TextEditingController();
+  final TextEditingController _telefonController = TextEditingController();
+  final TextEditingController _mobilController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _newContactValueController = TextEditingController();
 
   // Regex for email validation
   final RegExp _emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -661,7 +667,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
   }
 
-  Future<void> _showAddContactDialog() async {
+  Future<void> _showAddContactForm() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -669,40 +675,46 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: ScaledText(
-              'Neuen Kontakt hinzufügen',
+              'Kontakt hinzufügen',
               style: UIStyles.dialogTitleStyle,
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<int>(
-                value: _selectedContactType,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: UIConstants.contactTypeLabel,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  value: _selectedContactType,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: UIConstants.contactTypeLabel,
+                  ),
+                  items: UIConstants.contactTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedContactType = newValue;
+                    });
+                  },
                 ),
-                style: UIStyles.formValueStyle,
-                items: UIConstants.contactTypes.entries.map((entry) {
-                  return DropdownMenuItem<int>(
-                    value: entry.key,
-                    child: ScaledText(entry.value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedContactType = value!;
-                  });
-                },
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              TextFormField(
-                controller: _newContactValueController,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: UIConstants.contactValueLabel,
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _newContactValueController,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: UIConstants.contactValueLabel,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte geben Sie einen Kontaktwert ein';
+                    }
+                    return null;
+                  },
                 ),
-                style: UIStyles.formValueStyle,
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -712,8 +724,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 children: [
                   const Icon(Icons.close, color: UIConstants.closeIcon),
                   UIConstants.horizontalSpacingS,
-                  const ScaledText(
-                    'Abbrechen',
+                  ScaledText(
+                    UIConstants.cancelButtonLabel,
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.closeIcon,
                     ),
@@ -731,7 +743,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 children: [
                   const Icon(Icons.check, color: UIConstants.checkIcon),
                   UIConstants.horizontalSpacingS,
-                  const ScaledText(
+                  ScaledText(
                     'Hinzufügen',
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.checkIcon,
@@ -744,5 +756,176 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         );
       },
     );
+  }
+
+  Future<void> _addContact() async {
+    if (_selectedContactType == null || _newContactValueController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: ScaledText('Bitte Kontakttyp und Kontaktwert eingeben.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isAdding = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final contact = Contact(
+        id: 0,
+        personId: widget.userData?.personId ?? 0,
+        type: UIConstants.contactTypes.indexOf(_selectedContactType!) + 1,
+        value: _newContactValueController.text,
+      );
+
+      final bool success = await apiService.addKontakt(contact);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Kontakt erfolgreich hinzugefügt.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          _newContactValueController.clear();
+          _selectedContactType = null;
+          _fetchContacts();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Fehler beim Hinzufügen des Kontakts.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during contact addition: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAdding = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deleteContactData() async {
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final contact = Contact(
+        id: 0,
+        personId: widget.userData?.personId ?? 0,
+        type: 0,
+        value: '',
+      );
+
+      final bool success = await apiService.deleteKontakt(contact);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Kontaktdaten erfolgreich gelöscht.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          _fetchContacts();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Fehler beim Löschen der Kontaktdaten.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during contact deletion: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDeleting = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _saveContactData() async {
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final contact = Contact(
+        id: 0,
+        personId: widget.userData?.personId ?? 0,
+        type: 1, // Default to phone
+        value: _telefonController.text,
+      );
+
+      final bool success = await apiService.addKontakt(contact);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Kontaktdaten erfolgreich gespeichert.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          _fetchContacts();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Fehler beim Speichern der Kontaktdaten.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during contact save: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
   }
 }
