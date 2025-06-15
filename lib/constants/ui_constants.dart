@@ -151,6 +151,12 @@ class UIConstants {
   static const String forgotPasswordLabel = 'Passwort vergessen?';
   static const String bankDataTitle = 'Bankdaten';
   static const String bankDataSubtitle = 'Bitte geben Sie Ihre Bankdaten ein';
+  static const String ibanLabel = 'IBAN';
+  static const String ibanRequired = 'Bitte geben Sie Ihre IBAN ein';
+  static const String bicLabel = 'BIC';
+  static const String bicRequired = 'Bitte geben Sie Ihre BIC ein';
+  static const String kontoinhaberLabel = 'Kontoinhaber';
+  static const String kontoinhaberRequired = 'Bitte geben Sie den Kontoinhaber ein';
   static const String personalDataTitle = 'Persönliche Daten';
   static const String personalDataSubtitle = 'Bitte geben Sie Ihre persönlichen Daten ein';
   static const String homeTitle = 'Home';
@@ -168,6 +174,7 @@ class UIConstants {
   static const String registerButtonLabel = 'Registrieren';
   static const String registrationTitle = 'Registrierung';
   static const String cancelButtonLabel = 'Abbrechen';
+  static const String deleteBankDataConfirmation = 'Möchten Sie Ihre Bankdaten wirklich löschen?';
 
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =

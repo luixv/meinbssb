@@ -1,26 +1,26 @@
+// Project: Mein BSSB
+// Filename: bank_data_screen.dart
+// Author: Luis Mandel / NTT DATA
+
+// Flutter/Dart core imports
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/bank_data.dart';
 import '/models/user_data.dart';
-import '/services/api_service.dart';
-import '/services/api/bank_service.dart';
-import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
-import '/screens/bank_data_result_screen.dart';
+import '/services/api_service.dart';
+import '/services/core/logger_service.dart';
 import '/widgets/scaled_text.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
     this.userData, {
-    required this.webloginId,
     required this.isLoggedIn,
     required this.onLogout,
     super.key,
   });
   final UserData? userData;
-  final int webloginId;
   final bool isLoggedIn;
   final Function() onLogout;
 
@@ -29,12 +29,10 @@ class BankDataScreen extends StatefulWidget {
 }
 
 class BankDataScreenState extends State<BankDataScreen> {
-  late Future<BankData?> _bankDataFuture;
-  bool _isDeleting = false;
-  bool _isEditing = false;
+  late Future<Map<String, dynamic>> _bankDataFuture;
+  bool _isLoading = true;
   bool _isSaving = false;
   bool _hasBankData = false;
-  String? _errorMessage;
 
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
@@ -44,205 +42,47 @@ class BankDataScreenState extends State<BankDataScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    _fetchBankData();
   }
 
-  void _loadInitialData() {
+  Future<void> _fetchBankData() async {
+    final int personId = widget.userData?.personId ?? 0;
     setState(() {
-      _bankDataFuture =
-          Future.value(null); // Clear current data to show spinner
-      _hasBankData = false;
+      _isLoading = true;
     });
-
-    if (widget.webloginId == 0) {
-      setState(() {
-        _bankDataFuture =
-            Future.error('WebLoginID is required to fetch bank data');
-      });
-      return;
-    }
-
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _bankDataFuture =
-          apiService.fetchBankData(widget.webloginId).then((list) {
-        final hasData = list.isNotEmpty;
-        if (mounted) {
+      _bankDataFuture = apiService.fetchBankData(personId).then((data) {
+        LoggerService.logInfo('Bank data structure: $data');
+        if (data.isNotEmpty) {
+          _kontoinhaberController.text = data['kontoinhaber'] ?? '';
+          _ibanController.text = data['iban'] ?? '';
+          _bicController.text = data['bic'] ?? '';
           setState(() {
-            _hasBankData = hasData;
+            _hasBankData = true;
           });
         }
-        return hasData ? list.first : null;
+        return data;
       });
       LoggerService.logInfo(
         'BankDataScreen: Initiating bank data fetch.',
       );
     } catch (e) {
       LoggerService.logError('Error setting up bank data fetch: $e');
-      _bankDataFuture = Future.value(null); // Provide null on error
+      _bankDataFuture = Future.value({});
       if (mounted) {
-        setState(() {
-          _hasBankData = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _onDeleteBankData() async {
-    final bool? confirmDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Bankdaten löschen',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: UIStyles.dialogContentStyle,
-              children: <TextSpan>[
-                const TextSpan(
-                  text: 'Sind Sie sicher, dass Sie die Bankdaten für ',
-                ),
-                TextSpan(
-                  text: _kontoinhaberController.text,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const TextSpan(text: ' löschen möchten?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(UIConstants.spacingM),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(false);
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
-                          ScaledText(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  UIConstants.horizontalSpacingM,
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(true);
-                      },
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          ScaledText(
-                            'Löschen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (!mounted) return;
-
-    if (confirmDelete == null || !confirmDelete) {
-      LoggerService.logInfo('Bank data deletion cancelled by user.');
-      if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
-      }
-      return;
-    }
-
-    setState(() {
-      _isDeleting = true;
-    });
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final bankData = BankData(
-        id: 0, // Will be assigned by the server
-        webloginId: widget.webloginId,
-        kontoinhaber: _kontoinhaberController.text,
-        iban: _ibanController.text,
-        bic: _bicController.text,
-      );
-      final bool success = await apiService.deleteBankData(bankData);
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Bankdaten erfolgreich gelöscht.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-          _kontoinhaberController.clear();
-          _ibanController.clear();
-          _bicController.clear();
-          _loadInitialData();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Fehler beim Löschen der Bankdaten.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during bank data deletion: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        _showErrorDialog(e.toString());
       }
     } finally {
       if (mounted) {
         setState(() {
-          _isDeleting = false;
+          _isLoading = false;
         });
       }
     }
   }
 
-  Future<void> _onSaveBankData() async {
+  Future<void> _saveBankData() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -253,29 +93,24 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bankData = BankData(
-        id: 0, // Will be assigned by the server
-        webloginId: widget.webloginId,
-        kontoinhaber: _kontoinhaberController.text,
-        iban: _ibanController.text,
-        bic: _bicController.text,
-        mandatSeq: 2,
-      );
+      final bankData = {
+        'personId': widget.userData?.personId ?? 0,
+        'kontoinhaber': _kontoinhaberController.text,
+        'iban': _ibanController.text,
+        'bic': _bicController.text,
+      };
 
-      final bool success = await apiService.registerBankData(bankData);
+      final bool success = await apiService.saveBankData(bankData);
 
       if (mounted) {
         if (success) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => BankDataResultScreen(
-                success: true,
-                userData: widget.userData,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
-              ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Bankdaten erfolgreich gespeichert.'),
+              duration: Duration(seconds: 3),
             ),
           );
+          _fetchBankData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -299,35 +134,129 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         setState(() {
           _isSaving = false;
-          _isEditing = false;
         });
       }
     }
   }
 
-  @override
-  void dispose() {
-    _kontoinhaberController.dispose();
-    _ibanController.dispose();
-    _bicController.dispose();
-    super.dispose();
+  Future<void> _deleteBankData() async {
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final bool success = await apiService.deleteBankData(
+        widget.userData?.personId ?? 0,
+      );
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Bankdaten erfolgreich gelöscht.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+          _fetchBankData();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: ScaledText('Fehler beim Löschen der Bankdaten.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data deletion: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (widget.webloginId == 0) {
-      return BaseScreenLayout(
-        title: 'Bankdaten',
-        userData: widget.userData,
-        isLoggedIn: widget.isLoggedIn,
-        onLogout: widget.onLogout,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+  Future<void> _showDeleteConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Bankdaten löschen',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: const ScaledText(
+            UIConstants.deleteBankDataConfirmation,
+            style: UIStyles.dialogContentStyle,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.close, color: UIConstants.closeIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Abbrechen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.closeIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteBankData();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check, color: UIConstants.checkIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Löschen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.checkIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showErrorDialog(String message) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
                 Icons.error_outline,
-                color: Colors.red,
+                color: UIConstants.errorColor,
                 size: 48,
               ),
               const SizedBox(height: 16),
@@ -336,96 +265,23 @@ class BankDataScreenState extends State<BankDataScreen> {
                 style: UIStyles.headerStyle,
               ),
               const SizedBox(height: 8),
-              const ScaledText(
-                'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
+              ScaledText(
+                message,
                 textAlign: TextAlign.center,
                 style: UIStyles.bodyStyle,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  widget.onLogout();
+                  Navigator.of(context).pop();
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: const ScaledText('Zurück zum Login'),
               ),
             ],
           ),
-        ),
-      );
-    }
-
-    return BaseScreenLayout(
-      title: 'Bankdaten',
-      userData: widget.userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: widget.onLogout,
-      body: FutureBuilder<BankData?>(
-        future: _bankDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 16),
-                  const ScaledText(
-                    'Fehler beim Laden der Bankdaten',
-                    style: UIStyles.headerStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  ScaledText(
-                    snapshot.error.toString(),
-                    textAlign: TextAlign.center,
-                    style: UIStyles.bodyStyle,
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.hasData && snapshot.data != null) {
-            final bankData = snapshot.data!;
-            if (!_isEditing) {
-              _kontoinhaberController.text = bankData.kontoinhaber;
-              _ibanController.text = bankData.iban;
-              _bicController.text = bankData.bic;
-            }
-            return _buildBankDataForm();
-          } else {
-            return _buildBankDataForm();
-          }
-        },
-      ),
-      floatingActionButton: _buildFloatingActionButtons(),
-    );
-  }
-
-  Widget _buildBankDataForm() {
-    return Padding(
-      padding: const EdgeInsets.all(UIConstants.spacingM),
-      child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: UIConstants.startCrossAlignment,
-            children: [
-              _buildKontoinhaberField(),
-              _buildIbanField(),
-              _buildBicField(),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -480,45 +336,83 @@ class BankDataScreenState extends State<BankDataScreen> {
     );
   }
 
-  Widget _buildFloatingActionButtons() {
-    if (_isEditing) {
-      return FloatingActionButton(
-        onPressed: _isSaving ? null : _onSaveBankData,
-        backgroundColor: UIConstants.defaultAppColor,
-        child: _isSaving
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-            : const Icon(Icons.save, color: Colors.white),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (_hasBankData)
-          FloatingActionButton(
-            heroTag: 'deleteFab',
-            onPressed: _isDeleting ? null : _onDeleteBankData,
-            backgroundColor: UIConstants.deleteIcon,
-            child: _isDeleting
-                ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  )
-                : const Icon(Icons.delete_forever, color: Colors.white),
-          ),
-        if (_hasBankData) const SizedBox(height: UIConstants.spacingM),
-        FloatingActionButton(
-          heroTag: 'editFab',
-          onPressed: () {
-            setState(() {
-              _isEditing = true;
-            });
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.edit, color: Colors.white),
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        key: const Key('saveButton'),
+        onPressed: _isSaving ? null : _saveBankData,
+        style: UIStyles.primaryButtonStyle,
+        child: ScaledText(
+          _isSaving ? UIConstants.savingLabel : UIConstants.saveLabel,
+          style: UIStyles.buttonTextStyle,
         ),
-      ],
+      ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BaseScreenLayout(
+      title: UIConstants.bankDataTitle,
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: UIConstants.screenPadding,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ScaledText(
+                      UIConstants.bankDataSubtitle,
+                      style: UIStyles.subtitleStyle,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildIbanField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildBicField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildKontoinhaberField(),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildSaveButton(),
+                  ],
+                ),
+              ),
+            ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            key: const Key('helpFab'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/help');
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.help_outline),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            key: const Key('settingsFab'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.settings),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _kontoinhaberController.dispose();
+    _ibanController.dispose();
+    _bicController.dispose();
+    super.dispose();
   }
 }
