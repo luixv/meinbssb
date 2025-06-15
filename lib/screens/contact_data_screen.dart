@@ -595,37 +595,43 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     final displayLabelFormatted =
         displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: UIConstants.spacingS,
-      ),
-      child: TextFormField(
-        initialValue: displayValueFormatted,
-        readOnly: true,
-        style: const TextStyle(
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        final scaledStyle = TextStyle(
+          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
           fontWeight: FontWeight.bold,
-          fontSize: UIConstants.bodyFontSize,
-        ),
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: displayLabelFormatted,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isDeleting ? null : displayLabelFormatted,
-          fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
-          filled: isDeleting ? false : null,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.delete_outline),
-            color: UIConstants.deleteIcon,
-            onPressed: isDeleting
-                ? null
-                : () => onDelete(
-                      kontaktId,
-                      rawKontaktTyp,
-                      displayValue,
-                      displayLabel,
-                    ),
+        );
+        return Padding(
+          padding: const EdgeInsets.only(
+            bottom: UIConstants.spacingS,
           ),
-        ),
-      ),
+          child: TextFormField(
+            initialValue: displayValueFormatted,
+            readOnly: true,
+            style: scaledStyle,
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: displayLabelFormatted,
+              labelStyle: scaledStyle,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: isDeleting ? null : displayLabelFormatted,
+              fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
+              filled: isDeleting ? false : null,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: UIConstants.deleteIcon,
+                onPressed: isDeleting
+                    ? null
+                    : () => onDelete(
+                          kontaktId,
+                          rawKontaktTyp,
+                          displayValue,
+                          displayLabel,
+                        ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -262,18 +263,15 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           height: UIConstants.spacingS,
                         ),
                         _buildTextField(
-                          label: 'Passnummer',
+                          labelText: 'Passnummer',
                           controller: _passnummerController,
-                          isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
+                          enabled: false,
                         ),
                         _buildTextField(
-                          label: 'Geburtsdatum',
+                          labelText: 'Geburtsdatum',
                           controller: _geburtsdatumController,
-                          isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
+                          enabled: false,
+                          validator: (value) => null,
                           suffixIcon: Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
@@ -285,71 +283,65 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           ),
                         ),
                         _buildTextField(
-                          label: 'Titel',
+                          labelText: 'Titel',
                           controller: _titelController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) => null,
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
-                          label: 'Vorname',
+                          labelText: 'Vorname',
                           controller: _vornameController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Vorname ist erforderlich';
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
-                          label: 'Nachname',
+                          labelText: 'Nachname',
                           controller: _nachnameController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Nachname ist erforderlich';
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
-                          label: 'Straße und Hausnummer',
+                          labelText: 'Straße und Hausnummer',
                           controller: _strasseHausnummerController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Straße und Hausnummer sind erforderlich';
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
-                          label: 'Postleitzahl',
+                          labelText: 'Postleitzahl',
                           controller: _postleitzahlController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Postleitzahl ist erforderlich';
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
-                          label: 'Ort',
+                          labelText: 'Ort',
                           controller: _ortController,
-                          isReadOnly: !_isEditing,
+                          enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Ort ist erforderlich';
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         const SizedBox(
                           height: UIConstants.spacingS,
@@ -362,35 +354,29 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }
 
   Widget _buildTextField({
-    required String label,
     required TextEditingController controller,
+    required String labelText,
+    bool enabled = true,
     String? Function(String?)? validator,
-    bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    TextStyle? inputTextStyle,
     Widget? suffixIcon,
-    TextInputType? keyboardType,
   }) {
-    // Use UIConstants form styles
-    final effectiveTextStyle =
-        isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        style: effectiveTextStyle,
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: floatingLabelBehavior,
-          hintText: isReadOnly ? null : label,
-          filled: true, //backgroundColor != null,
-          suffixIcon: suffixIcon,
-        ),
-        validator: validator,
-        readOnly: isReadOnly,
-        keyboardType: keyboardType,
-      ),
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        final scaledStyle = TextStyle(
+          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
+        );
+        return TextFormField(
+          controller: controller,
+          enabled: enabled,
+          validator: validator,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: labelText,
+            labelStyle: scaledStyle,
+            suffixIcon: suffixIcon,
+          ),
+          style: scaledStyle,
+        );
+      },
     );
   }
 }

@@ -9,6 +9,7 @@ import '/services/api/bank_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/bank_data_result_screen.dart';
+import '/providers/font_size_provider.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -418,9 +419,8 @@ class BankDataScreenState extends State<BankDataScreen> {
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
               _buildTextField(
-                label: 'Kontoinhaber',
+                labelText: 'Kontoinhaber',
                 controller: _kontoinhaberController,
-                isReadOnly: !_isEditing,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Kontoinhaber ist erforderlich';
@@ -429,9 +429,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                 },
               ),
               _buildTextField(
-                label: 'IBAN',
+                labelText: 'IBAN',
                 controller: _ibanController,
-                isReadOnly: !_isEditing,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'IBAN ist erforderlich';
@@ -443,9 +442,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                 },
               ),
               _buildTextField(
-                label: 'BIC',
+                labelText: 'BIC',
                 controller: _bicController,
-                isReadOnly: !_isEditing,
                 validator: BankService.validateBIC,
               ),
             ],
@@ -456,27 +454,29 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   Widget _buildTextField({
-    required String label,
     required TextEditingController controller,
+    required String labelText,
+    bool enabled = true,
     String? Function(String?)? validator,
-    bool isReadOnly = false,
+    Widget? suffixIcon,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        readOnly: isReadOnly,
-        style: TextStyle(
-          fontSize: UIConstants.bodyFontSize,
-          fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
-        ),
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isReadOnly ? null : label,
-        ),
-        validator: validator,
-      ),
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        final scaledStyle = TextStyle(
+          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
+        );
+        return TextFormField(
+          controller: controller,
+          enabled: enabled,
+          validator: validator,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: labelText,
+            labelStyle: scaledStyle,
+            suffixIcon: suffixIcon,
+          ),
+          style: scaledStyle,
+        );
+      },
     );
   }
 
