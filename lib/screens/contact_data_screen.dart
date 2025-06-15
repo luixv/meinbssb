@@ -482,7 +482,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
               final contactData = snapshot.data ?? [];
               if (contactData.isEmpty) {
-                return Center(
+                return const Center(
                   child: ScaledText(
                     'Keine Kontaktdaten verfügbar.',
                     style: UIStyles.bodyStyle,
@@ -501,7 +501,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       onPressed: _isAdding ? null : _showAddContactForm,
                       style: UIStyles.primaryButtonStyle,
                       icon: const Icon(Icons.add),
-                      label: ScaledText(
+                      label: const ScaledText(
                         'Neuen Kontakt hinzufügen',
                         style: UIStyles.buttonTextStyle,
                       ),
