@@ -280,6 +280,6 @@ class UIConstants {
     'Homepage',
     'Facebook',
     'Instagram',
-    'Twitter'
+    'Twitter',
   ];
 }

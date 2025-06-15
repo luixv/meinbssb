@@ -12,7 +12,6 @@ import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/widgets/scaled_text.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -33,7 +32,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
   bool _isDeleting = false;
   bool _isAdding = false;
-  bool _isSaving = false;
 
   // Use Contact model's type constants
   final Map<int, String> _contactTypeLabels = {
@@ -47,12 +45,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   };
 
   int? _selectedKontaktTyp;
-  String? _selectedContactType;
   final TextEditingController _kontaktController = TextEditingController();
-  final TextEditingController _telefonController = TextEditingController();
-  final TextEditingController _mobilController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _newContactValueController = TextEditingController();
 
   // Regex for email validation
   final RegExp _emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -98,7 +91,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: ScaledText(
+            child: Text(
               'Kontaktdaten löschen',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -140,7 +133,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
+                          Text(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -162,7 +155,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
+                          Text(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
@@ -210,7 +203,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gelöscht.'),
+              content: Text('Kontaktdaten erfolgreich gelöscht.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -218,7 +211,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Fehler beim Löschen der Kontaktdaten.'),
+              content: Text('Fehler beim Löschen der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -229,7 +222,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -251,8 +244,42 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: ScaledText('Bitte Kontakttyp und Kontaktwert eingeben.'),
+            content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
             duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Create a temporary Contact object for validation
+    final contact = Contact(
+      id: 0, // Temporary ID for new contact
+      personId: widget.userData?.personId ?? 0,
+      type: _selectedKontaktTyp!,
+      value: kontaktValue,
+    );
+
+    // Input Validation based on Contact type
+    String? validationErrorMessage;
+    if (contact.isEmail) {
+      if (!_emailRegex.hasMatch(kontaktValue)) {
+        validationErrorMessage =
+            'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+      }
+    } else if (contact.isPhone || contact.isFax) {
+      if (!_phoneFaxMobileRegex.hasMatch(kontaktValue)) {
+        validationErrorMessage =
+            'Bitte geben Sie eine gültige Telefon-/Faxnummer ein (nur Ziffern, +, -, (, ) erlaubt).';
+      }
+    }
+
+    if (validationErrorMessage != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(validationErrorMessage),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -265,20 +292,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final contact = Contact(
-        id: 0, // New contact
-        personId: widget.userData?.personId ?? 0,
-        type: _selectedKontaktTyp!,
-        value: kontaktValue,
-      );
-
       final bool success = await apiService.addKontakt(contact);
 
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gespeichert.'),
+              content: Text('Kontaktdaten erfolgreich gespeichert.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -288,7 +308,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Fehler beim Speichern der Kontaktdaten.'),
+              content: Text('Fehler beim Speichern der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -299,7 +319,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -309,67 +329,131 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         setState(() {
           _isAdding = false;
         });
+        Navigator.of(context).pop();
       }
     }
   }
 
   // --- Display Add Contact Form ---
-  Widget _buildAddContactForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        DropdownButtonFormField<int>(
-          value: _selectedKontaktTyp,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Kontakttyp',
-          ),
-          style: UIStyles.formValueStyle,
-          items: _contactTypeLabels.entries.map((entry) {
-            return DropdownMenuItem<int>(
-              value: entry.key,
-              child: ScaledText(entry.value),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _selectedKontaktTyp = value;
-            });
-          },
-        ),
-        const SizedBox(height: UIConstants.spacingS),
-        TextFormField(
-          controller: _kontaktController,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Kontaktwert',
-          ),
-          style: UIStyles.formValueStyle,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Bitte geben Sie einen Kontaktwert ein.';
-            }
-            if (_selectedKontaktTyp == 3 && !_emailRegex.hasMatch(value)) {
-              return 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-            }
-            if ([1, 2, 4].contains(_selectedKontaktTyp) &&
-                !_phoneFaxMobileRegex.hasMatch(value)) {
-              return 'Bitte geben Sie eine gültige Telefonnummer ein.';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: UIConstants.spacingM),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _isAdding ? null : _onAddContact,
-            style: UIStyles.primaryButtonStyle,
-            child: ScaledText(
-              _isAdding ? 'Wird gespeichert...' : 'Kontakt hinzufügen',
-              style: UIStyles.buttonTextStyle,
+  void _showAddContactForm() {
+    _selectedKontaktTyp = null;
+    _kontaktController.clear();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: Text(
+              'Neuen Kontakt hinzufügen',
+              style: UIStyles.dialogTitleStyle,
             ),
           ),
-        ),
-      ],
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                DropdownButtonFormField<int>(
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Kontakttyp',
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  ),
+                  value: _selectedKontaktTyp,
+                  items: _contactTypeLabels.entries.map((entry) {
+                    return DropdownMenuItem<int>(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    );
+                  }).toList(),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _selectedKontaktTyp = newValue;
+                    });
+                  },
+                ),
+                const SizedBox(height: UIConstants.spacingM),
+                TextFormField(
+                  controller: _kontaktController,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Kontakt',
+                    hintText: 'z.B. email@beispiel.de oder 0123 456789',
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.closeIcon,
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          Text(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: UIConstants.spacingM),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isAdding ? null : _onAddContact,
+                      style: UIStyles.dialogAcceptButtonStyle,
+                      child: _isAdding
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.circularProgressIndicator,
+                              ),
+                              strokeWidth: 2,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.check,
+                                  color: UIConstants.checkIcon,
+                                  size: UIConstants.bodyFontSize + 4.0,
+                                ),
+                                const SizedBox(width: UIConstants.spacingS),
+                                Text(
+                                  'Hinzufügen',
+                                  style:
+                                      UIStyles.dialogButtonTextStyle.copyWith(
+                                    color: UIConstants.submitButtonText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -405,7 +489,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               'Error loading contact data in FutureBuilder: ${snapshot.error}',
             );
             return Center(
-              child: ScaledText(
+              child: Text(
                 'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
                 style: UIStyles.errorStyle,
               ),
@@ -421,28 +505,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             );
           } else {
             return const Center(
-              child: ScaledText('Keine Kontaktdaten gefunden.'),
+              child: Text('Keine Kontaktdaten gefunden.'),
             );
           }
         },
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: _isSaving ? null : _saveContactData,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: _isSaving
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Icon(Icons.save, color: Colors.white),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            onPressed: _showAddContactForm,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddContactForm,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -478,7 +549,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 padding: const EdgeInsets.symmetric(
                   vertical: UIConstants.spacingS,
                 ),
-                child: ScaledText(
+                child: Text(
                   categoryName,
                   style: UIStyles.subtitleStyle.copyWith(
                     color: UIConstants.primaryColor,
@@ -529,7 +600,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       child: TextFormField(
         initialValue: displayValueFormatted,
         readOnly: true,
-        style: UIStyles.formValueBoldStyle,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: UIConstants.bodyFontSize,
+        ),
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: displayLabelFormatted,
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -551,379 +625,5 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildTelefonField() {
-    return TextFormField(
-      key: const Key('telefonField'),
-      controller: _telefonController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.telefonLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.telefonRequired;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildMobilField() {
-    return TextFormField(
-      key: const Key('mobilField'),
-      controller: _mobilController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.mobilLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.mobilRequired;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildEmailField() {
-    return TextFormField(
-      key: const Key('emailField'),
-      controller: _emailController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: UIConstants.emailLabel,
-      ),
-      style: UIStyles.formValueStyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return UIConstants.emailRequired;
-        }
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-          return UIConstants.emailInvalid;
-        }
-        return null;
-      },
-    );
-  }
-
-  Future<void> _showDeleteConfirmationDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Kontaktdaten löschen',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: const ScaledText(
-            UIConstants.deleteContactDataConfirmation,
-            style: UIStyles.dialogContentStyle,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.close, color: UIConstants.closeIcon),
-                  UIConstants.horizontalSpacingS,
-                  const ScaledText(
-                    'Abbrechen',
-                    style: UIStyles.dialogButtonTextStyle.copyWith(
-                      color: UIConstants.closeIcon,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteContactData();
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check, color: UIConstants.checkIcon),
-                  UIConstants.horizontalSpacingS,
-                  const ScaledText(
-                    'Löschen',
-                    style: UIStyles.dialogButtonTextStyle.copyWith(
-                      color: UIConstants.checkIcon,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showAddContactForm() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Kontakt hinzufügen',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<String>(
-                  value: _selectedContactType,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: UIConstants.contactTypeLabel,
-                  ),
-                  items: UIConstants.contactTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedContactType = newValue;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _newContactValueController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: UIConstants.contactValueLabel,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte geben Sie einen Kontaktwert ein';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.close, color: UIConstants.closeIcon),
-                  UIConstants.horizontalSpacingS,
-                  ScaledText(
-                    UIConstants.cancelButtonLabel,
-                    style: UIStyles.dialogButtonTextStyle.copyWith(
-                      color: UIConstants.closeIcon,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _addContact();
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check, color: UIConstants.checkIcon),
-                  UIConstants.horizontalSpacingS,
-                  ScaledText(
-                    'Hinzufügen',
-                    style: UIStyles.dialogButtonTextStyle.copyWith(
-                      color: UIConstants.checkIcon,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _addContact() async {
-    if (_selectedContactType == null || _newContactValueController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: ScaledText('Bitte Kontakttyp und Kontaktwert eingeben.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      _isAdding = true;
-    });
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final contact = Contact(
-        id: 0,
-        personId: widget.userData?.personId ?? 0,
-        type: UIConstants.contactTypes.indexOf(_selectedContactType!) + 1,
-        value: _newContactValueController.text,
-      );
-
-      final bool success = await apiService.addKontakt(contact);
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Kontakt erfolgreich hinzugefügt.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-          _newContactValueController.clear();
-          _selectedContactType = null;
-          _fetchContacts();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Fehler beim Hinzufügen des Kontakts.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during contact addition: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isAdding = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _deleteContactData() async {
-    setState(() {
-      _isDeleting = true;
-    });
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final contact = Contact(
-        id: 0,
-        personId: widget.userData?.personId ?? 0,
-        type: 0,
-        value: '',
-      );
-
-      final bool success = await apiService.deleteKontakt(contact);
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gelöscht.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-          _fetchContacts();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Fehler beim Löschen der Kontaktdaten.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during contact deletion: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _saveContactData() async {
-    setState(() {
-      _isSaving = true;
-    });
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final contact = Contact(
-        id: 0,
-        personId: widget.userData?.personId ?? 0,
-        type: 1, // Default to phone
-        value: _telefonController.text,
-      );
-
-      final bool success = await apiService.addKontakt(contact);
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gespeichert.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-          _fetchContacts();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: ScaledText('Fehler beim Speichern der Kontaktdaten.'),
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during contact save: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
-      }
-    }
   }
 }
