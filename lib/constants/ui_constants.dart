@@ -156,9 +156,9 @@ class UIConstants {
   static const String bicLabel = 'BIC';
   static const String bicRequired = 'Bitte geben Sie Ihre BIC ein';
   static const String kontoinhaberLabel = 'Kontoinhaber';
-  static const String kontoinhaberRequired = 'Bitte geben Sie den Kontoinhaber ein';
+  static const String kontoinhaberRequired =
+      'Bitte geben Sie den Kontoinhaber ein';
   static const String personalDataTitle = 'Persönliche Daten';
-  static const String personalDataSubtitle = 'Bitte geben Sie Ihre persönlichen Daten ein';
   static const String homeTitle = 'Home';
   static const String welcomeMessage = 'Willkommen';
   static const String checkPassNumberButtonLabel = 'Passnummer prüfen';
@@ -174,7 +174,8 @@ class UIConstants {
   static const String registerButtonLabel = 'Registrieren';
   static const String registrationTitle = 'Registrierung';
   static const String cancelButtonLabel = 'Abbrechen';
-  static const String deleteBankDataConfirmation = 'Möchten Sie Ihre Bankdaten wirklich löschen?';
+  static const String deleteBankDataConfirmation =
+      'Möchten Sie Ihre Bankdaten wirklich löschen?';
   static const String deleteButtonLabel = 'Löschen';
   static const String saveButtonLabel = 'Speichern';
   static const String savingLabel = 'Wird gespeichert...';
@@ -263,15 +264,18 @@ class UIConstants {
 
   // Contact Data Screen
   static const String telefonLabel = 'Telefon';
-  static const String telefonRequired = 'Bitte geben Sie Ihre Telefonnummer ein';
+  static const String telefonRequired =
+      'Bitte geben Sie Ihre Telefonnummer ein';
   static const String mobilLabel = 'Mobil';
   static const String mobilRequired = 'Bitte geben Sie Ihre Mobilnummer ein';
   static const String emailLabel = 'E-Mail';
   static const String emailRequired = 'Bitte geben Sie Ihre E-Mail-Adresse ein';
-  static const String emailInvalid = 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+  static const String emailInvalid =
+      'Bitte geben Sie eine gültige E-Mail-Adresse ein';
   static const String contactTypeLabel = 'Kontakttyp';
   static const String contactValueLabel = 'Kontaktwert';
-  static const String deleteContactDataConfirmation = 'Möchten Sie diese Kontaktdaten wirklich löschen?';
+  static const String deleteContactDataConfirmation =
+      'Möchten Sie diese Kontaktdaten wirklich löschen?';
   static const List<String> contactTypes = [
     'Telefon',
     'Mobil',

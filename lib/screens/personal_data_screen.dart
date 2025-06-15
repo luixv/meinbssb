@@ -234,10 +234,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         style: UIStyles.errorStyle,
                       ),
                     const SizedBox(height: UIConstants.spacingM),
-                    const ScaledText(
-                      UIConstants.personalDataSubtitle,
-                      style: UIStyles.subtitleStyle,
-                    ),
                     const SizedBox(height: UIConstants.spacingM),
                     _buildPassnummerField(),
                     const SizedBox(height: UIConstants.spacingS),
