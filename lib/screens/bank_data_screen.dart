@@ -34,6 +34,7 @@ class BankDataScreenState extends State<BankDataScreen> {
   bool _isEditing = false;
   bool _isSaving = false;
   bool _hasBankData = false;
+  String? _errorMessage;
 
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
@@ -418,37 +419,9 @@ class BankDataScreenState extends State<BankDataScreen> {
           child: Column(
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
-              _buildTextField(
-                label: 'Kontoinhaber',
-                controller: _kontoinhaberController,
-                isReadOnly: !_isEditing,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Kontoinhaber ist erforderlich';
-                  }
-                  return null;
-                },
-              ),
-              _buildTextField(
-                label: 'IBAN',
-                controller: _ibanController,
-                isReadOnly: !_isEditing,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'IBAN ist erforderlich';
-                  }
-                  if (!BankService.validateIBAN(value)) {
-                    return 'Ungültige IBAN';
-                  }
-                  return null;
-                },
-              ),
-              _buildTextField(
-                label: 'BIC',
-                controller: _bicController,
-                isReadOnly: !_isEditing,
-                validator: BankService.validateBIC,
-              ),
+              _buildKontoinhaberField(),
+              _buildIbanField(),
+              _buildBicField(),
             ],
           ),
         ),
@@ -456,28 +429,54 @@ class BankDataScreenState extends State<BankDataScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
-    bool isReadOnly = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        readOnly: isReadOnly,
-        style: TextStyle(
-          fontSize: UIConstants.bodyFontSize,
-          fontWeight: isReadOnly ? FontWeight.bold : FontWeight.normal,
-        ),
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isReadOnly ? null : label,
-        ),
-        validator: validator,
+  Widget _buildIbanField() {
+    return TextFormField(
+      key: const Key('ibanField'),
+      controller: _ibanController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.ibanLabel,
       ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.ibanRequired;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildBicField() {
+    return TextFormField(
+      key: const Key('bicField'),
+      controller: _bicController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.bicLabel,
+      ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.bicRequired;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildKontoinhaberField() {
+    return TextFormField(
+      key: const Key('kontoinhaberField'),
+      controller: _kontoinhaberController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.kontoinhaberLabel,
+      ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.kontoinhaberRequired;
+        }
+        return null;
+      },
     );
   }
 

@@ -253,46 +253,19 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       return;
     }
 
-    // Create a temporary Contact object for validation
-    final contact = Contact(
-      id: 0, // Temporary ID for new contact
-      personId: widget.userData?.personId ?? 0,
-      type: _selectedKontaktTyp!,
-      value: kontaktValue,
-    );
-
-    // Input Validation based on Contact type
-    String? validationErrorMessage;
-    if (contact.isEmail) {
-      if (!_emailRegex.hasMatch(kontaktValue)) {
-        validationErrorMessage =
-            'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-      }
-    } else if (contact.isPhone || contact.isFax) {
-      if (!_phoneFaxMobileRegex.hasMatch(kontaktValue)) {
-        validationErrorMessage =
-            'Bitte geben Sie eine gültige Telefon-/Faxnummer ein (nur Ziffern, +, -, (, ) erlaubt).';
-      }
-    }
-
-    if (validationErrorMessage != null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: ScaledText(validationErrorMessage),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-      return;
-    }
-
     setState(() {
       _isAdding = true;
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
+      final contact = Contact(
+        id: 0, // New contact
+        personId: widget.userData?.personId ?? 0,
+        type: _selectedKontaktTyp!,
+        value: kontaktValue,
+      );
+
       final bool success = await apiService.addKontakt(contact);
 
       if (mounted) {
@@ -330,131 +303,67 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         setState(() {
           _isAdding = false;
         });
-        Navigator.of(context).pop();
       }
     }
   }
 
   // --- Display Add Contact Form ---
-  void _showAddContactForm() {
-    _selectedKontaktTyp = null;
-    _kontaktController.clear();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
+  Widget _buildAddContactForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<int>(
+          value: _selectedKontaktTyp,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Kontakttyp',
+          ),
+          style: UIStyles.formValueStyle,
+          items: _contactTypeLabels.entries.map((entry) {
+            return DropdownMenuItem<int>(
+              value: entry.key,
+              child: ScaledText(entry.value),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedKontaktTyp = value;
+            });
+          },
+        ),
+        const SizedBox(height: UIConstants.spacingS),
+        TextFormField(
+          controller: _kontaktController,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Kontaktwert',
+          ),
+          style: UIStyles.formValueStyle,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Bitte geben Sie einen Kontaktwert ein.';
+            }
+            if (_selectedKontaktTyp == 3 && !_emailRegex.hasMatch(value)) {
+              return 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            }
+            if ([1, 2, 4].contains(_selectedKontaktTyp) &&
+                !_phoneFaxMobileRegex.hasMatch(value)) {
+              return 'Bitte geben Sie eine gültige Telefonnummer ein.';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: UIConstants.spacingM),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _isAdding ? null : _onAddContact,
+            style: UIStyles.primaryButtonStyle,
             child: ScaledText(
-              'Neuen Kontakt hinzufügen',
-              style: UIStyles.dialogTitleStyle,
+              _isAdding ? 'Wird gespeichert...' : 'Kontakt hinzufügen',
+              style: UIStyles.buttonTextStyle,
             ),
           ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                DropdownButtonFormField<int>(
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Kontakttyp',
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  ),
-                  value: _selectedKontaktTyp,
-                  items: _contactTypeLabels.entries.map((entry) {
-                    return DropdownMenuItem<int>(
-                      value: entry.key,
-                      child: ScaledText(entry.value),
-                    );
-                  }).toList(),
-                  onChanged: (int? newValue) {
-                    setState(() {
-                      _selectedKontaktTyp = newValue;
-                    });
-                  },
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                TextFormField(
-                  controller: _kontaktController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Kontakt',
-                    hintText: 'z.B. email@beispiel.de oder 0123 456789',
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  ),
-                  keyboardType: TextInputType.text,
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingM,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop();
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.close,
-                            color: UIConstants.closeIcon,
-                          ),
-                          const SizedBox(width: UIConstants.spacingS),
-                          ScaledText(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: UIConstants.spacingM),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isAdding ? null : _onAddContact,
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: _isAdding
-                          ? const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.circularProgressIndicator,
-                              ),
-                              strokeWidth: 2,
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.check,
-                                  color: UIConstants.checkIcon,
-                                  size: UIConstants.bodyFontSize + 4.0,
-                                ),
-                                const SizedBox(width: UIConstants.spacingS),
-                                ScaledText(
-                                  'Hinzufügen',
-                                  style:
-                                      UIStyles.dialogButtonTextStyle.copyWith(
-                                    color: UIConstants.submitButtonText,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ],
     );
   }
 
@@ -601,10 +510,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       child: TextFormField(
         initialValue: displayValueFormatted,
         readOnly: true,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: UIConstants.bodyFontSize,
-        ),
+        style: UIStyles.formValueBoldStyle,
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: displayLabelFormatted,
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -625,6 +531,218 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTelefonField() {
+    return TextFormField(
+      key: const Key('telefonField'),
+      controller: _telefonController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.telefonLabel,
+      ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.telefonRequired;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildMobilField() {
+    return TextFormField(
+      key: const Key('mobilField'),
+      controller: _mobilController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.mobilLabel,
+      ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.mobilRequired;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      key: const Key('emailField'),
+      controller: _emailController,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: UIConstants.emailLabel,
+      ),
+      style: UIStyles.formValueStyle,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return UIConstants.emailRequired;
+        }
+        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          return UIConstants.emailInvalid;
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        key: const Key('saveButton'),
+        onPressed: _isSaving ? null : _saveContactData,
+        style: UIStyles.primaryButtonStyle,
+        child: ScaledText(
+          _isSaving ? UIConstants.savingLabel : UIConstants.saveLabel,
+          style: UIStyles.buttonTextStyle,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDeleteConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Kontaktdaten löschen',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: const ScaledText(
+            UIConstants.deleteContactDataConfirmation,
+            style: UIStyles.dialogContentStyle,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.close, color: UIConstants.closeIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Abbrechen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.closeIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteContactData();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check, color: UIConstants.checkIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Löschen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.checkIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAddContactDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Neuen Kontakt hinzufügen',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<int>(
+                value: _selectedContactType,
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: UIConstants.contactTypeLabel,
+                ),
+                style: UIStyles.formValueStyle,
+                items: UIConstants.contactTypes.entries.map((entry) {
+                  return DropdownMenuItem<int>(
+                    value: entry.key,
+                    child: ScaledText(entry.value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedContactType = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              TextFormField(
+                controller: _newContactValueController,
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: UIConstants.contactValueLabel,
+                ),
+                style: UIStyles.formValueStyle,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.close, color: UIConstants.closeIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Abbrechen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.closeIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _addContact();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.check, color: UIConstants.checkIcon),
+                  UIConstants.horizontalSpacingS,
+                  const ScaledText(
+                    'Hinzufügen',
+                    style: UIStyles.dialogButtonTextStyle.copyWith(
+                      color: UIConstants.checkIcon,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
