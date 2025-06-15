@@ -266,7 +266,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           onPressed: () {
             Navigator.pushNamed(context, '/help');
           },
-          backgroundColor: _appColor,
+          backgroundColor: UIConstants.defaultAppColor,
           child: const Icon(Icons.help_outline),
         ),
         FloatingActionButton(
@@ -274,7 +274,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           onPressed: () {
             Navigator.pushNamed(context, '/settings');
           },
-          backgroundColor: _appColor,
+          backgroundColor: UIConstants.defaultAppColor,
           child: const Icon(Icons.settings),
         ),
       ],
