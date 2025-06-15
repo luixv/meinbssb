@@ -457,14 +457,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const ScaledText('Kontaktdaten'),
-            backgroundColor: UIConstants.defaultAppColor,
-          ),
-          body: FutureBuilder<List<Map<String, dynamic>>>(
+    return BaseScreenLayout(
+      title: 'Kontaktdaten',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) {
+          return FutureBuilder<List<Map<String, dynamic>>>(
             future: _contactDataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -480,9 +480,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 );
               }
 
-              final contacts = snapshot.data ?? [];
-              if (contacts.isEmpty) {
-                return Center(
+              final contactData = snapshot.data ?? [];
+              if (contactData.isEmpty) {
+                return const Center(
                   child: ScaledText(
                     'Keine Kontaktdaten verfügbar.',
                     style: UIStyles.bodyStyle,
@@ -490,58 +490,79 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 );
               }
 
-              return ListView.builder(
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(UIConstants.spacingM),
-                itemCount: contacts.length,
-                itemBuilder: (context, index) {
-                  final contact = contacts[index];
-                  return _buildContactTile(
-                    contact['KONTAKT_ID'] as int,
-                    contact['KONTAKT_TYP'] as int,
-                    contact['KONTAKT'] as String,
-                  );
-                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ...contactData.map((contact) => _buildContactTile(contact)),
+                    const SizedBox(height: UIConstants.spacingL),
+                    ElevatedButton.icon(
+                      onPressed: _isAdding ? null : _showAddContactForm,
+                      style: UIStyles.primaryButtonStyle,
+                      icon: const Icon(Icons.add),
+                      label: const ScaledText(
+                        'Neuen Kontakt hinzufügen',
+                        style: UIStyles.buttonTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: _showAddContactForm,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildContactTile(int kontaktId, int kontaktTyp, String kontakt) {
-    final contactLabel = _contactTypeLabels[kontaktTyp] ?? 'Unbekannt';
-    return Card(
-      margin: const EdgeInsets.only(bottom: UIConstants.spacingM),
-      child: ListTile(
-        title: ScaledText(
-          contactLabel,
-          style: UIStyles.formLabelStyle,
-        ),
-        subtitle: ScaledText(
-          kontakt,
-          style: UIStyles.bodyStyle,
-        ),
-        trailing: IconButton(
-          icon: const Icon(
-            Icons.delete_outline_outlined,
-            color: UIConstants.defaultAppColor,
+  Widget _buildContactTile(Map<String, dynamic> contact) {
+    final kontaktId = contact['kontaktId'] as int;
+    final rawKontaktTyp = contact['rawKontaktTyp'] as int;
+    final displayValue = contact['value'] as String;
+    final displayLabel = contact['type'] as String;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: UIConstants.spacingS,
           ),
-          onPressed: _isDeleting
-              ? null
-              : () => _onDeleteContact(
-                    kontaktId,
-                    kontaktTyp,
-                    kontakt,
-                    contactLabel,
-                  ),
+          child: ScaledText(
+            displayLabel,
+            style: UIStyles.subtitleStyle.copyWith(
+              color: UIConstants.primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-      ),
+        TextFormField(
+          initialValue: displayValue.isNotEmpty ? displayValue : '-',
+          readOnly: true,
+          style: UIStyles.bodyStyle,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: displayLabel,
+            labelStyle: UIStyles.formLabelStyle,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: _isDeleting ? null : displayLabel,
+            fillColor: _isDeleting ? UIConstants.disabledBackgroundColor : null,
+            filled: _isDeleting ? false : null,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.delete_outline),
+              color: UIConstants.deleteIcon,
+              onPressed: _isDeleting
+                  ? null
+                  : () => _onDeleteContact(
+                        kontaktId,
+                        rawKontaktTyp,
+                        displayValue,
+                        displayLabel,
+                      ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
