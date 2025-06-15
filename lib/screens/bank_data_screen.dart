@@ -32,7 +32,7 @@ class BankDataScreenState extends State<BankDataScreen> {
   late Future<Map<String, dynamic>> _bankDataFuture;
   bool _isLoading = true;
   bool _isSaving = false;
-  bool _hasBankData = false;
+  final bool _hasBankData = false;
 
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
@@ -91,7 +91,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: ScaledText('Bankdaten erfolgreich gespeichert.'),
               duration: Duration(seconds: 3),
             ),
@@ -99,7 +99,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           _fetchBankData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: ScaledText('Fehler beim Speichern der Bankdaten.'),
               duration: Duration(seconds: 3),
             ),
@@ -112,7 +112,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -137,7 +137,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: ScaledText('Bankdaten erfolgreich gelöscht.'),
               duration: Duration(seconds: 3),
             ),
@@ -145,7 +145,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           _fetchBankData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: ScaledText('Fehler beim Löschen der Bankdaten.'),
               duration: Duration(seconds: 3),
             ),
@@ -158,7 +158,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -177,13 +177,13 @@ class BankDataScreenState extends State<BankDataScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: Center(
+          title: const Center(
             child: ScaledText(
               'Bankdaten löschen',
               style: UIStyles.dialogTitleStyle,
             ),
           ),
-          content: ScaledText(
+          content: const ScaledText(
             UIConstants.deleteBankDataConfirmation,
             style: UIStyles.dialogContentStyle,
           ),
@@ -193,7 +193,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.close, color: UIConstants.closeIcon),
+                  const Icon(Icons.close, color: UIConstants.closeIcon),
                   UIConstants.horizontalSpacingS,
                   ScaledText(
                     'Abbrechen',
@@ -212,7 +212,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check, color: UIConstants.checkIcon),
+                  const Icon(Icons.check, color: UIConstants.checkIcon),
                   UIConstants.horizontalSpacingS,
                   ScaledText(
                     'Löschen',
@@ -351,7 +351,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ScaledText(
+                    const ScaledText(
                       UIConstants.bankDataSubtitle,
                       style: UIStyles.subtitleStyle,
                     ),
