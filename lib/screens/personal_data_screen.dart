@@ -234,7 +234,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         style: UIStyles.errorStyle,
                       ),
                     const SizedBox(height: UIConstants.spacingM),
-                    const ScaledText(
+                    ScaledText(
                       UIConstants.personalDataSubtitle,
                       style: UIStyles.subtitleStyle,
                     ),
@@ -260,24 +260,28 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 ),
               ),
             ),
-      floatingActionButtons: [
-        FloatingActionButton(
-          key: const Key('helpFab'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/help');
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.help_outline),
-        ),
-        FloatingActionButton(
-          key: const Key('settingsFab'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/settings');
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.settings),
-        ),
-      ],
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            key: const Key('helpFab'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/help');
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.help_outline),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            key: const Key('settingsFab'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.settings),
+          ),
+        ],
+      ),
     );
   }
 
