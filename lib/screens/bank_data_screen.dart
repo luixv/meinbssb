@@ -46,24 +46,16 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   Future<void> _fetchBankData() async {
-    final int personId = widget.userData?.personId ?? 0;
-    setState(() {
-      _isLoading = true;
-    });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final data = await apiService.fetchBankData(personId);
+      final data = await apiService.fetchBankData(widget.userData?.personId ?? 0);
       if (data.isNotEmpty) {
         _kontoinhaberController.text = data['kontoinhaber'] as String? ?? '';
         _ibanController.text = data['iban'] as String? ?? '';
         _bicController.text = data['bic'] as String? ?? '';
-        setState(() {
-          _hasBankData = true;
-        });
       }
     } catch (e) {
       LoggerService.logError('Error setting up bank data fetch: $e');
-      _bankDataFuture = Future.value({});
       if (mounted) {
         _showErrorDialog(e.toString());
       }
@@ -99,7 +91,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: ScaledText('Bankdaten erfolgreich gespeichert.'),
               duration: Duration(seconds: 3),
             ),
@@ -107,7 +99,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           _fetchBankData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: ScaledText('Fehler beim Speichern der Bankdaten.'),
               duration: Duration(seconds: 3),
             ),
@@ -120,7 +112,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -140,14 +132,12 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bool success = await apiService.deleteBankData(
-        widget.userData?.personId ?? 0,
-      );
+      final bool success = await apiService.deleteBankData(widget.userData?.personId ?? 0);
 
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: ScaledText('Bankdaten erfolgreich gelöscht.'),
               duration: Duration(seconds: 3),
             ),
@@ -155,7 +145,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           _fetchBankData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: ScaledText('Fehler beim Löschen der Bankdaten.'),
               duration: Duration(seconds: 3),
             ),
@@ -168,7 +158,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: ScaledText('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -187,13 +177,13 @@ class BankDataScreenState extends State<BankDataScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
+          title: Center(
             child: ScaledText(
               'Bankdaten löschen',
               style: UIStyles.dialogTitleStyle,
             ),
           ),
-          content: const ScaledText(
+          content: ScaledText(
             UIConstants.deleteBankDataConfirmation,
             style: UIStyles.dialogContentStyle,
           ),
@@ -203,9 +193,9 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.close, color: UIConstants.closeIcon),
+                  Icon(Icons.close, color: UIConstants.closeIcon),
                   UIConstants.horizontalSpacingS,
-                  const ScaledText(
+                  ScaledText(
                     'Abbrechen',
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.closeIcon,
@@ -222,9 +212,9 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.check, color: UIConstants.checkIcon),
+                  Icon(Icons.check, color: UIConstants.checkIcon),
                   UIConstants.horizontalSpacingS,
-                  const ScaledText(
+                  ScaledText(
                     'Löschen',
                     style: UIStyles.dialogButtonTextStyle.copyWith(
                       color: UIConstants.checkIcon,
