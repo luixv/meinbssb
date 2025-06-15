@@ -462,54 +462,50 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: Consumer<FontSizeProvider>(
-        builder: (context, fontSizeProvider, child) {
-          return FutureBuilder<List<Map<String, dynamic>>>(
-            future: _contactDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _contactDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              if (snapshot.hasError) {
-                return Center(
-                  child: ScaledText(
-                    'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                    style: UIStyles.bodyStyle.copyWith(color: Colors.red),
+          if (snapshot.hasError) {
+            return Center(
+              child: ScaledText(
+                'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
+                style: UIStyles.bodyStyle.copyWith(color: Colors.red),
+              ),
+            );
+          }
+
+          final contactData = snapshot.data ?? [];
+          if (contactData.isEmpty) {
+            return const Center(
+              child: ScaledText(
+                'Keine Kontaktdaten verfügbar.',
+                style: UIStyles.bodyStyle,
+              ),
+            );
+          }
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(UIConstants.spacingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ...contactData.map((contact) => _buildContactTile(contact)),
+                const SizedBox(height: UIConstants.spacingL),
+                ElevatedButton.icon(
+                  onPressed: _isAdding ? null : _showAddContactForm,
+                  style: UIStyles.primaryButtonStyle,
+                  icon: const Icon(Icons.add),
+                  label: const ScaledText(
+                    'Neuen Kontakt hinzufügen',
+                    style: UIStyles.buttonTextStyle,
                   ),
-                );
-              }
-
-              final contactData = snapshot.data ?? [];
-              if (contactData.isEmpty) {
-                return const Center(
-                  child: ScaledText(
-                    'Keine Kontaktdaten verfügbar.',
-                    style: UIStyles.bodyStyle,
-                  ),
-                );
-              }
-
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(UIConstants.spacingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ...contactData.map((contact) => _buildContactTile(contact)),
-                    const SizedBox(height: UIConstants.spacingL),
-                    ElevatedButton.icon(
-                      onPressed: _isAdding ? null : _showAddContactForm,
-                      style: UIStyles.primaryButtonStyle,
-                      icon: const Icon(Icons.add),
-                      label: const ScaledText(
-                        'Neuen Kontakt hinzufügen',
-                        style: UIStyles.buttonTextStyle,
-                      ),
-                    ),
-                  ],
                 ),
-              );
-            },
+              ],
+            ),
           );
         },
       ),

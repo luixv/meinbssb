@@ -5,6 +5,8 @@ import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import 'package:provider/provider.dart';
+import '/providers/font_size_provider.dart';
 
 class BaseScreenLayout extends StatelessWidget {
   const BaseScreenLayout({
@@ -33,7 +35,7 @@ class BaseScreenLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: automaticallyImplyLeading,
         backgroundColor: UIConstants.backgroundColor,
         title: ScaledText(
           title,
@@ -60,7 +62,9 @@ class BaseScreenLayout extends StatelessWidget {
         isLoggedIn: isLoggedIn,
         onLogout: onLogout,
       ),
-      body: body,
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) => body,
+      ),
       floatingActionButton: floatingActionButton,
     );
   }
