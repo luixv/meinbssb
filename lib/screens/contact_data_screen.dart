@@ -14,6 +14,7 @@ import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 
 import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -614,7 +615,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               labelStyle: scaledStyle,
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: isDeleting ? null : displayLabelFormatted,
-              fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
+              fillColor:
+                  isDeleting ? UIConstants.disabledBackgroundColor : null,
               filled: isDeleting ? false : null,
               suffixIcon: IconButton(
                 icon: const Icon(Icons.delete_outline),
