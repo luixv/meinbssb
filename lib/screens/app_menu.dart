@@ -228,6 +228,7 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BankDataScreen(
                       userData,
+                      webloginId: userData?.webLoginId ?? 0,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),
@@ -291,8 +292,10 @@ class AppDrawer extends StatelessWidget {
               title: const ScaledText('Registrieren'),
               onTap: () {
                 Navigator.pop(context);
-                final authService = Provider.of<AuthService>(context, listen: false);
-                final emailService = Provider.of<EmailService>(context, listen: false);
+                final authService =
+                    Provider.of<AuthService>(context, listen: false);
+                final emailService =
+                    Provider.of<EmailService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -309,7 +312,8 @@ class AppDrawer extends StatelessWidget {
               title: const ScaledText('Passwort zurücksetzen'),
               onTap: () {
                 Navigator.pop(context);
-                final authService = Provider.of<AuthService>(context, listen: false);
+                final authService =
+                    Provider.of<AuthService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(

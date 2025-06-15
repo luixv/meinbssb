@@ -39,8 +39,9 @@ void main() {
         value: mockApiService,
         child: BankDataScreen(
           userData,
+          webloginId: userData?.webLoginId ?? 0,
           isLoggedIn: isLoggedIn,
-          onLogout: onLogout ?? () {},
+          onLogout: onLogout,
         ),
       ),
     );
