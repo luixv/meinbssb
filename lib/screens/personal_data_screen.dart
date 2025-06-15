@@ -294,7 +294,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Vorname ist erforderlich';
+                              return UIConstants.vornameRequired;
                             }
                             return null;
                           },
@@ -305,7 +305,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Nachname ist erforderlich';
+                              return UIConstants.nachnameRequired;
                             }
                             return null;
                           },
@@ -316,7 +316,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Straße und Hausnummer sind erforderlich';
+                              return UIConstants.strasseRequired;
                             }
                             return null;
                           },
@@ -327,7 +327,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Postleitzahl ist erforderlich';
+                              return UIConstants.plzRequired;
                             }
                             return null;
                           },
@@ -338,7 +338,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           enabled: !_isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Ort ist erforderlich';
+                              return UIConstants.ortRequired;
                             }
                             return null;
                           },
@@ -360,23 +360,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     String? Function(String?)? validator,
     Widget? suffixIcon,
   }) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
-        final scaledStyle = TextStyle(
-          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
-        );
-        return TextFormField(
-          controller: controller,
-          enabled: enabled,
-          validator: validator,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: labelText,
-            labelStyle: scaledStyle,
-            suffixIcon: suffixIcon,
-          ),
-          style: scaledStyle,
-        );
-      },
+    return TextFormField(
+      controller: controller,
+      enabled: enabled,
+      validator: validator,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: labelText,
+        labelStyle: UIStyles.formLabelStyle,
+        suffixIcon: suffixIcon,
+      ),
+      style: UIStyles.formInputStyle,
     );
   }
 }

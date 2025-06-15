@@ -456,27 +456,18 @@ class BankDataScreenState extends State<BankDataScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
-    bool enabled = true,
     String? Function(String?)? validator,
     Widget? suffixIcon,
   }) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
-        final scaledStyle = TextStyle(
-          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
-        );
-        return TextFormField(
-          controller: controller,
-          enabled: enabled,
-          validator: validator,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: labelText,
-            labelStyle: scaledStyle,
-            suffixIcon: suffixIcon,
-          ),
-          style: scaledStyle,
-        );
-      },
+    return TextFormField(
+      controller: controller,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: labelText,
+        labelStyle: UIStyles.formLabelStyle,
+        suffixIcon: suffixIcon,
+      ),
+      style: UIStyles.formInputStyle,
+      validator: validator,
     );
   }
 
