@@ -13,6 +13,8 @@ import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 
+import '/widgets/scaled_text.dart';
+
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
     this.userData, {
@@ -91,7 +93,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: Text(
+            child: ScaledText(
               'Kontaktdaten löschen',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -133,7 +135,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
+                          ScaledText(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -155,7 +157,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
+                          ScaledText(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
@@ -203,7 +205,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Kontaktdaten erfolgreich gelöscht.'),
+              content: ScaledText('Kontaktdaten erfolgreich gelöscht.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -211,7 +213,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Fehler beim Löschen der Kontaktdaten.'),
+              content: ScaledText('Fehler beim Löschen der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -222,7 +224,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ein Fehler ist aufgetreten: $e'),
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -244,7 +246,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
+            content: ScaledText('Bitte Kontakttyp und Kontaktwert eingeben.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -278,7 +280,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(validationErrorMessage),
+            content: ScaledText(validationErrorMessage),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -298,7 +300,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Kontaktdaten erfolgreich gespeichert.'),
+              content: ScaledText('Kontaktdaten erfolgreich gespeichert.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -308,7 +310,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Fehler beim Speichern der Kontaktdaten.'),
+              content: ScaledText('Fehler beim Speichern der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -319,7 +321,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ein Fehler ist aufgetreten: $e'),
+            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -345,7 +347,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: Text(
+            child: ScaledText(
               'Neuen Kontakt hinzufügen',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -362,7 +364,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   items: _contactTypeLabels.entries.map((entry) {
                     return DropdownMenuItem<int>(
                       value: entry.key,
-                      child: Text(entry.value),
+                      child: ScaledText(entry.value),
                     );
                   }).toList(),
                   onChanged: (int? newValue) {
@@ -406,7 +408,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             color: UIConstants.closeIcon,
                           ),
                           const SizedBox(width: UIConstants.spacingS),
-                          Text(
+                          ScaledText(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -437,7 +439,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                   size: UIConstants.bodyFontSize + 4.0,
                                 ),
                                 const SizedBox(width: UIConstants.spacingS),
-                                Text(
+                                ScaledText(
                                   'Hinzufügen',
                                   style:
                                       UIStyles.dialogButtonTextStyle.copyWith(
@@ -489,7 +491,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               'Error loading contact data in FutureBuilder: ${snapshot.error}',
             );
             return Center(
-              child: Text(
+              child: ScaledText(
                 'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
                 style: UIStyles.errorStyle,
               ),
@@ -505,7 +507,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             );
           } else {
             return const Center(
-              child: Text('Keine Kontaktdaten gefunden.'),
+              child: ScaledText('Keine Kontaktdaten gefunden.'),
             );
           }
         },
@@ -549,7 +551,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 padding: const EdgeInsets.symmetric(
                   vertical: UIConstants.spacingS,
                 ),
-                child: Text(
+                child: ScaledText(
                   categoryName,
                   style: UIStyles.subtitleStyle.copyWith(
                     color: UIConstants.primaryColor,
