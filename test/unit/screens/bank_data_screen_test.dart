@@ -31,7 +31,6 @@ void main() {
 
   Widget createBankDataScreen({
     UserData? userData,
-    int webloginId = 456,
     bool isLoggedIn = true,
     VoidCallback? onLogout,
   }) {
@@ -40,7 +39,6 @@ void main() {
         value: mockApiService,
         child: BankDataScreen(
           userData,
-          webloginId: webloginId,
           isLoggedIn: isLoggedIn,
           onLogout: onLogout ?? () {},
         ),
@@ -52,8 +50,8 @@ void main() {
     testWidgets('renders correctly with user data',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.value([]),
+      when(mockApiService.fetchBankdaten(any)).thenAnswer(
+        (_) => Future.value({}),
       );
 
       // Act
@@ -68,8 +66,8 @@ void main() {
     testWidgets('shows loading state while fetching bank data',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.delayed(const Duration(milliseconds: 100), () => []),
+      when(mockApiService.fetchBankdaten(any)).thenAnswer(
+        (_) => Future.delayed(const Duration(milliseconds: 100), () => {}),
       );
 
       // Act
@@ -85,7 +83,7 @@ void main() {
     testWidgets('shows error message when fetch fails',
         (WidgetTester tester) async {
       // Arrange
-      when(mockApiService.fetchBankData(any))
+      when(mockApiService.fetchBankdaten(any))
           .thenThrow(Exception('Test error'));
 
       // Act
