@@ -4,15 +4,9 @@
 
 // Flutter/Dart core imports
 import 'package:flutter/material.dart';
-
-// Third-party package imports
 import 'package:provider/provider.dart';
-
-// Local imports
-// Constants
 import '/constants/ui_constants.dart';
 
-// Screens
 import '/screens/absolvierte_seminare_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/contact_data_screen.dart';
