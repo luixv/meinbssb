@@ -433,7 +433,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           ScaledText(
                             'Hinzufügen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.acceptButtonText,
+                              color: UIConstants.primaryColor,
                             ),
                           ),
                         ],
@@ -447,15 +447,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         );
       },
     );
-  }
-
-  // --- Logout Handler ---
-  void _handleLogout() {
-    LoggerService.logInfo('Logging out user from ContactdataScreen');
-    widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
   }
 
   @override
@@ -484,7 +475,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 return Center(
                   child: ScaledText(
                     'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                    style: UIStyles.errorTextStyle,
+                    style: UIStyles.bodyStyle.copyWith(color: Colors.red),
                   ),
                 );
               }
