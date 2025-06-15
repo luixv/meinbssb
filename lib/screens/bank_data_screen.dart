@@ -9,7 +9,7 @@ import '/services/api/bank_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/bank_data_result_screen.dart';
-import '/providers/font_size_provider.dart';
+import '/widgets/scaled_text.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -330,12 +330,12 @@ class BankDataScreenState extends State<BankDataScreen> {
                 size: 48,
               ),
               const SizedBox(height: 16),
-              const Text(
+              const ScaledText(
                 'Fehler beim Laden der Bankdaten',
                 style: UIStyles.headerStyle,
               ),
               const SizedBox(height: 8),
-              const Text(
+              const ScaledText(
                 'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
                 textAlign: TextAlign.center,
                 style: UIStyles.bodyStyle,
@@ -346,7 +346,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   widget.onLogout();
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: const Text('Zurück zum Login'),
+                child: const ScaledText('Zurück zum Login'),
               ),
             ],
           ),
@@ -377,12 +377,12 @@ class BankDataScreenState extends State<BankDataScreen> {
                     size: 48,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  const ScaledText(
                     'Fehler beim Laden der Bankdaten',
                     style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  ScaledText(
                     snapshot.error.toString(),
                     textAlign: TextAlign.center,
                     style: UIStyles.bodyStyle,
@@ -419,8 +419,9 @@ class BankDataScreenState extends State<BankDataScreen> {
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
               _buildTextField(
-                labelText: 'Kontoinhaber',
+                label: 'Kontoinhaber',
                 controller: _kontoinhaberController,
+                isReadOnly: !_isEditing,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Kontoinhaber ist erforderlich';
@@ -429,8 +430,9 @@ class BankDataScreenState extends State<BankDataScreen> {
                 },
               ),
               _buildTextField(
-                labelText: 'IBAN',
+                label: 'IBAN',
                 controller: _ibanController,
+                isReadOnly: !_isEditing,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'IBAN ist erforderlich';
@@ -442,8 +444,9 @@ class BankDataScreenState extends State<BankDataScreen> {
                 },
               ),
               _buildTextField(
-                labelText: 'BIC',
+                label: 'BIC',
                 controller: _bicController,
+                isReadOnly: !_isEditing,
                 validator: BankService.validateBIC,
               ),
             ],
@@ -454,29 +457,24 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   Widget _buildTextField({
+    required String label,
     required TextEditingController controller,
-    required String labelText,
-    bool enabled = true,
     String? Function(String?)? validator,
-    Widget? suffixIcon,
+    bool isReadOnly = false,
   }) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
-        final scaledStyle = TextStyle(
-          fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
-        );
-        return TextFormField(
-          controller: controller,
-          enabled: enabled,
-          validator: validator,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: labelText,
-            labelStyle: scaledStyle,
-            suffixIcon: suffixIcon,
-          ),
-          style: scaledStyle,
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: TextFormField(
+        controller: controller,
+        readOnly: isReadOnly,
+        style: UIStyles.formValueStyle,
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: label,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: isReadOnly ? null : label,
+        ),
+        validator: validator,
+      ),
     );
   }
 

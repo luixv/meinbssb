@@ -162,9 +162,11 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('usernameField'),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
+      style: UIStyles.bodyStyle,
       decoration: UIStyles.formInputDecoration.copyWith(
         labelText: 'E-mail',
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        labelStyle: UIStyles.formLabelStyle,
       ),
     );
   }
@@ -174,15 +176,16 @@ class LoginScreenState extends State<LoginScreen> {
       key: const Key('passwordField'),
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
+      style: UIStyles.bodyStyle,
       decoration: UIStyles.formInputDecoration.copyWith(
         labelText: 'Passwort',
+        labelStyle: UIStyles.formLabelStyle,
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
           ),
           onPressed: () {
             if (mounted) {
-              //check mounted before calling setState
               setState(() {
                 _isPasswordVisible = !_isPasswordVisible;
               });

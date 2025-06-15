@@ -12,9 +12,7 @@ import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-
 import '/widgets/scaled_text.dart';
-import '/providers/font_size_provider.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -35,6 +33,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
   bool _isDeleting = false;
   bool _isAdding = false;
+  final ScrollController _scrollController = ScrollController();
 
   // Use Contact model's type constants
   final Map<int, String> _contactTypeLabels = {
@@ -94,7 +93,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: ScaledText(
+            child: Text(
               'Kontaktdaten löschen',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -136,7 +135,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
+                          Text(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -158,7 +157,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
+                          Text(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
@@ -206,7 +205,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gelöscht.'),
+              content: Text('Kontaktdaten erfolgreich gelöscht.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -214,7 +213,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Fehler beim Löschen der Kontaktdaten.'),
+              content: Text('Fehler beim Löschen der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -225,7 +224,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -247,7 +246,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: ScaledText('Bitte Kontakttyp und Kontaktwert eingeben.'),
+            content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -281,7 +280,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: ScaledText(validationErrorMessage),
+            content: Text(validationErrorMessage),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -301,7 +300,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Kontaktdaten erfolgreich gespeichert.'),
+              content: Text('Kontaktdaten erfolgreich gespeichert.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -311,7 +310,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: ScaledText('Fehler beim Speichern der Kontaktdaten.'),
+              content: Text('Fehler beim Speichern der Kontaktdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
@@ -322,7 +321,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: ScaledText('Ein Fehler ist aufgetreten: $e'),
+            content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -348,7 +347,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: ScaledText(
+            child: Text(
               'Neuen Kontakt hinzufügen',
               style: UIStyles.dialogTitleStyle,
             ),
@@ -359,15 +358,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 DropdownButtonFormField<int>(
                   decoration: UIStyles.formInputDecoration.copyWith(
                     labelText: 'Kontakttyp',
-                    labelStyle: UIStyles.formLabelStyle,
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
-                  style: UIStyles.bodyStyle,
                   value: _selectedKontaktTyp,
                   items: _contactTypeLabels.entries.map((entry) {
                     return DropdownMenuItem<int>(
                       value: entry.key,
-                      child: ScaledText(entry.value),
+                      child: Text(entry.value),
                     );
                   }).toList(),
                   onChanged: (int? newValue) {
@@ -381,11 +378,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   controller: _kontaktController,
                   decoration: UIStyles.formInputDecoration.copyWith(
                     labelText: 'Kontakt',
-                    labelStyle: UIStyles.formLabelStyle,
                     hintText: 'z.B. email@beispiel.de oder 0123 456789',
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
-                  style: UIStyles.bodyStyle,
                   keyboardType: TextInputType.text,
                 ),
               ],
@@ -408,9 +403,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
-                          ScaledText(
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.closeIcon,
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          Text(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
@@ -420,24 +418,36 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       ),
                     ),
                   ),
-                  UIConstants.horizontalSpacingM,
+                  const SizedBox(width: UIConstants.spacingM),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          ScaledText(
-                            'Hinzufügen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.primaryColor,
+                      child: _isAdding
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.circularProgressIndicator,
+                              ),
+                              strokeWidth: 2,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.check,
+                                  color: UIConstants.checkIcon,
+                                  size: UIConstants.bodyFontSize + 4.0,
+                                ),
+                                const SizedBox(width: UIConstants.spacingS),
+                                Text(
+                                  'Hinzufügen',
+                                  style:
+                                      UIStyles.dialogButtonTextStyle.copyWith(
+                                    color: UIConstants.submitButtonText,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -449,8 +459,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
   }
 
+  // --- Logout Handler ---
+  void _handleLogout() {
+    LoggerService.logInfo('Logging out user from ContactdataScreen');
+    widget.onLogout();
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
   @override
   void dispose() {
+    _scrollController.dispose();
     _kontaktController.dispose();
     super.dispose();
   }
@@ -461,104 +481,149 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       title: 'Kontaktdaten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
-      onLogout: widget.onLogout,
+      onLogout: _handleLogout,
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _contactDataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
+            LoggerService.logError(
+              'Error loading contact data in FutureBuilder: ${snapshot.error}',
+            );
             return Center(
               child: ScaledText(
                 'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                style: UIStyles.bodyStyle.copyWith(color: Colors.red),
+                style: UIStyles.errorStyle,
               ),
             );
-          }
-
-          final contactData = snapshot.data ?? [];
-          if (contactData.isEmpty) {
+          } else if (snapshot.hasData && snapshot.data != null) {
+            final List<Map<String, dynamic>> categorizedContactData =
+                snapshot.data!;
+            return _buildContactDataList(
+              categorizedContactData,
+              widget.userData?.personId ?? 0,
+              _onDeleteContact,
+              _isDeleting,
+            );
+          } else {
             return const Center(
-              child: ScaledText(
-                'Keine Kontaktdaten verfügbar.',
-                style: UIStyles.bodyStyle,
-              ),
+              child: ScaledText('Keine Kontaktdaten gefunden.'),
             );
           }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(UIConstants.spacingM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ...contactData.map((contact) => _buildContactTile(contact)),
-                const SizedBox(height: UIConstants.spacingL),
-                ElevatedButton.icon(
-                  onPressed: _isAdding ? null : _showAddContactForm,
-                  style: UIStyles.primaryButtonStyle,
-                  icon: const Icon(Icons.add),
-                  label: const ScaledText(
-                    'Neuen Kontakt hinzufügen',
-                    style: UIStyles.buttonTextStyle,
-                  ),
-                ),
-              ],
-            ),
-          );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddContactForm,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildContactTile(Map<String, dynamic> contact) {
-    final kontaktId = contact['kontaktId'] as int;
-    final rawKontaktTyp = contact['rawKontaktTyp'] as int;
-    final displayValue = contact['value'] as String;
-    final displayLabel = contact['type'] as String;
+  Widget _buildContactTile({
+    required int kontaktId,
+    required int rawKontaktTyp,
+    required String displayValue,
+    required String displayLabel,
+    required Function(int kontaktId, int kontaktTyp, String value, String label)
+        onDelete,
+    required bool isDeleting,
+  }) {
+    final displayValueFormatted = displayValue.isNotEmpty ? displayValue : '-';
+    final displayLabelFormatted =
+        displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: UIConstants.spacingS,
-          ),
-          child: ScaledText(
-            displayLabel,
-            style: UIStyles.subtitleStyle.copyWith(
-              color: UIConstants.primaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        TextFormField(
-          initialValue: displayValue.isNotEmpty ? displayValue : '-',
-          readOnly: true,
-          style: UIStyles.bodyStyle,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: displayLabel,
-            labelStyle: UIStyles.formLabelStyle,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: _isDeleting ? null : displayLabel,
-            fillColor: _isDeleting ? UIConstants.disabledBackgroundColor : null,
-            filled: _isDeleting ? false : null,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              color: UIConstants.deleteIcon,
-              onPressed: _isDeleting
-                  ? null
-                  : () => _onDeleteContact(
-                        kontaktId,
-                        rawKontaktTyp,
-                        displayValue,
-                        displayLabel,
-                      ),
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: UIConstants.spacingS,
+      ),
+      child: TextFormField(
+        initialValue: displayValueFormatted,
+        readOnly: true,
+        style: UIStyles.formValueStyle,
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: displayLabelFormatted,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: isDeleting ? null : displayLabelFormatted,
+          fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
+          filled: isDeleting ? false : null,
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.delete_outline),
+            color: UIConstants.deleteIcon,
+            onPressed: isDeleting
+                ? null
+                : () => onDelete(
+                      kontaktId,
+                      rawKontaktTyp,
+                      displayValue,
+                      displayLabel,
+                    ),
           ),
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildContactDataList(
+    List<Map<String, dynamic>> contactData,
+    int personId,
+    Function(int kontaktId, int kontaktTyp, String value, String label)
+        onDelete,
+    bool isDeleting,
+  ) {
+    return Padding(
+      padding: UIConstants.defaultPadding,
+      child: Scrollbar(
+        controller: _scrollController,
+        thickness: 6,
+        radius: const Radius.circular(8),
+        child: ListView.builder(
+          controller: _scrollController,
+          shrinkWrap: true,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: contactData.length,
+          itemBuilder: (context, index) {
+            final category = contactData[index];
+            final contacts = category['contacts'] as List<dynamic>;
+            final categoryName = category['category'] as String;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: UIConstants.spacingS,
+                  ),
+                  child: ScaledText(
+                    categoryName,
+                    style: UIStyles.subtitleStyle.copyWith(
+                      color: UIConstants.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: UIConstants.titleFontSize,
+                    ),
+                  ),
+                ),
+                ...contacts.map((contact) {
+                  final kontaktId = contact['kontaktId'] as int;
+                  final rawKontaktTyp = contact['rawKontaktTyp'] as int;
+                  final displayValue = contact['value'] as String;
+                  final displayLabel = contact['type'] as String;
+
+                  return _buildContactTile(
+                    kontaktId: kontaktId,
+                    rawKontaktTyp: rawKontaktTyp,
+                    displayValue: displayValue,
+                    displayLabel: displayLabel,
+                    onDelete: onDelete,
+                    isDeleting: isDeleting,
+                  );
+                }),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

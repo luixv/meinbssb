@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import '/providers/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -215,124 +214,183 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const ScaledText('Persönliche Daten'),
-            backgroundColor: UIConstants.defaultAppColor,
-          ),
-          body: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-                  ? Center(
-                      child: ScaledText(
-                        _errorMessage!,
-                        style: UIStyles.bodyStyle.copyWith(color: Colors.red),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.all(UIConstants.spacingM),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildTextField(
-                              controller: _passnummerController,
-                              label: 'Passnummer',
-                              enabled: false,
-                            ),
-                            _buildTextField(
-                              controller: _geburtsdatumController,
-                              label: 'Geburtsdatum',
-                              enabled: false,
-                            ),
-                            _buildTextField(
-                              controller: _titelController,
-                              label: 'Titel',
-                              enabled: _isEditing,
-                            ),
-                            _buildTextField(
-                              controller: _vornameController,
-                              label: 'Vorname',
-                              enabled: _isEditing,
-                            ),
-                            _buildTextField(
-                              controller: _nachnameController,
-                              label: 'Nachname',
-                              enabled: _isEditing,
-                            ),
-                            _buildTextField(
-                              controller: _strasseHausnummerController,
-                              label: 'Straße und Hausnummer',
-                              enabled: _isEditing,
-                            ),
-                            _buildTextField(
-                              controller: _postleitzahlController,
-                              label: 'Postleitzahl',
-                              enabled: _isEditing,
-                            ),
-                            _buildTextField(
-                              controller: _ortController,
-                              label: 'Ort',
-                              enabled: _isEditing,
-                            ),
-                            const SizedBox(height: UIConstants.spacingL),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                if (!_isEditing)
-                                  ElevatedButton(
-                                    onPressed: _isOnline
-                                        ? () {
-                                            setState(() {
-                                              _isEditing = true;
-                                            });
-                                          }
-                                        : null,
-                                    style: UIStyles.primaryButtonStyle,
-                                    child: const ScaledText('Bearbeiten'),
-                                  )
-                                else
-                                  ElevatedButton(
-                                    onPressed: _handleSave,
-                                    style: UIStyles.primaryButtonStyle,
-                                    child: const ScaledText('Speichern'),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-        );
-      },
+    return BaseScreenLayout(
+      title: 'Persönliche Daten',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
+      body: _isLoading && _currentPassData == null
+          ? const Center(child: CircularProgressIndicator())
+          : _buildPersonalDataForm(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _isEditing
+            ? _handleSave
+            : () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+        backgroundColor: UIConstants.defaultAppColor,
+        child: Icon(
+          _isEditing ? Icons.save : Icons.edit,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 
+  Widget _buildPersonalDataForm() {
+    return _errorMessage != null
+        ? Center(
+            child: ScaledText(
+              _errorMessage!,
+              style: UIStyles.errorStyle,
+            ),
+          )
+        : _currentPassData == null && !_isLoading
+            ? const Center(
+                child: ScaledText('Keine persönlichen Daten verfügbar.'),
+              )
+            : Padding(
+                padding: UIConstants.defaultPadding,
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const SizedBox(
+                          height: UIConstants.spacingS,
+                        ),
+                        _buildTextField(
+                          label: 'Passnummer',
+                          controller: _passnummerController,
+                          isReadOnly: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Geburtsdatum',
+                          controller: _geburtsdatumController,
+                          isReadOnly: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          inputTextStyle: UIStyles.formValueStyle,
+                          suffixIcon: Tooltip(
+                            message:
+                                'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                            preferBelow: false,
+                            child: Icon(
+                              Icons.info_outline,
+                              size: UIStyles.subtitleStyle.fontSize,
+                            ),
+                          ),
+                        ),
+                        _buildTextField(
+                          label: 'Titel',
+                          controller: _titelController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) => null,
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Vorname',
+                          controller: _vornameController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vorname ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Nachname',
+                          controller: _nachnameController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Nachname ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Straße und Hausnummer',
+                          controller: _strasseHausnummerController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Straße und Hausnummer sind erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Postleitzahl',
+                          controller: _postleitzahlController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Postleitzahl ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        _buildTextField(
+                          label: 'Ort',
+                          controller: _ortController,
+                          isReadOnly: !_isEditing,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ort ist erforderlich';
+                            }
+                            return null;
+                          },
+                          inputTextStyle: UIStyles.formValueStyle,
+                        ),
+                        const SizedBox(
+                          height: UIConstants.spacingS,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+  }
+
   Widget _buildTextField({
-    required TextEditingController controller,
     required String label,
-    bool enabled = true,
+    required TextEditingController controller,
+    String? Function(String?)? validator,
+    bool isReadOnly = false,
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
+    TextStyle? inputTextStyle,
+    Widget? suffixIcon,
+    TextInputType? keyboardType,
   }) {
+    // Use UIConstants form styles
+    final effectiveTextStyle =
+        isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
       child: TextFormField(
         controller: controller,
+        style: effectiveTextStyle,
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: label,
-          labelStyle: UIStyles.formLabelStyle,
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          floatingLabelBehavior: floatingLabelBehavior,
+          hintText: isReadOnly ? null : label,
+          filled: true,
+          suffixIcon: suffixIcon,
         ),
-        style: UIStyles.bodyStyle,
-        enabled: enabled,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Bitte füllen Sie dieses Feld aus';
-          }
-          return null;
-        },
+        validator: validator,
+        readOnly: isReadOnly,
+        keyboardType: keyboardType,
       ),
     );
   }
