@@ -426,10 +426,23 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddContactForm,
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _isSaving ? null : _saveContactData,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: _isSaving
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Icon(Icons.save, color: Colors.white),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            onPressed: _showAddContactForm,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+        ],
       ),
     );
   }
@@ -591,21 +604,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         }
         return null;
       },
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        key: const Key('saveButton'),
-        onPressed: _isSaving ? null : _saveContactData,
-        style: UIStyles.primaryButtonStyle,
-        child: ScaledText(
-          _isSaving ? UIConstants.savingLabel : UIConstants.saveLabel,
-          style: UIStyles.buttonTextStyle,
-        ),
-      ),
     );
   }
 
