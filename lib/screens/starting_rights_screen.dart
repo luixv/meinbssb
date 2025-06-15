@@ -10,6 +10,7 @@ import '/services/core/logger_service.dart';
 import '/services/api/training_service.dart';
 import '/models/disziplin.dart';
 import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -145,25 +146,32 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: UIStyles.bodyStyle,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: _passData!.passnummer,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  child: Consumer<FontSizeProvider>(
+                                    builder: (context, fontSizeProvider, child) {
+                                      final scaledStyle = UIStyles.bodyStyle.copyWith(
+                                        fontSize: UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                      );
+                                      return RichText(
+                                        text: TextSpan(
+                                          style: scaledStyle,
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: _passData!.passnummer,
+                                              style: scaledStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const TextSpan(text: ' - '),
+                                            TextSpan(
+                                              text: _passData!.vereinName,
+                                              style: scaledStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const TextSpan(text: ' - '),
-                                        TextSpan(
-                                          text: _passData!.vereinName,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
@@ -200,27 +208,32 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            style: UIStyles.bodyStyle,
-                                            children: [
-                                              TextSpan(
-                                                text: '${zve.vVereinNr}',
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        child: Consumer<FontSizeProvider>(
+                                          builder: (context, fontSizeProvider, child) {
+                                            final scaledStyle = UIStyles.bodyStyle.copyWith(
+                                              fontSize: UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                            );
+                                            return RichText(
+                                              text: TextSpan(
+                                                style: scaledStyle,
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                    text: '${zve.vVereinNr}',
+                                                    style: scaledStyle.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const TextSpan(text: ' - '),
+                                                  TextSpan(
+                                                    text: zve.vereinName ?? 'N/A',
+                                                    style: scaledStyle.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const TextSpan(text: ' - '),
-                                              TextSpan(
-                                                text: zve.vereinName ?? 'N/A',
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
@@ -242,19 +255,29 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                const Text(
-                                                  '• ',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                Consumer<FontSizeProvider>(
+                                                  builder: (context, fontSizeProvider, child) {
+                                                    final scaledStyle = TextStyle(
+                                                      fontSize: 16 * fontSizeProvider.scaleFactor,
+                                                      fontWeight: FontWeight.bold,
+                                                    );
+                                                    return Text(
+                                                      '• ',
+                                                      style: scaledStyle,
+                                                    );
+                                                  },
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    selectedDisziplin
-                                                            .disziplin ??
-                                                        'N/A',
-                                                    style: UIStyles.bodyStyle,
+                                                  child: Consumer<FontSizeProvider>(
+                                                    builder: (context, fontSizeProvider, child) {
+                                                      final scaledStyle = UIStyles.bodyStyle.copyWith(
+                                                        fontSize: UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                                      );
+                                                      return Text(
+                                                        selectedDisziplin.disziplin ?? 'N/A',
+                                                        style: scaledStyle,
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                                 IconButton(
@@ -343,13 +366,21 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     ) {
                                       _autocompleteTextController =
                                           textEditingController;
-                                      return TextFormField(
-                                        controller: textEditingController,
-                                        focusNode: focusNode,
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(
-                                          labelText: 'Disziplin suchen',
-                                        ),
+                                      return Consumer<FontSizeProvider>(
+                                        builder: (context, fontSizeProvider, child) {
+                                          final scaledStyle = TextStyle(
+                                            fontSize: UIConstants.bodyFontSize * fontSizeProvider.scaleFactor,
+                                          );
+                                          return TextFormField(
+                                            controller: textEditingController,
+                                            focusNode: focusNode,
+                                            decoration: UIStyles.formInputDecoration.copyWith(
+                                              labelText: 'Disziplin suchen',
+                                              labelStyle: scaledStyle,
+                                            ),
+                                            style: scaledStyle,
+                                          );
+                                        },
                                       );
                                     },
                                     onSelected: (Disziplin selection) {
