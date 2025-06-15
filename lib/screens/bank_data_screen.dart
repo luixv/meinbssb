@@ -52,21 +52,15 @@ class BankDataScreenState extends State<BankDataScreen> {
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _bankDataFuture = apiService.fetchBankData(personId).then((data) {
-        LoggerService.logInfo('Bank data structure: $data');
-        if (data.isNotEmpty) {
-          _kontoinhaberController.text = data['kontoinhaber'] ?? '';
-          _ibanController.text = data['iban'] ?? '';
-          _bicController.text = data['bic'] ?? '';
-          setState(() {
-            _hasBankData = true;
-          });
-        }
-        return data;
-      });
-      LoggerService.logInfo(
-        'BankDataScreen: Initiating bank data fetch.',
-      );
+      final data = await apiService.fetchBankData(personId);
+      if (data.isNotEmpty) {
+        _kontoinhaberController.text = data['kontoinhaber'] as String? ?? '';
+        _ibanController.text = data['iban'] as String? ?? '';
+        _bicController.text = data['bic'] as String? ?? '';
+        setState(() {
+          _hasBankData = true;
+        });
+      }
     } catch (e) {
       LoggerService.logError('Error setting up bank data fetch: $e');
       _bankDataFuture = Future.value({});
