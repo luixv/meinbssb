@@ -164,10 +164,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.celebration),
-              title: const ScaledText('Oktoberfestlandensshiessen'),
+              title: const ScaledText('Oktoberfestlandesschießen'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Oktoberfestlandensshiessen functionality
+                // TODO: Implement Oktoberfestlandesschießen functionality
               },
             ),
             ListTile(
