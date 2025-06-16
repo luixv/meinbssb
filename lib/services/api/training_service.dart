@@ -345,7 +345,6 @@ class TrainingService {
     try {
       final response = await _httpClient.get('Disziplinen');
       if (response is! List) {
-        LoggerService.logError('Expected List but got ${response.runtimeType}');
         return [];
       }
       return response
@@ -354,9 +353,7 @@ class TrainingService {
               if (item is Map<String, dynamic>) {
                 return Disziplin.fromJson(item);
               }
-              LoggerService.logWarning(
-                'Disziplin item is not a Map: ${item.runtimeType}',
-              );
+
               return null;
             } catch (e) {
               LoggerService.logError('Error mapping Disziplin: $e');

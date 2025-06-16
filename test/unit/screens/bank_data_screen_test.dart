@@ -32,7 +32,7 @@ void main() {
   Widget createBankDataScreen({
     UserData? userData,
     bool isLoggedIn = true,
-    VoidCallback? onLogout,
+    Function()? onLogout,
   }) {
     return MaterialApp(
       home: Provider<ApiService>.value(
@@ -41,7 +41,7 @@ void main() {
           userData,
           webloginId: userData?.webLoginId ?? 0,
           isLoggedIn: isLoggedIn,
-          onLogout: onLogout,
+          onLogout: onLogout ?? () {},
         ),
       ),
     );

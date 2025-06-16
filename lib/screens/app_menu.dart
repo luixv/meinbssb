@@ -38,7 +38,7 @@ class AppMenu extends StatelessWidget {
   final BuildContext context;
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class AppDrawer extends StatelessWidget {
 
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {

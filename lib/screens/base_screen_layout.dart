@@ -24,7 +24,7 @@ class BaseScreenLayout extends StatelessWidget {
   final String title;
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
   final Widget body;
   final List<Widget> actions;
   final bool automaticallyImplyLeading;

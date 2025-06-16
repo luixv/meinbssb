@@ -13,6 +13,7 @@ import '/models/bank_data.dart';
 import '/models/schulung.dart';
 import '/models/zweitmitgliedschaft_data.dart';
 import '/models/disziplin.dart';
+import '/models/pass_data_zve.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -113,7 +114,8 @@ class ApiService {
     return _userService.fetchPassdaten(personId);
   }
 
-  Future<List<dynamic>> fetchPassdatenZVE(int passdatenId, int personId) async {
+  Future<List<PassDataZVE>> fetchPassdatenZVE(
+      int passdatenId, int personId) async {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
