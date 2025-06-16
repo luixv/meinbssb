@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 
-import '/screens/absolvierte_seminare_screen.dart';
+import 'absolvierte_schulungen_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/help_screen.dart';
@@ -104,21 +104,21 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.school),
-              title: const ScaledText('Seminare buchen'),
+              title: const ScaledText('Schulungen buchen'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Seminare buchen functionality
+                // TODO: Implement Schulungen buchen functionality
               },
             ),
             ListTile(
               leading: const Icon(Icons.task_alt),
-              title: const ScaledText('Absolvierte Seminare'),
+              title: const ScaledText('Absolvierte Schulungen'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AbsolvierteSeminareScreen(
+                    builder: (context) => AbsolvierteSchulungenScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

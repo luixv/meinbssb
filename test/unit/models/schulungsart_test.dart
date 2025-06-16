@@ -47,7 +47,7 @@ void main() {
 
     test('should convert Schulungsart to JSON', () {
       // Arrange
-      final schulungsart = Schulungsart(
+      const schulungsart = Schulungsart(
         schulungsartId: 41,
         bezeichnung: 'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
         typ: 6,
@@ -118,7 +118,7 @@ void main() {
 
     test('toString should return correct format', () {
       // Arrange
-      final schulungsart = Schulungsart(
+      const schulungsart = Schulungsart(
         schulungsartId: 41,
         bezeichnung: 'Test Schulung',
         typ: 6,

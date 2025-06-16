@@ -46,14 +46,14 @@ class ApiService {
     required AuthService authService,
     required BankService bankService,
     required VereinService vereinService,
-  }) : _httpClient = httpClient,
-       _imageService = imageService,
-       _networkService = networkService,
-       _trainingService = trainingService,
-       _userService = userService,
-       _authService = authService,
-       _bankService = bankService,
-       _vereinService = vereinService;
+  })  : _httpClient = httpClient,
+        _imageService = imageService,
+        _networkService = networkService,
+        _trainingService = trainingService,
+        _userService = userService,
+        _authService = authService,
+        _bankService = bankService,
+        _vereinService = vereinService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -132,7 +132,7 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
-  Future<List<Schulung>> fetchAbsolvierteSeminare(int personId) async {
+  Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }
 
