@@ -2,6 +2,7 @@ import 'dart:async';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/models/verein.dart';
+import '/models/fremde_verband.dart';
 
 class VereinService {
   VereinService({
@@ -91,6 +92,47 @@ class VereinService {
     }
     LoggerService.logWarning(
       'Verein response is not a List or is empty: ${response.runtimeType}',
+    );
+    return [];
+  }
+
+  /// Fetches a list of FremdeVerbaende (external associations).
+  /// This method retrieves data from the '/FremdeVerbaende' endpoint.
+  Future<List<FremdeVerband>> fetchFremdeVerbaende() async {
+    try {
+      final response = await _httpClient.get('FremdeVerbaende');
+      return _mapFremdeVerbaendeResponse(response);
+    } catch (e) {
+      LoggerService.logError('Error fetching FremdeVerbaende: $e');
+      return []; // Return an empty list on error
+    }
+  }
+
+  /// Maps the dynamic API response for FremdeVerbaende into a list of [FremdeVerband] objects.
+  List<FremdeVerband> _mapFremdeVerbaendeResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return FremdeVerband.fromJson(item);
+              }
+              LoggerService.logWarning(
+                'FremdeVerband item is not a Map: ${item.runtimeType}',
+              );
+              return null;
+            } catch (e) {
+              LoggerService.logWarning(
+                'Failed to parse FremdeVerband: $e. Item: $item',
+              );
+              return null;
+            }
+          })
+          .whereType<FremdeVerband>()
+          .toList();
+    }
+    LoggerService.logWarning(
+      'FremdeVerbaende response is not a List: ${response.runtimeType}',
     );
     return [];
   }

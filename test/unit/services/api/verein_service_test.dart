@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/models/verein.dart';
+import 'package:meinbssb/models/fremde_verband.dart';
 
 @GenerateMocks([
   HttpClient,
@@ -247,6 +248,103 @@ void main() {
 
       expect(result.length, 1);
       expect(result[0].name, 'Valid Club');
+    });
+  });
+
+  group('fetchFremdeVerbaende', () {
+    test('returns mapped fremde verbaende list from API', () async {
+      final testResponse = [
+        {
+          'VEREINID': 4777,
+          'VEREINNR': 999901,
+          'VEREINNAME': 'Badischer SB',
+        },
+        {
+          'VEREINID': 4778,
+          'VEREINNR': 999902,
+          'VEREINNAME': 'Württembergischer SB',
+        },
+      ];
+
+      when(mockHttpClient.get('FremdeVerbaende'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchFremdeVerbaende();
+
+      expect(result, isA<List<FremdeVerband>>());
+      expect(result.length, 2);
+      expect(result[0].vereinId, 4777);
+      expect(result[0].vereinNr, 999901);
+      expect(result[0].vereinName, 'Badischer SB');
+      expect(result[1].vereinId, 4778);
+      expect(result[1].vereinNr, 999902);
+      expect(result[1].vereinName, 'Württembergischer SB');
+      verify(mockHttpClient.get('FremdeVerbaende')).called(1);
+    });
+
+    test('returns empty list when API returns non-list response', () async {
+      when(mockHttpClient.get('FremdeVerbaende'))
+          .thenAnswer((_) async => {'error': 'Invalid data'});
+
+      final result = await vereinService.fetchFremdeVerbaende();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('FremdeVerbaende')).called(1);
+    });
+
+    test('returns empty list and logs error when exception occurs', () async {
+      when(mockHttpClient.get('FremdeVerbaende'))
+          .thenThrow(Exception('Network error'));
+
+      final result = await vereinService.fetchFremdeVerbaende();
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('FremdeVerbaende')).called(1);
+    });
+
+    test('handles invalid items in response', () async {
+      final testResponse = [
+        {
+          'VEREINID': 4777,
+          'VEREINNR': 999901,
+          'VEREINNAME': 'Badischer SB',
+        },
+        'Invalid item', // Non-map item
+        {
+          'VEREINNAME': 'Missing ID', // Missing required field
+        },
+      ];
+
+      when(mockHttpClient.get('FremdeVerbaende'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchFremdeVerbaende();
+
+      expect(result.length, 1);
+      expect(result[0].vereinName, 'Badischer SB');
+    });
+
+    test('handles items with invalid field types', () async {
+      final testResponse = [
+        {
+          'VEREINID': 4777,
+          'VEREINNR': 999901,
+          'VEREINNAME': 'Badischer SB',
+        },
+        {
+          'VEREINID': 'not_an_integer',
+          'VEREINNR': 999902,
+          'VEREINNAME': 'Württembergischer SB',
+        },
+      ];
+
+      when(mockHttpClient.get('FremdeVerbaende'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchFremdeVerbaende();
+
+      expect(result.length, 1);
+      expect(result[0].vereinName, 'Badischer SB');
     });
   });
 }
