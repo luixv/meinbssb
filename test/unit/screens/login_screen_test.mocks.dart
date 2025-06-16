@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i10;
 import 'package:meinbssb/models/bank_data.dart' as _i12;
 import 'package:meinbssb/models/contact.dart' as _i9;
 import 'package:meinbssb/models/disziplin.dart' as _i11;
+import 'package:meinbssb/models/fremde_verband.dart' as _i14;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i6;
 import 'package:meinbssb/models/schulung.dart' as _i8;
 import 'package:meinbssb/models/user_data.dart' as _i5;
@@ -16,11 +17,11 @@ import 'package:meinbssb/models/verein.dart' as _i13;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/api_service.dart' as _i4;
-import 'package:meinbssb/services/core/cache_service.dart' as _i16;
-import 'package:meinbssb/services/core/config_service.dart' as _i14;
-import 'package:meinbssb/services/core/email_service.dart' as _i15;
+import 'package:meinbssb/services/core/cache_service.dart' as _i17;
+import 'package:meinbssb/services/core/config_service.dart' as _i15;
+import 'package:meinbssb/services/core/email_service.dart' as _i16;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i17;
+import 'package:mockito/src/dummies.dart' as _i18;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -414,17 +415,6 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchBankdaten,
-          [webloginId],
-        ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
-
-  @override
   _i2.Future<List<_i13.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
@@ -442,12 +432,23 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i2.Future<List<_i13.Verein>>.value(<_i13.Verein>[]),
       ) as _i2.Future<List<_i13.Verein>>);
+
+  @override
+  _i2.Future<List<_i14.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchFremdeVerbaende,
+          [vereinsNr],
+        ),
+        returnValue:
+            _i2.Future<List<_i14.FremdeVerband>>.value(<_i14.FremdeVerband>[]),
+      ) as _i2.Future<List<_i14.FremdeVerband>>);
 }
 
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i14.ConfigService {
+class MockConfigService extends _i1.Mock implements _i15.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -482,7 +483,7 @@ class MockConfigService extends _i1.Mock implements _i14.ConfigService {
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i15.EmailService {
+class MockEmailService extends _i1.Mock implements _i16.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -542,7 +543,7 @@ class MockEmailService extends _i1.Mock implements _i15.EmailService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i16.CacheService {
+class MockCacheService extends _i1.Mock implements _i17.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -703,8 +704,8 @@ class MockCacheService extends _i1.Mock implements _i16.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i17.ifNotNull(
-              _i17.dummyValueOrNull<T>(
+        returnValue: _i18.ifNotNull(
+              _i18.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -745,8 +746,8 @@ class MockCacheService extends _i1.Mock implements _i16.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i17.ifNotNull(
-              _i17.dummyValueOrNull<T>(
+        returnValue: _i18.ifNotNull(
+              _i18.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,

@@ -1,7 +1,4 @@
 class FremdeVerband {
-  final int vereinId;
-  final int vereinNr;
-  final String vereinName;
 
   FremdeVerband({
     required this.vereinId,
@@ -12,13 +9,13 @@ class FremdeVerband {
   factory FremdeVerband.fromJson(Map<String, dynamic> json) {
     try {
       if (!json.containsKey('VEREINID')) {
-        throw FormatException('Missing required field: VEREINID');
+        throw const FormatException('Missing required field: VEREINID');
       }
       if (!json.containsKey('VEREINNR')) {
-        throw FormatException('Missing required field: VEREINNR');
+        throw const FormatException('Missing required field: VEREINNR');
       }
       if (!json.containsKey('VEREINNAME')) {
-        throw FormatException('Missing required field: VEREINNAME');
+        throw const FormatException('Missing required field: VEREINNAME');
       }
 
       final vereinId = json['VEREINID'];
@@ -47,6 +44,9 @@ class FremdeVerband {
       throw FormatException('Failed to parse FremdeVerband: $e');
     }
   }
+  final int vereinId;
+  final int vereinNr;
+  final String vereinName;
 
   Map<String, dynamic> toJson() {
     return {

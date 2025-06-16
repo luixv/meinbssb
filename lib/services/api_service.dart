@@ -20,10 +20,10 @@ import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart';
 import 'core/network_service.dart';
-import 'core/logger_service.dart';
 import '/models/contact.dart';
 import '/models/verein.dart';
 import '/models/user_data.dart';
+import '/models/fremde_verband.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -145,8 +145,8 @@ class ApiService {
   }
 
   Future<bool> deleteKontakt(Contact contact) async {
-         return  _userService.deleteKontakt(contact);
-     }
+    return _userService.deleteKontakt(contact);
+  }
 
 // Image Service
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
@@ -198,18 +198,10 @@ class ApiService {
     return _bankService.deleteBankData(bankData);
   }
 
-  // Legacy method - keep for backward compatibility
-  Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
-    final bankDataList = await _bankService.fetchBankData(webloginId);
-    
-  }
-
   /// Fetches a list of all Vereine (clubs/associations).
   /// Returns a list of [Verein] objects containing basic club information.
   Future<List<Verein>> fetchVereine() async {
-    
-      return await _vereinService.fetchVereine();
-   
+    return await _vereinService.fetchVereine();
   }
 
   /// Fetches detailed information for a specific Verein by its Vereinsnummer.
@@ -217,13 +209,10 @@ class ApiService {
   ///
   /// [vereinsNr] The registration number of the Verein to fetch.
   Future<List<Verein>> fetchVerein(int vereinsNr) async {
- 
-      return await _vereinService.fetchVerein(vereinsNr);
-   }
+    return await _vereinService.fetchVerein(vereinsNr);
+  }
 
-    Future<List<FremdeVerbaende>> FremdeVerbaende(int vereinsNr) async {
- 
-      return await _vereinService.FremdeVerbaende();
- 
+  Future<List<FremdeVerband>> fetchFremdeVerbaende(int vereinsNr) async {
+    return await _vereinService.fetchFremdeVerbaende();
   }
 }

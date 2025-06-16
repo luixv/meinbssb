@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i9;
 import 'package:meinbssb/models/bank_data.dart' as _i11;
 import 'package:meinbssb/models/contact.dart' as _i8;
 import 'package:meinbssb/models/disziplin.dart' as _i10;
+import 'package:meinbssb/models/fremde_verband.dart' as _i13;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i5;
 import 'package:meinbssb/models/schulung.dart' as _i7;
 import 'package:meinbssb/models/user_data.dart' as _i4;
@@ -326,17 +327,6 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<Map<String, dynamic>> fetchBankdaten(int? webloginId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchBankdaten,
-          [webloginId],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
   _i3.Future<List<_i12.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
@@ -354,4 +344,15 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
         ),
         returnValue: _i3.Future<List<_i12.Verein>>.value(<_i12.Verein>[]),
       ) as _i3.Future<List<_i12.Verein>>);
+
+  @override
+  _i3.Future<List<_i13.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchFremdeVerbaende,
+          [vereinsNr],
+        ),
+        returnValue:
+            _i3.Future<List<_i13.FremdeVerband>>.value(<_i13.FremdeVerband>[]),
+      ) as _i3.Future<List<_i13.FremdeVerband>>);
 }
