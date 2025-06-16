@@ -541,7 +541,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       child: TextFormField(
         initialValue: displayValueFormatted,
         readOnly: true,
-        style: UIStyles.formValueStyle,
+        style: UIStyles.formValueBoldStyle,
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: displayLabelFormatted,
           floatingLabelBehavior: FloatingLabelBehavior.always,

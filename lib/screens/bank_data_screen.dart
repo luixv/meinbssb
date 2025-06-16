@@ -467,7 +467,8 @@ class BankDataScreenState extends State<BankDataScreen> {
       child: TextFormField(
         controller: controller,
         readOnly: isReadOnly,
-        style: UIStyles.formValueStyle,
+        style:
+            isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle,
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: label,
           floatingLabelBehavior: FloatingLabelBehavior.always,
