@@ -136,43 +136,36 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       if (_passData != null)
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(UIConstants.spacingS),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                              text: _passData!.passnummer,
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const TextSpan(text: ' - '),
-                                            TextSpan(
-                                              text: _passData!.vereinName,
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: UIStyles.bodyStyle,
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: _passData!.passnummer,
+                                          style: UIStyles.bodyStyle.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
+                                        const TextSpan(text: ' - '),
+                                        TextSpan(
+                                          text: _passData!.vereinName,
+                                          style: UIStyles.bodyStyle.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
+                          ],
                         )
                       else
                         const ScaledText(
@@ -187,45 +180,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: UIConstants.spacingM),
-                        child: Autocomplete<Disziplin>(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<Disziplin>.empty();
-                            }
-                            return _disciplines.where((Disziplin option) {
-                              return (option.disziplin?.toLowerCase() ?? '')
-                                      .contains(textEditingValue.text
-                                          .toLowerCase()) ||
-                                  (option.disziplinNr?.toLowerCase() ?? '')
-                                      .contains(
-                                          textEditingValue.text.toLowerCase());
-                            }).take(3);
-                          },
-                          displayStringForOption: (Disziplin option) =>
-                              '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
-                          fieldViewBuilder: (
-                            BuildContext context,
-                            TextEditingController textEditingController,
-                            FocusNode focusNode,
-                            VoidCallback onFieldSubmitted,
-                          ) {
-                            return TextField(
-                              controller: textEditingController,
-                              focusNode: focusNode,
-                              decoration: UIStyles.formInputDecoration.copyWith(
-                                labelText: 'Disziplin suchen',
-                                prefixIcon: const Icon(Icons.search),
-                              ),
-                            );
-                          },
-                          onSelected: (Disziplin selection) {
-                            // Handle selection if needed
-                          },
-                        ),
-                      ),
                       if (_zveData.isNotEmpty)
                         ListView.builder(
                           shrinkWrap: true,
@@ -237,49 +191,101 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                               padding: const EdgeInsets.only(
                                 bottom: UIConstants.spacingS,
                               ),
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(
-                                    UIConstants.spacingS,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                style: UIStyles.bodyStyle,
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                    text: zve.vVereinNr
-                                                        .toString(),
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const TextSpan(text: ' - '),
-                                                  TextSpan(
-                                                    text: zve.vereinName,
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            style: UIStyles.bodyStyle,
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: zve.vVereinNr.toString(),
+                                                style:
+                                                    UIStyles.bodyStyle.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
+                                              const TextSpan(text: ' - '),
+                                              TextSpan(
+                                                text: zve.vereinName,
+                                                style:
+                                                    UIStyles.bodyStyle.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
+                                  if (zve.disziplin.isNotEmpty) ...[
+                                    const SizedBox(
+                                      height: UIConstants.spacingS,
+                                    ),
+                                    ...zve.disziplin.map((selectedDisziplin) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: UIConstants.spacingXS,
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ScaledText(
+                                              '• ',
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: ScaledText(
+                                                selectedDisziplin.disziplin ??
+                                                    'N/A',
+                                                style: UIStyles.bodyStyle,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.delete_outline_outlined,
+                                                color:
+                                                    UIConstants.defaultAppColor,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  final updatedZveData =
+                                                      List<PassDataZVE>.from(
+                                                    _zveData,
+                                                  );
+                                                  final index = updatedZveData
+                                                      .indexOf(zve);
+                                                  if (index != -1) {
+                                                    final currentDisciplines =
+                                                        List<Disziplin>.from(
+                                                      zve.disziplin,
+                                                    );
+                                                    currentDisciplines.remove(
+                                                      selectedDisziplin,
+                                                    );
+                                                    updatedZveData[index] =
+                                                        zve.copyWith(
+                                                      disziplin:
+                                                          currentDisciplines,
+                                                    );
+                                                    _zveData = updatedZveData;
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                  ],
+                                ],
                               ),
                             );
                           },
@@ -289,6 +295,67 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           'Keine Zweitvereine verfügbar.',
                           style: UIStyles.bodyStyle,
                         ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: UIConstants.spacingM),
+                        child: Autocomplete<Disziplin>(
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text.isEmpty) {
+                              return const Iterable<Disziplin>.empty();
+                            }
+                            return _disciplines.where((Disziplin option) {
+                              return (option.disziplin?.toLowerCase() ?? '')
+                                      .contains(
+                                    textEditingValue.text.toLowerCase(),
+                                  ) ||
+                                  (option.disziplinNr?.toLowerCase() ?? '')
+                                      .contains(
+                                    textEditingValue.text.toLowerCase(),
+                                  );
+                            }).take(UIConstants.maxFilteredDisziplinen);
+                          },
+                          displayStringForOption: (Disziplin option) =>
+                              '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
+                          fieldViewBuilder: (
+                            BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted,
+                          ) {
+                            _autocompleteTextController = textEditingController;
+                            return TextField(
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              decoration: UIStyles.formInputDecoration.copyWith(
+                                labelText: 'Disziplin hinzufügen',
+                                prefixIcon: const Icon(Icons.search),
+                              ),
+                            );
+                          },
+                          onSelected: (Disziplin selection) {
+                            setState(() {
+                              // Add the selected discipline to the first Zweitverein
+                              if (_zveData.isNotEmpty) {
+                                final updatedZveData =
+                                    List<PassDataZVE>.from(_zveData);
+                                final firstZve = updatedZveData[0];
+                                final currentDisciplines =
+                                    List<Disziplin>.from(firstZve.disziplin);
+                                if (!currentDisciplines.contains(selection)) {
+                                  currentDisciplines.add(selection);
+                                  updatedZveData[0] = firstZve.copyWith(
+                                    disziplin: currentDisciplines,
+                                  );
+                                  _zveData = updatedZveData;
+                                }
+                              }
+                            });
+                            // Clear the search field
+                            _autocompleteTextController.clear();
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),

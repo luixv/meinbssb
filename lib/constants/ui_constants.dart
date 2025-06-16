@@ -145,6 +145,9 @@ class UIConstants {
   static const double defaultSeparatorHeight = 10.0;
   static const double iconSizeL = 32.0;
 
+  // Search and Filter
+  static const int maxFilteredDisziplinen = 5;
+
   // Strings
   static const String loginButtonLabel = 'Anmelden';
   static const String loginTitle = 'Anmeldung';
