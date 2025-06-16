@@ -137,7 +137,7 @@ void main() {
 
       expect(json['SCHULUNGENTERMINID'], 1691);
       expect(json['SCHULUNGSARTID'], 15);
-      expect(json['DATUM'], '2025-12-28T00:00:00.000+01:00');
+      expect(json['DATUM'], '2025-12-27T23:00:00.000Z');
       expect(json['BEMERKUNG'], '');
       expect(json['KOSTEN'], 72.07);
       expect(json['ORT'], 'Online');
@@ -218,7 +218,7 @@ void main() {
         schulungstermine.toString(),
         'Schulungstermine(schulungsterminId: 1691, '
         'schulungsartId: 15, '
-        'datum: 2025-12-28 00:00:00.000+01:00, '
+        'datum: 2025-12-27 23:00:00.000Z, '
         'bezeichnung: Der Sportleiter im Verein / Kugeldisziplinen, '
         'ort: Online, '
         'status: 2)',
