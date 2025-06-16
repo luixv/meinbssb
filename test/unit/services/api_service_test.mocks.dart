@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i9;
 import 'package:meinbssb/models/bank_data.dart' as _i19;
 import 'package:meinbssb/models/contact.dart' as _i14;
 import 'package:meinbssb/models/disziplin.dart' as _i17;
+import 'package:meinbssb/models/fremde_verband.dart' as _i22;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i13;
 import 'package:meinbssb/models/schulung.dart' as _i16;
 import 'package:meinbssb/models/user_data.dart' as _i11;
@@ -23,7 +24,7 @@ import 'package:meinbssb/services/core/cache_service.dart' as _i5;
 import 'package:meinbssb/services/core/config_service.dart' as _i4;
 import 'package:meinbssb/services/core/image_service.dart' as _i8;
 import 'package:meinbssb/services/core/network_service.dart' as _i7;
-import 'package:meinbssb/services/core/token_service.dart' as _i22;
+import 'package:meinbssb/services/core/token_service.dart' as _i23;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 
@@ -759,12 +760,23 @@ class MockVereinService extends _i1.Mock implements _i20.VereinService {
         ),
         returnValue: _i2.Future<List<_i21.Verein>>.value(<_i21.Verein>[]),
       ) as _i2.Future<List<_i21.Verein>>);
+
+  @override
+  _i2.Future<List<_i22.FremdeVerband>> fetchFremdeVerbaende() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchFremdeVerbaende,
+          [],
+        ),
+        returnValue:
+            _i2.Future<List<_i22.FremdeVerband>>.value(<_i22.FremdeVerband>[]),
+      ) as _i2.Future<List<_i22.FremdeVerband>>);
 }
 
 /// A class which mocks [TokenService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTokenService extends _i1.Mock implements _i22.TokenService {
+class MockTokenService extends _i1.Mock implements _i23.TokenService {
   MockTokenService() {
     _i1.throwOnMissingStub(this);
   }

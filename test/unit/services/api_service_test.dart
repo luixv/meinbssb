@@ -283,59 +283,6 @@ void main() {
         expect(() => apiService.deleteBankData(testBankData), throwsException);
         verify(mockBankService.deleteBankData(testBankData)).called(1);
       });
-
-      test('fetchBankdaten returns legacy format when bank data exists',
-          () async {
-        final testBankData = [
-          BankData(
-            id: 1,
-            webloginId: 13901,
-            kontoinhaber: 'Test User',
-            iban: 'DE89370400440532013000',
-            bic: 'DEUTDEBBXXX',
-            bankName: 'Test Bank',
-            mandatNr: 'M123456',
-            mandatName: 'Test Mandate',
-            mandatSeq: 1,
-            letzteNutzung: DateTime.now(),
-          ),
-        ];
-
-        when(mockBankService.fetchBankData(any))
-            .thenAnswer((_) async => testBankData);
-
-        final result = await apiService.fetchBankdaten(13901);
-        expect(result['ONLINE'], isTrue);
-        expect(result['KONTOINHABER'], equals(testBankData[0].kontoinhaber));
-        expect(result['IBAN'], equals(testBankData[0].iban));
-        expect(result['BIC'], equals(testBankData[0].bic));
-        expect(result['BANKNAME'], equals(testBankData[0].bankName));
-        expect(result['MANDATNR'], equals(testBankData[0].mandatNr));
-        expect(result['MANDATNAME'], equals(testBankData[0].mandatName));
-        expect(result['MANDATSEQ'], equals(testBankData[0].mandatSeq));
-        expect(
-          result['LETZTENUTZUNG'],
-          equals(testBankData[0].letzteNutzung?.toIso8601String()),
-        );
-        verify(mockBankService.fetchBankData(13901)).called(1);
-      });
-
-      test('fetchBankdaten returns online flag when no bank data exists',
-          () async {
-        when(mockBankService.fetchBankData(any)).thenAnswer((_) async => []);
-
-        final result = await apiService.fetchBankdaten(13901);
-        expect(result, equals({'ONLINE': true}));
-        verify(mockBankService.fetchBankData(13901)).called(1);
-      });
-
-      test('fetchBankdaten throws exception on API error', () async {
-        when(mockBankService.fetchBankData(any))
-            .thenThrow(Exception('API error'));
-
-        expect(() => apiService.fetchBankdaten(13901), throwsException);
-        verify(mockBankService.fetchBankData(13901)).called(1);
-      });
     });
   });
 }

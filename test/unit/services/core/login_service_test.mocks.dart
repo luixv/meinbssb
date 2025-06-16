@@ -11,6 +11,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/models/bank_data.dart' as _i22;
 import 'package:meinbssb/models/contact.dart' as _i20;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
+import 'package:meinbssb/models/fremde_verband.dart' as _i25;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i19;
 import 'package:meinbssb/models/schulung.dart' as _i14;
 import 'package:meinbssb/models/user_data.dart' as _i17;
@@ -1217,4 +1218,15 @@ class MockVereinService extends _i1.Mock implements _i23.VereinService {
         ),
         returnValue: _i2.Future<List<_i24.Verein>>.value(<_i24.Verein>[]),
       ) as _i2.Future<List<_i24.Verein>>);
+
+  @override
+  _i2.Future<List<_i25.FremdeVerband>> fetchFremdeVerbaende() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchFremdeVerbaende,
+          [],
+        ),
+        returnValue:
+            _i2.Future<List<_i25.FremdeVerband>>.value(<_i25.FremdeVerband>[]),
+      ) as _i2.Future<List<_i25.FremdeVerband>>);
 }

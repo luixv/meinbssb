@@ -38,12 +38,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   // Use Contact model's type constants
   final Map<int, String> _contactTypeLabels = {
     for (var type in [1, 2, 3, 4, 5, 6, 7, 8])
-      type: Contact(
-        id: 0,
-        personId: 0,
-        type: type,
-        value: '',
-      ).typeLabel,
+      type: Contact(id: 0, personId: 0, type: type, value: '').typeLabel,
   };
 
   int? _selectedKontaktTyp;
@@ -108,9 +103,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 ),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
               ],
@@ -361,12 +354,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
                   value: _selectedKontaktTyp,
-                  items: _contactTypeLabels.entries.map((entry) {
-                    return DropdownMenuItem<int>(
-                      value: entry.key,
-                      child: Text(entry.value),
-                    );
-                  }).toList(),
+                  items:
+                      _contactTypeLabels.entries.map((entry) {
+                        return DropdownMenuItem<int>(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        );
+                      }).toList(),
                   onChanged: (int? newValue) {
                     setState(() {
                       _selectedKontaktTyp = newValue;
@@ -403,10 +397,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.close,
-                            color: UIConstants.closeIcon,
-                          ),
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
                           const SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Abbrechen',
@@ -423,31 +414,32 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: UIStyles.dialogAcceptButtonStyle,
-                      child: _isAdding
-                          ? const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.circularProgressIndicator,
-                              ),
-                              strokeWidth: 2,
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.check,
-                                  color: UIConstants.checkIcon,
-                                  size: UIConstants.bodyFontSize + 4.0,
+                      child:
+                          _isAdding
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  UIConstants.circularProgressIndicator,
                                 ),
-                                const SizedBox(width: UIConstants.spacingS),
-                                Text(
-                                  'Hinzufügen',
-                                  style:
-                                      UIStyles.dialogButtonTextStyle.copyWith(
-                                    color: UIConstants.submitButtonText,
+                                strokeWidth: 2,
+                              )
+                              : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.check,
+                                    color: UIConstants.checkIcon,
+                                    size: UIConstants.bodyFontSize + 4.0,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(width: UIConstants.spacingS),
+                                  Text(
+                                    'Hinzufügen',
+                                    style: UIStyles.dialogButtonTextStyle
+                                        .copyWith(
+                                          color: UIConstants.submitButtonText,
+                                        ),
+                                  ),
+                                ],
+                              ),
                     ),
                   ),
                 ],
@@ -527,7 +519,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required String displayValue,
     required String displayLabel,
     required Function(int kontaktId, int kontaktTyp, String value, String label)
-        onDelete,
+    onDelete,
     required bool isDeleting,
   }) {
     final displayValueFormatted = displayValue.isNotEmpty ? displayValue : '-';
@@ -535,9 +527,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
 
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: UIConstants.spacingS,
-      ),
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
       child: TextFormField(
         initialValue: displayValueFormatted,
         readOnly: true,
@@ -551,9 +541,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           suffixIcon: IconButton(
             icon: const Icon(Icons.delete_outline),
             color: UIConstants.deleteIcon,
-            onPressed: isDeleting
-                ? null
-                : () => onDelete(
+            onPressed:
+                isDeleting
+                    ? null
+                    : () => onDelete(
                       kontaktId,
                       rawKontaktTyp,
                       displayValue,
@@ -569,60 +560,67 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     List<Map<String, dynamic>> contactData,
     int personId,
     Function(int kontaktId, int kontaktTyp, String value, String label)
-        onDelete,
+    onDelete,
     bool isDeleting,
   ) {
     return Padding(
       padding: UIConstants.defaultPadding,
-      child: Scrollbar(
-        controller: _scrollController,
-        thickness: 6,
-        radius: const Radius.circular(8),
-        child: ListView.builder(
-          controller: _scrollController,
-          shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: contactData.length,
-          itemBuilder: (context, index) {
-            final category = contactData[index];
-            final contacts = category['contacts'] as List<dynamic>;
-            final categoryName = category['category'] as String;
+      child: Column(
+        children: [
+          Expanded(
+            child: Scrollbar(
+              controller: _scrollController,
+              thickness: 6,
+              radius: const Radius.circular(8),
+              child: ListView.builder(
+                controller: _scrollController,
+                shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: contactData.length,
+                itemBuilder: (context, index) {
+                  final category = contactData[index];
+                  final contacts = category['contacts'] as List<dynamic>;
+                  final categoryName = category['category'] as String;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: UIConstants.spacingS,
-                  ),
-                  child: ScaledText(
-                    categoryName,
-                    style: UIStyles.subtitleStyle.copyWith(
-                      color: UIConstants.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: UIConstants.titleFontSize,
-                    ),
-                  ),
-                ),
-                ...contacts.map((contact) {
-                  final kontaktId = contact['kontaktId'] as int;
-                  final rawKontaktTyp = contact['rawKontaktTyp'] as int;
-                  final displayValue = contact['value'] as String;
-                  final displayLabel = contact['type'] as String;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: UIConstants.spacingS,
+                        ),
+                        child: ScaledText(
+                          categoryName,
+                          style: UIStyles.subtitleStyle.copyWith(
+                            color: UIConstants.primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: UIConstants.titleFontSize,
+                          ),
+                        ),
+                      ),
+                      ...contacts.map((contact) {
+                        final kontaktId = contact['kontaktId'] as int;
+                        final rawKontaktTyp = contact['rawKontaktTyp'] as int;
+                        final displayValue = contact['value'] as String;
+                        final displayLabel = contact['type'] as String;
 
-                  return _buildContactTile(
-                    kontaktId: kontaktId,
-                    rawKontaktTyp: rawKontaktTyp,
-                    displayValue: displayValue,
-                    displayLabel: displayLabel,
-                    onDelete: onDelete,
-                    isDeleting: isDeleting,
+                        return _buildContactTile(
+                          kontaktId: kontaktId,
+                          rawKontaktTyp: rawKontaktTyp,
+                          displayValue: displayValue,
+                          displayLabel: displayLabel,
+                          onDelete: onDelete,
+                          isDeleting: isDeleting,
+                        );
+                      }),
+                    ],
                   );
-                }),
-              ],
-            );
-          },
-        ),
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: UIConstants.spacingXXL),
+        ],
       ),
     );
   }
