@@ -8,10 +8,8 @@ import '/services/api_service.dart';
 
 import '/models/pass_data_zve.dart';
 import '/services/core/logger_service.dart';
-import '/services/api/training_service.dart';
 import '/models/disziplin.dart';
 import '/widgets/scaled_text.dart';
-import '/providers/font_size_provider.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -138,36 +136,43 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       if (_passData != null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(UIConstants.spacingS),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: UIStyles.bodyStyle,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: _passData!.passnummer,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: UIStyles.bodyStyle,
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: _passData!.passnummer,
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const TextSpan(text: ' - '),
+                                            TextSpan(
+                                              text: _passData!.vereinName,
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const TextSpan(text: ' - '),
-                                        TextSpan(
-                                          text: _passData!.vereinName,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         )
                       else
                         const ScaledText(
@@ -182,6 +187,45 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: UIConstants.spacingM),
+                        child: Autocomplete<Disziplin>(
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text.isEmpty) {
+                              return const Iterable<Disziplin>.empty();
+                            }
+                            return _disciplines.where((Disziplin option) {
+                              return (option.disziplin?.toLowerCase() ?? '')
+                                      .contains(textEditingValue.text
+                                          .toLowerCase()) ||
+                                  (option.disziplinNr?.toLowerCase() ?? '')
+                                      .contains(
+                                          textEditingValue.text.toLowerCase());
+                            }).take(3);
+                          },
+                          displayStringForOption: (Disziplin option) =>
+                              '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
+                          fieldViewBuilder: (
+                            BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted,
+                          ) {
+                            return TextField(
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              decoration: UIStyles.formInputDecoration.copyWith(
+                                labelText: 'Disziplin suchen',
+                                prefixIcon: const Icon(Icons.search),
+                              ),
+                            );
+                          },
+                          onSelected: (Disziplin selection) {
+                            // Handle selection if needed
+                          },
+                        ),
+                      ),
                       if (_zveData.isNotEmpty)
                         ListView.builder(
                           shrinkWrap: true,
