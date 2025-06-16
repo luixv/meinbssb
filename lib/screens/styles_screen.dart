@@ -376,90 +376,102 @@ class StylesScreen extends StatelessWidget {
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Divider(height: UIConstants.spacingL),
-            const Text(
-              'App Icons',
-              style: UIStyles.headerStyle,
-            ),
+            const Text('Icons', style: UIStyles.headerStyle),
             const SizedBox(height: UIConstants.spacingM),
             Wrap(
-              spacing: UIConstants.spacingM,
+              spacing: UIConstants.spacingL,
               runSpacing: UIConstants.spacingM,
               children: [
-                _buildIconItem(
-                  Icons.menu,
-                  'Menu - Opens the app drawer',
-                ),
-                _buildIconItem(
-                  Icons.close,
-                  'Close - Used in dialogs and forms',
-                ),
-                _buildIconItem(
-                  Icons.check,
-                  'Check - Used for confirmation',
-                ),
-                _buildIconItem(
-                  Icons.add,
-                  'Add - Used for adding new items',
-                ),
-                _buildIconItem(
+                _buildIconExample(Icons.menu, 'Menu - App drawer'),
+                _buildIconExample(Icons.close, 'Close - Dialogs and forms'),
+                _buildIconExample(Icons.check, 'Check - Confirmation'),
+                _buildIconExample(Icons.add, 'Add - New items'),
+                _buildIconExample(
                   Icons.delete_outline,
-                  'Delete - Used for removing items',
+                  'Delete - Remove items',
                 ),
-                _buildIconItem(
-                  Icons.arrow_back,
-                  'Back - Used for navigation',
-                ),
-                _buildIconItem(
+                _buildIconExample(Icons.arrow_back, 'Back - Navigation'),
+                _buildIconExample(
                   Icons.visibility,
-                  'Visibility - Used for password fields',
+                  'Visibility - Password field',
                 ),
-                _buildIconItem(
+                _buildIconExample(
                   Icons.visibility_off,
-                  'Visibility Off - Used for password fields',
+                  'Visibility Off - Password field',
                 ),
-                _buildIconItem(
-                  Icons.login,
-                  'Login - Used on the login button',
-                ),
-                _buildIconItem(
+                _buildIconExample(Icons.login, 'Login - Authentication'),
+                _buildIconExample(
                   Icons.lock_reset,
-                  'Password Reset - Used for resetting password',
+                  'Password Reset - Reset password',
                 ),
-                _buildIconItem(
-                  Icons.check_circle_outline,
-                  'Check Circle Outline - Used for success messages',
-                ),
-                _buildIconItem(
+                _buildIconExample(
                   Icons.check_circle,
-                  'Check Circle - Used for success messages',
+                  'Success - Success messages',
                 ),
-                _buildIconItem(
-                  Icons.error,
-                  'Error - Used for error messages',
-                ),
-                _buildIconItem(
-                  Icons.home,
-                  'Home - Used for home navigation',
-                ),
-                _buildIconItem(
+                _buildIconExample(Icons.error, 'Error - Error messages'),
+                _buildIconExample(Icons.home, 'Home - Home navigation'),
+                _buildIconExample(
                   Icons.remove_circle_outline,
-                  'Remove - Used for decreasing font size',
+                  'Remove - Decrease font size',
                 ),
-                _buildIconItem(
+                _buildIconExample(
                   Icons.add_circle_outline,
-                  'Add - Used for increasing font size',
+                  'Add - Increase font size',
                 ),
-                _buildIconItem(
-                  Icons.restore,
-                  'Restore - Used for resetting font size',
-                ),
-                _buildIconItem(
-                  Icons.school_outlined,
-                  'School - Used for training/schulungen',
-                ),
-                _buildIconItem(
+                _buildIconExample(Icons.restore, 'Restore - Reset font size'),
+                _buildIconExample(Icons.school_outlined, 'School - Training'),
+                _buildIconExample(
                   Icons.delete_outline_outlined,
-                  'Delete Outline - Used for removing items',
+                  'Delete - Remove items',
+                ),
+                _buildIconExample(
+                  Icons.calendar_today,
+                  'Calendar - Date selection',
+                ),
+                _buildIconExample(
+                  Icons.app_registration,
+                  'Registration - User registration',
+                ),
+                _buildIconExample(Icons.wifi, 'WiFi - Network status'),
+                _buildIconExample(
+                  Icons.signal_cellular_4_bar,
+                  'Cellular - Network status',
+                ),
+                _buildIconExample(Icons.wifi_off, 'WiFi Off - No network'),
+                _buildIconExample(
+                  Icons.bluetooth_connected,
+                  'Bluetooth - Connection status',
+                ),
+                _buildIconExample(Icons.vpn_lock, 'VPN - Secure connection'),
+                _buildIconExample(
+                  Icons.network_check,
+                  'Network Check - Connection status',
+                ),
+                _buildIconExample(Icons.task_alt, 'Task - Completed tasks'),
+                _buildIconExample(Icons.school, 'School - Training menu'),
+                _buildIconExample(Icons.badge, 'Badge - User profile'),
+                _buildIconExample(Icons.edit, 'Edit - Edit content'),
+                _buildIconExample(Icons.celebration, 'Celebration - Events'),
+                _buildIconExample(Icons.photo_camera, 'Camera - Photo capture'),
+                _buildIconExample(Icons.person, 'Person - User profile'),
+                _buildIconExample(
+                  Icons.contact_phone,
+                  'Contact - Contact information',
+                ),
+                _buildIconExample(Icons.account_balance, 'Bank - Bank data'),
+                _buildIconExample(Icons.settings, 'Settings - App settings'),
+                _buildIconExample(Icons.style, 'Style - App styling'),
+                _buildIconExample(Icons.logout, 'Logout - Sign out'),
+                _buildIconExample(Icons.help_outline, 'Help - Help section'),
+                _buildIconExample(Icons.info_outline, 'Info - Information'),
+                _buildIconExample(
+                  Icons.error_outline,
+                  'Error - Error messages',
+                ),
+                _buildIconExample(Icons.save, 'Save - Save changes'),
+                _buildIconExample(
+                  Icons.search,
+                  'Search - Search functionality',
                 ),
               ],
             ),
@@ -469,7 +481,7 @@ class StylesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIconItem(IconData icon, String description) {
+  Widget _buildIconExample(IconData icon, String description) {
     return Container(
       width: 200,
       padding: const EdgeInsets.all(UIConstants.spacingS),
