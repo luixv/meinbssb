@@ -145,13 +145,8 @@ class ApiService {
   }
 
   Future<bool> deleteKontakt(Contact contact) async {
-    try {
-      return await _userService.deleteKontakt(contact);
-    } catch (e) {
-      LoggerService.logError('Error deleting contact: $e');
-      rethrow;
-    }
-  }
+         return  _userService.deleteKontakt(contact);
+     }
 
 // Image Service
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
@@ -206,32 +201,15 @@ class ApiService {
   // Legacy method - keep for backward compatibility
   Future<Map<String, dynamic>> fetchBankdaten(int webloginId) async {
     final bankDataList = await _bankService.fetchBankData(webloginId);
-    if (bankDataList.isEmpty) {
-      return {'ONLINE': true};
-    }
-    final firstBankData = bankDataList.first;
-    return {
-      'ONLINE': true,
-      'KONTOINHABER': firstBankData.kontoinhaber,
-      'IBAN': firstBankData.iban,
-      'BIC': firstBankData.bic,
-      'BANKNAME': firstBankData.bankName,
-      'MANDATNR': firstBankData.mandatNr,
-      'MANDATNAME': firstBankData.mandatName,
-      'MANDATSEQ': firstBankData.mandatSeq,
-      'LETZTENUTZUNG': firstBankData.letzteNutzung?.toIso8601String(),
-    };
+    
   }
 
   /// Fetches a list of all Vereine (clubs/associations).
   /// Returns a list of [Verein] objects containing basic club information.
   Future<List<Verein>> fetchVereine() async {
-    try {
+    
       return await _vereinService.fetchVereine();
-    } catch (e) {
-      LoggerService.logError('Error in ApiService.fetchVereine: $e');
-      return [];
-    }
+   
   }
 
   /// Fetches detailed information for a specific Verein by its Vereinsnummer.
@@ -239,11 +217,13 @@ class ApiService {
   ///
   /// [vereinsNr] The registration number of the Verein to fetch.
   Future<List<Verein>> fetchVerein(int vereinsNr) async {
-    try {
+ 
       return await _vereinService.fetchVerein(vereinsNr);
-    } catch (e) {
-      LoggerService.logError('Error in ApiService.fetchVerein: $e');
-      return [];
-    }
+   }
+
+    Future<List<FremdeVerbaende>> FremdeVerbaende(int vereinsNr) async {
+ 
+      return await _vereinService.FremdeVerbaende();
+ 
   }
 }
