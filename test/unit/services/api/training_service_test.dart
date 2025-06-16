@@ -365,31 +365,12 @@ void main() {
         'LEHRGANGSINHALTHTML': '',
         'WEBGRUPPE': 3,
         'FUERVERLAENGERUNGEN': false,
-      },
+      }
     ];
 
     test('returns mapped Schulungsarten list from network', () async {
-      when(
-        mockNetworkService.getCacheExpirationDuration(),
-      ).thenReturn(const Duration(hours: 1));
-
-      when(
-        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((invocation) async {
-        final fetchData =
-            invocation.positionalArguments[2] as Future<dynamic> Function();
-        final response = await fetchData();
-        return response;
-      });
-
-      when(
-        mockHttpClient.get('Schulungsarten/false'),
-      ).thenAnswer((_) async => testResponse);
+      when(mockHttpClient.get('Schulungsarten/false'))
+          .thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -415,10 +396,6 @@ void main() {
     });
 
     test('handles null values correctly', () async {
-      when(
-        mockNetworkService.getCacheExpirationDuration(),
-      ).thenReturn(const Duration(hours: 1));
-
       when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
         (_) async => [
           {
@@ -436,23 +413,9 @@ void main() {
             'LEHRGANGSINHALTHTML': null,
             'WEBGRUPPE': null,
             'FUERVERLAENGERUNGEN': null,
-          },
+          }
         ],
       );
-
-      when(
-        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((invocation) async {
-        final fetchData =
-            invocation.positionalArguments[2] as Future<dynamic> Function();
-        final response = await fetchData();
-        return response;
-      });
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -474,27 +437,8 @@ void main() {
     });
 
     test('returns empty list when API returns non-list response', () async {
-      when(
-        mockNetworkService.getCacheExpirationDuration(),
-      ).thenReturn(const Duration(hours: 1));
-
-      when(
-        mockHttpClient.get('Schulungsarten/false'),
-      ).thenAnswer((_) async => {'error': 'Invalid format'});
-
-      when(
-        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((invocation) async {
-        final fetchData =
-            invocation.positionalArguments[2] as Future<dynamic> Function();
-        final response = await fetchData();
-        return response;
-      });
+      when(mockHttpClient.get('Schulungsarten/false'))
+          .thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -502,31 +446,8 @@ void main() {
     });
 
     test('returns empty list and logs error when exception occurs', () async {
-      when(
-        mockNetworkService.getCacheExpirationDuration(),
-      ).thenReturn(const Duration(hours: 1));
-
-      when(
-        mockHttpClient.get('Schulungsarten/false'),
-      ).thenThrow(Exception('Network error'));
-
-      when(
-        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-          any,
-          any,
-          any,
-          any,
-        ),
-      ).thenAnswer((invocation) async {
-        final fetchData =
-            invocation.positionalArguments[2] as Future<dynamic> Function();
-        try {
-          final response = await fetchData();
-          return response;
-        } catch (e) {
-          return [];
-        }
-      });
+      when(mockHttpClient.get('Schulungsarten/false'))
+          .thenThrow(Exception('Network error'));
 
       final result = await trainingService.fetchSchulungsarten();
 

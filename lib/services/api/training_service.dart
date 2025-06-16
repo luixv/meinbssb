@@ -12,9 +12,9 @@ class TrainingService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
-  }) : _httpClient = httpClient,
-       _cacheService = cacheService,
-       _networkService = networkService;
+  })  : _httpClient = httpClient,
+        _cacheService = cacheService,
+        _networkService = networkService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -28,20 +28,20 @@ class TrainingService {
     final cacheDuration = _networkService.getCacheExpirationDuration();
 
     try {
-      final result = await _cacheService
-          .cacheAndRetrieveData<List<Map<String, dynamic>>>(
-            cacheKey,
-            cacheDuration,
-            () async {
-              final response = await _httpClient.get(
-                'AngemeldeteSchulungen/$personId/$abDatum',
-              );
-              return _mapAngemeldeteSchulungenResponse(
-                response,
-              ).map((s) => s.toJson()).toList();
-            },
-            (data) => data,
+      final result =
+          await _cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+        cacheKey,
+        cacheDuration,
+        () async {
+          final response = await _httpClient.get(
+            'AngemeldeteSchulungen/$personId/$abDatum',
           );
+          return _mapAngemeldeteSchulungenResponse(
+            response,
+          ).map((s) => s.toJson()).toList();
+        },
+        (data) => data,
+      );
 
       return result.map((json) => Schulung.fromJson(json)).toList();
     } catch (e) {
@@ -191,24 +191,9 @@ class TrainingService {
   }
 
   Future<List<Schulungsart>> fetchSchulungsarten() async {
-    final cacheKey = 'schulungsarten';
-    final cacheDuration = _networkService.getCacheExpirationDuration();
-
     try {
-      final result = await _cacheService
-          .cacheAndRetrieveData<List<Map<String, dynamic>>>(
-            cacheKey,
-            cacheDuration,
-            () async {
-              final response = await _httpClient.get('Schulungsarten/false');
-              return _mapSchulungsartenResponse(
-                response,
-              ).map((s) => s.toJson()).toList();
-            },
-            (data) => data,
-          );
-
-      return result.map((json) => Schulungsart.fromJson(json)).toList();
+      final response = await _httpClient.get('Schulungsarten/false');
+      return _mapSchulungsartenResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching Schulungsarten: $e');
       return [];
