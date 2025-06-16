@@ -243,8 +243,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             ),
                                             Expanded(
                                               child: ScaledText(
-                                                selectedDisziplin.disziplin ??
-                                                    'N/A',
+                                                '${selectedDisziplin.disziplinNr ?? 'N/A'} - ${selectedDisziplin.disziplin ?? 'N/A'}',
                                                 style: UIStyles.bodyStyle,
                                               ),
                                             ),
