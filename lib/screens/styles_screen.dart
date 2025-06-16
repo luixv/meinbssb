@@ -346,7 +346,7 @@ class StylesScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {},
               style: UIStyles.defaultButtonStyle,
-              child: const Text('Primary Button Style'),
+              child: const Text('Default Button Style'),
             ),
             const SizedBox(height: UIConstants.spacingM),
             ElevatedButton(

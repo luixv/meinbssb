@@ -199,10 +199,13 @@ class UIStyles {
   static final ButtonStyle defaultButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: UIConstants.defaultAppColor,
     foregroundColor: UIConstants.whiteColor,
-    padding: UIConstants.buttonPadding,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+    textStyle: dialogButtonTextStyle,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
     ),
+    minimumSize: const Size(88, 36),
+    shape: const StadiumBorder(),
   );
 
   static final ButtonStyle secondaryButtonStyle = ElevatedButton.styleFrom(
@@ -230,11 +233,15 @@ class UIStyles {
   );
 
   static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: UIConstants.primaryColor,
+    backgroundColor: UIConstants.defaultAppColor,
     foregroundColor: UIConstants.whiteColor,
+    textStyle: dialogButtonTextStyle,
     padding: const EdgeInsets.symmetric(
       horizontal: UIConstants.spacingM,
       vertical: UIConstants.spacingS,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
     ),
   );
 
