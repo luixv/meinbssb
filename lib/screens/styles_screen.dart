@@ -433,20 +433,7 @@ class StylesScreen extends StatelessWidget {
                   'Registration - User registration',
                 ),
                 _buildIconExample(Icons.wifi, 'WiFi - Network status'),
-                _buildIconExample(
-                  Icons.signal_cellular_4_bar,
-                  'Cellular - Network status',
-                ),
                 _buildIconExample(Icons.wifi_off, 'WiFi Off - No network'),
-                _buildIconExample(
-                  Icons.bluetooth_connected,
-                  'Bluetooth - Connection status',
-                ),
-                _buildIconExample(Icons.vpn_lock, 'VPN - Secure connection'),
-                _buildIconExample(
-                  Icons.network_check,
-                  'Network Check - Connection status',
-                ),
                 _buildIconExample(Icons.task_alt, 'Task - Completed tasks'),
                 _buildIconExample(Icons.school, 'School - Training menu'),
                 _buildIconExample(Icons.badge, 'Badge - User profile'),
@@ -459,7 +446,6 @@ class StylesScreen extends StatelessWidget {
                   'Contact - Contact information',
                 ),
                 _buildIconExample(Icons.account_balance, 'Bank - Bank data'),
-                _buildIconExample(Icons.settings, 'Settings - App settings'),
                 _buildIconExample(Icons.style, 'Style - App styling'),
                 _buildIconExample(Icons.logout, 'Logout - Sign out'),
                 _buildIconExample(Icons.help_outline, 'Help - Help section'),

@@ -43,15 +43,17 @@ void main() {
         'ANMELDENERLAUBT': 0,
         'VERBANDSINTERNPASSWORT': '',
         'BEZEICHNUNG': 'Der Sportleiter im Verein / Kugeldisziplinen',
-        'ANGEMELDETETEILNEHMER': 1
+        'ANGEMELDETETEILNEHMER': 1,
       };
 
       final schulungstermine = Schulungstermine.fromJson(json);
 
       expect(schulungstermine.schulungsterminId, 1691);
       expect(schulungstermine.schulungsartId, 15);
-      expect(schulungstermine.datum,
-          DateTime.parse('2025-12-28T00:00:00.000+01:00'));
+      expect(
+        schulungstermine.datum,
+        DateTime.parse('2025-12-28T00:00:00.000+01:00'),
+      );
       expect(schulungstermine.bemerkung, '');
       expect(schulungstermine.kosten, 72.07);
       expect(schulungstermine.ort, 'Online');
@@ -68,17 +70,23 @@ void main() {
       expect(schulungstermine.lehrgangsinhaltHtml, '<p>Test HTML</p>');
       expect(schulungstermine.lehrgangsleiterTel, '089/316949-16');
       expect(
-          schulungstermine.lehrgangsleiterMail, 'sabine.freitag@bssb.bayern');
+        schulungstermine.lehrgangsleiterMail,
+        'sabine.freitag@bssb.bayern',
+      );
       expect(schulungstermine.geloescht, false);
-      expect(schulungstermine.stornoGrund,
-          'Test - Teams Besprechnung 03.03.2025 - Gerhard Reile');
+      expect(
+        schulungstermine.stornoGrund,
+        'Test - Teams Besprechnung 03.03.2025 - Gerhard Reile',
+      );
       expect(schulungstermine.webGruppe, 4);
       expect(schulungstermine.veranstaltungsBezirk, 4);
       expect(schulungstermine.fuerVerlaengerungen, true);
       expect(schulungstermine.anmeldeErlaubt, 0);
       expect(schulungstermine.verbandsInternPasswort, '');
-      expect(schulungstermine.bezeichnung,
-          'Der Sportleiter im Verein / Kugeldisziplinen');
+      expect(
+        schulungstermine.bezeichnung,
+        'Der Sportleiter im Verein / Kugeldisziplinen',
+      );
       expect(schulungstermine.angemeldeteTeilnehmer, 1);
     });
 
@@ -147,15 +155,19 @@ void main() {
       expect(json['LEHRGANGSLEITERTEL'], '089/316949-16');
       expect(json['LEHRGANGSLEITERMAIL'], 'sabine.freitag@bssb.bayern');
       expect(json['GELOESCHT'], false);
-      expect(json['STORNOGRUND'],
-          'Test - Teams Besprechnung 03.03.2025 - Gerhard Reile');
+      expect(
+        json['STORNOGRUND'],
+        'Test - Teams Besprechnung 03.03.2025 - Gerhard Reile',
+      );
       expect(json['WEBGRUPPE'], 4);
       expect(json['VERANSTALTUNGSBEZIRK'], 4);
       expect(json['FUERVERLAENGERUNGEN'], true);
       expect(json['ANMELDENERLAUBT'], 0);
       expect(json['VERBANDSINTERNPASSWORT'], '');
       expect(
-          json['BEZEICHNUNG'], 'Der Sportleiter im Verein / Kugeldisziplinen');
+        json['BEZEICHNUNG'],
+        'Der Sportleiter im Verein / Kugeldisziplinen',
+      );
       expect(json['ANGEMELDETETEILNEHMER'], 1);
     });
 
