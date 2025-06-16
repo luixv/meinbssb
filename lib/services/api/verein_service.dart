@@ -1,6 +1,6 @@
 import 'dart:async';
-import '../core/http_client.dart';
-import '../core/logger_service.dart';
+import '/services/core/http_client.dart';
+import '/services/core/logger_service.dart';
 import '/models/verein.dart';
 
 class VereinService {
