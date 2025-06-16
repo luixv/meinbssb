@@ -230,6 +230,7 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
+            /*
             ListTile(
               leading: const Icon(Icons.settings),
               title: const ScaledText('Einstellungen'),
@@ -246,7 +247,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 );
               },
-            ),
+            ), */ // TODO: Implement Einstellungen functionality
             ListTile(
               leading: const Icon(Icons.style),
               title: const ScaledText('Styles'),
