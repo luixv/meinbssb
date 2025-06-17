@@ -128,8 +128,8 @@ class SettingsScreen extends StatelessWidget {
                         activeColor: UIConstants.contrastSwitchActiveColor,
                         inactiveThumbColor:
                             UIConstants.contrastSwitchInactiveColor,
-                        activeTrackColor: UIConstants.contrastSwitchTrackColor
-                            .withOpacity(0.5),
+                        activeTrackColor:
+                            UIConstants.contrastSwitchTrackColor.withAlpha(128),
                         inactiveTrackColor:
                             UIConstants.contrastSwitchTrackColor,
                       ),
