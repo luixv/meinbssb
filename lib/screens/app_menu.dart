@@ -146,7 +146,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.edit),
+              leading: const Icon(Icons.rule),
               title: const ScaledText('Startrechte Ändern'),
               onTap: () {
                 Navigator.pop(context);
