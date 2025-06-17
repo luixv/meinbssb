@@ -303,7 +303,9 @@ class UIConstants {
 
   // Contrast Switch Colors
   static const Color contrastSwitchActiveColor =
-      Color(0xFF2E7D32); // Dark Green
-  static const Color contrastSwitchInactiveColor = Color(0xFF757575); // Grey
-  static const Color contrastSwitchTrackColor = Color(0xFFBDBDBD); // Light Grey
+      Color(0xFF000000); // Pure Black for maximum contrast
+  static const Color contrastSwitchInactiveColor =
+      Color(0xFFE0E0E0); // Light Grey
+  static const Color contrastSwitchTrackColor =
+      Color(0xFF9E9E9E); // Medium Grey
 }
