@@ -237,14 +237,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   Widget build(BuildContext context) {
     // Access FontSizeProvider at the top level of the build method
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
-    final double scaledFontSizeSubtitle =
-        UIStyles.subtitleStyle.fontSize! * fontSizeProvider.scaleFactor;
-    final double scaledHeaderFontSize =
-        UIStyles.headerStyle.fontSize! * fontSizeProvider.scaleFactor;
-    final double scaledBodyFontSize =
-        UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor;
-    final double scaledErrorFontSize =
-        UIStyles.errorStyle.fontSize! * fontSizeProvider.scaleFactor;
 
     return BaseScreenLayout(
       title: 'Persönliche Daten',

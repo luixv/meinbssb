@@ -26,8 +26,7 @@ class HelpScreen extends StatelessWidget {
         automaticallyImplyLeading: true,
         backgroundColor: UIConstants.backgroundColor,
         leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back, color: UIConstants.defaultAppColor),
+          icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const ScaledText(
@@ -226,7 +225,6 @@ class _AccordionItem extends StatefulWidget {
 }
 
 class _AccordionItemState extends State<_AccordionItem> {
-
   @override
   Widget build(BuildContext context) {
     return Card(

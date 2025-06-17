@@ -16,6 +16,7 @@ import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -192,42 +193,62 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildEmailField() {
-    return TextField(
-      key: const Key('usernameField'),
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      style: UIStyles.bodyStyle,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'E-mail',
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        labelStyle: UIStyles.formLabelStyle,
-      ),
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return TextField(
+          key: const Key('usernameField'),
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          style: UIStyles.bodyStyle.copyWith(
+            fontSize:
+                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+          ),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'E-mail',
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            labelStyle: UIStyles.formLabelStyle.copyWith(
+              fontSize: UIStyles.formLabelStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildPasswordField() {
-    return TextField(
-      key: const Key('passwordField'),
-      controller: _passwordController,
-      obscureText: !_isPasswordVisible,
-      style: UIStyles.bodyStyle,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Passwort',
-        labelStyle: UIStyles.formLabelStyle,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return TextField(
+          key: const Key('passwordField'),
+          controller: _passwordController,
+          obscureText: !_isPasswordVisible,
+          style: UIStyles.bodyStyle.copyWith(
+            fontSize:
+                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
           ),
-          onPressed: () {
-            if (mounted) {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            }
-          },
-        ),
-      ),
-      onSubmitted: (value) => _handleLogin(),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Passwort',
+            labelStyle: UIStyles.formLabelStyle.copyWith(
+              fontSize: UIStyles.formLabelStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: () {
+                if (mounted) {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                }
+              },
+            ),
+          ),
+          onSubmitted: (value) => _handleLogin(),
+        );
+      },
     );
   }
 

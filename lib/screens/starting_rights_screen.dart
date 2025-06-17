@@ -10,6 +10,7 @@ import '/models/pass_data_zve.dart';
 import '/services/core/logger_service.dart';
 import '/models/disziplin.dart';
 import '/widgets/scaled_text.dart';
+import '/services/core/font_size_provider.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -142,25 +143,32 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: UIStyles.bodyStyle,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: _passData!.passnummer,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  child: Consumer<FontSizeProvider>(
+                                    builder:
+                                        (context, fontSizeProvider, child) {
+                                      return RichText(
+                                        text: TextSpan(
+                                          style: UIStyles.bodyStyle,
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: _passData!.passnummer,
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const TextSpan(text: ' - '),
+                                            TextSpan(
+                                              text: _passData!.vereinName,
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const TextSpan(text: ' - '),
-                                        TextSpan(
-                                          text: _passData!.vereinName,
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
@@ -197,27 +205,35 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            style: UIStyles.bodyStyle,
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: zve.vVereinNr.toString(),
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                        child: Consumer<FontSizeProvider>(
+                                          builder: (context, fontSizeProvider,
+                                              child) {
+                                            return RichText(
+                                              text: TextSpan(
+                                                style: UIStyles.bodyStyle,
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                    text: zve.vVereinNr
+                                                        .toString(),
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const TextSpan(text: ' - '),
+                                                  TextSpan(
+                                                    text: zve.vereinName,
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const TextSpan(text: ' - '),
-                                              TextSpan(
-                                                text: zve.vereinName,
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
