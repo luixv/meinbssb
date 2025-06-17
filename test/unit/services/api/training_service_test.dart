@@ -7,15 +7,12 @@ import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
 import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/schulungsart.dart';
 // Import for date formatting
 import 'dart:async';
 import 'dart:io';
 
-@GenerateMocks([
-  HttpClient,
-  CacheService,
-  NetworkService,
-])
+@GenerateMocks([HttpClient, CacheService, NetworkService])
 import 'training_service_test.mocks.dart';
 
 void main() {
@@ -102,8 +99,9 @@ void main() {
     ];
 
     test('returns mapped training list from network', () async {
-      when(mockNetworkService.getCacheExpirationDuration())
-          .thenReturn(const Duration(hours: 1));
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
 
       // Mock the cache service to return the raw map list as the 'fetchData' function
       // already handles the mapping to Schulung models within TrainingService.
@@ -145,8 +143,9 @@ void main() {
     });
 
     test('handles null values correctly', () async {
-      when(mockNetworkService.getCacheExpirationDuration())
-          .thenReturn(const Duration(hours: 1));
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
 
       when(
         mockHttpClient.get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),
@@ -177,7 +176,7 @@ void main() {
             'LINK': null,
             'STATUS': null,
             'GUELTIGBIS': null,
-          }
+          },
         ],
       );
 
@@ -258,12 +257,13 @@ void main() {
         'LINK': '',
         'STATUS': 'Aktiv',
         'GUELTIGBIS': '2023-12-31',
-      }
+      },
     ];
 
     test('returns empty list for non-list response', () async {
-      when(mockHttpClient.get('AvailableSchulungen'))
-          .thenAnswer((_) async => {'error': 'Invalid format'});
+      when(
+        mockHttpClient.get('AvailableSchulungen'),
+      ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchAvailableSchulungen();
 
@@ -271,8 +271,9 @@ void main() {
     });
 
     test('maps available Schulungen correctly', () async {
-      when(mockHttpClient.get('AvailableSchulungen'))
-          .thenAnswer((_) async => testResponse);
+      when(
+        mockHttpClient.get('AvailableSchulungen'),
+      ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchAvailableSchulungen();
 
@@ -332,7 +333,7 @@ void main() {
             'LINK': null,
             'STATUS': null,
             'GUELTIGBIS': null,
-          }
+          },
         ],
       );
 
@@ -348,41 +349,94 @@ void main() {
   });
 
   group('fetchSchulungsarten', () {
-    // API response for Schulungsarten. Note the difference in available fields.
     final testResponse = [
       {
-        'SCHULUNGSARTID': 1,
-        'BEZEICHNUNG': 'Type 1',
-        'KURZBEZEICHNUNG': 'T1',
-        'BESCHREIBUNG': 'Description 1',
-        // Other fields like DATUM, ORT, etc. are not present here
+        'SCHULUNGSARTID': 41,
+        'BEZEICHNUNG': 'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
+        'TYP': 6,
+        'KOSTEN': 0.0,
+        'UE': 0,
+        'OMKATEGORIEID': 1,
+        'RECHNUNGAN': 1,
+        'VERPFLEGUNGSKOSTEN': 0.0,
+        'UEBERNACHTUNGSKOSTEN': 0.0,
+        'LEHRMATERIALKOSTEN': 0.0,
+        'LEHRGANGSINHALT': '',
+        'LEHRGANGSINHALTHTML': '',
+        'WEBGRUPPE': 3,
+        'FUERVERLAENGERUNGEN': false,
       }
     ];
 
-    test('maps all fields correctly to Schulung for Schulungsarten', () async {
+    test('returns mapped Schulungsarten list from network', () async {
       when(mockHttpClient.get('Schulungsarten/false'))
           .thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchSchulungsarten();
 
+      expect(result, isA<List<Schulungsart>>());
       expect(result.length, 1);
-      expect(result[0].id, 1);
-      expect(result[0].bezeichnung, 'Type 1');
-      expect(result[0].schulungsartId, 1);
+      expect(result[0].schulungsartId, 41);
       expect(
-        result[0].schulungsartBezeichnung,
-        'Type 1',
-      ); // BEZEICHNUNG maps to both
-      expect(result[0].schulungsartKurzbezeichnung, 'T1');
-      expect(result[0].schulungsartBeschreibung, 'Description 1');
-      // Assert that fields not present in Schulungsarten API are defaulted correctly
-      expect(result[0].datum, '');
-      expect(result[0].ausgestelltAm, '');
-      expect(result[0].teilnehmerId, 0);
-      expect(result[0].maxTeilnehmer, 0);
+        result[0].bezeichnung,
+        'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
+      );
+      expect(result[0].typ, 6);
+      expect(result[0].kosten, 0.0);
+      expect(result[0].ue, 0);
+      expect(result[0].omKategorieId, 1);
+      expect(result[0].rechnungAn, 1);
+      expect(result[0].verpflegungskosten, 0.0);
+      expect(result[0].uebernachtungskosten, 0.0);
+      expect(result[0].lehrmaterialkosten, 0.0);
+      expect(result[0].lehrgangsinhalt, '');
+      expect(result[0].lehrgangsinhaltHtml, '');
+      expect(result[0].webGruppe, 3);
+      expect(result[0].fuerVerlaengerungen, false);
     });
 
-    test('returns empty list for non-list response', () async {
+    test('handles null values correctly', () async {
+      when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
+        (_) async => [
+          {
+            'SCHULUNGSARTID': null,
+            'BEZEICHNUNG': null,
+            'TYP': null,
+            'KOSTEN': null,
+            'UE': null,
+            'OMKATEGORIEID': null,
+            'RECHNUNGAN': null,
+            'VERPFLEGUNGSKOSTEN': null,
+            'UEBERNACHTUNGSKOSTEN': null,
+            'LEHRMATERIALKOSTEN': null,
+            'LEHRGANGSINHALT': null,
+            'LEHRGANGSINHALTHTML': null,
+            'WEBGRUPPE': null,
+            'FUERVERLAENGERUNGEN': null,
+          }
+        ],
+      );
+
+      final result = await trainingService.fetchSchulungsarten();
+
+      expect(result.length, 1);
+      expect(result[0].schulungsartId, 0);
+      expect(result[0].bezeichnung, '');
+      expect(result[0].typ, 0);
+      expect(result[0].kosten, 0.0);
+      expect(result[0].ue, 0);
+      expect(result[0].omKategorieId, 0);
+      expect(result[0].rechnungAn, 0);
+      expect(result[0].verpflegungskosten, 0.0);
+      expect(result[0].uebernachtungskosten, 0.0);
+      expect(result[0].lehrmaterialkosten, 0.0);
+      expect(result[0].lehrgangsinhalt, '');
+      expect(result[0].lehrgangsinhaltHtml, '');
+      expect(result[0].webGruppe, 0);
+      expect(result[0].fuerVerlaengerungen, false);
+    });
+
+    test('returns empty list when API returns non-list response', () async {
       when(mockHttpClient.get('Schulungsarten/false'))
           .thenAnswer((_) async => {'error': 'Invalid format'});
 
@@ -391,27 +445,13 @@ void main() {
       expect(result, isEmpty);
     });
 
-    test('handles null values in Schulungsarten correctly', () async {
-      when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
-        (_) async => [
-          {
-            'SCHULUNGSARTID': null,
-            'BEZEICHNUNG': null,
-            'KURZBEZEICHNUNG': null,
-            'BESCHREIBUNG': null,
-          }
-        ],
-      );
+    test('returns empty list and logs error when exception occurs', () async {
+      when(mockHttpClient.get('Schulungsarten/false'))
+          .thenThrow(Exception('Network error'));
 
       final result = await trainingService.fetchSchulungsarten();
 
-      expect(result.length, 1);
-      expect(result[0].id, 0);
-      expect(result[0].bezeichnung, '');
-      expect(result[0].schulungsartId, 0);
-      expect(result[0].schulungsartBezeichnung, '');
-      expect(result[0].schulungsartKurzbezeichnung, '');
-      expect(result[0].schulungsartBeschreibung, '');
+      expect(result, isEmpty);
     });
   });
 
@@ -436,11 +476,13 @@ void main() {
         },
       ];
 
-      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
-          .thenAnswer((_) async => testResponse);
+      when(
+        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+      ).thenAnswer((_) async => testResponse);
 
-      final result =
-          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+      final result = await trainingService.fetchAbsolvierteSchulungen(
+        testPersonId,
+      );
 
       expect(result, isA<List<Schulung>>());
       expect(result.length, 2);
@@ -463,20 +505,22 @@ void main() {
     });
 
     test('handles invalid date strings in AbsolvierteSchulungen', () async {
-      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
-          .thenAnswer(
+      when(
+        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+      ).thenAnswer(
         (_) async => [
           {
             'SCHULUNGID': 201,
             'AUSGESTELLTAM': 'invalid-date-format',
             'BEZEICHNUNG': 'Bad Date Schulung',
             'GUELTIGBIS': 'another-bad-date',
-          }
+          },
         ],
       );
 
-      final result =
-          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+      final result = await trainingService.fetchAbsolvierteSchulungen(
+        testPersonId,
+      );
 
       expect(result.length, 1);
       expect(result[0].bezeichnung, 'Bad Date Schulung');
@@ -485,32 +529,38 @@ void main() {
       expect(result[0].gueltigBis, 'another-bad-date');
     });
 
-    test('returns empty list for non-list response for AbsolvierteSchulungen',
-        () async {
-      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
-          .thenAnswer((_) async => {'error': 'Not a list'});
+    test(
+      'returns empty list for non-list response for AbsolvierteSchulungen',
+      () async {
+        when(
+          mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        ).thenAnswer((_) async => {'error': 'Not a list'});
 
-      final result =
-          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+        final result = await trainingService.fetchAbsolvierteSchulungen(
+          testPersonId,
+        );
 
-      expect(result, isEmpty);
-    });
+        expect(result, isEmpty);
+      },
+    );
 
     test('handles null values for AbsolvierteSchulungen', () async {
-      when(mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'))
-          .thenAnswer(
+      when(
+        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+      ).thenAnswer(
         (_) async => [
           {
             'SCHULUNGID': null,
             'AUSGESTELLTAM': null,
             'BEZEICHNUNG': null,
             'GUELTIGBIS': null,
-          }
+          },
         ],
       );
 
-      final result =
-          await trainingService.fetchAbsolvierteSchulungen(testPersonId);
+      final result = await trainingService.fetchAbsolvierteSchulungen(
+        testPersonId,
+      );
 
       expect(result.length, 1);
       expect(result[0].id, 0);
@@ -527,8 +577,9 @@ void main() {
     ];
 
     test('returns mapped Disziplinen list from API', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenAnswer((_) async => testResponse);
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -549,8 +600,9 @@ void main() {
     });
 
     test('returns empty list when API returns non-list response', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenAnswer((_) async => {'error': 'Invalid format'});
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -559,8 +611,9 @@ void main() {
     });
 
     test('returns empty list and logs error when exception occurs', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenThrow(Exception('Network error for Disziplinen'));
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenThrow(Exception('Network error for Disziplinen'));
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -569,8 +622,9 @@ void main() {
     });
 
     test('handles network timeout exception', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenThrow(TimeoutException('Request timed out'));
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -579,8 +633,9 @@ void main() {
     });
 
     test('handles socket exception', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenThrow(const SocketException('Failed to connect'));
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenThrow(const SocketException('Failed to connect'));
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -589,8 +644,9 @@ void main() {
     });
 
     test('handles http exception', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenThrow(const HttpException('Server error'));
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenThrow(const HttpException('Server error'));
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -599,8 +655,9 @@ void main() {
     });
 
     test('handles format exception in response', () async {
-      when(mockHttpClient.get('Disziplinen'))
-          .thenAnswer((_) async => 'Invalid JSON response');
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenAnswer((_) async => 'Invalid JSON response');
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -627,8 +684,9 @@ void main() {
         // Missing DISZIPLINNR
       ];
 
-      when(mockHttpClient.get('Disziplinen'))
-          .thenAnswer((_) async => partialResponse);
+      when(
+        mockHttpClient.get('Disziplinen'),
+      ).thenAnswer((_) async => partialResponse);
 
       final result = await trainingService.fetchDisziplinen();
 
@@ -644,8 +702,9 @@ void main() {
     const testSchulungId = 456;
 
     test('returns true when registration is successful', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenAnswer((_) async => {'ResultType': 1});
+      when(
+        mockHttpClient.post('RegisterForSchulung', any),
+      ).thenAnswer((_) async => {'ResultType': 1});
 
       final result = await trainingService.registerForSchulung(
         testPersonId,
@@ -656,8 +715,9 @@ void main() {
     });
 
     test('returns false and logs error on failure', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenThrow(Exception('Registration error'));
+      when(
+        mockHttpClient.post('RegisterForSchulung', any),
+      ).thenThrow(Exception('Registration error'));
 
       final result = await trainingService.registerForSchulung(
         testPersonId,
@@ -668,8 +728,9 @@ void main() {
     });
 
     test('handles network timeout during registration', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenThrow(TimeoutException('Request timed out'));
+      when(
+        mockHttpClient.post('RegisterForSchulung', any),
+      ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.registerForSchulung(
         testPersonId,
@@ -693,8 +754,9 @@ void main() {
     });
 
     test('handles invalid response format', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any))
-          .thenAnswer((_) async => {'invalid': 'response'});
+      when(
+        mockHttpClient.post('RegisterForSchulung', any),
+      ).thenAnswer((_) async => {'invalid': 'response'});
 
       final result = await trainingService.registerForSchulung(
         testPersonId,
@@ -716,8 +778,9 @@ void main() {
         ),
       ).thenAnswer((_) async => {'result': true});
 
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+      final result = await trainingService.unregisterFromSchulung(
+        testTeilnehmerId,
+      );
 
       expect(result, isTrue);
     });
@@ -730,8 +793,9 @@ void main() {
         ),
       ).thenThrow(Exception('Network error'));
 
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+      final result = await trainingService.unregisterFromSchulung(
+        testTeilnehmerId,
+      );
 
       expect(result, isFalse);
     });
@@ -744,8 +808,9 @@ void main() {
         ),
       ).thenThrow(TimeoutException('Request timed out'));
 
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+      final result = await trainingService.unregisterFromSchulung(
+        testTeilnehmerId,
+      );
 
       expect(result, isFalse);
     });
@@ -758,8 +823,9 @@ void main() {
         ),
       ).thenAnswer((_) async => {'result': false, 'error': 'Server error'});
 
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+      final result = await trainingService.unregisterFromSchulung(
+        testTeilnehmerId,
+      );
 
       expect(result, isFalse);
     });
@@ -772,8 +838,9 @@ void main() {
         ),
       ).thenAnswer((_) async => {'invalid': 'response'});
 
-      final result =
-          await trainingService.unregisterFromSchulung(testTeilnehmerId);
+      final result = await trainingService.unregisterFromSchulung(
+        testTeilnehmerId,
+      );
 
       expect(result, isFalse);
     });

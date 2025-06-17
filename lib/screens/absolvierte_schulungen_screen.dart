@@ -9,8 +9,8 @@ import '/models/schulung.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
-class AbsolvierteSeminareScreen extends StatefulWidget {
-  const AbsolvierteSeminareScreen(
+class AbsolvierteSchulungenScreen extends StatefulWidget {
+  const AbsolvierteSchulungenScreen(
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
@@ -21,21 +21,22 @@ class AbsolvierteSeminareScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  AbsolvierteSeminareScreenState createState() =>
-      AbsolvierteSeminareScreenState();
+  AbsolvierteSchulungenScreenState createState() =>
+      AbsolvierteSchulungenScreenState();
 }
 
-class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
-  List<Schulung> absolvierteSeminare = [];
+class AbsolvierteSchulungenScreenState
+    extends State<AbsolvierteSchulungenScreen> {
+  List<Schulung> absolvierteSchulungen = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchAbsolvierteSeminare();
+    fetchAbsolvierteSchulungen();
   }
 
-  Future<void> fetchAbsolvierteSeminare() async {
+  Future<void> fetchAbsolvierteSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final personId = widget.userData?.personId;
 
@@ -46,11 +47,11 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
     }
 
     try {
-      final result = await apiService.fetchAbsolvierteSeminare(personId);
+      final result = await apiService.fetchAbsolvierteSchulungen(personId);
       if (mounted) {
         setState(() {
           // Sort the results by ausgestelltAm in descending order (oldest first)
-          absolvierteSeminare = result
+          absolvierteSchulungen = result
             ..sort((a, b) {
               // Get dates, handling all possible cases
               DateTime? dateA;
@@ -81,11 +82,11 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
         });
       }
     } catch (e) {
-      LoggerService.logError('Error fetching absolvierte Seminare: $e');
+      LoggerService.logError('Error fetching absolvierte Schulungen: $e');
       if (mounted) {
         setState(() {
           isLoading = false;
-          absolvierteSeminare = [];
+          absolvierteSchulungen = [];
         });
       }
     }
@@ -102,7 +103,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Absolvierte Seminare',
+      title: 'Absolvierte Schulungen',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
@@ -113,20 +114,20 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
           children: [
             if (isLoading)
               const Center(child: CircularProgressIndicator())
-            else if (absolvierteSeminare.isEmpty)
+            else if (absolvierteSchulungen.isEmpty)
               const ScaledText(
-                'Keine absolvierten Seminare gefunden.',
+                'Keine absolvierten Schulungen gefunden.',
                 style: TextStyle(color: UIConstants.greySubtitleTextColor),
               )
             else
               Expanded(
                 child: ListView.separated(
-                  itemCount: absolvierteSeminare.length,
+                  itemCount: absolvierteSchulungen.length,
                   separatorBuilder: (_, __) => const SizedBox(
                     height: UIConstants.defaultSeparatorHeight,
                   ),
                   itemBuilder: (context, index) {
-                    final seminar = absolvierteSeminare[index];
+                    final seminar = absolvierteSchulungen[index];
                     final ausgestelltAm =
                         DateTime.tryParse(seminar.ausgestelltAm);
                     final formattedAusgestelltAm = ausgestelltAm == null ||
@@ -175,7 +176,7 @@ class AbsolvierteSeminareScreenState extends State<AbsolvierteSeminareScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'absolvierteSeminareFab',
+        heroTag: 'absolvierteSchulungenFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',

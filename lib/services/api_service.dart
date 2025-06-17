@@ -24,6 +24,7 @@ import '/models/contact.dart';
 import '/models/verein.dart';
 import '/models/user_data.dart';
 import '/models/fremde_verband.dart';
+import '/models/schulungsart.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -87,7 +88,7 @@ class ApiService {
     );
   }
 
-// Auth service
+  // Auth service
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _authService.login(username, password);
@@ -109,7 +110,7 @@ class ApiService {
     return _authService.resetPassword(passNumber);
   }
 
-// User Service
+  // User Service
   Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
   }
@@ -131,11 +132,11 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
-  Future<List<Schulung>> fetchAbsolvierteSeminare(int personId) async {
+  Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }
 
-// User Service - Kontakte
+  // User Service - Kontakte
   Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
   }
@@ -148,7 +149,7 @@ class ApiService {
     return _userService.deleteKontakt(contact);
   }
 
-// Image Service
+  // Image Service
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     return _imageService.fetchAndCacheSchuetzenausweis(
       personId,
@@ -157,8 +158,8 @@ class ApiService {
     );
   }
 
-// Training Service
-  Future<List<Schulung>> fetchSchulungsarten() async {
+  // Training Service
+  Future<List<Schulungsart>> fetchSchulungsarten() async {
     return _trainingService.fetchSchulungsarten();
   }
 
@@ -185,7 +186,7 @@ class ApiService {
     return _trainingService.fetchDisziplinen();
   }
 
-// Bank Service
+  // Bank Service
   Future<List<BankData>> fetchBankData(int webloginId) async {
     return _bankService.fetchBankData(webloginId);
   }
