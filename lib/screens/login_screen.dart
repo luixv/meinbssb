@@ -2,6 +2,8 @@
 // Filename: login_screen.dart
 // Author: Luis Mandel / NTT DATA
 
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
@@ -15,9 +17,6 @@ import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import '/screens/settings_screen.dart';
-import '/screens/help_screen.dart';
-import '/screens/impressum_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -279,66 +278,6 @@ class LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const ScaledText(
-          'MeinBSSB',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, size: _menuIconSize),
-            padding: const EdgeInsets.all(_menuIconPadding),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                    userData: null,
-                    isLoggedIn: false,
-                    onLogout: () {},
-                  ),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.help, size: _menuIconSize),
-            padding: const EdgeInsets.all(_menuIconPadding),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HelpScreen(
-                    userData: null,
-                    isLoggedIn: false,
-                    onLogout: () {},
-                  ),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.info, size: _menuIconSize),
-            padding: const EdgeInsets.all(_menuIconPadding),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImpressumScreen(
-                    userData: null,
-                    isLoggedIn: false,
-                    onLogout: () {},
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
