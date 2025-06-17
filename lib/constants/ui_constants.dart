@@ -300,4 +300,10 @@ class UIConstants {
   static const String contrastTitle = 'Kontrast';
   static const String highContrastTitle = 'Hoher Kontrast';
   static const String highContrastDescription = 'Verbesserte Lesbarkeit';
+
+  // Contrast Switch Colors
+  static const Color contrastSwitchActiveColor =
+      Color(0xFF2E7D32); // Dark Green
+  static const Color contrastSwitchInactiveColor = Color(0xFF757575); // Grey
+  static const Color contrastSwitchTrackColor = Color(0xFFBDBDBD); // Light Grey
 }
