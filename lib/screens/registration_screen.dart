@@ -298,7 +298,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               style: UIStyles.formValueStyle,
             ),
-            const SizedBox(height: UIConstants.spacingM),
+            const SizedBox(height: UIConstants.spacingS),
             TextField(
               controller: _lastNameController,
               decoration: UIStyles.formInputDecoration.copyWith(
@@ -306,22 +306,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
               ),
               style: UIStyles.formValueStyle,
             ),
-            const SizedBox(height: UIConstants.spacingM),
-            TextField(
-              controller: _passNumberController,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Schützenausweisnummer',
-                errorText: passNumberError,
-              ),
-              style: UIStyles.formValueStyle,
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  validatePassNumber(value);
-                });
-              },
-            ),
-            const SizedBox(height: UIConstants.spacingM),
+            const SizedBox(height: UIConstants.spacingS),
             TextField(
               controller: _emailController,
               decoration: UIStyles.formInputDecoration.copyWith(
@@ -337,7 +322,22 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 });
               },
             ),
-            const SizedBox(height: UIConstants.spacingM),
+            const SizedBox(height: UIConstants.spacingS),
+            TextField(
+              controller: _passNumberController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Schützenausweisnummer',
+                errorText: passNumberError,
+              ),
+              style: UIStyles.formValueStyle,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  validatePassNumber(value);
+                });
+              },
+            ),
+            const SizedBox(height: UIConstants.spacingS),
             TextField(
               controller: _zipCodeController,
               decoration: UIStyles.formInputDecoration.copyWith(
@@ -352,7 +352,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 });
               },
             ),
-            const SizedBox(height: UIConstants.spacingM),
+            const SizedBox(height: UIConstants.spacingS),
             InkWell(
               onTap: () => _selectDate(context),
               child: InputDecorator(
