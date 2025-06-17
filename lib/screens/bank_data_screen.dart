@@ -7,6 +7,7 @@ import '/models/user_data.dart';
 import '/services/api_service.dart';
 import '/services/api/bank_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/screens/base_screen_layout.dart';
 import '/screens/bank_data_result_screen.dart';
 import '/widgets/scaled_text.dart';
@@ -410,49 +411,53 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   Widget _buildBankDataForm() {
-    return Padding(
-      padding: const EdgeInsets.all(UIConstants.spacingM),
-      child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: UIConstants.startCrossAlignment,
-            children: [
-              _buildTextField(
-                label: 'Kontoinhaber',
-                controller: _kontoinhaberController,
-                isReadOnly: !_isEditing,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Kontoinhaber ist erforderlich';
-                  }
-                  return null;
-                },
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.all(UIConstants.spacingM),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: UIConstants.startCrossAlignment,
+                children: [
+                  _buildTextField(
+                    label: 'Kontoinhaber',
+                    controller: _kontoinhaberController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Kontoinhaber ist erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'IBAN',
+                    controller: _ibanController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'IBAN ist erforderlich';
+                      }
+                      if (!BankService.validateIBAN(value)) {
+                        return 'Ungültige IBAN';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'BIC',
+                    controller: _bicController,
+                    isReadOnly: !_isEditing,
+                    validator: BankService.validateBIC,
+                  ),
+                ],
               ),
-              _buildTextField(
-                label: 'IBAN',
-                controller: _ibanController,
-                isReadOnly: !_isEditing,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'IBAN ist erforderlich';
-                  }
-                  if (!BankService.validateIBAN(value)) {
-                    return 'Ungültige IBAN';
-                  }
-                  return null;
-                },
-              ),
-              _buildTextField(
-                label: 'BIC',
-                controller: _bicController,
-                isReadOnly: !_isEditing,
-                validator: BankService.validateBIC,
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -462,20 +467,31 @@ class BankDataScreenState extends State<BankDataScreen> {
     String? Function(String?)? validator,
     bool isReadOnly = false,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        readOnly: isReadOnly,
-        style:
-            isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle,
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isReadOnly ? null : label,
-        ),
-        validator: validator,
-      ),
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            controller: controller,
+            readOnly: isReadOnly,
+            style: isReadOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
+                    fontSize: UIStyles.formValueBoldStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  )
+                : UIStyles.formValueStyle.copyWith(
+                    fontSize: UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: label,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: isReadOnly ? null : label,
+            ),
+            validator: validator,
+          ),
+        );
+      },
     );
   }
 

@@ -123,7 +123,12 @@ class ProfileScreen extends StatelessWidget {
         ),
         title: ScaledText(
           title,
-          style: UIStyles.listItemTitleStyle,
+          style: const TextStyle(
+            fontSize: UIConstants.titleFontSize,
+            fontFamily: UIConstants.defaultFontFamily,
+            fontWeight: FontWeight.w500,
+            color: UIConstants.textColor,
+          ),
         ),
         trailing: const Icon(
           Icons.chevron_right,

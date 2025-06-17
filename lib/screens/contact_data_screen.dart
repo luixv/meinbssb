@@ -12,6 +12,7 @@ import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 
 class ContactDataScreen extends StatefulWidget {
@@ -354,13 +355,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
                   ),
                   value: _selectedKontaktTyp,
-                  items:
-                      _contactTypeLabels.entries.map((entry) {
-                        return DropdownMenuItem<int>(
-                          value: entry.key,
-                          child: Text(entry.value),
-                        );
-                      }).toList(),
+                  items: _contactTypeLabels.entries.map((entry) {
+                    return DropdownMenuItem<int>(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    );
+                  }).toList(),
                   onChanged: (int? newValue) {
                     setState(() {
                       _selectedKontaktTyp = newValue;
@@ -414,32 +414,31 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                     child: ElevatedButton(
                       onPressed: _isAdding ? null : _onAddContact,
                       style: UIStyles.dialogAcceptButtonStyle,
-                      child:
-                          _isAdding
-                              ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.circularProgressIndicator,
-                                ),
-                                strokeWidth: 2,
-                              )
-                              : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.check,
-                                    color: UIConstants.checkIcon,
-                                    size: UIConstants.bodyFontSize + 4.0,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingS),
-                                  Text(
-                                    'Hinzufügen',
-                                    style: UIStyles.dialogButtonTextStyle
-                                        .copyWith(
-                                          color: UIConstants.submitButtonText,
-                                        ),
-                                  ),
-                                ],
+                      child: _isAdding
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.circularProgressIndicator,
                               ),
+                              strokeWidth: 2,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.check,
+                                  color: UIConstants.checkIcon,
+                                  size: UIConstants.bodyFontSize + 4.0,
+                                ),
+                                const SizedBox(width: UIConstants.spacingS),
+                                Text(
+                                  'Hinzufügen',
+                                  style:
+                                      UIStyles.dialogButtonTextStyle.copyWith(
+                                    color: UIConstants.submitButtonText,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                 ],
@@ -519,40 +518,48 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required String displayValue,
     required String displayLabel,
     required Function(int kontaktId, int kontaktTyp, String value, String label)
-    onDelete,
+        onDelete,
     required bool isDeleting,
   }) {
-    final displayValueFormatted = displayValue.isNotEmpty ? displayValue : '-';
-    final displayLabelFormatted =
-        displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        final displayValueFormatted =
+            displayValue.isNotEmpty ? displayValue : '-';
+        final displayLabelFormatted =
+            displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        initialValue: displayValueFormatted,
-        readOnly: true,
-        style: UIStyles.formValueBoldStyle,
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: displayLabelFormatted,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: isDeleting ? null : displayLabelFormatted,
-          fillColor: isDeleting ? UIConstants.disabledBackgroundColor : null,
-          filled: isDeleting ? false : null,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.delete_outline),
-            color: UIConstants.deleteIcon,
-            onPressed:
-                isDeleting
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            initialValue: displayValueFormatted,
+            readOnly: true,
+            style: UIStyles.formValueBoldStyle.copyWith(
+              fontSize: UIStyles.formValueBoldStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: displayLabelFormatted,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintText: isDeleting ? null : displayLabelFormatted,
+              fillColor:
+                  isDeleting ? UIConstants.disabledBackgroundColor : null,
+              filled: isDeleting ? false : null,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: UIConstants.deleteIcon,
+                onPressed: isDeleting
                     ? null
                     : () => onDelete(
-                      kontaktId,
-                      rawKontaktTyp,
-                      displayValue,
-                      displayLabel,
-                    ),
+                          kontaktId,
+                          rawKontaktTyp,
+                          displayValue,
+                          displayLabel,
+                        ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -560,7 +567,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     List<Map<String, dynamic>> contactData,
     int personId,
     Function(int kontaktId, int kontaktTyp, String value, String label)
-    onDelete,
+        onDelete,
     bool isDeleting,
   ) {
     return Padding(

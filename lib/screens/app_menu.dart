@@ -15,6 +15,7 @@ import '/screens/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
+import '/screens/styles_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -199,6 +200,26 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.style),
+              title: const ScaledText(
+                'Styles',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StylesScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             const Divider(),
