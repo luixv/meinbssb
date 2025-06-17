@@ -150,51 +150,18 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Widget _buildDateField() {
-    return InkWell(
-      onTap: () => _selectDate(context),
-      child: InputDecorator(
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: 'Geburtsdatum',
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              _selectedDate == null
-                  ? 'Wählen Sie Ihr Geburtsdatum'
-                  : DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDate!),
-              style: UIStyles.formValueStyle.copyWith(
-                color: _selectedDate != null
-                    ? UIConstants.defaultAppColor
-                    : UIConstants.greySubtitleTextColor,
-              ),
-            ),
-            const Icon(Icons.calendar_today),
-          ],
-        ),
-      ),
-    );
-  }
-
   bool validateEmail(String value) {
     if (!_emailFieldTouched && value.isEmpty) {
-      emailError = null; // Don't show error if not touched and empty
+      emailError = null;
       return true;
     }
     if (value.isEmpty) {
-      emailError = ErrorService.handleValidationError(
-        'E-Mail',
-        'E-Mail ist erforderlich.',
-      );
+      emailError = 'E-Mail ist erforderlich.';
       return false;
     }
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      emailError = ErrorService.handleValidationError(
-        'E-Mail',
-        'Bitte geben Sie eine gültige E-Mail Adresse ein.',
-      );
+      emailError = 'Bitte geben Sie eine gültige E-Mail Adresse ein.';
       return false;
     }
     emailError = null;
@@ -203,15 +170,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validateZipCode(String value) {
     if (value.isEmpty) {
-      zipCodeError = ErrorService.handleValidationError(
-        'Postleitzahl',
-        'Postleitzahl ist erforderlich.',
-      );
+      zipCodeError = 'Postleitzahl ist erforderlich.';
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-      zipCodeError = ErrorService.handleValidationError(
-        'Postleitzahl',
-        'Postleitzahl muss 5 Ziffern enthalten.',
-      );
+      zipCodeError = 'Postleitzahl muss 5 Ziffern enthalten.';
     } else {
       zipCodeError = null;
     }
@@ -220,15 +181,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validatePassNumber(String value) {
     if (value.isEmpty) {
-      passNumberError = ErrorService.handleValidationError(
-        'Schützenausweisnummer',
-        'Schützenausweisnummer ist erforderlich.',
-      );
+      passNumberError = 'Schützenausweisnummer ist erforderlich.';
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
-      passNumberError = ErrorService.handleValidationError(
-        'Schützenausweisnummer',
-        'Schützenausweisnummer muss 8 Ziffern enthalten.',
-      );
+      passNumberError = 'Schützenausweisnummer muss 8 Ziffern enthalten.';
     } else {
       passNumberError = null;
     }
@@ -277,25 +232,32 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         birthDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
       );
 
-      userData = UserData.fromJson(response);
-      setState(() {
-        _successMessage = 'Registrierung erfolgreich!';
-      });
-
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RegistrationSuccessScreen(
-            message: _successMessage,
-            userData: userData,
+      if (response['ResultType'] == 1) {
+        userData = UserData.fromJson(response);
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegistrationSuccessScreen(
+              message: 'Registrierung erfolgreich!',
+              userData: userData!,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        setState(() {
+          _successMessage = ErrorService.handleValidationError(
+            'Registrierung',
+            response['ResultMessage'] ?? 'Registrierung fehlgeschlagen.',
+          );
+        });
+      }
     } catch (e) {
       setState(() {
-        _successMessage = 'Fehler bei der Registrierung: $e';
+        _successMessage = ErrorService.handleValidationError(
+          'Registrierung',
+          'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
+        );
       });
     } finally {
       setState(() {
@@ -307,56 +269,115 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: UIConstants.registrationTitle,
+      title: 'Registrierung',
       userData: null,
       isLoggedIn: false,
       onLogout: () {},
       body: SingleChildScrollView(
-        padding: UIConstants.screenPadding,
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
-            ScaledText(
-              UIConstants.registrationTitle,
-              style: UIStyles.headerStyle.copyWith(
-                color: UIConstants.defaultAppColor,
+            if (_successMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
+                child: Text(
+                  _successMessage,
+                  style: UIStyles.errorStyle.copyWith(
+                    color: UIConstants.errorColor,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            TextField(
+              controller: _firstNameController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Vorname',
+              ),
+              style: UIStyles.formValueStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextField(
+              controller: _lastNameController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Nachname',
+              ),
+              style: UIStyles.formValueStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextField(
+              controller: _passNumberController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Schützenausweisnummer',
+                errorText: passNumberError,
+              ),
+              style: UIStyles.formValueStyle,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  validatePassNumber(value);
+                });
+              },
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextField(
+              controller: _emailController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'E-Mail',
+                errorText: emailError,
+              ),
+              style: UIStyles.formValueStyle,
+              keyboardType: TextInputType.emailAddress,
+              focusNode: _emailFocusNode,
+              onChanged: (value) {
+                setState(() {
+                  validateEmail(value);
+                });
+              },
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextField(
+              controller: _zipCodeController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Postleitzahl',
+                errorText: zipCodeError,
+              ),
+              style: UIStyles.formValueStyle,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  validateZipCode(value);
+                });
+              },
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            InkWell(
+              onTap: () => _selectDate(context),
+              child: InputDecorator(
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: 'Geburtsdatum',
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      _selectedDate == null
+                          ? 'Wählen Sie Ihr Geburtsdatum'
+                          : DateFormat('dd.MM.yyyy', 'de_DE')
+                              .format(_selectedDate!),
+                      style: UIStyles.formValueStyle.copyWith(
+                        color: _selectedDate != null
+                            ? UIConstants.textColor
+                            : UIConstants.greySubtitleTextColor,
+                      ),
+                    ),
+                    const Icon(Icons.calendar_today),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: UIConstants.spacingS),
-            if (zipCodeError != null)
-              ScaledText(
-                zipCodeError!,
-                style: UIStyles.errorStyle,
-              ),
-            if (passNumberError != null)
-              ScaledText(
-                passNumberError!,
-                style: UIStyles.errorStyle,
-              ),
-            if (emailError != null)
-              ScaledText(
-                emailError!,
-                style: UIStyles.errorStyle,
-              ),
-            if (_successMessage.isNotEmpty)
-              ScaledText(
-                _successMessage,
-                style: UIStyles.successStyle,
-              ),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildFirstNameField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildLastNameField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildPassNumberField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildEmailField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildZipCodeField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildDateField(),
             const SizedBox(height: UIConstants.spacingM),
             _buildPrivacyCheckbox(),
             const SizedBox(height: UIConstants.spacingM),
@@ -364,86 +385,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildFirstNameField() {
-    return TextField(
-      key: const Key('firstNameField'),
-      controller: _firstNameController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Vorname',
-      ),
-      onChanged: (_) => setState(() {}),
-    );
-  }
-
-  Widget _buildLastNameField() {
-    return TextField(
-      key: const Key('lastNameField'),
-      controller: _lastNameController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Nachname',
-      ),
-      onChanged: (_) => setState(() {}),
-    );
-  }
-
-  Widget _buildPassNumberField() {
-    return TextField(
-      key: const Key('passNumberField'),
-      controller: _passNumberController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Schützenausweisnummer',
-        errorText: passNumberError,
-      ),
-      onChanged: (value) {
-        setState(() {
-          validatePassNumber(value);
-        });
-      },
-    );
-  }
-
-  Widget _buildEmailField() {
-    return TextField(
-      key: const Key('emailField'),
-      controller: _emailController,
-      focusNode: _emailFocusNode,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'E-mail',
-        errorText: _emailFieldTouched ? emailError : null,
-      ),
-      onChanged: (value) {
-        setState(() {
-          if (_emailFieldTouched || value.isNotEmpty) {
-            validateEmail(value);
-          } else {
-            emailError = null;
-          }
-        });
-      },
-      onTap: () {
-        setState(() {
-          _emailFieldTouched = true;
-        });
-      },
-    );
-  }
-
-  Widget _buildZipCodeField() {
-    return TextField(
-      key: const Key('zipCodeField'),
-      controller: _zipCodeController,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Postleitzahl',
-        errorText: zipCodeError,
-      ),
-      onChanged: (value) {
-        setState(() {
-          validateZipCode(value);
-        });
-      },
     );
   }
 
@@ -495,7 +436,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       width: double.infinity,
       child: ElevatedButton(
         key: const Key('registerButton'),
-        onPressed: _isLoading ? null : _register,
+        onPressed: _isLoading ? null : (_validateForm() ? _register : null),
         style: UIStyles.defaultButtonStyle,
         child: _isLoading
             ? UIConstants.defaultLoadingIndicator
@@ -505,7 +446,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   Icon(Icons.app_registration, color: Colors.white),
                   SizedBox(width: UIConstants.spacingS),
                   ScaledText(
-                    UIConstants.registerButtonLabel,
+                    'Registrieren',
                     style: UIStyles.buttonStyle,
                   ),
                 ],
