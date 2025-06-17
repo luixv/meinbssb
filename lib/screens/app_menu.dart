@@ -12,6 +12,9 @@ import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
+import '/screens/help_screen.dart';
+import '/screens/impressum_screen.dart';
+import '/screens/settings_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -51,6 +54,12 @@ class AppDrawer extends StatelessWidget {
     required this.onLogout,
     super.key,
   });
+  static const double _drawerHeaderHeight = 120.0;
+  static const double _drawerHeaderTopPadding = 40.0;
+  static const double _drawerHeaderBottomPadding = 8.0;
+  static const double _drawerHeaderLeftPadding = 16.0;
+  static const double _menuTitleFontSize = 24.0;
+  static const double _menuItemFontSize = 18.0;
 
   final UserData? userData;
   final bool isLoggedIn;
@@ -63,13 +72,13 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-            height: 120.0,
+            height: _drawerHeaderHeight,
             decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
             child: const Padding(
-              padding: EdgeInsets.only(
-                left: 16.0,
-                top: 40.0,
-                bottom: 8.0,
+              padding: const EdgeInsets.only(
+                left: _drawerHeaderLeftPadding,
+                top: _drawerHeaderTopPadding,
+                bottom: _drawerHeaderBottomPadding,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +87,7 @@ class AppDrawer extends StatelessWidget {
                     'Mein BSSB',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: _menuTitleFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -91,7 +100,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.home),
               title: const ScaledText(
                 'Home',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -102,7 +111,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.school),
               title: const ScaledText(
                 'Schulungen buchen',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -113,7 +122,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.task_alt),
               title: const ScaledText(
                 'Absolvierte Schulungen',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -133,7 +142,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.badge),
               title: const ScaledText(
                 'Schützenausweis',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -154,7 +163,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.rule),
               title: const ScaledText(
                 'Startrechte Ändern',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -174,7 +183,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.celebration),
               title: const ScaledText(
                 'Oktoberfestlandesschießen',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -185,7 +194,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.person),
               title: const ScaledText(
                 'Profil',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -197,40 +206,67 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.help),
               title: const ScaledText(
                 'Hilfe',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/help');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HelpScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.info_outline),
               title: const ScaledText(
                 'Impressum',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/impressum');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ImpressumScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const ScaledText(
                 'Einstellungen',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/settings');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const ScaledText(
                 'Abmelden',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -242,7 +278,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.login),
               title: const ScaledText(
                 'Anmelden',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -253,7 +289,7 @@ class AppDrawer extends StatelessWidget {
               leading: const Icon(Icons.app_registration),
               title: const ScaledText(
                 'Registrieren',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -274,7 +310,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.lock_reset),
-              title: const ScaledText('Passwort zurücksetzen'),
+              title: const ScaledText(
+                'Passwort zurücksetzen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 final authService =
