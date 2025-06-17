@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Einstellungen',
+      title: UIConstants.settingsTitle,
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
@@ -36,49 +36,50 @@ class SettingsScreen extends StatelessWidget {
               crossAxisAlignment: UIConstants.startCrossAlignment,
               children: [
                 const ScaledText(
-                  'Schriftgröße',
+                  UIConstants.fontSizeTitle,
                   style: UIStyles.titleStyle,
                 ),
                 UIConstants.verticalSpacingS,
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: UIConstants.spaceBetweenAlignment,
                   children: [
                     const Expanded(
                       child: ScaledText(
-                        'Anpassung der Textgröße für bessere Lesbarkeit',
+                        UIConstants.fontSizeDescription,
                         style: UIStyles.bodyStyle,
                       ),
                     ),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                          height: 48,
-                          child: IconButton(
-                            onPressed: fontSizeProvider.decreaseFontSize,
-                            style: IconButton.styleFrom(
-                              backgroundColor: UIConstants.defaultAppColor,
-                              foregroundColor: UIConstants.whiteColor,
-                              shape: const CircleBorder(),
-                            ),
-                            icon: const Icon(Icons.remove),
+                        IconButton(
+                          onPressed: fontSizeProvider.decreaseFontSize,
+                          style: IconButton.styleFrom(
+                            backgroundColor:
+                                UIConstants.fontSizeButtonBackground,
+                            foregroundColor:
+                                UIConstants.fontSizeButtonTextColor,
+                            shape: const CircleBorder(),
                           ),
+                          icon: const Icon(Icons.remove),
                         ),
                         UIConstants.horizontalSpacingS,
                         Column(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              height: 48,
-                              child: IconButton(
-                                onPressed: fontSizeProvider.resetFontSize,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: UIConstants.defaultAppColor,
-                                  foregroundColor: UIConstants.whiteColor,
-                                  shape: const CircleBorder(),
-                                ),
-                                icon: const Icon(Icons.refresh),
+                            IconButton(
+                              onPressed: fontSizeProvider.resetFontSize,
+                              style: IconButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.fontSizeButtonBackground,
+                                foregroundColor:
+                                    UIConstants.fontSizeButtonTextColor,
+                                shape: const CircleBorder(),
                               ),
+                              icon: const Icon(Icons.refresh),
                             ),
                             ScaledText(
                               '${(fontSizeProvider.scaleFactor * 100).round()}%',
@@ -87,17 +88,16 @@ class SettingsScreen extends StatelessWidget {
                           ],
                         ),
                         UIConstants.horizontalSpacingS,
-                        SizedBox(
-                          height: 48,
-                          child: IconButton(
-                            onPressed: fontSizeProvider.increaseFontSize,
-                            style: IconButton.styleFrom(
-                              backgroundColor: UIConstants.defaultAppColor,
-                              foregroundColor: UIConstants.whiteColor,
-                              shape: const CircleBorder(),
-                            ),
-                            icon: const Icon(Icons.add),
+                        IconButton(
+                          onPressed: fontSizeProvider.increaseFontSize,
+                          style: IconButton.styleFrom(
+                            backgroundColor:
+                                UIConstants.fontSizeButtonBackground,
+                            foregroundColor:
+                                UIConstants.fontSizeButtonTextColor,
+                            shape: const CircleBorder(),
                           ),
+                          icon: const Icon(Icons.add),
                         ),
                       ],
                     ),
@@ -105,7 +105,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 UIConstants.verticalSpacingXL,
                 const ScaledText(
-                  'Kontrast',
+                  UIConstants.contrastTitle,
                   style: UIStyles.titleStyle,
                 ),
                 UIConstants.verticalSpacingS,
@@ -114,11 +114,11 @@ class SettingsScreen extends StatelessWidget {
                     Expanded(
                       child: SwitchListTile(
                         title: const ScaledText(
-                          'Hoher Kontrast',
+                          UIConstants.highContrastTitle,
                           style: UIStyles.bodyStyle,
                         ),
                         subtitle: const ScaledText(
-                          'Verbesserte Lesbarkeit',
+                          UIConstants.highContrastDescription,
                           style: UIStyles.bodyStyle,
                         ),
                         value: themeProvider.isHighContrast,
