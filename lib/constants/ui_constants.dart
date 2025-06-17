@@ -30,12 +30,14 @@ class UIConstants {
   static const Color deleteButtonBackground = primaryColor;
   static const Color submitButtonBackground = primaryColor;
   static const Color disabledBackgroundColor = Colors.grey;
+  static const Color fontSizeButtonBackground = primaryColor;
 
   static const Color buttonTextColor = Colors.white;
   static const Color cancelButtonText = Colors.white;
   static const Color deleteButtonText = Colors.white;
   static const Color submitButtonText = Colors.white;
   static const Color disabledSubmitButtonText = Colors.white;
+  static const Color fontSizeButtonTextColor = Colors.white;
 
   // Icon Colors
   static const Color deleteIcon = primaryColor;
@@ -289,4 +291,13 @@ class UIConstants {
     'Instagram',
     'Twitter',
   ];
+
+  // Settings Screen
+  static const String settingsTitle = 'Einstellungen';
+  static const String fontSizeTitle = 'Schriftgröße';
+  static const String fontSizeDescription =
+      'Anpassung der Textgröße für bessere Lesbarkeit';
+  static const String contrastTitle = 'Kontrast';
+  static const String highContrastTitle = 'Hoher Kontrast';
+  static const String highContrastDescription = 'Verbesserte Lesbarkeit';
 }
