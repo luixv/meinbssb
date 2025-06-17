@@ -125,6 +125,13 @@ class SettingsScreen extends StatelessWidget {
                         onChanged: (value) {
                           themeProvider.toggleHighContrast();
                         },
+                        activeColor: UIConstants.contrastSwitchActiveColor,
+                        inactiveThumbColor:
+                            UIConstants.contrastSwitchInactiveColor,
+                        activeTrackColor: UIConstants.contrastSwitchTrackColor
+                            .withOpacity(0.5),
+                        inactiveTrackColor:
+                            UIConstants.contrastSwitchTrackColor,
                       ),
                     ),
                   ],
