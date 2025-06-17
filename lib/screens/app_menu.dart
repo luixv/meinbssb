@@ -75,7 +75,7 @@ class AppDrawer extends StatelessWidget {
             height: _drawerHeaderHeight,
             decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
             child: const Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                 left: _drawerHeaderLeftPadding,
                 top: _drawerHeaderTopPadding,
                 bottom: _drawerHeaderBottomPadding,
