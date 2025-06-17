@@ -204,19 +204,24 @@ class LoginScreenState extends State<LoginScreen> {
         key: const Key('loginButton'),
         onPressed: _isLoading ? null : _handleLogin,
         style: UIStyles.defaultButtonStyle,
-        child: _isLoading
-            ? UIConstants.defaultLoadingIndicator
-            : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.login, color: Colors.white),
-                  SizedBox(width: UIConstants.spacingS),
-                  ScaledText(
-                    UIConstants.loginButtonLabel,
-                    style: UIStyles.buttonStyle,
+        child: SizedBox(
+          height: 36, // Match the minimumSize height from defaultButtonStyle
+          child: Center(
+            child: _isLoading
+                ? UIConstants.defaultLoadingIndicator
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.login, color: Colors.white),
+                      SizedBox(width: UIConstants.spacingS),
+                      ScaledText(
+                        UIConstants.loginButtonLabel,
+                        style: UIStyles.buttonStyle,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+          ),
+        ),
       ),
     );
   }

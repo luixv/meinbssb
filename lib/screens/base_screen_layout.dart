@@ -37,6 +37,7 @@ class BaseScreenLayout extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: automaticallyImplyLeading,
         backgroundColor: UIConstants.backgroundColor,
+        iconTheme: const IconThemeData(color: UIConstants.textColor),
         title: ScaledText(
           title,
           style: UIStyles.appBarTitleStyle,
@@ -49,7 +50,7 @@ class BaseScreenLayout extends StatelessWidget {
           ),
           Builder(
             builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
+              icon: const Icon(Icons.menu, color: UIConstants.textColor),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
               },

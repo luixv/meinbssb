@@ -8,17 +8,10 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 
 import 'absolvierte_schulungen_screen.dart';
-import '/screens/bank_data_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/help_screen.dart';
-import '/screens/impressum_screen.dart';
 import '/screens/password_reset_screen.dart';
-import '/screens/personal_data_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
-import '/screens/styles_screen.dart';
-import '/screens/settings_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -96,7 +89,10 @@ class AppDrawer extends StatelessWidget {
           if (isLoggedIn) ...[
             ListTile(
               leading: const Icon(Icons.home),
-              title: const ScaledText('Home'),
+              title: const ScaledText(
+                'Home',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/home');
@@ -104,7 +100,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.school),
-              title: const ScaledText('Schulungen buchen'),
+              title: const ScaledText(
+                'Schulungen buchen',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Schulungen buchen functionality
@@ -112,7 +111,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.task_alt),
-              title: const ScaledText('Absolvierte Schulungen'),
+              title: const ScaledText(
+                'Absolvierte Schulungen',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -129,7 +131,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.badge),
-              title: const ScaledText('Schützenausweis'),
+              title: const ScaledText(
+                'Schützenausweis',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -147,7 +152,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.rule),
-              title: const ScaledText('Startrechte Ändern'),
+              title: const ScaledText(
+                'Startrechte Ändern',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -164,110 +172,66 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.celebration),
-              title: const ScaledText('Oktoberfestlandesschießen'),
+              title: const ScaledText(
+                'Oktoberfestlandesschießen',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Oktoberfestlandesschießen functionality
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: const ScaledText('Profilbild'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement Profilbild functionality
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.person),
-              title: const ScaledText('Persönliche Daten'),
+              title: const ScaledText(
+                'Profil',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const ScaledText(
+                'Hilfe',
+                style: TextStyle(fontSize: 18),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/help');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.contact_phone),
-              title: const ScaledText('Kontaktdaten'),
+              leading: const Icon(Icons.info_outline),
+              title: const ScaledText(
+                'Impressum',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
+                Navigator.pushNamed(context, '/impressum');
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.account_balance),
-              title: const ScaledText('Bankdaten'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BankDataScreen(
-                      userData,
-                      webloginId: userData?.webLoginId ?? 0,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            /*
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const ScaledText('Einstellungen'),
+              title: const ScaledText(
+                'Einstellungen',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ), */ // TODO: Implement Einstellungen functionality
-            ListTile(
-              leading: const Icon(Icons.style),
-              title: const ScaledText('Styles'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StylesScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
+                Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const ScaledText('Abmelden'),
+              title: const ScaledText(
+                'Abmelden',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onLogout();
@@ -276,7 +240,10 @@ class AppDrawer extends StatelessWidget {
           ] else ...[
             ListTile(
               leading: const Icon(Icons.login),
-              title: const ScaledText('Anmelden'),
+              title: const ScaledText(
+                'Anmelden',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/login');
@@ -284,7 +251,10 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.app_registration),
-              title: const ScaledText('Registrieren'),
+              title: const ScaledText(
+                'Registrieren',
+                style: TextStyle(fontSize: 18),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 final authService =
@@ -323,41 +293,6 @@ class AppDrawer extends StatelessWidget {
               },
             ),
           ],
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const ScaledText('Hilfe'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HelpScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const ScaledText('Impressum'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImpressumScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
     );

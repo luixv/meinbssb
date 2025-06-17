@@ -7,6 +7,7 @@ import 'dart:convert';
 import '/constants/ui_constants.dart';
 import '/models/user_data.dart';
 import '/services/core/font_size_provider.dart';
+import 'services/core/theme_provider.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -14,6 +15,7 @@ import 'screens/help_screen.dart';
 import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/profile_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 
@@ -34,6 +36,7 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.userServiceProvider,
         AppInitializer.trainingServiceProvider,
         AppInitializer.fontSizeProvider,
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const MyApp(),
     );
@@ -92,22 +95,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
+    return Consumer2<FontSizeProvider, ThemeProvider>(
+      builder: (context, fontSizeProvider, themeProvider, child) {
         return MaterialApp(
           title: 'Mein BSSB',
-          theme: ThemeData(
-            fontFamily: UIConstants.defaultFontFamily,
-            primarySwatch: Colors.blue,
-            textTheme: Theme.of(context).textTheme.apply(
-                  fontSizeFactor: fontSizeProvider.scaleFactor,
-                ),
-            textSelectionTheme: const TextSelectionThemeData(
-              selectionColor: UIConstants.selectionColor,
-              selectionHandleColor: UIConstants.selectionHandleColor,
-              cursorColor: UIConstants.cursorColor,
-            ),
-          ),
+          theme: themeProvider.getTheme(false),
+          darkTheme: themeProvider.getTheme(true),
+          themeMode: ThemeMode.system,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -163,6 +157,11 @@ class _MyAppState extends State<MyApp> {
                   onLogout: _handleLogout,
                 ),
             '/settings': (context) => SettingsScreen(
+                  userData: _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                ),
+            '/profile': (context) => ProfileScreen(
                   userData: _userData,
                   isLoggedIn: _isLoggedIn,
                   onLogout: _handleLogout,

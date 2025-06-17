@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/services/core/font_size_provider.dart';
-import '/screens/base_screen_layout.dart';
+import '/constants/ui_constants.dart';
 import '/models/user_data.dart';
+import '/services/core/font_size_provider.dart';
+import '/services/core/theme_provider.dart';
 import '/widgets/scaled_text.dart';
+import '/screens/base_screen_layout.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({
@@ -17,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
 
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -26,52 +27,107 @@ class SettingsScreen extends StatelessWidget {
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
-      body: Consumer<FontSizeProvider>(
-        builder: (context, fontSizeProvider, child) {
+      automaticallyImplyLeading: true,
+      body: Consumer2<FontSizeProvider, ThemeProvider>(
+        builder: (context, fontSizeProvider, themeProvider, child) {
           return Padding(
-            padding: const EdgeInsets.all(UIConstants.spacingL),
+            padding: UIConstants.screenPadding,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: UIConstants.startCrossAlignment,
               children: [
                 const ScaledText(
                   'Schriftgröße',
-                  style: UIStyles.sectionTitleStyle,
+                  style: UIStyles.titleStyle,
                 ),
-                const SizedBox(height: UIConstants.spacingM),
+                UIConstants.verticalSpacingS,
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: UIConstants.spaceBetweenAlignment,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: fontSizeProvider.decreaseFontSize,
-                      iconSize: UIConstants.iconSizeL,
-                      color: UIConstants.defaultAppColor,
+                    const Expanded(
+                      child: ScaledText(
+                        'Anpassung der Textgröße für bessere Lesbarkeit',
+                        style: UIStyles.bodyStyle,
+                      ),
                     ),
-                    const SizedBox(width: UIConstants.spacingM),
-                    ScaledText(
-                      '${(fontSizeProvider.scaleFactor * 100).round()}%',
-                      style: UIStyles.bodyTextStyle,
-                    ),
-                    const SizedBox(width: UIConstants.spacingM),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: fontSizeProvider.increaseFontSize,
-                      iconSize: UIConstants.iconSizeL,
-                      color: UIConstants.defaultAppColor,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 48,
+                          child: IconButton(
+                            onPressed: fontSizeProvider.decreaseFontSize,
+                            style: IconButton.styleFrom(
+                              backgroundColor: UIConstants.defaultAppColor,
+                              foregroundColor: UIConstants.whiteColor,
+                              shape: const CircleBorder(),
+                            ),
+                            icon: const Icon(Icons.remove),
+                          ),
+                        ),
+                        UIConstants.horizontalSpacingS,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 48,
+                              child: IconButton(
+                                onPressed: fontSizeProvider.resetFontSize,
+                                style: IconButton.styleFrom(
+                                  backgroundColor: UIConstants.defaultAppColor,
+                                  foregroundColor: UIConstants.whiteColor,
+                                  shape: const CircleBorder(),
+                                ),
+                                icon: const Icon(Icons.refresh),
+                              ),
+                            ),
+                            ScaledText(
+                              '${(fontSizeProvider.scaleFactor * 100).round()}%',
+                              style: UIStyles.bodyStyle,
+                            ),
+                          ],
+                        ),
+                        UIConstants.horizontalSpacingS,
+                        SizedBox(
+                          height: 48,
+                          child: IconButton(
+                            onPressed: fontSizeProvider.increaseFontSize,
+                            style: IconButton.styleFrom(
+                              backgroundColor: UIConstants.defaultAppColor,
+                              foregroundColor: UIConstants.whiteColor,
+                              shape: const CircleBorder(),
+                            ),
+                            icon: const Icon(Icons.add),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: UIConstants.spacingM),
-                Center(
-                  child: ElevatedButton.icon(
-                    onPressed: fontSizeProvider.resetFontSize,
-                    icon: const Icon(Icons.restore),
-                    label: const ScaledText(
-                      'Zurücksetzen',
-                      style: UIStyles.buttonStyle,
+                UIConstants.verticalSpacingXL,
+                const ScaledText(
+                  'Kontrast',
+                  style: UIStyles.titleStyle,
+                ),
+                UIConstants.verticalSpacingS,
+                Row(
+                  children: [
+                    Expanded(
+                      child: SwitchListTile(
+                        title: const ScaledText(
+                          'Hoher Kontrast',
+                          style: UIStyles.bodyStyle,
+                        ),
+                        subtitle: const ScaledText(
+                          'Verbesserte Lesbarkeit',
+                          style: UIStyles.bodyStyle,
+                        ),
+                        value: themeProvider.isHighContrast,
+                        onChanged: (value) {
+                          themeProvider.toggleHighContrast();
+                        },
+                      ),
                     ),
-                    style: UIStyles.defaultButtonStyle,
-                  ),
+                  ],
                 ),
               ],
             ),
