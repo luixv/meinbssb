@@ -15,6 +15,9 @@ import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import '/screens/settings_screen.dart';
+import '/screens/help_screen.dart';
+import '/screens/impressum_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -30,6 +33,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  static const double _menuIconSize = 24.0;
+  static const double _menuIconPadding = 8.0;
+  static const double _menuIconSpacing = 16.0;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -266,8 +273,72 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final highContrastColor =
+        theme.brightness == Brightness.dark ? Colors.amber : Colors.blue;
+
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const ScaledText(
+          'MeinBSSB',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, size: _menuIconSize),
+            padding: const EdgeInsets.all(_menuIconPadding),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SettingsScreen(
+                    userData: null,
+                    isLoggedIn: false,
+                    onLogout: () {},
+                  ),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.help, size: _menuIconSize),
+            padding: const EdgeInsets.all(_menuIconPadding),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HelpScreen(
+                    userData: null,
+                    isLoggedIn: false,
+                    onLogout: () {},
+                  ),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.info, size: _menuIconSize),
+            padding: const EdgeInsets.all(_menuIconPadding),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImpressumScreen(
+                    userData: null,
+                    isLoggedIn: false,
+                    onLogout: () {},
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: UIConstants.screenPadding,
         child: Column(
