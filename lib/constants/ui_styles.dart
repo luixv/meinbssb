@@ -371,4 +371,14 @@ class UIStyles {
 
   static const IconData dialogCancelIcon = Icons.close;
   static const IconData dialogAcceptIcon = Icons.check;
+
+  // Profile Picture Styles
+  static final Color profilePictureBackgroundColor =
+      UIConstants.greyColor.withAlpha((0.2 * 255).toInt());
+
+  // Icon Colors
+  static const Color menuIconColor = Colors.black;
+  static const Color profileIconColor = Colors.black;
+  static const Color infoIconColor = UIConstants.defaultAppColor;
+  static const Color actionIconColor = UIConstants.defaultAppColor;
 }

@@ -31,7 +31,6 @@ class BankDataScreen extends StatefulWidget {
 
 class BankDataScreenState extends State<BankDataScreen> {
   late Future<BankData?> _bankDataFuture;
-  bool _isDeleting = false;
   bool _isEditing = false;
   bool _isSaving = false;
   bool _hasBankData = false;
@@ -81,9 +80,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       LoggerService.logError('Error setting up bank data fetch: $e');
       _bankDataFuture = Future.value(null); // Provide null on error
       if (mounted) {
-        setState(() {
-          _hasBankData = false;
-        });
+        setState(() {});
       }
     }
   }
@@ -180,16 +177,12 @@ class BankDataScreenState extends State<BankDataScreen> {
     if (confirmDelete == null || !confirmDelete) {
       LoggerService.logInfo('Bank data deletion cancelled by user.');
       if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
+        setState(() {});
       }
       return;
     }
 
-    setState(() {
-      _isDeleting = true;
-    });
+    setState(() {});
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
@@ -235,9 +228,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
+        setState(() {});
       }
     }
   }
@@ -406,7 +397,73 @@ class BankDataScreenState extends State<BankDataScreen> {
           }
         },
       ),
-      floatingActionButton: _buildFloatingActionButtons(),
+      floatingActionButton: _isEditing
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                      _kontoinhaberController.clear();
+                      _ibanController.clear();
+                      _bicController.clear();
+                      _loadInitialData();
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: _isSaving ? null : _onSaveBankData,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: _isSaving
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.circularProgressIndicator,
+                          ),
+                          strokeWidth: 2,
+                        )
+                      : const Icon(
+                          Icons.save,
+                          color: Colors.white,
+                        ),
+                ),
+              ],
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (_hasBankData)
+                  FloatingActionButton(
+                    heroTag: 'deleteFab',
+                    onPressed: _onDeleteBankData,
+                    backgroundColor: UIConstants.deleteIcon,
+                    child: const Icon(
+                      Icons.delete_forever,
+                      color: Colors.white,
+                    ),
+                  ),
+                if (_hasBankData) const SizedBox(height: 16),
+                FloatingActionButton(
+                  heroTag: 'editFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -507,48 +564,6 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildFloatingActionButtons() {
-    if (_isEditing) {
-      return FloatingActionButton(
-        onPressed: _isSaving ? null : _onSaveBankData,
-        backgroundColor: UIConstants.defaultAppColor,
-        child: _isSaving
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-            : const Icon(Icons.save, color: Colors.white),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (_hasBankData)
-          FloatingActionButton(
-            heroTag: 'deleteFab',
-            onPressed: _isDeleting ? null : _onDeleteBankData,
-            backgroundColor: UIConstants.deleteIcon,
-            child: _isDeleting
-                ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  )
-                : const Icon(Icons.delete_forever, color: Colors.white),
-          ),
-        if (_hasBankData) const SizedBox(height: UIConstants.spacingM),
-        FloatingActionButton(
-          heroTag: 'editFab',
-          onPressed: () {
-            setState(() {
-              _isEditing = true;
-            });
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.edit, color: Colors.white),
-        ),
-      ],
     );
   }
 }

@@ -426,51 +426,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                         const SizedBox(
                           height: UIConstants.spacingS,
                         ),
-                        if (_isEditing)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _isLoading ? null : _handleSave,
-                                style: UIStyles.dialogAcceptButtonStyle,
-                                child: _isLoading
-                                    ? const CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          UIConstants.circularProgressIndicator,
-                                        ),
-                                        strokeWidth: 2,
-                                      )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.check,
-                                            color: UIConstants.checkIcon,
-                                            size: 24 *
-                                                fontSizeProvider.scaleFactor,
-                                          ),
-                                          const SizedBox(
-                                              width: UIConstants.spacingS,),
-                                          ScaledText(
-                                            'Speichern',
-                                            style: UIStyles
-                                                .dialogButtonTextStyle
-                                                .copyWith(
-                                              color:
-                                                  UIConstants.submitButtonText,
-                                              fontSize: UIStyles
-                                                      .dialogButtonTextStyle
-                                                      .fontSize! *
-                                                  fontSizeProvider.scaleFactor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                              ),
-                            ],
-                          ),
                       ],
                     ),
                   ),

@@ -49,7 +49,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _autocompleteTextController.dispose();
+    // Do NOT dispose _autocompleteTextController, as it's managed by Autocomplete
     super.dispose();
   }
 
@@ -234,8 +234,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     children: [
                                       Expanded(
                                         child: Consumer<FontSizeProvider>(
-                                          builder: (context, fontSizeProvider,
-                                              child,) {
+                                          builder: (
+                                            context,
+                                            fontSizeProvider,
+                                            child,
+                                          ) {
                                             return RichText(
                                               text: TextSpan(
                                                 style:
@@ -294,7 +297,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   ),
                                   if (zve.disziplin.isNotEmpty) ...[
                                     const SizedBox(
-                                        height: UIConstants.spacingS,),
+                                      height: UIConstants.spacingS,
+                                    ),
                                     ...zve.disziplin.map((selectedDisziplin) {
                                       return Consumer<FontSizeProvider>(
                                         builder:
@@ -343,17 +347,23 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   onPressed: () {
                                                     setState(() {
                                                       final updatedZveData =
-                                                          List<PassDataZVE>.from(
-                                                              _zveData,);
+                                                          List<
+                                                              PassDataZVE>.from(
+                                                        _zveData,
+                                                      );
                                                       final index =
                                                           updatedZveData
                                                               .indexOf(zve);
                                                       if (index != -1) {
                                                         final currentDisciplines =
-                                                            List<Disziplin>.from(
-                                                                zve.disziplin,);
-                                                        currentDisciplines.remove(
-                                                            selectedDisziplin,);
+                                                            List<
+                                                                Disziplin>.from(
+                                                          zve.disziplin,
+                                                        );
+                                                        currentDisciplines
+                                                            .remove(
+                                                          selectedDisziplin,
+                                                        );
                                                         updatedZveData[index] =
                                                             zve.copyWith(
                                                           disziplin:
@@ -464,7 +474,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     final firstZve = updatedZveData[0];
                                     final currentDisciplines =
                                         List<Disziplin>.from(
-                                            firstZve.disziplin,);
+                                      firstZve.disziplin,
+                                    );
                                     if (!currentDisciplines
                                         .contains(selection)) {
                                       currentDisciplines.add(selection);
