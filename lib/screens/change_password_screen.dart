@@ -6,6 +6,7 @@ import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -85,80 +86,91 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
       automaticallyImplyLeading: true,
-      body: SingleChildScrollView(
-        padding: UIConstants.defaultPadding,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-                  child: Text(
-                    _errorMessage!,
-                    style: UIStyles.errorStyle,
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) {
+          return SingleChildScrollView(
+            padding: UIConstants.defaultPadding,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_errorMessage != null)
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: UIConstants.spacingM),
+                      child: ScaledText(
+                        _errorMessage!,
+                        style: UIStyles.errorStyle.copyWith(
+                          fontSize: UIStyles.errorStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                    ),
+                  _buildPasswordField(
+                    controller: _currentPasswordController,
+                    label: 'Aktuelles Passwort',
+                    isVisible: _isCurrentPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bitte geben Sie Ihr aktuelles Passwort ein';
+                      }
+                      return null;
+                    },
+                    fontSizeProvider: fontSizeProvider,
                   ),
-                ),
-              _buildPasswordField(
-                controller: _currentPasswordController,
-                label: 'Aktuelles Passwort',
-                isVisible: _isCurrentPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte geben Sie Ihr aktuelles Passwort ein';
-                  }
-                  return null;
-                },
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildPasswordField(
+                    controller: _newPasswordController,
+                    label: 'Neues Passwort',
+                    isVisible: _isNewPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isNewPasswordVisible = !_isNewPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bitte geben Sie ein neues Passwort ein';
+                      }
+                      if (value.length < 8) {
+                        return 'Das Passwort muss mindestens 8 Zeichen lang sein';
+                      }
+                      return null;
+                    },
+                    fontSizeProvider: fontSizeProvider,
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildPasswordField(
+                    controller: _confirmPasswordController,
+                    label: 'Neues Passwort wiederholen',
+                    isVisible: _isConfirmPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bitte wiederholen Sie das neue Passwort';
+                      }
+                      if (value != _newPasswordController.text) {
+                        return 'Die Passwörter stimmen nicht überein';
+                      }
+                      return null;
+                    },
+                    fontSizeProvider: fontSizeProvider,
+                  ),
+                ],
               ),
-              const SizedBox(height: UIConstants.spacingM),
-              _buildPasswordField(
-                controller: _newPasswordController,
-                label: 'Neues Passwort',
-                isVisible: _isNewPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isNewPasswordVisible = !_isNewPasswordVisible;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte geben Sie ein neues Passwort ein';
-                  }
-                  if (value.length < 8) {
-                    return 'Das Passwort muss mindestens 8 Zeichen lang sein';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              _buildPasswordField(
-                controller: _confirmPasswordController,
-                label: 'Neues Passwort wiederholen',
-                isVisible: _isConfirmPasswordVisible,
-                onToggleVisibility: () {
-                  setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bitte wiederholen Sie das neue Passwort';
-                  }
-                  if (value != _newPasswordController.text) {
-                    return 'Die Passwörter stimmen nicht überein';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'save_password',
@@ -179,13 +191,31 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     required String label,
     required bool isVisible,
     required VoidCallback onToggleVisibility,
+    required FontSizeProvider fontSizeProvider,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: !isVisible,
+      style: UIStyles.formValueStyle.copyWith(
+        fontSize:
+            UIStyles.formValueStyle.fontSize! * fontSizeProvider.scaleFactor,
+      ),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+          fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+              fontSizeProvider.scaleFactor,
+        ),
+        floatingLabelStyle:
+            UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+          fontSize: UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+              fontSizeProvider.scaleFactor,
+        ),
+        errorStyle: UIStyles.errorStyle.copyWith(
+          fontSize:
+              UIStyles.errorStyle.fontSize! * fontSizeProvider.scaleFactor,
+        ),
         border: const OutlineInputBorder(),
         suffixIcon: IconButton(
           icon: Icon(

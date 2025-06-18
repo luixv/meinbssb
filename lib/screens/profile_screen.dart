@@ -9,8 +9,6 @@ import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
-import '/services/api/auth_service.dart';
-import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
