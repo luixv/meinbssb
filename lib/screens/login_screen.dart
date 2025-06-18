@@ -2,8 +2,11 @@
 // Filename: login_screen.dart
 // Author: Luis Mandel / NTT DATA
 
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/registration_screen.dart';
@@ -13,6 +16,7 @@ import '/services/api/auth_service.dart';
 import '/services/api_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -30,6 +34,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  static const double _menuIconSize = 24.0;
+  static const double _menuIconPadding = 8.0;
+  static const double _menuIconSpacing = 16.0;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -38,10 +46,36 @@ class LoginScreenState extends State<LoginScreen> {
   final Color _appColor = UIConstants.defaultAppColor;
   UserData? _userData;
   bool _isLoggedIn = false;
+  bool _rememberMe = false;
 
   @override
   void initState() {
     super.initState();
+    _loadRememberMeState();
+  }
+
+  Future<void> _loadRememberMeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _rememberMe = prefs.getBool('rememberMe') ?? false;
+      if (_rememberMe) {
+        _emailController.text = prefs.getString('savedEmail') ?? '';
+        _passwordController.text = prefs.getString('savedPassword') ?? '';
+      }
+    });
+  }
+
+  Future<void> _saveRememberMeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setBool('rememberMe', true);
+      await prefs.setString('savedEmail', _emailController.text);
+      await prefs.setString('savedPassword', _passwordController.text);
+    } else {
+      await prefs.setBool('rememberMe', false);
+      await prefs.remove('savedEmail');
+      await prefs.remove('savedPassword');
+    }
   }
 
   @override
@@ -71,6 +105,7 @@ class LoginScreenState extends State<LoginScreen> {
       LoggerService.logInfo('Login response: $response');
 
       if (response['ResultType'] == 1) {
+        await _saveRememberMeState();
         await _handleSuccessfulLogin(
           apiService,
           response['PersonID'],
@@ -158,42 +193,65 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildEmailField() {
-    return TextField(
-      key: const Key('usernameField'),
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      style: UIStyles.bodyStyle,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'E-mail',
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        labelStyle: UIStyles.formLabelStyle,
-      ),
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return TextField(
+          key: const Key('usernameField'),
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          enableInteractiveSelection: true,
+          enableSuggestions: true,
+          autocorrect: false,
+          style: UIStyles.bodyStyle.copyWith(
+            fontSize:
+                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+          ),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'E-mail',
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            labelStyle: UIStyles.formLabelStyle.copyWith(
+              fontSize: UIStyles.formLabelStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildPasswordField() {
-    return TextField(
-      key: const Key('passwordField'),
-      controller: _passwordController,
-      obscureText: !_isPasswordVisible,
-      style: UIStyles.bodyStyle,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: 'Passwort',
-        labelStyle: UIStyles.formLabelStyle,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return TextField(
+          key: const Key('passwordField'),
+          controller: _passwordController,
+          obscureText: !_isPasswordVisible,
+          style: UIStyles.bodyStyle.copyWith(
+            fontSize:
+                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
           ),
-          onPressed: () {
-            if (mounted) {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            }
-          },
-        ),
-      ),
-      onSubmitted: (value) => _handleLogin(),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Passwort',
+            labelStyle: UIStyles.formLabelStyle.copyWith(
+              fontSize: UIStyles.formLabelStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: () {
+                if (mounted) {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                }
+              },
+            ),
+          ),
+          onSubmitted: (value) => _handleLogin(),
+        );
+      },
     );
   }
 
@@ -204,19 +262,24 @@ class LoginScreenState extends State<LoginScreen> {
         key: const Key('loginButton'),
         onPressed: _isLoading ? null : _handleLogin,
         style: UIStyles.defaultButtonStyle,
-        child: _isLoading
-            ? UIConstants.defaultLoadingIndicator
-            : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.login, color: Colors.white),
-                  SizedBox(width: UIConstants.spacingS),
-                  ScaledText(
-                    UIConstants.loginButtonLabel,
-                    style: UIStyles.buttonStyle,
+        child: SizedBox(
+          height: 36, // Match the minimumSize height from defaultButtonStyle
+          child: Center(
+            child: _isLoading
+                ? UIConstants.defaultLoadingIndicator
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.login, color: Colors.white),
+                      SizedBox(width: UIConstants.spacingS),
+                      ScaledText(
+                        UIConstants.loginButtonLabel,
+                        style: UIStyles.buttonStyle,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+          ),
+        ),
       ),
     );
   }
@@ -259,48 +322,84 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildRememberMeCheckbox() {
+    return Row(
+      children: [
+        Checkbox(
+          value: _rememberMe,
+          onChanged: (bool? value) {
+            setState(() {
+              _rememberMe = value ?? false;
+            });
+          },
+          activeColor: _appColor,
+        ),
+        const ScaledText(
+          'Angemeldet bleiben',
+          style: UIStyles.bodyStyle,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Theme.of(context);
+
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
-      body: SingleChildScrollView(
-        padding: UIConstants.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            widget.logoWidget ?? const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            ScaledText(
-              UIConstants.loginTitle,
-              style: UIStyles.headerStyle.copyWith(
-                color: _appColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: Padding(
+              padding: UIConstants.screenPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.logoWidget ?? const LogoWidget(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  ScaledText(
+                    UIConstants.loginTitle,
+                    style: UIStyles.headerStyle.copyWith(
+                      color: _appColor,
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  if (_errorMessage.isNotEmpty)
+                    ScaledText(
+                      _errorMessage,
+                      style: UIStyles.errorStyle,
+                    ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildEmailField(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  _buildPasswordField(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  _buildRememberMeCheckbox(),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildLoginButton(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildForgotPasswordButton(),
+                      _buildHelpButton(),
+                    ],
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  Center(
+                    child: _buildRegisterButton(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: UIConstants.spacingS),
-            if (_errorMessage.isNotEmpty)
-              ScaledText(
-                _errorMessage,
-                style: UIStyles.errorStyle,
-              ),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildEmailField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildPasswordField(),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildLoginButton(),
-            const SizedBox(height: UIConstants.spacingS),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildForgotPasswordButton(),
-                _buildHelpButton(),
-              ],
-            ),
-            const SizedBox(height: UIConstants.spacingS),
-            Center(
-              child: _buildRegisterButton(),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -3,11 +3,13 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/error_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -80,55 +82,101 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: SingleChildScrollView(
-        padding: UIConstants.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            ScaledText(
-              UIConstants.passwordResetTitle,
-              key: const Key('passwordResetTitle'),
-              style: UIStyles.headerStyle.copyWith(
-                color: UIConstants.defaultAppColor,
-              ),
-            ),
-            const SizedBox(height: UIConstants.spacingS),
-            if (_errorMessage.isNotEmpty)
-              ScaledText(_errorMessage, style: UIStyles.errorStyle),
-            if (_successMessage.isNotEmpty)
-              ScaledText(_successMessage, style: UIStyles.successStyle),
-            TextField(
-              controller: _passNumberController,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: UIConstants.passNumberLabel,
-              ),
-            ),
-            const SizedBox(height: UIConstants.spacingS),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                key: const Key('forgotPasswordButton'),
-                onPressed: _isLoading ? null : _resetPassword,
-                style: UIStyles.defaultButtonStyle,
-                child: _isLoading
-                    ? UIConstants.defaultLoadingIndicator
-                    : const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.lock_reset, color: Colors.white),
-                          SizedBox(width: UIConstants.spacingS),
-                          ScaledText(
-                            UIConstants.resetPasswordButtonLabel,
-                            style: UIStyles.buttonStyle,
-                          ),
-                        ],
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) {
+          return SingleChildScrollView(
+            padding: UIConstants.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const LogoWidget(),
+                const SizedBox(height: UIConstants.spacingS),
+                ScaledText(
+                  UIConstants.passwordResetTitle,
+                  key: const Key('passwordResetTitle'),
+                  style: UIStyles.headerStyle.copyWith(
+                    color: UIConstants.defaultAppColor,
+                    fontSize: UIStyles.headerStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingS),
+                if (_errorMessage.isNotEmpty)
+                  ScaledText(
+                    _errorMessage,
+                    style: UIStyles.errorStyle.copyWith(
+                      fontSize: UIStyles.errorStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                  ),
+                if (_successMessage.isNotEmpty)
+                  ScaledText(
+                    _successMessage,
+                    style: UIStyles.successStyle.copyWith(
+                      fontSize: UIStyles.successStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                  ),
+                TextField(
+                  controller: _passNumberController,
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontSize: UIStyles.bodyStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: UIConstants.passNumberLabel,
+                    labelStyle: UIStyles.formLabelStyle.copyWith(
+                      fontSize: UIStyles.formLabelStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    floatingLabelStyle: UIStyles.formLabelStyle.copyWith(
+                      fontSize: UIStyles.formLabelStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    hintStyle: UIStyles.formLabelStyle.copyWith(
+                      fontSize: UIStyles.formLabelStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingS),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    key: const Key('forgotPasswordButton'),
+                    onPressed: _isLoading ? null : _resetPassword,
+                    style: UIStyles.defaultButtonStyle,
+                    child: SizedBox(
+                      height: 36,
+                      child: Center(
+                        child: _isLoading
+                            ? UIConstants.defaultLoadingIndicator
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.lock_reset,
+                                    color: Colors.white,
+                                    size: 24 * fontSizeProvider.scaleFactor,
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingS),
+                                  ScaledText(
+                                    UIConstants.resetPasswordButtonLabel,
+                                    style: UIStyles.buttonStyle.copyWith(
+                                      fontSize: UIStyles.buttonStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
-              ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

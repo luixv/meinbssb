@@ -10,7 +10,10 @@ import '/services/api_service.dart';
 import 'package:intl/intl.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/widgets/scaled_text.dart';
+import '/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
+
+// Import FontSizeProvider
+import '/services/core/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -52,12 +55,28 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     _fetchAndPopulateData();
   }
 
+  @override
+  void dispose() {
+    _passnummerController.dispose();
+    _geburtsdatumController.dispose();
+    _titelController.dispose();
+    _vornameController.dispose();
+    _nachnameController.dispose();
+    _strasseHausnummerController.dispose();
+    _postleitzahlController.dispose();
+    _ortController.dispose();
+    super.dispose();
+  }
+
+  // --- Data Fetching and Population ---
+
   Future<void> _fetchAndPopulateData() async {
     final int? personId = widget.userData?.personId;
 
-    if (personId == null) {
+    if (personId == null || personId == 0) {
+      // Added personId == 0 check
       LoggerService.logError(
-        'Person ID is null in widget.userData. Cannot fetch personal data.',
+        'Person ID is null or 0 in widget.userData. Cannot fetch personal data.',
       );
       if (mounted) {
         setState(() {
@@ -131,6 +150,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     _ortController.text = data['ORT']?.toString() ?? '';
   }
 
+  // --- Save Functionality ---
   Future<void> _handleSave() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -139,29 +159,35 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
-        final userData = UserData(
+        final userDataToUpdate = UserData(
           personId: widget.userData?.personId ?? 0,
           webLoginId: widget.userData?.webLoginId ?? 0,
-          passnummer: widget.userData?.passnummer ?? '',
-          vereinNr: widget.userData?.vereinNr ?? 0,
+          passnummer:
+              widget.userData?.passnummer ?? '', // Passnummer not editable
+          vereinNr: widget.userData?.vereinNr ?? 0, // VereinNr not editable
           namen: _nachnameController.text,
           vorname: _vornameController.text,
           titel: _titelController.text,
-          geburtsdatum: widget.userData?.geburtsdatum,
+          geburtsdatum:
+              widget.userData?.geburtsdatum, // Geburtsdatum not editable
           geschlecht: _currentPassData?['GESCHLECHT'] is int
               ? _currentPassData!['GESCHLECHT'] as int
-              : 0,
-          vereinName: widget.userData?.vereinName ?? '',
-          passdatenId: widget.userData?.passdatenId ?? 0,
-          mitgliedschaftId: widget.userData?.mitgliedschaftId ?? 0,
+              : 0, // Geschlecht not editable from this screen
+          vereinName:
+              widget.userData?.vereinName ?? '', // VereinName not editable
+          passdatenId:
+              widget.userData?.passdatenId ?? 0, // PassdatenId not editable
+          mitgliedschaftId: widget.userData?.mitgliedschaftId ??
+              0, // MitgliedschaftId not editable
           strasse: _strasseHausnummerController.text,
           plz: _postleitzahlController.text,
           ort: _ortController.text,
-          isOnline: widget.userData?.isOnline ?? false,
+          isOnline:
+              widget.userData?.isOnline ?? false, // isOnline from initial fetch
         );
 
         final success =
-            await apiService.updateKritischeFelderUndAdresse(userData);
+            await apiService.updateKritischeFelderUndAdresse(userDataToUpdate);
 
         if (mounted) {
           if (success) {
@@ -199,21 +225,12 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _passnummerController.dispose();
-    _geburtsdatumController.dispose();
-    _titelController.dispose();
-    _vornameController.dispose();
-    _nachnameController.dispose();
-    _strasseHausnummerController.dispose();
-    _postleitzahlController.dispose();
-    _ortController.dispose();
-    super.dispose();
-  }
-
+  // --- UI Building ---
   @override
   Widget build(BuildContext context) {
+    // Access FontSizeProvider at the top level of the build method
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Persönliche Daten',
       userData: widget.userData,
@@ -221,7 +238,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       onLogout: widget.onLogout,
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
-          : _buildPersonalDataForm(),
+          : _buildPersonalDataForm(fontSizeProvider), // Pass the provider
       floatingActionButton: FloatingActionButton(
         onPressed: _isEditing
             ? _handleSave
@@ -239,17 +256,79 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     );
   }
 
-  Widget _buildPersonalDataForm() {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    String? Function(String?)? validator,
+    bool isReadOnly = false,
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.always,
+    Widget? suffixIcon,
+  }) {
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            controller: controller,
+            style: isReadOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
+                    fontSize: UIStyles.formValueBoldStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  )
+                : UIStyles.formValueStyle.copyWith(
+                    fontSize: UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: label,
+              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelStyle:
+                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+                fontSize:
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+                        fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelBehavior: floatingLabelBehavior,
+              hintText: isReadOnly ? null : label,
+              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              filled: true,
+              suffixIcon: suffixIcon,
+            ),
+            validator: validator,
+            readOnly: isReadOnly,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPersonalDataForm(FontSizeProvider fontSizeProvider) {
+    final double scaledErrorFontSize =
+        UIStyles.errorStyle.fontSize! * fontSizeProvider.scaleFactor;
+    final double scaledBodyFontSize =
+        UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor;
+
     return _errorMessage != null
         ? Center(
             child: ScaledText(
               _errorMessage!,
-              style: UIStyles.errorStyle,
+              style:
+                  UIStyles.errorStyle.copyWith(fontSize: scaledErrorFontSize),
             ),
           )
         : _currentPassData == null && !_isLoading
-            ? const Center(
-                child: ScaledText('Keine persönlichen Daten verfügbar.'),
+            ? Center(
+                child: ScaledText(
+                  'Keine persönlichen Daten verfügbar.',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
+                ),
               )
             : Padding(
                 padding: UIConstants.defaultPadding,
@@ -266,22 +345,20 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           label: 'Passnummer',
                           controller: _passnummerController,
                           isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Geburtsdatum',
                           controller: _geburtsdatumController,
                           isReadOnly: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
                           suffixIcon: Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
                             preferBelow: false,
                             child: Icon(
                               Icons.info_outline,
-                              size: UIStyles.subtitleStyle.fontSize,
+                              size: UIStyles.subtitleStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
                             ),
                           ),
                         ),
@@ -290,7 +367,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           controller: _titelController,
                           isReadOnly: !_isEditing,
                           validator: (value) => null,
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Vorname',
@@ -302,7 +378,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Nachname',
@@ -314,7 +389,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Straße und Hausnummer',
@@ -326,7 +400,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Postleitzahl',
@@ -338,7 +411,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         _buildTextField(
                           label: 'Ort',
@@ -350,48 +422,59 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
                         ),
                         const SizedBox(
                           height: UIConstants.spacingS,
                         ),
+                        if (_isEditing)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _isLoading ? null : _handleSave,
+                                style: UIStyles.dialogAcceptButtonStyle,
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          UIConstants.circularProgressIndicator,
+                                        ),
+                                        strokeWidth: 2,
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.check,
+                                            color: UIConstants.checkIcon,
+                                            size: 24 *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
+                                          const SizedBox(
+                                              width: UIConstants.spacingS,),
+                                          ScaledText(
+                                            'Speichern',
+                                            style: UIStyles
+                                                .dialogButtonTextStyle
+                                                .copyWith(
+                                              color:
+                                                  UIConstants.submitButtonText,
+                                              fontSize: UIStyles
+                                                      .dialogButtonTextStyle
+                                                      .fontSize! *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
                 ),
               );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
-    bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    TextStyle? inputTextStyle,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-  }) {
-    // Use UIConstants form styles
-    final effectiveTextStyle =
-        isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        style: effectiveTextStyle,
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          floatingLabelBehavior: floatingLabelBehavior,
-          hintText: isReadOnly ? null : label,
-          filled: true,
-          suffixIcon: suffixIcon,
-        ),
-        validator: validator,
-        readOnly: isReadOnly,
-        keyboardType: keyboardType,
-      ),
-    );
   }
 }

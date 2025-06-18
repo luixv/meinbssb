@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:async';
 import '/constants/ui_constants.dart';
 
 final _log = Logger('StartScreen');
@@ -17,12 +18,19 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
   ConnectivityResult _connectivityResult = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   final bool _useSvg = false; // Set this to true if you are using SVG assets
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     _initConnectivity();
-    _connectivity.onConnectivityChanged.listen(_updateConnectionState);
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionState);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _initConnectivity() async {
@@ -43,6 +51,7 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
   }
 
   void _updateConnectionState(List<ConnectivityResult> results) {
+    if (!mounted) return;
     if (results.isNotEmpty) {
       setState(() {
         _connectivityResult = results.first;

@@ -438,19 +438,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         key: const Key('registerButton'),
         onPressed: _isLoading ? null : (_validateForm() ? _register : null),
         style: UIStyles.defaultButtonStyle,
-        child: _isLoading
-            ? UIConstants.defaultLoadingIndicator
-            : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.app_registration, color: Colors.white),
-                  SizedBox(width: UIConstants.spacingS),
-                  ScaledText(
-                    'Registrieren',
-                    style: UIStyles.buttonStyle,
+        child: SizedBox(
+          height: 36, // Match the minimumSize height from defaultButtonStyle
+          child: Center(
+            child: _isLoading
+                ? UIConstants.defaultLoadingIndicator
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.app_registration, color: Colors.white),
+                      SizedBox(width: UIConstants.spacingS),
+                      ScaledText(
+                        'Registrieren',
+                        style: UIStyles.buttonStyle,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+          ),
+        ),
       ),
     );
   }

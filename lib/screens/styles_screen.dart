@@ -32,288 +32,126 @@ class StylesScreen extends StatelessWidget {
               spacing: UIConstants.spacingL,
               runSpacing: UIConstants.spacingM,
               children: [
+                // Left Column
                 SizedBox(
                   width: (MediaQuery.of(context).size.width -
                           UIConstants.screenPadding.left -
                           UIConstants.screenPadding.right -
                           UIConstants.spacingL) /
                       2,
-                  child: const Row(
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        UIConstants.menuIcon,
-                        size: 8,
-                        color: UIConstants.defaultAppColor,
+                      Row(
+                        children: [
+                          Text('Header Style', style: UIStyles.headerStyle),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Header Style', style: UIStyles.headerStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.homeIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Title Style', style: UIStyles.titleStyle),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Title Style', style: UIStyles.titleStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.infoIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Subtitle Style', style: UIStyles.subtitleStyle),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Subtitle Style', style: UIStyles.subtitleStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.personIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Body Style', style: UIStyles.bodyStyle),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Body Style', style: UIStyles.bodyStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.saveIcon,
-                        size: 8,
-                        color: Colors.white,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text(
+                            'List Item Title Style',
+                            style: UIStyles.listItemTitleStyle,
+                          ),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Button Style', style: UIStyles.buttonStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.infoIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text(
+                            'List Item Subtitle Style',
+                            style: UIStyles.listItemSubtitleStyle,
+                          ),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        'Dialog Title Style',
-                        style: UIStyles.dialogTitleStyle,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Link Style', style: UIStyles.linkStyle),
+                        ],
+                      ),
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Button Style', style: UIStyles.buttonStyle),
+                        ],
                       ),
                     ],
                   ),
                 ),
+                // Right Column
                 SizedBox(
                   width: (MediaQuery.of(context).size.width -
                           UIConstants.screenPadding.left -
                           UIConstants.screenPadding.right -
                           UIConstants.spacingL) /
                       2,
-                  child: const Row(
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        UIConstants.personIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      Row(
+                        children: [
+                          Text(
+                            'Title Style',
+                            style: UIStyles.dialogTitleStyle,
+                          ),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        'Dialog Content Style',
-                        style: UIStyles.dialogContentStyle,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text(
+                            'Content Style',
+                            style: UIStyles.dialogContentStyle,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.checkIconData,
-                        size: 8,
-                        color: Colors.white,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text(
+                            'Button Text Style',
+                            style: UIStyles.dialogButtonTextStyle,
+                          ),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        'Dialog Button Text Style',
-                        style: UIStyles.dialogButtonTextStyle,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Error Style', style: UIStyles.errorStyle),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.personIcon,
-                        size: 8,
-                        color: UIConstants.textColor,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Warning Style', style: UIStyles.warningStyle),
+                        ],
                       ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        'List Item Title Style',
-                        style: UIStyles.listItemTitleStyle,
+                      SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        children: [
+                          Text('Success Style', style: UIStyles.successStyle),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.infoIcon,
-                        size: 8,
-                        color: UIConstants.greyColor,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text(
-                        'List Item Subtitle Style',
-                        style: UIStyles.listItemSubtitleStyle,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        UIConstants.infoIcon,
-                        size: 8,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('News Style', style: UIStyles.newsStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: UIConstants.errorColor,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Error Style', style: UIStyles.errorStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: UIConstants.successColor,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Success Style', style: UIStyles.successStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: UIConstants.warningColor,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Warning Style', style: UIStyles.warningStyle),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width -
-                          UIConstants.screenPadding.left -
-                          UIConstants.screenPadding.right -
-                          UIConstants.spacingL) /
-                      2,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: UIConstants.linkColor,
-                      ),
-                      SizedBox(width: UIConstants.spacingS),
-                      Text('Link Style', style: UIStyles.linkStyle),
                     ],
                   ),
                 ),
@@ -343,36 +181,62 @@ class StylesScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: UIConstants.spacingM),
-            ElevatedButton(
-              onPressed: () {},
-              style: UIStyles.defaultButtonStyle,
-              child: const Text('Default Button Style'),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            ElevatedButton(
-              onPressed: () {},
-              style: UIStyles.dialogCancelButtonStyle,
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(UIStyles.dialogCancelIcon),
-                  SizedBox(width: UIConstants.spacingS),
-                  Text('Dialog Cancel Button Style'),
-                ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: UIStyles.defaultButtonStyle,
+                child: const Text('Default Button Style'),
               ),
             ),
             const SizedBox(height: UIConstants.spacingM),
-            ElevatedButton(
-              onPressed: () {},
-              style: UIStyles.dialogAcceptButtonStyle,
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(UIStyles.dialogAcceptIcon),
-                  SizedBox(width: UIConstants.spacingS),
-                  Text('Dialog Accept Button Style'),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(UIStyles.dialogCancelIcon),
+                        SizedBox(width: UIConstants.spacingS),
+                        Flexible(
+                          child: Text(
+                            'Cancel Button Style',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: UIConstants.spacingM),
+                Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(UIStyles.dialogAcceptIcon),
+                        SizedBox(width: UIConstants.spacingS),
+                        Flexible(
+                          child: Text(
+                            'Accept Button Style',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Divider(height: UIConstants.spacingL),
@@ -439,7 +303,8 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.badge, 'Badge - User profile'),
                 _buildIconExample(Icons.edit, 'Edit - Edit content'),
                 _buildIconExample(Icons.celebration, 'Celebration - Events'),
-                _buildIconExample(Icons.photo_camera, 'Camera - Photo capture'),
+                _buildIconExample(
+                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo',),
                 _buildIconExample(Icons.person, 'Person - User profile'),
                 _buildIconExample(
                   Icons.contact_phone,
