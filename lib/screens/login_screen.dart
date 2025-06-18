@@ -199,6 +199,9 @@ class LoginScreenState extends State<LoginScreen> {
           key: const Key('usernameField'),
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
+          enableInteractiveSelection: true,
+          enableSuggestions: true,
+          autocorrect: false,
           style: UIStyles.bodyStyle.copyWith(
             fontSize:
                 UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,

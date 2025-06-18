@@ -192,7 +192,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.celebration),
+              leading: const Icon(Icons.sports_bar_outlined),
               title: const ScaledText(
                 'Oktoberfestlandesschießen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -200,26 +200,6 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Oktoberfestlandesschießen functionality
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.style),
-              title: const ScaledText(
-                'Styles',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StylesScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
               },
             ),
             const Divider(),
@@ -275,6 +255,26 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SettingsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.style),
+              title: const ScaledText(
+                'Styles',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StylesScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

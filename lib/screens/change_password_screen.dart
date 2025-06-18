@@ -5,7 +5,6 @@ import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/services/api/auth_service.dart';
-import '/services/core/logger_service.dart';
 import '/services/core/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 
@@ -53,7 +52,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     });
 
     try {
-      final authService = Provider.of<AuthService>(context, listen: false);
+      Provider.of<AuthService>(context, listen: false);
       // TODO: Implement password change logic with authService
 
       if (mounted) {
@@ -76,6 +75,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         });
       }
     }
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Bitte geben Sie ein Passwort ein';
+    }
+    if (value.length < 8) {
+      return 'Das Passwort muss mindestens 8 Zeichen lang sein';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Das Passwort muss mindestens einen Großbuchstaben enthalten';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(value)) {
+      return 'Das Passwort muss mindestens einen Kleinbuchstaben enthalten';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Das Passwort muss mindestens eine Zahl enthalten';
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Das Passwort muss mindestens ein Sonderzeichen enthalten';
+    }
+    return null;
   }
 
   @override
@@ -134,15 +155,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         _isNewPasswordVisible = !_isNewPasswordVisible;
                       });
                     },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Bitte geben Sie ein neues Passwort ein';
-                      }
-                      if (value.length < 8) {
-                        return 'Das Passwort muss mindestens 8 Zeichen lang sein';
-                      }
-                      return null;
-                    },
+                    validator: _validatePassword,
                     fontSizeProvider: fontSizeProvider,
                   ),
                   const SizedBox(height: UIConstants.spacingM),

@@ -304,7 +304,7 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.edit, 'Edit - Edit content'),
                 _buildIconExample(Icons.celebration, 'Celebration - Events'),
                 _buildIconExample(
-                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo'),
+                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo',),
                 _buildIconExample(Icons.person, 'Person - User profile'),
                 _buildIconExample(
                   Icons.contact_phone,
