@@ -45,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
             _buildMenuItem(
               context,
               'Profilbild',
-              Icons.account_circle,
+              Icons.add_a_photo_outlined,
               () {
                 // TODO: Implement profile picture functionality
               },
