@@ -136,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           icon,
-          color: UIConstants.defaultAppColor,
+          color: UIStyles.profileIconColor,
           semanticLabel: title,
         ),
         title: ScaledText(
