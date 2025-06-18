@@ -109,6 +109,17 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.person),
+              title: const ScaledText(
+                'Profil',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.school),
               title: const ScaledText(
                 'Schulungen buchen',
@@ -189,17 +200,6 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement Oktoberfestlandesschießen functionality
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const ScaledText(
-                'Profil',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/profile');
               },
             ),
             ListTile(

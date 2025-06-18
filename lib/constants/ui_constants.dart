@@ -30,7 +30,7 @@ class UIConstants {
   static const Color deleteButtonBackground = primaryColor;
   static const Color submitButtonBackground = primaryColor;
   static const Color disabledBackgroundColor = Colors.grey;
-  static const Color fontSizeButtonBackground = primaryColor;
+  static const Color fontSizeButtonBackground = defaultAppColor;
 
   static const Color buttonTextColor = Colors.white;
   static const Color cancelButtonText = Colors.white;
@@ -286,26 +286,11 @@ class UIConstants {
     'Mobil',
     'E-Mail',
     'Fax',
-    'Homepage',
-    'Facebook',
-    'Instagram',
-    'Twitter',
   ];
 
   // Settings Screen
   static const String settingsTitle = 'Einstellungen';
-  static const String fontSizeTitle = 'Schriftgröße';
+  static const String fontSizeTitle = 'Textgröße';
   static const String fontSizeDescription =
       'Anpassung der Textgröße für bessere Lesbarkeit';
-  static const String contrastTitle = 'Kontrast';
-  static const String highContrastTitle = 'Hoher Kontrast';
-  static const String highContrastDescription = 'Verbesserte Lesbarkeit';
-
-  // Contrast Switch Colors
-  static const Color contrastSwitchActiveColor =
-      Color(0xFF000000); // Pure Black for maximum contrast
-  static const Color contrastSwitchInactiveColor =
-      Color(0xFFE0E0E0); // Light Grey
-  static const Color contrastSwitchTrackColor =
-      Color(0xFF9E9E9E); // Medium Grey
 }

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_styles.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
+import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/services/core/font_size_provider.dart';
-import '/services/core/theme_provider.dart';
 import '/widgets/scaled_text.dart';
-import '/screens/base_screen_layout.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({
-    super.key,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
+    super.key,
   });
 
   final UserData? userData;
   final bool isLoggedIn;
-  final VoidCallback onLogout;
+  final Function() onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -28,113 +27,100 @@ class SettingsScreen extends StatelessWidget {
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       automaticallyImplyLeading: true,
-      body: Consumer2<FontSizeProvider, ThemeProvider>(
-        builder: (context, fontSizeProvider, themeProvider, child) {
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) {
           return Padding(
             padding: UIConstants.screenPadding,
             child: Column(
               crossAxisAlignment: UIConstants.startCrossAlignment,
               children: [
-                const ScaledText(
-                  UIConstants.fontSizeTitle,
-                  style: UIStyles.titleStyle,
-                ),
-                UIConstants.verticalSpacingS,
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: UIConstants.spaceBetweenAlignment,
                   children: [
-                    const Expanded(
-                      child: ScaledText(
-                        UIConstants.fontSizeDescription,
-                        style: UIStyles.bodyStyle,
+                    const ScaledText(
+                      'Textgröße',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                    Column(
                       children: [
-                        IconButton(
-                          onPressed: fontSizeProvider.decreaseFontSize,
-                          style: IconButton.styleFrom(
-                            backgroundColor:
-                                UIConstants.fontSizeButtonBackground,
-                            foregroundColor:
-                                UIConstants.fontSizeButtonTextColor,
-                            shape: const CircleBorder(),
-                          ),
-                          icon: const Icon(Icons.remove),
-                        ),
-                        UIConstants.horizontalSpacingS,
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        Row(
                           children: [
-                            IconButton(
-                              onPressed: fontSizeProvider.resetFontSize,
-                              style: IconButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.fontSizeButtonBackground,
-                                foregroundColor:
-                                    UIConstants.fontSizeButtonTextColor,
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: FloatingActionButton(
+                                heroTag: 'decrease_font_size',
+                                onPressed: fontSizeProvider.scaleFactor <= 0.8
+                                    ? null
+                                    : () => fontSizeProvider.decreaseFontSize(),
+                                backgroundColor: UIConstants.defaultAppColor,
+                                disabledElevation: 0,
+                                elevation: 2,
                                 shape: const CircleBorder(),
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                               ),
-                              icon: const Icon(Icons.refresh),
                             ),
-                            ScaledText(
-                              '${(fontSizeProvider.scaleFactor * 100).round()}%',
-                              style: UIStyles.bodyStyle,
+                            const SizedBox(width: UIConstants.spacingS),
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: FloatingActionButton(
+                                heroTag: 'reset_font_size',
+                                onPressed: () =>
+                                    fontSizeProvider.resetFontSize(),
+                                backgroundColor: UIConstants.defaultAppColor,
+                                elevation: 2,
+                                shape: const CircleBorder(),
+                                child: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: FloatingActionButton(
+                                heroTag: 'increase_font_size',
+                                onPressed: fontSizeProvider.scaleFactor >= 1.6
+                                    ? null
+                                    : () => fontSizeProvider.increaseFontSize(),
+                                backgroundColor: UIConstants.defaultAppColor,
+                                disabledElevation: 0,
+                                elevation: 2,
+                                shape: const CircleBorder(),
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        UIConstants.horizontalSpacingS,
-                        IconButton(
-                          onPressed: fontSizeProvider.increaseFontSize,
-                          style: IconButton.styleFrom(
-                            backgroundColor:
-                                UIConstants.fontSizeButtonBackground,
-                            foregroundColor:
-                                UIConstants.fontSizeButtonTextColor,
-                            shape: const CircleBorder(),
-                          ),
-                          icon: const Icon(Icons.add),
+                        const SizedBox(height: UIConstants.spacingS),
+                        ScaledText(
+                          '${(fontSizeProvider.scaleFactor * 100).round()}%',
+                          style: UIStyles.bodyStyle,
                         ),
                       ],
                     ),
                   ],
                 ),
-                UIConstants.verticalSpacingXL,
-                const ScaledText(
-                  UIConstants.contrastTitle,
-                  style: UIStyles.titleStyle,
-                ),
                 UIConstants.verticalSpacingS,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SwitchListTile(
-                        title: const ScaledText(
-                          UIConstants.highContrastTitle,
-                          style: UIStyles.bodyStyle,
-                        ),
-                        subtitle: const ScaledText(
-                          UIConstants.highContrastDescription,
-                          style: UIStyles.bodyStyle,
-                        ),
-                        value: themeProvider.isHighContrast,
-                        onChanged: (value) {
-                          themeProvider.toggleHighContrast();
-                        },
-                        activeColor: UIConstants.contrastSwitchActiveColor,
-                        inactiveThumbColor:
-                            UIConstants.contrastSwitchInactiveColor,
-                        activeTrackColor:
-                            UIConstants.contrastSwitchTrackColor.withAlpha(128),
-                        inactiveTrackColor:
-                            UIConstants.contrastSwitchTrackColor,
-                      ),
-                    ),
-                  ],
+                const ScaledText(
+                  UIConstants.fontSizeDescription,
+                  style: UIStyles.bodyStyle,
                 ),
               ],
             ),

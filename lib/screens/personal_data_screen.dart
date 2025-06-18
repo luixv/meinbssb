@@ -69,13 +69,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }
 
   // --- Data Fetching and Population ---
-  void _loadInitialData() {
-    // This method is intentionally empty in the provided code,
-    // but typically would trigger initial data loading.
-    // The actual loading logic is in _fetchAndPopulateData.
-    // Adding a logger for clarity.
-    LoggerService.logInfo('PersonalDataScreen: _loadInitialData called.');
-  }
 
   Future<void> _fetchAndPopulateData() async {
     final int? personId = widget.userData?.personId;
@@ -263,6 +256,58 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     );
   }
 
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    String? Function(String?)? validator,
+    bool isReadOnly = false,
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.always,
+    Widget? suffixIcon,
+  }) {
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            controller: controller,
+            style: isReadOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
+                    fontSize: UIStyles.formValueBoldStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  )
+                : UIStyles.formValueStyle.copyWith(
+                    fontSize: UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: label,
+              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelStyle:
+                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+                fontSize:
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+                        fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelBehavior: floatingLabelBehavior,
+              hintText: isReadOnly ? null : label,
+              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              filled: true,
+              suffixIcon: suffixIcon,
+            ),
+            validator: validator,
+            readOnly: isReadOnly,
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildPersonalDataForm(FontSizeProvider fontSizeProvider) {
     final double scaledErrorFontSize =
         UIStyles.errorStyle.fontSize! * fontSizeProvider.scaleFactor;
@@ -300,26 +345,18 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           label: 'Passnummer',
                           controller: _passnummerController,
                           isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Geburtsdatum',
                           controller: _geburtsdatumController,
                           isReadOnly: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                           suffixIcon: Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
                             preferBelow: false,
                             child: Icon(
                               Icons.info_outline,
-                              // Scale tooltip icon size as well
                               size: UIStyles.subtitleStyle.fontSize! *
                                   fontSizeProvider.scaleFactor,
                             ),
@@ -330,9 +367,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           controller: _titelController,
                           isReadOnly: !_isEditing,
                           validator: (value) => null,
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Vorname',
@@ -344,9 +378,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Nachname',
@@ -358,9 +389,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Straße und Hausnummer',
@@ -372,9 +400,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Postleitzahl',
@@ -386,9 +411,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         _buildTextField(
                           label: 'Ort',
@@ -400,58 +422,59 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                             }
                             return null;
                           },
-                          inputTextStyle: UIStyles.formValueStyle,
-                          fontSizeProvider:
-                              fontSizeProvider, // Pass the provider
                         ),
                         const SizedBox(
                           height: UIConstants.spacingS,
                         ),
+                        if (_isEditing)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _isLoading ? null : _handleSave,
+                                style: UIStyles.dialogAcceptButtonStyle,
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          UIConstants.circularProgressIndicator,
+                                        ),
+                                        strokeWidth: 2,
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.check,
+                                            color: UIConstants.checkIcon,
+                                            size: 24 *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
+                                          const SizedBox(
+                                              width: UIConstants.spacingS,),
+                                          ScaledText(
+                                            'Speichern',
+                                            style: UIStyles
+                                                .dialogButtonTextStyle
+                                                .copyWith(
+                                              color:
+                                                  UIConstants.submitButtonText,
+                                              fontSize: UIStyles
+                                                      .dialogButtonTextStyle
+                                                      .fontSize! *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
                 ),
               );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
-    bool isReadOnly = false,
-    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
-    TextStyle? inputTextStyle,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-    required FontSizeProvider
-        fontSizeProvider, // Added FontSizeProvider parameter
-  }) {
-    // Apply scaleFactor ONLY to the actual input text style
-    final effectiveTextStyle =
-        (isReadOnly ? UIStyles.formValueBoldStyle : UIStyles.formValueStyle)
-            .copyWith(
-      fontSize: (inputTextStyle ?? UIStyles.formValueStyle).fontSize! *
-          fontSizeProvider.scaleFactor,
-    );
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: TextFormField(
-        controller: controller,
-        style: effectiveTextStyle, // This text style is scaled
-        decoration: UIStyles.formInputDecoration.copyWith(
-          labelText: label,
-          labelStyle: UIStyles.formInputDecoration.labelStyle,
-          floatingLabelBehavior: floatingLabelBehavior,
-          hintText: isReadOnly ? null : label,
-          hintStyle: UIStyles.formInputDecoration.hintStyle,
-          filled: true,
-          suffixIcon: suffixIcon,
-        ),
-        validator: validator,
-        readOnly: isReadOnly,
-        keyboardType: keyboardType,
-      ),
-    );
   }
 }

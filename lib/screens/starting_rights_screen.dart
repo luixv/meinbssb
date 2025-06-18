@@ -148,21 +148,42 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         (context, fontSizeProvider, child) {
                                       return RichText(
                                         text: TextSpan(
-                                          style: UIStyles.bodyStyle,
+                                          style: UIStyles.bodyStyle.copyWith(
+                                            fontSize: UIStyles
+                                                    .bodyStyle.fontSize! *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
                                           children: <TextSpan>[
                                             TextSpan(
                                               text: _passData!.passnummer,
                                               style:
                                                   UIStyles.bodyStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
                                               ),
                                             ),
-                                            const TextSpan(text: ' - '),
+                                            TextSpan(
+                                              text: ' - ',
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                            ),
                                             TextSpan(
                                               text: _passData!.vereinName,
                                               style:
                                                   UIStyles.bodyStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
                                               ),
                                             ),
                                           ],
@@ -176,9 +197,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           ],
                         )
                       else
-                        const ScaledText(
-                          'Keine Erstvereinsdaten verfügbar.',
-                          style: UIStyles.bodyStyle,
+                        Consumer<FontSizeProvider>(
+                          builder: (context, fontSizeProvider, child) {
+                            return ScaledText(
+                              'Keine Erstvereinsdaten verfügbar.',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize: UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
+                            );
+                          },
                         ),
                       const SizedBox(height: UIConstants.spacingM),
                       ScaledText(
@@ -207,10 +235,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       Expanded(
                                         child: Consumer<FontSizeProvider>(
                                           builder: (context, fontSizeProvider,
-                                              child) {
+                                              child,) {
                                             return RichText(
                                               text: TextSpan(
-                                                style: UIStyles.bodyStyle,
+                                                style:
+                                                    UIStyles.bodyStyle.copyWith(
+                                                  fontSize: UIStyles
+                                                          .bodyStyle.fontSize! *
+                                                      fontSizeProvider
+                                                          .scaleFactor,
+                                                ),
                                                 children: <TextSpan>[
                                                   TextSpan(
                                                     text: zve.vVereinNr
@@ -219,15 +253,35 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         .copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      fontSize: UIStyles
+                                                              .bodyStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
                                                     ),
                                                   ),
-                                                  const TextSpan(text: ' - '),
+                                                  TextSpan(
+                                                    text: ' - ',
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                      fontSize: UIStyles
+                                                              .bodyStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                  ),
                                                   TextSpan(
                                                     text: zve.vereinName,
                                                     style: UIStyles.bodyStyle
                                                         .copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      fontSize: UIStyles
+                                                              .bodyStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
                                                     ),
                                                   ),
                                                 ],
@@ -240,63 +294,81 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   ),
                                   if (zve.disziplin.isNotEmpty) ...[
                                     const SizedBox(
-                                      height: UIConstants.spacingS,
-                                    ),
+                                        height: UIConstants.spacingS,),
                                     ...zve.disziplin.map((selectedDisziplin) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: UIConstants.spacingXS,
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            ScaledText(
-                                              '• ',
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      return Consumer<FontSizeProvider>(
+                                        builder:
+                                            (context, fontSizeProvider, child) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: UIConstants.spacingXS,
                                             ),
-                                            Expanded(
-                                              child: ScaledText(
-                                                '${selectedDisziplin.disziplinNr ?? 'N/A'} - ${selectedDisziplin.disziplin ?? 'N/A'}',
-                                                style: UIStyles.bodyStyle,
-                                              ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                ScaledText(
+                                                  '• ',
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: UIStyles.bodyStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: ScaledText(
+                                                    '${selectedDisziplin.disziplinNr ?? 'N/A'} - ${selectedDisziplin.disziplin ?? 'N/A'}',
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                      fontSize: UIStyles
+                                                              .bodyStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons
+                                                        .delete_outline_outlined,
+                                                    color: UIConstants
+                                                        .defaultAppColor,
+                                                    size: 24 *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      final updatedZveData =
+                                                          List<PassDataZVE>.from(
+                                                              _zveData,);
+                                                      final index =
+                                                          updatedZveData
+                                                              .indexOf(zve);
+                                                      if (index != -1) {
+                                                        final currentDisciplines =
+                                                            List<Disziplin>.from(
+                                                                zve.disziplin,);
+                                                        currentDisciplines.remove(
+                                                            selectedDisziplin,);
+                                                        updatedZveData[index] =
+                                                            zve.copyWith(
+                                                          disziplin:
+                                                              currentDisciplines,
+                                                        );
+                                                        _zveData =
+                                                            updatedZveData;
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ],
                                             ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete_outline_outlined,
-                                                color:
-                                                    UIConstants.defaultAppColor,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  final updatedZveData =
-                                                      List<PassDataZVE>.from(
-                                                    _zveData,
-                                                  );
-                                                  final index = updatedZveData
-                                                      .indexOf(zve);
-                                                  if (index != -1) {
-                                                    final currentDisciplines =
-                                                        List<Disziplin>.from(
-                                                      zve.disziplin,
-                                                    );
-                                                    currentDisciplines.remove(
-                                                      selectedDisziplin,
-                                                    );
-                                                    updatedZveData[index] =
-                                                        zve.copyWith(
-                                                      disziplin:
-                                                          currentDisciplines,
-                                                    );
-                                                    _zveData = updatedZveData;
-                                                  }
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       );
                                     }),
                                   ],
@@ -306,68 +378,106 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           },
                         )
                       else
-                        const ScaledText(
-                          'Keine Zweitvereine verfügbar.',
-                          style: UIStyles.bodyStyle,
+                        Consumer<FontSizeProvider>(
+                          builder: (context, fontSizeProvider, child) {
+                            return ScaledText(
+                              'Keine Zweitvereine verfügbar.',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize: UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
+                            );
+                          },
                         ),
                       const SizedBox(height: UIConstants.spacingM),
                       Padding(
                         padding:
                             const EdgeInsets.only(bottom: UIConstants.spacingM),
-                        child: Autocomplete<Disziplin>(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<Disziplin>.empty();
-                            }
-                            return _disciplines.where((Disziplin option) {
-                              return (option.disziplin?.toLowerCase() ?? '')
-                                      .contains(
-                                    textEditingValue.text.toLowerCase(),
-                                  ) ||
-                                  (option.disziplinNr?.toLowerCase() ?? '')
-                                      .contains(
-                                    textEditingValue.text.toLowerCase(),
-                                  );
-                            }).take(UIConstants.maxFilteredDisziplinen);
-                          },
-                          displayStringForOption: (Disziplin option) =>
-                              '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
-                          fieldViewBuilder: (
-                            BuildContext context,
-                            TextEditingController textEditingController,
-                            FocusNode focusNode,
-                            VoidCallback onFieldSubmitted,
-                          ) {
-                            _autocompleteTextController = textEditingController;
-                            return TextField(
-                              controller: textEditingController,
-                              focusNode: focusNode,
-                              decoration: UIStyles.formInputDecoration.copyWith(
-                                labelText: 'Disziplin hinzufügen',
-                                prefixIcon: const Icon(Icons.search),
-                              ),
-                            );
-                          },
-                          onSelected: (Disziplin selection) {
-                            setState(() {
-                              // Add the selected discipline to the first Zweitverein
-                              if (_zveData.isNotEmpty) {
-                                final updatedZveData =
-                                    List<PassDataZVE>.from(_zveData);
-                                final firstZve = updatedZveData[0];
-                                final currentDisciplines =
-                                    List<Disziplin>.from(firstZve.disziplin);
-                                if (!currentDisciplines.contains(selection)) {
-                                  currentDisciplines.add(selection);
-                                  updatedZveData[0] = firstZve.copyWith(
-                                    disziplin: currentDisciplines,
-                                  );
-                                  _zveData = updatedZveData;
+                        child: Consumer<FontSizeProvider>(
+                          builder: (context, fontSizeProvider, child) {
+                            return Autocomplete<Disziplin>(
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text.isEmpty) {
+                                  return const Iterable<Disziplin>.empty();
                                 }
-                              }
-                            });
-                            // Clear the search field
-                            _autocompleteTextController.clear();
+                                return _disciplines.where((Disziplin option) {
+                                  return (option.disziplin?.toLowerCase() ?? '')
+                                          .contains(
+                                        textEditingValue.text.toLowerCase(),
+                                      ) ||
+                                      (option.disziplinNr?.toLowerCase() ?? '')
+                                          .contains(
+                                        textEditingValue.text.toLowerCase(),
+                                      );
+                                }).take(UIConstants.maxFilteredDisziplinen);
+                              },
+                              displayStringForOption: (Disziplin option) =>
+                                  '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
+                              fieldViewBuilder: (
+                                BuildContext context,
+                                TextEditingController textEditingController,
+                                FocusNode focusNode,
+                                VoidCallback onFieldSubmitted,
+                              ) {
+                                _autocompleteTextController =
+                                    textEditingController;
+                                return TextField(
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                  style: UIStyles.bodyStyle.copyWith(
+                                    fontSize: UIStyles.bodyStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
+                                  decoration:
+                                      UIStyles.formInputDecoration.copyWith(
+                                    labelText: 'Disziplin hinzufügen',
+                                    labelStyle:
+                                        UIStyles.formLabelStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                    ),
+                                    floatingLabelStyle:
+                                        UIStyles.formLabelStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                    ),
+                                    hintStyle: UIStyles.formLabelStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      size: 24 * fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                );
+                              },
+                              onSelected: (Disziplin selection) {
+                                setState(() {
+                                  if (_zveData.isNotEmpty) {
+                                    final updatedZveData =
+                                        List<PassDataZVE>.from(_zveData);
+                                    final firstZve = updatedZveData[0];
+                                    final currentDisciplines =
+                                        List<Disziplin>.from(
+                                            firstZve.disziplin,);
+                                    if (!currentDisciplines
+                                        .contains(selection)) {
+                                      currentDisciplines.add(selection);
+                                      updatedZveData[0] = firstZve.copyWith(
+                                        disziplin: currentDisciplines,
+                                      );
+                                      _zveData = updatedZveData;
+                                    }
+                                  }
+                                });
+                                _autocompleteTextController.clear();
+                              },
+                            );
                           },
                         ),
                       ),

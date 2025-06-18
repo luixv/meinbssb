@@ -473,7 +473,6 @@ class BankDataScreenState extends State<BankDataScreen> {
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
           child: TextFormField(
             controller: controller,
-            readOnly: isReadOnly,
             style: isReadOnly
                 ? UIStyles.formValueBoldStyle.copyWith(
                     fontSize: UIStyles.formValueBoldStyle.fontSize! *
@@ -485,10 +484,26 @@ class BankDataScreenState extends State<BankDataScreen> {
                   ),
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: label,
+              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelStyle:
+                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+                fontSize:
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+                        fontSizeProvider.scaleFactor,
+              ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: isReadOnly ? null : label,
+              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              filled: true,
             ),
             validator: validator,
+            readOnly: isReadOnly,
           ),
         );
       },

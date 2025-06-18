@@ -341,52 +341,62 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final highContrastColor =
-        theme.brightness == Brightness.dark ? Colors.amber : Colors.blue;
+    Theme.of(context);
 
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
-      body: SingleChildScrollView(
-        padding: UIConstants.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            widget.logoWidget ?? const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            ScaledText(
-              UIConstants.loginTitle,
-              style: UIStyles.headerStyle.copyWith(
-                color: _appColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: Padding(
+              padding: UIConstants.screenPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.logoWidget ?? const LogoWidget(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  ScaledText(
+                    UIConstants.loginTitle,
+                    style: UIStyles.headerStyle.copyWith(
+                      color: _appColor,
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  if (_errorMessage.isNotEmpty)
+                    ScaledText(
+                      _errorMessage,
+                      style: UIStyles.errorStyle,
+                    ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildEmailField(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  _buildPasswordField(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  _buildRememberMeCheckbox(),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildLoginButton(),
+                  const SizedBox(height: UIConstants.spacingS),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildForgotPasswordButton(),
+                      _buildHelpButton(),
+                    ],
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  Center(
+                    child: _buildRegisterButton(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: UIConstants.spacingS),
-            if (_errorMessage.isNotEmpty)
-              ScaledText(
-                _errorMessage,
-                style: UIStyles.errorStyle,
-              ),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildEmailField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildPasswordField(),
-            const SizedBox(height: UIConstants.spacingS),
-            _buildRememberMeCheckbox(),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildLoginButton(),
-            const SizedBox(height: UIConstants.spacingS),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildForgotPasswordButton(),
-                _buildHelpButton(),
-              ],
-            ),
-            const SizedBox(height: UIConstants.spacingS),
-            Center(
-              child: _buildRegisterButton(),
-            ),
-          ],
+          ),
         ),
       ),
     );

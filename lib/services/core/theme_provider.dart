@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/ui_constants.dart';
 import '../../constants/ui_styles.dart';
 
@@ -7,25 +6,8 @@ class ThemeProvider extends ChangeNotifier {
   ThemeProvider() {
     _loadThemePreference();
   }
-  static const String _highContrastKey = 'highContrastMode';
-  bool _isHighContrast = false;
-
-  bool get isHighContrast => _isHighContrast;
 
   Future<void> _loadThemePreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isHighContrast = prefs.getBool(_highContrastKey) ?? false;
-    notifyListeners();
-  }
-
-  Future<void> _saveThemePreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_highContrastKey, _isHighContrast);
-  }
-
-  void toggleHighContrast() {
-    _isHighContrast = !_isHighContrast;
-    _saveThemePreference();
     notifyListeners();
   }
 
@@ -42,7 +24,7 @@ class ThemeProvider extends ChangeNotifier {
       onError: UIConstants.whiteColor,
     );
 
-    final baseTheme = ThemeData(
+    return ThemeData(
       fontFamily: UIConstants.defaultFontFamily,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
@@ -115,24 +97,5 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
     );
-
-    if (_isHighContrast) {
-      return baseTheme.copyWith(
-        colorScheme: colorScheme.copyWith(
-          primary: UIConstants.foregroundColor,
-          onPrimary: UIConstants.textColor,
-          secondary: UIConstants.foregroundColor,
-          onSecondary: UIConstants.textColor,
-          surface: UIConstants.textColor,
-          onSurface: UIConstants.foregroundColor,
-        ),
-        textTheme: baseTheme.textTheme.apply(
-          bodyColor: UIConstants.foregroundColor,
-          displayColor: UIConstants.foregroundColor,
-        ),
-      );
-    }
-
-    return baseTheme;
   }
 }

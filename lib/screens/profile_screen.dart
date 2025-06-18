@@ -8,6 +8,9 @@ import '/models/user_data.dart';
 import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
+import '/screens/change_password_screen.dart';
+import '/services/api/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -94,6 +97,23 @@ class ProfileScreen extends StatelessWidget {
                     builder: (context) => BankDataScreen(
                       userData,
                       webloginId: userData?.webLoginId ?? 0,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildMenuItem(
+              context,
+              'Passwort ändern',
+              Icons.lock,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangePasswordScreen(
+                      userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),

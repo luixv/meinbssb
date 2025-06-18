@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'ui_constants.dart';
 
 class UIStyles {
-  // Text styles
-  static const TextStyle appBarTitleStyle = TextStyle(
-    fontSize: 20.0,
+  // Column 1: Core Text Styles
+  static const TextStyle headerStyle = TextStyle(
+    fontSize: UIConstants.headerFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     fontWeight: FontWeight.bold,
-    color: UIConstants.textColor,
+    color: UIConstants.defaultAppColor,
   );
 
   static const TextStyle titleStyle = TextStyle(
@@ -34,11 +34,65 @@ class UIStyles {
     color: UIConstants.textColor,
   );
 
+  static const TextStyle bodyTextStyle = TextStyle(
+    fontSize: 16.0,
+    color: UIConstants.textColor,
+  );
+
+  // Column 2: Component-Specific Styles
+  static const TextStyle dialogTitleStyle = TextStyle(
+    fontSize: UIConstants.titleFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.bold,
+    color: UIConstants.textColor,
+  );
+
+  static const TextStyle dialogContentStyle = TextStyle(
+    fontSize: UIConstants.bodyFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    color: UIConstants.textColor,
+  );
+
+  static const TextStyle dialogButtonTextStyle = TextStyle(
+    fontSize: UIConstants.bodyFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: UIConstants.whiteColor,
+  );
+
+  static const TextStyle listItemTitleStyle = TextStyle(
+    fontSize: UIConstants.bodyFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.w500,
+    color: UIConstants.textColor,
+  );
+
+  static const TextStyle listItemSubtitleStyle = TextStyle(
+    fontSize: UIConstants.bodyFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    color: UIConstants.greyColor,
+  );
+
   static const TextStyle buttonStyle = TextStyle(
     fontSize: UIConstants.buttonFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     fontWeight: FontWeight.w500,
     color: Colors.white,
+  );
+
+  static const TextStyle newsStyle = TextStyle(
+    fontSize: UIConstants.titleFontSize,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  // Additional Styles
+  static const TextStyle appBarTitleStyle = TextStyle(
+    fontSize: 20.0,
+    fontFamily: UIConstants.defaultFontFamily,
+    fontWeight: FontWeight.bold,
+    color: UIConstants.textColor,
   );
 
   static const TextStyle formLabelStyle = TextStyle(
@@ -78,58 +132,11 @@ class UIStyles {
     color: UIConstants.warningColor,
   );
 
-  static const TextStyle newsStyle = TextStyle(
-    fontSize: UIConstants.titleFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
-
-  static const TextStyle listItemTitleStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: UIConstants.textColor,
-  );
-
-  static const TextStyle listItemSubtitleStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    color: UIConstants.greyColor,
-  );
-
-  static const TextStyle dialogTitleStyle = TextStyle(
-    fontSize: UIConstants.titleFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: UIConstants.textColor,
-  );
-
-  static const TextStyle dialogContentStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    color: UIConstants.textColor,
-  );
-
-  static const TextStyle dialogButtonTextStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    fontWeight: FontWeight.w500,
-    color: UIConstants.whiteColor,
-  );
-
   static const TextStyle linkStyle = TextStyle(
     fontSize: UIConstants.bodyFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     color: UIConstants.linkColor,
     decoration: TextDecoration.underline,
-  );
-
-  static const TextStyle headerStyle = TextStyle(
-    fontSize: UIConstants.headerFontSize,
-    fontFamily: UIConstants.defaultFontFamily,
-    fontWeight: FontWeight.bold,
-    color: UIConstants.defaultAppColor,
   );
 
   static const TextStyle userDataTextStyle = TextStyle(
@@ -141,11 +148,6 @@ class UIStyles {
   static const TextStyle sectionTitleStyle = TextStyle(
     fontSize: 20.0,
     fontWeight: FontWeight.bold,
-    color: UIConstants.textColor,
-  );
-
-  static const TextStyle bodyTextStyle = TextStyle(
-    fontSize: 16.0,
     color: UIConstants.textColor,
   );
 
@@ -210,7 +212,11 @@ class UIStyles {
   static final ButtonStyle secondaryButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: UIConstants.cancelButtonBackground,
     foregroundColor: UIConstants.whiteColor,
-    padding: UIConstants.buttonPadding,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+    minimumSize: const Size(88, 36),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
     ),
@@ -218,17 +224,31 @@ class UIStyles {
 
   static final ButtonStyle textButtonStyle = TextButton.styleFrom(
     foregroundColor: UIConstants.linkColor,
-    padding: UIConstants.buttonPadding,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+    minimumSize: const Size(88, 36),
   );
 
   static final ButtonStyle dialogCancelButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: Colors.lightGreen,
     foregroundColor: Colors.white,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+    minimumSize: const Size(88, 36),
   );
 
   static final ButtonStyle dialogAcceptButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: UIConstants.defaultAppColor,
     foregroundColor: Colors.white,
+    padding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+    minimumSize: const Size(88, 36),
   );
 
   static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
@@ -239,6 +259,7 @@ class UIStyles {
       horizontal: UIConstants.spacingM,
       vertical: UIConstants.spacingS,
     ),
+    minimumSize: const Size(88, 36),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
     ),
