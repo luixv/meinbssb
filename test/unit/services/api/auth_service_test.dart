@@ -478,7 +478,10 @@ void main() {
       test('should return response data on success', () async {
         const personId = 123;
         const newPassword = 'newSecret123';
-        final expectedResponse = {'result': 1};
+        final expectedResponse = {
+          'ResultType': 1,
+          'Message': 'Password changed successfully',
+        };
         final requestBody = {
           'PersonID': personId,
           'PasswortNeu': newPassword,
@@ -493,7 +496,28 @@ void main() {
             .called(1);
       });
 
-      test('should return empty map if response is not a Map', () async {
+      test('should return error response on server failure', () async {
+        const personId = 123;
+        const newPassword = 'newSecret123';
+        final expectedResponse = {
+          'ResultType': 0,
+          'Message': 'Password change failed',
+        };
+        final requestBody = {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        };
+        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .thenAnswer((_) async => expectedResponse);
+
+        final result = await authService.changePassword(personId, newPassword);
+
+        expect(result, expectedResponse);
+        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .called(1);
+      });
+
+      test('should handle network errors gracefully', () async {
         const personId = 123;
         const newPassword = 'newSecret123';
         final requestBody = {
@@ -501,7 +525,24 @@ void main() {
           'PasswortNeu': newPassword,
         };
         when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
-            .thenAnswer((_) async => 'not a map');
+            .thenThrow(http.ClientException('Network error'));
+
+        final result = await authService.changePassword(personId, newPassword);
+
+        expect(result, {'ResultType': 0, 'Message': 'Network error occurred'});
+        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .called(1);
+      });
+
+      test('should handle unexpected server response format', () async {
+        const personId = 123;
+        const newPassword = 'newSecret123';
+        final requestBody = {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        };
+        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .thenAnswer((_) async => 'Invalid response format');
 
         final result = await authService.changePassword(personId, newPassword);
 
@@ -510,22 +551,28 @@ void main() {
             .called(1);
       });
 
-      test('should rethrow error on failure', () async {
-        const personId = 123;
+      test('should handle null personId', () async {
+        const personId = null;
         const newPassword = 'newSecret123';
-        final requestBody = {
-          'PersonID': personId,
-          'PasswortNeu': newPassword,
-        };
-        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
-            .thenThrow(Exception('Failed to change password'));
 
         expect(
           () => authService.changePassword(personId, newPassword),
-          throwsA(isA<Exception>()),
+          throwsA(isA<ArgumentError>()),
         );
-        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
-            .called(1);
+
+        verifyNever(mockHttpClient.put(any, any));
+      });
+
+      test('should handle empty new password', () async {
+        const personId = 123;
+        const newPassword = '';
+
+        expect(
+          () => authService.changePassword(personId, newPassword),
+          throwsA(isA<ArgumentError>()),
+        );
+
+        verifyNever(mockHttpClient.put(any, any));
       });
     });
   });
