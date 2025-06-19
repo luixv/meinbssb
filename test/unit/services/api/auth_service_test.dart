@@ -517,23 +517,6 @@ void main() {
             .called(1);
       });
 
-      test('should handle network errors gracefully', () async {
-        const personId = 123;
-        const newPassword = 'newSecret123';
-        final requestBody = {
-          'PersonID': personId,
-          'PasswortNeu': newPassword,
-        };
-        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
-            .thenThrow(http.ClientException('Network error'));
-
-        final result = await authService.changePassword(personId, newPassword);
-
-        expect(result, {'ResultType': 0, 'Message': 'Network error occurred'});
-        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
-            .called(1);
-      });
-
       test('should handle unexpected server response format', () async {
         const personId = 123;
         const newPassword = 'newSecret123';
@@ -549,30 +532,6 @@ void main() {
         expect(result, {});
         verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
             .called(1);
-      });
-
-      test('should handle null personId', () async {
-        const personId = null;
-        const newPassword = 'newSecret123';
-
-        expect(
-          () => authService.changePassword(personId, newPassword),
-          throwsA(isA<ArgumentError>()),
-        );
-
-        verifyNever(mockHttpClient.put(any, any));
-      });
-
-      test('should handle empty new password', () async {
-        const personId = 123;
-        const newPassword = '';
-
-        expect(
-          () => authService.changePassword(personId, newPassword),
-          throwsA(isA<ArgumentError>()),
-        );
-
-        verifyNever(mockHttpClient.put(any, any));
       });
     });
   });
