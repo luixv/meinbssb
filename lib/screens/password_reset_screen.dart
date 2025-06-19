@@ -51,9 +51,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     });
 
     try {
-      final response = await widget.authService.resetPassword(
-        _passNumberController.text,
-      );
+      final response = await widget.authService
+          .passwordReset(_passNumberController.text);
 
       if (response['ResultType'] == 1) {
         setState(() {

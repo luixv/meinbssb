@@ -17,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
     required this.isLoggedIn,
     required this.onLogout,
   });
-
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;

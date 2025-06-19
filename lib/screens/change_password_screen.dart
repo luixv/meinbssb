@@ -4,7 +4,8 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/services/api/auth_service.dart';
+import '/services/api_service.dart';
+import '/services/core/cache_service.dart';
 import '/services/core/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 
@@ -52,22 +53,62 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     });
 
     try {
-      Provider.of<AuthService>(context, listen: false);
-      // TODO: Implement password change logic with authService
+      final personId = widget.userData?.personId;
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final cacheService = Provider.of<CacheService>(context, listen: false);
+
+      if (personId == null) {
+        throw Exception(UIConstants.personIdMissing);
+      }
+
+      // Get username from cache
+      final username = await cacheService.getString('username');
+      if (username == null) {
+        throw Exception(UIConstants.usernameNotFound);
+      }
+
+      // First, validate the current password
+      final loginResponse = await apiService.login(
+        username,
+        _currentPasswordController.text,
+      );
+
+      if (loginResponse['ResultType'] != 1) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(UIConstants.currentPasswordIncorrect),
+              backgroundColor: UIConstants.errorColor,
+            ),
+          );
+        }
+        return;
+      }
+
+      // If current password is valid, proceed with password change
+      await apiService.changePassword(
+        personId,
+        _newPasswordController.text,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Passwort erfolgreich geändert'),
-            backgroundColor: Colors.green,
+            content: Text(UIConstants.passwordChangeSuccess),
+            backgroundColor: UIConstants.successColor,
           ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Fehler beim Ändern des Passworts: $e';
-      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(UIConstants.passwordChangeError + e.toString()),
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() {

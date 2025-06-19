@@ -345,39 +345,6 @@ void main() {
       });
     });
 
-    group('resetPassword', () {
-      test('should return reset password data on success', () async {
-        const passNumber = '12345';
-        final expectedResponse = {
-          'ResultType': 1,
-          'Message': 'Password reset successful',
-        };
-        final requestBody = {'passNumber': passNumber};
-        when(mockHttpClient.post('PasswordReset/$passNumber', requestBody))
-            .thenAnswer((_) async => expectedResponse);
-
-        final result = await authService.resetPassword(passNumber);
-
-        expect(result, expectedResponse);
-        verify(mockHttpClient.post('PasswordReset/$passNumber', requestBody))
-            .called(1);
-      });
-
-      test('should rethrow error on reset password failure', () async {
-        const passNumber = '12345';
-        final requestBody = {'passNumber': passNumber};
-        when(mockHttpClient.post('PasswordReset/$passNumber', requestBody))
-            .thenThrow(http.ClientException('Failed to reset password'));
-
-        expect(
-          () => authService.resetPassword(passNumber),
-          throwsA(isA<http.ClientException>()),
-        );
-        verify(mockHttpClient.post('PasswordReset/$passNumber', requestBody))
-            .called(1);
-      });
-    });
-
     group('logout', () {
       test('should clear all cached data on successful logout', () async {
         // No explicit stubs needed here as global mocks are fine
@@ -504,6 +471,61 @@ void main() {
           'ResultMessage':
               'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
         });
+      });
+    });
+
+    group('Change password', () {
+      test('should return response data on success', () async {
+        const personId = 123;
+        const newPassword = 'newSecret123';
+        final expectedResponse = {'result': 1};
+        final requestBody = {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        };
+        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .thenAnswer((_) async => expectedResponse);
+
+        final result = await authService.changePassword(personId, newPassword);
+
+        expect(result, expectedResponse);
+        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .called(1);
+      });
+
+      test('should return empty map if response is not a Map', () async {
+        const personId = 123;
+        const newPassword = 'newSecret123';
+        final requestBody = {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        };
+        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .thenAnswer((_) async => 'not a map');
+
+        final result = await authService.changePassword(personId, newPassword);
+
+        expect(result, {});
+        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .called(1);
+      });
+
+      test('should rethrow error on failure', () async {
+        const personId = 123;
+        const newPassword = 'newSecret123';
+        final requestBody = {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        };
+        when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .thenThrow(Exception('Failed to change password'));
+
+        expect(
+          () => authService.changePassword(personId, newPassword),
+          throwsA(isA<Exception>()),
+        );
+        verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
+            .called(1);
       });
     });
   });

@@ -13,7 +13,6 @@ class UIConstants {
   static const Color errorColor = Colors.red;
   static const Color successColor = Colors.green;
   static const Color warningColor = Color(0xFFFFA000);
-  static const Color infoColor = Color(0xFF2196F3);
   static const Color linkColor = primaryColor;
   static const Color greyColor = Colors.grey;
   static const Color whiteColor = Colors.white;
@@ -287,6 +286,15 @@ class UIConstants {
     'E-Mail',
     'Fax',
   ];
+
+  // Password Change Messages
+  static const String passwordChangeSuccess = 'Passwort erfolgreich geändert';
+  static const String passwordChangeError =
+      'Fehler beim Ändern des Passworts: ';
+  static const String currentPasswordIncorrect =
+      'Das aktuelle Passwort ist nicht korrekt';
+  static const String usernameNotFound = 'Benutzername nicht gefunden';
+  static const String personIdMissing = 'Person ID is missing';
 
   // Settings Screen
   static const String settingsTitle = 'Einstellungen';
