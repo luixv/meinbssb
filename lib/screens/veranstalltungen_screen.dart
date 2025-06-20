@@ -168,32 +168,44 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                           const SizedBox(width: UIConstants.spacingM),
                           Expanded(
                             flex: 1,
-                            child: ElevatedButton(
+                            child: IconButton(
+                              icon: const Icon(Icons.description,
+                                  size: 32, color: UIConstants.defaultAppColor),
+                              tooltip: 'Inhalt',
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    content: SizedBox(
-                                      width: 400,
-                                      height: 400,
-                                      child: SingleChildScrollView(
-                                        child: Html(
-                                          data: schulung.lehrgangsinhaltHtml,
+                                  builder: (context) => Dialog(
+                                    child: Stack(
+                                      children: [
+                                        SizedBox(
+                                          width: 400,
+                                          height: 400,
+                                          child: SingleChildScrollView(
+                                            child: Html(
+                                              data:
+                                                  schulung.lehrgangsinhaltHtml,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        Positioned(
+                                          bottom: 16,
+                                          right: 16,
+                                          child: FloatingActionButton(
+                                            mini: true,
+                                            backgroundColor:
+                                                UIConstants.defaultAppColor,
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Icon(Icons.close,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('Schließen'),
-                                      ),
-                                    ],
                                   ),
                                 );
                               },
-                              style: UIStyles.dialogAcceptButtonStyle,
-                              child: const Text('Inhalt'),
                             ),
                           ),
                         ],
