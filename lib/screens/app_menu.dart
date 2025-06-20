@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
-import 'absolvierte_schulungen_screen.dart';
+import '/screens/absolvierte_schulungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -132,7 +132,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.task_alt, color: UIStyles.menuIconColor),
+              leading:
+                  const Icon(Icons.task_alt, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Absolvierte Schulungen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -193,8 +194,10 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.sports_bar_outlined,
-                  color: UIStyles.menuIconColor,),
+              leading: const Icon(
+                Icons.sports_bar_outlined,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Oktoberfestlandesschießen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -206,27 +209,8 @@ class AppDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Hilfe',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HelpScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline, color: UIStyles.menuIconColor),
+              leading:
+                  const Icon(Icons.info_outline, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Impressum',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -237,26 +221,6 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ImpressumScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Einstellungen',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -277,6 +241,47 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => StylesScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading:
+                  const Icon(Icons.settings, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Einstellungen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Hilfe',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HelpScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -309,8 +314,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(Icons.app_registration, color: UIStyles.menuIconColor),
+              leading: const Icon(Icons.app_registration,
+                  color: UIStyles.menuIconColor,),
               title: const ScaledText(
                 'Registrieren',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -333,7 +338,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.lock_reset, color: UIStyles.menuIconColor),
+              leading:
+                  const Icon(Icons.lock_reset, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Passwort zurücksetzen',
                 style: TextStyle(fontSize: _menuItemFontSize),

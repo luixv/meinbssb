@@ -106,6 +106,7 @@ class UIConstants {
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
   static const double spacingXXL = 48.0;
+  static const double spacingXXXL = 64.0;
   static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
 
@@ -184,6 +185,16 @@ class UIConstants {
   static const String saveButtonLabel = 'Speichern';
   static const String savingLabel = 'Wird gespeichert...';
 
+  // Help screen
+  static const String helpTitle = 'FAQ';
+
+  // Cookie Consent
+  static const String cookieConsentTitle = 'Wir verwenden Cookies';
+  static const String cookieConsentMessage =
+      'Um diese App offline nutzen zu können, verwenden wir Cookies.';
+  static const String cookieSettingsButtonLabel = 'Einstellungen';
+  static const String cookieAcceptAllButtonLabel = 'Alle akzeptieren';
+
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =
       MainAxisAlignment.spaceBetween;
@@ -195,16 +206,6 @@ class UIConstants {
   static const Widget defaultLoadingIndicator = CircularProgressIndicator(
     valueColor: AlwaysStoppedAnimation<Color>(circularProgressIndicator),
   );
-
-  // Help screen
-  static const String helpTitle = 'FAQ';
-
-  // Cookie Consent
-  static const String cookieConsentTitle = 'Wir verwenden Cookies';
-  static const String cookieConsentMessage =
-      'Um diese App offline nutzen zu können, verwenden wir Cookies.';
-  static const String cookieSettingsButtonLabel = 'Einstellungen';
-  static const String cookieAcceptAllButtonLabel = 'Alle akzeptieren';
 
   // Layout
   static const double newsContainerHeight = 100.0;
@@ -226,33 +227,23 @@ class UIConstants {
   static const IconData editIcon = Icons.edit;
   static const IconData saveIcon = Icons.save;
   static const IconData deleteIconData = Icons.delete_forever;
-  static const IconData deleteOutlineIcon = Icons.delete_outline;
   static const IconData checkIconData = Icons.check;
-  static const IconData closeIconData = Icons.close;
   static const IconData calendarIcon = Icons.calendar_today;
 
   // Status Icons
   static const IconData successIcon = Icons.check_circle;
   static const IconData errorIcon = Icons.error;
-  static const IconData errorOutlineIcon = Icons.error_outline;
-  static const IconData infoIcon = Icons.info_outline;
-  static const IconData visibilityIcon = Icons.visibility;
-  static const IconData visibilityOffIcon = Icons.visibility_off;
 
   // Connectivity Icons
   static const IconData wifiIcon = Icons.wifi;
   static const IconData wifiOffIcon = Icons.wifi_off;
   static const IconData signalIcon = Icons.signal_cellular_4_bar;
   static const IconData bluetoothIcon = Icons.bluetooth_connected;
-  static const IconData vpnIcon = Icons.vpn_lock;
   static const IconData networkCheckIcon = Icons.network_check;
-  static const IconData cloudOffIcon = Icons.cloud_off;
 
   // Menu Icons
   static const IconData schoolIcon = Icons.school;
   static const IconData taskIcon = Icons.task_alt;
-  static const IconData badgeIcon = Icons.badge;
-  static const IconData celebrationIcon = Icons.celebration;
   static const IconData cameraIcon = Icons.photo_camera;
   static const IconData personIcon = Icons.person;
   static const IconData contactIcon = Icons.contact_phone;
@@ -260,8 +251,8 @@ class UIConstants {
   static const IconData logoutIcon = Icons.logout;
   static const IconData loginIcon = Icons.login;
   static const IconData registrationIcon = Icons.app_registration;
-  static const IconData lockResetIcon = Icons.lock_reset;
   static const IconData helpIcon = Icons.help_outline;
+  static const IconData lockResetIcon = Icons.lock_reset;
 
   // UI Icons
   static const IconData circleIcon = Icons.circle;

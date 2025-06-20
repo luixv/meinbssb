@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
+import '/screens/change_password_result_screen.dart';
 import '/models/user_data.dart';
 import '/services/api_service.dart';
 import '/services/core/cache_service.dart';
@@ -86,26 +87,33 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       }
 
       // If current password is valid, proceed with password change
-      await apiService.changePassword(
+      final result = await apiService.changePassword(
         personId,
         _newPasswordController.text,
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(UIConstants.passwordChangeSuccess),
-            backgroundColor: UIConstants.successColor,
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ChangePasswordResultScreen(
+              success: result['result'] == true,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
           ),
         );
-        Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(UIConstants.passwordChangeError + e.toString()),
-            backgroundColor: UIConstants.errorColor,
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ChangePasswordResultScreen(
+              success: false,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
           ),
         );
       }
@@ -185,6 +193,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       return null;
                     },
                     fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildPasswordField(
@@ -198,6 +207,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     },
                     validator: _validatePassword,
                     fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildPasswordField(
@@ -219,6 +229,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       return null;
                     },
                     fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
                   ),
                 ],
               ),
@@ -247,6 +258,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     required VoidCallback onToggleVisibility,
     required FontSizeProvider fontSizeProvider,
     String? Function(String?)? validator,
+    Color eyeIconColor = UIConstants.defaultAppColor,
   }) {
     return TextFormField(
       controller: controller,
@@ -274,7 +286,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         suffixIcon: IconButton(
           icon: Icon(
             isVisible ? Icons.visibility_off : Icons.visibility,
-            color: UIConstants.defaultAppColor,
+            color: eyeIconColor,
           ),
           onPressed: onToggleVisibility,
         ),
