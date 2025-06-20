@@ -136,6 +136,8 @@ Ergebnis der Abfrage:
   Future<String> _findeMailadressen(
     String personId,
 
+// This method will return THE FIRST EMAIL... Is thi correct??
+
     /*
     /FindeMailadressen/{PersonID}
     Response
@@ -270,16 +272,34 @@ Ergebnis der Abfrage:
     }
   }
 
-  Future<Map<String, dynamic>> resetPassword(String passNumber) async {
+  Future<Map<String, dynamic>> passwordReset(
+    String passNumber,
+  ) async {
     try {
-      // This method needs the email address of the user
+      // Find the email!
+      String email = '';
 
-      final response = await _httpClient.post('PasswordReset/$passNumber', {
-        'passNumber': passNumber,
-      });
+      final response =
+          await _httpClient.get('PasswordReset/$passNumber/$email');
       return response is Map<String, dynamic> ? response : {};
     } catch (e) {
       LoggerService.logError('Password reset error: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> changePassword(
+    int personId,
+    String newPassword,
+  ) async {
+    try {
+      final response = await _httpClient.put('MyBSSBPasswortAendern', {
+        'PersonID': personId,
+        'PasswortNeu': newPassword,
+      });
+      return response is Map<String, dynamic> ? response : {};
+    } catch (e) {
+      LoggerService.logError('Change Password  error: $e');
       rethrow;
     }
   }

@@ -6,8 +6,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 
-import 'absolvierte_schulungen_screen.dart';
+import '/screens/absolvierte_schulungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -40,7 +41,7 @@ class AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.menu, color: Colors.black),
+      icon: const Icon(Icons.menu, color: UIStyles.menuIconColor),
       onPressed: () {
         Scaffold.of(context).openEndDrawer();
       },
@@ -98,7 +99,7 @@ class AppDrawer extends StatelessWidget {
           ),
           if (isLoggedIn) ...[
             ListTile(
-              leading: const Icon(Icons.home),
+              leading: const Icon(Icons.home, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Home',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -109,7 +110,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person),
+              leading: const Icon(Icons.person, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Profil',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -120,7 +121,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school),
+              leading: const Icon(Icons.school, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Schulungen buchen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -131,7 +132,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.task_alt),
+              leading:
+                  const Icon(Icons.task_alt, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Absolvierte Schulungen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -151,7 +153,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.badge),
+              leading: const Icon(Icons.badge, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Schützenausweis',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -172,7 +174,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.rule),
+              leading: const Icon(Icons.rule, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Startrechte Ändern',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -192,7 +194,10 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.sports_bar_outlined),
+              leading: const Icon(
+                Icons.sports_bar_outlined,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Oktoberfestlandesschießen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -204,27 +209,8 @@ class AppDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.help),
-              title: const ScaledText(
-                'Hilfe',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HelpScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
+              leading:
+                  const Icon(Icons.info_outline, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Impressum',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -244,27 +230,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const ScaledText(
-                'Einstellungen',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.style),
+              leading: const Icon(Icons.style, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Styles',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -284,7 +250,48 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading:
+                  const Icon(Icons.settings, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Einstellungen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Hilfe',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HelpScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Abmelden',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -296,7 +303,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ] else ...[
             ListTile(
-              leading: const Icon(Icons.login),
+              leading: const Icon(Icons.login, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Anmelden',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -307,7 +314,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.app_registration),
+              leading: const Icon(Icons.app_registration,
+                  color: UIStyles.menuIconColor,),
               title: const ScaledText(
                 'Registrieren',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -330,7 +338,8 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.lock_reset),
+              leading:
+                  const Icon(Icons.lock_reset, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Passwort zurücksetzen',
                 style: TextStyle(fontSize: _menuItemFontSize),

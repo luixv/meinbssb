@@ -106,8 +106,13 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> resetPassword(String passNumber) async {
-    return _authService.resetPassword(passNumber);
+  Future<Map<String, dynamic>> passwordReset(String passNumber) async {
+    return _authService.passwordReset(passNumber);
+  }
+
+  Future<Map<String, dynamic>> changePassword(
+      int personId, String newPassword,) async {
+    return _authService.changePassword(personId, newPassword);
   }
 
   // User Service

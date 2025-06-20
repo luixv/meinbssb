@@ -706,7 +706,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               ),
             ),
           ),
-          const SizedBox(height: UIConstants.spacingXXL),
+          const SizedBox(height: UIConstants.spacingXXXL),
         ],
       ),
     );

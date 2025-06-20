@@ -115,11 +115,28 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
       ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i2.Future<Map<String, dynamic>> resetPassword(String? passNumber) =>
+  _i2.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
-          #resetPassword,
+          #passwordReset,
           [passNumber],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> changePassword(
+    int? personId,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [
+            personId,
+            newPassword,
+          ],
         ),
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),

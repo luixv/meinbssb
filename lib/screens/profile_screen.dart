@@ -18,7 +18,6 @@ class ProfileScreen extends StatelessWidget {
     required this.isLoggedIn,
     required this.onLogout,
   });
-
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
@@ -146,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           icon,
-          color: UIConstants.defaultAppColor,
+          color: UIStyles.profileIconColor,
           semanticLabel: title,
         ),
         title: ScaledText(

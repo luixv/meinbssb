@@ -9,7 +9,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
 import '/screens/privacy_screen.dart';
-import '/screens/registration_success_screen.dart';
+import '/screens/registration_result_screen.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';

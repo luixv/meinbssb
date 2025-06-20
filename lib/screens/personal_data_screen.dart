@@ -239,20 +239,46 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
           : _buildPersonalDataForm(fontSizeProvider), // Pass the provider
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isEditing
-            ? _handleSave
-            : () {
+      floatingActionButton: _isEditing
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                      _populateFields(_currentPassData!);
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: _handleSave,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(
+                    Icons.save,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            )
+          : FloatingActionButton(
+              onPressed: () {
                 setState(() {
                   _isEditing = true;
                 });
               },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: Icon(
-          _isEditing ? Icons.save : Icons.edit,
-          color: Colors.white,
-        ),
-      ),
+              backgroundColor: UIConstants.defaultAppColor,
+              child: const Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
+            ),
     );
   }
 
