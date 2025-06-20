@@ -67,22 +67,51 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               child: GestureDetector(
                 onTap: _pickImage,
                 child: _selectedImage == null
-                    ? Container(
-                        width: 160,
-                        height: 160,
-                        decoration: BoxDecoration(
-                          color: UIStyles.profilePictureBackgroundColor,
-                          borderRadius: BorderRadius.circular(80),
-                          border: Border.all(
-                            color: UIConstants.greyColor,
-                            width: 2,
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 160,
+                            height: 160,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(80),
+                              border: Border.all(
+                                color: UIConstants.greyColor,
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              size: 100,
+                              color: UIConstants.greyColor,
+                            ),
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.add_a_photo_outlined,
-                          size: 64,
-                          color: UIConstants.greyColor,
-                        ),
+                          Positioned(
+                            bottom: 16,
+                            right: 16,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Icon(
+                                  Icons.add_a_photo_outlined,
+                                  size: 32,
+                                  color: UIConstants.greyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       )
                     : ClipOval(
                         child: Image.file(
