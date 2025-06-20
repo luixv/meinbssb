@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZMI Server Ping Monitoring Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --color-green: #28a745;
+            --color-orange: #fd7e14;
+            --color-red: #dc3545;
+            --color-bg: #121212;
+            --color-surface: #1e1e1e;
+            --color-text-primary: #e0e0e0;
+            --color-text-secondary: #a0a0a0;
+            --color-border: #333;
+            --color-table-header-bg: #343a40;
+            --color-table-row-even: #252525;
+            --color-table-row-hover: #3a3a3a;
+            --color-button-bg: #007bff;
+            --color-button-hover: #0056b3;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: var(--color-surface);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 95%; /* Increased max-width for charts */
+            margin: 20px auto;
+            overflow-x: hidden; /* Prevent horizontal scroll on container itself */
+        }
+        h1 {
+            color: var(--color-text-primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .target-url-display {
+            font-size: 1.1em;
+            color: var(--color-text-secondary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow charts to wrap on smaller screens */
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .chart-wrapper {
+            flex: 1 1 calc(50% - 20px); /* Two columns, responsive */
+            min-width: 300px; /* Minimum width for charts */
+            max-width: 500px; /* Max width to prevent charts from becoming too wide */
+            background-color: #6a6a6a; /* Slightly lighter background for chart areas */
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                flex: 1 1 100%; /* Single column on small screens */
+            }
+        }
+        canvas {
+            max-width: 100% !important; /* Override Chart.js inline styles */
+            height: auto !important;
+        }
+
+        /* Toggle Button */
+        .toggle-button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .toggle-button {
+            background-color: var(--color-button-bg);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-button:hover {
+            background-color: var(--color-button-hover);
+        }
+
+        /* Table Styles */
+        #monitorTableContainer {
+            margin-top: 20px;
+            overflow-x: auto; /* For responsive tables */
+            /* Initially hidden, JS will toggle this */
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px; /* Ensure table doesn't get too small */
+        }
+        th, td {
+            border: 1px solid var(--color-border);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap; /* Prevent wrapping in cells */
+        }
+        th {
+            background-color: var(--color-table-header-bg);
+            color: white;
+            font-weight: 600;
+            position: sticky; /* Make header sticky when scrolling */
+            top: 0;
+            z-index: 1;
+        }
+        tbody tr:nth-child(even) { background-color: var(--color-table-row-even); }
+        tbody tr:hover { background-color: var(--color-table-row-hover); }
+
+        /* Status colors */
+        .status-online { color: var(--color-green); font-weight: bold; }
+        .status-slow_response { color: var(--color-orange); font-weight: bold; }
+        .status-http_code_mismatch, .status-curl_error { color: var(--color-red); font-weight: bold; }
+
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 20px;
+            color: var(--color-text-secondary);
+        }
+        .error-message { color: var(--color-red); }
+        .last-update-info {
+            font-size: 0.8em;
+            color: var(--color-text-secondary);
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ZMI Server Monitoring Dashboard</h1>
+        <p class="target-url-display">Monitoring: <a id="monitoredUrl" href="https://webintern.bssb.bayern:56400/rest/zmi/api/serverping" target="_blank">https://webintern.bssb.bayern:56400/rest/zmi/api/serverping</a></p>
+
+        <div id="loading" class="loading-message">Loading data...</div>
+        <div id="error" class="error-message" style="display: none;"></div>
+
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <canvas id="responseTimeChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="statusDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="toggle-button-container">
+            <button id="toggleTableBtn" class="toggle-button">Show Table</button>
+        </div>
+
+        <div id="monitorTableContainer">
+            <table id="monitorTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Target URL</th>
+                        <th>HTTP Code</th>
+                        <th>Response Time (s)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+        <div id="lastUpdate" class="last-update-info"></div>
+    </div>
+
+    <script>
+        const CSV_FILE_PATH = 'https_monitor.csv';
+        const MAX_ROWS_TO_DISPLAY = 200; // Max rows for table and chart data points
+
+        // Chart instances (will be initialized after data fetch)
+        let responseTimeChart;
+        let statusDistributionChart;
+
+        // Function to create/update the Response Time Line Chart
+        function updateResponseTimeChart(timestamps, responseTimes) {
+            const ctx = document.getElementById('responseTimeChart').getContext('2d');
+            const data = {
+                labels: timestamps,
+                datasets: [{
+                    label: 'Response Time (s)',
+                    data: responseTimes,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    fill: false,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            };
+            const options = {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Response Time Trend (Last ' + timestamps.length + ' checks)',
+                        color: 'var(--color-text-primary)'
+                    },
+                    legend: {
+                        labels: {
+                            color: 'var(--color-text-secondary)'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'var(--color-text-secondary)',
+                            autoSkip: true, // Automatically skip labels if too many
+                            maxRotation: 45, // Rotate labels for readability
+                            minRotation: 45,
+                            maxTicksLimit: 10, // Limit the number of ticks
+                            callback: function(val, index) {
+                                // Show only the time for better readability
+                                return this.getLabelForValue(val).split(' ')[1];
+                            }
+                        },
+                        grid: {
+                            color: 'var(--color-border)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: 'var(--color-text-secondary)'
+                        },
+                        grid: {
+                            color: 'var(--color-border)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Seconds',
+                            color: 'var(--color-text-secondary)'
+                        }
+                    }
+                }
+            };
+
+            if (responseTimeChart) {
+                responseTimeChart.data = data;
+                responseTimeChart.options = options; // Update options if needed
+                responseTimeChart.update();
+            } else {
+                responseTimeChart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: options
+                });
+            }
+        }
+
+        // Function to create/update the Status Distribution Doughnut Chart
+        function updateStatusDistributionChart(statusCounts) {
+            const ctx = document.getElementById('statusDistributionChart').getContext('2d');
+            const labels = Object.keys(statusCounts);
+            const dataValues = Object.values(statusCounts);
+            const backgroundColors = labels.map(label => {
+                switch (label.toLowerCase()) {
+                    case 'online': return 'var(--color-green)';
+                    case 'slow_response': return 'var(--color-orange)';
+                    case 'http_code_mismatch':
+                    case 'curl_error': return 'var(--color-red)';
+                    default: return '#6c757d'; // Grey for unknown
+                }
+            });
+
+            const data = {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                    hoverOffset: 4
+                }]
+            };
+            const options = {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Status Distribution',
+                        color: 'var(--color-text-primary)'
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'var(--color-text-secondary)'
+                        }
+                    }
+                }
+            };
+
+            if (statusDistributionChart) {
+                statusDistributionChart.data = data;
+                statusDistributionChart.options = options; // Update options if needed
+                statusDistributionChart.update();
+            } else {
+                statusDistributionChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: data,
+                    options: options
+                });
+            }
+        }
+
+        async function fetchData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                const response = await fetch(CSV_FILE_PATH + '?' + new Date().getTime()); // Add cache-buster
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - Could not load CSV.`);
+                }
+                const csvText = await response.text();
+                parseAndDisplayData(csvText);
+            } catch (e) {
+                console.error("Failed to fetch CSV:", e);
+                document.getElementById('error').textContent = `Failed to load data: ${e.message}. Ensure '${CSV_FILE_PATH}' exists and is readable by the web server.`;
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function parseAndDisplayData(csvText) {
+            const lines = csvText.trim().split('\n');
+            const tableBody = document.getElementById('monitorTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (lines.length <= 1) { // Only header or empty file
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data available yet.</td></tr>';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+                // Clear charts if no data
+                if (responseTimeChart) responseTimeChart.destroy();
+                if (statusDistributionChart) statusDistributionChart.destroy();
+                responseTimeChart = null;
+                statusDistributionChart = null;
+                return;
+            }
+
+            const dataLines = lines.slice(1); // Skip header row
+            // Take the last N entries for both table and charts
+            const relevantData = dataLines.slice(Math.max(0, dataLines.length - MAX_ROWS_TO_DISPLAY));
+
+            // Prepare data for charts
+            const timestamps = [];
+            const responseTimes = [];
+            const statusCounts = {};
+
+            relevantData.forEach(line => {
+                const columns = line.split(',');
+                if (columns.length === 5) {
+                    // For charts (reversed to show oldest on left for line chart)
+                    timestamps.push(columns[0]);
+                    responseTimes.push(parseFloat(columns[3]));
+
+                    // For status distribution
+                    const status = columns[4].replace(/\s/g, '_').toLowerCase(); // Normalize for consistent keys
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                }
+            });
+
+            // Update charts
+            updateResponseTimeChart(timestamps, responseTimes);
+            updateStatusDistributionChart(statusCounts);
+
+            // Populate table (newest at top)
+            // Need to reverse again for the table if charts consumed them in order
+            // Or better, iterate original dataLines in reverse for table
+            const tableDisplayLines = dataLines.reverse().slice(0, MAX_ROWS_TO_DISPLAY); // Re-reverse for table to show newest first
+            tableDisplayLines.forEach(line => {
+                const columns = line.split(',');
+                if (columns.length === 5) {
+                    const row = tableBody.insertRow();
+
+                    row.insertCell(0).textContent = columns[0]; // Timestamp
+                    row.insertCell(1).textContent = columns[1]; // Target URL
+                    row.insertCell(2).textContent = columns[2]; // HTTP Code
+                    row.insertCell(3).textContent = parseFloat(columns[3]).toFixed(3); // Response Time (formatted)
+
+                    const statusCell = row.insertCell(4); // Status Message
+                    statusCell.textContent = columns[4];
+                    statusCell.classList.add('status-' + columns[4].toLowerCase().replace(/\s/g, '_'));
+                }
+            });
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        // Toggle Table Button Logic
+        const toggleTableBtn = document.getElementById('toggleTableBtn');
+        const monitorTableContainer = document.getElementById('monitorTableContainer');
+        let isTableVisible = false; // Initial state
+
+        toggleTableBtn.addEventListener('click', () => {
+            if (isTableVisible) {
+                monitorTableContainer.style.display = 'none';
+                toggleTableBtn.textContent = 'Show Table';
+            } else {
+                monitorTableContainer.style.display = 'block';
+                toggleTableBtn.textContent = 'Hide Table';
+            }
+            isTableVisible = !isTableVisible;
+        });
+
+        // Initial fetch and periodic refresh
+        fetchData();
+        setInterval(fetchData, 30000); // Refresh data every 30 seconds
+    </script>
+</body>
+</html>
