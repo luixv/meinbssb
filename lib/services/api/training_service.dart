@@ -114,6 +114,7 @@ class TrainingService {
               link: link,
               status: status,
               gueltigBis: gueltigBis,
+              lehrgangsinhaltHtml: '',
             );
           } catch (e, stackTrace) {
             LoggerService.logError(
@@ -126,17 +127,18 @@ class TrainingService {
         .toList();
   }
 
-  Future<List<Schulung>> fetchAvailableSchulungen() async {
+  Future<List<Schulung>> fetchSchulungstermine(String abDatum) async {
     try {
-      final response = await _httpClient.get('AvailableSchulungen');
-      return _mapAvailableSchulungenResponse(response);
+      final response = await _httpClient.get('Schulungstermine/$abDatum/false');
+      final mappedSchulungen = _mapSchulungstermineResponse(response);
+      return mappedSchulungen;
     } catch (e) {
       LoggerService.logError('Error fetching available Schulungen: $e');
       return [];
     }
   }
 
-  List<Schulung> _mapAvailableSchulungenResponse(dynamic response) {
+  List<Schulung> _mapSchulungstermineResponse(dynamic response) {
     if (response is! List) {
       LoggerService.logError('Expected List but got ${response.runtimeType}');
       return [];
@@ -144,42 +146,40 @@ class TrainingService {
 
     return response
         .map((item) {
-          if (item is! Map<String, dynamic>) {
+          if (item is! Map) {
             LoggerService.logError(
-              'Expected Map<String, dynamic> but got ${item.runtimeType}',
+              'Expected Map but got ${item.runtimeType}',
             );
             return null;
           }
-
+          final map = Map<String, dynamic>.from(item);
           try {
             return Schulung(
-              id: item['SCHULUNGID'] as int? ?? 0,
-              bezeichnung: item['BEZEICHNUNG'] as String? ?? '',
-              datum: item['DATUM']?.toString() ?? '',
-              ausgestelltAm: item['AUSGESTELLTAM']?.toString() ?? '',
-              teilnehmerId: item['SCHULUNGENTEILNEHMERID'] as int? ?? 0,
-              schulungsartId: item['SCHULUNGSARTID'] as int? ?? 0,
-              schulungsartBezeichnung:
-                  item['SCHULUNGSARTBEZEICHNUNG'] as String? ?? '',
-              schulungsartKurzbezeichnung:
-                  item['SCHULUNGSARTKURZBEZEICHNUNG'] as String? ?? '',
-              schulungsartBeschreibung:
-                  item['SCHULUNGSARTBESCHREIBUNG'] as String? ?? '',
-              maxTeilnehmer: item['MAXTEILNEHMER'] as int? ?? 0,
-              anzahlTeilnehmer: item['ANZAHLTEILNEHMER'] as int? ?? 0,
-              ort: item['ORT'] as String? ?? '',
-              uhrzeit: item['UHRZEIT']?.toString() ?? '',
-              dauer: item['DAUER']?.toString() ?? '',
-              preis: item['PREIS']?.toString() ?? '',
-              zielgruppe: item['ZIELGRUPPE'] as String? ?? '',
-              voraussetzungen: item['VORAUSSETZUNGEN'] as String? ?? '',
-              inhalt: item['INHALT'] as String? ?? '',
-              abschluss: item['ABSCHLUSS'] as String? ?? '',
-              anmerkungen: item['ANMERKUNGEN'] as String? ?? '',
-              isOnline: item['ISONLINE'] as bool? ?? false,
-              link: item['LINK'] as String? ?? '',
-              status: item['STATUS'] as String? ?? '',
-              gueltigBis: item['GUELTIGBIS']?.toString() ?? '',
+              id: map['SCHULUNGENTERMINID'] as int? ?? 0,
+              bezeichnung: map['BEZEICHNUNG'] as String? ?? '',
+              datum: map['DATUM']?.toString() ?? '',
+              ausgestelltAm: '', // not in response
+              teilnehmerId: 0, // not in response
+              schulungsartId: map['SCHULUNGSARTID'] as int? ?? 0,
+              schulungsartBezeichnung: '', // not in response
+              schulungsartKurzbezeichnung: '', // not in response
+              schulungsartBeschreibung: '', // not in response
+              maxTeilnehmer: map['MAXTEILNEHMER'] as int? ?? 0,
+              anzahlTeilnehmer: map['ANGEMELDETETEILNEHMER'] as int? ?? 0,
+              ort: map['ORT'] as String? ?? '',
+              uhrzeit: '', // not in response
+              dauer: '', // not in response
+              preis: map['KOSTEN']?.toString() ?? '',
+              zielgruppe: '', // not in response
+              voraussetzungen: '', // not in response
+              inhalt: map['LEHRGANGSINHALT'] as String? ?? '',
+              lehrgangsinhaltHtml: map['LEHRGANGSINHALTHTML'] as String? ?? '',
+              abschluss: '', // not in response
+              anmerkungen: map['BEMERKUNG'] as String? ?? '',
+              isOnline: false, // not in response
+              link: '', // not in response
+              status: map['STATUS']?.toString() ?? '',
+              gueltigBis: map['DATUMBIS']?.toString() ?? '',
             );
           } catch (e) {
             LoggerService.logError('Error mapping Schulung: $e');
@@ -299,6 +299,7 @@ class TrainingService {
               link: item['LINK'] as String? ?? '',
               status: item['STATUS'] as String? ?? '',
               gueltigBis: item['GUELTIGBIS']?.toString() ?? '',
+              lehrgangsinhaltHtml: '',
             );
           } catch (e) {
             LoggerService.logError('Error mapping Schulung: $e');

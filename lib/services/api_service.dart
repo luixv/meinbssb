@@ -111,7 +111,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> changePassword(
-      int personId, String newPassword,) async {
+    int personId,
+    String newPassword,
+  ) async {
     return _authService.changePassword(personId, newPassword);
   }
 
@@ -175,8 +177,8 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<Schulung>> fetchAvailableSchulungen() async {
-    return _trainingService.fetchAvailableSchulungen();
+  Future<List<Schulung>> fetchSchulungstermine(String abDatum) async {
+    return _trainingService.fetchSchulungstermine(abDatum);
   }
 
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {

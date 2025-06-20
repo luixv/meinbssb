@@ -9,6 +9,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
 import '/screens/absolvierte_schulungen_screen.dart';
+import '/screens/veranstalltungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -144,6 +145,27 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AbsolvierteSchulungenScreen(
+                      userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading:
+                  const Icon(Icons.celebration, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Veranstalltungen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VeranstalltungenScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -314,8 +336,10 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.app_registration,
-                  color: UIStyles.menuIconColor,),
+              leading: const Icon(
+                Icons.app_registration,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Registrieren',
                 style: TextStyle(fontSize: _menuItemFontSize),

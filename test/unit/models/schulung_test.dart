@@ -123,6 +123,7 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
       final json = schulung.toJson();
@@ -182,6 +183,7 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
       const schulung2 = Schulung(
@@ -209,6 +211,7 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
       const schulung3 = Schulung(
@@ -236,6 +239,7 @@ void main() {
         link: 'https://different.com',
         status: 'Pending',
         gueltigBis: '2024-06-30',
+        lehrgangsinhaltHtml: '',
       );
 
       expect(schulung1, equals(schulung2));
@@ -268,6 +272,7 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
       const schulung2 = Schulung(
@@ -295,6 +300,7 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
       expect(schulung1.hashCode, equals(schulung2.hashCode));
@@ -326,22 +332,11 @@ void main() {
         link: 'https://test.com',
         status: 'Active',
         gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
       );
 
-      expect(
-        schulung.toString(),
-        equals(
-          'Schulung(id: 1, bezeichnung: Test Training, datum: 2024-01-01, '
-          'ausgestelltAm: 2023-12-01, teilnehmerId: 123, schulungsartId: 456, '
-          'schulungsartBezeichnung: Basic Training, schulungsartKurzbezeichnung: BT, '
-          'schulungsartBeschreibung: Basic training description, maxTeilnehmer: 20, '
-          'anzahlTeilnehmer: 15, ort: Test Location, uhrzeit: 09:00, dauer: 2 hours, '
-          'preis: 50€, zielgruppe: Beginners, voraussetzungen: None, '
-          'inhalt: Training content, abschluss: Certificate, '
-          'anmerkungen: Additional notes, isOnline: true, link: https://test.com, '
-          'status: Active, gueltigBis: 2024-12-31)',
-        ),
-      );
+      expect(schulung.toString(),
+          'Schulung(id: 1, bezeichnung: Test Training, datum: 2024-01-01, ausgestelltAm: 2023-12-01, teilnehmerId: 123, schulungsartId: 456, schulungsartBezeichnung: Basic Training, schulungsartKurzbezeichnung: BT, schulungsartBeschreibung: Basic training description, maxTeilnehmer: 20, anzahlTeilnehmer: 15, ort: Test Location, uhrzeit: 09:00, dauer: 2 hours, preis: 50€, zielgruppe: Beginners, voraussetzungen: None, inhalt: Training content, lehrgangsinhaltHtml: , abschluss: Certificate, anmerkungen: Additional notes, isOnline: true, link: https://test.com, status: Active, gueltigBis: 2024-12-31)');
     });
 
     test('handles null values in JSON', () {

@@ -272,11 +272,11 @@ class MockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<List<_i7.Schulung>>);
 
   @override
-  _i3.Future<List<_i7.Schulung>> fetchAvailableSchulungen() =>
+  _i3.Future<List<_i7.Schulung>> fetchSchulungstermine(String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchAvailableSchulungen,
-          [],
+          #fetchSchulungstermine,
+          [abDatum],
         ),
         returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
       ) as _i3.Future<List<_i7.Schulung>>);
@@ -606,11 +606,11 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
       ) as _i3.Future<List<_i7.Schulung>>);
 
   @override
-  _i3.Future<List<_i7.Schulung>> fetchAvailableSchulungen() =>
+  _i3.Future<List<_i7.Schulung>> fetchSchulungstermine(String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchAvailableSchulungen,
-          [],
+          #fetchSchulungstermine,
+          [abDatum],
         ),
         returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
       ) as _i3.Future<List<_i7.Schulung>>);
