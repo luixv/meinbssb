@@ -103,9 +103,92 @@ class BankDataScreenState extends State<BankDataScreen> {
 
       final bool success = await apiService.registerBankData(bankData);
 
+      if (!mounted) return;
+      if (success) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => BankDataResultScreen(
+              success: true,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Speichern der Bankdaten.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data save: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ein Fehler ist aufgetreten: $e'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } finally {
       if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _isEditing = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _onDeleteBankData() async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Bankdaten löschen'),
+          content: const Text(
+            'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Abbrechen'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Löschen'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _isSaving = true;
+      });
+
+      // Store context in a local variable before async gap
+      final ctx = context;
+      try {
+        final apiService = Provider.of<ApiService>(ctx, listen: false);
+        // Create a BankData object with current data for deletion
+        final bankData = BankData(
+          id: 0, // ID will be determined by the server
+          webloginId: widget.webloginId,
+          kontoinhaber: _kontoinhaberController.text,
+          iban: _ibanController.text,
+          bic: _bicController.text,
+          mandatSeq: 2,
+        );
+        final bool success = await apiService.deleteBankData(bankData);
+
         if (success) {
-          Navigator.of(context).pushReplacement(
+          if (!mounted) return; // ignore: use_build_context_synchronously
+          Navigator.of(ctx).pushReplacement(
             MaterialPageRoute(
               builder: (context) => BankDataResultScreen(
                 success: true,
@@ -116,30 +199,30 @@ class BankDataScreenState extends State<BankDataScreen> {
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
+          if (!mounted) return; // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(ctx).showSnackBar(
             const SnackBar(
-              content: Text('Fehler beim Speichern der Bankdaten.'),
+              content: Text('Fehler beim Löschen der Bankdaten.'),
               duration: Duration(seconds: 3),
             ),
           );
         }
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during bank data save: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+      } catch (e) {
+        LoggerService.logError('Exception during bank data delete: $e');
+        if (!mounted) return;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(ctx).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-          _isEditing = false;
-        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isSaving = false;
+          });
+        }
       }
     }
   }
@@ -285,18 +368,39 @@ class BankDataScreenState extends State<BankDataScreen> {
                 ),
               ],
             )
-          : FloatingActionButton(
-              heroTag: 'bankDataEditFab',
-              onPressed: () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-              backgroundColor: UIConstants.defaultAppColor,
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'bankDataDeleteFab',
+                  onPressed: _isSaving ? null : _onDeleteBankData,
+                  backgroundColor: Colors.red,
+                  child: _isSaving
+                      ? const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          strokeWidth: 2,
+                        )
+                      : const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  heroTag: 'bankDataEditFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
     );
   }
