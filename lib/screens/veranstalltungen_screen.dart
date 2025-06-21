@@ -170,7 +170,7 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                             flex: 1,
                             child: IconButton(
                               icon: const Icon(Icons.description,
-                                  size: 32, color: UIConstants.defaultAppColor),
+                                  size: 32, color: UIConstants.defaultAppColor,),
                               tooltip: 'Inhalt',
                               onPressed: () {
                                 showDialog(
@@ -198,7 +198,7 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                                             onPressed: () =>
                                                 Navigator.of(context).pop(),
                                             child: const Icon(Icons.close,
-                                                color: Colors.white),
+                                                color: Colors.white,),
                                           ),
                                         ),
                                       ],
