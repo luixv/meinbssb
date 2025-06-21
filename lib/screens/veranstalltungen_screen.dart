@@ -40,6 +40,57 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
       firstDate: now,
       lastDate: DateTime(now.year + 5),
       locale: const Locale('de', 'DE'),
+      helpText: 'Datum wählen',
+      cancelText: 'Abbrechen',
+      confirmText: 'Auswählen',
+      fieldLabelText: 'Datum eingeben',
+      fieldHintText: 'TT.MM.JJJJ',
+      errorFormatText: 'Ungültiges Datumsformat.',
+      errorInvalidText: 'Ungültiges Datum.',
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: UIConstants.defaultAppColor,
+                  onPrimary: UIConstants.whiteColor,
+                  surface: UIConstants.calendarBackgroundColor,
+                  onSurface: UIConstants.textColor,
+                ),
+            textButtonTheme: const TextButtonThemeData(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  UIConstants.cancelButtonBackground,
+                ),
+                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
+                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
+              ),
+            ),
+            datePickerTheme: const DatePickerThemeData(
+              headerBackgroundColor: UIConstants.calendarBackgroundColor,
+              backgroundColor: UIConstants.calendarBackgroundColor,
+              headerForegroundColor: UIConstants.textColor,
+              dayStyle: TextStyle(color: UIConstants.textColor),
+              yearStyle: TextStyle(color: UIConstants.textColor),
+              weekdayStyle: TextStyle(color: UIConstants.textColor),
+              confirmButtonStyle: ButtonStyle(
+                backgroundColor:
+                    WidgetStatePropertyAll(UIConstants.primaryColor),
+                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
+                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -150,68 +201,96 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ScaledText(
-                                  'Datum: $formattedDate',
-                                  style: UIStyles.bodyStyle,
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Datum: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(text: formattedDate),
+                                    ],
+                                  ),
                                 ),
-                                ScaledText(
-                                  'Gruppe: ${schulung.schulungsartId}',
-                                  style: UIStyles.bodyStyle,
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Gruppe: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '${schulung.schulungsartId}',
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                ScaledText(
-                                  'Ort: ${schulung.ort}',
-                                  style: UIStyles.bodyStyle,
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Ort: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(text: schulung.ort),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            flex: 1,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.description,
-                                size: 32,
-                                color: UIConstants.defaultAppColor,
-                              ),
-                              tooltip: 'Inhalt',
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Dialog(
-                                    child: Stack(
-                                      children: [
-                                        SizedBox(
-                                          width: 400,
-                                          height: 400,
-                                          child: SingleChildScrollView(
-                                            child: Html(
-                                              data:
-                                                  schulung.lehrgangsinhaltHtml,
-                                            ),
+                          FloatingActionButton(
+                            heroTag: 'veranstalltungenContentFab$index',
+                            backgroundColor: UIConstants.defaultAppColor,
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog(
+                                  child: Stack(
+                                    children: [
+                                      SizedBox(
+                                        width: 400,
+                                        height: 400,
+                                        child: SingleChildScrollView(
+                                          child: Html(
+                                            data: schulung.lehrgangsinhaltHtml,
                                           ),
                                         ),
-                                        Positioned(
-                                          bottom: 16,
-                                          right: 16,
-                                          child: FloatingActionButton(
-                                            heroTag: 'veranstalltungenCloseFab',
-                                            mini: true,
-                                            backgroundColor:
-                                                UIConstants.defaultAppColor,
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: const Icon(
-                                              Icons.close,
-                                              color: Colors.white,
-                                            ),
+                                      ),
+                                      Positioned(
+                                        bottom: 16,
+                                        right: 16,
+                                        child: FloatingActionButton(
+                                          heroTag: 'veranstalltungenCloseFab',
+                                          mini: true,
+                                          backgroundColor:
+                                              UIConstants.defaultAppColor,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                );
-                              },
+                                ),
+                              );
+                            },
+                            child: const Icon(
+                              Icons.description,
+                              color: Colors.white,
                             ),
                           ),
                         ],

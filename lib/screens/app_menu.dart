@@ -155,7 +155,7 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading:
-                  const Icon(Icons.celebration, color: UIStyles.menuIconColor),
+                  const Icon(Icons.gps_fixed, color: UIStyles.menuIconColor),
               title: const ScaledText(
                 'Veranstalltungen',
                 style: TextStyle(fontSize: _menuItemFontSize),

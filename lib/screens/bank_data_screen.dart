@@ -156,9 +156,9 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
           content: RichText(
             textAlign: TextAlign.center,
-            text: TextSpan(
+            text: const TextSpan(
               style: UIStyles.dialogContentStyle,
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                   text:
                       'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
