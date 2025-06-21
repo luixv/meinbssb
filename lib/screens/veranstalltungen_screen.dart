@@ -169,8 +169,11 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                           Expanded(
                             flex: 1,
                             child: IconButton(
-                              icon: const Icon(Icons.description,
-                                  size: 32, color: UIConstants.defaultAppColor,),
+                              icon: const Icon(
+                                Icons.description,
+                                size: 32,
+                                color: UIConstants.defaultAppColor,
+                              ),
                               tooltip: 'Inhalt',
                               onPressed: () {
                                 showDialog(
@@ -192,13 +195,16 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                                           bottom: 16,
                                           right: 16,
                                           child: FloatingActionButton(
+                                            heroTag: 'veranstalltungenCloseFab',
                                             mini: true,
                                             backgroundColor:
                                                 UIConstants.defaultAppColor,
                                             onPressed: () =>
                                                 Navigator.of(context).pop(),
-                                            child: const Icon(Icons.close,
-                                                color: Colors.white,),
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ],

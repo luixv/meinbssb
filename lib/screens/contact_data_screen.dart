@@ -563,6 +563,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'contactDataFab',
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(Icons.add, color: Colors.white),

@@ -44,7 +44,7 @@ class BankDataResultScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'schuetzenausweisFab',
+        heroTag: 'bankDataResultFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',

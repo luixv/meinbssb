@@ -65,8 +65,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           apiService.fetchBankData(widget.webloginId).then((list) {
         final hasData = list.isNotEmpty;
         if (mounted) {
-          setState(() {
-          });
+          setState(() {});
         }
         return hasData ? list.first : null;
       });
@@ -77,12 +76,10 @@ class BankDataScreenState extends State<BankDataScreen> {
       LoggerService.logError('Error setting up bank data fetch: $e');
       _bankDataFuture = Future.value(null); // Provide null on error
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
-
 
   Future<void> _onSaveBankData() async {
     if (!_formKey.currentState!.validate()) {
@@ -253,6 +250,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FloatingActionButton(
+                  heroTag: 'bankDataCancelFab',
                   onPressed: () {
                     setState(() {
                       _isEditing = false;
@@ -270,6 +268,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
+                  heroTag: 'bankDataSaveFab',
                   onPressed: _isSaving ? null : _onSaveBankData,
                   backgroundColor: UIConstants.defaultAppColor,
                   child: _isSaving
@@ -287,6 +286,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               ],
             )
           : FloatingActionButton(
+              heroTag: 'bankDataEditFab',
               onPressed: () {
                 setState(() {
                   _isEditing = true;
