@@ -145,21 +145,80 @@ class BankDataScreenState extends State<BankDataScreen> {
   Future<void> _onDeleteBankData() async {
     final bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('Bankdaten löschen'),
-          content: const Text(
-            'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: Text(
+              'Bankdaten löschen',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: const <TextSpan>[
+                TextSpan(
+                  text:
+                      'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Abbrechen'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Löschen'),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(false);
+                      },
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
+                          UIConstants.horizontalSpacingS,
+                          Text(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  UIConstants.horizontalSpacingM,
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop(true);
+                      },
+                      style: UIStyles.dialogAcceptButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.check, color: UIConstants.checkIcon),
+                          UIConstants.horizontalSpacingS,
+                          Text(
+                            'Löschen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -374,7 +433,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                 FloatingActionButton(
                   heroTag: 'bankDataDeleteFab',
                   onPressed: _isSaving ? null : _onDeleteBankData,
-                  backgroundColor: Colors.red,
+                  backgroundColor: UIConstants.defaultAppColor,
                   child: _isSaving
                       ? const CircularProgressIndicator(
                           valueColor:
@@ -382,7 +441,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                           strokeWidth: 2,
                         )
                       : const Icon(
-                          Icons.delete,
+                          Icons.delete_outline,
                           color: Colors.white,
                         ),
                 ),
