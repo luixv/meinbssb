@@ -196,8 +196,9 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                       padding: const EdgeInsets.all(UIConstants.spacingM),
                       child: Row(
                         children: [
+                          // Left: date, group, location
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -248,44 +249,152 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                               ],
                             ),
                           ),
+                          // Center: title (centered horizontally)
                           const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            flex: 2,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                schulung.bezeichnung,
+                                style: UIStyles.subtitleStyle,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          // Right: description icon
                           FloatingActionButton(
                             heroTag: 'veranstalltungenContentFab$index',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                builder: (context) => Dialog(
-                                  child: Stack(
-                                    children: [
-                                      SizedBox(
-                                        width: 400,
-                                        height: 400,
-                                        child: SingleChildScrollView(
-                                          child: Html(
-                                            data: schulung.lehrgangsinhaltHtml,
+                                builder: (context) {
+                                  int currentIndex = index;
+                                  return StatefulBuilder(
+                                    builder: (context, setState) => Dialog(
+                                      child: Stack(
+                                        children: [
+                                          SizedBox(
+                                            width: UIConstants.dialogWidth,
+                                            height: UIConstants.dialogHeight,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    16.0,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        _results[currentIndex]
+                                                            .bezeichnung,
+                                                        style: UIStyles
+                                                            .headerStyle,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: UIConstants
+                                                            .spacingS,
+                                                      ),
+                                                      Text(
+                                                        'Datum: ${_results[currentIndex].datum.isNotEmpty ? DateFormat('dd.MM.yyyy').format(DateTime.tryParse(_results[currentIndex].datum) ?? DateTime.now()) : ''}',
+                                                        style:
+                                                            UIStyles.bodyStyle,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Row(
+                                                    children: [
+                                                      // Left arrow
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                          Icons.arrow_left,
+                                                          color: UIConstants
+                                                              .defaultAppColor,
+                                                        ),
+                                                        iconSize: UIConstants
+                                                                .dialogFontSize *
+                                                            2,
+                                                        onPressed:
+                                                            currentIndex > 0
+                                                                ? () =>
+                                                                    setState(
+                                                                      () =>
+                                                                          currentIndex--,
+                                                                    )
+                                                                : null,
+                                                      ),
+                                                      // Description content
+                                                      Expanded(
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Html(
+                                                            data: _results[
+                                                                    currentIndex]
+                                                                .lehrgangsinhaltHtml,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // Right arrow
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                          Icons.arrow_right,
+                                                          color: UIConstants
+                                                              .defaultAppColor,
+                                                        ),
+                                                        iconSize: UIConstants
+                                                                .dialogFontSize *
+                                                            2,
+                                                        onPressed: currentIndex <
+                                                                _results.length -
+                                                                    1
+                                                            ? () => setState(
+                                                                  () =>
+                                                                      currentIndex++,
+                                                                )
+                                                            : null,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 16,
-                                        right: 16,
-                                        child: FloatingActionButton(
-                                          heroTag: 'veranstalltungenCloseFab',
-                                          mini: true,
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
+                                          // Close button
+                                          Positioned(
+                                            bottom: 16,
+                                            right: 16,
+                                            child: FloatingActionButton(
+                                              heroTag:
+                                                  'veranstalltungenCloseFab',
+                                              mini: true,
+                                              backgroundColor:
+                                                  UIConstants.defaultAppColor,
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  );
+                                },
                               );
                             },
                             child: const Icon(

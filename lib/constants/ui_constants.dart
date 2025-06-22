@@ -323,4 +323,7 @@ class UIConstants {
   static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
   static const String personalDataSaved =
       'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
+
+  static const double dialogWidth = 400.0;
+  static const double dialogHeight = 400.0;
 }
