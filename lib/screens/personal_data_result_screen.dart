@@ -38,8 +38,8 @@ class PersonalDataResultScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               success
-                  ? 'Ihre persönlichen Daten wurden erfolgreich gespeichert.'
-                  : 'Es ist ein Fehler aufgetreten.',
+                  ? UIConstants.personalDataSaved
+                  : UIConstants.errorOccurred,
               style: const TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),

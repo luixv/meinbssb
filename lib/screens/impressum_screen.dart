@@ -35,7 +35,7 @@ class ImpressumScreen extends StatelessWidget {
                 'Für den Inhalt verantwortlich sind:',
                 style: TextStyle(
                     fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -58,7 +58,7 @@ class ImpressumScreen extends StatelessWidget {
                 'Realisierung des Internetauftritts',
                 style: TextStyle(
                     fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -85,7 +85,7 @@ class ImpressumScreen extends StatelessWidget {
                 'Inhaltlich verantwortlich für die Teilbereiche',
                 style: TextStyle(
                     fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -174,7 +174,7 @@ class ImpressumScreen extends StatelessWidget {
                 'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
                 style: TextStyle(
                     fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(

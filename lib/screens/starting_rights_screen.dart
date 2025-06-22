@@ -129,7 +129,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ScaledText(
-                        'Erstverein',
+                        UIConstants.clubLabel,
                         style: UIStyles.headerStyle.copyWith(
                           color: UIConstants.defaultAppColor,
                         ),
@@ -199,7 +199,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         Consumer<FontSizeProvider>(
                           builder: (context, fontSizeProvider, child) {
                             return ScaledText(
-                              'Keine Erstvereinsdaten verfügbar.',
+                              UIConstants.noPrimaryClubDataAvailable,
                               style: UIStyles.bodyStyle.copyWith(
                                 fontSize: UIStyles.bodyStyle.fontSize! *
                                     fontSizeProvider.scaleFactor,
@@ -390,7 +390,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         Consumer<FontSizeProvider>(
                           builder: (context, fontSizeProvider, child) {
                             return ScaledText(
-                              'Keine Zweitvereine verfügbar.',
+                              UIConstants.noSecondaryClubsAvailable,
                               style: UIStyles.bodyStyle.copyWith(
                                 fontSize: UIStyles.bodyStyle.fontSize! *
                                     fontSizeProvider.scaleFactor,

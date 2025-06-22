@@ -301,4 +301,26 @@ class UIConstants {
   static const String fontSizeTitle = 'Textgröße';
   static const String fontSizeDescription =
       'Anpassung der Textgröße für bessere Lesbarkeit';
+
+  static const String firstNameLabel = 'Vorname';
+  static const String lastNameLabel = 'Nachname';
+  static const String clubLabel = 'Erstverein';
+  static const String noPersonalDataAvailable =
+      'Keine persönlichen Daten verfügbar.';
+  static const String noPrimaryClubDataAvailable =
+      'Keine Erstvereinsdaten verfügbar.';
+  static const String noSecondaryClubsAvailable =
+      'Keine Zweitvereine verfügbar.';
+  static const String registrationSuccessTitle = 'Registrierung erfolgreich';
+  static const String registrationSuccessMessage =
+      'Ihre Registrierung war erfolgreich.';
+  static const String privacyTitle = 'Datenschutz';
+  static const String privacyPlaceholder =
+      'Hier stehen die Datenschutzbestimmungen des BSSB.';
+  static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
+  static const String contactDataDeleteQuestion =
+      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
+  static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
+  static const String personalDataSaved =
+      'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
 }

@@ -354,7 +354,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         : _currentPassData == null && !_isLoading
             ? Center(
                 child: ScaledText(
-                  'Keine persönlichen Daten verfügbar.',
+                  UIConstants.noPersonalDataAvailable,
                   style:
                       UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
                 ),

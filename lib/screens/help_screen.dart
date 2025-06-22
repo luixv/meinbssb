@@ -62,7 +62,7 @@ class HelpScreen extends StatelessWidget {
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(
                     fontSize: UIConstants.headerFontSize,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(

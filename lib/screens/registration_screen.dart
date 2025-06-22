@@ -294,7 +294,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             TextField(
               controller: _firstNameController,
               decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Vorname',
+                labelText: UIConstants.firstNameLabel,
               ),
               style: UIStyles.formValueStyle,
             ),
@@ -302,7 +302,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             TextField(
               controller: _lastNameController,
               decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Nachname',
+                labelText: UIConstants.lastNameLabel,
               ),
               style: UIStyles.formValueStyle,
             ),

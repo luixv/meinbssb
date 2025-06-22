@@ -90,7 +90,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: Text(
-              'Kontaktdaten löschen',
+              UIConstants.contactDataDeleteTitle,
               style: UIStyles.dialogTitleStyle,
             ),
           ),
@@ -100,7 +100,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
-                  text: 'Sind Sie sicher, dass Sie die Kontaktdaten ',
+                  text: UIConstants.contactDataDeleteQuestion,
                 ),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
