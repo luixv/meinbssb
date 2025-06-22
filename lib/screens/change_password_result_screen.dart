@@ -30,14 +30,14 @@ class ChangePasswordResultScreen extends StatelessWidget {
             Icon(
               success ? Icons.check_circle : Icons.error,
               color: success ? Colors.green : Colors.red,
-              size: 64,
+              size: UIConstants.iconSizeXL,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               success
                   ? 'Ihr Passwort wurde erfolgreich geändert.'
                   : 'Es ist ein Fehler beim Ändern des Passworts aufgetreten.',
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
           ],

@@ -148,6 +148,13 @@ class UIConstants {
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
   static const double iconSizeL = 32.0;
+  static const double iconSizeXL = 64.0;
+  static const double iconSizeM = 48.0;
+  static const double dialogFontSize = 18.0;
+  static const double smallButtonSize = 40.0;
+  static const double fabSmallIconSize = 20.0;
+  static const double dividerThick = 6.0;
+  static const Duration snackbarDuration = Duration(seconds: 3);
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
