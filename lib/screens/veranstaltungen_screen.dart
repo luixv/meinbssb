@@ -304,7 +304,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                 .symmetric(
                                                                 vertical: 8.0,
                                                                 horizontal:
-                                                                    12.0),
+                                                                    12.0,),
                                                         decoration:
                                                             BoxDecoration(
                                                           color: UIConstants
@@ -324,12 +324,12 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Datum: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(DateFormat(
-                                                                        'dd.MM.yyyy')
+                                                                        'dd.MM.yyyy',)
                                                                     .format(_results[
                                                                             currentIndex]
-                                                                        .datum)),
+                                                                        .datum,),),
                                                               ],
                                                             ),
                                                             Row(
@@ -338,10 +338,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Gruppe: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
-                                                                    .webGruppeLabel),
+                                                                    .webGruppeLabel,),
                                                               ],
                                                             ),
                                                             Row(
@@ -350,10 +350,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Ort: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
-                                                                    .ort),
+                                                                    .ort,),
                                                               ],
                                                             ),
                                                             Row(
@@ -362,11 +362,11 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Kosten: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
                                                                     .kosten
-                                                                    .toString()),
+                                                                    .toString(),),
                                                               ],
                                                             ),
                                                             Row(
@@ -375,11 +375,11 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Max. Teilnehmer: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
                                                                     .maxTeilnehmer
-                                                                    .toString()),
+                                                                    .toString(),),
                                                               ],
                                                             ),
                                                             Row(
@@ -388,10 +388,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Leiter Tel: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
-                                                                    .lehrgangsleiterTel),
+                                                                    .lehrgangsleiterTel,),
                                                               ],
                                                             ),
                                                             Row(
@@ -400,10 +400,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                     'Leiter Mail: ',
                                                                     style: TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight.bold)),
+                                                                            FontWeight.bold,),),
                                                                 Text(_results[
                                                                         currentIndex]
-                                                                    .lehrgangsleiterMail),
+                                                                    .lehrgangsleiterMail,),
                                                               ],
                                                             ),
                                                           ],
