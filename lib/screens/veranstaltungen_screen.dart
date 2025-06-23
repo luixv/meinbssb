@@ -302,9 +302,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                                vertical: 8.0,
-                                                                horizontal:
-                                                                    12.0,),
+                                                          vertical: 8.0,
+                                                          horizontal: 12.0,
+                                                        ),
                                                         decoration:
                                                             BoxDecoration(
                                                           color: UIConstants
@@ -321,89 +321,133 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Datum: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(DateFormat(
-                                                                        'dd.MM.yyyy',)
-                                                                    .format(_results[
+                                                                  'Datum: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  DateFormat(
+                                                                    'dd.MM.yyyy',
+                                                                  ).format(
+                                                                    _results[
                                                                             currentIndex]
-                                                                        .datum,),),
+                                                                        .datum,
+                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Gruppe: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .webGruppeLabel,),
+                                                                  'Gruppe: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .webGruppeLabel,
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Ort: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .ort,),
+                                                                  'Ort: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .ort,
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Kosten: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .kosten
-                                                                    .toString(),),
+                                                                  'Kosten: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .kosten
+                                                                      .toString(),
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Max. Teilnehmer: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .maxTeilnehmer
-                                                                    .toString(),),
+                                                                  'Max. Teilnehmer: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .maxTeilnehmer
+                                                                      .toString(),
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Leiter Tel: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .lehrgangsleiterTel,),
+                                                                  'Leiter Tel: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .lehrgangsleiterTel,
+                                                                ),
                                                               ],
                                                             ),
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Leiter Mail: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
-                                                                Text(_results[
-                                                                        currentIndex]
-                                                                    .lehrgangsleiterMail,),
+                                                                  'Leiter Mail: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  _results[
+                                                                          currentIndex]
+                                                                      .lehrgangsleiterMail,
+                                                                ),
                                                               ],
                                                             ),
                                                           ],
@@ -439,6 +483,345 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                   Navigator.of(context).pop(),
                                               child: const Icon(
                                                 Icons.close,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          // Registration FAB
+                                          Positioned(
+                                            bottom: 16 +
+                                                56 +
+                                                16, // 16px below the cancel FAB (assuming FAB height 56)
+                                            right: 16,
+                                            child: FloatingActionButton(
+                                              heroTag:
+                                                  'veranstaltungenRegisterFab',
+                                              mini: true,
+                                              backgroundColor:
+                                                  UIConstants.defaultAppColor,
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                                // Show the booking dialog
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    final user =
+                                                        widget.userData;
+                                                    // TODO: Fetch bank data for the user if needed
+                                                    const bankData =
+                                                        null; // Replace with actual fetch if needed
+                                                    return Dialog(
+                                                      child: Padding(
+                                                        padding: UIConstants
+                                                            .dialogPadding,
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .stretch,
+                                                            children: [
+                                                              const Text(
+                                                                'Veranstaltung buchen',
+                                                                style: UIStyles
+                                                                    .headerStyle,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ),
+                                                              Text(
+                                                                _results[
+                                                                        currentIndex]
+                                                                    .bezeichnung,
+                                                                style: UIStyles
+                                                                    .subtitleStyle,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ),
+                                                              Text(
+                                                                'Es sind noch ${_results[currentIndex].angemeldeteTeilnehmer} von ${_results[currentIndex].maxTeilnehmer} Plätzen frei.',
+                                                                style: UIStyles
+                                                                    .bodyStyle,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingL,
+                                                              ),
+                                                              // Personal Data Block
+                                                              Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: UIConstants
+                                                                      .whiteColor,
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: UIConstants
+                                                                        .mydarkGreyColor,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                    UIConstants
+                                                                        .cornerRadius,
+                                                                  ),
+                                                                ),
+                                                                padding: UIConstants
+                                                                    .defaultPadding,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Persönliche Daten',
+                                                                      style: UIStyles
+                                                                          .sectionTitleStyle,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: user?.vorname ?? ''),
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'Vorname'),
+                                                                            readOnly:
+                                                                                true,
+                                                                            style:
+                                                                                UIStyles.formValueBoldStyle,
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              UIConstants.spacingM,
+                                                                        ),
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: user?.namen ?? ''),
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'Nachname'),
+                                                                            readOnly:
+                                                                                true,
+                                                                            style:
+                                                                                UIStyles.formValueBoldStyle,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: user?.telefon ?? ''),
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'Telefonnummer'),
+                                                                            readOnly:
+                                                                                true,
+                                                                            style:
+                                                                                UIStyles.formValueBoldStyle,
+                                                                          ),
+                                                                        ),
+                                                                        // E-Mail field: if available in user, otherwise empty
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              UIConstants.spacingM,
+                                                                        ),
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: ''), // TODO: Fill with user email if available
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
+                                                                            readOnly:
+                                                                                true,
+                                                                            style:
+                                                                                UIStyles.formValueBoldStyle,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingL,
+                                                              ),
+                                                              // Bank Data Block
+                                                              Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: UIConstants
+                                                                      .whiteColor,
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: UIConstants
+                                                                        .mydarkGreyColor,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                    UIConstants
+                                                                        .cornerRadius,
+                                                                  ),
+                                                                ),
+                                                                padding: UIConstants
+                                                                    .defaultPadding,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Bankdaten',
+                                                                      style: UIStyles
+                                                                          .sectionTitleStyle,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
+                                                                    TextField(
+                                                                      controller:
+                                                                          TextEditingController(
+                                                                        text: bankData?.kontoinhaber ??
+                                                                            '',
+                                                                      ),
+                                                                      decoration: UIStyles
+                                                                          .formInputDecoration
+                                                                          .copyWith(
+                                                                        labelText:
+                                                                            'Kontoinhaber',
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: bankData?.iban ?? ''),
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'IBAN'),
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              UIConstants.spacingM,
+                                                                        ),
+                                                                        Expanded(
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                TextEditingController(text: bankData?.bic ?? ''),
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'BIC'),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingL,
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  FloatingActionButton(
+                                                                    heroTag:
+                                                                        'buchungCancelFab',
+                                                                    mini: true,
+                                                                    backgroundColor:
+                                                                        UIConstants
+                                                                            .defaultAppColor,
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 16,
+                                                                  ),
+                                                                  FloatingActionButton(
+                                                                    heroTag:
+                                                                        'buchungOkFab',
+                                                                    mini: true,
+                                                                    backgroundColor:
+                                                                        UIConstants
+                                                                            .defaultAppColor,
+                                                                    onPressed:
+                                                                        () {
+                                                                      /* TODO: Implement OK logic */
+                                                                    },
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .check,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: const Icon(
+                                                Icons.how_to_reg,
                                                 color: Colors.white,
                                               ),
                                             ),
