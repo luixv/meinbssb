@@ -345,7 +345,7 @@ class StylesScreen extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(UIConstants.spacingS),
       decoration: BoxDecoration(
-        border: Border.all(color: UIConstants.greyColor),
+        border: Border.all(color: UIConstants.mydarkGreyColor),
         borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
       ),
       child: Row(

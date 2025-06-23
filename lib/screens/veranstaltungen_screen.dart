@@ -10,8 +10,8 @@ import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-class VeranstalltungenScreen extends StatefulWidget {
-  const VeranstalltungenScreen(
+class VeranstaltungenScreen extends StatefulWidget {
+  const VeranstaltungenScreen(
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
@@ -22,10 +22,10 @@ class VeranstalltungenScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  State<VeranstalltungenScreen> createState() => _VeranstalltungenScreenState();
+  State<VeranstaltungenScreen> createState() => _VeranstaltungenScreenState();
 }
 
-class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
+class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
   DateTime? _selectedDate;
   bool _isLoading = false;
   List<Schulung> _results = [];
@@ -133,7 +133,7 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Veranstalltungen',
+      title: 'Veranstaltungen',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -265,7 +265,7 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                           ),
                           // Right: description icon
                           FloatingActionButton(
-                            heroTag: 'veranstalltungenContentFab$index',
+                            heroTag: 'veranstaltungenContentFab$index',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () {
                               showDialog(
@@ -378,7 +378,7 @@ class _VeranstalltungenScreenState extends State<VeranstalltungenScreen> {
                                             right: 16,
                                             child: FloatingActionButton(
                                               heroTag:
-                                                  'veranstalltungenCloseFab',
+                                                  'veranstaltungenCloseFab',
                                               mini: true,
                                               backgroundColor:
                                                   UIConstants.defaultAppColor,

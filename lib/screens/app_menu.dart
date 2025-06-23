@@ -9,7 +9,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
 import '/screens/absolvierte_schulungen_screen.dart';
-import '/screens/veranstalltungen_screen.dart';
+import 'veranstaltungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -157,7 +157,7 @@ class AppDrawer extends StatelessWidget {
               leading:
                   const Icon(Icons.gps_fixed, color: UIStyles.menuIconColor),
               title: const ScaledText(
-                'Veranstalltungen',
+                'Veranstaltungen',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
@@ -165,7 +165,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => VeranstalltungenScreen(
+                    builder: (context) => VeranstaltungenScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

@@ -18,7 +18,7 @@ class ThemeProvider extends ChangeNotifier {
       onPrimary: UIConstants.whiteColor,
       secondary: UIConstants.foregroundColor,
       onSecondary: UIConstants.whiteColor,
-      surface: isDark ? UIConstants.greyColor : UIConstants.whiteColor,
+      surface: isDark ? UIConstants.mydarkGreyColor : UIConstants.whiteColor,
       onSurface: isDark ? UIConstants.whiteColor : UIConstants.textColor,
       error: UIConstants.errorColor,
       onError: UIConstants.whiteColor,
@@ -53,11 +53,11 @@ class ThemeProvider extends ChangeNotifier {
         errorStyle: UIStyles.errorStyle,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.greyColor),
+          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.greyColor),
+          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
