@@ -275,16 +275,6 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.error, 'Error - Error messages'),
                 _buildIconExample(Icons.home, 'Home - Home navigation'),
                 _buildIconExample(
-                  Icons.remove_circle_outline,
-                  'Remove - Decrease font size',
-                ),
-                _buildIconExample(
-                  Icons.add_circle_outline,
-                  'Add - Increase font size',
-                ),
-                _buildIconExample(Icons.restore, 'Restore - Reset font size'),
-                _buildIconExample(Icons.school_outlined, 'School - Training'),
-                _buildIconExample(
                   Icons.delete_outline_outlined,
                   'Delete - Remove items',
                 ),
@@ -302,9 +292,10 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.school, 'School - Training menu'),
                 _buildIconExample(Icons.badge, 'Badge - User profile'),
                 _buildIconExample(Icons.edit, 'Edit - Edit content'),
-                _buildIconExample(Icons.celebration, 'Celebration - Events'),
                 _buildIconExample(
-                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo',),
+                  Icons.add_a_photo_outlined,
+                  'Add a photo - Profile photo',
+                ),
                 _buildIconExample(Icons.person, 'Person - User profile'),
                 _buildIconExample(
                   Icons.contact_phone,
@@ -323,6 +314,23 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(
                   Icons.search,
                   'Search - Search functionality',
+                ),
+                _buildIconExample(
+                  Icons.signal_cellular_4_bar,
+                  'Signal - Mobile Data',
+                ),
+                _buildIconExample(
+                  Icons.delete_forever,
+                  'Delete Forever - Destructive Action',
+                ),
+                _buildIconExample(
+                  Icons.sports_bar_outlined,
+                  'Oktoberfestlandesschießen',
+                ),
+                _buildIconExample(Icons.rule, 'Rule - Startrechte Ändern'),
+                _buildIconExample(
+                  Icons.cloud_off,
+                  'Cloud Off - No Cloud Connection',
                 ),
               ],
             ),

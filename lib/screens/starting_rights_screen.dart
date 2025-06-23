@@ -48,7 +48,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   @override
   void dispose() {
-    _autocompleteTextController.dispose();
+    _searchController.dispose();
+    // Do NOT dispose _autocompleteTextController, as it's managed by Autocomplete
     super.dispose();
   }
 

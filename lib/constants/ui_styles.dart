@@ -380,4 +380,7 @@ class UIStyles {
 
   // Tooltip Colors
   static const Color tooltipIconColor = Colors.black;
+
+  // Add a background color for profile pictures
+  static const Color profilePictureBackgroundColor = UIConstants.greyColor;
 }
