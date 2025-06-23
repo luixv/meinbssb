@@ -6,6 +6,7 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
+import '/models/schulungstermine.dart';
 
 class TrainingService {
   TrainingService({
@@ -127,66 +128,39 @@ class TrainingService {
         .toList();
   }
 
-  Future<List<Schulung>> fetchSchulungstermine(String abDatum) async {
+  Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
     try {
       final response = await _httpClient.get('Schulungstermine/$abDatum/false');
-      final mappedSchulungen = _mapSchulungstermineResponse(response);
-      return mappedSchulungen;
+      final termine = _mapSchulungstermineResponseToTermine(response);
+      termine.sort((a, b) => a.datum.compareTo(b.datum));
+      return termine;
     } catch (e) {
-      LoggerService.logError('Error fetching available Schulungen: $e');
+      LoggerService.logError('Error fetching available Schulungstermine: $e');
       return [];
     }
   }
 
-  List<Schulung> _mapSchulungstermineResponse(dynamic response) {
+  List<Schulungstermine> _mapSchulungstermineResponseToTermine(
+      dynamic response,) {
     if (response is! List) {
       LoggerService.logError('Expected List but got ${response.runtimeType}');
       return [];
     }
-
     return response
         .map((item) {
-          if (item is! Map) {
+          if (item is! Map<String, dynamic>) {
             LoggerService.logError(
-              'Expected Map but got ${item.runtimeType}',
-            );
+                'Expected Map<String, dynamic> but got ${item.runtimeType}',);
             return null;
           }
-          final map = Map<String, dynamic>.from(item);
           try {
-            return Schulung(
-              id: map['SCHULUNGENTERMINID'] as int? ?? 0,
-              bezeichnung: map['BEZEICHNUNG'] as String? ?? '',
-              datum: map['DATUM']?.toString() ?? '',
-              ausgestelltAm: '', // not in response
-              teilnehmerId: 0, // not in response
-              schulungsartId: map['SCHULUNGSARTID'] as int? ?? 0,
-              schulungsartBezeichnung: '', // not in response
-              schulungsartKurzbezeichnung: '', // not in response
-              schulungsartBeschreibung: '', // not in response
-              maxTeilnehmer: map['MAXTEILNEHMER'] as int? ?? 0,
-              anzahlTeilnehmer: map['ANGEMELDETETEILNEHMER'] as int? ?? 0,
-              ort: map['ORT'] as String? ?? '',
-              uhrzeit: '', // not in response
-              dauer: '', // not in response
-              preis: map['KOSTEN']?.toString() ?? '',
-              zielgruppe: '', // not in response
-              voraussetzungen: '', // not in response
-              inhalt: map['LEHRGANGSINHALT'] as String? ?? '',
-              lehrgangsinhaltHtml: map['LEHRGANGSINHALTHTML'] as String? ?? '',
-              abschluss: '', // not in response
-              anmerkungen: map['BEMERKUNG'] as String? ?? '',
-              isOnline: false, // not in response
-              link: '', // not in response
-              status: map['STATUS']?.toString() ?? '',
-              gueltigBis: map['DATUMBIS']?.toString() ?? '',
-            );
+            return Schulungstermine.fromJson(item);
           } catch (e) {
-            LoggerService.logError('Error mapping Schulung: $e');
+            LoggerService.logError('Error mapping Schulungstermine: $e');
             return null;
           }
         })
-        .whereType<Schulung>()
+        .whereType<Schulungstermine>()
         .toList();
   }
 

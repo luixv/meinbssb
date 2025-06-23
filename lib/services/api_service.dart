@@ -25,6 +25,7 @@ import '/models/verein.dart';
 import '/models/user_data.dart';
 import '/models/fremde_verband.dart';
 import '/models/schulungsart.dart';
+import '/models/schulungstermine.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -177,7 +178,7 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<Schulung>> fetchSchulungstermine(String abDatum) async {
+  Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
     return _trainingService.fetchSchulungstermine(abDatum);
   }
 

@@ -750,49 +750,50 @@ void main() {
       final result = await trainingService.fetchSchulungstermine('15.08.2025');
       expect(result.length, 1);
       final s = result[0];
-      expect(s.id, 42);
+      expect(s.schulungsterminId, 42);
       expect(s.schulungsartId, 7);
-      expect(s.datum, '2025-08-15T00:00:00.000+02:00');
+      expect(s.datum, DateTime.parse('2025-08-15T00:00:00.000+02:00'));
       expect(s.ort, 'München');
       expect(s.maxTeilnehmer, 50);
-      expect(s.anzahlTeilnehmer, 10);
-      expect(s.inhalt, 'Inhalt Text');
+      expect(s.angemeldeteTeilnehmer, 10);
+      expect(s.lehrgangsinhalt, 'Inhalt Text');
       expect(s.lehrgangsinhaltHtml, '<b>HTML Inhalt</b>');
-      expect(s.status, '1');
-      expect(s.gueltigBis, '2025-08-16T00:00:00.000+02:00');
+      expect(s.status, 1);
+      expect(s.datumBis, '2025-08-16T00:00:00.000+02:00');
     });
 
     test('handles null/missing fields with defaults', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2030/false'))
-          .thenAnswer((_) async => [
-                {
-                  'SCHULUNGENTERMINID': null,
-                  'SCHULUNGSARTID': null,
-                  'DATUM': null,
-                  'BEMERKUNG': null,
-                  'KOSTEN': null,
-                  'ORT': null,
-                  'MAXTEILNEHMER': null,
-                  'ANGEMELDETETEILNEHMER': null,
-                  'LEHRGANGSINHALT': null,
-                  'LEHRGANGSINHALTHTML': null,
-                  'STATUS': null,
-                  'DATUMBIS': null,
-                },
-              ],);
+      when(mockHttpClient.get('Schulungstermine/01.01.2030/false')).thenAnswer(
+        (_) async => [
+          {
+            'SCHULUNGENTERMINID': null,
+            'SCHULUNGSARTID': null,
+            'DATUM': null,
+            'BEMERKUNG': null,
+            'KOSTEN': null,
+            'ORT': null,
+            'MAXTEILNEHMER': null,
+            'ANGEMELDETETEILNEHMER': null,
+            'LEHRGANGSINHALT': null,
+            'LEHRGANGSINHALTHTML': null,
+            'STATUS': null,
+            'DATUMBIS': null,
+          },
+        ],
+      );
       final result = await trainingService.fetchSchulungstermine('01.01.2030');
       expect(result.length, 1);
       final s = result[0];
-      expect(s.id, 0);
+      expect(s.schulungsterminId, 0);
       expect(s.schulungsartId, 0);
       expect(s.datum, '');
       expect(s.ort, '');
       expect(s.maxTeilnehmer, 0);
-      expect(s.anzahlTeilnehmer, 0);
-      expect(s.inhalt, '');
+      expect(s.angemeldeteTeilnehmer, 0);
+      expect(s.lehrgangsinhalt, '');
       expect(s.lehrgangsinhaltHtml, '');
       expect(s.status, '');
-      expect(s.gueltigBis, '');
+      expect(s.datumBis, '');
     });
 
     test('returns empty list for non-list response', () async {

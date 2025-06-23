@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/schulung.dart';
+import '/models/schulungstermine.dart';
 import '/models/user_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
@@ -28,7 +28,7 @@ class VeranstaltungenScreen extends StatefulWidget {
 class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
   DateTime? _selectedDate;
   bool _isLoading = false;
-  List<Schulung> _results = [];
+  List<Schulungstermine> _results = [];
   String? _errorMessage;
   bool _hasSearched = false;
 
@@ -177,16 +177,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                   separatorBuilder: (_, __) =>
                       const SizedBox(height: UIConstants.spacingS),
                   itemBuilder: (context, index) {
-                    final schulung = _results[index];
-                    String formattedDate = '';
-                    if (schulung.datum.isNotEmpty) {
-                      try {
-                        final parsed = DateTime.parse(schulung.datum);
-                        formattedDate = DateFormat('dd.MM.yyyy').format(parsed);
-                      } catch (_) {
-                        formattedDate = schulung.datum;
-                      }
-                    }
+                    final schulungsTermin = _results[index];
+                    String formattedDate =
+                        DateFormat('dd.MM.yyyy').format(schulungsTermin.datum);
                     return Container(
                       decoration: BoxDecoration(
                         color: UIConstants.tileColor,
@@ -227,7 +220,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: '${schulung.schulungsartId}',
+                                        text: schulungsTermin.webGruppeLabel,
                                       ),
                                     ],
                                   ),
@@ -242,7 +235,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      TextSpan(text: schulung.ort),
+                                      TextSpan(text: schulungsTermin.ort),
                                     ],
                                   ),
                                 ),
@@ -256,7 +249,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                schulung.bezeichnung,
+                                schulungsTermin.bezeichnung,
                                 style: UIStyles.subtitleStyle,
                                 textAlign: TextAlign.left,
                                 overflow: TextOverflow.ellipsis,
@@ -305,7 +298,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                             .spacingS,
                                                       ),
                                                       Text(
-                                                        'Datum: ${_results[currentIndex].datum.isNotEmpty ? DateFormat('dd.MM.yyyy').format(DateTime.tryParse(_results[currentIndex].datum) ?? DateTime.now()) : ''}',
+                                                        'Datum: ${DateFormat('dd.MM.yyyy').format(_results[currentIndex].datum)}',
                                                         style:
                                                             UIStyles.bodyStyle,
                                                         textAlign:
@@ -315,58 +308,12 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Row(
-                                                    children: [
-                                                      // Left arrow
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                          Icons.arrow_left,
-                                                          color: UIConstants
-                                                              .defaultAppColor,
-                                                        ),
-                                                        iconSize: UIConstants
-                                                                .dialogFontSize *
-                                                            2,
-                                                        onPressed:
-                                                            currentIndex > 0
-                                                                ? () =>
-                                                                    setState(
-                                                                      () =>
-                                                                          currentIndex--,
-                                                                    )
-                                                                : null,
-                                                      ),
-                                                      // Description content
-                                                      Expanded(
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: Html(
-                                                            data: _results[
-                                                                    currentIndex]
-                                                                .lehrgangsinhaltHtml,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // Right arrow
-                                                      IconButton(
-                                                        icon: const Icon(
-                                                          Icons.arrow_right,
-                                                          color: UIConstants
-                                                              .defaultAppColor,
-                                                        ),
-                                                        iconSize: UIConstants
-                                                                .dialogFontSize *
-                                                            2,
-                                                        onPressed: currentIndex <
-                                                                _results.length -
-                                                                    1
-                                                            ? () => setState(
-                                                                  () =>
-                                                                      currentIndex++,
-                                                                )
-                                                            : null,
-                                                      ),
-                                                    ],
+                                                  child: SingleChildScrollView(
+                                                    child: Html(
+                                                      data: _results[
+                                                              currentIndex]
+                                                          .lehrgangsinhaltHtml,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
