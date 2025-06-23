@@ -297,13 +297,119 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                         height: UIConstants
                                                             .spacingS,
                                                       ),
-                                                      Text(
-                                                        'Datum: ${DateFormat('dd.MM.yyyy').format(_results[currentIndex].datum)}',
-                                                        style:
-                                                            UIStyles.bodyStyle,
-                                                        textAlign:
-                                                            TextAlign.center,
+                                                      // BEGIN: Info block
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: UIConstants
+                                                              .tileColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Datum: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(DateFormat(
+                                                                        'dd.MM.yyyy')
+                                                                    .format(_results[
+                                                                            currentIndex]
+                                                                        .datum)),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Gruppe: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .webGruppeLabel),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Ort: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .ort),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Kosten: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .kosten
+                                                                    .toString()),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Max. Teilnehmer: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .maxTeilnehmer
+                                                                    .toString()),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Leiter Tel: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .lehrgangsleiterTel),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Leiter Mail: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                Text(_results[
+                                                                        currentIndex]
+                                                                    .lehrgangsleiterMail),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
+                                                      // END: Info block
                                                     ],
                                                   ),
                                                 ),

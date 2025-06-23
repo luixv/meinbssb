@@ -131,7 +131,20 @@ class TrainingService {
   Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
     try {
       final response = await _httpClient.get('Schulungstermine/$abDatum/false');
-      final termine = _mapSchulungstermineResponseToTermine(response);
+      final now = DateTime.now();
+      final termine =
+          _mapSchulungstermineResponseToTermine(response).where((t) {
+        // Status darf NICHT 2 sein!
+        if (t.status == 2) return false;
+        // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
+        if (t.webVeroeffentlichenAm.isEmpty) return true;
+        try {
+          final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
+          return now.isAfter(veroeff);
+        } catch (_) {
+          return false;
+        }
+      }).toList();
       termine.sort((a, b) => a.datum.compareTo(b.datum));
       return termine;
     } catch (e) {
@@ -141,7 +154,8 @@ class TrainingService {
   }
 
   List<Schulungstermine> _mapSchulungstermineResponseToTermine(
-      dynamic response,) {
+    dynamic response,
+  ) {
     if (response is! List) {
       LoggerService.logError('Expected List but got ${response.runtimeType}');
       return [];
@@ -150,7 +164,8 @@ class TrainingService {
         .map((item) {
           if (item is! Map<String, dynamic>) {
             LoggerService.logError(
-                'Expected Map<String, dynamic> but got ${item.runtimeType}',);
+              'Expected Map<String, dynamic> but got ${item.runtimeType}',
+            );
             return null;
           }
           try {
