@@ -492,6 +492,32 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                             widget.userData;
                                                         const bankData =
                                                             null; // Replace with actual fetch if needed
+                                                        final emailController =
+                                                            TextEditingController(
+                                                          text: '',
+                                                        );
+                                                        final telefonController =
+                                                            TextEditingController(
+                                                          text: user?.telefon ??
+                                                              '',
+                                                        );
+                                                        final kontoinhaberController =
+                                                            TextEditingController(
+                                                          text: bankData
+                                                                  ?.kontoinhaber ??
+                                                              '',
+                                                        );
+                                                        final ibanController =
+                                                            TextEditingController(
+                                                          text:
+                                                              bankData?.iban ??
+                                                                  '',
+                                                        );
+                                                        final bicController =
+                                                            TextEditingController(
+                                                          text: bankData?.bic ??
+                                                              '',
+                                                        );
                                                         return Dialog(
                                                           child: Padding(
                                                             padding: UIConstants
@@ -612,22 +638,17 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                           children: [
                                                                             Expanded(
                                                                               child: TextField(
-                                                                                controller: TextEditingController(text: user?.telefon ?? ''),
-                                                                                decoration: UIStyles.formInputDecoration.copyWith(labelText: 'Telefonnummer'),
-                                                                                readOnly: true,
-                                                                                style: UIStyles.formValueBoldStyle,
+                                                                                controller: emailController,
+                                                                                decoration: UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
                                                                               ),
                                                                             ),
-                                                                            // E-Mail field: if available in user, otherwise empty
                                                                             const SizedBox(
                                                                               width: UIConstants.spacingM,
                                                                             ),
                                                                             Expanded(
                                                                               child: TextField(
-                                                                                controller: TextEditingController(text: ''), // TODO: Fill with user email if available
-                                                                                decoration: UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
-                                                                                readOnly: true,
-                                                                                style: UIStyles.formValueBoldStyle,
+                                                                                controller: telefonController,
+                                                                                decoration: UIStyles.formInputDecoration.copyWith(labelText: 'Telefonnummer'),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -678,16 +699,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                         ),
                                                                         TextField(
                                                                           controller:
-                                                                              TextEditingController(
-                                                                            text:
-                                                                                bankData?.kontoinhaber ?? '',
-                                                                          ),
+                                                                              kontoinhaberController,
                                                                           decoration: UIStyles
                                                                               .formInputDecoration
-                                                                              .copyWith(
-                                                                            labelText:
-                                                                                'Kontoinhaber',
-                                                                          ),
+                                                                              .copyWith(labelText: 'Kontoinhaber'),
                                                                         ),
                                                                         const SizedBox(
                                                                           height:
@@ -697,7 +712,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                           children: [
                                                                             Expanded(
                                                                               child: TextField(
-                                                                                controller: TextEditingController(text: bankData?.iban ?? ''),
+                                                                                controller: ibanController,
                                                                                 decoration: UIStyles.formInputDecoration.copyWith(labelText: 'IBAN'),
                                                                               ),
                                                                             ),
@@ -706,7 +721,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                             ),
                                                                             Expanded(
                                                                               child: TextField(
-                                                                                controller: TextEditingController(text: bankData?.bic ?? ''),
+                                                                                controller: bicController,
                                                                                 decoration: UIStyles.formInputDecoration.copyWith(labelText: 'BIC'),
                                                                               ),
                                                                             ),
