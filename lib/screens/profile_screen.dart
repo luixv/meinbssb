@@ -9,6 +9,7 @@ import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
+import '/screens/personal_pict_upload.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -46,7 +47,16 @@ class ProfileScreen extends StatelessWidget {
               'Profilbild',
               Icons.add_a_photo_outlined,
               () {
-                // TODO: Implement profile picture functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonalPictUploadScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             _buildMenuItem(
