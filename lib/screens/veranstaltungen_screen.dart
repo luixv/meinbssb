@@ -10,6 +10,7 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '/services/core/cache_service.dart';
 
 class VeranstaltungenScreen extends StatefulWidget {
   const VeranstaltungenScreen(
@@ -562,12 +563,17 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
       context,
       listen: false,
     );
+    final cacheService = Provider.of<CacheService>(
+      context,
+      listen: false,
+    );
 
     List<BankData> bankDataList = await apiService.fetchBankData(
       user?.webLoginId ?? 0,
     );
 
     final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
+    final email = await cacheService.getString('username') ?? '';
 
     if (!mounted) return;
 
@@ -576,7 +582,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
       context: context,
       builder: (context) {
         final emailController = TextEditingController(
-          text: '',
+          text: email,
         );
         final telefonController = TextEditingController(
           text: user?.telefon ?? '',
@@ -648,7 +654,8 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                             Expanded(
                               child: TextField(
                                 controller: TextEditingController(
-                                    text: user?.vorname ?? '',),
+                                  text: user?.vorname ?? '',
+                                ),
                                 decoration: UIStyles.formInputDecoration
                                     .copyWith(labelText: 'Vorname'),
                                 readOnly: true,
@@ -659,7 +666,8 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                             Expanded(
                               child: TextField(
                                 controller: TextEditingController(
-                                    text: user?.namen ?? '',),
+                                  text: user?.namen ?? '',
+                                ),
                                 decoration: UIStyles.formInputDecoration
                                     .copyWith(labelText: 'Nachname'),
                                 readOnly: true,
