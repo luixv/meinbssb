@@ -324,6 +324,8 @@ class UIConstants {
   static const String personalDataSaved =
       'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
 
-  static const double dialogWidth = 400.0;
-  static const double dialogHeight = 400.0;
+  // Dialog
+  static const double dialogWidth = 500.0;
+  static const double dialogHeight = 600.0;
+  static const double dialogHeaderHeight = 64.0;
 }

@@ -226,8 +226,21 @@ class ApiService {
     return await _vereinService.fetchFremdeVerbaende();
   }
 
-  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer(
-      Map<String, dynamic> body,) async {
-    return _trainingService.registerSchulungenTeilnehmer(body);
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer({
+    required int schulungTerminId,
+    required UserData user,
+    required String email,
+    required String telefon,
+    required BankData bankData,
+    required List<Map<String, dynamic>> felderArray,
+  }) async {
+    return _trainingService.registerSchulungenTeilnehmer(
+      schulungTerminId: schulungTerminId,
+      user: user,
+      email: email,
+      telefon: telefon,
+      bankData: bankData,
+      felderArray: felderArray,
+    );
   }
 }

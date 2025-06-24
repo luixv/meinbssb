@@ -122,14 +122,24 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school, color: UIStyles.menuIconColor),
+              leading: const Icon(Icons.school_outlined,
+                  color: UIStyles.menuIconColor,),
               title: const ScaledText(
                 'Schulungen buchen',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Schulungen buchen functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VeranstaltungenScreen(
+                      userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -145,27 +155,6 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AbsolvierteSchulungenScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.gps_fixed, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Veranstaltungen',
-                style: TextStyle(fontSize: _menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VeranstaltungenScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

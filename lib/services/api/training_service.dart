@@ -8,6 +8,8 @@ import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/models/schulungstermine.dart';
 import '/models/register_schulungen_teilnehmer_response.dart';
+import '/models/user_data.dart';
+import '/models/bank_data.dart';
 
 class TrainingService {
   TrainingService({
@@ -354,8 +356,49 @@ class TrainingService {
   }
 
   /// Registers a participant for a training event (Schulungstermin).
-  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer(
-      Map<String, dynamic> body,) async {
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer({
+    required int schulungTerminId,
+    required UserData user,
+    required String email,
+    required String telefon,
+    required BankData bankData,
+    required List<Map<String, dynamic>> felderArray,
+  }) async {
+    final body = {
+      'SchulungTerminID': schulungTerminId,
+      'PersonID': user.personId,
+      'Namen': user.namen,
+      'Vorname': user.vorname,
+      'Titel': user.titel ?? '',
+      'Passnummer': user.passnummer,
+      'Nummer': '',
+      'Email': email,
+      'Geschlecht': user.geschlecht ?? 0,
+      'RechnungAn': 0,
+      'Strasse': user.strasse ?? '',
+      'PLZ': user.plz ?? '',
+      'Ort': user.ort ?? '',
+      'Kosten': 1,
+      'Verpflegung': 2,
+      'Uebernachtung': 3,
+      'Lehrmaterial': 4,
+      'AngemeldetUeber ': '',
+      'Bemerkung': '',
+      'Bankdaten': {
+        'Kontoinhaber': bankData.kontoinhaber,
+        'Bankname': bankData.bankName,
+        'IBAN': bankData.iban,
+        'BIC': bankData.bic,
+        'MandatNr': bankData.mandatNr,
+        'Mandatname': bankData.mandatName,
+        'MandatSeq': bankData.mandatSeq,
+      },
+      'AngemeldetUeberEmail': '',
+      'AngemeldetUeberTelefon': '',
+      'Telefon': telefon,
+      'VereinID': user.vereinNr,
+      'FelderArray': felderArray,
+    };
     try {
       final response = await _httpClient.post(
         'registerSchulungenTeilnehmer',

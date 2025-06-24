@@ -331,135 +331,198 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                           children: [
                                                             Row(
                                                               children: [
-                                                                const Text(
-                                                                  'Datum: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Datum: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              DateFormat('dd.MM.yyyy').format(_results[currentIndex].datum),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                                Text(
-                                                                  DateFormat(
-                                                                    'dd.MM.yyyy',
-                                                                  ).format(
-                                                                    _results[
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Gruppe: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              _results[currentIndex].webGruppeLabel,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                                height: UIConstants
+                                                                    .spacingS,),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Ort: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                            text:
+                                                                                _results[currentIndex].ort,),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Kosten: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text: _results[currentIndex]
+                                                                              .kosten
+                                                                              .toString(),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                                height: UIConstants
+                                                                    .spacingS,),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Leiter Tel: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              _results[currentIndex].lehrgangsleiterTel,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      RichText(
+                                                                    text:
+                                                                        TextSpan(
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Max. Teilnehmer: ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                          ),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text: _results[currentIndex]
+                                                                              .maxTeilnehmer
+                                                                              .toString(),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                                height: UIConstants
+                                                                    .spacingS,),
+                                                            RichText(
+                                                              text: TextSpan(
+                                                                style: UIStyles
+                                                                    .bodyStyle,
+                                                                children: [
+                                                                  const TextSpan(
+                                                                    text:
+                                                                        'Leiter Mail: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: _results[
                                                                             currentIndex]
-                                                                        .datum,
+                                                                        .lehrgangsleiterMail,
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Gruppe: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .webGruppeLabel,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Ort: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .ort,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Kosten: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .kosten
-                                                                      .toString(),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Max. Teilnehmer: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .maxTeilnehmer
-                                                                      .toString(),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Leiter Tel: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .lehrgangsleiterTel,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Leiter Mail: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _results[
-                                                                          currentIndex]
-                                                                      .lehrgangsleiterMail,
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
