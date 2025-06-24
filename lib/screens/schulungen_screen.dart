@@ -629,7 +629,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     .dialogTitleStyle,
                                                               ),
                                                             ),
-                                                            content: Column(
+                                                            content: const Column(
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .min,
