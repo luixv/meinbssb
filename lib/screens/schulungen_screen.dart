@@ -518,12 +518,39 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   style: UIStyles.dialogContentStyle,
                 ),
                 const SizedBox(height: 8),
-                ...registeredPersons.map(
-                  (p) => Text(
-                    '${p.vorname} ${p.nachname} (${p.passnummer})',
-                    style: UIStyles.dialogContentStyle,
-                  ),
-                ),
+                ...registeredPersons.map((p) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: UIStyles.dialogContentStyle,
+                              children: [
+                                const TextSpan(
+                                  text: '• ',
+                                  style: UIStyles.dialogContentStyle,
+                                ),
+                                TextSpan(
+                                  text: '${p.vorname} ${p.nachname}',
+                                  style: UIStyles.dialogContentStyle
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text: ' (${p.passnummer})',
+                                  style: UIStyles.dialogContentStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.delete_outline_outlined,
+                          size: 20.0,
+                          color: UIConstants.deleteIcon,
+                        ),
+                      ],
+                    ),),
                 const SizedBox(height: 16),
               ],
             ),
