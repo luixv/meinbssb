@@ -586,7 +586,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     onPressed: () {
                                                       Navigator.of(context)
                                                           .pop();
-                                                      _showBookingDialog();
+                                                      _showBookingDialog(
+                                                        _results[currentIndex],
+                                                      );
                                                     },
                                                     child: const Icon(
                                                       Icons.how_to_reg,
@@ -629,7 +631,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
   }
 
-  Future<void> _showBookingDialog() async {
+  Future<void> _showBookingDialog(Schulungstermine schulungsTermin) async {
     if (!mounted) return;
 
     final user = widget.userData;
@@ -695,7 +697,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     if (!mounted) return;
 
-    // Now show the booking dialog with the fetched data
+    // Show the booking dialog with the fetched data
     showDialog(
       context: context,
       builder: (context) {
@@ -907,7 +909,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       backgroundColor: UIConstants.defaultAppColor,
                       onPressed: () {
                         Navigator.of(context).pop();
-                        _showBookingDialog();
+                        _showRegistrationDialog(context, schulungsTermin);
                       },
                       child: const Icon(
                         Icons.how_to_reg,
@@ -922,5 +924,49 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         );
       },
     );
+  }
+
+  Future<void> _showRegistrationDialog(
+    BuildContext context,
+    Schulungstermine termin,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text.rich(
+              TextSpan(
+                text: 'Sie sind angemeldet für die Schulung ',
+                children: [
+                  TextSpan(
+                    text: termin.bezeichnung,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Wollen Sie eine weitere Person für diese Schulung anmelden?',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Nein'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Ja'),
+          ),
+        ],
+      ),
+    );
+    return Future.value();
   }
 }
