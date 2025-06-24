@@ -217,7 +217,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Oktoberfestlandesschießen functionality
+                // Still to be done: Implement Oktoberfestlandesschießen functionality
               },
             ),
             const Divider(),
