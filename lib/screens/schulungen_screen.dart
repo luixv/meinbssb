@@ -407,7 +407,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         final response =
                             await apiService.registerSchulungenTeilnehmer(
                           schulungTerminId: schulungsTermin.schulungsterminId,
-                          user: user!,
+                          user: user!.copyWith(
+                            vorname: user.vorname,
+                            namen: user.namen,
+                            passnummer: user.passnummer,
+                            telefon: user.telefon,
+                          ),
                           email: emailController.text,
                           telefon: telefonController.text,
                           bankData: BankData(
@@ -525,6 +530,200 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                       TextEditingController();
                                                   final telefonnummerController =
                                                       TextEditingController();
+                                                  final formKey =
+                                                      GlobalKey<FormState>();
+
+                                                  bool isEmailValid(
+                                                    String email,
+                                                  ) {
+                                                    final emailRegex = RegExp(
+                                                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}',
+                                                    );
+                                                    return emailRegex
+                                                        .hasMatch(email);
+                                                  }
+
+                                                  void submit() async {
+                                                    if (!formKey.currentState!
+                                                        .validate()) return;
+                                                    Navigator.of(context).pop();
+                                                    try {
+                                                      final apiService =
+                                                          Provider.of<
+                                                              ApiService>(
+                                                        dialogContext,
+                                                        listen: false,
+                                                      );
+                                                      final response =
+                                                          await apiService
+                                                              .registerSchulungenTeilnehmer(
+                                                        schulungTerminId:
+                                                            schulungsTermin
+                                                                .schulungsterminId,
+                                                        user: user.copyWith(
+                                                          vorname:
+                                                              vornameController
+                                                                  .text,
+                                                          namen:
+                                                              nachnameController
+                                                                  .text,
+                                                          passnummer:
+                                                              passnummerController
+                                                                  .text,
+                                                          telefon:
+                                                              telefonnummerController
+                                                                  .text,
+                                                        ),
+                                                        email: emailController
+                                                            .text,
+                                                        telefon:
+                                                            telefonnummerController
+                                                                .text,
+                                                        bankData: BankData(
+                                                          id: bankData?.id ?? 0,
+                                                          webloginId:
+                                                              user.webLoginId,
+                                                          kontoinhaber:
+                                                              kontoinhaberController
+                                                                  .text,
+                                                          iban: ibanController
+                                                              .text,
+                                                          bic: bicController
+                                                              .text,
+                                                          mandatSeq: bankData
+                                                                  ?.mandatSeq ??
+                                                              2,
+                                                          bankName: bankData
+                                                                  ?.bankName ??
+                                                              '',
+                                                          mandatNr: bankData
+                                                                  ?.mandatNr ??
+                                                              '',
+                                                          mandatName: bankData
+                                                                  ?.mandatName ??
+                                                              '',
+                                                        ),
+                                                        felderArray: [],
+                                                      );
+                                                      final msg = response.msg;
+                                                      if (msg == 'Teilnehmer erfolgreich erfasst' ||
+                                                          msg ==
+                                                              'Teilnehmer bereits erfasst' ||
+                                                          msg ==
+                                                              'Teilnehmer erfolgreich aktualisiert') {
+                                                        if (!mounted) return;
+                                                        showDialog(
+                                                          context:
+                                                              dialogContext,
+                                                          barrierDismissible:
+                                                              false,
+                                                          builder: (context) =>
+                                                              AlertDialog(
+                                                            backgroundColor:
+                                                                UIConstants
+                                                                    .backgroundColor,
+                                                            title: const Center(
+                                                              child: ScaledText(
+                                                                'Erfolg',
+                                                                style: UIStyles
+                                                                    .dialogTitleStyle,
+                                                              ),
+                                                            ),
+                                                            content: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(
+                                                                  'Die weitere Person wurde erfolgreich angemeldet.',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: UIStyles
+                                                                      .dialogContentStyle,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            actions: <Widget>[
+                                                              Padding(
+                                                                padding: UIConstants
+                                                                    .dialogPadding,
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    ElevatedButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.of(context).pop(),
+                                                                      style: UIStyles
+                                                                          .dialogAcceptButtonStyle,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            UIConstants.centerAlignment,
+                                                                        children: [
+                                                                          const Icon(
+                                                                            Icons.check,
+                                                                            color:
+                                                                                UIConstants.checkIcon,
+                                                                          ),
+                                                                          UIConstants
+                                                                              .horizontalSpacingS,
+                                                                          ScaledText(
+                                                                            'OK',
+                                                                            style:
+                                                                                UIStyles.dialogButtonTextStyle.copyWith(
+                                                                              color: UIConstants.submitButtonText,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                          dialogContext,
+                                                        ).showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(
+                                                              msg.isNotEmpty
+                                                                  ? msg
+                                                                  : 'Fehler bei der Anmeldung.',
+                                                            ),
+                                                            duration:
+                                                                const Duration(
+                                                              seconds: 3,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      ScaffoldMessenger.of(
+                                                        dialogContext,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Fehler bei der Anmeldung: $e',
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                            seconds: 3,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  }
+
                                                   return AlertDialog(
                                                     backgroundColor: UIConstants
                                                         .backgroundColor,
@@ -535,8 +734,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             .dialogTitleStyle,
                                                       ),
                                                     ),
-                                                    content:
-                                                        SingleChildScrollView(
+                                                    content: Form(
+                                                      key: formKey,
                                                       child: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -544,7 +743,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             CrossAxisAlignment
                                                                 .stretch,
                                                         children: [
-                                                          TextField(
+                                                          TextFormField(
                                                             controller:
                                                                 vornameController,
                                                             decoration:
@@ -552,11 +751,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               labelText:
                                                                   'Vorname',
                                                             ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .trim()
+                                                                      .isEmpty) {
+                                                                return 'Vorname ist erforderlich';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                           const SizedBox(
                                                             height: 16,
                                                           ),
-                                                          TextField(
+                                                          TextFormField(
                                                             controller:
                                                                 nachnameController,
                                                             decoration:
@@ -564,11 +773,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               labelText:
                                                                   'Nachname',
                                                             ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .trim()
+                                                                      .isEmpty) {
+                                                                return 'Nachname ist erforderlich';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                           const SizedBox(
                                                             height: 16,
                                                           ),
-                                                          TextField(
+                                                          TextFormField(
                                                             controller:
                                                                 passnummerController,
                                                             decoration:
@@ -576,11 +795,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               labelText:
                                                                   'Passnummer',
                                                             ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .trim()
+                                                                      .isEmpty) {
+                                                                return 'Passnummer ist erforderlich';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                           const SizedBox(
                                                             height: 16,
                                                           ),
-                                                          TextField(
+                                                          TextFormField(
                                                             controller:
                                                                 emailController,
                                                             decoration:
@@ -588,11 +817,26 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               labelText:
                                                                   'E-Mail',
                                                             ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .trim()
+                                                                      .isEmpty) {
+                                                                return 'E-Mail ist erforderlich';
+                                                              }
+                                                              if (!isEmailValid(
+                                                                value.trim(),
+                                                              )) {
+                                                                return 'Ungültige E-Mail-Adresse';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                           const SizedBox(
                                                             height: 16,
                                                           ),
-                                                          TextField(
+                                                          TextFormField(
                                                             controller:
                                                                 telefonnummerController,
                                                             decoration:
@@ -600,6 +844,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               labelText:
                                                                   'Telefonnummer',
                                                             ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .trim()
+                                                                      .isEmpty) {
+                                                                return 'Telefonnummer ist erforderlich';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                         ],
                                                       ),
@@ -641,10 +895,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             backgroundColor:
                                                                 UIConstants
                                                                     .defaultAppColor,
-                                                            onPressed: () =>
-                                                                Navigator.of(
-                                                              context,
-                                                            ).pop(),
+                                                            onPressed: submit,
                                                             child: const Icon(
                                                               Icons.check,
                                                               color:
