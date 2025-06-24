@@ -212,8 +212,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           text: bankData?.bic ?? '',
         );
 
-        final formKey = GlobalKey<FormState>();
-
         return Stack(
           children: [
             AlertDialog(
@@ -401,8 +399,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       Navigator.of(dialogContext).pop();
                       try {
                         final apiService = Provider.of<ApiService>(
-                            dialogContext,
-                            listen: false,);
+                          dialogContext,
+                          listen: false,
+                        );
                         final response =
                             await apiService.registerSchulungenTeilnehmer(
                           schulungTerminId: schulungsTermin.schulungsterminId,
@@ -426,9 +425,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         if (msg == 'Teilnehmer erfolgreich erfasst' ||
                             msg == 'Teilnehmer bereits erfasst' ||
                             msg == 'Teilnehmer erfolgreich aktualisiert') {
-                          // Show confirmation dialog
                           showDialog(
                             context: dialogContext,
+                            barrierDismissible: false,
                             builder: (context) => AlertDialog(
                               backgroundColor: UIConstants.backgroundColor,
                               title: const Center(
@@ -437,36 +436,102 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                   style: UIStyles.dialogTitleStyle,
                                 ),
                               ),
-                              content: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: UIStyles.dialogContentStyle,
-                                  children: <TextSpan>[
-                                    const TextSpan(
-                                        text:
-                                            'Sie sind angemeldet für die Schulung ',),
-                                    TextSpan(
-                                      text: schulungsTermin.bezeichnung,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      style: UIStyles.dialogContentStyle,
+                                      children: <TextSpan>[
+                                        const TextSpan(
+                                          text:
+                                              'Sie sind angemeldet für die Schulung ',
+                                        ),
+                                        TextSpan(
+                                          text: schulungsTermin.bezeichnung,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const TextSpan(text: '.'),
+                                      ],
                                     ),
-                                    const TextSpan(text: '.'),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  const Text(
+                                    'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
+                                    textAlign: TextAlign.center,
+                                    style: UIStyles.dialogContentStyle,
+                                  ),
+                                ],
                               ),
                               actions: <Widget>[
-                                Center(
-                                  child: ElevatedButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    style: UIStyles.dialogAcceptButtonStyle,
-                                    child: ScaledText(
-                                      'OK',
-                                      style: UIStyles.dialogButtonTextStyle
-                                          .copyWith(
-                                        color: UIConstants.submitButtonText,
+                                Padding(
+                                  padding: UIConstants.dialogPadding,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        UIConstants.spaceBetweenAlignment,
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          style:
+                                              UIStyles.dialogCancelButtonStyle,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                UIConstants.centerAlignment,
+                                            children: [
+                                              const Icon(
+                                                Icons.close,
+                                                color: UIConstants.closeIcon,
+                                              ),
+                                              UIConstants.horizontalSpacingS,
+                                              ScaledText(
+                                                'Nein',
+                                                style: UIStyles
+                                                    .dialogButtonTextStyle
+                                                    .copyWith(
+                                                  color: UIConstants
+                                                      .cancelButtonText,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      UIConstants.horizontalSpacingM,
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          style:
+                                              UIStyles.dialogAcceptButtonStyle,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                UIConstants.centerAlignment,
+                                            children: [
+                                              const Icon(
+                                                Icons.check,
+                                                color: UIConstants.checkIcon,
+                                              ),
+                                              UIConstants.horizontalSpacingS,
+                                              ScaledText(
+                                                'Ja',
+                                                style: UIStyles
+                                                    .dialogButtonTextStyle
+                                                    .copyWith(
+                                                  color: UIConstants
+                                                      .submitButtonText,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
