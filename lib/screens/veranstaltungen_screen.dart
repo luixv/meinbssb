@@ -11,6 +11,7 @@ import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '/services/core/cache_service.dart';
+import '/services/api/bank_service.dart';
 
 class VeranstaltungenScreen extends StatefulWidget {
   const VeranstaltungenScreen(
@@ -582,41 +583,41 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
 
     // Get phone number from contacts
     String phoneNumber = '';
-    if (contacts.isNotEmpty) {
-      // Try to find any phone number from private contacts first
-      final privateContacts = contacts.firstWhere(
-        (category) => category['category'] == 'Privat',
+
+    // Try to find private phone number first
+    final privateContacts = contacts.firstWhere(
+      (category) => category['category'] == 'Privat',
+      orElse: () => {'contacts': []},
+    )['contacts'] as List<dynamic>;
+
+    // Look for any phone number in private contacts
+    var phoneContact = privateContacts.cast<Map<String, dynamic>>().firstWhere(
+          (contact) =>
+              contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
+          orElse: () => {'value': ''},
+        );
+
+    if (phoneContact['value'] == '') {
+      // If no private phone found, look for business phone
+      final businessContacts = contacts.firstWhere(
+        (category) => category['category'] == 'Geschäftlich',
         orElse: () => {'contacts': []},
       )['contacts'] as List<dynamic>;
 
-      var phoneContact = privateContacts
-          .cast<Map<String, dynamic>>()
-          .firstWhere(
+      phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
             (contact) =>
-                contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
+                contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
             orElse: () => {'value': ''},
           );
-
-      // If no private phone, try business phone
-      if (phoneContact['value']?.isEmpty ?? true) {
-        final businessContacts = contacts.firstWhere(
-          (category) => category['category'] == 'Geschäftlich',
-          orElse: () => {'contacts': []},
-        )['contacts'] as List<dynamic>;
-
-        phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
-              (contact) =>
-                  contact['rawKontaktTyp'] == 5 ||
-                  contact['rawKontaktTyp'] == 6,
-              orElse: () => {'value': ''},
-            );
-      }
-
-      phoneNumber = phoneContact['value'] ?? '';
     }
 
+    phoneNumber = phoneContact['value'] as String;
+
+    // Get email from cache
+    final String email = await cacheService.getString('username') ?? '';
+
+    // Get bank data
     final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
-    final email = await cacheService.getString('username') ?? '';
 
     if (!mounted) return;
 
@@ -639,206 +640,148 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
         final bicController = TextEditingController(
           text: bankData?.bic ?? '',
         );
+
+        final formKey = GlobalKey<FormState>();
+
         return Dialog(
-          child: Padding(
-            padding: UIConstants.dialogPadding,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Veranstaltung buchen',
-                    style: UIStyles.headerStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: UIConstants.spacingM,
-                  ),
-                  Text(
-                    _results[0].bezeichnung,
-                    style: UIStyles.subtitleStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: UIConstants.spacingM,
-                  ),
-                  Text(
-                    'Es sind noch ${_results[0].angemeldeteTeilnehmer} von ${_results[0].maxTeilnehmer} Plätzen frei.',
-                    style: UIStyles.bodyStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: UIConstants.spacingL,
-                  ),
-                  // Personal Data Block
-                  Container(
-                    decoration: BoxDecoration(
-                      color: UIConstants.whiteColor,
-                      border: Border.all(
-                        color: UIConstants.mydarkGreyColor,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(UIConstants.spacingM),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ScaledText(
+                        'Veranstaltung buchen',
+                        style: UIStyles.headerStyle,
                       ),
-                      borderRadius:
-                          BorderRadius.circular(UIConstants.cornerRadius),
-                    ),
-                    padding: UIConstants.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Persönliche Daten',
-                          style: UIStyles.sectionTitleStyle,
+                      const SizedBox(height: UIConstants.spacingM),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'E-Mail',
                         ),
-                        const SizedBox(
-                          height: UIConstants.spacingM,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: TextEditingController(
-                                  text: user?.vorname ?? '',
-                                ),
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'Vorname'),
-                                readOnly: true,
-                                style: UIStyles.formValueBoldStyle,
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingM),
-                            Expanded(
-                              child: TextField(
-                                controller: TextEditingController(
-                                  text: user?.namen ?? '',
-                                ),
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'Nachname'),
-                                readOnly: true,
-                                style: UIStyles.formValueBoldStyle,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: UIConstants.spacingM,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: emailController,
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'E-Mail'),
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingM),
-                            Expanded(
-                              child: TextField(
-                                controller: telefonController,
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'Telefonnummer'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: UIConstants.spacingL,
-                  ),
-                  // Bank Data Block
-                  Container(
-                    decoration: BoxDecoration(
-                      color: UIConstants.whiteColor,
-                      border: Border.all(
-                        color: UIConstants.mydarkGreyColor,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'E-Mail ist erforderlich';
+                          }
+                          final emailRegex = RegExp(
+                            r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$',
+                          );
+                          if (!emailRegex.hasMatch(value)) {
+                            return 'Bitte geben Sie eine gültige E-Mail Adresse ein';
+                          }
+                          return null;
+                        },
                       ),
-                      borderRadius:
-                          BorderRadius.circular(UIConstants.cornerRadius),
-                    ),
-                    padding: UIConstants.defaultPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Bankdaten',
-                          style: UIStyles.sectionTitleStyle,
+                      const SizedBox(height: UIConstants.spacingS),
+                      TextFormField(
+                        controller: telefonController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'Telefon',
                         ),
-                        const SizedBox(
-                          height: UIConstants.spacingM,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Telefonnummer ist erforderlich';
+                          }
+                          final phoneRegex = RegExp(r'^[0-9\s\-\+\(\)]+$');
+                          if (!phoneRegex.hasMatch(value)) {
+                            return 'Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, +, -, (, ) erlaubt)';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      TextFormField(
+                        controller: kontoinhaberController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'Kontoinhaber',
                         ),
-                        TextField(
-                          controller: kontoinhaberController,
-                          decoration: UIStyles.formInputDecoration
-                              .copyWith(labelText: 'Kontoinhaber'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Kontoinhaber ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      TextFormField(
+                        controller: ibanController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'IBAN',
                         ),
-                        const SizedBox(
-                          height: UIConstants.spacingM,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'IBAN ist erforderlich';
+                          }
+                          if (!BankService.validateIBAN(value)) {
+                            return 'Ungültige IBAN';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      TextFormField(
+                        controller: bicController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'BIC',
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: ibanController,
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'IBAN'),
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingM),
-                            Expanded(
-                              child: TextField(
-                                controller: bicController,
-                                decoration: UIStyles.formInputDecoration
-                                    .copyWith(labelText: 'BIC'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                        validator: (value) {
+                          final bicError = BankService.validateBIC(value);
+                          if (bicError != null) {
+                            return bicError;
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: UIConstants.spacingL,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'buchungCancelFab',
-                          mini: true,
-                          tooltip: 'Schließen',
-                          backgroundColor: UIConstants.defaultAppColor,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: UIConstants.spacingS,
-                        ),
-                        FloatingActionButton(
-                          heroTag: 'buchungOkFab',
-                          mini: true,
-                          tooltip: 'Bestätigen',
-                          backgroundColor: UIConstants.defaultAppColor,
-                          onPressed: () {
-                            /* TODO: Implement OK logic */
-                          },
-                          child: const Icon(
-                            Icons.how_to_reg,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              Positioned(
+                bottom: UIConstants.spacingM,
+                right: UIConstants.spacingM,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'buchungCancelFab',
+                      mini: true,
+                      tooltip: 'Abbrechen',
+                      backgroundColor: UIConstants.defaultAppColor,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    FloatingActionButton(
+                      heroTag: 'buchungOkFab',
+                      mini: true,
+                      tooltip: 'Bestätigen',
+                      backgroundColor: UIConstants.defaultAppColor,
+                      onPressed: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          // TODO: Implement booking logic
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Icon(
+                        Icons.how_to_reg,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },
