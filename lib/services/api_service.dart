@@ -14,6 +14,7 @@ import '/models/schulung.dart';
 import '/models/zweitmitgliedschaft_data.dart';
 import '/models/disziplin.dart';
 import '/models/pass_data_zve.dart';
+import '/models/register_schulungen_teilnehmer_response.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -223,5 +224,10 @@ class ApiService {
 
   Future<List<FremdeVerband>> fetchFremdeVerbaende(int vereinsNr) async {
     return await _vereinService.fetchFremdeVerbaende();
+  }
+
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer(
+      Map<String, dynamic> body,) async {
+    return _trainingService.registerSchulungenTeilnehmer(body);
   }
 }

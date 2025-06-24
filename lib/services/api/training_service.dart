@@ -7,6 +7,7 @@ import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/models/schulungstermine.dart';
+import '/models/register_schulungen_teilnehmer_response.dart';
 
 class TrainingService {
   TrainingService({
@@ -349,6 +350,21 @@ class TrainingService {
     } catch (e) {
       LoggerService.logError('Error fetching Disziplinen: $e');
       return [];
+    }
+  }
+
+  /// Registers a participant for a training event (Schulungstermin).
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer(
+      Map<String, dynamic> body,) async {
+    try {
+      final response = await _httpClient.post(
+        'registerSchulungenTeilnehmer',
+        body,
+      );
+      return RegisterSchulungenTeilnehmerResponse.fromJson(response);
+    } catch (e) {
+      LoggerService.logError('Error registering Schulungen Teilnehmer: $e');
+      rethrow;
     }
   }
 }

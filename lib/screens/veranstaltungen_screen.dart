@@ -145,6 +145,11 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const ScaledText(
+              'Veranstaltungen suchen',
+              style: UIStyles.headerStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
             Row(
               children: [
                 Expanded(
@@ -660,83 +665,166 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                         style: UIStyles.headerStyle,
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'E-Mail',
+                      // --- Personal Data Block ---
+                      Container(
+                        decoration: BoxDecoration(
+                          color: UIConstants.whiteColor,
+                          border:
+                              Border.all(color: UIConstants.mydarkGreyColor),
+                          borderRadius:
+                              BorderRadius.circular(UIConstants.cornerRadius),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'E-Mail ist erforderlich';
-                          }
-                          final emailRegex = RegExp(
-                            r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$',
-                          );
-                          if (!emailRegex.hasMatch(value)) {
-                            return 'Bitte geben Sie eine gültige E-Mail Adresse ein';
-                          }
-                          return null;
-                        },
+                        padding: UIConstants.defaultPadding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Persönliche Daten',
+                              style: UIStyles.sectionTitleStyle,
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: TextEditingController(
+                                      text: user?.vorname ?? '',
+                                    ),
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'Vorname'),
+                                    readOnly: true,
+                                    style: UIStyles.formValueBoldStyle,
+                                  ),
+                                ),
+                                const SizedBox(width: UIConstants.spacingM),
+                                Expanded(
+                                  child: TextField(
+                                    controller: TextEditingController(
+                                      text: user?.namen ?? '',
+                                    ),
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'Nachname'),
+                                    readOnly: true,
+                                    style: UIStyles.formValueBoldStyle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: emailController,
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'E-Mail'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'E-Mail ist erforderlich';
+                                      }
+                                      final emailRegex = RegExp(
+                                        r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$',
+                                      );
+                                      if (!emailRegex.hasMatch(value)) {
+                                        return 'Bitte geben Sie eine gültige E-Mail Adresse ein';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: UIConstants.spacingM),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: telefonController,
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'Telefon'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Telefonnummer ist erforderlich';
+                                      }
+                                      final phoneRegex =
+                                          RegExp(r'^[0-9\s\-\+\(\)]+$');
+                                      if (!phoneRegex.hasMatch(value)) {
+                                        return 'Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, +, -, (, ) erlaubt)';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      TextFormField(
-                        controller: telefonController,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'Telefon',
+                      const SizedBox(height: UIConstants.spacingL),
+                      // --- Bank Data Block ---
+                      Container(
+                        decoration: BoxDecoration(
+                          color: UIConstants.whiteColor,
+                          border:
+                              Border.all(color: UIConstants.mydarkGreyColor),
+                          borderRadius:
+                              BorderRadius.circular(UIConstants.cornerRadius),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Telefonnummer ist erforderlich';
-                          }
-                          final phoneRegex = RegExp(r'^[0-9\s\-\+\(\)]+$');
-                          if (!phoneRegex.hasMatch(value)) {
-                            return 'Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, +, -, (, ) erlaubt)';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      TextFormField(
-                        controller: kontoinhaberController,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'Kontoinhaber',
+                        padding: UIConstants.defaultPadding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Bankdaten',
+                              style: UIStyles.sectionTitleStyle,
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: kontoinhaberController,
+                              decoration: UIStyles.formInputDecoration
+                                  .copyWith(labelText: 'Kontoinhaber'),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Kontoinhaber ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: ibanController,
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'IBAN'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'IBAN ist erforderlich';
+                                      }
+                                      if (!BankService.validateIBAN(value)) {
+                                        return 'Ungültige IBAN';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: UIConstants.spacingM),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: bicController,
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'BIC'),
+                                    validator: (value) {
+                                      final bicError =
+                                          BankService.validateBIC(value);
+                                      if (bicError != null) {
+                                        return bicError;
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kontoinhaber ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      TextFormField(
-                        controller: ibanController,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'IBAN',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'IBAN ist erforderlich';
-                          }
-                          if (!BankService.validateIBAN(value)) {
-                            return 'Ungültige IBAN';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      TextFormField(
-                        controller: bicController,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'BIC',
-                        ),
-                        validator: (value) {
-                          final bicError = BankService.validateBIC(value);
-                          if (bicError != null) {
-                            return bicError;
-                          }
-                          return null;
-                        },
                       ),
                     ],
                   ),
@@ -765,13 +853,11 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                     FloatingActionButton(
                       heroTag: 'buchungOkFab',
                       mini: true,
-                      tooltip: 'Bestätigen',
+                      tooltip: 'Veranstaltung buchen',
                       backgroundColor: UIConstants.defaultAppColor,
                       onPressed: () {
-                        if (formKey.currentState?.validate() ?? false) {
-                          // TODO: Implement booking logic
-                          Navigator.of(context).pop();
-                        }
+                        Navigator.of(context).pop();
+                        _showBookingDialog();
                       },
                       child: const Icon(
                         Icons.how_to_reg,
