@@ -401,7 +401,7 @@ class TrainingService {
     };
     try {
       final response = await _httpClient.post(
-        'registerSchulungenTeilnehmer',
+        'SchulungenTeilnehmer',
         body,
       );
       return RegisterSchulungenTeilnehmerResponse.fromJson(response);

@@ -9,7 +9,6 @@ import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_html/flutter_html.dart';
 import '/services/core/cache_service.dart';
 import '/services/api/bank_service.dart';
 
@@ -133,514 +132,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Schulungen',
-      userData: widget.userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: widget.onLogout,
-      body: Padding(
-        padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const ScaledText(
-              'Schulungen suchen',
-              style: UIStyles.headerStyle,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: _pickDate,
-                    child: InputDecorator(
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Datum wählen',
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      ),
-                      child: ScaledText(
-                        _selectedDate == null
-                            ? 'Bitte wählen Sie ein Datum'
-                            : _formatDate(_selectedDate!),
-                        style: UIStyles.bodyStyle,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: UIConstants.spacingL),
-            if (_isLoading) const Center(child: CircularProgressIndicator()),
-            if (_errorMessage != null)
-              ScaledText(
-                _errorMessage!,
-                style: UIStyles.errorStyle,
-              ),
-            if (!_isLoading && _errorMessage == null && _results.isNotEmpty)
-              Expanded(
-                child: ListView.separated(
-                  itemCount: _results.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: UIConstants.spacingS),
-                  itemBuilder: (context, index) {
-                    final schulungsTermin = _results[index];
-                    String formattedDate =
-                        DateFormat('dd.MM.yyyy').format(schulungsTermin.datum);
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: UIConstants.tileColor,
-                        borderRadius:
-                            BorderRadius.circular(UIConstants.cornerRadius),
-                      ),
-                      padding: const EdgeInsets.all(UIConstants.spacingM),
-                      child: Row(
-                        children: [
-                          // Left: date, group, location
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    style: UIStyles.bodyStyle,
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Datum: ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(text: formattedDate),
-                                    ],
-                                  ),
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    style: UIStyles.bodyStyle,
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Gruppe: ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: schulungsTermin.webGruppeLabel,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    style: UIStyles.bodyStyle,
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Ort: ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(text: schulungsTermin.ort),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Center: title (centered horizontally)
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            flex: 2,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                schulungsTermin.bezeichnung,
-                                style: UIStyles.subtitleStyle,
-                                textAlign: TextAlign.left,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          // Right: description icon
-                          FloatingActionButton(
-                            heroTag: 'schulungenContentFab$index',
-                            backgroundColor: UIConstants.defaultAppColor,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  int currentIndex = index;
-                                  return StatefulBuilder(
-                                    builder: (context, setState) => Stack(
-                                      children: [
-                                        AlertDialog(
-                                          backgroundColor:
-                                              UIConstants.backgroundColor,
-                                          title: const Center(
-                                            child: ScaledText(
-                                              'Schulungsinformationen',
-                                              style: UIStyles.dialogTitleStyle,
-                                            ),
-                                          ),
-                                          content: SingleChildScrollView(
-                                            child: ListBody(
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    UIConstants.spacingM,
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        _results[currentIndex]
-                                                            .bezeichnung,
-                                                        style: UIStyles
-                                                            .headerStyle,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingS,
-                                                      ),
-                                                      // BEGIN: Info block
-                                                      Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          vertical: 8.0,
-                                                          horizontal: 12.0,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: UIConstants
-                                                              .tileColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                            UIConstants
-                                                                .cornerRadius,
-                                                          ),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Datum: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              DateFormat('dd.MM.yyyy').format(_results[currentIndex].datum),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Gruppe: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              _results[currentIndex].webGruppeLabel,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              height:
-                                                                  UIConstants
-                                                                      .spacingS,
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Ort: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              _results[currentIndex].ort,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Kosten: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text: _results[currentIndex]
-                                                                              .kosten
-                                                                              .toString(),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              height:
-                                                                  UIConstants
-                                                                      .spacingS,
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Leiter Tel: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              _results[currentIndex].lehrgangsleiterTel,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  child:
-                                                                      RichText(
-                                                                    text:
-                                                                        TextSpan(
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      children: [
-                                                                        const TextSpan(
-                                                                          text:
-                                                                              'Max. Teilnehmer: ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text: _results[currentIndex]
-                                                                              .maxTeilnehmer
-                                                                              .toString(),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              height:
-                                                                  UIConstants
-                                                                      .spacingS,
-                                                            ),
-                                                            RichText(
-                                                              text: TextSpan(
-                                                                style: UIStyles
-                                                                    .bodyStyle,
-                                                                children: [
-                                                                  const TextSpan(
-                                                                    text:
-                                                                        'Leiter Mail: ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: _results[
-                                                                            currentIndex]
-                                                                        .lehrgangsleiterMail,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      // END: Info block
-                                                    ],
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: SingleChildScrollView(
-                                                    child: Html(
-                                                      data: _results[
-                                                              currentIndex]
-                                                          .lehrgangsinhaltHtml,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: UIConstants.spacingM,
-                                          right: UIConstants.spacingM,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              FloatingActionButton(
-                                                heroTag: 'buchungCancelFab',
-                                                mini: true,
-                                                tooltip: 'Schließen',
-                                                backgroundColor:
-                                                    UIConstants.defaultAppColor,
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              FloatingActionButton(
-                                                heroTag: 'buchungOkFab',
-                                                mini: true,
-                                                tooltip: 'Schulung buchen',
-                                                backgroundColor:
-                                                    UIConstants.defaultAppColor,
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  _showBookingDialog(
-                                                    _results[currentIndex],
-                                                  );
-                                                },
-                                                child: const Icon(
-                                                  Icons.how_to_reg,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            child: const Icon(
-                              Icons.description,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            if (!_isLoading &&
-                _errorMessage == null &&
-                _results.isEmpty &&
-                _hasSearched)
-              const ScaledText(
-                'Keine Schulungen gefunden.',
-                style: UIStyles.bodyStyle,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _showBookingDialog(Schulungstermine schulungsTermin) async {
     if (!mounted) return;
 
     final user = widget.userData;
     // Fetch bank data
-    final apiService = Provider.of<ApiService>(
-      context,
-      listen: false,
-    );
-    final cacheService = Provider.of<CacheService>(
-      context,
-      listen: false,
-    );
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final cacheService = Provider.of<CacheService>(context, listen: false);
 
     // Fetch bank data and contacts in parallel
     final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
@@ -727,7 +225,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 ),
               ),
               content: SingleChildScrollView(
-                child: ListBody(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // --- Personal Data Block ---
                     Container(
@@ -896,10 +396,54 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     mini: true,
                     tooltip: 'Buchen',
                     backgroundColor: UIConstants.defaultAppColor,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      if (mounted) {
-                        _showRegistrationDialog(context, schulungsTermin);
+                    onPressed: () async {
+                      final dialogContext = context;
+                      Navigator.of(dialogContext).pop();
+                      try {
+                        final apiService = Provider.of<ApiService>(
+                            dialogContext,
+                            listen: false,);
+                        final response =
+                            await apiService.registerSchulungenTeilnehmer(
+                          schulungTerminId: schulungsTermin.schulungsterminId,
+                          user: user!,
+                          email: emailController.text,
+                          telefon: telefonController.text,
+                          bankData: BankData(
+                            id: bankData?.id ?? 0,
+                            webloginId: user.webLoginId,
+                            kontoinhaber: kontoinhaberController.text,
+                            iban: ibanController.text,
+                            bic: bicController.text,
+                            mandatSeq: bankData?.mandatSeq ?? 2,
+                            bankName: bankData?.bankName ?? '',
+                            mandatNr: bankData?.mandatNr ?? '',
+                            mandatName: bankData?.mandatName ?? '',
+                          ),
+                          felderArray: [], // Pass an empty list unless you have dynamic fields
+                        );
+                        final msg = response.msg;
+                        if (!(msg == 'Teilnehmer erfolgreich erfasst' ||
+                            msg == 'Teilnehmer bereits erfasst' ||
+                            msg == 'Teilnehmer erfolgreich aktualisiert')) {
+                          ScaffoldMessenger.of(dialogContext).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                msg.isNotEmpty
+                                    ? msg
+                                    : 'Fehler bei der Anmeldung.',
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(dialogContext).showSnackBar(
+                          SnackBar(
+                            content: Text('Fehler bei der Anmeldung: $e'),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
                       }
                     },
                     child: const Icon(
@@ -916,90 +460,166 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
   }
 
-  Future<void> _showRegistrationDialog(
-    BuildContext context,
-    Schulungstermine termin,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: UIConstants.backgroundColor,
-        title: const Center(
-          child: ScaledText(
-            'Schulung buchen',
-            style: UIStyles.dialogTitleStyle,
-          ),
-        ),
-        content: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: UIStyles.dialogContentStyle,
-            children: <TextSpan>[
-              const TextSpan(text: 'Sie sind angemeldet für die Schulung '),
-              TextSpan(
-                text: termin.bezeichnung,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: '.'),
-              const TextSpan(
-                text:
-                    '\n\nWollen Sie eine weitere Person für diese Schulung anmelden?',
-              ),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: UIConstants.dialogPadding,
-            child: Row(
-              mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+  @override
+  Widget build(BuildContext context) {
+    return BaseScreenLayout(
+      title: 'Schulungen',
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
+      body: Padding(
+        padding: const EdgeInsets.all(UIConstants.spacingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ScaledText(
+              'Schulungen suchen',
+              style: UIStyles.headerStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: UIStyles.dialogCancelButtonStyle,
-                    child: Row(
-                      mainAxisAlignment: UIConstants.centerAlignment,
-                      children: [
-                        const Icon(Icons.close, color: UIConstants.closeIcon),
-                        UIConstants.horizontalSpacingS,
-                        ScaledText(
-                          'Nein',
-                          style: UIStyles.dialogButtonTextStyle.copyWith(
-                            color: UIConstants.cancelButtonText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                UIConstants.horizontalSpacingM,
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: UIStyles.dialogAcceptButtonStyle,
-                    child: Row(
-                      mainAxisAlignment: UIConstants.centerAlignment,
-                      children: [
-                        const Icon(Icons.check, color: UIConstants.checkIcon),
-                        UIConstants.horizontalSpacingS,
-                        ScaledText(
-                          'Ja',
-                          style: UIStyles.dialogButtonTextStyle.copyWith(
-                            color: UIConstants.submitButtonText,
-                          ),
-                        ),
-                      ],
+                  child: InkWell(
+                    onTap: _pickDate,
+                    child: InputDecorator(
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Datum wählen',
+                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      ),
+                      child: ScaledText(
+                        _selectedDate == null
+                            ? 'Bitte wählen Sie ein Datum'
+                            : _formatDate(_selectedDate!),
+                        style: UIStyles.bodyStyle,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: UIConstants.spacingL),
+            if (_isLoading) const Center(child: CircularProgressIndicator()),
+            if (_errorMessage != null)
+              ScaledText(
+                _errorMessage!,
+                style: UIStyles.errorStyle,
+              ),
+            if (!_isLoading && _errorMessage == null && _results.isNotEmpty)
+              Expanded(
+                child: ListView.separated(
+                  itemCount: _results.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: UIConstants.spacingS),
+                  itemBuilder: (context, index) {
+                    final schulungsTermin = _results[index];
+                    String formattedDate =
+                        DateFormat('dd.MM.yyyy').format(schulungsTermin.datum);
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: UIConstants.tileColor,
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
+                      ),
+                      padding: const EdgeInsets.all(UIConstants.spacingM),
+                      child: Row(
+                        children: [
+                          // Left: date, group, location
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Datum: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(text: formattedDate),
+                                    ],
+                                  ),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Gruppe: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: schulungsTermin.webGruppeLabel,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    style: UIStyles.bodyStyle,
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Ort: ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(text: schulungsTermin.ort),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Center: title (centered horizontally)
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            flex: 2,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                schulungsTermin.bezeichnung,
+                                style: UIStyles.subtitleStyle,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          // Right: description icon
+                          FloatingActionButton(
+                            heroTag: 'schulungenContentFab$index',
+                            backgroundColor: UIConstants.defaultAppColor,
+                            onPressed: () {
+                              _showBookingDialog(schulungsTermin);
+                            },
+                            child: const Icon(
+                              Icons.description,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            if (!_isLoading &&
+                _errorMessage == null &&
+                _results.isEmpty &&
+                _hasSearched)
+              const ScaledText(
+                'Keine Schulungen gefunden.',
+                style: UIStyles.bodyStyle,
+              ),
+          ],
+        ),
       ),
     );
-    return Future.value();
   }
 }
