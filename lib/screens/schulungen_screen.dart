@@ -132,9 +132,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     }
   }
 
-  Future<void> _showBookingDialog(Schulungstermine schulungsTermin) async {
+  Future<void> _showBookingDialog(
+    Schulungstermine schulungsTermin, {
+    required List<_RegisteredPerson> registeredPersons,
+  }) async {
     if (!mounted) return;
-
     final parentContext = context;
     final user = widget.userData;
     // Fetch bank data
@@ -433,513 +435,27 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             msg == 'Teilnehmer bereits erfasst' ||
                             msg == 'Teilnehmer erfolgreich aktualisiert') {
                           if (!mounted) return;
-                          showDialog(
-                            context: dialogContext,
-                            barrierDismissible: false,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: UIConstants.backgroundColor,
-                              title: const Center(
-                                child: ScaledText(
-                                  'Erfolg',
-                                  style: UIStyles.dialogTitleStyle,
-                                ),
+                          final updatedRegisteredPersons =
+                              List<_RegisteredPerson>.from(registeredPersons)
+                                ..add(
+                                  _RegisteredPerson(
+                                    user.vorname,
+                                    user.namen,
+                                    user.passnummer,
+                                  ),
+                                );
+                          if (bankData != null) {
+                            showDialog(
+                              context: dialogContext,
+                              barrierDismissible: false,
+                              builder: (context) => _buildRegisterAnotherDialog(
+                                dialogContext,
+                                schulungsTermin,
+                                updatedRegisteredPersons,
+                                bankData,
                               ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      style: UIStyles.dialogContentStyle,
-                                      children: <TextSpan>[
-                                        const TextSpan(
-                                          text:
-                                              'Sie sind angemeldet für die Schulung ',
-                                        ),
-                                        TextSpan(
-                                          text: schulungsTermin.bezeichnung,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(text: '.'),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  const Text(
-                                    'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
-                                    textAlign: TextAlign.center,
-                                    style: UIStyles.dialogContentStyle,
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                Padding(
-                                  padding: UIConstants.dialogPadding,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        UIConstants.spaceBetweenAlignment,
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          style:
-                                              UIStyles.dialogCancelButtonStyle,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                UIConstants.centerAlignment,
-                                            children: [
-                                              const Icon(
-                                                Icons.close,
-                                                color: UIConstants.closeIcon,
-                                              ),
-                                              UIConstants.horizontalSpacingS,
-                                              ScaledText(
-                                                'Nein',
-                                                style: UIStyles
-                                                    .dialogButtonTextStyle
-                                                    .copyWith(
-                                                  color: UIConstants
-                                                      .cancelButtonText,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      UIConstants.horizontalSpacingM,
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Future.delayed(Duration.zero, () {
-                                              showDialog(
-                                                context: dialogContext,
-                                                barrierDismissible: false,
-                                                builder: (context) {
-                                                  final vornameController =
-                                                      TextEditingController();
-                                                  final nachnameController =
-                                                      TextEditingController();
-                                                  final passnummerController =
-                                                      TextEditingController();
-                                                  final emailController =
-                                                      TextEditingController();
-                                                  final telefonnummerController =
-                                                      TextEditingController();
-                                                  final formKey =
-                                                      GlobalKey<FormState>();
-
-                                                  bool isEmailValid(
-                                                    String email,
-                                                  ) {
-                                                    final emailRegex = RegExp(
-                                                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}',
-                                                    );
-                                                    return emailRegex
-                                                        .hasMatch(email);
-                                                  }
-
-                                                  void submit() async {
-                                                    if (!formKey.currentState!
-                                                        .validate()) return;
-                                                    Navigator.of(context).pop();
-                                                    try {
-                                                      final apiService =
-                                                          Provider.of<
-                                                              ApiService>(
-                                                        dialogContext,
-                                                        listen: false,
-                                                      );
-                                                      final response =
-                                                          await apiService
-                                                              .registerSchulungenTeilnehmer(
-                                                        schulungTerminId:
-                                                            schulungsTermin
-                                                                .schulungsterminId,
-                                                        user: user.copyWith(
-                                                          vorname:
-                                                              vornameController
-                                                                  .text,
-                                                          namen:
-                                                              nachnameController
-                                                                  .text,
-                                                          passnummer:
-                                                              passnummerController
-                                                                  .text,
-                                                          telefon:
-                                                              telefonnummerController
-                                                                  .text,
-                                                        ),
-                                                        email: emailController
-                                                            .text,
-                                                        telefon:
-                                                            telefonnummerController
-                                                                .text,
-                                                        bankData: BankData(
-                                                          id: bankData?.id ?? 0,
-                                                          webloginId:
-                                                              user.webLoginId,
-                                                          kontoinhaber:
-                                                              kontoinhaberController
-                                                                  .text,
-                                                          iban: ibanController
-                                                              .text,
-                                                          bic: bicController
-                                                              .text,
-                                                          mandatSeq: bankData
-                                                                  ?.mandatSeq ??
-                                                              2,
-                                                          bankName: bankData
-                                                                  ?.bankName ??
-                                                              '',
-                                                          mandatNr: bankData
-                                                                  ?.mandatNr ??
-                                                              '',
-                                                          mandatName: bankData
-                                                                  ?.mandatName ??
-                                                              '',
-                                                        ),
-                                                        felderArray: [],
-                                                      );
-                                                      final msg = response.msg;
-                                                      if (msg == 'Teilnehmer erfolgreich erfasst' ||
-                                                          msg ==
-                                                              'Teilnehmer bereits erfasst' ||
-                                                          msg ==
-                                                              'Teilnehmer erfolgreich aktualisiert') {
-                                                        if (!mounted) return;
-                                                        showDialog(
-                                                          context:
-                                                              dialogContext,
-                                                          barrierDismissible:
-                                                              false,
-                                                          builder: (context) =>
-                                                              AlertDialog(
-                                                            backgroundColor:
-                                                                UIConstants
-                                                                    .backgroundColor,
-                                                            title: const Center(
-                                                              child: ScaledText(
-                                                                'Erfolg',
-                                                                style: UIStyles
-                                                                    .dialogTitleStyle,
-                                                              ),
-                                                            ),
-                                                            content: const Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text(
-                                                                  'Die weitere Person wurde erfolgreich angemeldet.',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: UIStyles
-                                                                      .dialogContentStyle,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            actions: <Widget>[
-                                                              Padding(
-                                                                padding: UIConstants
-                                                                    .dialogPadding,
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    ElevatedButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.of(context).pop(),
-                                                                      style: UIStyles
-                                                                          .dialogAcceptButtonStyle,
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            UIConstants.centerAlignment,
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.check,
-                                                                            color:
-                                                                                UIConstants.checkIcon,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          ScaledText(
-                                                                            'OK',
-                                                                            style:
-                                                                                UIStyles.dialogButtonTextStyle.copyWith(
-                                                                              color: UIConstants.submitButtonText,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        ScaffoldMessenger.of(
-                                                          dialogContext,
-                                                        ).showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                              msg.isNotEmpty
-                                                                  ? msg
-                                                                  : 'Fehler bei der Anmeldung.',
-                                                            ),
-                                                            duration:
-                                                                const Duration(
-                                                              seconds: 3,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      }
-                                                    } catch (e) {
-                                                      ScaffoldMessenger.of(
-                                                        dialogContext,
-                                                      ).showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                            'Fehler bei der Anmeldung: $e',
-                                                          ),
-                                                          duration:
-                                                              const Duration(
-                                                            seconds: 3,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                  }
-
-                                                  return AlertDialog(
-                                                    backgroundColor: UIConstants
-                                                        .backgroundColor,
-                                                    title: const Center(
-                                                      child: ScaledText(
-                                                        'Weitere Person anmelden',
-                                                        style: UIStyles
-                                                            .dialogTitleStyle,
-                                                      ),
-                                                    ),
-                                                    content: Form(
-                                                      key: formKey,
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .stretch,
-                                                        children: [
-                                                          TextFormField(
-                                                            controller:
-                                                                vornameController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              labelText:
-                                                                  'Vorname',
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .trim()
-                                                                      .isEmpty) {
-                                                                return 'Vorname ist erforderlich';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          TextFormField(
-                                                            controller:
-                                                                nachnameController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              labelText:
-                                                                  'Nachname',
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .trim()
-                                                                      .isEmpty) {
-                                                                return 'Nachname ist erforderlich';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          TextFormField(
-                                                            controller:
-                                                                passnummerController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              labelText:
-                                                                  'Passnummer',
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .trim()
-                                                                      .isEmpty) {
-                                                                return 'Passnummer ist erforderlich';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          TextFormField(
-                                                            controller:
-                                                                emailController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              labelText:
-                                                                  'E-Mail',
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .trim()
-                                                                      .isEmpty) {
-                                                                return 'E-Mail ist erforderlich';
-                                                              }
-                                                              if (!isEmailValid(
-                                                                value.trim(),
-                                                              )) {
-                                                                return 'Ungültige E-Mail-Adresse';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 16,
-                                                          ),
-                                                          TextFormField(
-                                                            controller:
-                                                                telefonnummerController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              labelText:
-                                                                  'Telefonnummer',
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .trim()
-                                                                      .isEmpty) {
-                                                                return 'Telefonnummer ist erforderlich';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          FloatingActionButton(
-                                                            heroTag:
-                                                                'cancelRegisterAnotherFab',
-                                                            mini: true,
-                                                            tooltip:
-                                                                'Abbrechen',
-                                                            backgroundColor:
-                                                                UIConstants
-                                                                    .defaultAppColor,
-                                                            onPressed: () =>
-                                                                Navigator.of(
-                                                              context,
-                                                            ).pop(),
-                                                            child: const Icon(
-                                                              Icons.close,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: UIConstants
-                                                                .spacingS,
-                                                          ),
-                                                          FloatingActionButton(
-                                                            heroTag:
-                                                                'okRegisterAnotherFab',
-                                                            mini: true,
-                                                            tooltip: 'OK',
-                                                            backgroundColor:
-                                                                UIConstants
-                                                                    .defaultAppColor,
-                                                            onPressed: submit,
-                                                            child: const Icon(
-                                                              Icons.check,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            });
-                                          },
-                                          style:
-                                              UIStyles.dialogAcceptButtonStyle,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                UIConstants.centerAlignment,
-                                            children: [
-                                              const Icon(
-                                                Icons.check,
-                                                color: UIConstants.checkIcon,
-                                              ),
-                                              UIConstants.horizontalSpacingS,
-                                              ScaledText(
-                                                'Ja',
-                                                style: UIStyles
-                                                    .dialogButtonTextStyle
-                                                    .copyWith(
-                                                  color: UIConstants
-                                                      .submitButtonText,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                            );
+                          }
                         } else {
                           ScaffoldMessenger.of(dialogContext).showSnackBar(
                             SnackBar(
@@ -968,6 +484,341 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   ),
                 ],
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildRegisterAnotherDialog(
+    BuildContext parentContext,
+    Schulungstermine schulungsTermin,
+    List<_RegisteredPerson> registeredPersons,
+    BankData bankData,
+  ) {
+    return AlertDialog(
+      backgroundColor: UIConstants.backgroundColor,
+      title: const Center(
+        child: ScaledText(
+          'Erfolg',
+          style: UIStyles.dialogTitleStyle,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (registeredPersons.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Bereits angemeldete Personen:',
+                  style: UIStyles.dialogContentStyle,
+                ),
+                const SizedBox(height: 8),
+                ...registeredPersons.map(
+                  (p) => Text(
+                    '${p.vorname} ${p.nachname} (${p.passnummer})',
+                    style: UIStyles.dialogContentStyle,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                const TextSpan(
+                  text: 'Sie sind angemeldet für die Schulung ',
+                ),
+                TextSpan(
+                  text: schulungsTermin.bezeichnung,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(text: '.'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
+            textAlign: TextAlign.center,
+            style: UIStyles.dialogContentStyle,
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: UIConstants.dialogPadding,
+          child: Row(
+            mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(parentContext).pop(),
+                  style: UIStyles.dialogCancelButtonStyle,
+                  child: Row(
+                    mainAxisAlignment: UIConstants.centerAlignment,
+                    children: [
+                      const Icon(
+                        Icons.close,
+                        color: UIConstants.closeIcon,
+                      ),
+                      UIConstants.horizontalSpacingS,
+                      ScaledText(
+                        'Nein',
+                        style: UIStyles.dialogButtonTextStyle.copyWith(
+                          color: UIConstants.cancelButtonText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              UIConstants.horizontalSpacingM,
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(parentContext).pop();
+                    Future.delayed(Duration.zero, () {
+                      _showRegisterAnotherPersonDialog(
+                        parentContext,
+                        parentContext,
+                        schulungsTermin,
+                        registeredPersons,
+                        bankData,
+                      );
+                    });
+                  },
+                  style: UIStyles.dialogAcceptButtonStyle,
+                  child: Row(
+                    mainAxisAlignment: UIConstants.centerAlignment,
+                    children: [
+                      const Icon(
+                        Icons.check,
+                        color: UIConstants.checkIcon,
+                      ),
+                      UIConstants.horizontalSpacingS,
+                      ScaledText(
+                        'Ja',
+                        style: UIStyles.dialogButtonTextStyle.copyWith(
+                          color: UIConstants.submitButtonText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showRegisterAnotherPersonDialog(
+    BuildContext parentContext,
+    BuildContext dialogContext,
+    Schulungstermine schulungsTermin,
+    List<_RegisteredPerson> registeredPersons,
+    BankData bankData,
+  ) {
+    showDialog(
+      context: dialogContext,
+      barrierDismissible: false,
+      builder: (context) {
+        final vornameController = TextEditingController();
+        final nachnameController = TextEditingController();
+        final passnummerController = TextEditingController();
+        final emailController = TextEditingController();
+        final telefonnummerController = TextEditingController();
+        final formKey = GlobalKey<FormState>();
+        bool isEmailValid(String email) {
+          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}');
+          return emailRegex.hasMatch(email);
+        }
+
+        void submit() async {
+          if (!formKey.currentState!.validate()) return;
+          Navigator.of(context).pop();
+          try {
+            final apiService = Provider.of<ApiService>(
+              dialogContext,
+              listen: false,
+            );
+            final response = await apiService.registerSchulungenTeilnehmer(
+              schulungTerminId: schulungsTermin.schulungsterminId,
+              user: widget.userData!.copyWith(
+                vorname: vornameController.text,
+                namen: nachnameController.text,
+                passnummer: passnummerController.text,
+                telefon: telefonnummerController.text,
+              ),
+              email: emailController.text,
+              telefon: telefonnummerController.text,
+              bankData: bankData,
+              felderArray: [],
+            );
+            final msg = response.msg;
+            if (msg == 'Teilnehmer erfolgreich erfasst' ||
+                msg == 'Teilnehmer bereits erfasst' ||
+                msg == 'Teilnehmer erfolgreich aktualisiert') {
+              if (!mounted) return;
+              final updatedRegisteredPersons =
+                  List<_RegisteredPerson>.from(registeredPersons)
+                    ..add(
+                      _RegisteredPerson(
+                        vornameController.text,
+                        nachnameController.text,
+                        passnummerController.text,
+                      ),
+                    );
+              showDialog(
+                context: dialogContext,
+                barrierDismissible: false,
+                builder: (context) => _buildRegisterAnotherDialog(
+                  parentContext,
+                  schulungsTermin,
+                  updatedRegisteredPersons,
+                  bankData,
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(parentContext).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    msg.isNotEmpty ? msg : 'Fehler bei der Anmeldung.',
+                  ),
+                  duration: const Duration(seconds: 3),
+                ),
+              );
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(parentContext).showSnackBar(
+              SnackBar(
+                content: Text('Fehler bei der Anmeldung: $e'),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Weitere Person anmelden',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: vornameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Vorname',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Vorname ist erforderlich';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: nachnameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nachname',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Nachname ist erforderlich';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: passnummerController,
+                  decoration: const InputDecoration(
+                    labelText: 'Passnummer',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Passnummer ist erforderlich';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'E-Mail',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'E-Mail ist erforderlich';
+                    }
+                    if (!isEmailValid(value.trim())) {
+                      return 'Ungültige E-Mail-Adresse';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: telefonnummerController,
+                  decoration: const InputDecoration(
+                    labelText: 'Telefonnummer',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Telefonnummer ist erforderlich';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'cancelRegisterAnotherFab',
+                  mini: true,
+                  tooltip: 'Abbrechen',
+                  backgroundColor: UIConstants.defaultAppColor,
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: UIConstants.spacingS),
+                FloatingActionButton(
+                  heroTag: 'okRegisterAnotherFab',
+                  mini: true,
+                  tooltip: 'OK',
+                  backgroundColor: UIConstants.defaultAppColor,
+                  onPressed: submit,
+                  child: const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -1111,7 +962,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             heroTag: 'schulungenContentFab$index',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () {
-                              _showBookingDialog(schulungsTermin);
+                              _showBookingDialog(
+                                schulungsTermin,
+                                registeredPersons: [],
+                              );
                             },
                             child: const Icon(
                               Icons.description,
@@ -1137,4 +991,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       ),
     );
   }
+}
+
+class _RegisteredPerson {
+  _RegisteredPerson(this.vorname, this.nachname, this.passnummer);
+  final String vorname;
+  final String nachname;
+  final String passnummer;
 }
