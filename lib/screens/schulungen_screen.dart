@@ -274,15 +274,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 builder: (context) {
                                   int currentIndex = index;
                                   return StatefulBuilder(
-                                    builder: (context, setState) => Dialog(
-                                      child: Stack(
-                                        children: [
-                                          SizedBox(
-                                            width: UIConstants.dialogWidth,
-                                            height: UIConstants.dialogHeight,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
+                                    builder: (context, setState) => Stack(
+                                      children: [
+                                        AlertDialog(
+                                          backgroundColor:
+                                              UIConstants.backgroundColor,
+                                          title: const Center(
+                                            child: ScaledText(
+                                              'Schulungsinformationen',
+                                              style: UIStyles.dialogTitleStyle,
+                                            ),
+                                          ),
+                                          content: SingleChildScrollView(
+                                            child: ListBody(
                                               children: [
                                                 Padding(
                                                   padding: const EdgeInsets.all(
@@ -550,57 +554,50 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               ],
                                             ),
                                           ),
-                                          // Close button
-                                          Positioned(
-                                            bottom: UIConstants.spacingM,
-                                            right: UIConstants.spacingM,
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  FloatingActionButton(
-                                                    heroTag: 'buchungCancelFab',
-                                                    mini: true,
-                                                    tooltip: 'Schließen',
-                                                    backgroundColor: UIConstants
-                                                        .defaultAppColor,
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    child: const Icon(
-                                                      Icons.close,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingS,
-                                                  ),
-                                                  FloatingActionButton(
-                                                    heroTag: 'buchungOkFab',
-                                                    mini: true,
-                                                    tooltip: 'Schulung buchen',
-                                                    backgroundColor: UIConstants
-                                                        .defaultAppColor,
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      _showBookingDialog(
-                                                        _results[currentIndex],
-                                                      );
-                                                    },
-                                                    child: const Icon(
-                                                      Icons.how_to_reg,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
+                                        ),
+                                        Positioned(
+                                          bottom: UIConstants.spacingM,
+                                          right: UIConstants.spacingM,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              FloatingActionButton(
+                                                heroTag: 'buchungCancelFab',
+                                                mini: true,
+                                                tooltip: 'Schließen',
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                ),
                                               ),
-                                            ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              FloatingActionButton(
+                                                heroTag: 'buchungOkFab',
+                                                mini: true,
+                                                tooltip: 'Schulung buchen',
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  _showBookingDialog(
+                                                    _results[currentIndex],
+                                                  );
+                                                },
+                                                child: const Icon(
+                                                  Icons.how_to_reg,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 },
@@ -719,211 +716,195 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
         final formKey = GlobalKey<FormState>();
 
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Schulung buchen',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                // --- Personal Data Block ---
-                Container(
-                  decoration: BoxDecoration(
-                    color: UIConstants.whiteColor,
-                    border: Border.all(color: UIConstants.mydarkGreyColor),
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.cornerRadius),
-                  ),
-                  padding: UIConstants.defaultPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Persönliche Daten',
-                        style: UIStyles.sectionTitleStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: TextEditingController(
-                                text: user?.vorname ?? '',
-                              ),
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'Vorname'),
-                              readOnly: true,
-                              style: UIStyles.formValueBoldStyle,
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: TextField(
-                              controller: TextEditingController(
-                                text: user?.namen ?? '',
-                              ),
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'Nachname'),
-                              readOnly: true,
-                              style: UIStyles.formValueBoldStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: emailController,
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'E-Mail'),
-                              readOnly: true,
-                              style: UIStyles.formValueBoldStyle,
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: TextField(
-                              controller: telefonController,
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'Telefon'),
-                              readOnly: true,
-                              style: UIStyles.formValueBoldStyle,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+        return Stack(
+          children: [
+            AlertDialog(
+              backgroundColor: UIConstants.backgroundColor,
+              title: const Center(
+                child: ScaledText(
+                  'Schulung buchen',
+                  style: UIStyles.dialogTitleStyle,
                 ),
-                const SizedBox(height: UIConstants.spacingL),
-                // --- Bank Data Block ---
-                Container(
-                  decoration: BoxDecoration(
-                    color: UIConstants.whiteColor,
-                    border: Border.all(color: UIConstants.mydarkGreyColor),
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.cornerRadius),
-                  ),
-                  padding: UIConstants.defaultPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Bankdaten',
-                        style: UIStyles.sectionTitleStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      TextFormField(
-                        controller: kontoinhaberController,
-                        decoration: UIStyles.formInputDecoration
-                            .copyWith(labelText: 'Kontoinhaber'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kontoinhaber ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: ibanController,
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'IBAN'),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'IBAN ist erforderlich';
-                                }
-                                if (!BankService.validateIBAN(value)) {
-                                  return 'Ungültige IBAN';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: TextFormField(
-                              controller: bicController,
-                              decoration: UIStyles.formInputDecoration
-                                  .copyWith(labelText: 'BIC'),
-                              validator: (value) {
-                                final bicError = BankService.validateBIC(value);
-                                if (bicError != null) {
-                                  return bicError;
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingM,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: [
+                    // --- Personal Data Block ---
+                    Container(
+                      decoration: BoxDecoration(
+                        color: UIConstants.whiteColor,
+                        border: Border.all(color: UIConstants.mydarkGreyColor),
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
+                      ),
+                      padding: UIConstants.defaultPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
-                          Text(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                            ),
+                          const Text(
+                            'Persönliche Daten',
+                            style: UIStyles.sectionTitleStyle,
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: TextEditingController(
+                                    text: user?.vorname ?? '',
+                                  ),
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'Vorname'),
+                                  readOnly: true,
+                                  style: UIStyles.formValueBoldStyle,
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingM),
+                              Expanded(
+                                child: TextField(
+                                  controller: TextEditingController(
+                                    text: user?.namen ?? '',
+                                  ),
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'Nachname'),
+                                  readOnly: true,
+                                  style: UIStyles.formValueBoldStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: emailController,
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'E-Mail'),
+                                  readOnly: true,
+                                  style: UIStyles.formValueBoldStyle,
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingM),
+                              Expanded(
+                                child: TextField(
+                                  controller: telefonController,
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'Telefon'),
+                                  readOnly: true,
+                                  style: UIStyles.formValueBoldStyle,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  UIConstants.horizontalSpacingM,
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        if (mounted) {
-                          _showRegistrationDialog(context, schulungsTermin);
-                        }
-                      },
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    const SizedBox(height: UIConstants.spacingL),
+                    // --- Bank Data Block ---
+                    Container(
+                      decoration: BoxDecoration(
+                        color: UIConstants.whiteColor,
+                        border: Border.all(color: UIConstants.mydarkGreyColor),
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
+                      ),
+                      padding: UIConstants.defaultPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          Text(
-                            'Buchen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.submitButtonText,
-                            ),
+                          const Text(
+                            'Bankdaten',
+                            style: UIStyles.sectionTitleStyle,
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          TextFormField(
+                            controller: kontoinhaberController,
+                            decoration: UIStyles.formInputDecoration
+                                .copyWith(labelText: 'Kontoinhaber'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Kontoinhaber ist erforderlich';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: ibanController,
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'IBAN'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'IBAN ist erforderlich';
+                                    }
+                                    if (!BankService.validateIBAN(value)) {
+                                      return 'Ungültige IBAN';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingM),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: bicController,
+                                  decoration: UIStyles.formInputDecoration
+                                      .copyWith(labelText: 'BIC'),
+                                  validator: (value) {
+                                    final bicError =
+                                        BankService.validateBIC(value);
+                                    if (bicError != null) {
+                                      return bicError;
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: UIConstants.spacingM,
+              right: UIConstants.spacingM,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'buchungCancelFab',
+                    mini: true,
+                    tooltip: 'Abbrechen',
+                    backgroundColor: UIConstants.defaultAppColor,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  FloatingActionButton(
+                    heroTag: 'buchungOkFab',
+                    mini: true,
+                    tooltip: 'Buchen',
+                    backgroundColor: UIConstants.defaultAppColor,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (mounted) {
+                        _showRegistrationDialog(context, schulungsTermin);
+                      }
+                    },
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -942,36 +923,79 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text.rich(
-              TextSpan(
-                text: 'Sie sind angemeldet für die Schulung ',
-                children: [
-                  TextSpan(
-                    text: termin.bezeichnung,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Wollen Sie eine weitere Person für diese Schulung anmelden?',
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Nein'),
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: UIConstants.backgroundColor,
+        title: const Center(
+          child: ScaledText(
+            'Schulung buchen',
+            style: UIStyles.dialogTitleStyle,
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Ja'),
+        ),
+        content: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: UIStyles.dialogContentStyle,
+            children: <TextSpan>[
+              const TextSpan(text: 'Sie sind angemeldet für die Schulung '),
+              TextSpan(
+                text: termin.bezeichnung,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const TextSpan(text: '.'),
+              const TextSpan(
+                text:
+                    '\n\nWollen Sie eine weitere Person für diese Schulung anmelden?',
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: UIConstants.dialogPadding,
+            child: Row(
+              mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingS,
+                        ScaledText(
+                          'Nein',
+                          style: UIStyles.dialogButtonTextStyle.copyWith(
+                            color: UIConstants.cancelButtonText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                UIConstants.horizontalSpacingM,
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        ScaledText(
+                          'Ja',
+                          style: UIStyles.dialogButtonTextStyle.copyWith(
+                            color: UIConstants.submitButtonText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
