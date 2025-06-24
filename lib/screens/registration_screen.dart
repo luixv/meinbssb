@@ -14,7 +14,6 @@ import '/screens/base_screen_layout.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/error_service.dart';
-import '/services/core/logger_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -460,33 +459,4 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Future<void> _sendRegistrationEmail() async {
-    try {
-      final fromEmail = await widget.emailService.getFromEmail();
-      final subject = await widget.emailService.getRegistrationSubject();
-      final registrationContent =
-          await widget.emailService.getRegistrationContent();
-
-      if (fromEmail == null || subject == null || registrationContent == null) {
-        LoggerService.logWarning(
-          'Registration email content not fully configured.',
-        );
-        return;
-      }
-
-      final emailResponse = await widget.emailService.sendEmail(
-        from: fromEmail,
-        recipient: _emailController.text,
-        subject: subject,
-        body: registrationContent,
-      );
-
-      if (emailResponse['ResultType'] != 1) {
-        throw Exception(emailResponse['ResultMessage']);
-      }
-    } catch (e) {
-      LoggerService.logError('Error sending email: $e');
-      rethrow;
-    }
-  }
 }
