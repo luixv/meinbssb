@@ -4,6 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermine.dart';
 import '/models/user_data.dart';
+import '/models/bank_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
@@ -510,36 +511,61 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                       Navigator.of(context)
                                                           .pop();
                                                       // Show the booking dialog
+                                                      final dialogContext =
+                                                          context;
+                                                      final user =
+                                                          widget.userData;
+                                                      // Fetch bank data
+                                                      final apiService =
+                                                          Provider.of<
+                                                              ApiService>(
+                                                        context,
+                                                        listen: false,
+                                                      );
+                                                      List<BankData>
+                                                          bankDataList =
+                                                          await apiService
+                                                              .fetchBankData(
+                                                        user?.webLoginId ?? 0,
+                                                      );
+                                                      final bankData =
+                                                          bankDataList
+                                                                  .isNotEmpty
+                                                              ? bankDataList
+                                                                  .first
+                                                              : null;
+                                                      if (!mounted) return;
                                                       showDialog(
-                                                        context: context,
+                                                        context: dialogContext,
                                                         builder: (context) {
-                                                          final user =
-                                                              widget.userData;
-                                                          const bankData =
-                                                              null; // Replace with actual fetch if needed
                                                           final emailController =
                                                               TextEditingController(
-                                                                  text: '',);
+                                                            text: '',
+                                                          );
                                                           final telefonController =
                                                               TextEditingController(
-                                                                  text:
-                                                                      user?.telefon ??
-                                                                          '',);
+                                                            text:
+                                                                user?.telefon ??
+                                                                    '',
+                                                          );
                                                           final kontoinhaberController =
                                                               TextEditingController(
-                                                                  text: bankData
-                                                                          ?.kontoinhaber ??
-                                                                      '',);
+                                                            text: bankData
+                                                                    ?.kontoinhaber ??
+                                                                '',
+                                                          );
                                                           final ibanController =
                                                               TextEditingController(
-                                                                  text: bankData
-                                                                          ?.iban ??
-                                                                      '',);
+                                                            text: bankData
+                                                                    ?.iban ??
+                                                                '',
+                                                          );
                                                           final bicController =
                                                               TextEditingController(
-                                                                  text: bankData
-                                                                          ?.bic ??
-                                                                      '',);
+                                                            text:
+                                                                bankData?.bic ??
+                                                                    '',
+                                                          );
                                                           return Dialog(
                                                             child: Padding(
                                                               padding: UIConstants
@@ -563,8 +589,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                               .center,
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingM,),
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
                                                                     Text(
                                                                       _results[
                                                                               currentIndex]
@@ -576,8 +603,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                               .center,
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingM,),
+                                                                      height: UIConstants
+                                                                          .spacingM,
+                                                                    ),
                                                                     Text(
                                                                       'Es sind noch ${_results[currentIndex].angemeldeteTeilnehmer} von ${_results[currentIndex].maxTeilnehmer} Plätzen frei.',
                                                                       style: UIStyles
@@ -587,17 +615,20 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                               .center,
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingL,),
+                                                                      height: UIConstants
+                                                                          .spacingL,
+                                                                    ),
                                                                     // Personal Data Block
                                                                     Container(
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         color: UIConstants
                                                                             .whiteColor,
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                UIConstants.mydarkGreyColor,),
+                                                                        border:
+                                                                            Border.all(
+                                                                          color:
+                                                                              UIConstants.mydarkGreyColor,
+                                                                        ),
                                                                         borderRadius:
                                                                             BorderRadius.circular(UIConstants.cornerRadius),
                                                                       ),
@@ -615,7 +646,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                                 UIStyles.sectionTitleStyle,
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingM,),
+                                                                            height:
+                                                                                UIConstants.spacingM,
+                                                                          ),
                                                                           Row(
                                                                             children: [
                                                                               Expanded(
@@ -638,7 +671,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingM,),
+                                                                            height:
+                                                                                UIConstants.spacingM,
+                                                                          ),
                                                                           Row(
                                                                             children: [
                                                                               Expanded(
@@ -660,17 +695,20 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                       ),
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingL,),
+                                                                      height: UIConstants
+                                                                          .spacingL,
+                                                                    ),
                                                                     // Bank Data Block
                                                                     Container(
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         color: UIConstants
                                                                             .whiteColor,
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                UIConstants.mydarkGreyColor,),
+                                                                        border:
+                                                                            Border.all(
+                                                                          color:
+                                                                              UIConstants.mydarkGreyColor,
+                                                                        ),
                                                                         borderRadius:
                                                                             BorderRadius.circular(UIConstants.cornerRadius),
                                                                       ),
@@ -688,7 +726,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                                 UIStyles.sectionTitleStyle,
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingM,),
+                                                                            height:
+                                                                                UIConstants.spacingM,
+                                                                          ),
                                                                           TextField(
                                                                             controller:
                                                                                 kontoinhaberController,
@@ -696,7 +736,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                                 UIStyles.formInputDecoration.copyWith(labelText: 'Kontoinhaber'),
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingM,),
+                                                                            height:
+                                                                                UIConstants.spacingM,
+                                                                          ),
                                                                           Row(
                                                                             children: [
                                                                               Expanded(
@@ -718,45 +760,60 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                       ),
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingL,),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .end,
-                                                                      children: [
-                                                                        FloatingActionButton(
-                                                                          heroTag:
-                                                                              'buchungCancelFab',
-                                                                          mini:
-                                                                              true,
-                                                                          backgroundColor:
-                                                                              UIConstants.defaultAppColor,
-                                                                          onPressed: () =>
-                                                                              Navigator.of(context).pop(),
-                                                                          child: const Icon(
+                                                                      height: UIConstants
+                                                                          .spacingL,
+                                                                    ),
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerRight,
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          FloatingActionButton(
+                                                                            heroTag:
+                                                                                'buchungCancelFab',
+                                                                            mini:
+                                                                                true,
+                                                                            tooltip:
+                                                                                'Schließen',
+                                                                            backgroundColor:
+                                                                                UIConstants.defaultAppColor,
+                                                                            onPressed: () =>
+                                                                                Navigator.of(context).pop(),
+                                                                            child:
+                                                                                const Icon(
                                                                               Icons.close,
-                                                                              color: Colors.white,),
-                                                                        ),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                UIConstants.spacingM,),
-                                                                        FloatingActionButton(
-                                                                          heroTag:
-                                                                              'buchungOkFab',
-                                                                          mini:
-                                                                              true,
-                                                                          backgroundColor:
-                                                                              UIConstants.defaultAppColor,
-                                                                          onPressed:
-                                                                              () {
-                                                                            /* TODO: Implement OK logic */
-                                                                          },
-                                                                          child: const Icon(
-                                                                              Icons.check,
-                                                                              color: Colors.white,),
-                                                                        ),
-                                                                      ],
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                UIConstants.spacingS,
+                                                                          ),
+                                                                          FloatingActionButton(
+                                                                            heroTag:
+                                                                                'buchungOkFab',
+                                                                            mini:
+                                                                                true,
+                                                                            tooltip:
+                                                                                'Bestätigen',
+                                                                            backgroundColor:
+                                                                                UIConstants.defaultAppColor,
+                                                                            onPressed:
+                                                                                () {
+                                                                              /* TODO: Implement OK logic */
+                                                                            },
+                                                                            child:
+                                                                                const Icon(
+                                                                              Icons.how_to_reg,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -767,7 +824,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                       );
                                                     },
                                                     child: const Icon(
-                                                      Icons.check,
+                                                      Icons.how_to_reg,
                                                       color: Colors.white,
                                                     ),
                                                   ),
