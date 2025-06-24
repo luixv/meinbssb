@@ -9,7 +9,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
 import '/screens/absolvierte_schulungen_screen.dart';
-import 'veranstaltungen_screen.dart';
+import 'schulungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -122,8 +122,10 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school_outlined,
-                  color: UIStyles.menuIconColor,),
+              leading: const Icon(
+                Icons.school_outlined,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Schulungen buchen',
                 style: TextStyle(fontSize: _menuItemFontSize),
@@ -133,7 +135,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => VeranstaltungenScreen(
+                    builder: (context) => SchulungenScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

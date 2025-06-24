@@ -13,8 +13,8 @@ import 'package:flutter_html/flutter_html.dart';
 import '/services/core/cache_service.dart';
 import '/services/api/bank_service.dart';
 
-class VeranstaltungenScreen extends StatefulWidget {
-  const VeranstaltungenScreen(
+class SchulungenScreen extends StatefulWidget {
+  const SchulungenScreen(
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
@@ -25,10 +25,10 @@ class VeranstaltungenScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  State<VeranstaltungenScreen> createState() => _VeranstaltungenScreenState();
+  State<SchulungenScreen> createState() => _SchulungenScreenState();
 }
 
-class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
+class _SchulungenScreenState extends State<SchulungenScreen> {
   DateTime? _selectedDate;
   bool _isLoading = false;
   List<Schulungstermine> _results = [];
@@ -124,7 +124,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Fehler beim Laden der Veranstaltungen: $e';
+        _errorMessage = 'Fehler beim Laden der Schulungen: $e';
       });
     } finally {
       setState(() {
@@ -136,7 +136,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Veranstaltungen',
+      title: 'Schulungen',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -146,7 +146,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ScaledText(
-              'Veranstaltungen suchen',
+              'Schulungen suchen',
               style: UIStyles.headerStyle,
             ),
             const SizedBox(height: UIConstants.spacingM),
@@ -266,7 +266,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                           ),
                           // Right: description icon
                           FloatingActionButton(
-                            heroTag: 'veranstaltungenContentFab$index',
+                            heroTag: 'schulungenContentFab$index',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () {
                               showDialog(
@@ -384,8 +384,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                                height: UIConstants
-                                                                    .spacingS,),
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingS,
+                                                            ),
                                                             Row(
                                                               children: [
                                                                 Expanded(
@@ -406,8 +408,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                                           ),
                                                                         ),
                                                                         TextSpan(
-                                                                            text:
-                                                                                _results[currentIndex].ort,),
+                                                                          text:
+                                                                              _results[currentIndex].ort,
+                                                                        ),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -441,8 +444,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                                height: UIConstants
-                                                                    .spacingS,),
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingS,
+                                                            ),
                                                             Row(
                                                               children: [
                                                                 Expanded(
@@ -499,8 +504,10 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                                height: UIConstants
-                                                                    .spacingS,),
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingS,
+                                                            ),
                                                             RichText(
                                                               text: TextSpan(
                                                                 style: UIStyles
@@ -573,8 +580,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                   FloatingActionButton(
                                                     heroTag: 'buchungOkFab',
                                                     mini: true,
-                                                    tooltip:
-                                                        'Veranstaltung buchen',
+                                                    tooltip: 'Schulung buchen',
                                                     backgroundColor: UIConstants
                                                         .defaultAppColor,
                                                     onPressed: () {
@@ -614,7 +620,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                 _results.isEmpty &&
                 _hasSearched)
               const ScaledText(
-                'Keine Veranstaltungen gefunden.',
+                'Keine Schulungen gefunden.',
                 style: UIStyles.bodyStyle,
               ),
           ],
@@ -724,7 +730,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const ScaledText(
-                        'Veranstaltung buchen',
+                        'Schulung buchen',
                         style: UIStyles.headerStyle,
                       ),
                       const SizedBox(height: UIConstants.spacingM),
@@ -777,41 +783,22 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: TextFormField(
+                                  child: TextField(
                                     controller: emailController,
                                     decoration: UIStyles.formInputDecoration
                                         .copyWith(labelText: 'E-Mail'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'E-Mail ist erforderlich';
-                                      }
-                                      final emailRegex = RegExp(
-                                        r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$',
-                                      );
-                                      if (!emailRegex.hasMatch(value)) {
-                                        return 'Bitte geben Sie eine gültige E-Mail Adresse ein';
-                                      }
-                                      return null;
-                                    },
+                                    readOnly: true,
+                                    style: UIStyles.formValueBoldStyle,
                                   ),
                                 ),
                                 const SizedBox(width: UIConstants.spacingM),
                                 Expanded(
-                                  child: TextFormField(
+                                  child: TextField(
                                     controller: telefonController,
                                     decoration: UIStyles.formInputDecoration
                                         .copyWith(labelText: 'Telefon'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Telefonnummer ist erforderlich';
-                                      }
-                                      final phoneRegex =
-                                          RegExp(r'^[0-9\s\-\+\(\)]+$');
-                                      if (!phoneRegex.hasMatch(value)) {
-                                        return 'Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, +, -, (, ) erlaubt)';
-                                      }
-                                      return null;
-                                    },
+                                    readOnly: true,
+                                    style: UIStyles.formValueBoldStyle,
                                   ),
                                 ),
                               ],
@@ -916,7 +903,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                     FloatingActionButton(
                       heroTag: 'buchungOkFab',
                       mini: true,
-                      tooltip: 'Veranstaltung buchen',
+                      tooltip: 'Schulung buchen',
                       backgroundColor: UIConstants.defaultAppColor,
                       onPressed: () {
                         Navigator.of(context).pop();
