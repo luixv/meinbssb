@@ -423,9 +423,56 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           felderArray: [], // Pass an empty list unless you have dynamic fields
                         );
                         final msg = response.msg;
-                        if (!(msg == 'Teilnehmer erfolgreich erfasst' ||
+                        if (msg == 'Teilnehmer erfolgreich erfasst' ||
                             msg == 'Teilnehmer bereits erfasst' ||
-                            msg == 'Teilnehmer erfolgreich aktualisiert')) {
+                            msg == 'Teilnehmer erfolgreich aktualisiert') {
+                          // Show confirmation dialog
+                          showDialog(
+                            context: dialogContext,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: UIConstants.backgroundColor,
+                              title: const Center(
+                                child: ScaledText(
+                                  'Erfolg',
+                                  style: UIStyles.dialogTitleStyle,
+                                ),
+                              ),
+                              content: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style: UIStyles.dialogContentStyle,
+                                  children: <TextSpan>[
+                                    const TextSpan(
+                                        text:
+                                            'Sie sind angemeldet für die Schulung ',),
+                                    TextSpan(
+                                      text: schulungsTermin.bezeichnung,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,),
+                                    ),
+                                    const TextSpan(text: '.'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                Center(
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    style: UIStyles.dialogAcceptButtonStyle,
+                                    child: ScaledText(
+                                      'OK',
+                                      style: UIStyles.dialogButtonTextStyle
+                                          .copyWith(
+                                        color: UIConstants.submitButtonText,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
                           ScaffoldMessenger.of(dialogContext).showSnackBar(
                             SnackBar(
                               content: Text(
