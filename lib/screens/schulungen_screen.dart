@@ -135,10 +135,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   Future<void> _showBookingDialog(Schulungstermine schulungsTermin) async {
     if (!mounted) return;
 
+    final parentContext = context;
     final user = widget.userData;
     // Fetch bank data
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    final cacheService = Provider.of<CacheService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(parentContext, listen: false);
+    final cacheService =
+        Provider.of<CacheService>(parentContext, listen: false);
 
     // Fetch bank data and contacts in parallel
     final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
@@ -194,7 +196,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     // Show the booking dialog with the fetched data
     showDialog(
-      context: context,
+      context: parentContext,
       builder: (context) {
         final emailController = TextEditingController(
           text: email,
@@ -395,8 +397,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     tooltip: 'Buchen',
                     backgroundColor: UIConstants.defaultAppColor,
                     onPressed: () async {
-                      final dialogContext = context;
-                      Navigator.of(dialogContext).pop();
+                      final dialogContext = parentContext;
+                      Navigator.of(context).pop();
                       try {
                         final apiService = Provider.of<ApiService>(
                           dialogContext,
@@ -425,6 +427,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         if (msg == 'Teilnehmer erfolgreich erfasst' ||
                             msg == 'Teilnehmer bereits erfasst' ||
                             msg == 'Teilnehmer erfolgreich aktualisiert') {
+                          if (!mounted) return;
                           showDialog(
                             context: dialogContext,
                             barrierDismissible: false,
@@ -505,8 +508,157 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       UIConstants.horizontalSpacingM,
                                       Expanded(
                                         child: ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            Future.delayed(Duration.zero, () {
+                                              showDialog(
+                                                context: dialogContext,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  final vornameController =
+                                                      TextEditingController();
+                                                  final nachnameController =
+                                                      TextEditingController();
+                                                  final passnummerController =
+                                                      TextEditingController();
+                                                  final emailController =
+                                                      TextEditingController();
+                                                  final telefonnummerController =
+                                                      TextEditingController();
+                                                  return AlertDialog(
+                                                    backgroundColor: UIConstants
+                                                        .backgroundColor,
+                                                    title: const Center(
+                                                      child: ScaledText(
+                                                        'Weitere Person anmelden',
+                                                        style: UIStyles
+                                                            .dialogTitleStyle,
+                                                      ),
+                                                    ),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .stretch,
+                                                        children: [
+                                                          TextField(
+                                                            controller:
+                                                                vornameController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              labelText:
+                                                                  'Vorname',
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 16,
+                                                          ),
+                                                          TextField(
+                                                            controller:
+                                                                nachnameController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              labelText:
+                                                                  'Nachname',
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 16,
+                                                          ),
+                                                          TextField(
+                                                            controller:
+                                                                passnummerController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              labelText:
+                                                                  'Passnummer',
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 16,
+                                                          ),
+                                                          TextField(
+                                                            controller:
+                                                                emailController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              labelText:
+                                                                  'E-Mail',
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 16,
+                                                          ),
+                                                          TextField(
+                                                            controller:
+                                                                telefonnummerController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              labelText:
+                                                                  'Telefonnummer',
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          FloatingActionButton(
+                                                            heroTag:
+                                                                'cancelRegisterAnotherFab',
+                                                            mini: true,
+                                                            tooltip:
+                                                                'Abbrechen',
+                                                            backgroundColor:
+                                                                UIConstants
+                                                                    .defaultAppColor,
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                              context,
+                                                            ).pop(),
+                                                            child: const Icon(
+                                                              Icons.close,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: UIConstants
+                                                                .spacingS,
+                                                          ),
+                                                          FloatingActionButton(
+                                                            heroTag:
+                                                                'okRegisterAnotherFab',
+                                                            mini: true,
+                                                            tooltip: 'OK',
+                                                            backgroundColor:
+                                                                UIConstants
+                                                                    .defaultAppColor,
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                              context,
+                                                            ).pop(),
+                                                            child: const Icon(
+                                                              Icons.check,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            });
+                                          },
                                           style:
                                               UIStyles.dialogAcceptButtonStyle,
                                           child: Row(
