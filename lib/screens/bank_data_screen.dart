@@ -143,7 +143,8 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   Future<void> _onDeleteBankData() async {
-    final bool? confirm = await showDialog<bool>(
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -230,11 +231,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         _isSaving = true;
       });
 
-      // Store context in a local variable before async gap
-      final ctx = context;
       try {
-        final apiService = Provider.of<ApiService>(ctx, listen: false);
-        // Create a BankData object with current data for deletion
         final bankData = BankData(
           id: 0, // ID will be determined by the server
           webloginId: widget.webloginId,
@@ -245,9 +242,9 @@ class BankDataScreenState extends State<BankDataScreen> {
         );
         final bool success = await apiService.deleteBankData(bankData);
 
+        if (!mounted) return;
         if (success) {
-          if (!mounted) return; // ignore: use_build_context_synchronously
-          Navigator.of(ctx).pushReplacement(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => BankDataResultScreen(
                 success: true,
@@ -258,8 +255,7 @@ class BankDataScreenState extends State<BankDataScreen> {
             ),
           );
         } else {
-          if (!mounted) return; // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(ctx).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Bankdaten.'),
               duration: Duration(seconds: 3),
@@ -269,8 +265,7 @@ class BankDataScreenState extends State<BankDataScreen> {
       } catch (e) {
         LoggerService.logError('Exception during bank data delete: $e');
         if (!mounted) return;
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(ctx).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
             duration: const Duration(seconds: 3),
