@@ -65,10 +65,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 ),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                      horizontal: UIConstants.spacingL,
+                      vertical: UIConstants.spacingS),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
+                minimumSize: WidgetStatePropertyAll(
+                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize)),
               ),
             ),
             datePickerTheme: const DatePickerThemeData(
@@ -83,10 +86,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     WidgetStatePropertyAll(UIConstants.primaryColor),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                      horizontal: UIConstants.spacingL,
+                      vertical: UIConstants.spacingS),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
+                minimumSize: WidgetStatePropertyAll(
+                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize)),
               ),
             ),
           ),
@@ -464,7 +470,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     ? msg
                                     : 'Fehler bei der Anmeldung.',
                               ),
-                              duration: const Duration(seconds: 3),
+                              duration: UIConstants.snackbarDuration,
                             ),
                           );
                         }
@@ -472,7 +478,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         ScaffoldMessenger.of(dialogContext).showSnackBar(
                           SnackBar(
                             content: Text('Fehler bei der Anmeldung: $e'),
-                            duration: const Duration(seconds: 3),
+                            duration: UIConstants.snackbarDuration,
                           ),
                         );
                       }
@@ -517,7 +523,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   'Bereits angemeldete Personen:',
                   style: UIStyles.dialogContentStyle,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: UIConstants.spacingS),
                 ...registeredPersons.map(
                   (p) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,7 +553,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
               ],
             ),
           RichText(
@@ -566,7 +572,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: UIConstants.spacingL),
           const Text(
             'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
             textAlign: TextAlign.center,
@@ -591,7 +597,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         Icons.close,
                         color: UIConstants.closeIcon,
                       ),
-                      UIConstants.horizontalSpacingS,
+                      const SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         'Nein',
                         style: UIStyles.dialogButtonTextStyle.copyWith(
@@ -625,7 +631,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         Icons.check,
                         color: UIConstants.checkIcon,
                       ),
-                      UIConstants.horizontalSpacingS,
+                      const SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         'Ja',
                         style: UIStyles.dialogButtonTextStyle.copyWith(
@@ -716,7 +722,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   content: Text(
                     msg.isNotEmpty ? msg : 'Fehler bei der Anmeldung.',
                   ),
-                  duration: const Duration(seconds: 3),
+                  duration: UIConstants.snackbarDuration,
                 ),
               );
             }
@@ -724,7 +730,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             ScaffoldMessenger.of(parentContext).showSnackBar(
               SnackBar(
                 content: Text('Fehler bei der Anmeldung: $e'),
-                duration: const Duration(seconds: 3),
+                duration: UIConstants.snackbarDuration,
               ),
             );
           }
@@ -756,7 +762,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: nachnameController,
                   decoration: const InputDecoration(
@@ -769,7 +775,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: passnummerController,
                   decoration: const InputDecoration(
@@ -782,7 +788,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -798,7 +804,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
                 TextFormField(
                   controller: telefonnummerController,
                   decoration: const InputDecoration(
