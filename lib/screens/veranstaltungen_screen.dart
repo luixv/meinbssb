@@ -568,9 +568,52 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
       listen: false,
     );
 
-    List<BankData> bankDataList = await apiService.fetchBankData(
+    // Fetch bank data and contacts in parallel
+    final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
       user?.webLoginId ?? 0,
     );
+    final Future<List<Map<String, dynamic>>> contactsFuture =
+        apiService.fetchKontakte(
+      user?.personId ?? 0,
+    );
+
+    final List<BankData> bankDataList = await bankDataFuture;
+    final List<Map<String, dynamic>> contacts = await contactsFuture;
+
+    // Get phone number from contacts
+    String phoneNumber = '';
+    if (contacts.isNotEmpty) {
+      // Try to find any phone number from private contacts first
+      final privateContacts = contacts.firstWhere(
+        (category) => category['category'] == 'Privat',
+        orElse: () => {'contacts': []},
+      )['contacts'] as List<dynamic>;
+
+      var phoneContact = privateContacts
+          .cast<Map<String, dynamic>>()
+          .firstWhere(
+            (contact) =>
+                contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
+            orElse: () => {'value': ''},
+          );
+
+      // If no private phone, try business phone
+      if (phoneContact['value']?.isEmpty ?? true) {
+        final businessContacts = contacts.firstWhere(
+          (category) => category['category'] == 'Geschäftlich',
+          orElse: () => {'contacts': []},
+        )['contacts'] as List<dynamic>;
+
+        phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
+              (contact) =>
+                  contact['rawKontaktTyp'] == 5 ||
+                  contact['rawKontaktTyp'] == 6,
+              orElse: () => {'value': ''},
+            );
+      }
+
+      phoneNumber = phoneContact['value'] ?? '';
+    }
 
     final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
     final email = await cacheService.getString('username') ?? '';
@@ -585,7 +628,7 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
           text: email,
         );
         final telefonController = TextEditingController(
-          text: user?.telefon ?? '',
+          text: phoneNumber,
         );
         final kontoinhaberController = TextEditingController(
           text: bankData?.kontoinhaber ?? '',
