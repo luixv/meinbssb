@@ -309,9 +309,12 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                             BoxDecoration(
                                                           color: UIConstants
                                                               .tileColor,
-                                                          borderRadius: BorderRadius
-                                                              .circular(UIConstants
-                                                                  .cornerRadius,),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            UIConstants
+                                                                .cornerRadius,
+                                                          ),
                                                         ),
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -493,8 +496,9 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                     ),
                                                   ),
                                                   const SizedBox(
-                                                      height:
-                                                          UIConstants.spacingS,),
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
                                                   FloatingActionButton(
                                                     heroTag: 'buchungOkFab',
                                                     mini: true,
@@ -502,8 +506,265 @@ class _VeranstaltungenScreenState extends State<VeranstaltungenScreen> {
                                                         'Veranstaltung buchen',
                                                     backgroundColor: UIConstants
                                                         .defaultAppColor,
-                                                    onPressed: () {
-                                                      /* TODO: Implement OK logic */
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      // Show the booking dialog
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          final user =
+                                                              widget.userData;
+                                                          const bankData =
+                                                              null; // Replace with actual fetch if needed
+                                                          final emailController =
+                                                              TextEditingController(
+                                                                  text: '',);
+                                                          final telefonController =
+                                                              TextEditingController(
+                                                                  text:
+                                                                      user?.telefon ??
+                                                                          '',);
+                                                          final kontoinhaberController =
+                                                              TextEditingController(
+                                                                  text: bankData
+                                                                          ?.kontoinhaber ??
+                                                                      '',);
+                                                          final ibanController =
+                                                              TextEditingController(
+                                                                  text: bankData
+                                                                          ?.iban ??
+                                                                      '',);
+                                                          final bicController =
+                                                              TextEditingController(
+                                                                  text: bankData
+                                                                          ?.bic ??
+                                                                      '',);
+                                                          return Dialog(
+                                                            child: Padding(
+                                                              padding: UIConstants
+                                                                  .dialogPadding,
+                                                              child:
+                                                                  SingleChildScrollView(
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .stretch,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Veranstaltung buchen',
+                                                                      style: UIStyles
+                                                                          .headerStyle,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            UIConstants.spacingM,),
+                                                                    Text(
+                                                                      _results[
+                                                                              currentIndex]
+                                                                          .bezeichnung,
+                                                                      style: UIStyles
+                                                                          .subtitleStyle,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            UIConstants.spacingM,),
+                                                                    Text(
+                                                                      'Es sind noch ${_results[currentIndex].angemeldeteTeilnehmer} von ${_results[currentIndex].maxTeilnehmer} Plätzen frei.',
+                                                                      style: UIStyles
+                                                                          .bodyStyle,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            UIConstants.spacingL,),
+                                                                    // Personal Data Block
+                                                                    Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: UIConstants
+                                                                            .whiteColor,
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                UIConstants.mydarkGreyColor,),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(UIConstants.cornerRadius),
+                                                                      ),
+                                                                      padding:
+                                                                          UIConstants
+                                                                              .defaultPadding,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          const Text(
+                                                                            'Persönliche Daten',
+                                                                            style:
+                                                                                UIStyles.sectionTitleStyle,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingM,),
+                                                                          Row(
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: TextEditingController(text: user?.vorname ?? ''),
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'Vorname'),
+                                                                                  readOnly: true,
+                                                                                  style: UIStyles.formValueBoldStyle,
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: UIConstants.spacingM),
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: TextEditingController(text: user?.namen ?? ''),
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'Nachname'),
+                                                                                  readOnly: true,
+                                                                                  style: UIStyles.formValueBoldStyle,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingM,),
+                                                                          Row(
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: emailController,
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: UIConstants.spacingM),
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: telefonController,
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'Telefonnummer'),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            UIConstants.spacingL,),
+                                                                    // Bank Data Block
+                                                                    Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: UIConstants
+                                                                            .whiteColor,
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                UIConstants.mydarkGreyColor,),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(UIConstants.cornerRadius),
+                                                                      ),
+                                                                      padding:
+                                                                          UIConstants
+                                                                              .defaultPadding,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          const Text(
+                                                                            'Bankdaten',
+                                                                            style:
+                                                                                UIStyles.sectionTitleStyle,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingM,),
+                                                                          TextField(
+                                                                            controller:
+                                                                                kontoinhaberController,
+                                                                            decoration:
+                                                                                UIStyles.formInputDecoration.copyWith(labelText: 'Kontoinhaber'),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingM,),
+                                                                          Row(
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: ibanController,
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'IBAN'),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: UIConstants.spacingM),
+                                                                              Expanded(
+                                                                                child: TextField(
+                                                                                  controller: bicController,
+                                                                                  decoration: UIStyles.formInputDecoration.copyWith(labelText: 'BIC'),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            UIConstants.spacingL,),
+                                                                    Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .end,
+                                                                      children: [
+                                                                        FloatingActionButton(
+                                                                          heroTag:
+                                                                              'buchungCancelFab',
+                                                                          mini:
+                                                                              true,
+                                                                          backgroundColor:
+                                                                              UIConstants.defaultAppColor,
+                                                                          onPressed: () =>
+                                                                              Navigator.of(context).pop(),
+                                                                          child: const Icon(
+                                                                              Icons.close,
+                                                                              color: Colors.white,),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                UIConstants.spacingM,),
+                                                                        FloatingActionButton(
+                                                                          heroTag:
+                                                                              'buchungOkFab',
+                                                                          mini:
+                                                                              true,
+                                                                          backgroundColor:
+                                                                              UIConstants.defaultAppColor,
+                                                                          onPressed:
+                                                                              () {
+                                                                            /* TODO: Implement OK logic */
+                                                                          },
+                                                                          child: const Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.white,),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
                                                     },
                                                     child: const Icon(
                                                       Icons.check,
