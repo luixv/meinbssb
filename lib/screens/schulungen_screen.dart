@@ -1000,6 +1000,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 context: context,
                                 builder: (context) {
                                   final t = schulungsTermin;
+                                  final freiePlaetze =
+                                      t.maxTeilnehmer - t.angemeldeteTeilnehmer;
                                   return AlertDialog(
                                     backgroundColor:
                                         UIConstants.backgroundColor,
@@ -1011,20 +1013,45 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              Container(
-                                                padding: const EdgeInsets.all(
-                                                    UIConstants.spacingM,),
-                                                decoration: const BoxDecoration(
-                                                  color: UIConstants.whiteColor,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft: Radius.circular(
-                                                        UIConstants
-                                                            .cornerRadius,),
-                                                    topRight: Radius.circular(
-                                                        UIConstants
-                                                            .cornerRadius,),
+                                              // Title
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: UIConstants.spacingM,
+                                                  left: UIConstants.spacingM,
+                                                  right: UIConstants.spacingM,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    t.bezeichnung,
+                                                    style: UIStyles
+                                                        .dialogTitleStyle,
+                                                    textAlign: TextAlign.center,
                                                   ),
+                                                ),
+                                              ),
+                                              // Free places sentence
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: UIConstants.spacingS,
+                                                  left: UIConstants.spacingM,
+                                                  right: UIConstants.spacingM,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Info table
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                  UIConstants.spacingM,
                                                 ),
                                                 child: Row(
                                                   crossAxisAlignment:
@@ -1037,90 +1064,109 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Text(t.bezeichnung,
-                                                              style: UIStyles
-                                                                  .dialogTitleStyle,),
-                                                          const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingS,),
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Datum: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
-                                                              Text(DateFormat(
-                                                                      'dd.MM.yyyy',)
-                                                                  .format(
-                                                                      t.datum,),),
+                                                                'Datum: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                DateFormat(
+                                                                  'dd.MM.yyyy',
+                                                                ).format(
+                                                                  t.datum,
+                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                           const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,),
+                                                            height: UIConstants
+                                                                .spacingXS,
+                                                          ),
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Ort: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
+                                                                'Ort: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
                                                               Text(t.ort),
                                                             ],
                                                           ),
                                                           const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,),
+                                                            height: UIConstants
+                                                                .spacingXS,
+                                                          ),
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Kosten: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
+                                                                'Kosten: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
                                                               Text(
-                                                                  '${t.kosten.toStringAsFixed(2)} €',),
+                                                                '${t.kosten.toStringAsFixed(2)} €',
+                                                              ),
                                                             ],
                                                           ),
                                                           const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,),
+                                                            height: UIConstants
+                                                                .spacingXS,
+                                                          ),
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Max. Teilnehmer: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
-                                                              Text(t
-                                                                  .maxTeilnehmer
-                                                                  .toString(),),
+                                                                'Max. Teilnehmer: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                t.maxTeilnehmer
+                                                                    .toString(),
+                                                              ),
                                                             ],
                                                           ),
                                                           const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,),
+                                                            height: UIConstants
+                                                                .spacingXS,
+                                                          ),
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Gruppe: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
-                                                              Text(t
-                                                                  .webGruppeLabel,),
+                                                                'Gruppe: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                t.webGruppeLabel,
+                                                              ),
                                                             ],
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                    // Right column
+                                                    // Right column (Lehrgang info only)
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
@@ -1130,32 +1176,44 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           Row(
                                                             children: [
                                                               const Text(
-                                                                  'Lehrgangsleiter: ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,),),
+                                                                'Lehrgangsleiter: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
                                                               Flexible(
-                                                                  child: Text(t
-                                                                      .lehrgangsleiter,),),
+                                                                child: Text(
+                                                                  t.lehrgangsleiter,
+                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                           const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,),
+                                                            height: UIConstants
+                                                                .spacingXS,
+                                                          ),
                                                           if (t
                                                               .lehrgangsleiterTel
                                                               .isNotEmpty)
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'Tel.: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
+                                                                  'Tel.: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
                                                                 Flexible(
-                                                                    child: Text(
-                                                                        t.lehrgangsleiterTel,),),
+                                                                  child: Text(
+                                                                    t.lehrgangsleiterTel,
+                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
                                                           if (t
@@ -1164,13 +1222,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             Row(
                                                               children: [
                                                                 const Text(
-                                                                    'E-Mail: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,),),
+                                                                  'E-Mail: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
                                                                 Flexible(
-                                                                    child: Text(
-                                                                        t.lehrgangsleiterMail,),),
+                                                                  child: Text(
+                                                                    t.lehrgangsleiterMail,
+                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
                                                         ],
@@ -1182,57 +1246,70 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               const Divider(height: 1),
                                               Padding(
                                                 padding: const EdgeInsets.all(
-                                                    UIConstants.spacingM,),
+                                                  UIConstants.spacingM,
+                                                ),
                                                 child: t.lehrgangsinhaltHtml
                                                         .isNotEmpty
                                                     ? Html(
                                                         data: t
-                                                            .lehrgangsinhaltHtml,)
+                                                            .lehrgangsinhaltHtml,
+                                                      )
                                                     : t.lehrgangsinhalt
                                                             .isNotEmpty
                                                         ? Text(
-                                                            t.lehrgangsinhalt,)
+                                                            t.lehrgangsinhalt,
+                                                          )
                                                         : t.bemerkung.isNotEmpty
                                                             ? Text(t.bemerkung)
                                                             : const Text(
-                                                                'Keine Beschreibung verfügbar.',),
+                                                                'Keine Beschreibung verfügbar.',
+                                                              ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        // FAB for booking (bottom left)
-                                        Positioned(
-                                          bottom: UIConstants.spacingM,
-                                          left: UIConstants.spacingM,
-                                          child: FloatingActionButton(
-                                            heroTag: 'bookSchulungFab$index',
-                                            mini: true,
-                                            backgroundColor:
-                                                UIConstants.defaultAppColor,
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              _showBookingDialog(t,
-                                                  registeredPersons: [],);
-                                            },
-                                            child: const Icon(
-                                                Icons.event_available,
-                                                color: Colors.white,),
-                                          ),
-                                        ),
-                                        // FAB for close (bottom right)
+                                        // FABs at bottom right
                                         Positioned(
                                           bottom: UIConstants.spacingM,
                                           right: UIConstants.spacingM,
-                                          child: FloatingActionButton(
-                                            heroTag:
-                                                'closeSchulungInfoFab$index',
-                                            mini: true,
-                                            backgroundColor:
-                                                UIConstants.defaultAppColor,
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: const Icon(Icons.close,
-                                                color: Colors.white,),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              FloatingActionButton(
+                                                heroTag:
+                                                    'bookSchulungFab$index',
+                                                mini: true,
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  _showBookingDialog(
+                                                    t,
+                                                    registeredPersons: [],
+                                                  );
+                                                },
+                                                child: const Icon(
+                                                  Icons.event_available,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: UIConstants.spacingS,
+                                              ),
+                                              FloatingActionButton(
+                                                heroTag:
+                                                    'closeSchulungInfoFab$index',
+                                                mini: true,
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
