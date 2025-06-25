@@ -277,6 +277,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          const Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              'Daten aus ZMI',
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: UIConstants.greySubtitleTextColor,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
