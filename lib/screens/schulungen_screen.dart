@@ -372,7 +372,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           onChanged: (val) {
                             setState(() => agbChecked = val ?? false);
                           },
-                          title: const Text('AGB akzeptieren'),
+                          title: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('AGB akzeptieren'),
+                              SizedBox(width: UIConstants.spacingS),
+                              Tooltip(
+                                message: 'Ich bin mit den ABG einverstanden.',
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: UIConstants.defaultAppColor,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
                           controlAffinity: ListTileControlAffinity.leading,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -381,7 +395,22 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           onChanged: (val) {
                             setState(() => lastschriftChecked = val ?? false);
                           },
-                          title: const Text('SEPA-Lastschriftmandat erteilen'),
+                          title: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('SEPA-Lastschriftmandat erteilen'),
+                              SizedBox(width: UIConstants.spacingS),
+                              Tooltip(
+                                message: // Hiermit ermächtige ich Sie widerruflich, fällige Zahlungen per Lastschrift von meinem MeinBSSB-Konto einzuziehen. Mein Kreditinstitut wird angewiesen, diese Lastschriften einzulösen
+                                    'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: UIConstants.defaultAppColor,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
                           controlAffinity: ListTileControlAffinity.leading,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -719,11 +748,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               title: const Center(
                 child: ScaledText(
                   'Person anmelden',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: UIConstants.defaultAppColor,
-                  ),
+                  style: UIStyles.dialogTitleStyle,
                 ),
               ),
               content: SingleChildScrollView(
