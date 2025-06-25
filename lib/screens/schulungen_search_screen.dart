@@ -28,9 +28,9 @@ class SchulungenSearchScreen extends StatefulWidget {
 }
 
 class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
-  DateTime? _selectedDate;
-  int? _selectedWebGruppe;
-  int? _selectedBezirkId;
+  DateTime? _selectedDate = DateTime.now();
+  int? _selectedWebGruppe = 0;
+  int? _selectedBezirkId = 0;
   final TextEditingController _ortController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
   bool _fuerVerlaengerungen = false;
@@ -50,7 +50,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
 
     // Add "Alle" option
     bezirke.insert(
-        0, const Bezirk(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),);
+      0,
+      const Bezirk(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
+    );
 
     setState(() {
       _bezirke = bezirke;
@@ -228,10 +230,12 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       labelText: 'Bezirk',
                     ),
                     items: _bezirke
-                        .map((bezirk) => DropdownMenuItem<int>(
-                              value: bezirk.bezirkId,
-                              child: Text(bezirk.bezirkName),
-                            ),)
+                        .map(
+                          (bezirk) => DropdownMenuItem<int>(
+                            value: bezirk.bezirkId,
+                            child: Text(bezirk.bezirkName),
+                          ),
+                        )
                         .toList(),
                     onChanged: (value) {
                       setState(() {

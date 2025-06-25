@@ -843,266 +843,305 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return AlertDialog(
-                                          backgroundColor:
-                                              UIConstants.backgroundColor,
-                                          contentPadding: EdgeInsets.zero,
-                                          content: SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                // White header and info container
-                                                Container(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color:
-                                                        UIConstants.whiteColor,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft: Radius.circular(
-                                                        UIConstants
-                                                            .cornerRadius,
-                                                      ),
-                                                      topRight: Radius.circular(
-                                                        UIConstants
-                                                            .cornerRadius,
-                                                      ),
-                                                    ),
-                                                  ),
+                                        return Stack(
+                                          children: [
+                                            AlertDialog(
+                                              backgroundColor:
+                                                  UIConstants.backgroundColor,
+                                              contentPadding: EdgeInsets.zero,
+                                              content: ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxHeight:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .height *
+                                                          0.8,
+                                                  minWidth: 300,
+                                                ),
+                                                child: SingleChildScrollView(
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .stretch,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      // Title
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          top: UIConstants
-                                                              .spacingM,
-                                                          left: UIConstants
-                                                              .spacingM,
-                                                          right: UIConstants
-                                                              .spacingM,
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            t.bezeichnung,
-                                                            style: UIStyles
-                                                                .dialogTitleStyle,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // Free places sentence
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          top: UIConstants
-                                                              .spacingS,
-                                                          left: UIConstants
-                                                              .spacingM,
-                                                          right: UIConstants
-                                                              .spacingM,
-                                                          bottom: UIConstants
-                                                              .spacingM,
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
-                                                            style: UIStyles
-                                                                .bodyStyle
-                                                                .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // Info table
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal:
+                                                      // White header and info container
+                                                      Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color: UIConstants
+                                                              .whiteColor,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
                                                               UIConstants
-                                                                  .spacingM,
+                                                                  .cornerRadius,
+                                                            ),
+                                                            topRight:
+                                                                Radius.circular(
+                                                              UIConstants
+                                                                  .cornerRadius,
+                                                            ),
+                                                          ),
                                                         ),
-                                                        child: Row(
+                                                        child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
-                                                                  .start,
+                                                                  .stretch,
                                                           children: [
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      const Text(
-                                                                        'Datum: ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                      Text(DateFormat(
-                                                                              'dd.MM.yyyy',)
-                                                                          .format(
-                                                                              t.datum,),),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: UIConstants
-                                                                        .spacingXS,
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      const Text(
-                                                                        'Ort: ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                      Text(t
-                                                                          .ort,),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: UIConstants
-                                                                        .spacingXS,
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      const Text(
-                                                                        'Kosten: ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                          '${t.kosten.toStringAsFixed(2)} €',),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: UIConstants
-                                                                        .spacingXS,
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      const Text(
-                                                                        'Gruppe: ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                      Text(t
-                                                                          .webGruppeLabel,),
-                                                                    ],
-                                                                  ),
-                                                                ],
+                                                            // Title
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                top: UIConstants
+                                                                    .spacingM,
+                                                                left: UIConstants
+                                                                    .spacingM,
+                                                                right: UIConstants
+                                                                    .spacingM,
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  t.bezeichnung,
+                                                                  style: UIStyles
+                                                                      .dialogTitleStyle,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
                                                               ),
                                                             ),
-                                                            Expanded(
-                                                              child: Column(
+                                                            // Free places sentence
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                top: UIConstants
+                                                                    .spacingS,
+                                                                left: UIConstants
+                                                                    .spacingM,
+                                                                right: UIConstants
+                                                                    .spacingM,
+                                                                bottom:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
+                                                                  style: UIStyles
+                                                                      .bodyStyle
+                                                                      .copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            // Info table
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                horizontal:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ),
+                                                              child: Row(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      const Text(
-                                                                        'Lehrgangsleiter: ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Datum: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            Text(DateFormat('dd.MM.yyyy').format(t.datum)),
+                                                                          ],
                                                                         ),
-                                                                      ),
-                                                                      Flexible(
-                                                                          child:
-                                                                              Text(t.lehrgangsleiter),),
-                                                                    ],
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Ort: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            Text(t.ort),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Kosten: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            Text('${t.kosten.toStringAsFixed(2)} €'),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Gruppe: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            Text(t.webGruppeLabel),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                  if (t
-                                                                      .lehrgangsleiterTel
-                                                                      .isNotEmpty)
-                                                                    Row(
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: [
-                                                                        const Text(
-                                                                            'Tel.: ',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.bold),),
-                                                                        Flexible(
-                                                                            child:
-                                                                                Text(t.lehrgangsleiterTel),),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Lehrgangsleiter: ',
+                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            ),
+                                                                            Flexible(child: Text(t.lehrgangsleiter)),
+                                                                          ],
+                                                                        ),
+                                                                        if (t
+                                                                            .lehrgangsleiterTel
+                                                                            .isNotEmpty)
+                                                                          Row(
+                                                                            children: [
+                                                                              const Text('Tel.: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                              Flexible(child: Text(t.lehrgangsleiterTel)),
+                                                                            ],
+                                                                          ),
+                                                                        if (t
+                                                                            .lehrgangsleiterMail
+                                                                            .isNotEmpty)
+                                                                          Row(
+                                                                            children: [
+                                                                              const Text('E-Mail: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                              Flexible(child: Text(t.lehrgangsleiterMail)),
+                                                                            ],
+                                                                          ),
                                                                       ],
                                                                     ),
-                                                                  if (t
-                                                                      .lehrgangsleiterMail
-                                                                      .isNotEmpty)
-                                                                    Row(
-                                                                      children: [
-                                                                        const Text(
-                                                                            'E-Mail: ',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.bold),),
-                                                                        Flexible(
-                                                                            child:
-                                                                                Text(t.lehrgangsleiterMail),),
-                                                                      ],
-                                                                    ),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),
                                                           ],
                                                         ),
                                                       ),
+                                                      const Divider(height: 1),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(
+                                                          UIConstants.spacingM,
+                                                        ),
+                                                        child: t.lehrgangsinhaltHtml
+                                                                .isNotEmpty
+                                                            ? Html(
+                                                                data: t
+                                                                    .lehrgangsinhaltHtml,
+                                                              )
+                                                            : t.lehrgangsinhalt
+                                                                    .isNotEmpty
+                                                                ? Text(
+                                                                    t.lehrgangsinhalt,
+                                                                  )
+                                                                : t.bemerkung
+                                                                        .isNotEmpty
+                                                                    ? Text(
+                                                                        t.bemerkung,
+                                                                      )
+                                                                    : const Text(
+                                                                        'Keine Beschreibung verfügbar.',
+                                                                      ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
-                                                const Divider(height: 1),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    UIConstants.spacingM,
-                                                  ),
-                                                  child: t.lehrgangsinhaltHtml
-                                                          .isNotEmpty
-                                                      ? Html(
-                                                          data: t
-                                                              .lehrgangsinhaltHtml,)
-                                                      : t.lehrgangsinhalt
-                                                              .isNotEmpty
-                                                          ? Text(
-                                                              t.lehrgangsinhalt,)
-                                                          : t.bemerkung
-                                                                  .isNotEmpty
-                                                              ? Text(
-                                                                  t.bemerkung,)
-                                                              : const Text(
-                                                                  'Keine Beschreibung verfügbar.',
-                                                                ),
-                                                ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
+                                            Positioned(
+                                              bottom: UIConstants.spacingM,
+                                              right: UIConstants.spacingM,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  FloatingActionButton(
+                                                    heroTag:
+                                                        'descDialogCancelFab$index',
+                                                    mini: true,
+                                                    tooltip: 'Abbrechen',
+                                                    backgroundColor: UIConstants
+                                                        .defaultAppColor,
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                    child: const Icon(
+                                                      Icons.close,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  FloatingActionButton(
+                                                    heroTag:
+                                                        'descDialogBookFab$index',
+                                                    mini: true,
+                                                    tooltip:
+                                                        'Schulungen Buchen',
+                                                    backgroundColor: UIConstants
+                                                        .defaultAppColor,
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      _showBookingDialog(
+                                                        t,
+                                                        registeredPersons: [],
+                                                      );
+                                                    },
+                                                    child: const Icon(
+                                                      Icons.event_available,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         );
                                       },
                                     );
