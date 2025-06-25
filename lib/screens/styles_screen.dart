@@ -251,25 +251,25 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.check, 'Check - Confirmation'),
                 _buildIconExample(Icons.add, 'Add - New items'),
                 _buildIconExample(
-                    Icons.delete_outline, 'Delete - Remove items'),
+                    Icons.delete_outline, 'Delete - Remove items',),
                 _buildIconExample(Icons.arrow_back, 'Back - Navigation'),
                 _buildIconExample(
-                    Icons.visibility, 'Visibility - Password field'),
+                    Icons.visibility, 'Visibility - Password field',),
                 _buildIconExample(
-                    Icons.visibility_off, 'Visibility Off - Password field'),
+                    Icons.visibility_off, 'Visibility Off - Password field',),
                 _buildIconExample(Icons.login, 'Login - Authentication'),
                 _buildIconExample(
-                    Icons.lock_reset, 'Password Reset - Reset password'),
+                    Icons.lock_reset, 'Password Reset - Reset password',),
                 _buildIconExample(
-                    Icons.check_circle, 'Success - Success messages'),
+                    Icons.check_circle, 'Success - Success messages',),
                 _buildIconExample(Icons.error, 'Error - Error messages'),
                 _buildIconExample(Icons.home, 'Home - Home navigation'),
                 _buildIconExample(
-                    Icons.delete_outline_outlined, 'Delete - Remove items'),
+                    Icons.delete_outline_outlined, 'Delete - Remove items',),
                 _buildIconExample(
-                    Icons.calendar_today, 'Calendar - Date selection'),
+                    Icons.calendar_today, 'Calendar - Date selection',),
                 _buildIconExample(
-                    Icons.app_registration, 'Registration - User registration'),
+                    Icons.app_registration, 'Registration - User registration',),
                 _buildIconExample(Icons.wifi, 'WiFi - Network status'),
                 _buildIconExample(Icons.wifi_off, 'WiFi Off - No network'),
                 _buildIconExample(Icons.task_alt, 'Task - Completed tasks'),
@@ -277,37 +277,37 @@ class StylesScreen extends StatelessWidget {
                 _buildIconExample(Icons.badge, 'Badge - User profile'),
                 _buildIconExample(Icons.edit, 'Edit - Edit content'),
                 _buildIconExample(
-                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo'),
+                    Icons.add_a_photo_outlined, 'Add a photo - Profile photo',),
                 _buildIconExample(Icons.person, 'Person - User profile'),
                 _buildIconExample(
-                    Icons.contact_phone, 'Contact - Contact information'),
+                    Icons.contact_phone, 'Contact - Contact information',),
                 _buildIconExample(Icons.account_balance, 'Bank - Bank data'),
                 _buildIconExample(Icons.style, 'Style - App styling'),
                 _buildIconExample(Icons.logout, 'Logout - Sign out'),
                 _buildIconExample(Icons.help_outline, 'Help - Help section'),
                 _buildIconExample(Icons.info_outline, 'Info - Information'),
                 _buildIconExample(
-                    Icons.error_outline, 'Error - Error messages'),
+                    Icons.error_outline, 'Error - Error messages',),
                 _buildIconExample(Icons.save, 'Save - Save changes'),
                 _buildIconExample(
-                    Icons.search, 'Search - Search functionality'),
+                    Icons.search, 'Search - Search functionality',),
                 _buildIconExample(
-                    Icons.signal_cellular_4_bar, 'Signal - Mobile Data'),
+                    Icons.signal_cellular_4_bar, 'Signal - Mobile Data',),
                 _buildIconExample(Icons.delete_forever,
-                    'Delete Forever - Destructive Action'),
+                    'Delete Forever - Destructive Action',),
                 _buildIconExample(
-                    Icons.sports_bar_outlined, 'Oktoberfestlandesschießen'),
+                    Icons.sports_bar_outlined, 'Oktoberfestlandesschießen',),
                 _buildIconExample(Icons.rule, 'Rule - Startrechte Ändern'),
                 _buildIconExample(
-                    Icons.cloud_off, 'Cloud Off - No Cloud Connection'),
+                    Icons.cloud_off, 'Cloud Off - No Cloud Connection',),
                 _buildIconExample(
-                    Icons.check, 'Check - Confirm (used in dialogs)'),
+                    Icons.check, 'Check - Confirm (used in dialogs)',),
                 _buildIconExample(
-                    Icons.upload_file, 'Upload File - Profile photo upload'),
+                    Icons.upload_file, 'Upload File - Profile photo upload',),
                 _buildIconExample(Icons.refresh, 'Refresh - Reload data'),
                 _buildIconExample(Icons.search, 'Search - Search bar'),
                 _buildIconExample(
-                    Icons.network_check, 'Network Check - Connectivity'),
+                    Icons.network_check, 'Network Check - Connectivity',),
                 _buildIconExample(Icons.vpn_lock, 'VPN Lock - Connectivity'),
                 _buildIconExample(Icons.phone, 'Phone - Contact/phone number'),
                 _buildIconExample(Icons.email, 'Email - Contact/email'),
