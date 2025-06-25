@@ -9,7 +9,6 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
 import '/screens/absolvierte_schulungen_screen.dart';
-import 'schulungen_screen.dart';
 import '/screens/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
@@ -18,6 +17,7 @@ import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
+import '/screens/schulungen_search_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -135,7 +135,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SchulungenScreen(
+                    builder: (context) => SchulungenSearchScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

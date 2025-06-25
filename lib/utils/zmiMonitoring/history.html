@@ -583,37 +583,37 @@
 
         function parseAndDisplayData(csvText) {
             try {
-                const lines = csvText.trim().split('\n');
-                const tableBody = document.getElementById('monitorTable').getElementsByTagName('tbody')[0];
-                tableBody.innerHTML = ''; // Clear existing rows
+            const lines = csvText.trim().split('\n');
+            const tableBody = document.getElementById('monitorTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear existing rows
 
-                if (lines.length <= 1) { // Only header or empty file
-                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data available yet.</td></tr>';
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
-                    // Clear charts if no data
-                    if (responseTimeChart) responseTimeChart.destroy();
-                    if (statusDistributionChart) statusDistributionChart.destroy();
-                    responseTimeChart = null;
-                    statusDistributionChart = null;
-                    return;
-                }
+            if (lines.length <= 1) { // Only header or empty file
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data available yet.</td></tr>';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+                // Clear charts if no data
+                if (responseTimeChart) responseTimeChart.destroy();
+                if (statusDistributionChart) statusDistributionChart.destroy();
+                responseTimeChart = null;
+                statusDistributionChart = null;
+                return;
+            }
 
-                const dataLines = lines.slice(1); // Skip header row
-                // Take the last N entries for both table and charts
-                const relevantData = dataLines.slice(Math.max(0, dataLines.length - MAX_ROWS_TO_DISPLAY));
+            const dataLines = lines.slice(1); // Skip header row
+            // Take the last N entries for both table and charts
+            const relevantData = dataLines.slice(Math.max(0, dataLines.length - MAX_ROWS_TO_DISPLAY));
 
-                // Prepare data for charts
-                const timestamps = [];
-                const responseTimes = [];
-                const statusCounts = {};
+            // Prepare data for charts
+            const timestamps = [];
+            const responseTimes = [];
+            const statusCounts = {};
 
-                relevantData.forEach(line => {
-                    const columns = line.split(',');
-                    if (columns.length === 5) {
-                        // For charts (reversed to show oldest on left for line chart)
-                        timestamps.push(columns[0]);
-                        responseTimes.push(parseFloat(columns[3]));
+            relevantData.forEach(line => {
+                const columns = line.split(',');
+                if (columns.length === 5) {
+                    // For charts (reversed to show oldest on left for line chart)
+                    timestamps.push(columns[0]);
+                    responseTimes.push(parseFloat(columns[3]));
 
                         // For status distribution - display "Offline" instead of "curl_error"
                         let status = columns[4];
@@ -622,37 +622,37 @@
                         }
                         const normalizedStatus = status.replace(/\s/g, '_').toLowerCase(); // Normalize for consistent keys
                         statusCounts[normalizedStatus] = (statusCounts[normalizedStatus] || 0) + 1;
-                    }
-                });
+                }
+            });
 
-                // Update charts
-                updateResponseTimeChart(timestamps, responseTimes);
-                updateStatusDistributionChart(statusCounts);
+            // Update charts
+            updateResponseTimeChart(timestamps, responseTimes);
+            updateStatusDistributionChart(statusCounts);
 
-                // Populate table (newest at top)
-                // Need to reverse again for the table if charts consumed them in order
-                // Or better, iterate original dataLines in reverse for table
-                const tableDisplayLines = dataLines.reverse().slice(0, MAX_ROWS_TO_DISPLAY); // Re-reverse for table to show newest first
-                tableDisplayLines.forEach(line => {
-                    const columns = line.split(',');
-                    if (columns.length === 5) {
-                        const row = tableBody.insertRow();
+            // Populate table (newest at top)
+            // Need to reverse again for the table if charts consumed them in order
+            // Or better, iterate original dataLines in reverse for table
+            const tableDisplayLines = dataLines.reverse().slice(0, MAX_ROWS_TO_DISPLAY); // Re-reverse for table to show newest first
+            tableDisplayLines.forEach(line => {
+                const columns = line.split(',');
+                if (columns.length === 5) {
+                    const row = tableBody.insertRow();
 
-                        row.insertCell(0).textContent = columns[0]; // Timestamp
-                        row.insertCell(1).textContent = columns[1]; // Target URL
-                        row.insertCell(2).textContent = columns[2]; // HTTP Code
-                        row.insertCell(3).textContent = parseFloat(columns[3]).toFixed(3); // Response Time (formatted)
+                    row.insertCell(0).textContent = columns[0]; // Timestamp
+                    row.insertCell(1).textContent = columns[1]; // Target URL
+                    row.insertCell(2).textContent = columns[2]; // HTTP Code
+                    row.insertCell(3).textContent = parseFloat(columns[3]).toFixed(3); // Response Time (formatted)
 
-                        const statusCell = row.insertCell(4); // Status Message
+                    const statusCell = row.insertCell(4); // Status Message
                         // Display "Offline" instead of "curl_error" for better user experience
                         const displayStatus = columns[4].toLowerCase() === 'curl_error' ? 'Offline' : columns[4];
                         statusCell.textContent = displayStatus;
-                        statusCell.classList.add('status-' + columns[4].toLowerCase().replace(/\s/g, '_'));
-                    }
-                });
+                    statusCell.classList.add('status-' + columns[4].toLowerCase().replace(/\s/g, '_'));
+                }
+            });
 
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
             } catch (e) {
                 console.error("Error parsing data:", e);
                 document.getElementById('error').textContent = `Error parsing data: ${e.message}`;

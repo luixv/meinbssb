@@ -18,99 +18,27 @@ class SchulungenScreen extends StatefulWidget {
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
+    required this.searchDate,
     super.key,
   });
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
+  final DateTime searchDate;
 
   @override
   State<SchulungenScreen> createState() => _SchulungenScreenState();
 }
 
 class _SchulungenScreenState extends State<SchulungenScreen> {
-  DateTime? _selectedDate;
   bool _isLoading = false;
   List<Schulungstermine> _results = [];
   String? _errorMessage;
-  bool _hasSearched = false;
 
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
-      locale: const Locale('de', 'DE'),
-      helpText: 'Datum wählen',
-      cancelText: 'Abbrechen',
-      confirmText: 'Auswählen',
-      fieldLabelText: 'Datum eingeben',
-      fieldHintText: 'TT.MM.JJJJ',
-      errorFormatText: 'Ungültiges Datumsformat.',
-      errorInvalidText: 'Ungültiges Datum.',
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: UIConstants.defaultAppColor,
-                  onPrimary: UIConstants.whiteColor,
-                  surface: UIConstants.calendarBackgroundColor,
-                  onSurface: UIConstants.textColor,
-                ),
-            textButtonTheme: const TextButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  UIConstants.cancelButtonBackground,
-                ),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingS,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(
-                  Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),
-                ),
-              ),
-            ),
-            datePickerTheme: const DatePickerThemeData(
-              headerBackgroundColor: UIConstants.calendarBackgroundColor,
-              backgroundColor: UIConstants.calendarBackgroundColor,
-              headerForegroundColor: UIConstants.textColor,
-              dayStyle: TextStyle(color: UIConstants.textColor),
-              yearStyle: TextStyle(color: UIConstants.textColor),
-              weekdayStyle: TextStyle(color: UIConstants.textColor),
-              confirmButtonStyle: ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(UIConstants.primaryColor),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingS,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(
-                  Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),
-                ),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-      await _search();
-    }
+  @override
+  void initState() {
+    super.initState();
+    _search();
   }
 
   String _formatDate(DateTime date) {
@@ -118,17 +46,15 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   Future<void> _search() async {
-    if (_selectedDate == null) return;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
       _results = [];
-      _hasSearched = true;
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final result =
-          await apiService.fetchSchulungstermine(_formatDate(_selectedDate!));
+      final result = await apiService
+          .fetchSchulungstermine(_formatDate(widget.searchDate));
       setState(() {
         _results = result;
       });
@@ -877,28 +803,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               style: UIStyles.headerStyle,
             ),
             const SizedBox(height: UIConstants.spacingM),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: _pickDate,
-                    child: InputDecorator(
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Datum wählen',
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      ),
-                      child: ScaledText(
-                        _selectedDate == null
-                            ? 'Bitte wählen Sie ein Datum'
-                            : _formatDate(_selectedDate!),
-                        style: UIStyles.bodyStyle,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: UIConstants.spacingL),
             if (_isLoading) const Center(child: CircularProgressIndicator()),
             if (_errorMessage != null)
               ScaledText(
@@ -1212,13 +1116,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     children: [
                                                                       const Text(
                                                                         'Tel.: ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
                                                                       ),
                                                                       Flexible(
-                                                                        child: Text(
-                                                                            t.lehrgangsleiterTel,),
+                                                                        child:
+                                                                            Text(
+                                                                          t.lehrgangsleiterTel,
+                                                                        ),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1229,13 +1137,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     children: [
                                                                       const Text(
                                                                         'E-Mail: ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
                                                                       ),
                                                                       Flexible(
-                                                                        child: Text(
-                                                                            t.lehrgangsleiterMail,),
+                                                                        child:
+                                                                            Text(
+                                                                          t.lehrgangsleiterMail,
+                                                                        ),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1298,7 +1210,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 ),
                                               ),
                                               const SizedBox(
-                                                  height: UIConstants.spacingS,),
+                                                height: UIConstants.spacingS,
+                                              ),
                                               FloatingActionButton(
                                                 heroTag:
                                                     'bookSchulungFab$index',
@@ -1337,10 +1250,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   },
                 ),
               ),
-            if (!_isLoading &&
-                _errorMessage == null &&
-                _results.isEmpty &&
-                _hasSearched)
+            if (!_isLoading && _errorMessage == null && _results.isEmpty)
               const ScaledText(
                 'Keine Schulungen gefunden.',
                 style: UIStyles.bodyStyle,
