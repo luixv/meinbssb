@@ -67,11 +67,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
                       horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingS),
+                      vertical: UIConstants.spacingS,),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(
-                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize)),
+                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),),
               ),
             ),
             datePickerTheme: const DatePickerThemeData(
@@ -88,11 +88,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
                       horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingS),
+                      vertical: UIConstants.spacingS,),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(
-                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize)),
+                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),),
               ),
             ),
           ),
