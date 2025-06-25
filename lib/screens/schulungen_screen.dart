@@ -1169,9 +1169,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           children: [
                                                                             const Icon(
                                                                               Icons.calendar_today,
-                                                                              size: 18,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
-                                                                            const SizedBox(width: 4),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(DateFormat('dd.MM.yyyy').format(t.datum)),
                                                                           ],
                                                                         ),
@@ -1183,9 +1183,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           children: [
                                                                             const Icon(
                                                                               Icons.place,
-                                                                              size: 18,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
-                                                                            const SizedBox(width: 4),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(t.ort),
                                                                           ],
                                                                         ),
@@ -1196,10 +1196,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         Row(
                                                                           children: [
                                                                             const Icon(
-                                                                              Icons.attach_money,
-                                                                              size: 18,
+                                                                              Icons.request_quote,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
-                                                                            const SizedBox(width: 4),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text('${t.kosten.toStringAsFixed(2)} €'),
                                                                           ],
                                                                         ),
@@ -1209,9 +1209,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(Icons.group,
-                                                                                size: 18,),
-                                                                            const SizedBox(width: 4),
+                                                                            const Icon(
+                                                                              Icons.group,
+                                                                              size: UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(t.webGruppeLabel),
                                                                           ],
                                                                         ),
@@ -1239,8 +1241,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             .isNotEmpty)
                                                                           Row(
                                                                             children: [
-                                                                              const Icon(Icons.phone, size: 18),
-                                                                              const SizedBox(width: 4),
+                                                                              const Icon(Icons.phone, size: UIConstants.defaultIconSize),
+                                                                              UIConstants.horizontalSpacingS,
                                                                               Flexible(child: Text(t.lehrgangsleiterTel)),
                                                                             ],
                                                                           ),
@@ -1249,8 +1251,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             .isNotEmpty)
                                                                           Row(
                                                                             children: [
-                                                                              const Icon(Icons.email, size: 18),
-                                                                              const SizedBox(width: 4),
+                                                                              const Icon(Icons.email, size: UIConstants.defaultIconSize),
+                                                                              UIConstants.horizontalSpacingS,
                                                                               Flexible(child: Text(t.lehrgangsleiterMail)),
                                                                             ],
                                                                           ),

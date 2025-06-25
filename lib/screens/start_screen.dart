@@ -174,6 +174,8 @@ class StartScreenState extends State<StartScreen> {
       },
     );
 
+    if (!mounted) return;
+
     if (confirmDelete != true) return;
 
     try {

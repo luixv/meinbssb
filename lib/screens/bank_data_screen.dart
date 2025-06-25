@@ -226,6 +226,8 @@ class BankDataScreenState extends State<BankDataScreen> {
       },
     );
 
+    if (!mounted) return;
+
     if (confirm == true) {
       setState(() {
         _isSaving = true;
