@@ -204,7 +204,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   backgroundColor: UIConstants.backgroundColor,
                   title: const Center(
                     child: ScaledText(
-                      'Schulung buchen',
+                      'Buchungsdaten Erfassen',
                       style: UIStyles.dialogTitleStyle,
                     ),
                   ),
