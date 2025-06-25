@@ -1013,232 +1013,241 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              // Title
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: UIConstants.spacingM,
-                                                  left: UIConstants.spacingM,
-                                                  right: UIConstants.spacingM,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    t.bezeichnung,
-                                                    style: UIStyles
-                                                        .dialogTitleStyle,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                              // Free places sentence
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: UIConstants.spacingS,
-                                                  left: UIConstants.spacingM,
-                                                  right: UIConstants.spacingM,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                              // White header and info container
+                                              Container(
+                                                decoration: const BoxDecoration(
+                                                  color: UIConstants.whiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft: Radius.circular(
+                                                      UIConstants.cornerRadius,
                                                     ),
-                                                    textAlign: TextAlign.center,
+                                                    topRight: Radius.circular(
+                                                      UIConstants.cornerRadius,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              // Info table
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                  UIConstants.spacingM,
-                                                ),
-                                                child: Row(
+                                                child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                      CrossAxisAlignment
+                                                          .stretch,
                                                   children: [
-                                                    // Left column
-                                                    Expanded(
-                                                      child: Column(
+                                                    // Title
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: UIConstants
+                                                            .spacingM,
+                                                        left: UIConstants
+                                                            .spacingM,
+                                                        right: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          t.bezeichnung,
+                                                          style: UIStyles
+                                                              .dialogTitleStyle,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    // Free places sentence
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: UIConstants
+                                                            .spacingS,
+                                                        left: UIConstants
+                                                            .spacingM,
+                                                        right: UIConstants
+                                                            .spacingM,
+                                                        bottom: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
+                                                          style: UIStyles
+                                                              .bodyStyle
+                                                              .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    // Info table
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      child: Row(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Datum: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                          // Left column
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Datum: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      DateFormat(
+                                                                        'dd.MM.yyyy',
+                                                                      ).format(
+                                                                        t.datum,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                              Text(
-                                                                DateFormat(
-                                                                  'dd.MM.yyyy',
-                                                                ).format(
-                                                                  t.datum,
+                                                                const SizedBox(
+                                                                  height: UIConstants
+                                                                      .spacingXS,
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: UIConstants
-                                                                .spacingXS,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Ort: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Ort: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Text(t.ort),
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                              Text(t.ort),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: UIConstants
-                                                                .spacingXS,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Kosten: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                const SizedBox(
+                                                                  height: UIConstants
+                                                                      .spacingXS,
                                                                 ),
-                                                              ),
-                                                              Text(
-                                                                '${t.kosten.toStringAsFixed(2)} €',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: UIConstants
-                                                                .spacingXS,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Max. Teilnehmer: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Kosten: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${t.kosten.toStringAsFixed(2)} €',
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                              ),
-                                                              Text(
-                                                                t.maxTeilnehmer
-                                                                    .toString(),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: UIConstants
-                                                                .spacingXS,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Gruppe: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                const SizedBox(
+                                                                  height: UIConstants
+                                                                      .spacingXS,
                                                                 ),
-                                                              ),
-                                                              Text(
-                                                                t.webGruppeLabel,
-                                                              ),
-                                                            ],
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Gruppe: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      t.webGruppeLabel,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          // Right column (Lehrgang info only)
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Lehrgangsleiter: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Flexible(
+                                                                      child:
+                                                                          Text(
+                                                                        t.lehrgangsleiter,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: UIConstants
+                                                                      .spacingXS,
+                                                                ),
+                                                                if (t
+                                                                    .lehrgangsleiterTel
+                                                                    .isNotEmpty)
+                                                                  Row(
+                                                                    children: [
+                                                                      const Text(
+                                                                        'Tel.: ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,),
+                                                                      ),
+                                                                      Flexible(
+                                                                        child: Text(
+                                                                            t.lehrgangsleiterTel,),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                if (t
+                                                                    .lehrgangsleiterMail
+                                                                    .isNotEmpty)
+                                                                  Row(
+                                                                    children: [
+                                                                      const Text(
+                                                                        'E-Mail: ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,),
+                                                                      ),
+                                                                      Flexible(
+                                                                        child: Text(
+                                                                            t.lehrgangsleiterMail,),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                    // Right column (Lehrgang info only)
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                'Lehrgangsleiter: ',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(
-                                                                  t.lehrgangsleiter,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: UIConstants
-                                                                .spacingXS,
-                                                          ),
-                                                          if (t
-                                                              .lehrgangsleiterTel
-                                                              .isNotEmpty)
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'Tel.: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    t.lehrgangsleiterTel,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          if (t
-                                                              .lehrgangsleiterMail
-                                                              .isNotEmpty)
-                                                            Row(
-                                                              children: [
-                                                                const Text(
-                                                                  'E-Mail: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    t.lehrgangsleiterMail,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                        ],
-                                                      ),
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingM,
                                                     ),
                                                   ],
                                                 ),
@@ -1268,13 +1277,28 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             ],
                                           ),
                                         ),
-                                        // FABs at bottom right
+                                        // FABs at bottom right in a column
                                         Positioned(
                                           bottom: UIConstants.spacingM,
                                           right: UIConstants.spacingM,
-                                          child: Row(
+                                          child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
+                                              FloatingActionButton(
+                                                heroTag:
+                                                    'closeSchulungInfoFab$index',
+                                                mini: true,
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                  height: UIConstants.spacingS,),
                                               FloatingActionButton(
                                                 heroTag:
                                                     'bookSchulungFab$index',
@@ -1290,22 +1314,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 },
                                                 child: const Icon(
                                                   Icons.event_available,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: UIConstants.spacingS,
-                                              ),
-                                              FloatingActionButton(
-                                                heroTag:
-                                                    'closeSchulungInfoFab$index',
-                                                mini: true,
-                                                backgroundColor:
-                                                    UIConstants.defaultAppColor,
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Icon(
-                                                  Icons.close,
                                                   color: Colors.white,
                                                 ),
                                               ),
