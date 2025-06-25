@@ -369,9 +369,6 @@ class UIStyles {
   static const BorderRadius warningMessageBorderRadius =
       BorderRadius.all(Radius.circular(8.0));
 
-  static const IconData dialogCancelIcon = Icons.close;
-  static const IconData dialogAcceptIcon = Icons.check;
-
   // Icon Colors
   static const Color menuIconColor = Colors.black;
   static const Color profileIconColor = Colors.black;

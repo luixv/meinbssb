@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
 import '/services/api/bank_service.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '../screens/agb.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -134,37 +135,42 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     final List<BankData> bankDataList = await bankDataFuture;
     final List<Map<String, dynamic>> contacts = await contactsFuture;
 
-    // Get phone number from contacts
-    String phoneNumber = '';
-
-    // Try to find private phone number first
-    final privateContacts = contacts.firstWhere(
-      (category) => category['category'] == 'Privat',
-      orElse: () => {'contacts': []},
-    )['contacts'] as List<dynamic>;
-
-    // Look for any phone number in private contacts
-    var phoneContact = privateContacts.cast<Map<String, dynamic>>().firstWhere(
-          (contact) =>
-              contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
-          orElse: () => {'value': ''},
-        );
-
-    if (phoneContact['value'] == '') {
-      // If no private phone found, look for business phone
-      final businessContacts = contacts.firstWhere(
-        (category) => category['category'] == 'Geschäftlich',
+    // Get phone number from contacts (MINIMAL FIX: extract logic to helper, no context usage after async gap)
+    String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
+      // Try to find private phone number first
+      final privateContacts = contacts.firstWhere(
+        (category) => category['category'] == 'Privat',
         orElse: () => {'contacts': []},
       )['contacts'] as List<dynamic>;
 
-      phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
+      // Look for any phone number in private contacts
+      var phoneContact = privateContacts
+          .cast<Map<String, dynamic>>()
+          .firstWhere(
             (contact) =>
-                contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
+                contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
             orElse: () => {'value': ''},
           );
+
+      if (phoneContact['value'] == '') {
+        // If no private phone found, look for business phone
+        final businessContacts = contacts.firstWhere(
+          (category) => category['category'] == 'Geschäftlich',
+          orElse: () => {'contacts': []},
+        )['contacts'] as List<dynamic>;
+
+        phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
+              (contact) =>
+                  contact['rawKontaktTyp'] == 5 ||
+                  contact['rawKontaktTyp'] == 6,
+              orElse: () => {'value': ''},
+            );
+      }
+
+      return phoneContact['value'] as String;
     }
 
-    phoneNumber = phoneContact['value'] as String;
+    final String phoneNumber = extractPhoneNumber(contacts);
 
     // Get email from cache
     final String email = await cacheService.getString('username') ?? '';
@@ -372,13 +378,86 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           onChanged: (val) {
                             setState(() => agbChecked = val ?? false);
                           },
-                          title: const Row(
+                          title: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('AGB akzeptieren'),
-                              SizedBox(width: UIConstants.spacingS),
-                              Tooltip(
-                                message: 'Ich bin mit den ABG einverstanden.',
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor:
+                                          UIConstants.backgroundColor,
+                                      child: Stack(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              left: UIConstants
+                                                  .defaultPadding.left,
+                                              top: UIConstants
+                                                  .defaultPadding.top,
+                                              right: UIConstants
+                                                  .defaultPadding.right,
+                                              bottom: UIConstants
+                                                      .defaultPadding.bottom +
+                                                  56 +
+                                                  UIConstants.spacingM,
+                                            ),
+                                            child: const SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'AGB',
+                                                    style: UIStyles
+                                                        .dialogTitleStyle,
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          UIConstants.spacingM,),
+                                                  SelectableText(
+                                                    AgbScreen.agbText,
+                                                    style: UIStyles.bodyStyle,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: UIConstants.spacingM,
+                                            right: UIConstants.spacingM,
+                                            child: FloatingActionButton(
+                                              heroTag: 'agbDialogCloseFab',
+                                              mini: true,
+                                              tooltip: 'Schließen',
+                                              backgroundColor:
+                                                  UIConstants.defaultAppColor,
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Icon(Icons.close,
+                                                  color: Colors.white,),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'AGB',
+                                  style: UIStyles.linkStyle.copyWith(
+                                    color: UIConstants.linkColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingS),
+                              const Text('akzeptieren'),
+                              const SizedBox(width: UIConstants.spacingS),
+                              const Tooltip(
+                                message: 'Ich bin mit den AGB einverstanden.',
                                 child: Icon(
                                   Icons.info_outline,
                                   color: UIConstants.defaultAppColor,
@@ -1162,10 +1241,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       children: [
                                                                         Row(
                                                                           children: [
-                                                                            const Text(
-                                                                              'Datum: ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            const Icon(
+                                                                              Icons.calendar_today,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(DateFormat('dd.MM.yyyy').format(t.datum)),
                                                                           ],
                                                                         ),
@@ -1175,10 +1255,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         Row(
                                                                           children: [
-                                                                            const Text(
-                                                                              'Ort: ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            const Icon(
+                                                                              Icons.place,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(t.ort),
                                                                           ],
                                                                         ),
@@ -1188,10 +1269,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         Row(
                                                                           children: [
-                                                                            const Text(
-                                                                              'Kosten: ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            const Icon(
+                                                                              Icons.request_quote,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text('${t.kosten.toStringAsFixed(2)} €'),
                                                                           ],
                                                                         ),
@@ -1201,10 +1283,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         Row(
                                                                           children: [
-                                                                            const Text(
-                                                                              'Gruppe: ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                                                            const Icon(
+                                                                              Icons.group,
+                                                                              size: UIConstants.defaultIconSize,
                                                                             ),
+                                                                            UIConstants.horizontalSpacingS,
                                                                             Text(t.webGruppeLabel),
                                                                           ],
                                                                         ),
@@ -1232,7 +1315,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             .isNotEmpty)
                                                                           Row(
                                                                             children: [
-                                                                              const Text('Tel.: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                              const Icon(Icons.phone, size: UIConstants.defaultIconSize),
+                                                                              UIConstants.horizontalSpacingS,
                                                                               Flexible(child: Text(t.lehrgangsleiterTel)),
                                                                             ],
                                                                           ),
@@ -1241,7 +1325,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             .isNotEmpty)
                                                                           Row(
                                                                             children: [
-                                                                              const Text('E-Mail: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                                              const Icon(Icons.email, size: UIConstants.defaultIconSize),
+                                                                              UIConstants.horizontalSpacingS,
                                                                               Flexible(child: Text(t.lehrgangsleiterMail)),
                                                                             ],
                                                                           ),
