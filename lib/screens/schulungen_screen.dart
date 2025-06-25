@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
 import '/services/api/bank_service.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '../screens/agb.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -377,13 +378,86 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           onChanged: (val) {
                             setState(() => agbChecked = val ?? false);
                           },
-                          title: const Row(
+                          title: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('AGB akzeptieren'),
-                              SizedBox(width: UIConstants.spacingS),
-                              Tooltip(
-                                message: 'Ich bin mit den ABG einverstanden.',
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      backgroundColor:
+                                          UIConstants.backgroundColor,
+                                      child: Stack(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              left: UIConstants
+                                                  .defaultPadding.left,
+                                              top: UIConstants
+                                                  .defaultPadding.top,
+                                              right: UIConstants
+                                                  .defaultPadding.right,
+                                              bottom: UIConstants
+                                                      .defaultPadding.bottom +
+                                                  56 +
+                                                  UIConstants.spacingM,
+                                            ),
+                                            child: const SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'AGB',
+                                                    style: UIStyles
+                                                        .dialogTitleStyle,
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          UIConstants.spacingM,),
+                                                  SelectableText(
+                                                    AgbScreen.agbText,
+                                                    style: UIStyles.bodyStyle,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: UIConstants.spacingM,
+                                            right: UIConstants.spacingM,
+                                            child: FloatingActionButton(
+                                              heroTag: 'agbDialogCloseFab',
+                                              mini: true,
+                                              tooltip: 'Schließen',
+                                              backgroundColor:
+                                                  UIConstants.defaultAppColor,
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Icon(Icons.close,
+                                                  color: Colors.white,),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'AGB',
+                                  style: UIStyles.linkStyle.copyWith(
+                                    color: UIConstants.linkColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingS),
+                              const Text('akzeptieren'),
+                              const SizedBox(width: UIConstants.spacingS),
+                              const Tooltip(
+                                message: 'Ich bin mit den AGB einverstanden.',
                                 child: Icon(
                                   Icons.info_outline,
                                   color: UIConstants.defaultAppColor,
