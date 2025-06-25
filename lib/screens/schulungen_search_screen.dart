@@ -173,9 +173,35 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToResults,
-        child: const Icon(Icons.search),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'resetFab',
+            onPressed: () {
+              setState(() {
+                _selectedDate = DateTime.now();
+                _selectedWebGruppe = 0;
+                _selectedBezirkId = 0;
+                _ortController.clear();
+                _titelController.clear();
+                _fuerVerlaengerungen = false;
+              });
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            tooltip: 'Formular zurücksetzen',
+            child: const Icon(Icons.refresh),
+          ),
+          const SizedBox(height: UIConstants.spacingS),
+          FloatingActionButton(
+            heroTag: 'searchFab',
+            onPressed: _navigateToResults,
+            backgroundColor: UIConstants.defaultAppColor,
+            tooltip: 'Suchen',
+            child: const Icon(Icons.search),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),

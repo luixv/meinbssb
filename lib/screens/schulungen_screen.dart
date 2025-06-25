@@ -686,8 +686,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               backgroundColor: UIConstants.backgroundColor,
               title: const Center(
                 child: ScaledText(
-                  'Weitere Person anmelden',
-                  style: UIStyles.dialogTitleStyle,
+                  'Person anmelden',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: UIConstants.defaultAppColor,
+                  ),
                 ),
               ),
               content: SingleChildScrollView(
@@ -935,7 +939,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 // Right: description icon
                                 FloatingActionButton(
                                   heroTag: 'schulungenContentFab$index',
-                                  backgroundColor: UIConstants.defaultAppColor,
+                                  backgroundColor:
+                                      schulungsTermin.anmeldungenGesperrt
+                                          ? Colors.red
+                                          : UIConstants.defaultAppColor,
                                   onPressed: () {
                                     final t = schulungsTermin;
                                     final freiePlaetze = t.maxTeilnehmer -
@@ -943,6 +950,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
+                                        final bool isGesperrt =
+                                            t.anmeldungenGesperrt;
                                         return Stack(
                                           children: [
                                             AlertDialog(
@@ -1003,15 +1012,35 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 right: UIConstants
                                                                     .spacingM,
                                                               ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  t.bezeichnung,
-                                                                  style: UIStyles
-                                                                      .dialogTitleStyle,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
+                                                              child: Column(
+                                                                children: [
+                                                                  Text(
+                                                                    t.bezeichnung,
+                                                                    style: UIStyles
+                                                                        .dialogTitleStyle,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                  if (isGesperrt) ...[
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingS,
+                                                                    ),
+                                                                    Text(
+                                                                      'Anmeldung gesperrt',
+                                                                      style: UIStyles
+                                                                          .errorStyle
+                                                                          .copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                  ],
+                                                                ],
                                                               ),
                                                             ),
                                                             // Free places sentence
@@ -1223,16 +1252,22 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     mini: true,
                                                     tooltip:
                                                         'Schulungen Buchen',
-                                                    backgroundColor: UIConstants
-                                                        .defaultAppColor,
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      _showBookingDialog(
-                                                        t,
-                                                        registeredPersons: [],
-                                                      );
-                                                    },
+                                                    backgroundColor: isGesperrt
+                                                        ? UIConstants
+                                                            .cancelButtonBackground
+                                                        : UIConstants
+                                                            .defaultAppColor,
+                                                    onPressed: isGesperrt
+                                                        ? null
+                                                        : () {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop();
+                                                            _showBookingDialog(
+                                                              t,
+                                                              registeredPersons: [],
+                                                            );
+                                                          },
                                                     child: const Icon(
                                                       Icons.event_available,
                                                       color: Colors.white,
