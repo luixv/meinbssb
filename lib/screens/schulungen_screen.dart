@@ -398,7 +398,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           title: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('SEPA-Lastschriftmandat erteilen'),
+                              Text('Bestätigung des Lastschrifteinzugs'),
                               SizedBox(width: UIConstants.spacingS),
                               Tooltip(
                                 message: // Hiermit ermächtige ich Sie widerruflich, fällige Zahlungen per Lastschrift von meinem MeinBSSB-Konto einzuziehen. Mein Kreditinstitut wird angewiesen, diese Lastschriften einzulösen
@@ -743,97 +743,105 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
         return Stack(
           children: [
-            AlertDialog(
-              backgroundColor: UIConstants.backgroundColor,
-              title: const Center(
-                child: ScaledText(
-                  'Person anmelden',
-                  style: UIStyles.dialogTitleStyle,
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 600,
+                  maxHeight: 700,
                 ),
-              ),
-              content: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: UIConstants.whiteColor,
-                    border: Border.all(color: UIConstants.mydarkGreyColor),
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.cornerRadius),
+                child: AlertDialog(
+                  backgroundColor: UIConstants.backgroundColor,
+                  title: const Center(
+                    child: ScaledText(
+                      'Person anmelden',
+                      style: UIStyles.dialogTitleStyle,
+                    ),
                   ),
-                  padding: UIConstants.defaultPadding,
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextFormField(
-                          controller: vornameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Vorname',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Vorname ist erforderlich';
-                            }
-                            return null;
-                          },
+                  content: SingleChildScrollView(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: UIConstants.whiteColor,
+                        border: Border.all(color: UIConstants.mydarkGreyColor),
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
+                      ),
+                      padding: UIConstants.defaultPadding,
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            TextFormField(
+                              controller: vornameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Vorname',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Vorname ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: nachnameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Nachname',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Nachname ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: passnummerController,
+                              decoration: const InputDecoration(
+                                labelText: 'Passnummer',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Passnummer ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: emailController,
+                              decoration: const InputDecoration(
+                                labelText: 'E-Mail',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'E-Mail ist erforderlich';
+                                }
+                                if (!isEmailValid(value.trim())) {
+                                  return 'Ungültige E-Mail-Adresse';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: telefonnummerController,
+                              decoration: const InputDecoration(
+                                labelText: 'Telefonnummer',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Telefonnummer ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: nachnameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nachname',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Nachname ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: passnummerController,
-                          decoration: const InputDecoration(
-                            labelText: 'Passnummer',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Passnummer ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'E-Mail',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'E-Mail ist erforderlich';
-                            }
-                            if (!isEmailValid(value.trim())) {
-                              return 'Ungültige E-Mail-Adresse';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: telefonnummerController,
-                          decoration: const InputDecoration(
-                            labelText: 'Telefonnummer',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Telefonnummer ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

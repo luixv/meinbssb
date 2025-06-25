@@ -15,7 +15,8 @@ class BezirkService {
   Future<List<Bezirk>> fetchBezirke() async {
     try {
       final response = await _httpClient.get('Bezirke');
-      return _mapBezirkeResponse(response);
+      final mappedResponse = _mapBezirkeResponse(response);
+      return mappedResponse;
     } catch (e) {
       LoggerService.logError('Error fetching Bezirke: $e');
       return [];
