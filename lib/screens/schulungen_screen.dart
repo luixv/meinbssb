@@ -11,6 +11,7 @@ import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
 import '/services/api/bank_service.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -66,12 +67,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
-                      horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingS,),
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingS,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(
-                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),),
+                  Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),
+                ),
               ),
             ),
             datePickerTheme: const DatePickerThemeData(
@@ -87,12 +90,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
-                      horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingS,),
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingS,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(
-                    Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),),
+                  Size(UIConstants.defaultButtonWidth, UIConstants.fabSize),
+                ),
               ),
             ),
           ),
@@ -991,9 +996,249 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             heroTag: 'schulungenContentFab$index',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () {
-                              _showBookingDialog(
-                                schulungsTermin,
-                                registeredPersons: [],
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  final t = schulungsTermin;
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        UIConstants.backgroundColor,
+                                    contentPadding: EdgeInsets.zero,
+                                    content: Stack(
+                                      children: [
+                                        SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                    UIConstants.spacingM,),
+                                                decoration: const BoxDecoration(
+                                                  color: UIConstants.whiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft: Radius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,),
+                                                    topRight: Radius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Left column
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(t.bezeichnung,
+                                                              style: UIStyles
+                                                                  .dialogTitleStyle,),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingS,),
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Datum: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Text(DateFormat(
+                                                                      'dd.MM.yyyy',)
+                                                                  .format(
+                                                                      t.datum,),),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingXS,),
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Ort: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Text(t.ort),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingXS,),
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Kosten: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Text(
+                                                                  '${t.kosten.toStringAsFixed(2)} €',),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingXS,),
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Max. Teilnehmer: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Text(t
+                                                                  .maxTeilnehmer
+                                                                  .toString(),),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingXS,),
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Gruppe: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Text(t
+                                                                  .webGruppeLabel,),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    // Right column
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              const Text(
+                                                                  'Lehrgangsleiter: ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),),
+                                                              Flexible(
+                                                                  child: Text(t
+                                                                      .lehrgangsleiter,),),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: UIConstants
+                                                                  .spacingXS,),
+                                                          if (t
+                                                              .lehrgangsleiterTel
+                                                              .isNotEmpty)
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'Tel.: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,),),
+                                                                Flexible(
+                                                                    child: Text(
+                                                                        t.lehrgangsleiterTel,),),
+                                                              ],
+                                                            ),
+                                                          if (t
+                                                              .lehrgangsleiterMail
+                                                              .isNotEmpty)
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    'E-Mail: ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,),),
+                                                                Flexible(
+                                                                    child: Text(
+                                                                        t.lehrgangsleiterMail,),),
+                                                              ],
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const Divider(height: 1),
+                                              Padding(
+                                                padding: const EdgeInsets.all(
+                                                    UIConstants.spacingM,),
+                                                child: t.lehrgangsinhaltHtml
+                                                        .isNotEmpty
+                                                    ? Html(
+                                                        data: t
+                                                            .lehrgangsinhaltHtml,)
+                                                    : t.lehrgangsinhalt
+                                                            .isNotEmpty
+                                                        ? Text(
+                                                            t.lehrgangsinhalt,)
+                                                        : t.bemerkung.isNotEmpty
+                                                            ? Text(t.bemerkung)
+                                                            : const Text(
+                                                                'Keine Beschreibung verfügbar.',),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // FAB for booking (bottom left)
+                                        Positioned(
+                                          bottom: UIConstants.spacingM,
+                                          left: UIConstants.spacingM,
+                                          child: FloatingActionButton(
+                                            heroTag: 'bookSchulungFab$index',
+                                            mini: true,
+                                            backgroundColor:
+                                                UIConstants.defaultAppColor,
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              _showBookingDialog(t,
+                                                  registeredPersons: [],);
+                                            },
+                                            child: const Icon(
+                                                Icons.event_available,
+                                                color: Colors.white,),
+                                          ),
+                                        ),
+                                        // FAB for close (bottom right)
+                                        Positioned(
+                                          bottom: UIConstants.spacingM,
+                                          right: UIConstants.spacingM,
+                                          child: FloatingActionButton(
+                                            heroTag:
+                                                'closeSchulungInfoFab$index',
+                                            mini: true,
+                                            backgroundColor:
+                                                UIConstants.defaultAppColor,
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Icon(Icons.close,
+                                                color: Colors.white,),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               );
                             },
                             child: const Icon(
