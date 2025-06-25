@@ -11,7 +11,7 @@ class BezirkService {
   final HttpClient _httpClient;
 
   /// Fetches a list of Bezirke (districts/regions).
-  /// This method retrieves data from the '/Bezirke' endpoint.
+  /// This method retrieves data from the '/Bezirke' endpoint from the ZMI server.
   Future<List<Bezirk>> fetchBezirke() async {
     try {
       final response = await _httpClient.get('Bezirke');
