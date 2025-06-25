@@ -10,7 +10,7 @@ class BezirkService {
 
   final HttpClient _httpClient;
 
-  /// Fetches a list of Bezirke.
+  /// Fetches a list of Bezirke (districts/regions).
   /// This method retrieves data from the '/Bezirke' endpoint.
   Future<List<Bezirk>> fetchBezirke() async {
     try {
@@ -18,7 +18,7 @@ class BezirkService {
       return _mapBezirkeResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching Bezirke: $e');
-      return []; // Return an empty list on error
+      return [];
     }
   }
 
@@ -32,7 +32,7 @@ class BezirkService {
                 return Bezirk.fromJson(item);
               }
               LoggerService.logWarning(
-                'Bezirk item is not a Map: ${item.runtimeType}',
+                'Bezirk item is not a Map: ${item.runtimeType}',
               );
               return null;
             } catch (e) {
@@ -52,21 +52,20 @@ class BezirkService {
   }
 
   /// Fetches details for a single Bezirk based on its Bezirknummer.
-  /// This method retrieves data from the '/Bezirk/{bezirksNr}' endpoint.
-  Future<List<Bezirk>> fetchBezirk(int bezirksNr) async {
+  /// This method retrieves data from the '/Bezirk/{bezirkNr}' endpoint.
+  Future<List<Bezirk>> fetchBezirk(int bezirkNr) async {
     try {
-      final response = await _httpClient.get('Bezirk/$bezirksNr');
+      final response = await _httpClient.get('Bezirk/$bezirkNr');
       return _mapBezirkResponse(response);
     } catch (e) {
       LoggerService.logError(
-        'Error fetching Bezirk with number $bezirksNr: $e',
+        'Error fetching Bezirk with number $bezirkNr: $e',
       );
-      return []; // Return an empty list on error
+      return [];
     }
   }
 
   /// Maps the dynamic API response for a single Bezirk into a list of [Bezirk] objects.
-  /// Even though the API returns a list with one item, this method handles it gracefully.
   List<Bezirk> _mapBezirkResponse(dynamic response) {
     if (response is List) {
       return response

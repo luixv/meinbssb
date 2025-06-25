@@ -7,6 +7,10 @@ import '/screens/schulungen_screen.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import '/models/schulungstermine.dart';
+import '/services/api/bezirk_service.dart';
+import '/models/bezirk.dart';
+import 'package:provider/provider.dart';
+import '/services/core/http_client.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen(
@@ -26,9 +30,33 @@ class SchulungenSearchScreen extends StatefulWidget {
 class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   DateTime? _selectedDate;
   int? _selectedWebGruppe;
+  int? _selectedBezirkId;
   final TextEditingController _ortController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
   bool _fuerVerlaengerungen = false;
+  List<Bezirk> _bezirke = [];
+  bool _isLoadingBezirke = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBezirke();
+  }
+
+  Future<void> _fetchBezirke() async {
+    final httpClient = Provider.of<HttpClient>(context, listen: false);
+    final bezirkService = BezirkService(httpClient: httpClient);
+    final bezirke = await bezirkService.fetchBezirke();
+
+    // Add "Alle" option
+    bezirke.insert(
+        0, const Bezirk(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),);
+
+    setState(() {
+      _bezirke = bezirke;
+      _isLoadingBezirke = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -127,6 +155,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           onLogout: widget.onLogout,
           searchDate: _selectedDate!,
           webGruppe: _selectedWebGruppe,
+          bezirkId: _selectedBezirkId,
           ort: _ortController.text,
           titel: _titelController.text,
           fuerVerlaengerungen: _fuerVerlaengerungen,
@@ -162,7 +191,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Datum wählen',
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  prefixIcon: const Icon(Icons.calendar_today),
+                  suffixIcon: const Icon(Icons.calendar_today),
                 ),
                 child: ScaledText(
                   _selectedDate == null
@@ -190,6 +219,26 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 });
               },
             ),
+            const SizedBox(height: UIConstants.spacingM),
+            _isLoadingBezirke
+                ? const CircularProgressIndicator()
+                : DropdownButtonFormField<int>(
+                    value: _selectedBezirkId,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Bezirk',
+                    ),
+                    items: _bezirke
+                        .map((bezirk) => DropdownMenuItem<int>(
+                              value: bezirk.bezirkId,
+                              child: Text(bezirk.bezirkName),
+                            ),)
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedBezirkId = value;
+                      });
+                    },
+                  ),
             const SizedBox(height: UIConstants.spacingM),
             TextFormField(
               controller: _ortController,

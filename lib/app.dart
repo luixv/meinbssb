@@ -8,6 +8,7 @@ import '/constants/ui_constants.dart';
 import '/models/user_data.dart';
 import '/services/core/font_size_provider.dart';
 import 'services/core/theme_provider.dart';
+import '/services/core/http_client.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -37,6 +38,7 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.trainingServiceProvider,
         AppInitializer.fontSizeProvider,
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider<HttpClient>(create: (_) => AppInitializer.httpClient),
       ],
       child: const MyApp(),
     );
