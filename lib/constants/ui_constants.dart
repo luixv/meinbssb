@@ -14,9 +14,9 @@ class UIConstants {
   static const Color successColor = Colors.green;
   static const Color warningColor = Color(0xFFFFA000);
   static const Color linkColor = primaryColor;
-  static const Color greyColor = Colors.grey;
+  static const Color mydarkGreyColor = Color(0xFF616161);
   static const Color whiteColor = Colors.white;
-  static const Color greySubtitleTextColor = Colors.grey;
+  static const Color greySubtitleTextColor = mydarkGreyColor;
   static const Color labelTextColor = Colors.grey;
 
   static const Color news = Colors.lightGreen;
@@ -139,6 +139,8 @@ class UIConstants {
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
   static const double fabHeight = 16.0;
+  static const double fabSize = 56.0; // Standard FAB size
+  static const double fabIconSize = 24.0; // Standard FAB icon size
   static const double defaultStrokeWidth = 2.0;
   static const double defaultIconSize = 16.0;
   static const double defaultIconWidth = 60.0;
@@ -146,6 +148,13 @@ class UIConstants {
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
   static const double iconSizeL = 32.0;
+  static const double iconSizeXL = 64.0;
+  static const double iconSizeM = 48.0;
+  static const double dialogFontSize = 18.0;
+  static const double smallButtonSize = 40.0;
+  static const double fabSmallIconSize = 20.0;
+  static const double dividerThick = 6.0;
+  static const Duration snackbarDuration = Duration(seconds: 3);
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
@@ -292,4 +301,31 @@ class UIConstants {
   static const String fontSizeTitle = 'Textgröße';
   static const String fontSizeDescription =
       'Anpassung der Textgröße für bessere Lesbarkeit';
+
+  static const String firstNameLabel = 'Vorname';
+  static const String lastNameLabel = 'Nachname';
+  static const String clubLabel = 'Erstverein';
+  static const String noPersonalDataAvailable =
+      'Keine persönlichen Daten verfügbar.';
+  static const String noPrimaryClubDataAvailable =
+      'Keine Erstvereinsdaten verfügbar.';
+  static const String noSecondaryClubsAvailable =
+      'Keine Zweitvereine verfügbar.';
+  static const String registrationSuccessTitle = 'Registrierung erfolgreich';
+  static const String registrationSuccessMessage =
+      'Ihre Registrierung war erfolgreich.';
+  static const String privacyTitle = 'Datenschutz';
+  static const String privacyPlaceholder =
+      'Hier stehen die Datenschutzbestimmungen des BSSB.';
+  static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
+  static const String contactDataDeleteQuestion =
+      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
+  static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
+  static const String personalDataSaved =
+      'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
+
+  // Dialog
+  static const double dialogWidth = 500.0;
+  static const double dialogHeight = 600.0;
+  static const double dialogHeaderHeight = 64.0;
 }

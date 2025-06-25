@@ -132,7 +132,97 @@
         /* Status colors */
         .status-online { color: var(--color-green); font-weight: bold; }
         .status-slow_response { color: var(--color-orange); font-weight: bold; }
-        .status-http_code_mismatch, .status-curl_error { color: var(--color-red); font-weight: bold; }
+        .status-http_code_mismatch { color: var(--color-red); font-weight: bold; }
+        .status-server_timeout { color: var(--color-red); font-weight: bold; }
+        .status-curl_error { color: var(--color-red); font-weight: bold; }
+        
+        /* Curl Error Types - All in red but with different shades for distinction */
+        .status-curl_operation_timed_out { color: #dc3545; font-weight: bold; }
+        .status-curl_could_not_connect { color: #c82333; font-weight: bold; }
+        .status-curl_could_not_resolve_host { color: #bd2130; font-weight: bold; }
+        .status-curl_ssl_connect_error { color: #a71e2a; font-weight: bold; }
+        .status-curl_operation_timeout { color: #dc3545; font-weight: bold; }
+        .status-curl_ssl_certificate_problem { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_certificate_verify_failed { color: #a71e2a; font-weight: bold; }
+        .status-curl_peer_failed_verification { color: #a71e2a; font-weight: bold; }
+        .status-curl_http_returned_error { color: #c82333; font-weight: bold; }
+        .status-curl_remote_access_denied { color: #c82333; font-weight: bold; }
+        .status-curl_got_nothing { color: #bd2130; font-weight: bold; }
+        .status-curl_partial_file { color: #fd7e14; font-weight: bold; }
+        .status-curl_upload_failed { color: #c82333; font-weight: bold; }
+        .status-curl_read_error { color: #c82333; font-weight: bold; }
+        .status-curl_write_error { color: #c82333; font-weight: bold; }
+        .status-curl_send_error { color: #c82333; font-weight: bold; }
+        .status-curl_recv_error { color: #c82333; font-weight: bold; }
+        .status-curl_out_of_memory { color: #6c757d; font-weight: bold; }
+        .status-curl_too_many_redirects { color: #fd7e14; font-weight: bold; }
+        .status-curl_again { color: #fd7e14; font-weight: bold; }
+        .status-curl_aborted_by_callback { color: #6c757d; font-weight: bold; }
+        .status-curl_bad_function_argument { color: #6c757d; font-weight: bold; }
+        .status-curl_interface_failed { color: #c82333; font-weight: bold; }
+        .status-curl_unknown_option { color: #6c757d; font-weight: bold; }
+        .status-curl_bad_option { color: #6c757d; font-weight: bold; }
+        .status-curl_url_malformed { color: #6c757d; font-weight: bold; }
+        .status-curl_url_user_required { color: #6c757d; font-weight: bold; }
+        .status-curl_could_not_resolve_proxy { color: #bd2130; font-weight: bold; }
+        .status-curl_ftp_weird_server_reply { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_accept_failed { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_weird_pass_reply { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_accept_timeout { color: #dc3545; font-weight: bold; }
+        .status-curl_ftp_weird_pasv_reply { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_weird_227_format { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_cant_get_host { color: #bd2130; font-weight: bold; }
+        .status-curl_http2_error { color: #c82333; font-weight: bold; }
+        .status-curl_ftp_could_not_set_type { color: #fd7e14; font-weight: bold; }
+        .status-curl_ftp_could_not_retr_file { color: #fd7e14; font-weight: bold; }
+        .status-curl_quote_error { color: #fd7e14; font-weight: bold; }
+        .status-curl_bad_download_resume { color: #fd7e14; font-weight: bold; }
+        .status-curl_file_could_not_read_file { color: #6c757d; font-weight: bold; }
+        .status-curl_ldap_cannot_bind { color: #c82333; font-weight: bold; }
+        .status-curl_ldap_search_failed { color: #c82333; font-weight: bold; }
+        .status-curl_library_not_found { color: #6c757d; font-weight: bold; }
+        .status-curl_function_not_found { color: #6c757d; font-weight: bold; }
+        .status-curl_ssl_cipher { color: #a71e2a; font-weight: bold; }
+        .status-curl_range_error { color: #c82333; font-weight: bold; }
+        .status-curl_http_post_error { color: #c82333; font-weight: bold; }
+        .status-curl_ssl_engine_not_found { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_engine_set_failed { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_shutdown_failed { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_crl_badfile { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_issuer_error { color: #a71e2a; font-weight: bold; }
+        .status-curl_ftp_pret_failed { color: #fd7e14; font-weight: bold; }
+        .status-curl_rtsp_cseq_error { color: #c82333; font-weight: bold; }
+        .status-curl_rtsp_session_error { color: #c82333; font-weight: bold; }
+        .status-curl_ftp_bad_file_list { color: #fd7e14; font-weight: bold; }
+        .status-curl_chunk_failed { color: #c82333; font-weight: bold; }
+        .status-curl_no_connection_available { color: #bd2130; font-weight: bold; }
+        .status-curl_ssl_pinned_pubkey_not_match { color: #a71e2a; font-weight: bold; }
+        .status-curl_ssl_invalid_certificate_status { color: #a71e2a; font-weight: bold; }
+        .status-curl_http2_stream { color: #c82333; font-weight: bold; }
+        .status-curl_recursive_api_call { color: #6c757d; font-weight: bold; }
+        .status-curl_auth_error { color: #c82333; font-weight: bold; }
+        .status-curl_http3 { color: #c82333; font-weight: bold; }
+        .status-curl_quic_connect_error { color: #c82333; font-weight: bold; }
+        .status-curl_proxy { color: #c82333; font-weight: bold; }
+        .status-curl_ssl_client_cert { color: #a71e2a; font-weight: bold; }
+        .status-curl_unrecoverable_proxy { color: #c82333; font-weight: bold; }
+        .status-curl_ssl_engine_init_failed { color: #a71e2a; font-weight: bold; }
+        .status-curl_login_denied { color: #c82333; font-weight: bold; }
+        .status-curl_tftp_not_found { color: #c82333; font-weight: bold; }
+        .status-curl_tftp_perm { color: #c82333; font-weight: bold; }
+        .status-curl_remote_disk_full { color: #c82333; font-weight: bold; }
+        .status-curl_tftp_illegal { color: #c82333; font-weight: bold; }
+        .status-curl_tftp_unknown_id { color: #c82333; font-weight: bold; }
+        .status-curl_remote_file_exists { color: #c82333; font-weight: bold; }
+        .status-curl_tftp_no_such_user { color: #c82333; font-weight: bold; }
+        .status-curl_conversion_failed { color: #6c757d; font-weight: bold; }
+        .status-curl_conversion_required { color: #6c757d; font-weight: bold; }
+        .status-curl_ssl_cacert_badfile { color: #a71e2a; font-weight: bold; }
+        .status-curl_remote_file_not_found { color: #c82333; font-weight: bold; }
+        .status-curl_ssh { color: #c82333; font-weight: bold; }
+        
+        /* Generic curl error fallback */
+        .status-curl_unknown_error_* { color: #6c757d; font-weight: bold; }
 
         .loading-message, .error-message {
             text-align: center;
@@ -276,27 +366,167 @@
             const ctx = document.getElementById('statusDistributionChart').getContext('2d');
             const labels = Object.keys(statusCounts);
             const dataValues = Object.values(statusCounts);
+            
+            // Create display labels mapping
+            const displayLabels = labels.map(label => {
+                switch (label) {
+                    case 'offline': return 'Offline';
+                    case 'online': return 'Online';
+                    case 'slow_response': return 'Slow Response';
+                    case 'http_code_mismatch': return 'HTTP Code Mismatch';
+                    case 'server_timeout': return 'Server Timeout';
+                    default: return label.charAt(0).toUpperCase() + label.slice(1).replace(/_/g, ' ');
+                }
+            });
+            
             const backgroundColors = labels.map(label => {
-                switch (label.toLowerCase()) {
-                    case 'online': return 'var(--color-green)';
-                    case 'slow_response': return 'var(--color-orange)';
+                const normalizedLabel = label.toLowerCase();
+                
+                switch (normalizedLabel) {
+                    case 'online': 
+                        return '#1e7e34'; // Darker Green
+                    case 'slow_response': 
+                        return '#fd7e14'; // Orange
                     case 'http_code_mismatch':
-                    case 'curl_error': return 'var(--color-red)';
-                    default: return '#6c757d'; // Grey for unknown
+                        return '#dc3545'; // Red
+                    
+                    // Server timeout (bright red)
+                    case 'server_timeout':
+                        return '#dc3545'; // Bright Red
+                    
+                    // Offline status (bright red) - replaces curl_error
+                    case 'offline':
+                        return '#dc3545'; // Bright Red
+                    
+                    // Generic curl error (bright red)
+                    case 'curl_error':
+                        return '#dc3545'; // Bright Red
+                    
+                    // Timeout errors (bright red)
+                    case 'curl_operation_timed_out':
+                    case 'curl_operation_timeout':
+                    case 'curl_ftp_accept_timeout':
+                        return '#dc3545'; // Bright Red
+                    
+                    // Connection errors (dark red)
+                    case 'curl_could_not_connect':
+                    case 'curl_could_not_resolve_host':
+                    case 'curl_could_not_resolve_proxy':
+                    case 'curl_no_connection_available':
+                    case 'curl_got_nothing':
+                        return '#c82333'; // Dark Red
+                    
+                    // SSL/Certificate errors (very dark red)
+                    case 'curl_ssl_connect_error':
+                    case 'curl_ssl_certificate_problem':
+                    case 'curl_ssl_certificate_verify_failed':
+                    case 'curl_peer_failed_verification':
+                    case 'curl_ssl_cipher':
+                    case 'curl_ssl_engine_not_found':
+                    case 'curl_ssl_engine_set_failed':
+                    case 'curl_ssl_shutdown_failed':
+                    case 'curl_ssl_crl_badfile':
+                    case 'curl_ssl_issuer_error':
+                    case 'curl_ssl_pinned_pubkey_not_match':
+                    case 'curl_ssl_invalid_certificate_status':
+                    case 'curl_ssl_client_cert':
+                    case 'curl_ssl_engine_init_failed':
+                    case 'curl_ssl_cacert_badfile':
+                        return '#a71e2a'; // Very Dark Red
+                    
+                    // HTTP/Server errors (medium red)
+                    case 'curl_http_returned_error':
+                    case 'curl_remote_access_denied':
+                    case 'curl_upload_failed':
+                    case 'curl_read_error':
+                    case 'curl_write_error':
+                    case 'curl_send_error':
+                    case 'curl_recv_error':
+                    case 'curl_interface_failed':
+                    case 'curl_range_error':
+                    case 'curl_http_post_error':
+                    case 'curl_ldap_cannot_bind':
+                    case 'curl_ldap_search_failed':
+                    case 'curl_rtsp_cseq_error':
+                    case 'curl_rtsp_session_error':
+                    case 'curl_chunk_failed':
+                    case 'curl_http2_stream':
+                    case 'curl_auth_error':
+                    case 'curl_http3':
+                    case 'curl_quic_connect_error':
+                    case 'curl_proxy':
+                    case 'curl_unrecoverable_proxy':
+                    case 'curl_login_denied':
+                    case 'curl_tftp_not_found':
+                    case 'curl_tftp_perm':
+                    case 'curl_remote_disk_full':
+                    case 'curl_tftp_illegal':
+                    case 'curl_tftp_unknown_id':
+                    case 'curl_remote_file_exists':
+                    case 'curl_tftp_no_such_user':
+                    case 'curl_remote_file_not_found':
+                    case 'curl_ssh':
+                        return '#c82333'; // Medium Red
+                    
+                    // FTP errors (orange)
+                    case 'curl_ftp_weird_server_reply':
+                    case 'curl_ftp_accept_failed':
+                    case 'curl_ftp_weird_pass_reply':
+                    case 'curl_ftp_weird_pasv_reply':
+                    case 'curl_ftp_weird_227_format':
+                    case 'curl_ftp_could_not_set_type':
+                    case 'curl_ftp_could_not_retr_file':
+                    case 'curl_quote_error':
+                    case 'curl_bad_download_resume':
+                    case 'curl_ftp_pret_failed':
+                    case 'curl_ftp_bad_file_list':
+                        return '#fd7e14'; // Orange
+                    
+                    // Configuration/System errors (grey)
+                    case 'curl_out_of_memory':
+                    case 'curl_aborted_by_callback':
+                    case 'curl_bad_function_argument':
+                    case 'curl_unknown_option':
+                    case 'curl_bad_option':
+                    case 'curl_url_malformed':
+                    case 'curl_url_user_required':
+                    case 'curl_file_could_not_read_file':
+                    case 'curl_library_not_found':
+                    case 'curl_function_not_found':
+                    case 'curl_recursive_api_call':
+                    case 'curl_conversion_failed':
+                    case 'curl_conversion_required':
+                        return '#6c757d'; // Grey
+                    
+                    // Retry/Partial errors (light orange)
+                    case 'curl_partial_file':
+                    case 'curl_too_many_redirects':
+                    case 'curl_again':
+                        return '#fd7e14'; // Light Orange
+                    
+                    // Default for any other curl errors
+                    default:
+                        if (normalizedLabel.startsWith('curl_')) {
+                            return '#6c757d'; // Grey for unknown curl errors
+                        }
+                        return '#6c757d'; // Grey for unknown
                 }
             });
 
             const data = {
-                labels: labels,
+                labels: displayLabels, // Use display labels instead of raw labels
                 datasets: [{
                     data: dataValues,
                     backgroundColor: backgroundColors,
+                    borderColor: '#000000', // Black border for perimeter
+                    borderWidth: 1,
                     hoverOffset: 4
                 }]
             };
             const options = {
                 responsive: true,
                 maintainAspectRatio: true,
+                cutout: '60%',
                 plugins: {
                     title: {
                         display: true,
@@ -306,8 +536,15 @@
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: 'var(--color-text-secondary)'
+                            color: 'var(--color-text-secondary)',
+                            usePointStyle: true,
+                            padding: 20
                         }
+                    }
+                },
+                elements: {
+                    arc: {
+                        borderWidth: 2
                     }
                 }
             };
@@ -345,6 +582,7 @@
         }
 
         function parseAndDisplayData(csvText) {
+            try {
             const lines = csvText.trim().split('\n');
             const tableBody = document.getElementById('monitorTable').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; // Clear existing rows
@@ -377,9 +615,13 @@
                     timestamps.push(columns[0]);
                     responseTimes.push(parseFloat(columns[3]));
 
-                    // For status distribution
-                    const status = columns[4].replace(/\s/g, '_').toLowerCase(); // Normalize for consistent keys
-                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                        // For status distribution - display "Offline" instead of "curl_error"
+                        let status = columns[4];
+                        if (status.toLowerCase() === 'curl_error') {
+                            status = 'Offline';
+                        }
+                        const normalizedStatus = status.replace(/\s/g, '_').toLowerCase(); // Normalize for consistent keys
+                        statusCounts[normalizedStatus] = (statusCounts[normalizedStatus] || 0) + 1;
                 }
             });
 
@@ -402,13 +644,21 @@
                     row.insertCell(3).textContent = parseFloat(columns[3]).toFixed(3); // Response Time (formatted)
 
                     const statusCell = row.insertCell(4); // Status Message
-                    statusCell.textContent = columns[4];
+                        // Display "Offline" instead of "curl_error" for better user experience
+                        const displayStatus = columns[4].toLowerCase() === 'curl_error' ? 'Offline' : columns[4];
+                        statusCell.textContent = displayStatus;
                     statusCell.classList.add('status-' + columns[4].toLowerCase().replace(/\s/g, '_'));
                 }
             });
 
             document.getElementById('loading').style.display = 'none';
             document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+            } catch (e) {
+                console.error("Error parsing data:", e);
+                document.getElementById('error').textContent = `Error parsing data: ${e.message}`;
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
         }
 
         // Toggle Table Button Logic
@@ -429,7 +679,37 @@
 
         // Initial fetch and periodic refresh
         fetchData();
-        setInterval(fetchData, 30000); // Refresh data every 30 seconds
+        setInterval(fetchData, 60000); // Refresh data every 60 seconds
+
+        // Global error handler to suppress non-critical browser extension errors
+        window.addEventListener('error', function(e) {
+            // Suppress favicon.ico 404 errors and browser extension errors
+            if (e.target && e.target.src && e.target.src.includes('favicon.ico')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Suppress message channel errors from browser extensions
+            if (e.message && e.message.includes('message channel closed')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Log other errors for debugging
+            console.warn('Non-critical error suppressed:', e.message);
+        });
+
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            // Suppress message channel errors from browser extensions
+            if (e.reason && e.reason.message && e.reason.message.includes('message channel closed')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Log other promise rejections for debugging
+            console.warn('Promise rejection handled:', e.reason);
+        });
     </script>
 </body>
 </html>

@@ -3,20 +3,23 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-import 'dart:typed_data' as _i9;
+import 'dart:async' as _i4;
+import 'dart:typed_data' as _i10;
 
-import 'package:meinbssb/models/bank_data.dart' as _i12;
-import 'package:meinbssb/models/contact.dart' as _i8;
-import 'package:meinbssb/models/disziplin.dart' as _i11;
-import 'package:meinbssb/models/fremde_verband.dart' as _i14;
-import 'package:meinbssb/models/pass_data_zve.dart' as _i5;
-import 'package:meinbssb/models/schulung.dart' as _i7;
-import 'package:meinbssb/models/schulungsart.dart' as _i10;
-import 'package:meinbssb/models/user_data.dart' as _i4;
-import 'package:meinbssb/models/verein.dart' as _i13;
-import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i6;
-import 'package:meinbssb/services/api_service.dart' as _i2;
+import 'package:meinbssb/models/bank_data.dart' as _i14;
+import 'package:meinbssb/models/contact.dart' as _i9;
+import 'package:meinbssb/models/disziplin.dart' as _i13;
+import 'package:meinbssb/models/fremde_verband.dart' as _i16;
+import 'package:meinbssb/models/pass_data_zve.dart' as _i6;
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
+    as _i2;
+import 'package:meinbssb/models/schulung.dart' as _i8;
+import 'package:meinbssb/models/schulungsart.dart' as _i11;
+import 'package:meinbssb/models/schulungstermine.dart' as _i12;
+import 'package:meinbssb/models/user_data.dart' as _i5;
+import 'package:meinbssb/models/verein.dart' as _i15;
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
+import 'package:meinbssb/services/api_service.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -43,356 +46,33 @@ class _FakeDuration_0 extends _i1.SmartFake implements Duration {
         );
 }
 
-/// A class which mocks [ApiService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i2.ApiService {
-  MockApiService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.Future<bool> hasInternet() => (super.noSuchMethod(
-        Invocation.method(
-          #hasInternet,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  Duration getCacheExpirationDuration() => (super.noSuchMethod(
-        Invocation.method(
-          #getCacheExpirationDuration,
-          [],
-        ),
-        returnValue: _FakeDuration_0(
-          this,
-          Invocation.method(
-            #getCacheExpirationDuration,
-            [],
-          ),
-        ),
-      ) as Duration);
-
-  @override
-  _i3.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #register,
-          [],
-          {
-            #firstName: firstName,
-            #lastName: lastName,
-            #passNumber: passNumber,
-            #email: email,
-            #birthDate: birthDate,
-            #zipCode: zipCode,
-          },
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> login(
-    String? username,
-    String? password,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #login,
-          [
-            username,
-            password,
-          ],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #passwordReset,
-          [passNumber],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> changePassword(
-    int? personId,
-    String? newPassword,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #changePassword,
-          [
-            personId,
-            newPassword,
-          ],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<_i4.UserData?> fetchPassdaten(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchPassdaten,
-          [personId],
-        ),
-        returnValue: _i3.Future<_i4.UserData?>.value(),
-      ) as _i3.Future<_i4.UserData?>);
-
-  @override
-  _i3.Future<List<_i5.PassDataZVE>> fetchPassdatenZVE(
-    int? passdatenId,
-    int? personId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchPassdatenZVE,
-          [
-            passdatenId,
-            personId,
-          ],
-        ),
-        returnValue:
-            _i3.Future<List<_i5.PassDataZVE>>.value(<_i5.PassDataZVE>[]),
-      ) as _i3.Future<List<_i5.PassDataZVE>>);
-
-  @override
-  _i3.Future<bool> updateKritischeFelderUndAdresse(_i4.UserData? userData) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateKritischeFelderUndAdresse,
-          [userData],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<List<_i6.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
-          int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchZweitmitgliedschaften,
-          [personId],
-        ),
-        returnValue: _i3.Future<List<_i6.ZweitmitgliedschaftData>>.value(
-            <_i6.ZweitmitgliedschaftData>[]),
-      ) as _i3.Future<List<_i6.ZweitmitgliedschaftData>>);
-
-  @override
-  _i3.Future<List<_i7.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchAbsolvierteSchulungen,
-          [personId],
-        ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
-
-  @override
-  _i3.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchKontakte,
-          [personId],
-        ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i3.Future<bool> addKontakt(_i8.Contact? contact) => (super.noSuchMethod(
-        Invocation.method(
-          #addKontakt,
-          [contact],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<bool> deleteKontakt(_i8.Contact? contact) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteKontakt,
-          [contact],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<_i9.Uint8List> fetchSchuetzenausweis(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchSchuetzenausweis,
-          [personId],
-        ),
-        returnValue: _i3.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
-      ) as _i3.Future<_i9.Uint8List>);
-
-  @override
-  _i3.Future<List<_i10.Schulungsart>> fetchSchulungsarten() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchSchulungsarten,
-          [],
-        ),
-        returnValue:
-            _i3.Future<List<_i10.Schulungsart>>.value(<_i10.Schulungsart>[]),
-      ) as _i3.Future<List<_i10.Schulungsart>>);
-
-  @override
-  _i3.Future<List<_i7.Schulung>> fetchAngemeldeteSchulungen(
-    int? personId,
-    String? abDatum,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchAngemeldeteSchulungen,
-          [
-            personId,
-            abDatum,
-          ],
-        ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
-
-  @override
-  _i3.Future<List<_i7.Schulung>> fetchAvailableSchulungen() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchAvailableSchulungen,
-          [],
-        ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
-
-  @override
-  _i3.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #unregisterFromSchulung,
-          [schulungenTeilnehmerID],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<bool> registerFromSchulung(
-    int? personId,
-    int? schulungId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #registerFromSchulung,
-          [
-            personId,
-            schulungId,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<List<_i11.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchDisziplinen,
-          [],
-        ),
-        returnValue: _i3.Future<List<_i11.Disziplin>>.value(<_i11.Disziplin>[]),
-      ) as _i3.Future<List<_i11.Disziplin>>);
-
-  @override
-  _i3.Future<List<_i12.BankData>> fetchBankData(int? webloginId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchBankData,
-          [webloginId],
-        ),
-        returnValue: _i3.Future<List<_i12.BankData>>.value(<_i12.BankData>[]),
-      ) as _i3.Future<List<_i12.BankData>>);
-
-  @override
-  _i3.Future<bool> registerBankData(_i12.BankData? bankData) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #registerBankData,
-          [bankData],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<bool> deleteBankData(_i12.BankData? bankData) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #deleteBankData,
-          [bankData],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<List<_i13.Verein>> fetchVereine() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchVereine,
-          [],
-        ),
-        returnValue: _i3.Future<List<_i13.Verein>>.value(<_i13.Verein>[]),
-      ) as _i3.Future<List<_i13.Verein>>);
-
-  @override
-  _i3.Future<List<_i13.Verein>> fetchVerein(int? vereinsNr) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchVerein,
-          [vereinsNr],
-        ),
-        returnValue: _i3.Future<List<_i13.Verein>>.value(<_i13.Verein>[]),
-      ) as _i3.Future<List<_i13.Verein>>);
-
-  @override
-  _i3.Future<List<_i14.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchFremdeVerbaende,
-          [vereinsNr],
-        ),
-        returnValue:
-            _i3.Future<List<_i14.FremdeVerband>>.value(<_i14.FremdeVerband>[]),
-      ) as _i3.Future<List<_i14.FremdeVerband>>);
+class _FakeRegisterSchulungenTeilnehmerResponse_1 extends _i1.SmartFake
+    implements _i2.RegisterSchulungenTeilnehmerResponse {
+  _FakeRegisterSchulungenTeilnehmerResponse_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [ApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
-  CustomMockApiService() {
+class MockApiService extends _i1.Mock implements _i3.ApiService {
+  MockApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<bool> hasInternet() => (super.noSuchMethod(
+  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
         Invocation.method(
           #hasInternet,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() => (super.noSuchMethod(
@@ -410,7 +90,7 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
       ) as Duration);
 
   @override
-  _i3.Future<Map<String, dynamic>> register({
+  _i4.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -432,11 +112,11 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           },
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> login(
+  _i4.Future<Map<String, dynamic>> login(
     String? username,
     String? password,
   ) =>
@@ -449,22 +129,22 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
+  _i4.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #passwordReset,
           [passNumber],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> changePassword(
+  _i4.Future<Map<String, dynamic>> changePassword(
     int? personId,
     String? newPassword,
   ) =>
@@ -477,21 +157,21 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<_i4.UserData?> fetchPassdaten(int? personId) =>
+  _i4.Future<_i5.UserData?> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchPassdaten,
           [personId],
         ),
-        returnValue: _i3.Future<_i4.UserData?>.value(),
-      ) as _i3.Future<_i4.UserData?>);
+        returnValue: _i4.Future<_i5.UserData?>.value(),
+      ) as _i4.Future<_i5.UserData?>);
 
   @override
-  _i3.Future<List<_i5.PassDataZVE>> fetchPassdatenZVE(
+  _i4.Future<List<_i6.PassDataZVE>> fetchPassdatenZVE(
     int? passdatenId,
     int? personId,
   ) =>
@@ -504,93 +184,93 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
           ],
         ),
         returnValue:
-            _i3.Future<List<_i5.PassDataZVE>>.value(<_i5.PassDataZVE>[]),
-      ) as _i3.Future<List<_i5.PassDataZVE>>);
+            _i4.Future<List<_i6.PassDataZVE>>.value(<_i6.PassDataZVE>[]),
+      ) as _i4.Future<List<_i6.PassDataZVE>>);
 
   @override
-  _i3.Future<bool> updateKritischeFelderUndAdresse(_i4.UserData? userData) =>
+  _i4.Future<bool> updateKritischeFelderUndAdresse(_i5.UserData? userData) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateKritischeFelderUndAdresse,
           [userData],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<List<_i6.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+  _i4.Future<List<_i7.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchZweitmitgliedschaften,
           [personId],
         ),
-        returnValue: _i3.Future<List<_i6.ZweitmitgliedschaftData>>.value(
-            <_i6.ZweitmitgliedschaftData>[]),
-      ) as _i3.Future<List<_i6.ZweitmitgliedschaftData>>);
+        returnValue: _i4.Future<List<_i7.ZweitmitgliedschaftData>>.value(
+            <_i7.ZweitmitgliedschaftData>[]),
+      ) as _i4.Future<List<_i7.ZweitmitgliedschaftData>>);
 
   @override
-  _i3.Future<List<_i7.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i4.Future<List<_i8.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
+        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
+      ) as _i4.Future<List<_i8.Schulung>>);
 
   @override
-  _i3.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
+  _i4.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
+      ) as _i4.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i3.Future<bool> addKontakt(_i8.Contact? contact) => (super.noSuchMethod(
+  _i4.Future<bool> addKontakt(_i9.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
           [contact],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> deleteKontakt(_i8.Contact? contact) => (super.noSuchMethod(
+  _i4.Future<bool> deleteKontakt(_i9.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
           [contact],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<_i9.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i4.Future<_i10.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchuetzenausweis,
           [personId],
         ),
-        returnValue: _i3.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
-      ) as _i3.Future<_i9.Uint8List>);
+        returnValue: _i4.Future<_i10.Uint8List>.value(_i10.Uint8List(0)),
+      ) as _i4.Future<_i10.Uint8List>);
 
   @override
-  _i3.Future<List<_i10.Schulungsart>> fetchSchulungsarten() =>
+  _i4.Future<List<_i11.Schulungsart>> fetchSchulungsarten() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungsarten,
           [],
         ),
         returnValue:
-            _i3.Future<List<_i10.Schulungsart>>.value(<_i10.Schulungsart>[]),
-      ) as _i3.Future<List<_i10.Schulungsart>>);
+            _i4.Future<List<_i11.Schulungsart>>.value(<_i11.Schulungsart>[]),
+      ) as _i4.Future<List<_i11.Schulungsart>>);
 
   @override
-  _i3.Future<List<_i7.Schulung>> fetchAngemeldeteSchulungen(
+  _i4.Future<List<_i8.Schulung>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -602,31 +282,33 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
+        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
+      ) as _i4.Future<List<_i8.Schulung>>);
 
   @override
-  _i3.Future<List<_i7.Schulung>> fetchAvailableSchulungen() =>
+  _i4.Future<List<_i12.Schulungstermine>> fetchSchulungstermine(
+          String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchAvailableSchulungen,
-          [],
+          #fetchSchulungstermine,
+          [abDatum],
         ),
-        returnValue: _i3.Future<List<_i7.Schulung>>.value(<_i7.Schulung>[]),
-      ) as _i3.Future<List<_i7.Schulung>>);
+        returnValue: _i4.Future<List<_i12.Schulungstermine>>.value(
+            <_i12.Schulungstermine>[]),
+      ) as _i4.Future<List<_i12.Schulungstermine>>);
 
   @override
-  _i3.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
+  _i4.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
           [schulungenTeilnehmerID],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> registerFromSchulung(
+  _i4.Future<bool> registerFromSchulung(
     int? personId,
     int? schulungId,
   ) =>
@@ -638,75 +320,495 @@ class CustomMockApiService extends _i1.Mock implements _i2.ApiService {
             schulungId,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<List<_i11.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
+  _i4.Future<List<_i13.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
         Invocation.method(
           #fetchDisziplinen,
           [],
         ),
-        returnValue: _i3.Future<List<_i11.Disziplin>>.value(<_i11.Disziplin>[]),
-      ) as _i3.Future<List<_i11.Disziplin>>);
+        returnValue: _i4.Future<List<_i13.Disziplin>>.value(<_i13.Disziplin>[]),
+      ) as _i4.Future<List<_i13.Disziplin>>);
 
   @override
-  _i3.Future<List<_i12.BankData>> fetchBankData(int? webloginId) =>
+  _i4.Future<List<_i14.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankData,
           [webloginId],
         ),
-        returnValue: _i3.Future<List<_i12.BankData>>.value(<_i12.BankData>[]),
-      ) as _i3.Future<List<_i12.BankData>>);
+        returnValue: _i4.Future<List<_i14.BankData>>.value(<_i14.BankData>[]),
+      ) as _i4.Future<List<_i14.BankData>>);
 
   @override
-  _i3.Future<bool> registerBankData(_i12.BankData? bankData) =>
+  _i4.Future<bool> registerBankData(_i14.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #registerBankData,
           [bankData],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> deleteBankData(_i12.BankData? bankData) =>
+  _i4.Future<bool> deleteBankData(_i14.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteBankData,
           [bankData],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<List<_i13.Verein>> fetchVereine() => (super.noSuchMethod(
+  _i4.Future<List<_i15.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i3.Future<List<_i13.Verein>>.value(<_i13.Verein>[]),
-      ) as _i3.Future<List<_i13.Verein>>);
+        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
+      ) as _i4.Future<List<_i15.Verein>>);
 
   @override
-  _i3.Future<List<_i13.Verein>> fetchVerein(int? vereinsNr) =>
+  _i4.Future<List<_i15.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i3.Future<List<_i13.Verein>>.value(<_i13.Verein>[]),
-      ) as _i3.Future<List<_i13.Verein>>);
+        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
+      ) as _i4.Future<List<_i15.Verein>>);
 
   @override
-  _i3.Future<List<_i14.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
+  _i4.Future<List<_i16.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchFremdeVerbaende,
           [vereinsNr],
         ),
         returnValue:
-            _i3.Future<List<_i14.FremdeVerband>>.value(<_i14.FremdeVerband>[]),
-      ) as _i3.Future<List<_i14.FremdeVerband>>);
+            _i4.Future<List<_i16.FremdeVerband>>.value(<_i16.FremdeVerband>[]),
+      ) as _i4.Future<List<_i16.FremdeVerband>>);
+
+  @override
+  _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>
+      registerSchulungenTeilnehmer({
+    required int? schulungTerminId,
+    required _i5.UserData? user,
+    required String? email,
+    required String? telefon,
+    required _i14.BankData? bankData,
+    required List<Map<String, dynamic>>? felderArray,
+  }) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #registerSchulungenTeilnehmer,
+              [],
+              {
+                #schulungTerminId: schulungTerminId,
+                #user: user,
+                #email: email,
+                #telefon: telefon,
+                #bankData: bankData,
+                #felderArray: felderArray,
+              },
+            ),
+            returnValue:
+                _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>.value(
+                    _FakeRegisterSchulungenTeilnehmerResponse_1(
+              this,
+              Invocation.method(
+                #registerSchulungenTeilnehmer,
+                [],
+                {
+                  #schulungTerminId: schulungTerminId,
+                  #user: user,
+                  #email: email,
+                  #telefon: telefon,
+                  #bankData: bankData,
+                  #felderArray: felderArray,
+                },
+              ),
+            )),
+          ) as _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
+}
+
+/// A class which mocks [ApiService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class CustomMockApiService extends _i1.Mock implements _i3.ApiService {
+  CustomMockApiService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
+        Invocation.method(
+          #hasInternet,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  Duration getCacheExpirationDuration() => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheExpirationDuration,
+          [],
+        ),
+        returnValue: _FakeDuration_0(
+          this,
+          Invocation.method(
+            #getCacheExpirationDuration,
+            [],
+          ),
+        ),
+      ) as Duration);
+
+  @override
+  _i4.Future<Map<String, dynamic>> register({
+    required String? firstName,
+    required String? lastName,
+    required String? passNumber,
+    required String? email,
+    required String? birthDate,
+    required String? zipCode,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #register,
+          [],
+          {
+            #firstName: firstName,
+            #lastName: lastName,
+            #passNumber: passNumber,
+            #email: email,
+            #birthDate: birthDate,
+            #zipCode: zipCode,
+          },
+        ),
+        returnValue:
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
+
+  @override
+  _i4.Future<Map<String, dynamic>> login(
+    String? username,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #login,
+          [
+            username,
+            password,
+          ],
+        ),
+        returnValue:
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
+
+  @override
+  _i4.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #passwordReset,
+          [passNumber],
+        ),
+        returnValue:
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
+
+  @override
+  _i4.Future<Map<String, dynamic>> changePassword(
+    int? personId,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [
+            personId,
+            newPassword,
+          ],
+        ),
+        returnValue:
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
+
+  @override
+  _i4.Future<_i5.UserData?> fetchPassdaten(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdaten,
+          [personId],
+        ),
+        returnValue: _i4.Future<_i5.UserData?>.value(),
+      ) as _i4.Future<_i5.UserData?>);
+
+  @override
+  _i4.Future<List<_i6.PassDataZVE>> fetchPassdatenZVE(
+    int? passdatenId,
+    int? personId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdatenZVE,
+          [
+            passdatenId,
+            personId,
+          ],
+        ),
+        returnValue:
+            _i4.Future<List<_i6.PassDataZVE>>.value(<_i6.PassDataZVE>[]),
+      ) as _i4.Future<List<_i6.PassDataZVE>>);
+
+  @override
+  _i4.Future<bool> updateKritischeFelderUndAdresse(_i5.UserData? userData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateKritischeFelderUndAdresse,
+          [userData],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<List<_i7.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+          int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaften,
+          [personId],
+        ),
+        returnValue: _i4.Future<List<_i7.ZweitmitgliedschaftData>>.value(
+            <_i7.ZweitmitgliedschaftData>[]),
+      ) as _i4.Future<List<_i7.ZweitmitgliedschaftData>>);
+
+  @override
+  _i4.Future<List<_i8.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAbsolvierteSchulungen,
+          [personId],
+        ),
+        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
+      ) as _i4.Future<List<_i8.Schulung>>);
+
+  @override
+  _i4.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchKontakte,
+          [personId],
+        ),
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i4.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i4.Future<bool> addKontakt(_i9.Contact? contact) => (super.noSuchMethod(
+        Invocation.method(
+          #addKontakt,
+          [contact],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> deleteKontakt(_i9.Contact? contact) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteKontakt,
+          [contact],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<_i10.Uint8List> fetchSchuetzenausweis(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchuetzenausweis,
+          [personId],
+        ),
+        returnValue: _i4.Future<_i10.Uint8List>.value(_i10.Uint8List(0)),
+      ) as _i4.Future<_i10.Uint8List>);
+
+  @override
+  _i4.Future<List<_i11.Schulungsart>> fetchSchulungsarten() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungsarten,
+          [],
+        ),
+        returnValue:
+            _i4.Future<List<_i11.Schulungsart>>.value(<_i11.Schulungsart>[]),
+      ) as _i4.Future<List<_i11.Schulungsart>>);
+
+  @override
+  _i4.Future<List<_i8.Schulung>> fetchAngemeldeteSchulungen(
+    int? personId,
+    String? abDatum,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAngemeldeteSchulungen,
+          [
+            personId,
+            abDatum,
+          ],
+        ),
+        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
+      ) as _i4.Future<List<_i8.Schulung>>);
+
+  @override
+  _i4.Future<List<_i12.Schulungstermine>> fetchSchulungstermine(
+          String? abDatum) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungstermine,
+          [abDatum],
+        ),
+        returnValue: _i4.Future<List<_i12.Schulungstermine>>.value(
+            <_i12.Schulungstermine>[]),
+      ) as _i4.Future<List<_i12.Schulungstermine>>);
+
+  @override
+  _i4.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unregisterFromSchulung,
+          [schulungenTeilnehmerID],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> registerFromSchulung(
+    int? personId,
+    int? schulungId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerFromSchulung,
+          [
+            personId,
+            schulungId,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<List<_i13.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchDisziplinen,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i13.Disziplin>>.value(<_i13.Disziplin>[]),
+      ) as _i4.Future<List<_i13.Disziplin>>);
+
+  @override
+  _i4.Future<List<_i14.BankData>> fetchBankData(int? webloginId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBankData,
+          [webloginId],
+        ),
+        returnValue: _i4.Future<List<_i14.BankData>>.value(<_i14.BankData>[]),
+      ) as _i4.Future<List<_i14.BankData>>);
+
+  @override
+  _i4.Future<bool> registerBankData(_i14.BankData? bankData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerBankData,
+          [bankData],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> deleteBankData(_i14.BankData? bankData) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteBankData,
+          [bankData],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<List<_i15.Verein>> fetchVereine() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchVereine,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
+      ) as _i4.Future<List<_i15.Verein>>);
+
+  @override
+  _i4.Future<List<_i15.Verein>> fetchVerein(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchVerein,
+          [vereinsNr],
+        ),
+        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
+      ) as _i4.Future<List<_i15.Verein>>);
+
+  @override
+  _i4.Future<List<_i16.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchFremdeVerbaende,
+          [vereinsNr],
+        ),
+        returnValue:
+            _i4.Future<List<_i16.FremdeVerband>>.value(<_i16.FremdeVerband>[]),
+      ) as _i4.Future<List<_i16.FremdeVerband>>);
+
+  @override
+  _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>
+      registerSchulungenTeilnehmer({
+    required int? schulungTerminId,
+    required _i5.UserData? user,
+    required String? email,
+    required String? telefon,
+    required _i14.BankData? bankData,
+    required List<Map<String, dynamic>>? felderArray,
+  }) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #registerSchulungenTeilnehmer,
+              [],
+              {
+                #schulungTerminId: schulungTerminId,
+                #user: user,
+                #email: email,
+                #telefon: telefon,
+                #bankData: bankData,
+                #felderArray: felderArray,
+              },
+            ),
+            returnValue:
+                _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>.value(
+                    _FakeRegisterSchulungenTeilnehmerResponse_1(
+              this,
+              Invocation.method(
+                #registerSchulungenTeilnehmer,
+                [],
+                {
+                  #schulungTerminId: schulungTerminId,
+                  #user: user,
+                  #email: email,
+                  #telefon: telefon,
+                  #bankData: bankData,
+                  #felderArray: felderArray,
+                },
+              ),
+            )),
+          ) as _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
 }

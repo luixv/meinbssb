@@ -77,26 +77,26 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(80),
                               border: Border.all(
-                                color: UIConstants.greyColor,
+                                color: UIConstants.mydarkGreyColor,
                                 width: 2,
                               ),
                             ),
                             child: const Icon(
                               Icons.person,
                               size: 100,
-                              color: UIConstants.greyColor,
+                              color: UIConstants.mydarkGreyColor,
                             ),
                           ),
                           Positioned(
                             bottom: 16,
                             right: 16,
                             child: Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Color(0x1A000000),
                                     blurRadius: 4,
                                   ),
                                 ],
@@ -106,7 +106,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                                 child: Icon(
                                   Icons.add_a_photo_outlined,
                                   size: 32,
-                                  color: UIConstants.greyColor,
+                                  color: UIConstants.mydarkGreyColor,
                                 ),
                               ),
                             ),

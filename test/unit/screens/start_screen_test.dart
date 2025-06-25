@@ -127,6 +127,7 @@ void main() {
           link: '',
           status: 'Aktiv',
           gueltigBis: '2023-12-31',
+          lehrgangsinhaltHtml: '',
         ),
       ],
     );

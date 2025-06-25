@@ -227,127 +227,6 @@ void main() {
       expect(result[0].gueltigBis, '-');
     });
   });
-
-  group('fetchAvailableSchulungen', () {
-    // API response format for AvailableSchulungen. This is similar to AngemeldeteSchulungen,
-    // but the ID field for Schulung model is 'SCHULUNGID' here.
-    final testResponse = [
-      {
-        'SCHULUNGID': 1,
-        'BEZEICHNUNG': 'Training 1',
-        'DATUM': '2023-01-15',
-        'AUSGESTELLTAM': '2023-01-01',
-        'SCHULUNGENTEILNEHMERID': 1,
-        'SCHULUNGSARTID': 1,
-        'SCHULUNGSARTBEZEICHNUNG': 'Basic',
-        'SCHULUNGSARTKURZBEZEICHNUNG': 'BSC',
-        'SCHULUNGSARTBESCHREIBUNG': 'Basic Training Course',
-        'MAXTEILNEHMER': 20,
-        'ANZAHLTEILNEHMER': 15,
-        'ORT': 'Training Center',
-        'UHRZEIT': '09:00',
-        'DAUER': '8 Stunden',
-        'PREIS': '100€',
-        'ZIELGRUPPE': 'Anfänger',
-        'VORAUSSETZUNGEN': 'Keine',
-        'INHALT': 'Grundlagen',
-        'ABSCHLUSS': 'Zertifikat',
-        'ANMERKUNGEN': 'Bitte mitbringen: Schreibzeug',
-        'ISONLINE': false,
-        'LINK': '',
-        'STATUS': 'Aktiv',
-        'GUELTIGBIS': '2023-12-31',
-      },
-    ];
-
-    test('returns empty list for non-list response', () async {
-      when(
-        mockHttpClient.get('AvailableSchulungen'),
-      ).thenAnswer((_) async => {'error': 'Invalid format'});
-
-      final result = await trainingService.fetchAvailableSchulungen();
-
-      expect(result, isEmpty);
-    });
-
-    test('maps available Schulungen correctly', () async {
-      when(
-        mockHttpClient.get('AvailableSchulungen'),
-      ).thenAnswer((_) async => testResponse);
-
-      final result = await trainingService.fetchAvailableSchulungen();
-
-      expect(result.length, 1);
-      expect(result[0].id, 1);
-      expect(result[0].bezeichnung, 'Training 1');
-      expect(result[0].datum, '2023-01-15');
-      expect(result[0].ausgestelltAm, '2023-01-01');
-      expect(result[0].teilnehmerId, 1);
-      expect(result[0].schulungsartId, 1);
-      expect(result[0].schulungsartBezeichnung, 'Basic');
-      expect(result[0].schulungsartKurzbezeichnung, 'BSC');
-      expect(result[0].schulungsartBeschreibung, 'Basic Training Course');
-      expect(result[0].maxTeilnehmer, 20);
-      expect(result[0].anzahlTeilnehmer, 15);
-      expect(result[0].ort, 'Training Center');
-      expect(result[0].uhrzeit, '09:00');
-      expect(result[0].dauer, '8 Stunden');
-      expect(result[0].preis, '100€');
-      expect(result[0].zielgruppe, 'Anfänger');
-      expect(result[0].voraussetzungen, 'Keine');
-      expect(result[0].inhalt, 'Grundlagen');
-      expect(result[0].abschluss, 'Zertifikat');
-      expect(result[0].anmerkungen, 'Bitte mitbringen: Schreibzeug');
-      expect(result[0].isOnline, false);
-      expect(result[0].link, '');
-      expect(result[0].status, 'Aktiv');
-      expect(result[0].gueltigBis, '2023-12-31');
-    });
-
-    test('handles null values in AvailableSchulungen correctly', () async {
-      when(mockHttpClient.get('AvailableSchulungen')).thenAnswer(
-        (_) async => [
-          {
-            // All nulls to test default values in Schulung.fromJson
-            'SCHULUNGID': null,
-            'BEZEICHNUNG': null,
-            'DATUM': null,
-            'AUSGESTELLTAM': null,
-            'SCHULUNGENTEILNEHMERID': null,
-            'SCHULUNGSARTID': null,
-            'SCHULUNGSARTBEZEICHNUNG': null,
-            'SCHULUNGSARTKURZBEZEICHNUNG': null,
-            'SCHULUNGSARTBESCHREIBUNG': null,
-            'MAXTEILNEHMER': null,
-            'ANZAHLTEILNEHMER': null,
-            'ORT': null,
-            'UHRZEIT': null,
-            'DAUER': null,
-            'PREIS': null,
-            'ZIELGRUPPE': null,
-            'VORAUSSETZUNGEN': null,
-            'INHALT': null,
-            'ABSCHLUSS': null,
-            'ANMERKUNGEN': null,
-            'ISONLINE': null,
-            'LINK': null,
-            'STATUS': null,
-            'GUELTIGBIS': null,
-          },
-        ],
-      );
-
-      final result = await trainingService.fetchAvailableSchulungen();
-
-      expect(result.length, 1);
-      expect(result[0].id, 0); // Default int
-      expect(result[0].bezeichnung, ''); // Default string
-      expect(result[0].datum, '');
-      expect(result[0].ausgestelltAm, '');
-      // ... and so on for all other fields, verifying default values
-    });
-  });
-
   group('fetchSchulungsarten', () {
     final testResponse = [
       {
@@ -843,6 +722,358 @@ void main() {
       );
 
       expect(result, isFalse);
+    });
+  });
+
+  group('fetchSchulungstermine', () {
+
+    test('maps valid Schulungstermine response correctly', () async {
+      when(mockHttpClient.get('Schulungstermine/15.08.2025/false'))
+          .thenAnswer((_) async => [
+                {
+                  'SCHULUNGENTERMINID': 42,
+                  'SCHULUNGSARTID': 7,
+                  'DATUM': '2025-08-15T00:00:00.000+02:00',
+                  'BEMERKUNG': 'Hinweis',
+                  'KOSTEN': 99.99,
+                  'ORT': 'München',
+                  'LEHRGANGSLEITER': 'Herr Mustermann',
+                  'MAXTEILNEHMER': 50,
+                  'ANGEMELDETETEILNEHMER': 10,
+                  'LEHRGANGSINHALT': 'Inhalt Text',
+                  'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
+                  'STATUS': 1,
+                  'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
+                  'VERPFLEGUNGSKOSTEN': 0.0,
+                  'UEBERNACHTUNGSKOSTEN': 0.0,
+                  'LEHRMATERIALKOSTEN': 0.0,
+                  'WEBVEROEFFENTLICHENAM': '',
+                  'ANMELDUNGENGESPERRT': false,
+                  'LEHRGANGSLEITER2': '',
+                  'LEHRGANGSLEITER3': '',
+                  'LEHRGANGSLEITER4': '',
+                  'LEHRGANGSLEITERTEL': '',
+                  'LEHRGANGSLEITER2TEL': '',
+                  'LEHRGANGSLEITER3TEL': '',
+                  'LEHRGANGSLEITER4TEL': '',
+                  'LEHRGANGSLEITERMAIL': '',
+                  'LEHRGANGSLEITER2MAIL': '',
+                  'LEHRGANGSLEITER3MAIL': '',
+                  'LEHRGANGSLEITER4MAIL': '',
+                  'ANMELDESTOPP': '',
+                  'ABMELDESTOPP': '',
+                  'GELOESCHT': false,
+                  'STORNOGRUND': '',
+                  'WEBGRUPPE': 0,
+                  'VERANSTALTUNGSBEZIRK': 0,
+                  'FUERVERLAENGERUNGEN': false,
+                  'ANMELDENERLAUBT': 0,
+                  'VERBANDSINTERNPASSWORT': '',
+                  'BEZEICHNUNG': 'Test',
+                },
+                {
+                  // Should be filtered out: status == 2
+                  'SCHULUNGENTERMINID': 99,
+                  'SCHULUNGSARTID': 7,
+                  'DATUM': '2025-08-15T00:00:00.000+02:00',
+                  'BEMERKUNG': 'Hinweis',
+                  'KOSTEN': 99.99,
+                  'ORT': 'München',
+                  'LEHRGANGSLEITER': 'Herr Mustermann',
+                  'MAXTEILNEHMER': 50,
+                  'ANGEMELDETETEILNEHMER': 10,
+                  'LEHRGANGSINHALT': 'Inhalt Text',
+                  'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
+                  'STATUS': 2,
+                  'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
+                  'VERPFLEGUNGSKOSTEN': 0.0,
+                  'UEBERNACHTUNGSKOSTEN': 0.0,
+                  'LEHRMATERIALKOSTEN': 0.0,
+                  'WEBVEROEFFENTLICHENAM': '',
+                  'ANMELDUNGENGESPERRT': false,
+                  'LEHRGANGSLEITER2': '',
+                  'LEHRGANGSLEITER3': '',
+                  'LEHRGANGSLEITER4': '',
+                  'LEHRGANGSLEITERTEL': '',
+                  'LEHRGANGSLEITER2TEL': '',
+                  'LEHRGANGSLEITER3TEL': '',
+                  'LEHRGANGSLEITER4TEL': '',
+                  'LEHRGANGSLEITERMAIL': '',
+                  'LEHRGANGSLEITER2MAIL': '',
+                  'LEHRGANGSLEITER3MAIL': '',
+                  'LEHRGANGSLEITER4MAIL': '',
+                  'ANMELDESTOPP': '',
+                  'ABMELDESTOPP': '',
+                  'GELOESCHT': false,
+                  'STORNOGRUND': '',
+                  'WEBGRUPPE': 0,
+                  'VERANSTALTUNGSBEZIRK': 0,
+                  'FUERVERLAENGERUNGEN': false,
+                  'ANMELDENERLAUBT': 0,
+                  'VERBANDSINTERNPASSWORT': '',
+                  'BEZEICHNUNG': 'Test',
+                },
+              ],);
+      final result = await trainingService.fetchSchulungstermine('15.08.2025');
+      expect(result.length, 1);
+      final s = result[0];
+      expect(s.schulungsterminId, 42);
+      expect(s.schulungsartId, 7);
+      expect(s.datum, DateTime.parse('2025-08-15T00:00:00.000+02:00'));
+      expect(s.ort, 'München');
+      expect(s.maxTeilnehmer, 50);
+      expect(s.angemeldeteTeilnehmer, 10);
+      expect(s.lehrgangsinhalt, 'Inhalt Text');
+      expect(s.lehrgangsinhaltHtml, '<b>HTML Inhalt</b>');
+      expect(s.status, 1);
+      expect(s.datumBis, '2025-08-16T00:00:00.000+02:00');
+    });
+
+    test('handles null/missing fields with defaults', () async {
+      when(mockHttpClient.get('Schulungstermine/01.01.2030/false')).thenAnswer(
+        (_) async => [
+          {
+            'SCHULUNGENTERMINID': null,
+            'SCHULUNGSARTID': null,
+            'DATUM': null,
+            'BEMERKUNG': null,
+            'KOSTEN': null,
+            'ORT': null,
+            'MAXTEILNEHMER': null,
+            'ANGEMELDETETEILNEHMER': null,
+            'LEHRGANGSINHALT': null,
+            'LEHRGANGSINHALTHTML': null,
+            'STATUS': null,
+            'DATUMBIS': null,
+            'VERPFLEGUNGSKOSTEN': null,
+            'UEBERNACHTUNGSKOSTEN': null,
+            'LEHRMATERIALKOSTEN': null,
+            'WEBVEROEFFENTLICHENAM': null,
+            'ANMELDUNGENGESPERRT': null,
+            'LEHRGANGSLEITER': null,
+            'LEHRGANGSLEITER2': null,
+            'LEHRGANGSLEITER3': null,
+            'LEHRGANGSLEITER4': null,
+            'LEHRGANGSLEITERTEL': null,
+            'LEHRGANGSLEITER2TEL': null,
+            'LEHRGANGSLEITER3TEL': null,
+            'LEHRGANGSLEITER4TEL': null,
+            'LEHRGANGSLEITERMAIL': null,
+            'LEHRGANGSLEITER2MAIL': null,
+            'LEHRGANGSLEITER3MAIL': null,
+            'LEHRGANGSLEITER4MAIL': null,
+            'ANMELDESTOPP': null,
+            'ABMELDESTOPP': null,
+            'GELOESCHT': null,
+            'STORNOGRUND': null,
+            'WEBGRUPPE': null,
+            'VERANSTALTUNGSBEZIRK': null,
+            'FUERVERLAENGERUNGEN': null,
+            'ANMELDENERLAUBT': null,
+            'VERBANDSINTERNPASSWORT': null,
+            'BEZEICHNUNG': null,
+          },
+        ],
+      );
+      final result = await trainingService.fetchSchulungstermine('01.01.2030');
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list for non-list response', () async {
+      when(mockHttpClient.get('Schulungstermine/01.01.2040/false'))
+          .thenAnswer((_) async => {'error': 'not a list'});
+      final result = await trainingService.fetchSchulungstermine('01.01.2040');
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list and logs error on exception', () async {
+      when(mockHttpClient.get('Schulungstermine/01.01.2050/false'))
+          .thenThrow(Exception('Network error'));
+      final result = await trainingService.fetchSchulungstermine('01.01.2050');
+      expect(result, isEmpty);
+    });
+
+    test('filters out results with status == 2 or not published', () async {
+      final now = DateTime.now();
+      final futureDate = now.add(const Duration(days: 10));
+      final pastDate = now.subtract(const Duration(days: 10));
+      final testResponse = [
+        // Should be included: status!=2, webVeroeffentlichenAm empty
+        {
+          'SCHULUNGENTERMINID': 1,
+          'SCHULUNGSARTID': 1,
+          'DATUM': futureDate.toIso8601String(),
+          'BEMERKUNG': '',
+          'KOSTEN': 10.0,
+          'ORT': 'Ort1',
+          'LEHRGANGSLEITER': '',
+          'VERPFLEGUNGSKOSTEN': 0.0,
+          'UEBERNACHTUNGSKOSTEN': 0.0,
+          'LEHRMATERIALKOSTEN': 0.0,
+          'LEHRGANGSINHALT': '',
+          'MAXTEILNEHMER': 10,
+          'WEBVEROEFFENTLICHENAM': '',
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 1,
+          'DATUMBIS': '',
+          'LEHRGANGSINHALTHTML': '',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 0,
+          'VERANSTALTUNGSBEZIRK': 0,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 0,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'A',
+          'ANGEMELDETETEILNEHMER': 0,
+        },
+        // Should be included: status!=2, now after webVeroeffentlichenAm
+        {
+          'SCHULUNGENTERMINID': 2,
+          'SCHULUNGSARTID': 1,
+          'DATUM': futureDate.toIso8601String(),
+          'BEMERKUNG': '',
+          'KOSTEN': 10.0,
+          'ORT': 'Ort2',
+          'LEHRGANGSLEITER': '',
+          'VERPFLEGUNGSKOSTEN': 0.0,
+          'UEBERNACHTUNGSKOSTEN': 0.0,
+          'LEHRMATERIALKOSTEN': 0.0,
+          'LEHRGANGSINHALT': '',
+          'MAXTEILNEHMER': 10,
+          'WEBVEROEFFENTLICHENAM': pastDate.toIso8601String(),
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 1,
+          'DATUMBIS': '',
+          'LEHRGANGSINHALTHTML': '',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 0,
+          'VERANSTALTUNGSBEZIRK': 0,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 0,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'B',
+          'ANGEMELDETETEILNEHMER': 0,
+        },
+        // Should be filtered out: status == 2
+        {
+          'SCHULUNGENTERMINID': 3,
+          'SCHULUNGSARTID': 1,
+          'DATUM': futureDate.toIso8601String(),
+          'BEMERKUNG': '',
+          'KOSTEN': 10.0,
+          'ORT': 'Ort3',
+          'LEHRGANGSLEITER': '',
+          'VERPFLEGUNGSKOSTEN': 0.0,
+          'UEBERNACHTUNGSKOSTEN': 0.0,
+          'LEHRMATERIALKOSTEN': 0.0,
+          'LEHRGANGSINHALT': '',
+          'MAXTEILNEHMER': 10,
+          'WEBVEROEFFENTLICHENAM': '',
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 2,
+          'DATUMBIS': '',
+          'LEHRGANGSINHALTHTML': '',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 0,
+          'VERANSTALTUNGSBEZIRK': 0,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 0,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'C',
+          'ANGEMELDETETEILNEHMER': 0,
+        },
+        // Should be filtered out: status!=2, but now before webVeroeffentlichenAm
+        {
+          'SCHULUNGENTERMINID': 4,
+          'SCHULUNGSARTID': 1,
+          'DATUM': futureDate.toIso8601String(),
+          'BEMERKUNG': '',
+          'KOSTEN': 10.0,
+          'ORT': 'Ort4',
+          'LEHRGANGSLEITER': '',
+          'VERPFLEGUNGSKOSTEN': 0.0,
+          'UEBERNACHTUNGSKOSTEN': 0.0,
+          'LEHRMATERIALKOSTEN': 0.0,
+          'LEHRGANGSINHALT': '',
+          'MAXTEILNEHMER': 10,
+          'WEBVEROEFFENTLICHENAM': futureDate.toIso8601String(),
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 1,
+          'DATUMBIS': '',
+          'LEHRGANGSINHALTHTML': '',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 0,
+          'VERANSTALTUNGSBEZIRK': 0,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 0,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'D',
+          'ANGEMELDETETEILNEHMER': 0,
+        },
+      ];
+      when(mockHttpClient.get('Schulungstermine/01.01.2099/false'))
+          .thenAnswer((_) async => testResponse);
+      final result = await trainingService.fetchSchulungstermine('01.01.2099');
+      final ids = result.map((e) => e.schulungsterminId).toList();
+      expect(ids, containsAll([1, 2]));
+      expect(ids, isNot(contains(3)));
+      expect(ids, isNot(contains(4)));
     });
   });
 }

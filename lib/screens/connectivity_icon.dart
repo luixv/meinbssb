@@ -24,7 +24,8 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
   void initState() {
     super.initState();
     _initConnectivity();
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionState);
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionState);
   }
 
   @override
@@ -135,8 +136,10 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
         break;
       case ConnectivityResult
             .bluetooth: // You might want to handle this differently
-        icon = const Icon(Icons.bluetooth_connected,
-            color: UIConstants.bluetoothConnected,);
+        icon = const Icon(
+          Icons.bluetooth_connected,
+          color: UIConstants.bluetoothConnected,
+        );
         tooltip = 'Connected via Bluetooth (No Internet)';
         break;
       case ConnectivityResult.vpn: //  treat this as connected

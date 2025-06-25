@@ -244,6 +244,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FloatingActionButton(
+                  heroTag: 'personalDataCancelFab',
                   onPressed: () {
                     setState(() {
                       _isEditing = false;
@@ -258,6 +259,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
+                  heroTag: 'personalDataSaveFab',
                   onPressed: _handleSave,
                   backgroundColor: UIConstants.defaultAppColor,
                   child: const Icon(
@@ -268,6 +270,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               ],
             )
           : FloatingActionButton(
+              heroTag: 'personalDataEditFab',
               onPressed: () {
                 setState(() {
                   _isEditing = true;
@@ -351,7 +354,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         : _currentPassData == null && !_isLoading
             ? Center(
                 child: ScaledText(
-                  'Keine persönlichen Daten verfügbar.',
+                  UIConstants.noPersonalDataAvailable,
                   style:
                       UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
                 ),

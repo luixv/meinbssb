@@ -70,7 +70,7 @@ class UIStyles {
   static const TextStyle listItemSubtitleStyle = TextStyle(
     fontSize: UIConstants.bodyFontSize,
     fontFamily: UIConstants.defaultFontFamily,
-    color: UIConstants.greyColor,
+    color: UIConstants.mydarkGreyColor,
   );
 
   static const TextStyle buttonStyle = TextStyle(
@@ -158,11 +158,11 @@ class UIStyles {
         errorStyle: errorStyle,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.greyColor),
+          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.greyColor),
+          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
@@ -382,5 +382,6 @@ class UIStyles {
   static const Color tooltipIconColor = Colors.black;
 
   // Add a background color for profile pictures
-  static const Color profilePictureBackgroundColor = UIConstants.greyColor;
+  static const Color profilePictureBackgroundColor =
+      UIConstants.mydarkGreyColor;
 }

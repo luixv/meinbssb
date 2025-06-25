@@ -177,4 +177,17 @@ class Schulungstermine {
         'ort: $ort, '
         'status: $status)';
   }
+
+  String get webGruppeLabel {
+    return webGruppeMap[webGruppe] ?? 'nicht zugeordnet';
+  }
+
+  static const Map<int, String> webGruppeMap = {
+    0: 'Alle',
+    1: 'Wettbewerbe',
+    2: 'Jugend',
+    3: 'Sport',
+    4: 'Überfachlich',
+    5: 'Verbandsintern',
+  };
 }

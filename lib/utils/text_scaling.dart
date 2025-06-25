@@ -5,7 +5,8 @@ import '../constants/ui_constants.dart';
 
 class ScaledTextStyle {
   static TextStyle scale(TextStyle baseStyle, BuildContext context) {
-    final fontSizeProvider = Provider.of<FontSizeProvider>(context, listen: false);
+    final fontSizeProvider =
+        Provider.of<FontSizeProvider>(context, listen: false);
     return baseStyle.copyWith(
       fontSize: baseStyle.fontSize! * fontSizeProvider.scaleFactor,
     );
@@ -166,7 +167,7 @@ class ScaledTextStyle {
       const TextStyle(
         fontSize: UIConstants.bodyFontSize,
         fontFamily: UIConstants.defaultFontFamily,
-        color: UIConstants.greyColor,
+        color: UIConstants.mydarkGreyColor,
       ),
       context,
     );
@@ -262,4 +263,4 @@ class ScaledTextStyle {
       context,
     );
   }
-} 
+}
