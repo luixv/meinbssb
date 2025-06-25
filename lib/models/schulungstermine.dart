@@ -179,20 +179,15 @@ class Schulungstermine {
   }
 
   String get webGruppeLabel {
-    switch (webGruppe) {
-      case 1:
-        return 'Wettbewerbe';
-      case 2:
-        return 'Jugend';
-      case 3:
-        return 'Sport';
-      case 4:
-        return 'Überfachlich';
-      case 5:
-        return 'Verbandsintern';
-      case 0:
-      default:
-        return 'nicht zugeordnet';
-    }
+    return webGruppeMap[webGruppe] ?? 'nicht zugeordnet';
   }
+
+  static const Map<int, String> webGruppeMap = {
+    0: 'Alle',
+    1: 'Wettbewerbe',
+    2: 'Jugend',
+    3: 'Sport',
+    4: 'Überfachlich',
+    5: 'Verbandsintern',
+  };
 }

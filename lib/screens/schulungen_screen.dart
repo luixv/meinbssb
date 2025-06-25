@@ -19,12 +19,20 @@ class SchulungenScreen extends StatefulWidget {
     required this.isLoggedIn,
     required this.onLogout,
     required this.searchDate,
+    this.webGruppe,
+    this.ort,
+    this.titel,
+    this.fuerVerlaengerungen,
     super.key,
   });
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
   final DateTime searchDate;
+  final int? webGruppe;
+  final String? ort;
+  final String? titel;
+  final bool? fuerVerlaengerungen;
 
   @override
   State<SchulungenScreen> createState() => _SchulungenScreenState();
@@ -56,7 +64,30 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       final result = await apiService
           .fetchSchulungstermine(_formatDate(widget.searchDate));
       setState(() {
-        _results = result;
+        var filteredResults = result;
+        if (widget.webGruppe != null && widget.webGruppe != 0) {
+          filteredResults = filteredResults
+              .where((s) => s.webGruppe == widget.webGruppe)
+              .toList();
+        }
+        if (widget.ort != null && widget.ort!.isNotEmpty) {
+          filteredResults = filteredResults
+              .where((s) =>
+                  s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),)
+              .toList();
+        }
+        if (widget.titel != null && widget.titel!.isNotEmpty) {
+          filteredResults = filteredResults
+              .where((s) => s.bezeichnung
+                  .toLowerCase()
+                  .contains(widget.titel!.toLowerCase()),)
+              .toList();
+        }
+        if (widget.fuerVerlaengerungen == true) {
+          filteredResults =
+              filteredResults.where((s) => s.fuerVerlaengerungen).toList();
+        }
+        _results = filteredResults;
       });
     } catch (e) {
       setState(() {
