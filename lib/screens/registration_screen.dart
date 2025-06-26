@@ -42,7 +42,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? zipCodeError;
   String? passNumberError;
   String? emailError;
-  bool _isLoading = false;
   String _successMessage = '';
   UserData? userData;
   final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
@@ -217,51 +216,84 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   Future<void> _register() async {
     if (!_validateForm()) return;
 
-    setState(() {
-      _isLoading = true;
-      _successMessage = '';
-    });
-
     try {
-      final response = await widget.authService.register(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        passNumber: _passNumberController.text,
-        email: _emailController.text,
-        zipCode: _zipCodeController.text,
-        birthDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
+      final personId = await widget.authService.getPersonIDByPassnummer(_passNumberController.text);
+      
+      if (personId == '0') {
+        setState(() {
+          _successMessage = 'No PersonID was found. Please check your Passnummer again and retry.';
+        });
+        return;
+      }
+
+      // Generate a verification token (you might want to move this to the server side)
+      final verificationToken = DateTime.now().millisecondsSinceEpoch.toString();
+      
+      // Get the verification base URL from config
+      final baseUrl = await widget.emailService.getVerificationBaseUrl();
+      if (baseUrl == null) {
+        setState(() {
+          _successMessage = 'System configuration error. Please contact support.';
+        });
+        return;
+      }
+
+      // Create verification link
+      final verificationLink = '$baseUrl?email=${_emailController.text}&token=$verificationToken';
+
+      // Get email template
+      final fromEmail = await widget.emailService.getFromEmail();
+      final subject = await widget.emailService.getRegistrationSubject();
+      final emailContent = await widget.emailService.getRegistrationContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        setState(() {
+          _successMessage = 'Email configuration error. Please contact support.';
+        });
+        return;
+      }
+
+      // Replace placeholders in the email content
+      final emailBody = emailContent
+          .replaceAll('{verificationLink}', verificationLink)
+          .replaceAll('{firstName}', _firstNameController.text);
+
+      // Send the verification email
+      final emailResponse = await widget.emailService.sendEmail(
+        from: fromEmail,
+        recipient: _emailController.text,
+        subject: subject,
+        body: emailBody,
       );
 
-      if (response['ResultType'] == 1) {
-        userData = UserData.fromJson(response);
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegistrationSuccessScreen(
-              message: 'Registrierung erfolgreich!',
-              userData: userData!,
-            ),
-          ),
+      if (emailResponse['ResultType'] == 1) {
+        // Store the registration data temporarily (you might want to move this to the server)
+        await widget.authService.register(
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          passNumber: _passNumberController.text,
+          email: _emailController.text,
+          birthDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
+          zipCode: _zipCodeController.text,
         );
+
+        setState(() {
+          _successMessage = 'Email sent. Please follow the instructions to register your account';
+        });
       } else {
         setState(() {
           _successMessage = ErrorService.handleValidationError(
-            'Registrierung',
-            response['ResultMessage'] ?? 'Registrierung fehlgeschlagen.',
+            'Registration',
+            emailResponse['ResultMessage'] ?? 'Failed to send verification email.',
           );
         });
       }
     } catch (e) {
       setState(() {
         _successMessage = ErrorService.handleValidationError(
-          'Registrierung',
-          'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
+          'Registration',
+          'An error occurred. Please try again later.',
         );
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
       });
     }
   }
@@ -436,25 +468,18 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       width: double.infinity,
       child: ElevatedButton(
         key: const Key('registerButton'),
-        onPressed: _isLoading ? null : (_validateForm() ? _register : null),
+        onPressed: _validateForm() ? _register : null,
         style: UIStyles.defaultButtonStyle,
-        child: SizedBox(
-          height: 36, // Match the minimumSize height from defaultButtonStyle
-          child: Center(
-            child: _isLoading
-                ? UIConstants.defaultLoadingIndicator
-                : const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.app_registration, color: Colors.white),
-                      SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        'Registrieren',
-                        style: UIStyles.buttonStyle,
-                      ),
-                    ],
-                  ),
-          ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.app_registration, color: Colors.white),
+            SizedBox(width: UIConstants.spacingS),
+            ScaledText(
+              'Registrieren',
+              style: UIStyles.buttonStyle,
+            ),
+          ],
         ),
       ),
     );

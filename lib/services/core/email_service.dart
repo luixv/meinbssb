@@ -29,8 +29,8 @@ class EmailService {
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
-  }) : _emailSender = emailSender,
-       _configService = configService;
+  })  : _emailSender = emailSender,
+        _configService = configService;
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
 
@@ -64,12 +64,11 @@ class EmailService {
         password: password,
       );
 
-      final message =
-          mailer.Message()
-            ..from = mailer.Address(from)
-            ..recipients.add(recipient)
-            ..subject = subject
-            ..text = body;
+      final message = mailer.Message()
+        ..from = mailer.Address(from)
+        ..recipients.add(recipient)
+        ..subject = subject
+        ..text = body;
 
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');
@@ -93,6 +92,18 @@ class EmailService {
 
   Future<String?> getRegistrationContent() async {
     return _configService.getString('registrationContent', 'smtpSettings');
+  }
+
+  Future<String?> getVerificationBaseUrl() async {
+    return _configService.getString('verificationBaseUrl', 'smtpSettings');
+  }
+
+  Future<String?> getWelcomeSubject() async {
+    return _configService.getString('welcomeSubject', 'smtpSettings');
+  }
+
+  Future<String?> getWelcomeContent() async {
+    return _configService.getString('welcomeContent', 'smtpSettings');
   }
 
   Future<String?> getFromEmail() async {

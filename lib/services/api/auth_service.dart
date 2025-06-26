@@ -62,8 +62,8 @@ class AuthService {
         return {};
       }
 
-      final response = await _httpClient.post('RegisterMyBSSB', {
-        'PersonId': personId,
+      final response = await _httpClient.post('ErstelleMyBSSBAccount', {
+        'PersonID': personId,
         'Email': email,
         'Passwort': password,
       });
@@ -304,6 +304,24 @@ Ergebnis der Abfrage:
     }
   }
 
+  Future<Map<String, dynamic>> finalizeRegistration({
+    required String email,
+    required String password,
+    required String token,
+  }) async {
+    try {
+      final response = await _httpClient.post('FinalizeRegistration', {
+        'Email': email,
+        'Passwort': password,
+        'Token': token,
+      });
+      return response is Map<String, dynamic> ? response : {};
+    } catch (e) {
+      LoggerService.logError('Finalize registration error: $e');
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     try {
       await _cacheService.remove('username');
@@ -313,6 +331,26 @@ Ergebnis der Abfrage:
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> getPersonIDByPassnummer(String passNumber) async {
+    try {
+      final response = await _httpClient.get('PersonID/$passNumber');
+      if (response is Map<String, dynamic>) {
+        if (response['PERSONID'] != null && response['PERSONID'] != 0) {
+          return response['PERSONID'].toString();
+        } else {
+          LoggerService.logError('Person ID not found.');
+          return '0';
+        }
+      } else {
+        LoggerService.logError('Invalid server response.');
+        return '0';
+      }
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
       rethrow;
     }
   }
