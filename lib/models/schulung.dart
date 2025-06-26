@@ -30,6 +30,7 @@ class Schulung {
       zielgruppe: json['ZIELGRUPPE'] as String? ?? '',
       voraussetzungen: json['VORAUSSETZUNGEN'] as String? ?? '',
       inhalt: json['INHALT'] as String? ?? '',
+      lehrgangsinhaltHtml: json['LEHRGANGSINHALTHTML'] as String? ?? '',
       abschluss: json['ABSCHLUSS'] as String? ?? '',
       anmerkungen: json['ANMERKUNGEN'] as String? ?? '',
       isOnline: json['ISONLINE'] as bool? ?? false,
@@ -59,6 +60,7 @@ class Schulung {
     required this.zielgruppe,
     required this.voraussetzungen,
     required this.inhalt,
+    required this.lehrgangsinhaltHtml,
     required this.abschluss,
     required this.anmerkungen,
     required this.isOnline,
@@ -121,6 +123,9 @@ class Schulung {
   /// The content of the training course.
   final String inhalt;
 
+  /// The content of the training course in HTML format.
+  final String lehrgangsinhaltHtml;
+
   /// The conclusion of the training.
   final String abschluss;
 
@@ -159,6 +164,7 @@ class Schulung {
         'ZIELGRUPPE': zielgruppe,
         'VORAUSSETZUNGEN': voraussetzungen,
         'INHALT': inhalt,
+        'LEHRGANGSINHALTHTML': lehrgangsinhaltHtml,
         'ABSCHLUSS': abschluss,
         'ANMERKUNGEN': anmerkungen,
         'ISONLINE': isOnline,
@@ -169,7 +175,7 @@ class Schulung {
 
   @override
   String toString() {
-    return 'Schulung(id: $id, bezeichnung: $bezeichnung, datum: $datum, ausgestelltAm: $ausgestelltAm, teilnehmerId: $teilnehmerId, schulungsartId: $schulungsartId, schulungsartBezeichnung: $schulungsartBezeichnung, schulungsartKurzbezeichnung: $schulungsartKurzbezeichnung, schulungsartBeschreibung: $schulungsartBeschreibung, maxTeilnehmer: $maxTeilnehmer, anzahlTeilnehmer: $anzahlTeilnehmer, ort: $ort, uhrzeit: $uhrzeit, dauer: $dauer, preis: $preis, zielgruppe: $zielgruppe, voraussetzungen: $voraussetzungen, inhalt: $inhalt, abschluss: $abschluss, anmerkungen: $anmerkungen, isOnline: $isOnline, link: $link, status: $status, gueltigBis: $gueltigBis)';
+    return 'Schulung(id: $id, bezeichnung: $bezeichnung, datum: $datum, ausgestelltAm: $ausgestelltAm, teilnehmerId: $teilnehmerId, schulungsartId: $schulungsartId, schulungsartBezeichnung: $schulungsartBezeichnung, schulungsartKurzbezeichnung: $schulungsartKurzbezeichnung, schulungsartBeschreibung: $schulungsartBeschreibung, maxTeilnehmer: $maxTeilnehmer, anzahlTeilnehmer: $anzahlTeilnehmer, ort: $ort, uhrzeit: $uhrzeit, dauer: $dauer, preis: $preis, zielgruppe: $zielgruppe, voraussetzungen: $voraussetzungen, inhalt: $inhalt, lehrgangsinhaltHtml: $lehrgangsinhaltHtml, abschluss: $abschluss, anmerkungen: $anmerkungen, isOnline: $isOnline, link: $link, status: $status, gueltigBis: $gueltigBis)';
   }
 
   @override
@@ -194,6 +200,7 @@ class Schulung {
         other.zielgruppe == zielgruppe &&
         other.voraussetzungen == voraussetzungen &&
         other.inhalt == inhalt &&
+        other.lehrgangsinhaltHtml == lehrgangsinhaltHtml &&
         other.abschluss == abschluss &&
         other.anmerkungen == anmerkungen &&
         other.isOnline == isOnline &&
@@ -223,6 +230,7 @@ class Schulung {
       zielgruppe,
       voraussetzungen,
       inhalt,
+      lehrgangsinhaltHtml,
       abschluss,
       anmerkungen,
       isOnline,

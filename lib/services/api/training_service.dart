@@ -6,6 +6,10 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
+import '/models/schulungstermine.dart';
+import '/models/register_schulungen_teilnehmer_response.dart';
+import '/models/user_data.dart';
+import '/models/bank_data.dart';
 
 class TrainingService {
   TrainingService({
@@ -114,6 +118,7 @@ class TrainingService {
               link: link,
               status: status,
               gueltigBis: gueltigBis,
+              lehrgangsinhaltHtml: '',
             );
           } catch (e, stackTrace) {
             LoggerService.logError(
@@ -126,22 +131,38 @@ class TrainingService {
         .toList();
   }
 
-  Future<List<Schulung>> fetchAvailableSchulungen() async {
+  Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
     try {
-      final response = await _httpClient.get('AvailableSchulungen');
-      return _mapAvailableSchulungenResponse(response);
+      final response = await _httpClient.get('Schulungstermine/$abDatum/false');
+      final now = DateTime.now();
+      final termine =
+          _mapSchulungstermineResponseToTermine(response).where((t) {
+        // Status darf NICHT 2 sein!
+        if (t.status == 2) return false;
+        // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
+        if (t.webVeroeffentlichenAm.isEmpty) return true;
+        try {
+          final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
+          return now.isAfter(veroeff);
+        } catch (_) {
+          return false;
+        }
+      }).toList();
+      termine.sort((a, b) => a.datum.compareTo(b.datum));
+      return termine;
     } catch (e) {
-      LoggerService.logError('Error fetching available Schulungen: $e');
+      LoggerService.logError('Error fetching available Schulungstermine: $e');
       return [];
     }
   }
 
-  List<Schulung> _mapAvailableSchulungenResponse(dynamic response) {
+  List<Schulungstermine> _mapSchulungstermineResponseToTermine(
+    dynamic response,
+  ) {
     if (response is! List) {
       LoggerService.logError('Expected List but got ${response.runtimeType}');
       return [];
     }
-
     return response
         .map((item) {
           if (item is! Map<String, dynamic>) {
@@ -150,43 +171,14 @@ class TrainingService {
             );
             return null;
           }
-
           try {
-            return Schulung(
-              id: item['SCHULUNGID'] as int? ?? 0,
-              bezeichnung: item['BEZEICHNUNG'] as String? ?? '',
-              datum: item['DATUM']?.toString() ?? '',
-              ausgestelltAm: item['AUSGESTELLTAM']?.toString() ?? '',
-              teilnehmerId: item['SCHULUNGENTEILNEHMERID'] as int? ?? 0,
-              schulungsartId: item['SCHULUNGSARTID'] as int? ?? 0,
-              schulungsartBezeichnung:
-                  item['SCHULUNGSARTBEZEICHNUNG'] as String? ?? '',
-              schulungsartKurzbezeichnung:
-                  item['SCHULUNGSARTKURZBEZEICHNUNG'] as String? ?? '',
-              schulungsartBeschreibung:
-                  item['SCHULUNGSARTBESCHREIBUNG'] as String? ?? '',
-              maxTeilnehmer: item['MAXTEILNEHMER'] as int? ?? 0,
-              anzahlTeilnehmer: item['ANZAHLTEILNEHMER'] as int? ?? 0,
-              ort: item['ORT'] as String? ?? '',
-              uhrzeit: item['UHRZEIT']?.toString() ?? '',
-              dauer: item['DAUER']?.toString() ?? '',
-              preis: item['PREIS']?.toString() ?? '',
-              zielgruppe: item['ZIELGRUPPE'] as String? ?? '',
-              voraussetzungen: item['VORAUSSETZUNGEN'] as String? ?? '',
-              inhalt: item['INHALT'] as String? ?? '',
-              abschluss: item['ABSCHLUSS'] as String? ?? '',
-              anmerkungen: item['ANMERKUNGEN'] as String? ?? '',
-              isOnline: item['ISONLINE'] as bool? ?? false,
-              link: item['LINK'] as String? ?? '',
-              status: item['STATUS'] as String? ?? '',
-              gueltigBis: item['GUELTIGBIS']?.toString() ?? '',
-            );
+            return Schulungstermine.fromJson(item);
           } catch (e) {
-            LoggerService.logError('Error mapping Schulung: $e');
+            LoggerService.logError('Error mapping Schulungstermine: $e');
             return null;
           }
         })
-        .whereType<Schulung>()
+        .whereType<Schulungstermine>()
         .toList();
   }
 
@@ -299,6 +291,7 @@ class TrainingService {
               link: item['LINK'] as String? ?? '',
               status: item['STATUS'] as String? ?? '',
               gueltigBis: item['GUELTIGBIS']?.toString() ?? '',
+              lehrgangsinhaltHtml: '',
             );
           } catch (e) {
             LoggerService.logError('Error mapping Schulung: $e');
@@ -359,6 +352,62 @@ class TrainingService {
     } catch (e) {
       LoggerService.logError('Error fetching Disziplinen: $e');
       return [];
+    }
+  }
+
+  /// Registers a participant for a training event (Schulungstermin).
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer({
+    required int schulungTerminId,
+    required UserData user,
+    required String email,
+    required String telefon,
+    required BankData bankData,
+    required List<Map<String, dynamic>> felderArray,
+  }) async {
+    final body = {
+      'SchulungTerminID': schulungTerminId,
+      'PersonID': user.personId,
+      'Namen': user.namen,
+      'Vorname': user.vorname,
+      'Titel': user.titel ?? '',
+      'Passnummer': user.passnummer,
+      'Nummer': '',
+      'Email': email,
+      'Geschlecht': user.geschlecht ?? 0,
+      'RechnungAn': 0,
+      'Strasse': user.strasse ?? '',
+      'PLZ': user.plz ?? '',
+      'Ort': user.ort ?? '',
+      'Kosten': 0,
+      'Verpflegung': 0,
+      'Uebernachtung': 0,
+      'Lehrmaterial': 0,
+      'AngemeldetUeber ': '',
+      'Bemerkung': '',
+      'Bankdaten': {
+        'Kontoinhaber': bankData.kontoinhaber,
+        'Bankname': bankData.bankName,
+        'IBAN': bankData.iban,
+        'BIC': bankData.bic,
+        'MandatNr': bankData.mandatNr,
+        'Mandatname': bankData.mandatName,
+        'MandatSeq': bankData.mandatSeq,
+      },
+      'AngemeldetUeberEmail': '',
+      'AngemeldetUeberTelefon': '',
+      'Telefon': telefon,
+      'VereinID': user.vereinNr,
+      'FelderArray': felderArray,
+    };
+    try {
+      final response = await _httpClient.post(
+        'SchulungenTeilnehmer',
+        body,
+      );
+      return RegisterSchulungenTeilnehmerResponse.fromJson(response);
+    } catch (e) {
+      LoggerService.logError('Error registering Schulungen Teilnehmer: $e');
+      rethrow;
     }
   }
 }

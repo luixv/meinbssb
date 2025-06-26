@@ -30,21 +30,21 @@ class BankDataResultScreen extends StatelessWidget {
             Icon(
               success ? Icons.check_circle : Icons.error,
               color: success ? Colors.green : Colors.red,
-              size: 64,
+              size: UIConstants.iconSizeXL,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               success
                   ? 'Ihre Bankdaten wurden erfolgreich gespeichert.'
                   : 'Es ist ein Fehler aufgetreten.',
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'schuetzenausweisFab',
+        heroTag: 'bankDataResultFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',

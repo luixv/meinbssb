@@ -14,6 +14,7 @@ import '/models/schulung.dart';
 import '/models/zweitmitgliedschaft_data.dart';
 import '/models/disziplin.dart';
 import '/models/pass_data_zve.dart';
+import '/models/register_schulungen_teilnehmer_response.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -25,6 +26,7 @@ import '/models/verein.dart';
 import '/models/user_data.dart';
 import '/models/fremde_verband.dart';
 import '/models/schulungsart.dart';
+import '/models/schulungstermine.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -111,7 +113,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> changePassword(
-      int personId, String newPassword,) async {
+    int personId,
+    String newPassword,
+  ) async {
     return _authService.changePassword(personId, newPassword);
   }
 
@@ -175,8 +179,8 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<Schulung>> fetchAvailableSchulungen() async {
-    return _trainingService.fetchAvailableSchulungen();
+  Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
+    return _trainingService.fetchSchulungstermine(abDatum);
   }
 
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
@@ -220,5 +224,23 @@ class ApiService {
 
   Future<List<FremdeVerband>> fetchFremdeVerbaende(int vereinsNr) async {
     return await _vereinService.fetchFremdeVerbaende();
+  }
+
+  Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer({
+    required int schulungTerminId,
+    required UserData user,
+    required String email,
+    required String telefon,
+    required BankData bankData,
+    required List<Map<String, dynamic>> felderArray,
+  }) async {
+    return _trainingService.registerSchulungenTeilnehmer(
+      schulungTerminId: schulungTerminId,
+      user: user,
+      email: email,
+      telefon: telefon,
+      bankData: bankData,
+      felderArray: felderArray,
+    );
   }
 }

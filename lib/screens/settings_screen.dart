@@ -50,8 +50,8 @@ class SettingsScreen extends StatelessWidget {
                         Row(
                           children: [
                             SizedBox(
-                              width: 40,
-                              height: 40,
+                              width: UIConstants.smallButtonSize,
+                              height: UIConstants.smallButtonSize,
                               child: FloatingActionButton(
                                 heroTag: 'decrease_font_size',
                                 onPressed: fontSizeProvider.scaleFactor <= 0.8
@@ -64,14 +64,14 @@ class SettingsScreen extends StatelessWidget {
                                 child: const Icon(
                                   Icons.remove,
                                   color: Colors.white,
-                                  size: 20,
+                                  size: UIConstants.fabSmallIconSize,
                                 ),
                               ),
                             ),
                             const SizedBox(width: UIConstants.spacingS),
                             SizedBox(
-                              width: 40,
-                              height: 40,
+                              width: UIConstants.smallButtonSize,
+                              height: UIConstants.smallButtonSize,
                               child: FloatingActionButton(
                                 heroTag: 'reset_font_size',
                                 onPressed: () =>
@@ -82,14 +82,14 @@ class SettingsScreen extends StatelessWidget {
                                 child: const Icon(
                                   Icons.refresh,
                                   color: Colors.white,
-                                  size: 20,
+                                  size: UIConstants.fabSmallIconSize,
                                 ),
                               ),
                             ),
                             const SizedBox(width: UIConstants.spacingS),
                             SizedBox(
-                              width: 40,
-                              height: 40,
+                              width: UIConstants.smallButtonSize,
+                              height: UIConstants.smallButtonSize,
                               child: FloatingActionButton(
                                 heroTag: 'increase_font_size',
                                 onPressed: fontSizeProvider.scaleFactor >= 1.6
@@ -102,7 +102,7 @@ class SettingsScreen extends StatelessWidget {
                                 child: const Icon(
                                   Icons.add,
                                   color: Colors.white,
-                                  size: 20,
+                                  size: UIConstants.fabSmallIconSize,
                                 ),
                               ),
                             ),

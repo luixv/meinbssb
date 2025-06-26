@@ -17,6 +17,7 @@ import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
+import '/screens/schulungen_search_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -121,14 +122,26 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school, color: UIStyles.menuIconColor),
+              leading: const Icon(
+                Icons.school_outlined,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Schulungen buchen',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Schulungen buchen functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SchulungenSearchScreen(
+                      userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -204,7 +217,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Oktoberfestlandesschießen functionality
+                // Still to be done: Implement Oktoberfestlandesschießen functionality
               },
             ),
             const Divider(),
@@ -314,8 +327,10 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.app_registration,
-                  color: UIStyles.menuIconColor,),
+              leading: const Icon(
+                Icons.app_registration,
+                color: UIStyles.menuIconColor,
+              ),
               title: const ScaledText(
                 'Registrieren',
                 style: TextStyle(fontSize: _menuItemFontSize),

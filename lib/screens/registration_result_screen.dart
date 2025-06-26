@@ -22,7 +22,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Registrierung erfolgreich',
+      title: UIConstants.registrationSuccessTitle,
       userData: userData,
       isLoggedIn: false,
       onLogout: () {

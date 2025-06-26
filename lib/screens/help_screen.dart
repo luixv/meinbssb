@@ -60,7 +60,9 @@ class HelpScreen extends StatelessWidget {
             children: [
               ScaledText(
                 'Häufig gestellte Fragen (FAQ)',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: UIConstants.headerFontSize,
+                    fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
@@ -199,7 +201,7 @@ class _AccordionSection extends StatelessWidget {
         ScaledText(
           title,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: UIConstants.titleFontSize,
             fontWeight: FontWeight.bold,
             color: UIConstants.defaultAppColor,
           ),
@@ -233,7 +235,7 @@ class _AccordionItemState extends State<_AccordionItem> {
         title: ScaledText(
           widget.question,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: UIConstants.subtitleFontSize,
             fontWeight: FontWeight.w500,
           ),
         ),

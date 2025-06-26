@@ -33,30 +33,34 @@ class ImpressumScreen extends StatelessWidget {
               SizedBox(height: 16),
               ScaledText(
                 'Für den Inhalt verantwortlich sind:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: UIConstants.dialogFontSize,
+                    fontWeight: FontWeight.bold,),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Gesamtverantwortung',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               ScaledText('Bayerischer Sportschützenbund e.V.'),
               ScaledText('1. Landesschützenmeister'),
-              SizedBox(height: 4),
+              SizedBox(height: UIConstants.spacingXS),
               ScaledText('Christian Kühn'),
               ScaledText('Olympia-Schießanlage Hochbrück'),
               ScaledText('Ingolstädter Landstraße 110'),
               ScaledText('85748 Garching'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
               _LinkText('Website: https://www.bssb.de', 'https://www.bssb.de'),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Realisierung des Internetauftritts',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: UIConstants.dialogFontSize,
+                    fontWeight: FontWeight.bold,),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Datenschutzbeauftragter',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -64,12 +68,12 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText('Herbert Isdebski'),
               ScaledText('Scheibenhalde 1'),
               ScaledText('72160 Horb-Nordstetten'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               _LinkText(
                 'E-Mail: datenschutz@bssb.de',
                 'mailto:datenschutz@bssb.de',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Telefon-Sprechstunde für BSSB-Mitglieder:',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -79,9 +83,11 @@ class ImpressumScreen extends StatelessWidget {
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Inhaltlich verantwortlich für die Teilbereiche',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: UIConstants.dialogFontSize,
+                    fontWeight: FontWeight.bold,),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Verband',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -91,13 +97,13 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText('Olympia-Schießanlage Hochbrück'),
               ScaledText('Ingolstädter Landstraße 110'),
               ScaledText('85748 Garching'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
                 'E-Mail: alexander.heidel@bssb.bayern',
                 'mailto:alexander.heidel@bssb.bayern',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Sport',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -108,13 +114,13 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText('Olympia-Schießanlage Hochbrück'),
               ScaledText('Ingolstädter Landstraße 110'),
               ScaledText('85748 Garching'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
                 'E-Mail: josef.lederer@bssb.bayern',
                 'mailto:josef.lederer@bssb.bayern',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Jugend',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -124,13 +130,13 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText('Olympia-Schießanlage Hochbrück'),
               ScaledText('Ingolstädter Landstraße 110'),
               ScaledText('85748 Garching'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
               _LinkText(
                 'E-Mail: jugend@bssb.bayern',
                 'mailto:jugend@bssb.bayern',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
               ),
@@ -166,9 +172,11 @@ class ImpressumScreen extends StatelessWidget {
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: UIConstants.dialogFontSize,
+                    fontWeight: FontWeight.bold,),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Bayerischer Sportschützenbund e.V.',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -176,11 +184,11 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText(
                 'eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText('Postanschrift der Geschäftsstelle:'),
               ScaledText('Ingolstädter Landstrasse 110'),
               ScaledText('85748 Garching'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Kommunikation',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -191,13 +199,13 @@ class ImpressumScreen extends StatelessWidget {
                 'Homepage: https://www.bssb.de/',
                 'https://www.bssb.de/',
               ),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Geschäftsführer',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               ScaledText('Alexander Heidel'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Vorstand i.S. §26 BGB',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -207,7 +215,7 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText('3. Landesschützenmeister: Hans Hainthaler'),
               ScaledText('4. Landesschützenmeister: Albert Euba'),
               ScaledText('5. Landesschützenmeister: Stefan Fersch'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Bankverbindung',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -216,7 +224,7 @@ class ImpressumScreen extends StatelessWidget {
                 'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
               ),
               ScaledText('IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX'),
-              SizedBox(height: 8),
+              SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 'Umsatzsteueridentifikationsnummer',
                 style: TextStyle(fontWeight: FontWeight.bold),
