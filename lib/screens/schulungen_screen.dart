@@ -383,65 +383,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => Dialog(
-                                      backgroundColor:
-                                          UIConstants.backgroundColor,
-                                      child: Stack(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              left: UIConstants
-                                                  .defaultPadding.left,
-                                              top: UIConstants
-                                                  .defaultPadding.top,
-                                              right: UIConstants
-                                                  .defaultPadding.right,
-                                              bottom: UIConstants
-                                                      .defaultPadding.bottom +
-                                                  56 +
-                                                  UIConstants.spacingM,
-                                            ),
-                                            child: const SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'AGB',
-                                                    style: UIStyles
-                                                        .dialogTitleStyle,
-                                                  ),
-                                                  SizedBox(
-                                                      height:
-                                                          UIConstants.spacingM,),
-                                                  SelectableText(
-                                                    AgbScreen.agbText,
-                                                    style: UIStyles.bodyStyle,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            bottom: UIConstants.spacingM,
-                                            right: UIConstants.spacingM,
-                                            child: FloatingActionButton(
-                                              heroTag: 'agbDialogCloseFab',
-                                              mini: true,
-                                              tooltip: 'Schließen',
-                                              backgroundColor:
-                                                  UIConstants.defaultAppColor,
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Icon(Icons.close,
-                                                  color: Colors.white,),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const AgbScreen(),
                                     ),
                                   );
                                 },
@@ -756,12 +700,34 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
         void submit() async {
           if (!formKey.currentState!.validate()) return;
+          final apiService = Provider.of<ApiService>(
+            dialogContext,
+            listen: false,
+          );
+
+          // TODO, find in which way has to be validated this
+/*
+          final nachname = nachnameController.text.trim();
+          final passnummer = passnummerController.text.trim();
+          if (!dialogContext.mounted) return;
+          final isValidPerson =
+              await apiService.findePersonID2(nachname, passnummer);
+          if (!isValidPerson) {
+            ScaffoldMessenger.of(parentContext).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Nachname und Passnummer stimmen nicht überein oder existieren nicht.',
+                ),
+                duration: UIConstants.snackbarDuration,
+                backgroundColor: UIConstants.errorColor,
+              ),
+            );
+            return;
+          }
+          */
+
           Navigator.of(context).pop();
           try {
-            final apiService = Provider.of<ApiService>(
-              dialogContext,
-              listen: false,
-            );
             final userData = prefillUser ?? widget.userData!;
             final response = await apiService.registerSchulungenTeilnehmer(
               schulungTerminId: schulungsTermin.schulungsterminId,
@@ -780,7 +746,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             if (msg == 'Teilnehmer erfolgreich erfasst' ||
                 msg == 'Teilnehmer bereits erfasst' ||
                 msg == 'Teilnehmer erfolgreich aktualisiert') {
-              if (!mounted) return;
+              if (!dialogContext.mounted) return;
               final updatedRegisteredPersons =
                   List<_RegisteredPerson>.from(registeredPersons)
                     ..add(
@@ -980,7 +946,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ScaledText(
-                    'Schulungen suchen',
+                    'Verfügbare Schulungen',
                     style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
@@ -1018,50 +984,62 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Datum: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.calendar_today,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              formattedDate,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
-                                            TextSpan(text: formattedDate),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Gruppe: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.group,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              schulungsTermin.webGruppeLabel,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
-                                            TextSpan(
-                                              text: schulungsTermin
-                                                  .webGruppeLabel,
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Ort: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.place,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              schulungsTermin.ort,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
-                                            TextSpan(text: schulungsTermin.ort),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -1085,8 +1063,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                   heroTag: 'schulungenContentFab$index',
                                   backgroundColor:
                                       schulungsTermin.anmeldungenGesperrt
-                                          ? Colors.red
-                                          : UIConstants.defaultAppColor,
+                                          ? UIConstants.schulungenGesperrtColor
+                                          : UIConstants.schulungenNormalColor,
                                   onPressed: () {
                                     final t = schulungsTermin;
                                     final freiePlaetze = t.maxTeilnehmer -
@@ -1222,17 +1200,22 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .symmetric(
-                                                                horizontal:
-                                                                    UIConstants
-                                                                        .spacingM,
+                                                                      .fromLTRB(
+                                                                UIConstants
+                                                                    .infoTableHorizontalPadding,
+                                                                0,
+                                                                UIConstants
+                                                                    .infoTableHorizontalPadding,
+                                                                UIConstants
+                                                                    .infoTableBottomPadding,
                                                               ),
                                                               child: Row(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Expanded(
+                                                                  Flexible(
+                                                                    flex: 1,
                                                                     child:
                                                                         Column(
                                                                       crossAxisAlignment:
@@ -1294,7 +1277,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  Expanded(
+                                                                  const SizedBox(
+                                                                    width: UIConstants
+                                                                            .infoTableColumnSpacing *
+                                                                        2,
+                                                                  ),
+                                                                  Flexible(
+                                                                    flex: 2,
                                                                     child:
                                                                         Column(
                                                                       crossAxisAlignment:

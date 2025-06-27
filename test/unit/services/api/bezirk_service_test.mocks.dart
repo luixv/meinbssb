@@ -3,12 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i2;
 import 'dart:typed_data' as _i5;
 
-import 'package:meinbssb/services/core/http_client.dart' as _i2;
+import 'package:meinbssb/services/core/cache_service.dart' as _i6;
+import 'package:meinbssb/services/core/http_client.dart' as _i3;
+import 'package:meinbssb/services/core/network_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,10 +26,30 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeFuture_0<T1> extends _i1.SmartFake implements _i2.Future<T1> {
+  _FakeFuture_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDuration_1 extends _i1.SmartFake implements Duration {
+  _FakeDuration_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -35,7 +57,7 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
@@ -48,7 +70,7 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
       ) as int);
 
   @override
-  _i4.Future<dynamic> post(
+  _i2.Future<dynamic> post(
     String? endpoint,
     Map<String, dynamic>? body,
   ) =>
@@ -60,11 +82,11 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
             body,
           ],
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> put(
+  _i2.Future<dynamic> put(
     String? endpoint,
     Map<String, dynamic>? body,
   ) =>
@@ -76,11 +98,11 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
             body,
           ],
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> delete(
+  _i2.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
   }) =>
@@ -90,20 +112,20 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
           [endpoint],
           {#body: body},
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> get(String? endpoint) => (super.noSuchMethod(
+  _i2.Future<dynamic> get(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #get,
           [endpoint],
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> getWithBody(
+  _i2.Future<dynamic> getWithBody(
     String? endpoint,
     Map<String, dynamic>? body,
   ) =>
@@ -115,15 +137,293 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
             body,
           ],
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
 
   @override
-  _i4.Future<_i5.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
+  _i2.Future<_i5.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #getBytes,
           [endpoint],
         ),
-        returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i4.Future<_i5.Uint8List>);
+        returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+      ) as _i2.Future<_i5.Uint8List>);
+}
+
+/// A class which mocks [CacheService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCacheService extends _i1.Mock implements _i6.CacheService {
+  MockCacheService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<void> setString(
+    String? key,
+    String? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setString,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<String?> getString(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getString,
+          [key],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<void> setJson(
+    String? key,
+    Map<String, dynamic>? json,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setJson,
+          [
+            key,
+            json,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getJson(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getJson,
+          [key],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<void> setInt(
+    String? key,
+    int? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setInt,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getInt(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getInt,
+          [key],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
+
+  @override
+  _i2.Future<void> setBool(
+    String? key,
+    bool? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setBool,
+          [
+            key,
+            value,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool?> getBool(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getBool,
+          [key],
+        ),
+        returnValue: _i2.Future<bool?>.value(),
+      ) as _i2.Future<bool?>);
+
+  @override
+  _i2.Future<void> remove(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #remove,
+          [key],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clear() => (super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #containsKey,
+          [key],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #setCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
+
+  @override
+  _i2.Future<T> getCachedData<T>(
+    String? cacheKey,
+    _i2.Future<T> Function()? getCachedData,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCachedData,
+          [
+            cacheKey,
+            getCachedData,
+          ],
+        ),
+        returnValue: _i4.ifNotNull(
+              _i4.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #getCachedData,
+                  [
+                    cacheKey,
+                    getCachedData,
+                  ],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #getCachedData,
+                [
+                  cacheKey,
+                  getCachedData,
+                ],
+              ),
+            ),
+      ) as _i2.Future<T>);
+
+  @override
+  _i2.Future<T> cacheAndRetrieveData<T>(
+    String? cacheKey,
+    Duration? validityDuration,
+    _i2.Future<T> Function()? fetchData,
+    T Function(dynamic)? processResponse,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cacheAndRetrieveData,
+          [
+            cacheKey,
+            validityDuration,
+            fetchData,
+            processResponse,
+          ],
+        ),
+        returnValue: _i4.ifNotNull(
+              _i4.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #cacheAndRetrieveData,
+                  [
+                    cacheKey,
+                    validityDuration,
+                    fetchData,
+                    processResponse,
+                  ],
+                ),
+              ),
+              (T v) => _i2.Future<T>.value(v),
+            ) ??
+            _FakeFuture_0<T>(
+              this,
+              Invocation.method(
+                #cacheAndRetrieveData,
+                [
+                  cacheKey,
+                  validityDuration,
+                  fetchData,
+                  processResponse,
+                ],
+              ),
+            ),
+      ) as _i2.Future<T>);
+}
+
+/// A class which mocks [NetworkService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNetworkService extends _i1.Mock implements _i7.NetworkService {
+  MockNetworkService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<bool> hasInternet() => (super.noSuchMethod(
+        Invocation.method(
+          #hasInternet,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  Duration getCacheExpirationDuration() => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheExpirationDuration,
+          [],
+        ),
+        returnValue: _FakeDuration_1(
+          this,
+          Invocation.method(
+            #getCacheExpirationDuration,
+            [],
+          ),
+        ),
+      ) as Duration);
 }

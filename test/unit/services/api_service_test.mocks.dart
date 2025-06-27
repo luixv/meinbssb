@@ -165,6 +165,22 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].
@@ -344,14 +360,23 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<void> setCacheTimestamp() => (super.noSuchMethod(
+  _i2.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
         Invocation.method(
-          #setCacheTimestamp,
-          [],
+          #setCacheTimestampForKey,
+          [key],
         ),
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
 
   @override
   _i2.Future<T> getCachedData<T>(

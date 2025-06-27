@@ -124,6 +124,22 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }
 
 /// A class which mocks [EmailService].

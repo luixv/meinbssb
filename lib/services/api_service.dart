@@ -243,4 +243,9 @@ class ApiService {
       felderArray: felderArray,
     );
   }
+
+  // Auth service
+  Future<bool> findePersonID2(String nachname, String passnummer) async {
+    return _authService.findePersonID2(nachname, passnummer);
+  }
 }

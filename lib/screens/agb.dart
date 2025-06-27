@@ -75,20 +75,131 @@ Stand: 01.12.2022
 
   @override
   Widget build(BuildContext context) {
+    final List<_AgbSection> sections = _parseAgbText(agbText);
     return Scaffold(
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        title: const Text('AGB'),
-        backgroundColor: UIConstants.defaultAppColor,
+        title: const Text('AGB', style: UIStyles.appBarTitleStyle),
+        backgroundColor: UIConstants.backgroundColor,
+        elevation: 2,
+        iconTheme: const IconThemeData(color: UIConstants.textColor),
       ),
-      body: const Padding(
-        padding: UIConstants.defaultPadding,
+      body: Center(
         child: SingleChildScrollView(
-          child: SelectableText(
-            agbText,
-            style: UIStyles.bodyStyle,
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: UIConstants.spacingL,
+              horizontal: UIConstants.spacingM,
+            ),
+            padding: UIConstants.defaultPadding,
+            decoration: BoxDecoration(
+              color: UIConstants.cardColor,
+              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              boxShadow: UIStyles.cardDecoration.boxShadow,
+            ),
+            child: Builder(
+              builder: (context) {
+                // Remove the last line if it starts with 'Stand:' and treat as footer
+                final List<_AgbSection> mainSections = List.from(sections);
+                String? footer;
+                if (mainSections.isNotEmpty &&
+                    mainSections.last.paragraphs.isNotEmpty) {
+                  final lastParas = mainSections.last.paragraphs;
+                  final lastLine = lastParas.last.trim();
+                  if (lastLine.startsWith('Stand:')) {
+                    footer = lastLine;
+                    lastParas.removeLast();
+                    // If the last section is now empty, remove it
+                    if (lastParas.isEmpty) {
+                      mainSections.removeLast();
+                    }
+                  }
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final section in mainSections) ...[
+                      if (section.title != null) ...[
+                        Text(
+                          section.title!,
+                          style: UIStyles.sectionTitleStyle,
+                        ),
+                        UIConstants.verticalSpacingS,
+                      ],
+                      for (final para in section.paragraphs) ...[
+                        if (RegExp(r'^\d+\.\s').hasMatch(para) &&
+                            !para.startsWith('Stand:'))
+                          Text(
+                            para,
+                            style: UIStyles.sectionTitleStyle.copyWith(
+                              fontSize: 28,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        else
+                          Text(
+                            para,
+                            style: UIStyles.bodyStyle,
+                          ),
+                        UIConstants.verticalSpacingXS,
+                      ],
+                      UIConstants.verticalSpacingM,
+                    ],
+                    if (footer != null)
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: UIConstants.spacingS),
+                        child: Text(
+                          footer,
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontStyle: FontStyle.italic,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+class _AgbSection {
+  _AgbSection({this.title, required this.paragraphs});
+  final String? title;
+  final List<String> paragraphs;
+}
+
+List<_AgbSection> _parseAgbText(String text) {
+  final lines = text.split('\n');
+  final List<_AgbSection> sections = [];
+  String? currentTitle;
+  List<String> currentParagraphs = [];
+  final sectionHeaderRegex = RegExp(r'^(\d+\.|[A-Z][a-z]+:?)');
+
+  for (final line in lines) {
+    final trimmed = line.trim();
+    if (trimmed.isEmpty) continue;
+    if (sectionHeaderRegex.hasMatch(trimmed) && trimmed.length < 60) {
+      if (currentParagraphs.isNotEmpty || currentTitle != null) {
+        sections.add(
+          _AgbSection(title: currentTitle, paragraphs: currentParagraphs),
+        );
+        currentParagraphs = [];
+      }
+      currentTitle = trimmed;
+    } else {
+      currentParagraphs.add(trimmed);
+    }
+  }
+  if (currentParagraphs.isNotEmpty || currentTitle != null) {
+    sections
+        .add(_AgbSection(title: currentTitle, paragraphs: currentParagraphs));
+  }
+  return sections;
 }

@@ -109,6 +109,16 @@ class UIConstants {
   static const double spacingXXXL = 64.0;
   static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
+  static const double spacingXXS = 1.0;
+
+  /// Minimal horizontal spacing between columns in info tables/dialogs
+  static const double infoTableColumnSpacing = 1.0;
+
+  /// Horizontal padding for info tables/dialogs
+  static const double infoTableHorizontalPadding = 20.0;
+
+  /// Bottom padding for info tables/dialogs
+  static const double infoTableBottomPadding = 16.0;
 
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
@@ -328,4 +338,10 @@ class UIConstants {
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
+
+  // Schulungen (Course Registration) Colors
+  static const Color schulungenGesperrtColor =
+      Colors.red; // For gesperrt/locked state
+  static const Color schulungenNormalColor =
+      defaultAppColor; // For normal state
 }

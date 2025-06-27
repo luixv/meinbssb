@@ -111,7 +111,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Startrechte Ändern',
+      title: 'Startrechte',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -121,7 +121,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
               ? Center(
                   child: ScaledText(
                     _errorMessage!,
-                    style: UIStyles.bodyStyle.copyWith(color: Colors.red),
+                    style: UIStyles.bodyStyle
+                        .copyWith(color: UIConstants.errorColor),
                   ),
                 )
               : SingleChildScrollView(
@@ -305,7 +306,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             (context, fontSizeProvider, child) {
                                           return Padding(
                                             padding: const EdgeInsets.only(
-                                              bottom: UIConstants.spacingXS,
+                                              bottom: UIConstants.spacingXXS,
                                             ),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,

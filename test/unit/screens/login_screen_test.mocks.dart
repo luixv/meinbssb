@@ -160,6 +160,22 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }
 
 /// A class which mocks [ApiService].
@@ -538,6 +554,22 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
               ),
             )),
           ) as _i3.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
+
+  @override
+  _i3.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].
@@ -777,14 +809,23 @@ class MockCacheService extends _i1.Mock implements _i20.CacheService {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<void> setCacheTimestamp() => (super.noSuchMethod(
+  _i3.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
         Invocation.method(
-          #setCacheTimestamp,
-          [],
+          #setCacheTimestampForKey,
+          [key],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i3.Future<int?>.value(),
+      ) as _i3.Future<int?>);
 
   @override
   _i3.Future<T> getCachedData<T>(

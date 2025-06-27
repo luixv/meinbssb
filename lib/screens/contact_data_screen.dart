@@ -200,7 +200,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Kontaktdaten erfolgreich gelöscht.'),
-              duration: Duration(seconds: 3),
+              duration: UIConstants.snackbarDuration,
             ),
           );
           _fetchContacts();
@@ -208,7 +208,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Kontaktdaten.'),
-              duration: Duration(seconds: 3),
+              duration: UIConstants.snackbarDuration,
+              backgroundColor: UIConstants.errorColor,
             ),
           );
         }
@@ -219,7 +220,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }
@@ -241,7 +243,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Bitte Kontakttyp und Kontaktwert eingeben.'),
-            duration: Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }
@@ -275,7 +278,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(validationErrorMessage),
-            duration: const Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }
@@ -295,7 +299,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Kontaktdaten erfolgreich gespeichert.'),
-              duration: Duration(seconds: 3),
+              duration: UIConstants.snackbarDuration,
             ),
           );
           _kontaktController.clear();
@@ -305,7 +309,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Speichern der Kontaktdaten.'),
-              duration: Duration(seconds: 3),
+              duration: UIConstants.snackbarDuration,
+              backgroundColor: UIConstants.errorColor,
             ),
           );
         }
@@ -316,7 +321,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }

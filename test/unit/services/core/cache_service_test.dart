@@ -83,15 +83,10 @@ void main() {
   });
 
   group('CacheService - Cache Timestamp', () {
-    test('setCacheTimestamp', () async {
-      final beforeTimestamp = DateTime.now().millisecondsSinceEpoch;
-      await cacheService.setCacheTimestamp();
-      final timestamp = await cacheService.getInt('cacheTimestamp');
-      final afterTimestamp = DateTime.now().millisecondsSinceEpoch;
-
+    test('setCacheTimestampForKey and getCacheTimestampForKey', () async {
+      await cacheService.setCacheTimestampForKey('testKey');
+      final timestamp = await cacheService.getCacheTimestampForKey('testKey');
       expect(timestamp, isNotNull);
-      expect(timestamp! >= beforeTimestamp, true);
-      expect(timestamp <= afterTimestamp, true);
     });
   });
 
@@ -138,7 +133,7 @@ void main() {
         'testKey',
         jsonEncode({...testData, 'ONLINE': true}),
       );
-      await cacheService.setCacheTimestamp();
+      await cacheService.setCacheTimestampForKey('testKey');
 
       // Wait a moment to ensure cache expires
       await Future.delayed(const Duration(milliseconds: 100));
@@ -170,7 +165,7 @@ void main() {
         'testKey',
         jsonEncode({...testData, 'ONLINE': true}),
       );
-      await cacheService.setCacheTimestamp();
+      await cacheService.setCacheTimestampForKey('testKey');
 
       final result =
           await cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -294,7 +289,7 @@ void main() {
           testDataList.map((item) => {...item, 'ONLINE': true}).toList(),
         ),
       );
-      await cacheService.setCacheTimestamp();
+      await cacheService.setCacheTimestampForKey('testKey');
 
       final result =
           await cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(

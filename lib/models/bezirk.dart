@@ -116,3 +116,23 @@ class Bezirk {
     };
   }
 }
+
+class BezirkSearchTriple {
+  const BezirkSearchTriple({
+    required this.bezirkId,
+    required this.bezirkNr,
+    required this.bezirkName,
+  });
+
+  factory BezirkSearchTriple.fromJson(Map<String, dynamic> json) {
+    return BezirkSearchTriple(
+      bezirkId: json['BEZIRKID'] as int,
+      bezirkNr: json['BEZIRKNR'] as int,
+      bezirkName: json['BEZIRKNAME'] as String,
+    );
+  }
+
+  final int bezirkId;
+  final int bezirkNr;
+  final String bezirkName;
+}
