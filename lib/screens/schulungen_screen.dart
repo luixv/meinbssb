@@ -704,8 +704,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             dialogContext,
             listen: false,
           );
+
+          // TODO, find in which way has to be validated this
+
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
+          if (!dialogContext.mounted) return;
           final isValidPerson =
               await apiService.findePersonID2(nachname, passnummer);
           if (!isValidPerson) {
@@ -720,6 +724,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             );
             return;
           }
+
           Navigator.of(context).pop();
           try {
             final userData = prefillUser ?? widget.userData!;
@@ -740,7 +745,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             if (msg == 'Teilnehmer erfolgreich erfasst' ||
                 msg == 'Teilnehmer bereits erfasst' ||
                 msg == 'Teilnehmer erfolgreich aktualisiert') {
-              if (!mounted) return;
+              if (!dialogContext.mounted) return;
               final updatedRegisteredPersons =
                   List<_RegisteredPerson>.from(registeredPersons)
                     ..add(

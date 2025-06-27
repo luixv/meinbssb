@@ -74,31 +74,6 @@ class AuthService {
       rethrow;
     }
   }
-/*
-  Future<String> _findePersonIDUndDokumente(
-    String lastName,
-    String passNumber,
-  ) async {
-    try {
-      final response = await _httpClient
-          .get('FindePersonIDUndDokumente/$lastName/$passNumber');
-      if (response is Map<String, dynamic>) {
-        if (response['PERSONID'] != 0) {
-          return response['PERSONID'].toString();
-        } else {
-          LoggerService.logError('Person ID not found.');
-          return '0';
-        }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '0';
-      }
-    } catch (e) {
-      LoggerService.logError('Find Person ID error: $e');
-      rethrow;
-    }
-  }
-  */
 
 /*
 /FindePersonID/{Namen}/{Vorname}/{Geburtsdatum}/{Passnummer}/{PLZ}
@@ -106,6 +81,7 @@ class AuthService {
 Ergebnis der Abfrage:
 [{"PERSONID":439287}]
 */
+
   Future<String> _findePersonID(
     String namen,
     String vorname,
@@ -314,6 +290,21 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('Logout error: $e');
       rethrow;
+    }
+  }
+
+  /// Checks if a person exists by Nachname and Passnummer. Returns true if found, false otherwise.
+  Future<bool> findePersonID2(String nachname, String passnummer) async {
+    try {
+      final response =
+          await _httpClient.get('FindePersonID/$nachname/$passnummer');
+      if (response is List && response.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      LoggerService.logError('findePersonID2 error: $e');
+      return false;
     }
   }
 }
