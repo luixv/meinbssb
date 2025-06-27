@@ -34,7 +34,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   final TextEditingController _ortController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
   bool _fuerVerlaengerungen = false;
-  List<Bezirk> _bezirke = [];
+  List<BezirkSearchTriple> _bezirke = [];
   bool _isLoadingBezirke = true;
 
   @override
@@ -46,16 +46,15 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   Future<void> _fetchBezirke() async {
     final httpClient = Provider.of<HttpClient>(context, listen: false);
     final bezirkService = BezirkService(httpClient: httpClient);
-    final bezirke = await bezirkService.fetchBezirke();
+    final bezirke = await bezirkService.fetchBezirkeforSearch();
 
     // Add "Alle" option
-    bezirke.insert(
-      0,
-      const Bezirk(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
-    );
+    _bezirke = [
+      const BezirkSearchTriple(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
+      ...bezirke,
+    ];
 
     setState(() {
-      _bezirke = bezirke;
       _isLoadingBezirke = false;
     });
   }

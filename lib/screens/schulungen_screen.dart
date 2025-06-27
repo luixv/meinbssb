@@ -383,65 +383,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => Dialog(
-                                      backgroundColor:
-                                          UIConstants.backgroundColor,
-                                      child: Stack(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              left: UIConstants
-                                                  .defaultPadding.left,
-                                              top: UIConstants
-                                                  .defaultPadding.top,
-                                              right: UIConstants
-                                                  .defaultPadding.right,
-                                              bottom: UIConstants
-                                                      .defaultPadding.bottom +
-                                                  56 +
-                                                  UIConstants.spacingM,
-                                            ),
-                                            child: const SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'AGB',
-                                                    style: UIStyles
-                                                        .dialogTitleStyle,
-                                                  ),
-                                                  SizedBox(
-                                                      height:
-                                                          UIConstants.spacingM,),
-                                                  SelectableText(
-                                                    AgbScreen.agbText,
-                                                    style: UIStyles.bodyStyle,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            bottom: UIConstants.spacingM,
-                                            right: UIConstants.spacingM,
-                                            child: FloatingActionButton(
-                                              heroTag: 'agbDialogCloseFab',
-                                              mini: true,
-                                              tooltip: 'Schließen',
-                                              backgroundColor:
-                                                  UIConstants.defaultAppColor,
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Icon(Icons.close,
-                                                  color: Colors.white,),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const AgbScreen(),
                                     ),
                                   );
                                 },
@@ -1018,50 +962,50 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Datum: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            TextSpan(text: formattedDate),
-                                          ],
-                                        ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.calendar_today,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Text(
+                                            formattedDate,
+                                            style: UIStyles.bodyStyle,
+                                          ),
+                                        ],
                                       ),
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Gruppe: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: schulungsTermin
-                                                  .webGruppeLabel,
-                                            ),
-                                          ],
-                                        ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.group,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Text(
+                                            schulungsTermin.webGruppeLabel,
+                                            style: UIStyles.bodyStyle,
+                                          ),
+                                        ],
                                       ),
-                                      RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle,
-                                          children: [
-                                            const TextSpan(
-                                              text: 'Ort: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            TextSpan(text: schulungsTermin.ort),
-                                          ],
-                                        ),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.place,
+                                            size: UIConstants.defaultIconSize,
+                                          ),
+                                          const SizedBox(
+                                            width: UIConstants.spacingXS,
+                                          ),
+                                          Text(
+                                            schulungsTermin.ort,
+                                            style: UIStyles.bodyStyle,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

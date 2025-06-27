@@ -73,4 +73,34 @@ void main() {
       expect(result, isEmpty);
     });
   });
+
+  group('BezirkService.fetchBezirkeforSearch', () {
+    test('returns list of BezirkSearchTriple on success', () async {
+      final response = [
+        {'BEZIRKID': 1, 'BEZIRKNR': 100, 'BEZIRKNAME': 'TestBezirk'},
+        {'BEZIRKID': 2, 'BEZIRKNR': 200, 'BEZIRKNAME': 'TestBezirk2'},
+      ];
+      when(mockHttpClient.get('Bezirke'))
+          .thenAnswer((_) => Future.value(response));
+      final result = await bezirkService.fetchBezirkeforSearch();
+      expect(result, isA<List<BezirkSearchTriple>>());
+      expect(result.length, 2);
+      expect(result[0].bezirkId, 1);
+      expect(result[1].bezirkName, 'TestBezirk2');
+    });
+
+    test('returns empty list and logs error on exception', () async {
+      when(mockHttpClient.get('Bezirke'))
+          .thenAnswer((_) => Future.error(Exception('fail')));
+      final result = await bezirkService.fetchBezirkeforSearch();
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list on malformed data', () async {
+      when(mockHttpClient.get('Bezirke'))
+          .thenAnswer((_) => Future.value({'unexpected': 'object'}));
+      final result = await bezirkService.fetchBezirkeforSearch();
+      expect(result, isEmpty);
+    });
+  });
 }

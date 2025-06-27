@@ -94,4 +94,39 @@ class BezirkService {
     );
     return [];
   }
+
+  /// Fetches a lightweight list of Bezirke for search (only id, nr, name).
+  Future<List<BezirkSearchTriple>> fetchBezirkeforSearch() async {
+    try {
+      final response = await _httpClient.get('Bezirke');
+      if (response is List) {
+        return response
+            .map((item) {
+              try {
+                if (item is Map<String, dynamic>) {
+                  return BezirkSearchTriple.fromJson(item);
+                }
+                LoggerService.logWarning(
+                  'BezirkSearchTriple item is not a Map: ${item.runtimeType}',
+                );
+                return null;
+              } catch (e) {
+                LoggerService.logWarning(
+                  'Failed to parse BezirkSearchTriple: $e. Item: $item',
+                );
+                return null;
+              }
+            })
+            .whereType<BezirkSearchTriple>()
+            .toList();
+      }
+      LoggerService.logWarning(
+        'Bezirke response is not a List: ${response.runtimeType}',
+      );
+      return [];
+    } catch (e) {
+      LoggerService.logError('Error fetching Bezirke for search: $e');
+      return [];
+    }
+  }
 }
