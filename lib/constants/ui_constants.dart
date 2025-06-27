@@ -328,4 +328,10 @@ class UIConstants {
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
+
+  // Schulungen (Course Registration) Colors
+  static const Color schulungenGesperrtColor =
+      Colors.red; // For gesperrt/locked state
+  static const Color schulungenNormalColor =
+      defaultAppColor; // For normal state
 }

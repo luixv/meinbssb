@@ -119,7 +119,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fehler beim Speichern der Bankdaten.'),
-            duration: Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
           ),
         );
       }
@@ -129,7 +129,8 @@ class BankDataScreenState extends State<BankDataScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Ein Fehler ist aufgetreten: $e'),
-          duration: const Duration(seconds: 3),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
         ),
       );
     } finally {
@@ -260,7 +261,8 @@ class BankDataScreenState extends State<BankDataScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Bankdaten.'),
-              duration: Duration(seconds: 3),
+              duration: UIConstants.snackbarDuration,
+              backgroundColor: UIConstants.errorColor,
             ),
           );
         }
@@ -270,7 +272,8 @@ class BankDataScreenState extends State<BankDataScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
-            duration: const Duration(seconds: 3),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       } finally {

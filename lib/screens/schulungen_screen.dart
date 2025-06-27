@@ -700,12 +700,28 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
         void submit() async {
           if (!formKey.currentState!.validate()) return;
+          final apiService = Provider.of<ApiService>(
+            dialogContext,
+            listen: false,
+          );
+          final nachname = nachnameController.text.trim();
+          final passnummer = passnummerController.text.trim();
+          final isValidPerson =
+              await apiService.findePersonID2(nachname, passnummer);
+          if (!isValidPerson) {
+            ScaffoldMessenger.of(parentContext).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Nachname und Passnummer stimmen nicht überein oder existieren nicht.',
+                ),
+                duration: UIConstants.snackbarDuration,
+                backgroundColor: UIConstants.errorColor,
+              ),
+            );
+            return;
+          }
           Navigator.of(context).pop();
           try {
-            final apiService = Provider.of<ApiService>(
-              dialogContext,
-              listen: false,
-            );
             final userData = prefillUser ?? widget.userData!;
             final response = await apiService.registerSchulungenTeilnehmer(
               schulungTerminId: schulungsTermin.schulungsterminId,
@@ -1029,8 +1045,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                   heroTag: 'schulungenContentFab$index',
                                   backgroundColor:
                                       schulungsTermin.anmeldungenGesperrt
-                                          ? Colors.red
-                                          : UIConstants.defaultAppColor,
+                                          ? UIConstants.schulungenGesperrtColor
+                                          : UIConstants.schulungenNormalColor,
                                   onPressed: () {
                                     final t = schulungsTermin;
                                     final freiePlaetze = t.maxTeilnehmer -
