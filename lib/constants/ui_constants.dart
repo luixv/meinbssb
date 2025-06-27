@@ -111,10 +111,13 @@ class UIConstants {
   static const double listItemInterSpace = 3.0;
 
   /// Minimal horizontal spacing between columns in info tables/dialogs
-  static const double infoTableColumnSpacing = 2.0;
+  static const double infoTableColumnSpacing = 1.0;
 
   /// Horizontal padding for info tables/dialogs
-  static const double infoTableHorizontalPadding = 12.0;
+  static const double infoTableHorizontalPadding = 20.0;
+
+  /// Bottom padding for info tables/dialogs
+  static const double infoTableBottomPadding = 16.0;
 
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);

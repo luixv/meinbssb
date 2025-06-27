@@ -1200,10 +1200,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .symmetric(
-                                                                horizontal:
-                                                                    UIConstants
-                                                                        .infoTableHorizontalPadding,
+                                                                      .fromLTRB(
+                                                                UIConstants
+                                                                    .infoTableHorizontalPadding,
+                                                                0,
+                                                                UIConstants
+                                                                    .infoTableHorizontalPadding,
+                                                                UIConstants
+                                                                    .infoTableBottomPadding,
                                                               ),
                                                               child: Row(
                                                                 crossAxisAlignment:
@@ -1273,9 +1277,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ),
                                                                   ),
                                                                   const SizedBox(
-                                                                    width: UIConstants
-                                                                        .infoTableColumnSpacing,
-                                                                  ),
+                                                                      width: UIConstants
+                                                                          .infoTableColumnSpacing,),
                                                                   Expanded(
                                                                     child:
                                                                         Column(
