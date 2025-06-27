@@ -1203,7 +1203,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       .symmetric(
                                                                 horizontal:
                                                                     UIConstants
-                                                                        .spacingXS,
+                                                                        .infoTableHorizontalPadding,
                                                               ),
                                                               child: Row(
                                                                 crossAxisAlignment:
@@ -1271,6 +1271,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                       ],
                                                                     ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: UIConstants
+                                                                        .infoTableColumnSpacing,
                                                                   ),
                                                                   Expanded(
                                                                     child:
