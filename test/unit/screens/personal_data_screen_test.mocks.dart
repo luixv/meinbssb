@@ -433,4 +433,20 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
               ),
             )),
           ) as _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
+
+  @override
+  _i4.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }

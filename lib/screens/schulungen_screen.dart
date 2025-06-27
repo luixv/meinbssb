@@ -1214,7 +1214,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Expanded(
+                                                                  Flexible(
+                                                                    flex: 1,
                                                                     child:
                                                                         Column(
                                                                       crossAxisAlignment:
@@ -1277,9 +1278,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ),
                                                                   ),
                                                                   const SizedBox(
-                                                                      width: UIConstants
-                                                                          .infoTableColumnSpacing,),
-                                                                  Expanded(
+                                                                    width: UIConstants
+                                                                            .infoTableColumnSpacing *
+                                                                        2,
+                                                                  ),
+                                                                  Flexible(
+                                                                    flex: 2,
                                                                     child:
                                                                         Column(
                                                                       crossAxisAlignment:

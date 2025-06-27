@@ -95,9 +95,17 @@ class CacheService {
     return exists;
   }
 
-  Future<void> setCacheTimestamp() async {
-    await setInt('cacheTimestamp', DateTime.now().millisecondsSinceEpoch);
-    LoggerService.logInfo('Set cache timestamp');
+  Future<void> setCacheTimestampForKey(String key) async {
+    await setInt('${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+    LoggerService.logInfo('Set cache timestamp for key: $key');
+  }
+
+  Future<int?> getCacheTimestampForKey(String key) async {
+    final value = await getInt('${key}_timestamp');
+    LoggerService.logInfo(
+      'Retrieved cache timestamp for key: $key, value: ${value ?? 'null'}',
+    );
+    return value;
   }
 
   Future<T> getCachedData<T>(
@@ -116,14 +124,15 @@ class CacheService {
     if (cachedJson != null) {
       final dynamic cachedRawData = jsonDecode(cachedJson);
 
-      final globalTimestamp = await getInt('cacheTimestamp');
+      final keyTimestamp =
+          await getCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
       final cacheExpirationHours =
           _configService.getInt('cacheExpirationHours') ?? 24;
       final validityDurationConfig = Duration(hours: cacheExpirationHours);
 
-      if (globalTimestamp != null) {
+      if (keyTimestamp != null) {
         final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-          globalTimestamp,
+          keyTimestamp,
         ).add(validityDurationConfig);
         if (DateTime.now().isBefore(expirationTime)) {
           LoggerService.logInfo(
@@ -224,7 +233,7 @@ class CacheService {
             _cacheKeyPrefix + cacheKey,
             jsonEncode(dataToCache),
           );
-          await setCacheTimestamp();
+          await setCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
           LoggerService.logInfo('Successfully cached fresh data for $cacheKey');
           // Direct cast of dataToCache to T
           return dataToCache as T;

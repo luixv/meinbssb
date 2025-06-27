@@ -2,18 +2,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/models/bezirk.dart';
 import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'bezirk_service_test.mocks.dart';
 
-@GenerateMocks([HttpClient])
+@GenerateMocks([HttpClient, CacheService, NetworkService])
 void main() {
   late MockHttpClient mockHttpClient;
+  late MockCacheService mockCacheService;
+  late MockNetworkService mockNetworkService;
   late BezirkService bezirkService;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    bezirkService = BezirkService(httpClient: mockHttpClient);
+    mockCacheService = MockCacheService();
+    mockNetworkService = MockNetworkService();
+    bezirkService = BezirkService(
+      httpClient: mockHttpClient,
+      cacheService: mockCacheService,
+      networkService: mockNetworkService,
+    );
   });
 
   group('BezirkService.fetchBezirke', () {

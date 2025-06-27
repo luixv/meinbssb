@@ -11,6 +11,8 @@ import '/services/api/bezirk_service.dart';
 import '/models/bezirk.dart';
 import 'package:provider/provider.dart';
 import '/services/core/http_client.dart';
+import '/services/core/cache_service.dart';
+import '/services/core/network_service.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen(
@@ -45,7 +47,13 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
 
   Future<void> _fetchBezirke() async {
     final httpClient = Provider.of<HttpClient>(context, listen: false);
-    final bezirkService = BezirkService(httpClient: httpClient);
+    final cacheService = Provider.of<CacheService>(context, listen: false);
+    final networkService = Provider.of<NetworkService>(context, listen: false);
+    final bezirkService = BezirkService(
+      httpClient: httpClient,
+      cacheService: cacheService,
+      networkService: networkService,
+    );
     final bezirke = await bezirkService.fetchBezirkeforSearch();
 
     // Add "Alle" option

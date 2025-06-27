@@ -52,7 +52,12 @@ void main() {
     when(mockCacheService.setString(any, any)).thenAnswer((_) async => true);
     when(mockCacheService.setInt(any, any)).thenAnswer((_) async => true);
     when(mockCacheService.remove(any)).thenAnswer((_) async => true);
-    when(mockCacheService.setCacheTimestamp()).thenAnswer((_) async => true);
+    when(mockCacheService.setCacheTimestampForKey('username'))
+        .thenAnswer((_) async => true);
+    when(mockCacheService.setCacheTimestampForKey('personId'))
+        .thenAnswer((_) async => true);
+    when(mockCacheService.setCacheTimestampForKey('webLoginId'))
+        .thenAnswer((_) async => true);
     when(mockCacheService.getString(any)).thenAnswer((_) async => null);
     when(mockCacheService.getInt(any)).thenAnswer((_) async => null);
 
@@ -242,7 +247,10 @@ void main() {
             .called(1);
         verify(mockCacheService.setInt('personId', 456)).called(1);
         verify(mockCacheService.setInt('webLoginId', 789)).called(1);
-        verify(mockCacheService.setCacheTimestamp()).called(1);
+        verify(mockCacheService.setCacheTimestampForKey('username')).called(1);
+        verify(mockCacheService.setCacheTimestampForKey('personId')).called(1);
+        verify(mockCacheService.setCacheTimestampForKey('webLoginId'))
+            .called(1);
         verify(
           mockHttpClient.getWithBody(
             'LoginMyBSSB',

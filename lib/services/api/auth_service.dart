@@ -162,7 +162,9 @@ Ergebnis der Abfrage:
           await _secureStorage.write(key: 'password', value: password);
           await _cacheService.setInt('personId', response['PersonID']);
           await _cacheService.setInt('webLoginId', response['WebLoginID']);
-          await _cacheService.setCacheTimestamp();
+          await _cacheService.setCacheTimestampForKey('username');
+          await _cacheService.setCacheTimestampForKey('personId');
+          await _cacheService.setCacheTimestampForKey('webLoginId');
           LoggerService.logInfo('User data cached successfully.');
           return response;
         } else {
@@ -199,26 +201,46 @@ Ergebnis der Abfrage:
     final cachedPassword = await _secureStorage.read(key: 'password');
     final cachedPersonId = await _cacheService.getInt('personId');
     final cachedWebloginId = await _cacheService.getInt('webLoginId');
-    final cachedTimestamp = await _cacheService.getInt('cacheTimestamp');
+    final cachedUsernameTimestamp =
+        await _cacheService.getCacheTimestampForKey('username');
+    final cachedPersonIdTimestamp =
+        await _cacheService.getCacheTimestampForKey('personId');
+    final cachedWebloginIdTimestamp =
+        await _cacheService.getCacheTimestampForKey('webLoginId');
     final expirationDuration = _networkService.getCacheExpirationDuration();
-    final expirationTime = DateTime.fromMillisecondsSinceEpoch(
-      cachedTimestamp ?? 0,
-    ).add(expirationDuration);
-
+    final now = DateTime.now();
+    bool isUsernameValid = false;
+    bool isPersonIdValid = false;
+    bool isWebloginIdValid = false;
+    if (cachedUsernameTimestamp != null) {
+      final expirationTime =
+          DateTime.fromMillisecondsSinceEpoch(cachedUsernameTimestamp)
+              .add(expirationDuration);
+      isUsernameValid = now.isBefore(expirationTime);
+    }
+    if (cachedPersonIdTimestamp != null) {
+      final expirationTime =
+          DateTime.fromMillisecondsSinceEpoch(cachedPersonIdTimestamp)
+              .add(expirationDuration);
+      isPersonIdValid = now.isBefore(expirationTime);
+    }
+    if (cachedWebloginIdTimestamp != null) {
+      final expirationTime =
+          DateTime.fromMillisecondsSinceEpoch(cachedWebloginIdTimestamp)
+              .add(expirationDuration);
+      isWebloginIdValid = now.isBefore(expirationTime);
+    }
     final testCachedUsername = cachedUsername == email;
     final testCachedPassword = cachedPassword == password;
     final testCachedPersonId = cachedPersonId != null;
-    final testCachedTimestamp = cachedTimestamp != null;
-    final today = DateTime.now();
-    final testExpirationDate =
-        testCachedTimestamp && today.isBefore(expirationTime);
-
+    final testCachedWebloginId = cachedWebloginId != null;
     final isCacheValid = testCachedUsername &&
         testCachedPassword &&
         testCachedPersonId &&
-        testCachedTimestamp &&
-        testExpirationDate;
-
+        testCachedWebloginId &&
+        isUsernameValid &&
+        isPersonIdValid &&
+        isWebloginIdValid;
     if (isCacheValid) {
       LoggerService.logInfo('Login from cache successful.');
       return {
@@ -231,8 +253,8 @@ Ergebnis der Abfrage:
       if (testCachedUsername &&
           testCachedPassword &&
           testCachedPersonId &&
-          testCachedTimestamp &&
-          !testExpirationDate) {
+          testCachedWebloginId &&
+          (!isUsernameValid || !isPersonIdValid || !isWebloginIdValid)) {
         return {
           'ResultType': 0,
           'ResultMessage':
@@ -285,7 +307,10 @@ Ergebnis der Abfrage:
       await _cacheService.remove('username');
       await _secureStorage.delete(key: 'password');
       await _cacheService.remove('personId');
-      await _cacheService.remove('cacheTimestamp');
+      await _cacheService.remove('webLoginId');
+      await _cacheService.remove('username_timestamp');
+      await _cacheService.remove('personId_timestamp');
+      await _cacheService.remove('webLoginId_timestamp');
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
