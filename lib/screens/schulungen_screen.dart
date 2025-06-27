@@ -706,7 +706,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           );
 
           // TODO, find in which way has to be validated this
-
+/*
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
           if (!dialogContext.mounted) return;
@@ -724,6 +724,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             );
             return;
           }
+          */
 
           Navigator.of(context).pop();
           try {
@@ -945,7 +946,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ScaledText(
-                    'Schulungen suchen',
+                    'Verfügbare Schulungen',
                     style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
@@ -992,9 +993,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                           const SizedBox(
                                             width: UIConstants.spacingXS,
                                           ),
-                                          Text(
-                                            formattedDate,
-                                            style: UIStyles.bodyStyle,
+                                          Flexible(
+                                            child: Text(
+                                              formattedDate,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1007,9 +1012,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                           const SizedBox(
                                             width: UIConstants.spacingXS,
                                           ),
-                                          Text(
-                                            schulungsTermin.webGruppeLabel,
-                                            style: UIStyles.bodyStyle,
+                                          Flexible(
+                                            child: Text(
+                                              schulungsTermin.webGruppeLabel,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1022,9 +1031,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                           const SizedBox(
                                             width: UIConstants.spacingXS,
                                           ),
-                                          Text(
-                                            schulungsTermin.ort,
-                                            style: UIStyles.bodyStyle,
+                                          Flexible(
+                                            child: Text(
+                                              schulungsTermin.ort,
+                                              style: UIStyles.bodyStyle,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1190,7 +1203,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       .symmetric(
                                                                 horizontal:
                                                                     UIConstants
-                                                                        .spacingM,
+                                                                        .spacingXS,
                                                               ),
                                                               child: Row(
                                                                 crossAxisAlignment:
