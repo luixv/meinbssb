@@ -64,6 +64,13 @@ void main() {
     // Default for NetworkService.getCacheExpirationDuration (can be overridden by specific tests)
     when(mockNetworkService.getCacheExpirationDuration())
         .thenReturn(const Duration(days: 1)); // Default to non-expired
+
+    when(mockCacheService.getCacheTimestampForKey('username'))
+        .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
+    when(mockCacheService.getCacheTimestampForKey('personId'))
+        .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
+    when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+        .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
   });
 
   // No tearDown needed for platform channel handler since it's removed from setUp.
@@ -355,17 +362,14 @@ void main() {
 
     group('logout', () {
       test('should clear all cached data on successful logout', () async {
-        // No explicit stubs needed here as global mocks are fine
-        // if no specific key/value is being asserted to be returned.
-        // The default `thenAnswer((_) async => {})` and `thenAnswer((_) async => true)`
-        // for secureStorage.delete and cacheService.remove are sufficient.
-
         await authService.logout();
-
         verify(mockCacheService.remove('username')).called(1);
         verify(mockSecureStorage.delete(key: 'password')).called(1);
         verify(mockCacheService.remove('personId')).called(1);
-        verify(mockCacheService.remove('cacheTimestamp')).called(1);
+        verify(mockCacheService.remove('webLoginId')).called(1);
+        verify(mockCacheService.remove('username_timestamp')).called(1);
+        verify(mockCacheService.remove('personId_timestamp')).called(1);
+        verify(mockCacheService.remove('webLoginId_timestamp')).called(1);
       });
 
       test('should rethrow error on logout failure', () async {
@@ -393,19 +397,21 @@ void main() {
 
         // Stub offline cache data for successful offline login
         when(mockCacheService.getString('username'))
-            .thenAnswer((_) async => testUsername); // Fixed to use testUsername
+            .thenAnswer((_) async => testUsername);
         when(mockSecureStorage.read(key: 'password'))
-            .thenAnswer((_) async => testPassword); // Fixed to use testPassword
+            .thenAnswer((_) async => testPassword);
         when(mockCacheService.getInt('personId'))
             .thenAnswer((_) async => cachedPersonId);
         when(mockCacheService.getInt('webLoginId'))
             .thenAnswer((_) async => cachedWebloginId);
-        when(mockCacheService.getInt('cacheTimestamp')).thenAnswer(
-          (_) async => DateTime.now()
-              .subtract(const Duration(minutes: 5))
-              .millisecondsSinceEpoch,
-        );
-        // This is already globally set, but can be explicitly set here too if needed
+        // Per-key timestamp stubs for valid login
+        final now = DateTime.now().millisecondsSinceEpoch;
+        when(mockCacheService.getCacheTimestampForKey('username'))
+            .thenAnswer((_) async => now);
+        when(mockCacheService.getCacheTimestampForKey('personId'))
+            .thenAnswer((_) async => now);
+        when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+            .thenAnswer((_) async => now);
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(days: 1));
       });
@@ -414,8 +420,6 @@ void main() {
           'should successfully login from cache if data is valid and not expired',
           () async {
         final result = await authService.login(testUsername, testPassword);
-
-        verify(mockCacheService.getInt('cacheTimestamp')).called(1);
         expect(result, {
           'ResultType': 1,
           'PersonID': cachedPersonId,
@@ -424,18 +428,18 @@ void main() {
       });
 
       test('should return failure if cached data is expired', () async {
-        // Override the cacheTimestamp to be expired for this specific test
-        when(mockCacheService.getInt('cacheTimestamp')).thenAnswer(
-          (_) async => DateTime.now()
-              .subtract(
-                const Duration(
-                  days: 2,
-                ),
-              ) // 2 days ago, and expiration is 1 day
-              .millisecondsSinceEpoch,
-        );
+        // Expired timestamp for all keys
+        final expired = DateTime.now()
+            .subtract(const Duration(days: 2))
+            .millisecondsSinceEpoch;
+        when(mockCacheService.getCacheTimestampForKey('username'))
+            .thenAnswer((_) async => expired);
+        when(mockCacheService.getCacheTimestampForKey('personId'))
+            .thenAnswer((_) async => expired);
+        when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+            .thenAnswer((_) async => expired);
         when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(days: 1)); // Still 1 day expiration
+            .thenReturn(const Duration(days: 1));
 
         final result = await authService.login(testUsername, testPassword);
 
@@ -452,6 +456,14 @@ void main() {
         // Override cached username to not match
         when(mockCacheService.getString('username'))
             .thenAnswer((_) async => 'wrong_user');
+        // Valid timestamps
+        final now = DateTime.now().millisecondsSinceEpoch;
+        when(mockCacheService.getCacheTimestampForKey('username'))
+            .thenAnswer((_) async => now);
+        when(mockCacheService.getCacheTimestampForKey('personId'))
+            .thenAnswer((_) async => now);
+        when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+            .thenAnswer((_) async => now);
 
         final result = await authService.login(testUsername, testPassword);
 
@@ -469,7 +481,14 @@ void main() {
         when(mockSecureStorage.read(key: 'password'))
             .thenAnswer((_) async => null);
         when(mockCacheService.getInt('personId')).thenAnswer((_) async => null);
-        when(mockCacheService.getInt('cacheTimestamp'))
+        when(mockCacheService.getInt('webLoginId'))
+            .thenAnswer((_) async => null);
+        // Null timestamps for all keys
+        when(mockCacheService.getCacheTimestampForKey('username'))
+            .thenAnswer((_) async => null);
+        when(mockCacheService.getCacheTimestampForKey('personId'))
+            .thenAnswer((_) async => null);
+        when(mockCacheService.getCacheTimestampForKey('webLoginId'))
             .thenAnswer((_) async => null);
 
         final result = await authService.login(testUsername, testPassword);

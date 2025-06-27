@@ -24,6 +24,18 @@ void main() {
       cacheService: mockCacheService,
       networkService: mockNetworkService,
     );
+    when(mockNetworkService.getCacheExpirationDuration())
+        .thenReturn(const Duration(hours: 24));
+    when(mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+      any,
+      any,
+      any,
+      any,
+    ),).thenAnswer((invocation) async {
+      final fetchData = invocation.positionalArguments[2]
+          as Future<List<Map<String, dynamic>>> Function();
+      return await fetchData();
+    });
   });
 
   group('BezirkService.fetchBezirke', () {
