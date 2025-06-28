@@ -532,7 +532,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       backgroundColor: UIConstants.backgroundColor,
       title: const Center(
         child: ScaledText(
-          'Erfolg',
+          'Bereits angemeldet Personen',
           style: UIStyles.dialogTitleStyle,
         ),
       ),
@@ -544,11 +544,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Bereits angemeldete Personen:',
-                  style: UIStyles.dialogContentStyle,
-                ),
-                const SizedBox(height: UIConstants.spacingS),
                 ...registeredPersons.map(
                   (p) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -587,7 +582,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
-                  text: 'Sie sind angemeldet für die Schulung ',
+                  text: 'Sie sind angemeldet für die Schulung\n',
                 ),
                 TextSpan(
                   text: schulungsTermin.bezeichnung,
