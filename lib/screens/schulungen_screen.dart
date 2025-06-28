@@ -305,7 +305,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: UIConstants.spacingL),
+                        const SizedBox(height: UIConstants.spacingM),
                         // --- Bank Data Block ---
                         Container(
                           decoration: BoxDecoration(

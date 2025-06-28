@@ -71,36 +71,16 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> _loadStoredCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final savedEmail = prefs.getString('savedEmail');
+    final savedPassword = await _secureStorage.read(key: 'password');
 
-    // Test secure storage functionality
-    LoggerService.logInfo('Testing secure storage...');
-    try {
-      final savedPassword = await _secureStorage.read(key: 'password');
-      LoggerService.logInfo('Loading stored credentials:');
-      LoggerService.logInfo('Email from SharedPreferences: $savedEmail');
-      LoggerService.logInfo(
-        'Password from secure storage: ${savedPassword != null ? '***' : 'null'}',
-      );
-
-      // Try to read all keys to see what's in secure storage
-      final allKeys = await _secureStorage.readAll();
-      LoggerService.logInfo(
-        'All keys in secure storage: ${allKeys.keys.toList()}',
-      );
-
-      setState(() {
-        if (savedEmail != null && savedEmail.isNotEmpty) {
-          _emailController.text = savedEmail;
-          LoggerService.logInfo('Email field set to: $savedEmail');
-        }
-        if (savedPassword != null && savedPassword.isNotEmpty) {
-          _passwordController.text = savedPassword;
-          LoggerService.logInfo('Password field set to: ***');
-        }
-      });
-    } catch (e) {
-      LoggerService.logInfo('Error reading from secure storage: $e');
-    }
+    setState(() {
+      if (savedEmail != null && savedEmail.isNotEmpty) {
+        _emailController.text = savedEmail;
+      }
+      if (savedPassword != null && savedPassword.isNotEmpty) {
+        _passwordController.text = savedPassword;
+      }
+    });
   }
 
   @override
@@ -168,7 +148,8 @@ class LoginScreenState extends State<LoginScreen> {
 
       await apiService.fetchSchuetzenausweis(personId);
       if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed(
+      Navigator.pushReplacementNamed(
+        context,
         '/home',
         arguments: {'userData': _userData!.toJson(), 'isLoggedIn': true},
       );
@@ -217,7 +198,7 @@ class LoginScreenState extends State<LoginScreen> {
       _isLoggedIn = false;
       _userData = null;
     });
-    Navigator.of(context).pushReplacementNamed('/login');
+    // Navigation is handled by the app's logout handler
   }
 
   Future<void> _saveRememberMeState() async {
@@ -230,26 +211,11 @@ class LoginScreenState extends State<LoginScreen> {
         key: 'password',
         value: _passwordController.text,
       );
-
-      // Verify the password was saved by reading it back immediately
-      final savedPassword = await _secureStorage.read(key: 'password');
-      LoggerService.logInfo(
-        'Remember me enabled - saved email: ${_emailController.text}',
-      );
-      LoggerService.logInfo(
-        'Password saved to secure storage: ${_passwordController.text.isNotEmpty ? '***' : 'empty'}',
-      );
-      LoggerService.logInfo(
-        'Password verification - read back: ${savedPassword != null ? '***' : 'null'}',
-      );
     } else {
       await prefs.setBool('rememberMe', false);
       await prefs.remove('savedEmail');
       // Clear password from secure storage when "remember me" is disabled
       await _secureStorage.delete(key: 'password');
-      LoggerService.logInfo(
-        'Remember me disabled - cleared all stored credentials',
-      );
     }
   }
 
