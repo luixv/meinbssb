@@ -518,9 +518,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from ContactdataScreen');
     widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
+    // Navigation is handled by the app's logout handler
   }
 
   @override

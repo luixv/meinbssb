@@ -78,9 +78,7 @@ class StartScreenState extends State<StartScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user: ${widget.userData?.vorname}');
     widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
+    // Navigation is handled by the app's logout handler
   }
 
   Future<void> _handleDeleteSchulung(

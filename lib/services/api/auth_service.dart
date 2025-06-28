@@ -305,7 +305,8 @@ Ergebnis der Abfrage:
   Future<void> logout() async {
     try {
       await _cacheService.remove('username');
-      await _secureStorage.delete(key: 'password');
+      // Don't delete password from secure storage here - let the login screen handle it
+      // based on the remember me setting
       await _cacheService.remove('personId');
       await _cacheService.remove('webLoginId');
       await _cacheService.remove('username_timestamp');

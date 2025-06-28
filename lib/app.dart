@@ -56,6 +56,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   UserData? _userData;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -108,9 +109,9 @@ class _MyAppState extends State<MyApp> {
         _userData = null;
       });
 
-      // Navigate to login screen
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
+      // Navigate to login screen using the navigator key
+      if (mounted && _navigatorKey.currentState != null) {
+        _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     } catch (e) {
       debugPrint('Error during logout: $e');
@@ -119,8 +120,8 @@ class _MyAppState extends State<MyApp> {
         _isLoggedIn = false;
         _userData = null;
       });
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
+      if (mounted && _navigatorKey.currentState != null) {
+        _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     }
   }
@@ -130,6 +131,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
         return MaterialApp(
+          navigatorKey: _navigatorKey,
           title: 'Mein BSSB',
           theme: themeProvider.getTheme(false),
           darkTheme: themeProvider.getTheme(true),
@@ -165,7 +167,7 @@ class _MyAppState extends State<MyApp> {
           routes: {
             '/splash': (context) => SplashScreen(
                   onFinish: () {
-                    Navigator.of(context).pushReplacementNamed(
+                    _navigatorKey.currentState!.pushReplacementNamed(
                       _isLoggedIn ? '/home' : '/login',
                     );
                   },
