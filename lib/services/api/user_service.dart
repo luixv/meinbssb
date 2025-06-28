@@ -6,7 +6,6 @@ import '/services/core/network_service.dart';
 import '/services/core/logger_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/pass_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 
@@ -172,19 +171,24 @@ class UserService {
       return {};
     }
 
-    // Direct mapping without creating intermediate PassData object
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
     return {
       'PASSNUMMER': dataToProcess['PASSNUMMER']?.toString() ?? '',
-      'VEREINNR': dataToProcess['VEREINNR']?.toString() ?? '',
+      'VEREINNR': parseInt(dataToProcess['VEREINNR']),
       'NAMEN': dataToProcess['NAMEN']?.toString() ?? '',
       'VORNAME': dataToProcess['VORNAME']?.toString() ?? '',
       'TITEL': dataToProcess['TITEL']?.toString() ?? '',
       'GEBURTSDATUM': dataToProcess['GEBURTSDATUM']?.toString() ?? '',
-      'GESCHLECHT': dataToProcess['GESCHLECHT']?.toString() ?? '',
+      'GESCHLECHT': parseInt(dataToProcess['GESCHLECHT']),
       'VEREINNAME': dataToProcess['VEREINNAME']?.toString() ?? '',
-      'PASSDATENID': dataToProcess['PASSDATENID']?.toString() ?? '',
-      'MITGLIEDSCHAFTID': dataToProcess['MITGLIEDSCHAFTID']?.toString() ?? '',
-      'PERSONID': dataToProcess['PERSONID']?.toString() ?? '',
+      'PASSDATENID': parseInt(dataToProcess['PASSDATENID']),
+      'MITGLIEDSCHAFTID': parseInt(dataToProcess['MITGLIEDSCHAFTID']),
+      'PERSONID': parseInt(dataToProcess['PERSONID']),
       'STRASSE': dataToProcess['STRASSE']?.toString() ?? '',
       'PLZ': dataToProcess['PLZ']?.toString() ?? '',
       'ORT': dataToProcess['ORT']?.toString() ?? '',

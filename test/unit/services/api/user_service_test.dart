@@ -121,7 +121,9 @@ void main() {
           final fetchData =
               invocation.positionalArguments[2] as Future<dynamic> Function();
           final response = await fetchData();
-          return response;
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
         });
 
         when(mockHttpClient.get('Passdaten/$testPersonId'))
