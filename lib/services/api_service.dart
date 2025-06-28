@@ -248,4 +248,24 @@ class ApiService {
   Future<bool> findePersonID2(String nachname, String passnummer) async {
     return _authService.findePersonID2(nachname, passnummer);
   }
+
+  /// Clears the schulungen cache for a specific person
+  Future<void> clearSchulungenCache(int personId) async {
+    await _trainingService.clearSchulungenCache(personId);
+  }
+
+  /// Clears all schulungen caches
+  Future<void> clearAllSchulungenCache() async {
+    await _trainingService.clearAllSchulungenCache();
+  }
+
+  /// Clears the passdaten cache for a specific person
+  Future<void> clearPassdatenCache(int personId) async {
+    await _userService.clearPassdatenCache(personId);
+  }
+
+  /// Clears all passdaten caches
+  Future<void> clearAllPassdatenCache() async {
+    await _userService.clearAllPassdatenCache();
+  }
 }

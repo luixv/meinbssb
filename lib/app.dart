@@ -9,6 +9,7 @@ import '/models/user_data.dart';
 import '/services/core/font_size_provider.dart';
 import 'services/core/theme_provider.dart';
 import '/services/core/http_client.dart';
+import '/services/api/auth_service.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -88,11 +89,40 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _handleLogout() {
-    setState(() {
-      _isLoggedIn = false;
-      _userData = null;
-    });
+  void _handleLogout() async {
+    try {
+      // Get AuthService before async operations to avoid BuildContext issues
+      final authService = Provider.of<AuthService>(context, listen: false);
+
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn');
+      await prefs.remove('userData');
+
+      // Call AuthService logout to clear cached data
+      await authService.logout();
+
+      // Update local state
+      setState(() {
+        _isLoggedIn = false;
+        _userData = null;
+      });
+
+      // Navigate to login screen
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    } catch (e) {
+      debugPrint('Error during logout: $e');
+      // Even if there's an error, still update state and navigate
+      setState(() {
+        _isLoggedIn = false;
+        _userData = null;
+      });
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    }
   }
 
   @override

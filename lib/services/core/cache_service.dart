@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'config_service.dart';
 import 'logger_service.dart';
+import 'dart:async';
 
 class CacheService {
   CacheService({
@@ -89,6 +90,21 @@ class CacheService {
     LoggerService.logInfo('Cleared $count cache entries');
   }
 
+  /// Clears cache entries that match a specific pattern
+  Future<void> clearPattern(String pattern) async {
+    final keys = _prefs.getKeys();
+    int count = 0;
+    for (String key in keys) {
+      if (key.startsWith(_cacheKeyPrefix) && key.contains(pattern)) {
+        await _prefs.remove(key);
+        count++;
+      }
+    }
+    LoggerService.logInfo(
+      'Cleared $count cache entries matching pattern: $pattern',
+    );
+  }
+
   Future<bool> containsKey(String key) async {
     final exists = _prefs.containsKey(_cacheKeyPrefix + key);
     LoggerService.logInfo('Checked if key exists: $key, result: $exists');
@@ -119,6 +135,7 @@ class CacheService {
   Future<T?> _retrieveCachedDataWithOnlineFlag<T>(
     String cacheKey,
     T Function(dynamic rawData) processCachedData,
+    Duration validityDuration,
   ) async {
     final cachedJson = _prefs.getString(_cacheKeyPrefix + cacheKey);
     if (cachedJson != null) {
@@ -126,14 +143,18 @@ class CacheService {
 
       final keyTimestamp =
           await getCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
+
+      // Use ConfigService to get cache duration, fallback to validityDuration if config is not available
       final cacheExpirationHours =
-          _configService.getInt('cacheExpirationHours') ?? 24;
-      final validityDurationConfig = Duration(hours: cacheExpirationHours);
+          _configService.getInt('cacheExpirationHours');
+      final effectiveValidityDuration = cacheExpirationHours != null
+          ? Duration(hours: cacheExpirationHours)
+          : validityDuration;
 
       if (keyTimestamp != null) {
         final expirationTime = DateTime.fromMillisecondsSinceEpoch(
           keyTimestamp,
-        ).add(validityDurationConfig);
+        ).add(effectiveValidityDuration);
         if (DateTime.now().isBefore(expirationTime)) {
           LoggerService.logInfo(
             'Using cached data from SharedPreferences for key: $cacheKey',
@@ -193,8 +214,26 @@ class CacheService {
     Future<T> Function() fetchData,
     T Function(dynamic response) processResponse,
   ) async {
+    final stopwatch = Stopwatch()..start();
+
+    // First, try to get cached data
+    final cachedData = await _retrieveCachedDataWithOnlineFlag<T>(
+      cacheKey,
+      processResponse,
+      validityDuration,
+    );
+    if (cachedData != null) {
+      stopwatch.stop();
+      LoggerService.logInfo(
+          'Using cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
+      return cachedData;
+    }
+
+    // If no valid cached data, make network request
     try {
-      LoggerService.logInfo('Attempting network request for $cacheKey');
+      LoggerService.logInfo(
+        'No valid cache found, attempting network request for $cacheKey',
+      );
       final response = await fetchData();
       final processedData = processResponse(response);
 
@@ -234,7 +273,9 @@ class CacheService {
             jsonEncode(dataToCache),
           );
           await setCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
-          LoggerService.logInfo('Successfully cached fresh data for $cacheKey');
+          stopwatch.stop();
+          LoggerService.logInfo(
+              'Successfully cached fresh data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
           // Direct cast of dataToCache to T
           return dataToCache as T;
         }
@@ -244,17 +285,23 @@ class CacheService {
         'Network request returned no data.',
       );
     } on Exception catch (e) {
-      LoggerService.logError('Operation failed for $cacheKey: $e');
+      LoggerService.logError('Network request failed for $cacheKey: $e');
 
       if (e.toString().contains('Unsupported data type for caching')) {
         rethrow;
       }
 
-      final cachedData =
-          await _retrieveCachedDataWithOnlineFlag<T>(cacheKey, processResponse);
-      if (cachedData != null) {
-        LoggerService.logInfo('Falling back to cached data');
-        return cachedData;
+      // Try to get cached data again as fallback (in case it was added between our first check and now)
+      final fallbackCachedData = await _retrieveCachedDataWithOnlineFlag<T>(
+        cacheKey,
+        processResponse,
+        validityDuration,
+      );
+      if (fallbackCachedData != null) {
+        stopwatch.stop();
+        LoggerService.logInfo(
+            'Using fallback cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
+        return fallbackCachedData;
       }
       LoggerService.logWarning('No network and no valid cache for $cacheKey');
       throw Exception(

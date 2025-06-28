@@ -180,6 +180,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     if (!mounted) return;
 
+    // Check if the BuildContext is still valid before using it
+    if (!parentContext.mounted) return;
+
     // Show the booking dialog with the fetched data
     bool agbChecked = false;
     bool lastschriftChecked = false;
@@ -490,6 +493,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       mandatName: '',
                                     );
                                 Future.delayed(Duration.zero, () {
+                                  if (!parentContext.mounted) return;
                                   _showRegisterAnotherPersonDialog(
                                     parentContext,
                                     parentContext,
@@ -635,6 +639,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   onPressed: () {
                     Navigator.of(parentContext).pop();
                     Future.delayed(Duration.zero, () {
+                      if (!parentContext.mounted) return;
                       _showRegisterAnotherPersonDialog(
                         parentContext,
                         parentContext,
@@ -756,6 +761,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         passnummerController.text,
                       ),
                     );
+              // Check if dialogContext is still mounted before using it
+              if (!dialogContext.mounted) return;
               showDialog(
                 context: dialogContext,
                 barrierDismissible: false,
@@ -767,6 +774,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 ),
               );
             } else {
+              if (!parentContext.mounted) return;
               ScaffoldMessenger.of(parentContext).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -777,6 +785,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               );
             }
           } catch (e) {
+            if (!parentContext.mounted) return;
             ScaffoldMessenger.of(parentContext).showSnackBar(
               SnackBar(
                 content: Text('Fehler bei der Anmeldung: $e'),

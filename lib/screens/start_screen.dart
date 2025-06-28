@@ -187,7 +187,7 @@ class StartScreenState extends State<StartScreen> {
           LoggerService.logInfo(
             'Unregistered from Schulung $schulungenTeilnehmerID',
           );
-          setState(() => schulungen.removeAt(index));
+          await fetchSchulungen();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

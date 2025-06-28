@@ -32,8 +32,7 @@ class TrainingService {
     final cacheDuration = _networkService.getCacheExpirationDuration();
 
     try {
-      final result =
-          await _cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+      final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         cacheKey,
         cacheDuration,
         () async {
@@ -44,10 +43,30 @@ class TrainingService {
             response,
           ).map((s) => s.toJson()).toList();
         },
-        (data) => data,
+        (data) {
+          // Ensure the cached data is properly typed
+          if (data is List) {
+            return data.map((item) {
+              if (item is Map<String, dynamic>) {
+                return item;
+              } else if (item is Map) {
+                return Map<String, dynamic>.from(item);
+              } else {
+                LoggerService.logWarning(
+                  'Unexpected item type in cached schulungen: ${item.runtimeType}',
+                );
+                return <String, dynamic>{};
+              }
+            }).toList();
+          }
+          return <dynamic>[];
+        },
       );
 
-      return result.map((json) => Schulung.fromJson(json)).toList();
+      return result
+          .whereType<Map<String, dynamic>>()
+          .map((json) => Schulung.fromJson(json))
+          .toList();
     } catch (e) {
       LoggerService.logError('Error fetching schulungen: $e');
       return [];
@@ -308,7 +327,12 @@ class TrainingService {
         'personId': personId,
         'schulungId': schulungId,
       });
-      return response['ResultType'] == 1;
+      final success = response['ResultType'] == 1;
+      if (success) {
+        // Clear the schulungen cache after successful registration
+        await clearSchulungenCache(personId);
+      }
+      return success;
     } catch (e) {
       LoggerService.logError('Error registering for Schulung: $e');
       return false;
@@ -321,10 +345,38 @@ class TrainingService {
         'SchulungenTeilnehmer/$teilnehmerId',
         body: {},
       );
-      return response['result'] == true;
+      final success = response['result'] == true;
+      if (success) {
+        // Clear the schulungen cache after successful unregistration
+        // We need to get the personId from the response or pass it as parameter
+        // For now, we'll clear all schulungen caches
+        await clearAllSchulungenCache();
+      }
+      return success;
     } catch (e) {
       LoggerService.logError('Error unregistering from Schulung: $e');
       return false;
+    }
+  }
+
+  /// Clears the cache for a specific person's schulungen
+  Future<void> clearSchulungenCache(int personId) async {
+    try {
+      final cacheKey = 'schulungen_$personId';
+      await _cacheService.remove(cacheKey);
+      LoggerService.logInfo('Cleared schulungen cache for personId: $personId');
+    } catch (e) {
+      LoggerService.logError('Error clearing schulungen cache: $e');
+    }
+  }
+
+  /// Clears all schulungen caches (used when we don't have the specific personId)
+  Future<void> clearAllSchulungenCache() async {
+    try {
+      await _cacheService.clearPattern('schulungen_');
+      LoggerService.logInfo('Cleared all schulungen cache entries');
+    } catch (e) {
+      LoggerService.logError('Error clearing all schulungen cache: $e');
     }
   }
 
@@ -377,7 +429,7 @@ class TrainingService {
       'RechnungAn': 0,
       'Strasse': user.strasse ?? '',
       'PLZ': user.plz ?? '',
-      'Ort': user.ort ?? '',
+      'ORT': user.ort ?? '',
       'Kosten': 0,
       'Verpflegung': 0,
       'Uebernachtung': 0,
@@ -404,7 +456,15 @@ class TrainingService {
         'SchulungenTeilnehmer',
         body,
       );
-      return RegisterSchulungenTeilnehmerResponse.fromJson(response);
+      final result = RegisterSchulungenTeilnehmerResponse.fromJson(response);
+
+      // Clear the schulungen cache after successful registration
+      // Check if the response indicates success (platz > 0 means successful registration)
+      if (result.platz > 0) {
+        await clearSchulungenCache(user.personId);
+      }
+
+      return result;
     } catch (e) {
       LoggerService.logError('Error registering Schulungen Teilnehmer: $e');
       rethrow;
