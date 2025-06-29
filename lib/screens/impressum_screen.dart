@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -34,8 +34,9 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText(
                 'Für den Inhalt verantwortlich sind:',
                 style: TextStyle(
-                    fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold,),
+                  fontSize: UIConstants.dialogFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -57,8 +58,9 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText(
                 'Realisierung des Internetauftritts',
                 style: TextStyle(
-                    fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold,),
+                  fontSize: UIConstants.dialogFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -84,8 +86,9 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText(
                 'Inhaltlich verantwortlich für die Teilbereiche',
                 style: TextStyle(
-                    fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold,),
+                  fontSize: UIConstants.dialogFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(
@@ -173,8 +176,9 @@ class ImpressumScreen extends StatelessWidget {
               ScaledText(
                 'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
                 style: TextStyle(
-                    fontSize: UIConstants.dialogFontSize,
-                    fontWeight: FontWeight.bold,),
+                  fontSize: UIConstants.dialogFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: UIConstants.spacingS),
               ScaledText(

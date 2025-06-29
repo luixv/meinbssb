@@ -359,30 +359,6 @@ void main() {
         verifyNever(mockCacheService.getString(any));
       });
     });
-
-    group('logout', () {
-      test('should clear all cached data on successful logout', () async {
-        await authService.logout();
-        verify(mockCacheService.remove('username')).called(1);
-        verify(mockSecureStorage.delete(key: 'password')).called(1);
-        verify(mockCacheService.remove('personId')).called(1);
-        verify(mockCacheService.remove('webLoginId')).called(1);
-        verify(mockCacheService.remove('username_timestamp')).called(1);
-        verify(mockCacheService.remove('personId_timestamp')).called(1);
-        verify(mockCacheService.remove('webLoginId_timestamp')).called(1);
-      });
-
-      test('should rethrow error on logout failure', () async {
-        when(mockCacheService.remove('username'))
-            .thenThrow(Exception('Failed to remove username'));
-
-        expect(() => authService.logout(), throwsA(isA<Exception>()));
-        verify(mockCacheService.remove('username')).called(1);
-        verifyNever(mockSecureStorage.delete(key: anyNamed('key')));
-        verifyNever(mockCacheService.remove('personId'));
-      });
-    });
-
     group('login (offline)', () {
       const String testUsername = 'testuser';
       const String testPassword = 'testpassword';

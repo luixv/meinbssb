@@ -4,11 +4,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '/constants/ui_constants.dart';
-import '/models/user_data.dart';
-import '/services/core/font_size_provider.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'services/core/theme_provider.dart';
-import '/services/core/http_client.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   UserData? _userData;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -88,11 +90,40 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _handleLogout() {
-    setState(() {
-      _isLoggedIn = false;
-      _userData = null;
-    });
+  void _handleLogout() async {
+    try {
+      // Get AuthService before async operations to avoid BuildContext issues
+      final authService = Provider.of<AuthService>(context, listen: false);
+
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn');
+      await prefs.remove('userData');
+
+      // Call AuthService logout to clear cached data
+      await authService.logout();
+
+      // Update local state
+      setState(() {
+        _isLoggedIn = false;
+        _userData = null;
+      });
+
+      // Navigate to login screen using the navigator key
+      if (mounted && _navigatorKey.currentState != null) {
+        _navigatorKey.currentState!.pushReplacementNamed('/login');
+      }
+    } catch (e) {
+      debugPrint('Error during logout: $e');
+      // Even if there's an error, still update state and navigate
+      setState(() {
+        _isLoggedIn = false;
+        _userData = null;
+      });
+      if (mounted && _navigatorKey.currentState != null) {
+        _navigatorKey.currentState!.pushReplacementNamed('/login');
+      }
+    }
   }
 
   @override
@@ -100,6 +131,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
         return MaterialApp(
+          navigatorKey: _navigatorKey,
           title: 'Mein BSSB',
           theme: themeProvider.getTheme(false),
           darkTheme: themeProvider.getTheme(true),
@@ -135,7 +167,7 @@ class _MyAppState extends State<MyApp> {
           routes: {
             '/splash': (context) => SplashScreen(
                   onFinish: () {
-                    Navigator.of(context).pushReplacementNamed(
+                    _navigatorKey.currentState!.pushReplacementNamed(
                       _isLoggedIn ? '/home' : '/login',
                     );
                   },

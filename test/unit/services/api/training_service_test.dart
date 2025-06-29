@@ -455,7 +455,27 @@ void main() {
       {'DISZIPLINID': 2, 'DISZIPLINNR': '1.11', 'DISZIPLIN': 'Kleinkaliber'},
     ];
 
-    test('returns mapped Disziplinen list from API', () async {
+    test('returns mapped Disziplinen list from network', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      // Mock the cache service to return the raw map list as the 'fetchData' function
+      // already handles the mapping to Disziplin models within TrainingService.
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(
         mockHttpClient.get('Disziplinen'),
       ).thenAnswer((_) async => testResponse);
@@ -470,6 +490,24 @@ void main() {
     });
 
     test('returns empty list when API returns an empty list', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(mockHttpClient.get('Disziplinen')).thenAnswer((_) async => []);
 
       final result = await trainingService.fetchDisziplinen();
@@ -479,6 +517,24 @@ void main() {
     });
 
     test('returns empty list when API returns non-list response', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(
         mockHttpClient.get('Disziplinen'),
       ).thenAnswer((_) async => {'error': 'Invalid format'});
@@ -491,6 +547,24 @@ void main() {
 
     test('returns empty list and logs error when exception occurs', () async {
       when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
+      when(
         mockHttpClient.get('Disziplinen'),
       ).thenThrow(Exception('Network error for Disziplinen'));
 
@@ -501,6 +575,24 @@ void main() {
     });
 
     test('handles network timeout exception', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(
         mockHttpClient.get('Disziplinen'),
       ).thenThrow(TimeoutException('Request timed out'));
@@ -513,6 +605,24 @@ void main() {
 
     test('handles socket exception', () async {
       when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
+      when(
         mockHttpClient.get('Disziplinen'),
       ).thenThrow(const SocketException('Failed to connect'));
 
@@ -523,6 +633,24 @@ void main() {
     });
 
     test('handles http exception', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(
         mockHttpClient.get('Disziplinen'),
       ).thenThrow(const HttpException('Server error'));
@@ -535,6 +663,24 @@ void main() {
 
     test('handles format exception in response', () async {
       when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
+      when(
         mockHttpClient.get('Disziplinen'),
       ).thenAnswer((_) async => 'Invalid JSON response');
 
@@ -545,6 +691,24 @@ void main() {
     });
 
     test('handles malformed JSON in response', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       when(mockHttpClient.get('Disziplinen')).thenAnswer(
         (_) async => [
           {'DISZIPLINID': 'invalid', 'DISZIPLIN': 123},
@@ -558,6 +722,24 @@ void main() {
     });
 
     test('handles partial Disziplinen data correctly', () async {
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response; // Return the raw list of maps
+      });
+
       final partialResponse = [
         {'DISZIPLINID': 3, 'DISZIPLIN': 'Pistole (Partial)'},
         // Missing DISZIPLINNR
@@ -573,6 +755,26 @@ void main() {
       expect(result[0].disziplin, 'Pistole (Partial)');
       expect(result[0].disziplinNr, isNull); // Should be null if missing
       verify(mockHttpClient.get('Disziplinen')).called(1);
+    });
+  });
+
+  group('clearDisziplinenCache', () {
+    test('clears disziplinen cache successfully', () async {
+      when(mockCacheService.remove('disziplinen')).thenAnswer((_) async {});
+
+      await trainingService.clearDisziplinenCache();
+
+      verify(mockCacheService.remove('disziplinen')).called(1);
+    });
+
+    test('handles error when clearing cache fails', () async {
+      when(mockCacheService.remove('disziplinen'))
+          .thenThrow(Exception('Cache clear error'));
+
+      // Should not throw
+      await trainingService.clearDisziplinenCache();
+
+      verify(mockCacheService.remove('disziplinen')).called(1);
     });
   });
 
@@ -726,94 +928,94 @@ void main() {
   });
 
   group('fetchSchulungstermine', () {
-
     test('maps valid Schulungstermine response correctly', () async {
-      when(mockHttpClient.get('Schulungstermine/15.08.2025/false'))
-          .thenAnswer((_) async => [
-                {
-                  'SCHULUNGENTERMINID': 42,
-                  'SCHULUNGSARTID': 7,
-                  'DATUM': '2025-08-15T00:00:00.000+02:00',
-                  'BEMERKUNG': 'Hinweis',
-                  'KOSTEN': 99.99,
-                  'ORT': 'München',
-                  'LEHRGANGSLEITER': 'Herr Mustermann',
-                  'MAXTEILNEHMER': 50,
-                  'ANGEMELDETETEILNEHMER': 10,
-                  'LEHRGANGSINHALT': 'Inhalt Text',
-                  'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
-                  'STATUS': 1,
-                  'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
-                  'VERPFLEGUNGSKOSTEN': 0.0,
-                  'UEBERNACHTUNGSKOSTEN': 0.0,
-                  'LEHRMATERIALKOSTEN': 0.0,
-                  'WEBVEROEFFENTLICHENAM': '',
-                  'ANMELDUNGENGESPERRT': false,
-                  'LEHRGANGSLEITER2': '',
-                  'LEHRGANGSLEITER3': '',
-                  'LEHRGANGSLEITER4': '',
-                  'LEHRGANGSLEITERTEL': '',
-                  'LEHRGANGSLEITER2TEL': '',
-                  'LEHRGANGSLEITER3TEL': '',
-                  'LEHRGANGSLEITER4TEL': '',
-                  'LEHRGANGSLEITERMAIL': '',
-                  'LEHRGANGSLEITER2MAIL': '',
-                  'LEHRGANGSLEITER3MAIL': '',
-                  'LEHRGANGSLEITER4MAIL': '',
-                  'ANMELDESTOPP': '',
-                  'ABMELDESTOPP': '',
-                  'GELOESCHT': false,
-                  'STORNOGRUND': '',
-                  'WEBGRUPPE': 0,
-                  'VERANSTALTUNGSBEZIRK': 0,
-                  'FUERVERLAENGERUNGEN': false,
-                  'ANMELDENERLAUBT': 0,
-                  'VERBANDSINTERNPASSWORT': '',
-                  'BEZEICHNUNG': 'Test',
-                },
-                {
-                  // Should be filtered out: status == 2
-                  'SCHULUNGENTERMINID': 99,
-                  'SCHULUNGSARTID': 7,
-                  'DATUM': '2025-08-15T00:00:00.000+02:00',
-                  'BEMERKUNG': 'Hinweis',
-                  'KOSTEN': 99.99,
-                  'ORT': 'München',
-                  'LEHRGANGSLEITER': 'Herr Mustermann',
-                  'MAXTEILNEHMER': 50,
-                  'ANGEMELDETETEILNEHMER': 10,
-                  'LEHRGANGSINHALT': 'Inhalt Text',
-                  'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
-                  'STATUS': 2,
-                  'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
-                  'VERPFLEGUNGSKOSTEN': 0.0,
-                  'UEBERNACHTUNGSKOSTEN': 0.0,
-                  'LEHRMATERIALKOSTEN': 0.0,
-                  'WEBVEROEFFENTLICHENAM': '',
-                  'ANMELDUNGENGESPERRT': false,
-                  'LEHRGANGSLEITER2': '',
-                  'LEHRGANGSLEITER3': '',
-                  'LEHRGANGSLEITER4': '',
-                  'LEHRGANGSLEITERTEL': '',
-                  'LEHRGANGSLEITER2TEL': '',
-                  'LEHRGANGSLEITER3TEL': '',
-                  'LEHRGANGSLEITER4TEL': '',
-                  'LEHRGANGSLEITERMAIL': '',
-                  'LEHRGANGSLEITER2MAIL': '',
-                  'LEHRGANGSLEITER3MAIL': '',
-                  'LEHRGANGSLEITER4MAIL': '',
-                  'ANMELDESTOPP': '',
-                  'ABMELDESTOPP': '',
-                  'GELOESCHT': false,
-                  'STORNOGRUND': '',
-                  'WEBGRUPPE': 0,
-                  'VERANSTALTUNGSBEZIRK': 0,
-                  'FUERVERLAENGERUNGEN': false,
-                  'ANMELDENERLAUBT': 0,
-                  'VERBANDSINTERNPASSWORT': '',
-                  'BEZEICHNUNG': 'Test',
-                },
-              ],);
+      when(mockHttpClient.get('Schulungstermine/15.08.2025/false')).thenAnswer(
+        (_) async => [
+          {
+            'SCHULUNGENTERMINID': 42,
+            'SCHULUNGSARTID': 7,
+            'DATUM': '2025-08-15T00:00:00.000+02:00',
+            'BEMERKUNG': 'Hinweis',
+            'KOSTEN': 99.99,
+            'ORT': 'München',
+            'LEHRGANGSLEITER': 'Herr Mustermann',
+            'MAXTEILNEHMER': 50,
+            'ANGEMELDETETEILNEHMER': 10,
+            'LEHRGANGSINHALT': 'Inhalt Text',
+            'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
+            'STATUS': 1,
+            'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
+            'VERPFLEGUNGSKOSTEN': 0.0,
+            'UEBERNACHTUNGSKOSTEN': 0.0,
+            'LEHRMATERIALKOSTEN': 0.0,
+            'WEBVEROEFFENTLICHENAM': '',
+            'ANMELDUNGENGESPERRT': false,
+            'LEHRGANGSLEITER2': '',
+            'LEHRGANGSLEITER3': '',
+            'LEHRGANGSLEITER4': '',
+            'LEHRGANGSLEITERTEL': '',
+            'LEHRGANGSLEITER2TEL': '',
+            'LEHRGANGSLEITER3TEL': '',
+            'LEHRGANGSLEITER4TEL': '',
+            'LEHRGANGSLEITERMAIL': '',
+            'LEHRGANGSLEITER2MAIL': '',
+            'LEHRGANGSLEITER3MAIL': '',
+            'LEHRGANGSLEITER4MAIL': '',
+            'ANMELDESTOPP': '',
+            'ABMELDESTOPP': '',
+            'GELOESCHT': false,
+            'STORNOGRUND': '',
+            'WEBGRUPPE': 0,
+            'VERANSTALTUNGSBEZIRK': 0,
+            'FUERVERLAENGERUNGEN': false,
+            'ANMELDENERLAUBT': 0,
+            'VERBANDSINTERNPASSWORT': '',
+            'BEZEICHNUNG': 'Test',
+          },
+          {
+            // Should be filtered out: status == 2
+            'SCHULUNGENTERMINID': 99,
+            'SCHULUNGSARTID': 7,
+            'DATUM': '2025-08-15T00:00:00.000+02:00',
+            'BEMERKUNG': 'Hinweis',
+            'KOSTEN': 99.99,
+            'ORT': 'München',
+            'LEHRGANGSLEITER': 'Herr Mustermann',
+            'MAXTEILNEHMER': 50,
+            'ANGEMELDETETEILNEHMER': 10,
+            'LEHRGANGSINHALT': 'Inhalt Text',
+            'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
+            'STATUS': 2,
+            'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
+            'VERPFLEGUNGSKOSTEN': 0.0,
+            'UEBERNACHTUNGSKOSTEN': 0.0,
+            'LEHRMATERIALKOSTEN': 0.0,
+            'WEBVEROEFFENTLICHENAM': '',
+            'ANMELDUNGENGESPERRT': false,
+            'LEHRGANGSLEITER2': '',
+            'LEHRGANGSLEITER3': '',
+            'LEHRGANGSLEITER4': '',
+            'LEHRGANGSLEITERTEL': '',
+            'LEHRGANGSLEITER2TEL': '',
+            'LEHRGANGSLEITER3TEL': '',
+            'LEHRGANGSLEITER4TEL': '',
+            'LEHRGANGSLEITERMAIL': '',
+            'LEHRGANGSLEITER2MAIL': '',
+            'LEHRGANGSLEITER3MAIL': '',
+            'LEHRGANGSLEITER4MAIL': '',
+            'ANMELDESTOPP': '',
+            'ABMELDESTOPP': '',
+            'GELOESCHT': false,
+            'STORNOGRUND': '',
+            'WEBGRUPPE': 0,
+            'VERANSTALTUNGSBEZIRK': 0,
+            'FUERVERLAENGERUNGEN': false,
+            'ANMELDENERLAUBT': 0,
+            'VERBANDSINTERNPASSWORT': '',
+            'BEZEICHNUNG': 'Test',
+          },
+        ],
+      );
       final result = await trainingService.fetchSchulungstermine('15.08.2025');
       expect(result.length, 1);
       final s = result[0];

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/models/bank_data.dart';
-import '/models/user_data.dart';
-import '/services/api_service.dart';
-import '/services/api/bank_service.dart';
-import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
-import '/screens/base_screen_layout.dart';
-import '/screens/bank_data_result_screen.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/bank_data_result_screen.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -294,6 +295,95 @@ class BankDataScreenState extends State<BankDataScreen> {
     super.dispose();
   }
 
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      LoggerService.logError('Error checking network status: $e');
+      return true; // Assume offline if we can't check
+    }
+  }
+
+  Widget _buildFABs() {
+    if (_isEditing) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'bankDataCancelFab',
+            onPressed: () {
+              setState(() {
+                _isEditing = false;
+                _kontoinhaberController.clear();
+                _ibanController.clear();
+                _bicController.clear();
+                _loadInitialData();
+              });
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: 'bankDataSaveFab',
+            onPressed: _isSaving ? null : _onSaveBankData,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: _isSaving
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.circularProgressIndicator,
+                    ),
+                    strokeWidth: 2,
+                  )
+                : const Icon(
+                    Icons.save,
+                    color: Colors.white,
+                  ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'bankDataDeleteFab',
+            onPressed: _isSaving ? null : _onDeleteBankData,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: _isSaving
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 2,
+                  )
+                : const Icon(
+                    Icons.delete_outline,
+                    color: Colors.white,
+                  ),
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: 'bankDataEditFab',
+            onPressed: () {
+              setState(() {
+                _isEditing = true;
+              });
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(
+              Icons.edit,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.webloginId == 0) {
@@ -341,126 +431,106 @@ class BankDataScreenState extends State<BankDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: FutureBuilder<BankData?>(
-        future: _bankDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.hasError) {
+          // Check if offline first
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 16),
-                  const ScaledText(
-                    'Fehler beim Laden der Bankdaten',
-                    style: UIStyles.headerStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  ScaledText(
-                    snapshot.error.toString(),
-                    textAlign: TextAlign.center,
-                    style: UIStyles.bodyStyle,
-                  ),
-                ],
+              child: Padding(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.wifi_off,
+                      size: UIConstants.wifiOffIconSize,
+                      color: UIConstants.noConnectivityIcon,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      'Bankdaten sind offline nicht verfügbar',
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.textColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um auf Ihre Bankdaten zuzugreifen.',
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
           }
 
-          if (snapshot.hasData && snapshot.data != null) {
-            final bankData = snapshot.data!;
-            if (!_isEditing) {
-              _kontoinhaberController.text = bankData.kontoinhaber;
-              _ibanController.text = bankData.iban;
-              _bicController.text = bankData.bic;
-            }
-            return _buildBankDataForm();
-          } else {
-            return _buildBankDataForm();
-          }
+          // If online, show the normal bank data form
+          return FutureBuilder<BankData?>(
+            future: _bankDataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      const ScaledText(
+                        'Fehler beim Laden der Bankdaten',
+                        style: UIStyles.headerStyle,
+                      ),
+                      const SizedBox(height: 8),
+                      ScaledText(
+                        snapshot.error.toString(),
+                        textAlign: TextAlign.center,
+                        style: UIStyles.bodyStyle,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              if (snapshot.hasData && snapshot.data != null) {
+                final bankData = snapshot.data!;
+                if (!_isEditing) {
+                  _kontoinhaberController.text = bankData.kontoinhaber;
+                  _ibanController.text = bankData.iban;
+                  _bicController.text = bankData.bic;
+                }
+                return _buildBankDataForm();
+              } else {
+                return _buildBankDataForm();
+              }
+            },
+          );
         },
       ),
-      floatingActionButton: _isEditing
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'bankDataCancelFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = false;
-                      _kontoinhaberController.clear();
-                      _ibanController.clear();
-                      _bicController.clear();
-                      _loadInitialData();
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  heroTag: 'bankDataSaveFab',
-                  onPressed: _isSaving ? null : _onSaveBankData,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: _isSaving
-                      ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.circularProgressIndicator,
-                          ),
-                          strokeWidth: 2,
-                        )
-                      : const Icon(
-                          Icons.save,
-                          color: Colors.white,
-                        ),
-                ),
-              ],
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'bankDataDeleteFab',
-                  onPressed: _isSaving ? null : _onDeleteBankData,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: _isSaving
-                      ? const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 2,
-                        )
-                      : const Icon(
-                          Icons.delete_outline,
-                          color: Colors.white,
-                        ),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  heroTag: 'bankDataEditFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
+      floatingActionButton: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (!offlineSnapshot.hasData || offlineSnapshot.data == true) {
+            return const SizedBox.shrink();
+          }
+          return _buildFABs();
+        },
+      ),
     );
   }
 

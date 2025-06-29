@@ -283,6 +283,16 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<void> clearPattern(String? pattern) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPattern,
+          [pattern],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
         Invocation.method(
           #containsKey,

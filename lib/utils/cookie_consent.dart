@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/services/core/logger_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 
 class CookieConsent extends StatefulWidget {
   const CookieConsent({super.key, required this.child});

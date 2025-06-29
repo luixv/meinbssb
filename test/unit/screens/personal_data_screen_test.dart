@@ -1,99 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/personal_data_screen.dart';
-import 'package:meinbssb/services/api_service.dart';
-
-@GenerateMocks([ApiService])
-import 'personal_data_screen_test.mocks.dart';
+import '../helpers/test_helper.dart';
 
 void main() {
-  late MockApiService mockApiService;
-  late UserData testUserData;
-
   setUp(() {
-    mockApiService = MockApiService();
-    testUserData = const UserData(
-      personId: 123,
-      webLoginId: 456,
-      passnummer: '12345678',
-      vereinNr: 789,
-      namen: 'User',
-      vorname: 'Test',
-      vereinName: 'Test Club',
-      passdatenId: 1,
-      mitgliedschaftId: 1,
-    );
+    TestHelper.setupMocks();
   });
 
-  Widget createPersonalDataScreen({
-    UserData? userData,
-    bool isLoggedIn = true,
-    VoidCallback? onLogout,
-  }) {
-    return MaterialApp(
-      home: Provider<ApiService>.value(
-        value: mockApiService,
-        child: PersonDataScreen(
-          userData,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout ?? () {},
+  Widget createPersonalDataScreen() {
+    return TestHelper.createTestApp(
+      home: PersonDataScreen(
+        const UserData(
+          personId: 439287,
+          webLoginId: 13901,
+          passnummer: '40100709',
+          vereinNr: 401051,
+          namen: 'Schürz',
+          vorname: 'Lukas',
+          vereinName: 'Feuerschützen Kühbach',
+          passdatenId: 2000009155,
+          mitgliedschaftId: 439287,
+          strasse: 'Aichacher Strasse 21',
+          plz: '86574',
+          ort: 'Alsmoos',
+          telefon: '123456789',
         ),
+        isLoggedIn: true,
+        onLogout: () {},
       ),
     );
   }
 
   group('PersonalDataScreen', () {
-    testWidgets('renders correctly with user data',
-        (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchPassdaten(any)).thenAnswer(
-        (_) => Future.value(null),
-      );
-
-      // Act
-      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
-      await tester.pump();
+    testWidgets('renders personal data correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(createPersonalDataScreen());
       await tester.pumpAndSettle();
 
-      // Assert
       expect(find.text('Persönliche Daten'), findsOneWidget);
+      expect(find.text('Lukas'), findsOneWidget);
+      expect(find.text('Schürz'), findsOneWidget);
+      expect(find.text('40100709'), findsOneWidget);
     });
 
-    testWidgets('shows loading state while fetching personal data',
-        (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchPassdaten(any)).thenAnswer(
-        (_) => Future.delayed(const Duration(milliseconds: 100), () => null),
-      );
-
-      // Act
-      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
-      await tester.pump();
-
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 100));
+    testWidgets('shows edit button', (WidgetTester tester) async {
+      await tester.pumpWidget(createPersonalDataScreen());
       await tester.pumpAndSettle();
+
+      // The edit button is a FloatingActionButton with an edit icon
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is FloatingActionButton &&
+              widget.child is Icon &&
+              (widget.child as Icon).icon == Icons.edit,
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('shows error message when fetch fails',
+    testWidgets('enables editing when edit button is tapped',
         (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchPassdaten(any))
-          .thenThrow(Exception('Test error'));
-
-      // Act
-      await tester.pumpWidget(createPersonalDataScreen(userData: testUserData));
-      await tester.pump();
+      await tester.pumpWidget(createPersonalDataScreen());
       await tester.pumpAndSettle();
 
-      // Assert
-      expect(find.text('Persönliche Daten'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      // Tap the edit FAB
+      await tester.tap(find.byIcon(Icons.edit));
+      await tester.pumpAndSettle();
+
+      // Now the Vorname/Nachname fields should be editable (not readOnly)
+      final vornameField = find.widgetWithText(TextFormField, 'Vorname');
+      final nachnameField = find.widgetWithText(TextFormField, 'Nachname');
+      expect(vornameField, findsWidgets);
+      expect(nachnameField, findsWidgets);
+      final vornameWidgets = tester.widgetList<TextFormField>(vornameField);
+      final nachnameWidgets = tester.widgetList<TextFormField>(nachnameField);
+      expect(vornameWidgets.any((w) => w.enabled == true), isTrue);
+      expect(nachnameWidgets.any((w) => w.enabled == true), isTrue);
     });
   });
 }

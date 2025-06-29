@@ -161,10 +161,17 @@ class UIConstants {
   static const double iconSizeXL = 64.0;
   static const double iconSizeM = 48.0;
   static const double dialogFontSize = 18.0;
+  static const double largeFontSize = 24.0;
   static const double smallButtonSize = 40.0;
   static const double fabSmallIconSize = 20.0;
   static const double dividerThick = 6.0;
   static const Duration snackbarDuration = Duration(seconds: 3);
+
+  // AppBar
+  static const double appBarElevation = 2.0;
+
+  // Text and Layout
+  static const int maxSectionHeaderLength = 60;
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
@@ -344,4 +351,6 @@ class UIConstants {
       Colors.red; // For gesperrt/locked state
   static const Color schulungenNormalColor =
       defaultAppColor; // For normal state
+
+  static const double wifiOffIconSize = 64.0;
 }

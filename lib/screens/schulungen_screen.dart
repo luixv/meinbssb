@@ -180,6 +180,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     if (!mounted) return;
 
+    // Check if the BuildContext is still valid before using it
+    if (!parentContext.mounted) return;
+
     // Show the booking dialog with the fetched data
     bool agbChecked = false;
     bool lastschriftChecked = false;
@@ -302,7 +305,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: UIConstants.spacingL),
+                        const SizedBox(height: UIConstants.spacingM),
                         // --- Bank Data Block ---
                         Container(
                           decoration: BoxDecoration(
@@ -490,6 +493,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       mandatName: '',
                                     );
                                 Future.delayed(Duration.zero, () {
+                                  if (!parentContext.mounted) return;
                                   _showRegisterAnotherPersonDialog(
                                     parentContext,
                                     parentContext,
@@ -528,7 +532,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       backgroundColor: UIConstants.backgroundColor,
       title: const Center(
         child: ScaledText(
-          'Erfolg',
+          'Bereits angemeldet Personen',
           style: UIStyles.dialogTitleStyle,
         ),
       ),
@@ -540,11 +544,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Bereits angemeldete Personen:',
-                  style: UIStyles.dialogContentStyle,
-                ),
-                const SizedBox(height: UIConstants.spacingS),
                 ...registeredPersons.map(
                   (p) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -583,7 +582,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
                 const TextSpan(
-                  text: 'Sie sind angemeldet für die Schulung ',
+                  text: 'Sie sind angemeldet für die Schulung\n',
                 ),
                 TextSpan(
                   text: schulungsTermin.bezeichnung,
@@ -635,6 +634,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   onPressed: () {
                     Navigator.of(parentContext).pop();
                     Future.delayed(Duration.zero, () {
+                      if (!parentContext.mounted) return;
                       _showRegisterAnotherPersonDialog(
                         parentContext,
                         parentContext,
@@ -756,6 +756,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         passnummerController.text,
                       ),
                     );
+              // Check if dialogContext is still mounted before using it
+              if (!dialogContext.mounted) return;
               showDialog(
                 context: dialogContext,
                 barrierDismissible: false,
@@ -767,6 +769,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 ),
               );
             } else {
+              if (!parentContext.mounted) return;
               ScaffoldMessenger.of(parentContext).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -777,6 +780,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               );
             }
           } catch (e) {
+            if (!parentContext.mounted) return;
             ScaffoldMessenger.of(parentContext).showSnackBar(
               SnackBar(
                 content: Text('Fehler bei der Anmeldung: $e'),
@@ -786,23 +790,23 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           }
         }
 
-        return Stack(
-          children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 600,
-                  maxHeight: 700,
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 970,
+              maxHeight: 600,
+            ),
+            child: AlertDialog(
+              backgroundColor: UIConstants.backgroundColor,
+              title: const Center(
+                child: ScaledText(
+                  'Person anmelden',
+                  style: UIStyles.dialogTitleStyle,
                 ),
-                child: AlertDialog(
-                  backgroundColor: UIConstants.backgroundColor,
-                  title: const Center(
-                    child: ScaledText(
-                      'Person anmelden',
-                      style: UIStyles.dialogTitleStyle,
-                    ),
-                  ),
-                  content: SingleChildScrollView(
+              ),
+              content: Stack(
+                children: [
+                  SingleChildScrollView(
                     child: Container(
                       decoration: BoxDecoration(
                         color: UIConstants.whiteColor,
@@ -889,43 +893,44 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: UIConstants.spacingM,
-              right: UIConstants.spacingM,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  FloatingActionButton(
-                    heroTag: 'cancelRegisterAnotherFab',
-                    mini: true,
-                    tooltip: 'Abbrechen',
-                    backgroundColor: UIConstants.defaultAppColor,
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  FloatingActionButton(
-                    heroTag: 'okRegisterAnotherFab',
-                    mini: true,
-                    tooltip: 'OK',
-                    backgroundColor: UIConstants.defaultAppColor,
-                    onPressed: submit,
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
+                  // FABs positioned over the dialog content
+                  Positioned(
+                    bottom: UIConstants.spacingM,
+                    right: UIConstants.spacingM,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        FloatingActionButton(
+                          heroTag: 'cancelRegisterAnotherFab',
+                          mini: true,
+                          tooltip: 'Abbrechen',
+                          backgroundColor: UIConstants.defaultAppColor,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingS),
+                        FloatingActionButton(
+                          heroTag: 'okRegisterAnotherFab',
+                          mini: true,
+                          tooltip: 'OK',
+                          backgroundColor: UIConstants.defaultAppColor,
+                          onPressed: submit,
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         );
       },
     );
@@ -1149,29 +1154,50 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       height: UIConstants
                                                                           .spacingS,
                                                                     ),
-                                                                    Text(
-                                                                      'Anmeldung gesperrt',
-                                                                      style: UIStyles
-                                                                          .errorStyle
-                                                                          .copyWith(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
+                                                                    Container(
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .symmetric(
+                                                                        horizontal:
+                                                                            UIConstants.spacingM,
+                                                                        vertical:
+                                                                            UIConstants.spacingS,
                                                                       ),
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: UIConstants
+                                                                            .schulungenGesperrtColor,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(UIConstants.cornerRadius),
+                                                                      ),
+                                                                      child:
+                                                                          const Text(
+                                                                        'Anmeldungen gesperrt',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                      ),
                                                                     ),
                                                                   ],
                                                                 ],
                                                               ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingM,
                                                             ),
                                                             // Free places sentence
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                top: UIConstants
-                                                                    .spacingS,
                                                                 left: UIConstants
                                                                     .spacingM,
                                                                 right: UIConstants
@@ -1200,14 +1226,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .fromLTRB(
-                                                                UIConstants
-                                                                    .infoTableHorizontalPadding,
-                                                                0,
-                                                                UIConstants
-                                                                    .infoTableHorizontalPadding,
-                                                                UIConstants
-                                                                    .infoTableBottomPadding,
+                                                                      .only(
+                                                                left: UIConstants
+                                                                    .spacingM,
+                                                                right: UIConstants
+                                                                    .spacingM,
+                                                                bottom:
+                                                                    UIConstants
+                                                                        .spacingM,
                                                               ),
                                                               child: Row(
                                                                 crossAxisAlignment:
@@ -1239,11 +1265,25 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         Row(
                                                                           children: [
                                                                             const Icon(
-                                                                              Icons.place,
+                                                                              Icons.location_on,
                                                                               size: UIConstants.defaultIconSize,
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Text(t.ort),
+                                                                            Flexible(child: Text(t.ort)),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.people,
+                                                                              size: UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text('${t.angemeldeteTeilnehmer}/${t.maxTeilnehmer}'),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
@@ -1360,6 +1400,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 ),
                                               ),
                                             ),
+                                            // FABs positioned over the entire dialog
                                             Positioned(
                                               bottom: UIConstants.spacingM,
                                               right: UIConstants.spacingM,

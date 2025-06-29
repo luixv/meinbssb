@@ -5,15 +5,16 @@
 // Flutter/Dart core imports
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/models/contact.dart';
-import '/models/user_data.dart';
-import '/screens/base_screen_layout.dart';
-import '/services/api_service.dart';
-import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ContactDataScreen extends StatefulWidget {
   const ContactDataScreen(
@@ -518,8 +519,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user from ContactdataScreen');
     widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
+    // Navigation is handled by the app's logout handler
+  }
+
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      LoggerService.logError('Error checking network status: $e');
+      return true; // Assume offline if we can't check
     }
   }
 
@@ -537,42 +547,97 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _contactDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            LoggerService.logError(
-              'Error loading contact data in FutureBuilder: ${snapshot.error}',
-            );
+          }
+
+          // Check if offline first
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
             return Center(
-              child: ScaledText(
-                'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                style: UIStyles.errorStyle,
+              child: Padding(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.wifi_off,
+                      size: UIConstants.wifiOffIconSize,
+                      color: UIConstants.noConnectivityIcon,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      'Kontaktdaten sind offline nicht verfügbar',
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.textColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um auf Ihre Kontaktdaten zuzugreifen.',
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
-          } else if (snapshot.hasData && snapshot.data != null) {
-            final List<Map<String, dynamic>> categorizedContactData =
-                snapshot.data!;
-            return _buildContactDataList(
-              categorizedContactData,
-              widget.userData?.personId ?? 0,
-              _onDeleteContact,
-              _isDeleting,
-            );
-          } else {
-            return const Center(
-              child: ScaledText('Keine Kontaktdaten gefunden.'),
-            );
           }
+
+          // If online, show the normal contact data list
+          return FutureBuilder<List<Map<String, dynamic>>>(
+            future: _contactDataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                LoggerService.logError(
+                  'Error loading contact data in FutureBuilder: ${snapshot.error}',
+                );
+                return Center(
+                  child: ScaledText(
+                    'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
+                    style: UIStyles.errorStyle,
+                  ),
+                );
+              } else if (snapshot.hasData && snapshot.data != null) {
+                final List<Map<String, dynamic>> categorizedContactData =
+                    snapshot.data!;
+                return _buildContactDataList(
+                  categorizedContactData,
+                  widget.userData?.personId ?? 0,
+                  _onDeleteContact,
+                  _isDeleting,
+                );
+              } else {
+                return const Center(
+                  child: ScaledText('Keine Kontaktdaten gefunden.'),
+                );
+              }
+            },
+          );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'contactDataFab',
-        onPressed: _showAddContactForm,
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          // Hide FAB when offline
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return const SizedBox.shrink();
+          }
+
+          return FloatingActionButton(
+            heroTag: 'contactDataFab',
+            onPressed: _showAddContactForm,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.add, color: Colors.white),
+          );
+        },
       ),
     );
   }

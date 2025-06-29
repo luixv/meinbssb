@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/logo_widget.dart';
-import '/services/api_service.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
   const SchuetzenausweisScreen({
@@ -16,6 +16,7 @@ class SchuetzenausweisScreen extends StatefulWidget {
     required this.isLoggedIn,
     required this.onLogout,
   });
+
   final int personId;
   final UserData? userData;
   final bool isLoggedIn;

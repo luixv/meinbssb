@@ -1,9 +1,9 @@
 // In lib/screens/person_data_result_screen.dart
 
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 class PersonalDataResultScreen extends StatelessWidget {
   const PersonalDataResultScreen({

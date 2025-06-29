@@ -2,18 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/personal_data_result_screen.dart';
-import '/services/core/logger_service.dart';
-import '/services/api_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/personal_data_result_screen.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:intl/intl.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
-
-// Import FontSizeProvider
-import '/services/core/font_size_provider.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(
@@ -66,6 +65,17 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     _postleitzahlController.dispose();
     _ortController.dispose();
     super.dispose();
+  }
+
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      LoggerService.logError('Error checking network status: $e');
+      return true; // Assume offline if we can't check
+    }
   }
 
   // --- Data Fetching and Population ---
@@ -239,49 +249,59 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       body: _isLoading && _currentPassData == null
           ? const Center(child: CircularProgressIndicator())
           : _buildPersonalDataForm(fontSizeProvider), // Pass the provider
-      floatingActionButton: _isEditing
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'personalDataCancelFab',
+      floatingActionButton: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          // Hide FABs when offline
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return const SizedBox.shrink();
+          }
+
+          return _isEditing
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'personalDataCancelFab',
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = false;
+                          _populateFields(_currentPassData!);
+                        });
+                      },
+                      backgroundColor: UIConstants.defaultAppColor,
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FloatingActionButton(
+                      heroTag: 'personalDataSaveFab',
+                      onPressed: _handleSave,
+                      backgroundColor: UIConstants.defaultAppColor,
+                      child: const Icon(
+                        Icons.save,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                )
+              : FloatingActionButton(
+                  heroTag: 'personalDataEditFab',
                   onPressed: () {
                     setState(() {
-                      _isEditing = false;
-                      _populateFields(_currentPassData!);
+                      _isEditing = true;
                     });
                   },
                   backgroundColor: UIConstants.defaultAppColor,
                   child: const Icon(
-                    Icons.close,
+                    Icons.edit,
                     color: Colors.white,
                   ),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  heroTag: 'personalDataSaveFab',
-                  onPressed: _handleSave,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(
-                    Icons.save,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            )
-          : FloatingActionButton(
-              heroTag: 'personalDataEditFab',
-              onPressed: () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-              backgroundColor: UIConstants.defaultAppColor,
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-            ),
+                );
+        },
+      ),
     );
   }
 

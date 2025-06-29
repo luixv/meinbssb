@@ -304,13 +304,6 @@ Ergebnis der Abfrage:
 
   Future<void> logout() async {
     try {
-      await _cacheService.remove('username');
-      await _secureStorage.delete(key: 'password');
-      await _cacheService.remove('personId');
-      await _cacheService.remove('webLoginId');
-      await _cacheService.remove('username_timestamp');
-      await _cacheService.remove('personId_timestamp');
-      await _cacheService.remove('webLoginId_timestamp');
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
