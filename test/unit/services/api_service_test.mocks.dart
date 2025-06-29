@@ -351,6 +351,16 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<void> clearPattern(String? pattern) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPattern,
+          [pattern],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
         Invocation.method(
           #containsKey,
@@ -596,6 +606,26 @@ class MockUserService extends _i1.Mock implements _i11.UserService {
       ) as _i2.Future<bool>);
 
   @override
+  _i2.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPassdatenCache,
+          [personId],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllPassdatenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<List<_i13.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
@@ -747,6 +777,26 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
+  _i2.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearSchulungenCache,
+          [personId],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllSchulungenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<List<_i20.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
         Invocation.method(
           #fetchDisziplinen,
@@ -754,6 +804,16 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
         ),
         returnValue: _i2.Future<List<_i20.Disziplin>>.value(<_i20.Disziplin>[]),
       ) as _i2.Future<List<_i20.Disziplin>>);
+
+  @override
+  _i2.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearDisziplinenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 
   @override
   _i2.Future<_i3.RegisterSchulungenTeilnehmerResponse>

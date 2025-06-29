@@ -8,24 +8,39 @@ import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 
 import 'registration_screen_test.mocks.dart';
 
-@GenerateMocks([AuthService, EmailService, ConfigService, EmailSender])
+@GenerateMocks([
+  AuthService,
+  EmailService,
+  ConfigService,
+  EmailSender,
+  NetworkService,
+  FontSizeProvider,
+])
 void main() {
   late MockAuthService mockAuthService;
   late MockEmailService mockEmailService;
   late MockConfigService mockConfigService;
   late MockEmailSender mockEmailSender;
+  late MockNetworkService mockNetworkService;
+  late MockFontSizeProvider mockFontSizeProvider;
 
   setUp(() {
     mockAuthService = MockAuthService();
     mockEmailService = MockEmailService();
     mockConfigService = MockConfigService();
     mockEmailSender = MockEmailSender();
+    mockNetworkService = MockNetworkService();
+    mockFontSizeProvider = MockFontSizeProvider();
 
     when(mockConfigService.getString('logoName', 'appTheme'))
         .thenReturn('assets/images/myBSSB-logo.png');
+    when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
+    when(mockFontSizeProvider.scaleFactor).thenReturn(1.0);
   });
 
   Future<void> pumpRegistrationScreen(WidgetTester tester) async {
@@ -36,6 +51,10 @@ void main() {
           Provider<AuthService>.value(value: mockAuthService),
           Provider<EmailService>.value(value: mockEmailService),
           Provider<EmailSender>.value(value: mockEmailSender),
+          Provider<NetworkService>.value(value: mockNetworkService),
+          ChangeNotifierProvider<FontSizeProvider>.value(
+            value: mockFontSizeProvider,
+          ),
         ],
         child: MaterialApp(
           home: Scaffold(
@@ -52,11 +71,33 @@ void main() {
 
   testWidgets('Text Field are present', (WidgetTester tester) async {
     await pumpRegistrationScreen(tester);
+    await tester.pumpAndSettle(); // Wait for FutureBuilder to complete
 
-    expect(find.byKey(const Key('firstNameField')), findsOneWidget);
-    expect(find.byKey(const Key('lastNameField')), findsOneWidget);
-    expect(find.byKey(const Key('passNumberField')), findsOneWidget);
-    expect(find.byKey(const Key('emailField')), findsOneWidget);
+    // Look for text fields by their label text instead of keys
+    expect(find.text('Vorname'), findsOneWidget);
+    expect(find.text('Nachname'), findsOneWidget);
+    expect(find.text('Schützenausweisnummer'), findsOneWidget);
+    expect(find.text('E-Mail'), findsOneWidget);
+  });
+
+  testWidgets('Shows offline message when offline',
+      (WidgetTester tester) async {
+    // Mock offline state
+    when(mockNetworkService.hasInternet()).thenAnswer((_) async => false);
+
+    await pumpRegistrationScreen(tester);
+    await tester.pumpAndSettle(); // Wait for FutureBuilder to complete
+
+    expect(
+      find.text('Registrierung ist offline nicht verfügbar'),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um sich zu registrieren.',
+      ),
+      findsOneWidget,
+    );
   });
 
   group('Pure Validation Tests', () {
@@ -114,6 +155,10 @@ void main() {
         MultiProvider(
           providers: [
             Provider<ConfigService>.value(value: mockConfigService),
+            Provider<NetworkService>.value(value: mockNetworkService),
+            ChangeNotifierProvider<FontSizeProvider>.value(
+              value: mockFontSizeProvider,
+            ),
           ],
           child: MaterialApp(
             home: RegistrationScreen(
@@ -127,10 +172,10 @@ void main() {
 
       // Assert
       expect(find.text('Registrierung'), findsWidgets);
-      expect(find.byKey(const Key('firstNameField')), findsOneWidget);
-      expect(find.byKey(const Key('lastNameField')), findsOneWidget);
-      expect(find.byKey(const Key('emailField')), findsOneWidget);
-      expect(find.byKey(const Key('submitButton')), findsOneWidget);
+      expect(find.text('Vorname'), findsOneWidget);
+      expect(find.text('Nachname'), findsOneWidget);
+      expect(find.text('E-Mail'), findsOneWidget);
+      expect(find.byKey(const Key('registerButton')), findsOneWidget);
     });
   });
 }

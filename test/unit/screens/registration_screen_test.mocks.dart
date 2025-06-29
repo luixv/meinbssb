@@ -4,12 +4,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
+import 'dart:ui' as _i10;
 
 import 'package:mailer/mailer.dart' as _i2;
 import 'package:mailer/smtp_server.dart' as _i7;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/email_service.dart' as _i5;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i9;
+import 'package:meinbssb/services/core/network_service.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -28,6 +31,16 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeSendReport_0 extends _i1.SmartFake implements _i2.SendReport {
   _FakeSendReport_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDuration_1 extends _i1.SmartFake implements Duration {
+  _FakeDuration_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -269,4 +282,121 @@ class MockEmailSender extends _i1.Mock implements _i5.EmailSender {
           ),
         )),
       ) as _i4.Future<_i2.SendReport>);
+}
+
+/// A class which mocks [NetworkService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockNetworkService extends _i1.Mock implements _i8.NetworkService {
+  MockNetworkService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
+        Invocation.method(
+          #hasInternet,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  Duration getCacheExpirationDuration() => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheExpirationDuration,
+          [],
+        ),
+        returnValue: _FakeDuration_1(
+          this,
+          Invocation.method(
+            #getCacheExpirationDuration,
+            [],
+          ),
+        ),
+      ) as Duration);
+}
+
+/// A class which mocks [FontSizeProvider].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFontSizeProvider extends _i1.Mock implements _i9.FontSizeProvider {
+  MockFontSizeProvider() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  double get scaleFactor => (super.noSuchMethod(
+        Invocation.getter(#scaleFactor),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
+  bool get hasListeners => (super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  void increaseFontSize() => super.noSuchMethod(
+        Invocation.method(
+          #increaseFontSize,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void decreaseFontSize() => super.noSuchMethod(
+        Invocation.method(
+          #decreaseFontSize,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void resetFontSize() => super.noSuchMethod(
+        Invocation.method(
+          #resetFontSize,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void addListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
 }

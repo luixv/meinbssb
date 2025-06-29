@@ -4,6 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/schulung.dart';
 import '/models/user_data.dart';
@@ -98,6 +99,17 @@ class AbsolvierteSchulungenScreenState
     // Navigation is handled by the app's logout handler
   }
 
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      LoggerService.logError('Error checking network status: $e');
+      return true; // Assume offline if we can't check
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
@@ -105,87 +117,141 @@ class AbsolvierteSchulungenScreenState
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
-      body: Padding(
-        padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: Column(
-          crossAxisAlignment: UIConstants.startCrossAlignment,
-          children: [
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (absolvierteSchulungen.isEmpty)
-              const ScaledText(
-                'Keine absolvierten Schulungen gefunden.',
-                style: TextStyle(color: UIConstants.greySubtitleTextColor),
-              )
-            else
-              Expanded(
-                child: ListView.separated(
-                  itemCount: absolvierteSchulungen.length,
-                  separatorBuilder: (_, __) => const SizedBox(
-                    height: UIConstants.defaultSeparatorHeight,
-                  ),
-                  itemBuilder: (context, index) {
-                    final seminar = absolvierteSchulungen[index];
-                    final ausgestelltAm =
-                        DateTime.tryParse(seminar.ausgestelltAm);
-                    final formattedAusgestelltAm = ausgestelltAm == null ||
-                            seminar.ausgestelltAm.isEmpty ||
-                            seminar.ausgestelltAm == '-'
-                        ? 'Unbekannt'
-                        : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
+      body: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                    return ListTile(
-                      tileColor: UIConstants.tileColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(UIConstants.cornerRadius),
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return Center(
+              child: Padding(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.wifi_off,
+                      size: UIConstants.wifiOffIconSize,
+                      color: UIConstants.noConnectivityIcon,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      'Absolvierte Schulungen sind offline nicht verfügbar',
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.textColor,
                       ),
-                      leading: const Column(
-                        mainAxisAlignment: UIStyles.listItemLeadingAlignment,
-                        children: [
-                          Icon(
-                            Icons.task_alt,
-                            color: UIConstants.defaultAppColor,
-                          ),
-                        ],
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihre absolvierten Schulungen anzuzeigen.',
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
                       ),
-                      title: ScaledText(
-                        seminar.bezeichnung,
-                        style: UIStyles.subtitleStyle,
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ScaledText(
-                            'Ausgestellt am: $formattedAusgestelltAm',
-                            style: UIStyles.listItemSubtitleStyle,
-                          ),
-                          ScaledText(
-                            'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
-                            style: UIStyles.listItemSubtitleStyle,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'absolvierteSchulungenFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'isLoggedIn': true},
+            );
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(UIConstants.spacingM),
+            child: Column(
+              crossAxisAlignment: UIConstants.startCrossAlignment,
+              children: [
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (absolvierteSchulungen.isEmpty)
+                  const ScaledText(
+                    'Keine absolvierten Schulungen gefunden.',
+                    style: TextStyle(color: UIConstants.greySubtitleTextColor),
+                  )
+                else
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: absolvierteSchulungen.length,
+                      separatorBuilder: (_, __) => const SizedBox(
+                        height: UIConstants.defaultSeparatorHeight,
+                      ),
+                      itemBuilder: (context, index) {
+                        final seminar = absolvierteSchulungen[index];
+                        final ausgestelltAm =
+                            DateTime.tryParse(seminar.ausgestelltAm);
+                        final formattedAusgestelltAm = ausgestelltAm == null ||
+                                seminar.ausgestelltAm.isEmpty ||
+                                seminar.ausgestelltAm == '-'
+                            ? 'Unbekannt'
+                            : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
+
+                        return ListTile(
+                          tileColor: UIConstants.tileColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(UIConstants.cornerRadius),
+                          ),
+                          leading: const Column(
+                            mainAxisAlignment:
+                                UIStyles.listItemLeadingAlignment,
+                            children: [
+                              Icon(
+                                Icons.task_alt,
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ],
+                          ),
+                          title: ScaledText(
+                            seminar.bezeichnung,
+                            style: UIStyles.subtitleStyle,
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ScaledText(
+                                'Ausgestellt am: $formattedAusgestelltAm',
+                                style: UIStyles.listItemSubtitleStyle,
+                              ),
+                              ScaledText(
+                                'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
+                                style: UIStyles.listItemSubtitleStyle,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
           );
         },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
-        ),
+      ),
+      floatingActionButton: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          // Hide FAB when offline
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return const SizedBox.shrink();
+          }
+
+          return FloatingActionButton(
+            heroTag: 'absolvierteSchulungenFab',
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed(
+                '/home',
+                arguments: {'isLoggedIn': true},
+              );
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(
+              Icons.home,
+              color: UIConstants.whiteColor,
+            ),
+          );
+        },
       ),
     );
   }

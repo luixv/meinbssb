@@ -10,6 +10,7 @@ import '/screens/logo_widget.dart';
 import '/services/api/auth_service.dart';
 import '/services/core/error_service.dart';
 import '/services/core/font_size_provider.dart';
+import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -43,6 +44,16 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     super.dispose();
   }
 
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      return true; // Assume offline if we can't check
+    }
+  }
+
   Future<void> _resetPassword() async {
     setState(() {
       _isLoading = true;
@@ -51,8 +62,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
     });
 
     try {
-      final response = await widget.authService
-          .passwordReset(_passNumberController.text);
+      final response =
+          await widget.authService.passwordReset(_passNumberController.text);
 
       if (response['ResultType'] == 1) {
         setState(() {
@@ -81,99 +92,145 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: Consumer<FontSizeProvider>(
-        builder: (context, fontSizeProvider, child) {
-          return SingleChildScrollView(
-            padding: UIConstants.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const LogoWidget(),
-                const SizedBox(height: UIConstants.spacingS),
-                ScaledText(
-                  UIConstants.passwordResetTitle,
-                  key: const Key('passwordResetTitle'),
-                  style: UIStyles.headerStyle.copyWith(
-                    color: UIConstants.defaultAppColor,
-                    fontSize: UIStyles.headerStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
+      body: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return Center(
+              child: Padding(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.wifi_off,
+                      size: UIConstants.wifiOffIconSize,
+                      color: UIConstants.noConnectivityIcon,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      'Passwort zurücksetzen ist offline nicht verfügbar',
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.textColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: UIConstants.spacingS),
-                if (_errorMessage.isNotEmpty)
-                  ScaledText(
-                    _errorMessage,
-                    style: UIStyles.errorStyle.copyWith(
-                      fontSize: UIStyles.errorStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                  ),
-                if (_successMessage.isNotEmpty)
-                  ScaledText(
-                    _successMessage,
-                    style: UIStyles.successStyle.copyWith(
-                      fontSize: UIStyles.successStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                  ),
-                TextField(
-                  controller: _passNumberController,
-                  style: UIStyles.bodyStyle.copyWith(
-                    fontSize: UIStyles.bodyStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: UIConstants.passNumberLabel,
-                    labelStyle: UIStyles.formLabelStyle.copyWith(
-                      fontSize: UIStyles.formLabelStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                    floatingLabelStyle: UIStyles.formLabelStyle.copyWith(
-                      fontSize: UIStyles.formLabelStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                    hintStyle: UIStyles.formLabelStyle.copyWith(
-                      fontSize: UIStyles.formLabelStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: UIConstants.spacingS),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    key: const Key('forgotPasswordButton'),
-                    onPressed: _isLoading ? null : _resetPassword,
-                    style: UIStyles.defaultButtonStyle,
-                    child: SizedBox(
-                      height: 36,
-                      child: Center(
-                        child: _isLoading
-                            ? UIConstants.defaultLoadingIndicator
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.lock_reset,
-                                    color: Colors.white,
-                                    size: 24 * fontSizeProvider.scaleFactor,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingS),
-                                  ScaledText(
-                                    UIConstants.resetPasswordButtonLabel,
-                                    style: UIStyles.buttonStyle.copyWith(
-                                      fontSize: UIStyles.buttonStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                  ),
-                                ],
-                              ),
+              ),
+            );
+          }
+
+          return Consumer<FontSizeProvider>(
+            builder: (context, fontSizeProvider, child) {
+              return SingleChildScrollView(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const LogoWidget(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      UIConstants.passwordResetTitle,
+                      key: const Key('passwordResetTitle'),
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.defaultAppColor,
+                        fontSize: UIStyles.headerStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
                       ),
                     ),
-                  ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    if (_errorMessage.isNotEmpty)
+                      ScaledText(
+                        _errorMessage,
+                        style: UIStyles.errorStyle.copyWith(
+                          fontSize: UIStyles.errorStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                    if (_successMessage.isNotEmpty)
+                      ScaledText(
+                        _successMessage,
+                        style: UIStyles.successStyle.copyWith(
+                          fontSize: UIStyles.successStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                    TextField(
+                      controller: _passNumberController,
+                      style: UIStyles.bodyStyle.copyWith(
+                        fontSize: UIStyles.bodyStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: UIConstants.passNumberLabel,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize: UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                        floatingLabelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize: UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                        hintStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize: UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        key: const Key('forgotPasswordButton'),
+                        onPressed: _isLoading ? null : _resetPassword,
+                        style: UIStyles.defaultButtonStyle,
+                        child: SizedBox(
+                          height: 36,
+                          child: Center(
+                            child: _isLoading
+                                ? UIConstants.defaultLoadingIndicator
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.lock_reset,
+                                        color: Colors.white,
+                                        size: 24 * fontSizeProvider.scaleFactor,
+                                      ),
+                                      const SizedBox(
+                                        width: UIConstants.spacingS,
+                                      ),
+                                      ScaledText(
+                                        UIConstants.resetPasswordButtonLabel,
+                                        style: UIStyles.buttonStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.buttonStyle.fontSize! *
+                                                  fontSizeProvider.scaleFactor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),

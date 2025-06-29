@@ -449,6 +449,56 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         ),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearSchulungenCache,
+          [personId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllSchulungenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPassdatenCache,
+          [personId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllPassdatenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearDisziplinenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [ApiService].
@@ -843,4 +893,54 @@ class CustomMockApiService extends _i1.Mock implements _i3.ApiService {
         ),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearSchulungenCache,
+          [personId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllSchulungenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPassdatenCache,
+          [personId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllPassdatenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearDisziplinenCache,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

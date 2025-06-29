@@ -381,29 +381,71 @@ class TrainingService {
   }
 
   Future<List<Disziplin>> fetchDisziplinen() async {
-    try {
-      final response = await _httpClient.get('Disziplinen');
-      if (response is! List) {
-        return [];
-      }
-      return response
-          .map((item) {
-            try {
-              if (item is Map<String, dynamic>) {
-                return Disziplin.fromJson(item);
-              }
+    const cacheKey = 'disziplinen';
+    final cacheDuration = _networkService.getCacheExpirationDuration();
 
-              return null;
-            } catch (e) {
-              LoggerService.logError('Error mapping Disziplin: $e');
-              return null;
-            }
-          })
-          .whereType<Disziplin>()
+    try {
+      final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+        cacheKey,
+        cacheDuration,
+        () async {
+          final response = await _httpClient.get('Disziplinen');
+          if (response is! List) {
+            return [];
+          }
+          return response
+              .map((item) {
+                try {
+                  if (item is Map<String, dynamic>) {
+                    return Disziplin.fromJson(item).toJson();
+                  }
+                  return null;
+                } catch (e) {
+                  LoggerService.logError('Error mapping Disziplin: $e');
+                  return null;
+                }
+              })
+              .whereType<Map<String, dynamic>>()
+              .toList();
+        },
+        (data) {
+          // Ensure the cached data is properly typed
+          if (data is List) {
+            return data.map((item) {
+              if (item is Map<String, dynamic>) {
+                return item;
+              } else if (item is Map) {
+                return Map<String, dynamic>.from(item);
+              } else {
+                LoggerService.logWarning(
+                  'Unexpected item type in cached disziplinen: ${item.runtimeType}',
+                );
+                return <String, dynamic>{};
+              }
+            }).toList();
+          }
+          return <dynamic>[];
+        },
+      );
+
+      return result
+          .whereType<Map<String, dynamic>>()
+          .map((json) => Disziplin.fromJson(json))
           .toList();
     } catch (e) {
       LoggerService.logError('Error fetching Disziplinen: $e');
       return [];
+    }
+  }
+
+  /// Clears the disziplinen cache
+  Future<void> clearDisziplinenCache() async {
+    try {
+      const cacheKey = 'disziplinen';
+      await _cacheService.remove(cacheKey);
+      LoggerService.logInfo('Cleared disziplinen cache');
+    } catch (e) {
+      LoggerService.logError('Error clearing disziplinen cache: $e');
     }
   }
 

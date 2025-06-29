@@ -351,4 +351,6 @@ class UIConstants {
       Colors.red; // For gesperrt/locked state
   static const Color schulungenNormalColor =
       defaultAppColor; // For normal state
+
+  static const double wifiOffIconSize = 64.0;
 }

@@ -6,18 +6,25 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/bank_data_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/bank_data.dart';
 
-@GenerateMocks([ApiService])
+@GenerateMocks([ApiService, NetworkService, ConfigService])
 import 'bank_data_screen_test.mocks.dart';
 
 void main() {
   late MockApiService mockApiService;
+  late MockNetworkService mockNetworkService;
+  late MockConfigService mockConfigService;
   late UserData testUserData;
 
   setUp(() {
     mockApiService = MockApiService();
+    mockNetworkService = MockNetworkService();
+    mockConfigService = MockConfigService();
     testUserData = const UserData(
       personId: 123,
       webLoginId: 456,
@@ -37,8 +44,15 @@ void main() {
     Function()? onLogout,
   }) {
     return MaterialApp(
-      home: Provider<ApiService>.value(
-        value: mockApiService,
+      home: MultiProvider(
+        providers: [
+          Provider<ApiService>.value(value: mockApiService),
+          Provider<NetworkService>.value(value: mockNetworkService),
+          Provider<ConfigService>.value(value: mockConfigService),
+          ChangeNotifierProvider<FontSizeProvider>(
+            create: (_) => FontSizeProvider(),
+          ),
+        ],
         child: BaseScreenLayout(
           title: 'Bankdaten',
           userData: userData,

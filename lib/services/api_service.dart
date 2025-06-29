@@ -268,4 +268,9 @@ class ApiService {
   Future<void> clearAllPassdatenCache() async {
     await _userService.clearAllPassdatenCache();
   }
+
+  /// Clears the disziplinen cache
+  Future<void> clearDisziplinenCache() async {
+    await _trainingService.clearDisziplinenCache();
+  }
 }
