@@ -119,8 +119,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
-                      horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingSM,),
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingSM,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
@@ -139,8 +140,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
                   EdgeInsets.symmetric(
-                      horizontal: UIConstants.spacingL,
-                      vertical: UIConstants.spacingSM,),
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingSM,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
@@ -163,7 +165,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Bitte wählen Sie ein Datum.'),
-          backgroundColor: Colors.red,
+          backgroundColor: UIConstants.errorColor,
         ),
       );
       return;

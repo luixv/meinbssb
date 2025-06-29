@@ -160,7 +160,7 @@ class StylesScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: UIConstants.mydarkGreyColor),
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
               padding: const EdgeInsets.all(UIConstants.spacingM),
