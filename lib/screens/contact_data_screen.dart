@@ -386,7 +386,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           child: ScaledText(
                             entry.value,
                             style: TextStyle(
-                              fontSize: 16 * fontSizeProvider.scaleFactor,
+                              fontSize: UIConstants.subtitleFontSize *
+                                  fontSizeProvider.scaleFactor,
                             ),
                           ),
                         );
@@ -425,7 +426,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         floatingLabelBehavior: FloatingLabelBehavior.auto,
                       ),
                       style: TextStyle(
-                        fontSize: 16 * fontSizeProvider.scaleFactor,
+                        fontSize: UIConstants.subtitleFontSize *
+                            fontSizeProvider.scaleFactor,
                       ),
                       keyboardType: TextInputType.text,
                     ),

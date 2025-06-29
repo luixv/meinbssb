@@ -328,7 +328,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.spacingM),
           FloatingActionButton(
             heroTag: 'bankDataSaveFab',
             onPressed: _isSaving ? null : _onSaveBankData,
@@ -338,7 +338,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       UIConstants.circularProgressIndicator,
                     ),
-                    strokeWidth: 2,
+                    strokeWidth: UIConstants.defaultStrokeWidth,
                   )
                 : const Icon(
                     Icons.save,
@@ -358,14 +358,14 @@ class BankDataScreenState extends State<BankDataScreen> {
             child: _isSaving
                 ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 2,
+                    strokeWidth: UIConstants.defaultStrokeWidth,
                   )
                 : const Icon(
                     Icons.delete_outline,
                     color: Colors.white,
                   ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.spacingM),
           FloatingActionButton(
             heroTag: 'bankDataEditFab',
             onPressed: () {
@@ -399,20 +399,20 @@ class BankDataScreenState extends State<BankDataScreen> {
               const Icon(
                 Icons.error_outline,
                 color: Colors.red,
-                size: 48,
+                size: UIConstants.iconSizeM,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: UIConstants.spacingM),
               const ScaledText(
                 'Fehler beim Laden der Bankdaten',
                 style: UIStyles.headerStyle,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: UIConstants.spacingS),
               const ScaledText(
                 'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
                 textAlign: TextAlign.center,
                 style: UIStyles.bodyStyle,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: UIConstants.spacingM),
               ElevatedButton(
                 onPressed: () {
                   widget.onLogout();
@@ -489,14 +489,14 @@ class BankDataScreenState extends State<BankDataScreen> {
                       const Icon(
                         Icons.error_outline,
                         color: Colors.red,
-                        size: 48,
+                        size: UIConstants.iconSizeM,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: UIConstants.spacingM),
                       const ScaledText(
                         'Fehler beim Laden der Bankdaten',
                         style: UIStyles.headerStyle,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: UIConstants.spacingS),
                       ScaledText(
                         snapshot.error.toString(),
                         textAlign: TextAlign.center,

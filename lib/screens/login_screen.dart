@@ -297,7 +297,8 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: _isLoading ? null : _handleLogin,
         style: UIStyles.defaultButtonStyle,
         child: SizedBox(
-          height: 36, // Match the minimumSize height from defaultButtonStyle
+          height: UIConstants
+              .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
           child: Center(
             child: _isLoading
                 ? UIConstants.defaultLoadingIndicator

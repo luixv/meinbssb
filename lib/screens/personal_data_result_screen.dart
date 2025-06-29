@@ -33,14 +33,14 @@ class PersonalDataResultScreen extends StatelessWidget {
             Icon(
               success ? Icons.check_circle : Icons.error,
               color: success ? Colors.green : Colors.red,
-              size: 64,
+              size: UIConstants.iconSizeXL,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               success
                   ? UIConstants.personalDataSaved
                   : UIConstants.errorOccurred,
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
           ],

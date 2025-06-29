@@ -41,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
                     const ScaledText(
                       'Textgröße',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: UIConstants.largeFontSize,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

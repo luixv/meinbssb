@@ -118,7 +118,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 ),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                      horizontal: UIConstants.spacingL,
+                      vertical: UIConstants.spacingSM,),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
@@ -136,7 +138,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     WidgetStatePropertyAll(UIConstants.primaryColor),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                      horizontal: UIConstants.spacingL,
+                      vertical: UIConstants.spacingSM,),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),

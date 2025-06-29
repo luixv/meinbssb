@@ -198,7 +198,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                         onPressed: _isLoading ? null : _resetPassword,
                         style: UIStyles.defaultButtonStyle,
                         child: SizedBox(
-                          height: 36,
+                          height: UIConstants.defaultButtonHeight,
                           child: Center(
                             child: _isLoading
                                 ? UIConstants.defaultLoadingIndicator

@@ -125,7 +125,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingSM,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
@@ -143,7 +146,10 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     WidgetStatePropertyAll(UIConstants.primaryColor),
                 foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
                 padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  EdgeInsets.symmetric(
+                    horizontal: UIConstants.spacingL,
+                    vertical: UIConstants.spacingSM,
+                  ),
                 ),
                 textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
                 minimumSize: WidgetStatePropertyAll(Size(120, 48)),
@@ -492,7 +498,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         onPressed: _isLoading ? null : (_validateForm() ? _register : null),
         style: UIStyles.defaultButtonStyle,
         child: SizedBox(
-          height: 36, // Match the minimumSize height from defaultButtonStyle
+          height: UIConstants
+              .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
           child: Center(
             child: _isLoading
                 ? UIConstants.defaultLoadingIndicator

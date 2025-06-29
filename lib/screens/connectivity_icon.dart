@@ -74,8 +74,8 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
         icon = _useSvg
             ? SvgPicture.asset(
                 'assets/wifi_on.svg', // Replace with your SVG asset path
-                width: 24,
-                height: 24,
+                width: UIConstants.defaultIconSize,
+                height: UIConstants.defaultIconSize,
                 colorFilter: const ColorFilter.mode(
                   Colors.green,
                   BlendMode.srcIn,
@@ -88,8 +88,8 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
         icon = _useSvg
             ? SvgPicture.asset(
                 'assets/signal_cellular_4_bar.svg',
-                width: 24,
-                height: 24,
+                width: UIConstants.defaultIconSize,
+                height: UIConstants.defaultIconSize,
                 colorFilter: const ColorFilter.mode(
                   UIConstants.connectivityIcon,
                   BlendMode.srcIn,
@@ -106,8 +106,8 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
         icon = _useSvg
             ? SvgPicture.asset(
                 'assets/ethernet.svg', // Replace with your SVG asset path
-                width: 24,
-                height: 24,
+                width: UIConstants.defaultIconSize,
+                height: UIConstants.defaultIconSize,
                 colorFilter: const ColorFilter.mode(
                   UIConstants.connectivityIcon,
                   BlendMode.srcIn,
@@ -124,8 +124,8 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
         icon = _useSvg
             ? SvgPicture.asset(
                 'assets/wifi_off.svg', // Replace with your SVG asset path
-                width: 24,
-                height: 24,
+                width: UIConstants.defaultIconSize,
+                height: UIConstants.defaultIconSize,
                 colorFilter: const ColorFilter.mode(
                   UIConstants.noConnectivityIcon,
                   BlendMode.srcIn,

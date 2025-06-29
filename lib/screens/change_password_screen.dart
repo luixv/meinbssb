@@ -309,7 +309,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             child: _isLoading
                 ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 2,
+                    strokeWidth: UIConstants.defaultStrokeWidth,
                   )
                 : const Icon(Icons.save, color: Colors.white),
           );

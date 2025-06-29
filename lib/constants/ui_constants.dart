@@ -102,6 +102,7 @@ class UIConstants {
   // Spacing constants
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
+  static const double spacingSM = 12.0;
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
@@ -155,6 +156,7 @@ class UIConstants {
   static const double defaultIconSize = 16.0;
   static const double defaultIconWidth = 60.0;
   static const double defaultButtonWidth = 120.0;
+  static const double defaultButtonHeight = 36.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
   static const double iconSizeL = 32.0;
