@@ -3,13 +3,13 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/logo_widget.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/screens/login_screen.dart';
-import '/services/api/auth_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/screens/login_screen.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   const PasswordResetSuccessScreen({

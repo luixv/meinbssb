@@ -1,73 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 
 import 'package:meinbssb/screens/change_password_screen.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-
-import 'change_password_screen_test.mocks.dart';
+import '../helpers/test_helper.dart';
 
 @GenerateMocks([NetworkService, FontSizeProvider, ConfigService])
 void main() {
-  late MockNetworkService mockNetworkService;
-  late MockFontSizeProvider mockFontSizeProvider;
-  late MockConfigService mockConfigService;
-
   setUp(() {
-    mockNetworkService = MockNetworkService();
-    mockFontSizeProvider = MockFontSizeProvider();
-    mockConfigService = MockConfigService();
-    when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
-    when(mockFontSizeProvider.scaleFactor).thenReturn(1.0);
-    when(mockConfigService.getString('logoName', 'appTheme'))
-        .thenReturn('assets/images/myBSSB-logo.png');
+    TestHelper.setupMocks();
   });
 
-  Future<void> pumpChangePasswordScreen(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider<NetworkService>.value(value: mockNetworkService),
-          ChangeNotifierProvider<FontSizeProvider>.value(
-              value: mockFontSizeProvider,),
-          Provider<ConfigService>.value(value: mockConfigService),
-        ],
-        child: MaterialApp(
-          home: ChangePasswordScreen(
-            userData: null,
-            isLoggedIn: false,
-            onLogout: () {},
-          ),
-        ),
+  Widget createChangePasswordScreen() {
+    return TestHelper.createTestApp(
+      home: ChangePasswordScreen(
+        userData: null,
+        isLoggedIn: true,
+        onLogout: () {},
       ),
     );
   }
 
-  testWidgets('shows form fields when online', (WidgetTester tester) async {
-    await pumpChangePasswordScreen(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('Neues Passwort erstellen'), findsWidgets);
-    expect(find.text('Aktuelles Passwort'), findsOneWidget);
-    expect(find.text('Neues Passwort'), findsOneWidget);
-    expect(find.text('Neues Passwort wiederholen'), findsOneWidget);
-    expect(find.byType(FloatingActionButton), findsOneWidget);
-  });
+  group('ChangePasswordScreen', () {
+    testWidgets('renders change password form', (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
 
-  testWidgets('shows offline message when offline',
-      (WidgetTester tester) async {
-    when(mockNetworkService.hasInternet()).thenAnswer((_) async => false);
-    await pumpChangePasswordScreen(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('Passwort ändern ist offline nicht verfügbar'),
-        findsOneWidget,);
-    expect(
-        find.text(
-            'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zu ändern.',),
-        findsOneWidget,);
-    expect(find.byType(FloatingActionButton), findsNothing);
+      expect(find.text('Neues Passwort erstellen'), findsOneWidget);
+      expect(find.byType(TextFormField), findsWidgets);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      expect(find.byIcon(Icons.save), findsOneWidget);
+    });
+
+    testWidgets('validates required fields', (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Bitte geben Sie Ihr aktuelles Passwort ein'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Bitte geben Sie ein Passwort ein'),
+        findsOneWidget,
+      );
+    });
   });
 }

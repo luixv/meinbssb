@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '/screens/base_screen_layout.dart';
-import '/constants/ui_constants.dart';
-import '/models/user_data.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 class BankDataResultScreen extends StatelessWidget {
   const BankDataResultScreen({

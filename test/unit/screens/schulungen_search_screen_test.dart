@@ -1,64 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/schulungen_search_screen.dart';
-import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
-
-@GenerateMocks([NetworkService, ConfigService])
-import 'schulungen_search_screen_test.mocks.dart';
+import '../helpers/test_helper.dart';
 
 void main() {
-  late MockNetworkService mockNetworkService;
-  late MockConfigService mockConfigService;
-  late UserData testUserData;
-
   setUp(() {
-    mockNetworkService = MockNetworkService();
-    mockConfigService = MockConfigService();
-    testUserData = const UserData(
-      personId: 123,
-      webLoginId: 456,
-      passnummer: '12345678',
-      vereinNr: 789,
-      namen: 'User',
-      vorname: 'Test',
-      vereinName: 'Test Club',
-      passdatenId: 1,
-      mitgliedschaftId: 1,
-    );
+    TestHelper.setupMocks();
   });
 
-  Widget createSchulungenSearchScreen({
-    UserData? userData,
-    bool isLoggedIn = true,
-    Function()? onLogout,
-  }) {
-    return MaterialApp(
-      home: MultiProvider(
-        providers: [
-          Provider<NetworkService>.value(value: mockNetworkService),
-          Provider<ConfigService>.value(value: mockConfigService),
-          ChangeNotifierProvider<FontSizeProvider>(
-            create: (_) => FontSizeProvider(),
-          ),
-        ],
-        child: BaseScreenLayout(
-          title: 'Schulungen',
-          userData: userData,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout ?? () {},
-          body: SchulungenSearchScreen(
-            userData,
-            isLoggedIn: isLoggedIn,
-            onLogout: onLogout ?? () {},
-          ),
+  Widget createSchulungenSearchScreen() {
+    return TestHelper.createTestApp(
+      home: SchulungenSearchScreen(
+        const UserData(
+          personId: 439287,
+          webLoginId: 13901,
+          passnummer: '40100709',
+          vereinNr: 401051,
+          namen: 'Schürz',
+          vorname: 'Lukas',
+          vereinName: 'Feuerschützen Kühbach',
+          passdatenId: 2000009155,
+          mitgliedschaftId: 439287,
+          strasse: 'Aichacher Strasse 21',
+          plz: '86574',
+          ort: 'Alsmoos',
+          telefon: '123456789',
         ),
+        isLoggedIn: true,
+        onLogout: () {},
       ),
     );
   }
@@ -66,10 +37,10 @@ void main() {
   group('SchulungenSearchScreen', () {
     testWidgets('renders correctly with user data',
         (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => true);
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
       expect(find.text('Schulungen'), findsOneWidget);
@@ -84,10 +55,10 @@ void main() {
 
     testWidgets('shows offline message when offline',
         (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer((_) async => false);
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => false);
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
       expect(
@@ -104,10 +75,10 @@ void main() {
     });
 
     testWidgets('shows FABs when online', (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => true);
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsNWidgets(2));
@@ -116,10 +87,10 @@ void main() {
     });
 
     testWidgets('hides FABs when offline', (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer((_) async => false);
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => false);
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
       expect(find.byType(FloatingActionButton), findsNothing);
@@ -127,12 +98,11 @@ void main() {
 
     testWidgets('shows loading indicator while checking network status',
         (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer(
+      when(TestHelper.mockNetworkService.hasInternet()).thenAnswer(
         (_) => Future.delayed(const Duration(milliseconds: 100), () => true),
       );
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -142,10 +112,10 @@ void main() {
 
     testWidgets('displays form fields when online',
         (WidgetTester tester) async {
-      when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => true);
 
-      await tester
-          .pumpWidget(createSchulungenSearchScreen(userData: testUserData));
+      await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
       expect(find.text('Schulungen suchen'), findsOneWidget);

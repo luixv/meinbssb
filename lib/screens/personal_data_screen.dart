@@ -2,19 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/personal_data_result_screen.dart';
-import '/services/core/logger_service.dart';
-import '/services/api_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/personal_data_result_screen.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:intl/intl.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
-import '/services/core/network_service.dart';
-
-// Import FontSizeProvider
-import '/services/core/font_size_provider.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(

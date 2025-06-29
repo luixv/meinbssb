@@ -8,18 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/registration_screen.dart';
-import '/screens/password_reset_screen.dart';
-import '/screens/logo_widget.dart';
-import '/services/api/auth_service.dart';
-import '/services/api_service.dart';
-import '/services/core/email_service.dart';
-import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({

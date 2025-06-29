@@ -3,11 +3,11 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key, required this.userData});

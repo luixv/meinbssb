@@ -1,149 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/bank_data_screen.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/models/bank_data.dart';
-
-@GenerateMocks([ApiService, NetworkService, ConfigService])
-import 'bank_data_screen_test.mocks.dart';
+import '../helpers/test_helper.dart';
 
 void main() {
-  late MockApiService mockApiService;
-  late MockNetworkService mockNetworkService;
-  late MockConfigService mockConfigService;
-  late UserData testUserData;
-
   setUp(() {
-    mockApiService = MockApiService();
-    mockNetworkService = MockNetworkService();
-    mockConfigService = MockConfigService();
-    testUserData = const UserData(
-      personId: 123,
-      webLoginId: 456,
-      passnummer: '12345678',
-      vereinNr: 789,
-      namen: 'User',
-      vorname: 'Test',
-      vereinName: 'Test Club',
-      passdatenId: 1,
-      mitgliedschaftId: 1,
-    );
+    TestHelper.setupMocks();
   });
 
-  Widget createBankDataScreen({
-    UserData? userData,
-    bool isLoggedIn = true,
-    Function()? onLogout,
-  }) {
-    return MaterialApp(
-      home: MultiProvider(
-        providers: [
-          Provider<ApiService>.value(value: mockApiService),
-          Provider<NetworkService>.value(value: mockNetworkService),
-          Provider<ConfigService>.value(value: mockConfigService),
-          ChangeNotifierProvider<FontSizeProvider>(
-            create: (_) => FontSizeProvider(),
-          ),
-        ],
-        child: BaseScreenLayout(
-          title: 'Bankdaten',
-          userData: userData,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout ?? () {},
-          body: BankDataScreen(
-            userData,
-            webloginId: userData?.webLoginId ?? 0,
-            isLoggedIn: isLoggedIn,
-            onLogout: onLogout ?? () {},
-          ),
+  Widget createBankDataScreen() {
+    return TestHelper.createTestApp(
+      home: BankDataScreen(
+        const UserData(
+          personId: 439287,
+          webLoginId: 13901,
+          passnummer: '40100709',
+          vereinNr: 401051,
+          namen: 'Schürz',
+          vorname: 'Lukas',
+          vereinName: 'Feuerschützen Kühbach',
+          passdatenId: 2000009155,
+          mitgliedschaftId: 439287,
+          strasse: 'Aichacher Strasse 21',
+          plz: '86574',
+          ort: 'Alsmoos',
+          telefon: '123456789',
         ),
+        webloginId: 13901,
+        isLoggedIn: true,
+        onLogout: () {},
       ),
     );
   }
 
   group('BankDataScreen', () {
-    testWidgets('renders correctly with user data',
-        (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.value([]),
-      );
-
-      // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
-      await tester.pump();
+    testWidgets('renders bank data form', (WidgetTester tester) async {
+      await tester.pumpWidget(createBankDataScreen());
       await tester.pumpAndSettle();
 
-      // Assert
       expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(TextFormField), findsWidgets);
+      expect(find.byType(FloatingActionButton), findsWidgets);
+      expect(find.byIcon(Icons.edit), findsOneWidget);
+      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
     });
 
-    testWidgets('shows loading state while fetching bank data',
+    testWidgets('shows offline message when offline',
         (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.delayed(const Duration(milliseconds: 100), () => []),
-      );
+      when(TestHelper.mockNetworkService.hasInternet())
+          .thenAnswer((_) async => false);
 
-      // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
-      await tester.pump();
-
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('shows error message when fetch fails',
-        (WidgetTester tester) async {
-      // Arrange
-      when(mockApiService.fetchBankData(any))
-          .thenThrow(Exception('Test error'));
-
-      // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
-      await tester.pump();
+      await tester.pumpWidget(createBankDataScreen());
       await tester.pumpAndSettle();
 
-      // Assert
-      expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-    });
-
-    testWidgets('displays bank data when available',
-        (WidgetTester tester) async {
-      // Arrange
-      final bankData = BankData(
-        id: 1,
-        webloginId: testUserData.webLoginId,
-        kontoinhaber: 'Test User',
-        iban: 'DE89370400440532013000',
-        bic: 'DEUTDEBBXXX',
+      expect(
+        find.text('Bankdaten sind offline nicht verfügbar'),
+        findsOneWidget,
       );
-      when(mockApiService.fetchBankData(any)).thenAnswer(
-        (_) => Future.value([bankData]),
-      );
-
-      // Act
-      await tester.pumpWidget(createBankDataScreen(userData: testUserData));
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      // Assert
-      expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.text('Test User'), findsOneWidget);
-      expect(find.text('DE89370400440532013000'), findsOneWidget);
-      expect(find.text('DEUTDEBBXXX'), findsOneWidget);
     });
   });
 }

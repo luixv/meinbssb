@@ -2,22 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/screens/start_screen.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:mockito/annotations.dart';
-import 'package:provider/provider.dart';
-import 'package:meinbssb/services/core/config_service.dart';
-import 'start_screen_test.mocks.dart';
 import 'package:meinbssb/models/schulung.dart';
 import 'package:meinbssb/models/user_data.dart';
+import '../helpers/test_helper.dart';
 
-// Mock ConfigService para Provider
-class MockConfigService extends Mock implements ConfigService {}
-
-@GenerateMocks(
-  [ApiService],
-  customMocks: [MockSpec<ApiService>(as: #CustomMockApiService)],
-)
 void main() {
+  setUp(() {
+    TestHelper.setupMocks();
+  });
+
   // Create a UserData instance for testing
   const userData = UserData(
     personId: 439287,
@@ -38,27 +31,21 @@ void main() {
     isOnline: false,
   );
 
+  Widget createStartScreen() {
+    return TestHelper.createTestApp(
+      home: StartScreen(userData, isLoggedIn: true, onLogout: () {}),
+    );
+  }
+
   testWidgets('StartScreen displays loading spinner while fetching data',
       (WidgetTester tester) async {
-    final mockApiService = CustomMockApiService();
-
     when(
-      mockApiService.fetchAngemeldeteSchulungen(any, any),
+      TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
     ).thenAnswer(
       (_) async => Future.delayed(const Duration(seconds: 1), () => []),
     );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ConfigService>(
-          create: (_) => MockConfigService(),
-          child: Provider<ApiService>(
-            create: (_) => mockApiService,
-            child: StartScreen(userData, isLoggedIn: true, onLogout: () {}),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(createStartScreen());
 
     // Mientras espera el resultado, debe mostrar CircularProgressIndicator
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -71,23 +58,11 @@ void main() {
 
   testWidgets('StartScreen displays no Schulungen found message when no data',
       (WidgetTester tester) async {
-    final mockApiService = CustomMockApiService();
-
     when(
-      mockApiService.fetchAngemeldeteSchulungen(any, any),
+      TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
     ).thenAnswer((_) async => []);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ConfigService>(
-          create: (_) => MockConfigService(),
-          child: Provider<ApiService>(
-            create: (_) => mockApiService,
-            child: StartScreen(userData, isLoggedIn: true, onLogout: () {}),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(createStartScreen());
 
     // Esperamos que se muestre el texto de 'Keine Schulungen gefunden.'
     await tester.pumpAndSettle();
@@ -96,10 +71,8 @@ void main() {
 
   testWidgets('StartScreen displays list of Schulungen when data is present',
       (WidgetTester tester) async {
-    final mockApiService = CustomMockApiService();
-
     when(
-      mockApiService.fetchAngemeldeteSchulungen(any, any),
+      TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
     ).thenAnswer(
       (_) async => [
         const Schulung(
@@ -132,17 +105,7 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Provider<ConfigService>(
-          create: (_) => MockConfigService(),
-          child: Provider<ApiService>(
-            create: (_) => mockApiService,
-            child: StartScreen(userData, isLoggedIn: true, onLogout: () {}),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(createStartScreen());
 
     await tester.pumpAndSettle();
 

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/models/bank_data.dart';
-import '/models/user_data.dart';
-import '/services/api_service.dart';
-import '/services/api/bank_service.dart';
-import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
-import '/services/core/network_service.dart';
-import '/screens/base_screen_layout.dart';
-import '/screens/bank_data_result_screen.dart';
-import '/widgets/scaled_text.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/bank_data_result_screen.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(

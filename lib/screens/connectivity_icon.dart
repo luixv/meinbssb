@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
-import '/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 final _log = Logger('StartScreen');
 

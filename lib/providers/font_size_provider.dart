@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 class FontSizeProvider extends ChangeNotifier {
   FontSizeProvider() {

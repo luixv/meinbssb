@@ -1,9 +1,9 @@
 import 'dart:async';
-import '/services/core/http_client.dart';
-import '/services/core/logger_service.dart';
-import '/models/verein.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/models/verein.dart';
 
-import '/models/fremde_verband.dart';
+import 'package:meinbssb/models/fremde_verband.dart';
 
 class VereinService {
   VereinService({

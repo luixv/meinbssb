@@ -3,13 +3,13 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/exceptions/api_exception.dart';
-import '/exceptions/authentication_exception.dart';
-import '/exceptions/network_exception.dart';
-import '/exceptions/validation_exception.dart';
-import '/exceptions/base_exception.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/exceptions/api_exception.dart';
+import 'package:meinbssb/exceptions/authentication_exception.dart';
+import 'package:meinbssb/exceptions/network_exception.dart';
+import 'package:meinbssb/exceptions/validation_exception.dart';
+import 'package:meinbssb/exceptions/base_exception.dart';
 import 'logger_service.dart';
 
 /// A service for handling errors consistently across the application
