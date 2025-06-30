@@ -3,13 +3,16 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:meinbssb/constants/messages.dart';
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
+import '/services/core/email_service.dart';
 
 class AuthService {
   AuthService({
@@ -17,16 +20,19 @@ class AuthService {
     required CacheService cacheService,
     required NetworkService networkService,
     FlutterSecureStorage? secureStorage,
+    required EmailService emailService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
         _networkService = networkService,
-        _secureStorage = secureStorage ?? const FlutterSecureStorage();
+        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+        _emailService = emailService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
   final FlutterSecureStorage
       _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
+  final EmailService _emailService;
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -37,41 +43,41 @@ class AuthService {
     required String zipCode,
   }) async {
     try {
-      /* ErstelleMyBSSBAccount/
-           Body as JSON
-           {"PersonID": 439287,
-            "Email": "kostas@rizoudis1.de",
-            "Passwort": "test1"}
-      */
-
-      String password = '';
-      String personId = await _findePersonID(
-        lastName,
-        firstName,
-        birthDate,
-        passNumber,
-        zipCode,
-      );
-
-      String loginMail = await _findeMailadressen(personId);
-
-      // ERROR - This logical condition (loginMail.isEmpty && loginMail == 'null' && loginMail != email)
-      // is always false and will never return {}. The post call will always be made.
-      if (loginMail.isEmpty && loginMail == 'null' && loginMail != email) {
-        LoggerService.logError('No email address found.');
-        return {};
+      // Get PersonID first
+      final personId = await getPersonIDByPassnummer(passNumber);
+      if (personId == '0') {
+        return {
+          'ResultType': 0,
+          'ResultMessage': Messages.noPersonIdFound
+        };
       }
 
-      final response = await _httpClient.post('ErstelleMyBSSBAccount', {
-        'PersonID': personId,
-        'Email': email,
-        'Passwort': password,
-      });
+      // Store registration data for later use
+      final registrationData = {
+        'personId': personId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'passNumber': passNumber,
+        'email': email,
+        'birthDate': birthDate,
+        'zipCode': zipCode,
+      };
 
-      return response is Map<String, dynamic> ? response : {};
+      await _cacheService.setString(
+        'registration_$email',
+        jsonEncode(registrationData),
+      );
+
+      return {
+        'ResultType': 1,
+        'ResultMessage': Messages.registrationDataStored
+      };
     } catch (e) {
       LoggerService.logError('Registration error: $e');
-      rethrow;
+      return {
+        'ResultType': 0,
+        'ResultMessage': Messages.registrationDataStoreFailed
+      };
     }
   }
 
@@ -308,15 +314,63 @@ Ergebnis der Abfrage:
     required String token,
   }) async {
     try {
-      final response = await _httpClient.post('FinalizeRegistration', {
-        'Email': email,
-        'Passwort': password,
-        'Token': token,
-      });
-      return response is Map<String, dynamic> ? response : {};
+      // Get the PersonID from the stored registration data
+      final personId = await _getStoredPersonId(email);
+      if (personId == null || personId.isEmpty) {
+        return {
+          'ResultType': 0,
+          'ResultMessage': Messages.registrationDataNotFound
+        };
+      }
+
+      // Call the API to create the account
+      final response = await _httpClient.post(
+        'ErstelleMyBSSBAccount',
+        {
+          'PersonID': personId,
+          'Email': email,
+          'Passwort': password,
+        },
+      );
+
+      if (response['ResultType'] == 1) {
+        // Send notification emails to all associated email addresses
+        await _emailService.sendAccountCreationNotifications(personId, email);
+        
+        // Clear stored registration data after successful account creation
+        await _clearStoredRegistrationData(email);
+      }
+
+      return response;
     } catch (e) {
-      LoggerService.logError('Finalize registration error: $e');
-      rethrow;
+      LoggerService.logError('Error in finalizeRegistration: $e');
+      return {
+        'ResultType': 0,
+        'ResultMessage': Messages.accountCreationFailed
+      };
+    }
+  }
+
+  // Helper method to get stored PersonID
+  Future<String?> _getStoredPersonId(String email) async {
+    try {
+      final registrationData = await _cacheService.getString('registration_$email');
+      if (registrationData != null) {
+        final data = jsonDecode(registrationData);
+        return data['personId'] as String?;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting stored PersonID: $e');
+    }
+    return null;
+  }
+
+  // Helper method to clear stored registration data
+  Future<void> _clearStoredRegistrationData(String email) async {
+    try {
+      await _cacheService.remove('registration_$email');
+    } catch (e) {
+      LoggerService.logError('Error clearing registration data: $e');
     }
   }
 

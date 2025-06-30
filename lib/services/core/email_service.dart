@@ -7,6 +7,7 @@ import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
 import 'config_service.dart';
 import 'logger_service.dart';
+import 'http_client.dart';
 
 abstract class EmailSender {
   Future<mailer.SendReport> send(
@@ -29,10 +30,13 @@ class EmailService {
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
+    required HttpClient httpClient,
   })  : _emailSender = emailSender,
-        _configService = configService;
+        _configService = configService,
+        _httpClient = httpClient;
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
+  final HttpClient _httpClient;
 
   Future<Map<String, dynamic>> sendEmail({
     required String from,
@@ -108,5 +112,59 @@ class EmailService {
 
   Future<String?> getFromEmail() async {
     return _configService.getString('fromEmail', 'smtpSettings');
+  }
+
+  Future<String?> getAccountCreatedSubject() async {
+    return _configService.getString('accountCreatedSubject', 'smtpSettings');
+  }
+
+  Future<String?> getAccountCreatedContent() async {
+    return _configService.getString('accountCreatedContent', 'smtpSettings');
+  }
+
+  Future<List<String>> getEmailAddressesByPersonId(String personId) async {
+    try {
+      final response = await _httpClient.get('FindeMailadressen/$personId');
+      if (response is List) {
+        return response.map((e) => e.toString()).toList();
+      }
+      return [];
+    } catch (e) {
+      LoggerService.logError('Error fetching email addresses: $e');
+      return [];
+    }
+  }
+
+  Future<void> sendAccountCreationNotifications(String personId, String registeredEmail) async {
+    try {
+      // Get all email addresses for this person
+      final emailAddresses = await getEmailAddressesByPersonId(personId);
+      
+      // Get email template and subject
+      final fromEmail = await getFromEmail();
+      final subject = await getAccountCreatedSubject();
+      final emailContent = await getAccountCreatedContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        LoggerService.logError('Email configuration missing for account creation notification');
+        return;
+      }
+
+      // Send notification to each email address
+      for (final email in emailAddresses) {
+        if (email.isNotEmpty && email != 'null') {
+          final emailBody = emailContent.replaceAll('{email}', registeredEmail);
+          
+          await sendEmail(
+            from: fromEmail,
+            recipient: email,
+            subject: subject,
+            body: emailBody,
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Error sending account creation notifications: $e');
+    }
   }
 }

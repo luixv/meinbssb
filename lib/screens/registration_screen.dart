@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/privacy_screen.dart';
 import 'package:meinbssb/screens/registration_result_screen.dart';
@@ -172,12 +173,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       return true;
     }
     if (value.isEmpty) {
-      emailError = 'E-Mail ist erforderlich.';
+      emailError = Messages.emailRequired;
       return false;
     }
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      emailError = 'Bitte geben Sie eine gültige E-Mail Adresse ein.';
+      emailError = Messages.invalidEmail;
       return false;
     }
     emailError = null;
@@ -186,9 +187,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validateZipCode(String value) {
     if (value.isEmpty) {
-      zipCodeError = 'Postleitzahl ist erforderlich.';
+      zipCodeError = Messages.zipCodeRequired;
     } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-      zipCodeError = 'Postleitzahl muss 5 Ziffern enthalten.';
+      zipCodeError = Messages.invalidZipCode;
     } else {
       zipCodeError = null;
     }
@@ -197,9 +198,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool validatePassNumber(String value) {
     if (value.isEmpty) {
-      passNumberError = 'Schützenausweisnummer ist erforderlich.';
+      passNumberError = Messages.passNumberRequired;
     } else if (!RegExp(r'^\d{8}$').hasMatch(value)) {
-      passNumberError = 'Schützenausweisnummer muss 8 Ziffern enthalten.';
+      passNumberError = Messages.invalidPassNumber;
     } else {
       passNumberError = null;
     }
@@ -239,8 +240,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
       if (personId == '0') {
         setState(() {
-          _successMessage =
-              'No PersonID was found. Please check your Passnummer again and retry.';
+          _successMessage = Messages.noPersonIdFound;
         });
         return;
       }
@@ -253,8 +253,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       final baseUrl = await widget.emailService.getVerificationBaseUrl();
       if (baseUrl == null) {
         setState(() {
-          _successMessage =
-              'System configuration error. Please contact support.';
+          _successMessage = Messages.configError;
         });
         return;
       }
@@ -270,8 +269,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
       if (fromEmail == null || subject == null || emailContent == null) {
         setState(() {
-          _successMessage =
-              'Email configuration error. Please contact support.';
+          _successMessage = Messages.emailConfigError;
         });
         return;
       }
@@ -301,15 +299,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         );
 
         setState(() {
-          _successMessage =
-              'Email sent. Please follow the instructions to register your account';
+          _successMessage = Messages.emailSentSuccess;
         });
       } else {
         setState(() {
           _successMessage = ErrorService.handleValidationError(
             'Registration',
-            emailResponse['ResultMessage'] ??
-                'Failed to send verification email.',
+            emailResponse['ResultMessage'] ?? Messages.generalError,
           );
         });
       }
@@ -317,7 +313,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       setState(() {
         _successMessage = ErrorService.handleValidationError(
           'Registration',
-          'An error occurred. Please try again later.',
+          Messages.generalError,
         );
       });
     }
@@ -351,14 +347,14 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     const SizedBox(height: UIConstants.spacingM),
                     ScaledText(
-                      'Registrierung ist offline nicht verfügbar',
+                      Messages.registrationOfflineTitle,
                       style: UIStyles.headerStyle.copyWith(
                         color: UIConstants.textColor,
                       ),
                     ),
                     const SizedBox(height: UIConstants.spacingS),
                     ScaledText(
-                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um sich zu registrieren.',
+                      Messages.registrationOfflineMessage,
                       style: UIStyles.bodyStyle.copyWith(
                         color: UIConstants.greySubtitleTextColor,
                       ),
@@ -537,24 +533,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         key: const Key('registerButton'),
         onPressed: _validateForm() ? _register : null,
         style: UIStyles.defaultButtonStyle,
-        child: SizedBox(
-          height: UIConstants
-              .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
-          child: Center(
-            child: _isLoading
-                ? UIConstants.defaultLoadingIndicator
-                : const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.app_registration, color: Colors.white),
-                      SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        'Registrieren',
-                        style: UIStyles.buttonStyle,
-                      ),
-                    ],
-                  ),
-          ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.app_registration, color: Colors.white),
+            SizedBox(width: UIConstants.spacingS),
+            ScaledText(
+              'Registrieren',
+              style: UIStyles.buttonStyle,
+            ),
+          ],
         ),
       ),
     );
