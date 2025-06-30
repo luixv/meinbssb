@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/constants/ui_constants.dart';
 // Ensure LoggerService is correctly imported
 
 class SplashScreen extends StatefulWidget {
@@ -57,8 +58,8 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _animation,
           child: Image.asset(
             'assets/images/BSSB_Wappen.png',
-            width: 200,
-            height: 200,
+            width: UIConstants.logoSize * 2,
+            height: UIConstants.logoSize * 2,
           ),
         ),
       ),

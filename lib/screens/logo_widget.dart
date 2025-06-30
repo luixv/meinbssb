@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/services/core/config_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 
 class LogoWidget extends StatelessWidget {
   const LogoWidget({super.key});

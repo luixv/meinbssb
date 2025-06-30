@@ -71,25 +71,27 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                         alignment: Alignment.center,
                         children: [
                           Container(
-                            width: 160,
-                            height: 160,
+                            width: UIConstants.defaultImageHeight + 60,
+                            height: UIConstants.defaultImageHeight + 60,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(80),
+                              borderRadius: BorderRadius.circular(
+                                (UIConstants.defaultImageHeight + 60) / 2,
+                              ),
                               border: Border.all(
                                 color: UIConstants.mydarkGreyColor,
-                                width: 2,
+                                width: UIConstants.defaultStrokeWidth,
                               ),
                             ),
                             child: const Icon(
                               Icons.person,
-                              size: 100,
+                              size: UIConstants.defaultImageHeight,
                               color: UIConstants.mydarkGreyColor,
                             ),
                           ),
                           Positioned(
-                            bottom: 16,
-                            right: 16,
+                            bottom: UIConstants.spacingM,
+                            right: UIConstants.spacingM,
                             child: Container(
                               decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -97,15 +99,15 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                                 boxShadow: [
                                   BoxShadow(
                                     color: Color(0x1A000000),
-                                    blurRadius: 4,
+                                    blurRadius: UIConstants.spacingXS,
                                   ),
                                 ],
                               ),
                               child: const Padding(
-                                padding: EdgeInsets.all(4.0),
+                                padding: EdgeInsets.all(UIConstants.spacingXS),
                                 child: Icon(
                                   Icons.add_a_photo_outlined,
-                                  size: 32,
+                                  size: UIConstants.iconSizeL,
                                   color: UIConstants.mydarkGreyColor,
                                 ),
                               ),
@@ -117,8 +119,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                         child: Image.file(
                           // ignore: use_build_context_synchronously
                           File(_selectedImage!.path),
-                          width: 160,
-                          height: 160,
+                          width: UIConstants.defaultImageHeight + 60,
+                          height: UIConstants.defaultImageHeight + 60,
                           fit: BoxFit.cover,
                         ),
                       ),

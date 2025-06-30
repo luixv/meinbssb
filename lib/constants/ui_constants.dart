@@ -102,6 +102,7 @@ class UIConstants {
   // Spacing constants
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
+  static const double spacingSM = 12.0;
   static const double spacingM = 16.0;
   static const double spacingL = 24.0;
   static const double spacingXL = 32.0;
@@ -109,6 +110,16 @@ class UIConstants {
   static const double spacingXXXL = 64.0;
   static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
+  static const double spacingXXS = 1.0;
+
+  /// Minimal horizontal spacing between columns in info tables/dialogs
+  static const double infoTableColumnSpacing = 1.0;
+
+  /// Horizontal padding for info tables/dialogs
+  static const double infoTableHorizontalPadding = 20.0;
+
+  /// Bottom padding for info tables/dialogs
+  static const double infoTableBottomPadding = 16.0;
 
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
@@ -145,16 +156,24 @@ class UIConstants {
   static const double defaultIconSize = 16.0;
   static const double defaultIconWidth = 60.0;
   static const double defaultButtonWidth = 120.0;
+  static const double defaultButtonHeight = 36.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
   static const double iconSizeL = 32.0;
   static const double iconSizeXL = 64.0;
   static const double iconSizeM = 48.0;
   static const double dialogFontSize = 18.0;
+  static const double largeFontSize = 24.0;
   static const double smallButtonSize = 40.0;
   static const double fabSmallIconSize = 20.0;
   static const double dividerThick = 6.0;
   static const Duration snackbarDuration = Duration(seconds: 3);
+
+  // AppBar
+  static const double appBarElevation = 2.0;
+
+  // Text and Layout
+  static const int maxSectionHeaderLength = 60;
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
@@ -328,4 +347,12 @@ class UIConstants {
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
+
+  // Schulungen (Course Registration) Colors
+  static const Color schulungenGesperrtColor =
+      Colors.red; // For gesperrt/locked state
+  static const Color schulungenNormalColor =
+      defaultAppColor; // For normal state
+
+  static const double wifiOffIconSize = 64.0;
 }

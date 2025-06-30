@@ -1,9 +1,9 @@
 // In lib/screens/person_data_result_screen.dart
 
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
 
 class PersonalDataResultScreen extends StatelessWidget {
   const PersonalDataResultScreen({
@@ -33,14 +33,14 @@ class PersonalDataResultScreen extends StatelessWidget {
             Icon(
               success ? Icons.check_circle : Icons.error,
               color: success ? Colors.green : Colors.red,
-              size: 64,
+              size: UIConstants.iconSizeXL,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: UIConstants.spacingM),
             Text(
               success
                   ? UIConstants.personalDataSaved
                   : UIConstants.errorOccurred,
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
           ],

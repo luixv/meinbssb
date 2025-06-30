@@ -6,7 +6,6 @@ import '/services/core/network_service.dart';
 import '/services/core/logger_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/pass_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 
@@ -23,10 +22,30 @@ class UserService {
   final CacheService _cacheService;
   final NetworkService _networkService;
 
+  // In-memory cache to prevent multiple simultaneous calls
+  final Map<int, Future<UserData?>> _pendingRequests = {};
+
   Future<UserData?> fetchPassdaten(int personId) async {
+    // Check if there's already a pending request for this personId
+    if (_pendingRequests.containsKey(personId)) {
+      return await _pendingRequests[personId]!;
+    }
+
+    // Create a new request
+    final request = _fetchPassdatenInternal(personId);
+    _pendingRequests[personId] = request;
+
     try {
-      // cacheAndRetrieveData now returns the flattened map directly,
-      // with 'ONLINE' flag merged into it by CacheService.
+      final result = await request;
+      return result;
+    } finally {
+      // Remove the request from pending requests
+      _pendingRequests.remove(personId);
+    }
+  }
+
+  Future<UserData?> _fetchPassdatenInternal(int personId) async {
+    try {
       final Map<String, dynamic> result =
           await _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
         'passdaten_$personId',
@@ -34,12 +53,16 @@ class UserService {
         () async {
           // This is the fetchData function that CacheService will call if data is not in cache.
           final response = await _httpClient.get('Passdaten/$personId');
-          return _mapPassdatenResponse(response); // Use the robust mapper
+          return _mapPassdatenResponse(response);
         },
         (dynamic rawResponse) {
           // This is the processResponse function for CacheService to process cached data.
-          // This will be called on data retrieved from cache or the result of fetchData.
-          return _mapPassdatenResponse(rawResponse); // Use the robust mapper
+          // For cached data, we can assume it's already in the correct format
+          if (rawResponse is Map<String, dynamic>) {
+            return rawResponse;
+          }
+          // Fallback to processing if needed
+          return _mapPassdatenResponse(rawResponse);
         },
       );
 
@@ -50,7 +73,7 @@ class UserService {
       return UserData.fromJson(result);
     } catch (e) {
       LoggerService.logError('Error fetching Passdaten: $e');
-      return null; // Return null on any error during the API call or caching
+      return null;
     }
   }
 
@@ -85,6 +108,8 @@ class UserService {
         LoggerService.logInfo(
           'KritischeFelderUndAdresse UPDATED successfully for PersonID: ${userData.personId}',
         );
+        // Clear the passdaten cache after successful update
+        await clearPassdatenCache(userData.personId);
         return true;
       } else {
         LoggerService.logWarning(
@@ -98,70 +123,82 @@ class UserService {
     }
   }
 
-  // This function is crucial for ensuring the correct data structure
-  // It handles both List (with single item) and direct Map responses.
-  // It also now explicitly handles empty/invalid inputs to return an empty map.
-  Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
-    Map<String, dynamic> dataToProcess = {}; // Initialize as an empty map
+  /// Clears the cache for a specific person's passdaten
+  Future<void> clearPassdatenCache(int personId) async {
+    try {
+      final cacheKey = 'passdaten_$personId';
+      await _cacheService.remove(cacheKey);
+      LoggerService.logInfo('Cleared passdaten cache for personId: $personId');
+    } catch (e) {
+      LoggerService.logError('Error clearing passdaten cache: $e');
+    }
+  }
 
-    // Case 1: Response is a List and has elements.
-    // We assume the actual Passdaten is the first element.
+  /// Clears all passdaten caches
+  Future<void> clearAllPassdatenCache() async {
+    try {
+      await _cacheService.clearPattern('passdaten_');
+      LoggerService.logInfo('Cleared all passdaten cache entries');
+    } catch (e) {
+      LoggerService.logError('Error clearing all passdaten cache: $e');
+    }
+  }
+
+  // Optimized function for processing Passdaten response
+  Map<String, dynamic> _mapPassdatenResponse(dynamic response) {
+    Map<String, dynamic> dataToProcess = {};
+
+    // Handle different response formats
     if (response is List && response.isNotEmpty) {
       if (response.first is Map<String, dynamic>) {
         dataToProcess = response.first as Map<String, dynamic>;
       } else {
-        // Log if the first element in the list is not a map
         LoggerService.logWarning(
           'Passdaten response list element is not a map: ${response.first.runtimeType}',
         );
-        // dataToProcess remains empty, which will lead to returning {} below.
+        return {};
       }
-    }
-    // Case 2: Response is already a Map.
-    else if (response is Map<String, dynamic>) {
+    } else if (response is Map<String, dynamic>) {
       dataToProcess = response;
-    }
-    // Case 3: Response is an empty list, null, or any other non-map type.
-    // In this case, dataToProcess remains an empty map, so the method will correctly return {}.
-    else {
+    } else {
       LoggerService.logInfo(
         'Passdaten response is empty or unexpected type: ${response.runtimeType}',
       );
-      // dataToProcess remains empty, which will lead to returning {} below.
+      return {};
     }
 
-    // IMPORTANT: If `dataToProcess` is an empty map at this point (which happens
-    // if the original `response` was an empty list, null, or a non-map type),
-    // then extracting values like `dataToProcess['PASSNUMMER']` would result in `null`s.
-    // To prevent returning a map full of `null`s, we check if `dataToProcess` is empty.
     if (dataToProcess.isEmpty) {
-      return {}; // Return an empty map directly if there's no valid data to process.
+      return {};
     }
 
-    // Create a PassData instance from the response
-    final passData = PassData.fromJson(dataToProcess);
-    // Convert PassData to a map for UserData.fromJson
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
     return {
-      'PASSNUMMER': passData.passnummer,
-      'VEREINNR': passData.vereinNr,
-      'NAMEN': passData.namen,
-      'VORNAME': passData.vorname,
-      'TITEL': passData.titel,
-      'GEBURTSDATUM': passData.geburtsdatum?.toIso8601String(),
-      'GESCHLECHT': passData.geschlecht,
-      'VEREINNAME': passData.vereinName,
-      'PASSDATENID': passData.passdatenId,
-      'MITGLIEDSCHAFTID': passData.mitgliedschaftId,
-      'PERSONID': passData.personId,
-      'STRASSE': passData.strasse,
-      'PLZ': passData.plz,
-      'ORT': passData.ort,
-      'ONLINE': passData.isOnline,
+      'PASSNUMMER': dataToProcess['PASSNUMMER']?.toString() ?? '',
+      'VEREINNR': parseInt(dataToProcess['VEREINNR']),
+      'NAMEN': dataToProcess['NAMEN']?.toString() ?? '',
+      'VORNAME': dataToProcess['VORNAME']?.toString() ?? '',
+      'TITEL': dataToProcess['TITEL']?.toString() ?? '',
+      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM']?.toString() ?? '',
+      'GESCHLECHT': parseInt(dataToProcess['GESCHLECHT']),
+      'VEREINNAME': dataToProcess['VEREINNAME']?.toString() ?? '',
+      'PASSDATENID': parseInt(dataToProcess['PASSDATENID']),
+      'MITGLIEDSCHAFTID': parseInt(dataToProcess['MITGLIEDSCHAFTID']),
+      'PERSONID': parseInt(dataToProcess['PERSONID']),
+      'STRASSE': dataToProcess['STRASSE']?.toString() ?? '',
+      'PLZ': dataToProcess['PLZ']?.toString() ?? '',
+      'ORT': dataToProcess['ORT']?.toString() ?? '',
+      'ONLINE': dataToProcess['ONLINE'] as bool? ?? false,
     };
   }
 
   Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
-      int personId,) async {
+    int personId,
+  ) async {
     try {
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(

@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+
+import 'package:meinbssb/screens/absolvierte_schulungen_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/screens/bank_data_screen.dart';
 import '../helpers/test_helper.dart';
 
+
+@GenerateMocks([ApiService, NetworkService, FontSizeProvider, ConfigService])
 void main() {
   setUp(() {
     TestHelper.setupMocks();
   });
 
-  Widget createBankDataScreen() {
+  Widget createAbsolvierteSchulungenScreen() {
     return TestHelper.createTestApp(
-      home: BankDataScreen(
+      home: AbsolvierteSchulungenScreen(
         const UserData(
           personId: 439287,
           webLoginId: 13901,
@@ -28,23 +36,19 @@ void main() {
           ort: 'Alsmoos',
           telefon: '123456789',
         ),
-        webloginId: 13901,
         isLoggedIn: true,
         onLogout: () {},
       ),
     );
   }
 
-  group('BankDataScreen', () {
-    testWidgets('renders bank data form', (WidgetTester tester) async {
-      await tester.pumpWidget(createBankDataScreen());
+  group('AbsolvierteSchulungenScreen', () {
+    testWidgets('renders absolvierte schulungen screen',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createAbsolvierteSchulungenScreen());
       await tester.pumpAndSettle();
 
-      expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.byType(TextFormField), findsWidgets);
-      expect(find.byType(FloatingActionButton), findsWidgets);
-      expect(find.byIcon(Icons.edit), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+      expect(find.text('Absolvierte Schulungen'), findsOneWidget);
     });
 
     testWidgets('shows offline message when offline',
@@ -52,13 +56,11 @@ void main() {
       when(TestHelper.mockNetworkService.hasInternet())
           .thenAnswer((_) async => false);
 
-      await tester.pumpWidget(createBankDataScreen());
+      await tester.pumpWidget(createAbsolvierteSchulungenScreen());
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('Bankdaten sind offline nicht verfügbar'),
-        findsOneWidget,
-      );
+      expect(find.text('Absolvierte Schulungen sind offline nicht verfügbar'),
+          findsOneWidget,);
     });
   });
 }

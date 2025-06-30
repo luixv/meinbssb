@@ -449,6 +449,16 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<void> clearPattern(String? pattern) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPattern,
+          [pattern],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
         Invocation.method(
           #containsKey,
@@ -458,14 +468,23 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<void> setCacheTimestamp() => (super.noSuchMethod(
+  _i2.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
         Invocation.method(
-          #setCacheTimestamp,
-          [],
+          #setCacheTimestampForKey,
+          [key],
         ),
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i2.Future<int?>.value(),
+      ) as _i2.Future<int?>);
 
   @override
   _i2.Future<T> getCachedData<T>(
@@ -963,6 +982,22 @@ class MockAuthService extends _i1.Mock implements _i12.AuthService {
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool> findePersonID2(
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID2,
+          [
+            nachname,
+            passnummer,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].
@@ -1084,6 +1119,26 @@ class MockTrainingService extends _i1.Mock implements _i14.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
+  _i2.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearSchulungenCache,
+          [personId],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllSchulungenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<List<_i18.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
         Invocation.method(
           #fetchDisziplinen,
@@ -1091,6 +1146,16 @@ class MockTrainingService extends _i1.Mock implements _i14.TrainingService {
         ),
         returnValue: _i2.Future<List<_i18.Disziplin>>.value(<_i18.Disziplin>[]),
       ) as _i2.Future<List<_i18.Disziplin>>);
+
+  @override
+  _i2.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearDisziplinenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 
   @override
   _i2.Future<_i4.RegisterSchulungenTeilnehmerResponse>
@@ -1162,6 +1227,26 @@ class MockUserService extends _i1.Mock implements _i21.UserService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPassdatenCache,
+          [personId],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAllPassdatenCache,
+          [],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 
   @override
   _i2.Future<List<_i22.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(

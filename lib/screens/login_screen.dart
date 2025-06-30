@@ -7,18 +7,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/registration_screen.dart';
-import '/screens/password_reset_screen.dart';
-import '/screens/logo_widget.dart';
-import '/services/api/auth_service.dart';
-import '/services/api_service.dart';
-import '/services/core/email_service.dart';
-import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
-import '/models/user_data.dart';
-import '/widgets/scaled_text.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -47,35 +48,39 @@ class LoginScreenState extends State<LoginScreen> {
   UserData? _userData;
   bool _isLoggedIn = false;
   bool _rememberMe = false;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
-    _loadRememberMeState();
+    _initRememberMe();
+  }
+
+  Future<void> _initRememberMe() async {
+    await _loadRememberMeState();
+    if (_rememberMe) {
+      await _loadStoredCredentials();
+    }
   }
 
   Future<void> _loadRememberMeState() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _rememberMe = prefs.getBool('rememberMe') ?? false;
-      if (_rememberMe) {
-        _emailController.text = prefs.getString('savedEmail') ?? '';
-        _passwordController.text = prefs.getString('savedPassword') ?? '';
-      }
-    });
+    _rememberMe = prefs.getBool('rememberMe') ?? false;
   }
 
-  Future<void> _saveRememberMeState() async {
+  Future<void> _loadStoredCredentials() async {
     final prefs = await SharedPreferences.getInstance();
-    if (_rememberMe) {
-      await prefs.setBool('rememberMe', true);
-      await prefs.setString('savedEmail', _emailController.text);
-      await prefs.setString('savedPassword', _passwordController.text);
-    } else {
-      await prefs.setBool('rememberMe', false);
-      await prefs.remove('savedEmail');
-      await prefs.remove('savedPassword');
-    }
+    final savedEmail = prefs.getString('savedEmail');
+    final savedPassword = await _secureStorage.read(key: 'password');
+
+    setState(() {
+      if (savedEmail != null && savedEmail.isNotEmpty) {
+        _emailController.text = savedEmail;
+      }
+      if (savedPassword != null && savedPassword.isNotEmpty) {
+        _passwordController.text = savedPassword;
+      }
+    });
   }
 
   @override
@@ -94,6 +99,9 @@ class LoginScreenState extends State<LoginScreen> {
       _errorMessage = '';
     });
 
+    // Save remember me state before attempting login
+    await _saveRememberMeState();
+
     try {
       final response = await authService.login(
         _emailController.text,
@@ -105,7 +113,6 @@ class LoginScreenState extends State<LoginScreen> {
       LoggerService.logInfo('Login response: $response');
 
       if (response['ResultType'] == 1) {
-        await _saveRememberMeState();
         await _handleSuccessfulLogin(
           apiService,
           response['PersonID'],
@@ -140,13 +147,12 @@ class LoginScreenState extends State<LoginScreen> {
       widget.onLoginSuccess(_userData!);
 
       await apiService.fetchSchuetzenausweis(personId);
-
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed(
-          '/home',
-          arguments: {'userData': _userData!.toJson(), 'isLoggedIn': true},
-        );
-      }
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(
+        context,
+        '/home',
+        arguments: {'userData': _userData!.toJson(), 'isLoggedIn': true},
+      );
     } else {
       setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
     }
@@ -184,12 +190,40 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _handleLogout() {
+  void _handleLogout() async {
+    // Clear stored credentials when logging out
+    await _clearStoredCredentials();
+
     setState(() {
       _isLoggedIn = false;
       _userData = null;
     });
-    Navigator.of(context).pushReplacementNamed('/login');
+    // Navigation is handled by the app's logout handler
+  }
+
+  Future<void> _saveRememberMeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setBool('rememberMe', true);
+      await prefs.setString('savedEmail', _emailController.text);
+      // Save password to secure storage immediately when remember me is enabled
+      await _secureStorage.write(
+        key: 'password',
+        value: _passwordController.text,
+      );
+    } else {
+      await prefs.setBool('rememberMe', false);
+      await prefs.remove('savedEmail');
+      // Clear password from secure storage when "remember me" is disabled
+      await _secureStorage.delete(key: 'password');
+    }
+  }
+
+  Future<void> _clearStoredCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('rememberMe');
+    await prefs.remove('savedEmail');
+    await _secureStorage.delete(key: 'password');
   }
 
   Widget _buildEmailField() {
@@ -263,7 +297,8 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: _isLoading ? null : _handleLogin,
         style: UIStyles.defaultButtonStyle,
         child: SizedBox(
-          height: 36, // Match the minimumSize height from defaultButtonStyle
+          height: UIConstants
+              .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
           child: Center(
             child: _isLoading
                 ? UIConstants.defaultLoadingIndicator

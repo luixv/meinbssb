@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/base_screen_layout.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
@@ -10,6 +10,7 @@ import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
 import '/screens/personal_pict_upload.dart';
+import '/screens/absolvierte_schulungen_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -104,6 +105,23 @@ class ProfileScreen extends StatelessWidget {
                     builder: (context) => BankDataScreen(
                       userData,
                       webloginId: userData?.webLoginId ?? 0,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildMenuItem(
+              context,
+              'Absolvierte Schulungen',
+              Icons.task_alt,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AbsolvierteSchulungenScreen(
+                      userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),

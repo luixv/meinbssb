@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../services/core/font_size_provider.dart';
 
 class ScaledText extends StatelessWidget {
-
   const ScaledText(
     this.text, {
     super.key,

@@ -512,6 +512,16 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> clearPattern(String? pattern) => (super.noSuchMethod(
+        Invocation.method(
+          #clearPattern,
+          [pattern],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<bool> containsKey(String? key) => (super.noSuchMethod(
         Invocation.method(
           #containsKey,
@@ -521,14 +531,23 @@ class MockCacheService extends _i1.Mock implements _i9.CacheService {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<void> setCacheTimestamp() => (super.noSuchMethod(
+  _i3.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
         Invocation.method(
-          #setCacheTimestamp,
-          [],
+          #setCacheTimestampForKey,
+          [key],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
+        Invocation.method(
+          #getCacheTimestampForKey,
+          [key],
+        ),
+        returnValue: _i3.Future<int?>.value(),
+      ) as _i3.Future<int?>);
 
   @override
   _i3.Future<T> getCachedData<T>(

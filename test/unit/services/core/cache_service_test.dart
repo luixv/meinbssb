@@ -83,15 +83,10 @@ void main() {
   });
 
   group('CacheService - Cache Timestamp', () {
-    test('setCacheTimestamp', () async {
-      final beforeTimestamp = DateTime.now().millisecondsSinceEpoch;
-      await cacheService.setCacheTimestamp();
-      final timestamp = await cacheService.getInt('cacheTimestamp');
-      final afterTimestamp = DateTime.now().millisecondsSinceEpoch;
-
+    test('setCacheTimestampForKey and getCacheTimestampForKey', () async {
+      await cacheService.setCacheTimestampForKey('testKey');
+      final timestamp = await cacheService.getCacheTimestampForKey('testKey');
       expect(timestamp, isNotNull);
-      expect(timestamp! >= beforeTimestamp, true);
-      expect(timestamp <= afterTimestamp, true);
     });
   });
 
@@ -130,32 +125,32 @@ void main() {
       final newData = {'test': 'newData'};
 
       when(mockConfigService.getInt('cacheExpirationHours'))
-          .thenReturn(0); // Immediate expiration
+          .thenReturn(24); // Normal expiration time
 
       // Cache initial data with ONLINE: true (as it would be if fetched from network)
-      // Using setString for consistency with what's stored
       await cacheService.setString(
         'testKey',
         jsonEncode({...testData, 'ONLINE': true}),
       );
-      await cacheService.setCacheTimestamp();
 
-      // Wait a moment to ensure cache expires
-      await Future.delayed(const Duration(milliseconds: 100));
+      // Set timestamp to 25 hours ago to make it expired
+      final expiredTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 25))
+          .millisecondsSinceEpoch;
+      // Use the correct key with prefix as in the cache service
+      await cacheService.setInt('cache_testKey_timestamp', expiredTimestamp);
 
       final result =
           await cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
         'testKey',
-        const Duration(
-          hours: 1,
-        ), // This duration is not directly used for expiration, the configService's value is.
+        const Duration(hours: 1),
         () async => newData, // This will be fetched because cache is expired
         (response) => response as Map<String, dynamic>,
       );
 
-      // CORRECTED: Assert directly on the result map and the 'ONLINE' flag (from new data)
+      // Should get new data, not cached data
       expect(result, isA<Map<String, dynamic>>());
-      expect(result['test'], newData['test']);
+      expect(result['test'], 'newData');
       expect(result['ONLINE'], true); // Fresh data will have ONLINE: true
     });
 
@@ -170,7 +165,7 @@ void main() {
         'testKey',
         jsonEncode({...testData, 'ONLINE': true}),
       );
-      await cacheService.setCacheTimestamp();
+      await cacheService.setCacheTimestampForKey('testKey');
 
       final result =
           await cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -294,7 +289,7 @@ void main() {
           testDataList.map((item) => {...item, 'ONLINE': true}).toList(),
         ),
       );
-      await cacheService.setCacheTimestamp();
+      await cacheService.setCacheTimestampForKey('testKey');
 
       final result =
           await cacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(

@@ -4,29 +4,29 @@ import 'dart:typed_data'; // Import Uint8List
 
 import 'package:flutter/foundation.dart';
 import 'package:meinbssb/services/api_service.dart' as network_ex;
-import '/services/api/auth_service.dart';
-import '/services/api/training_service.dart';
-import '/services/api/user_service.dart';
-import '/services/api/bank_service.dart';
-import '/services/api/verein_service.dart';
-import '/models/bank_data.dart';
-import '/models/schulung.dart';
-import '/models/zweitmitgliedschaft_data.dart';
-import '/models/disziplin.dart';
-import '/models/pass_data_zve.dart';
-import '/models/register_schulungen_teilnehmer_response.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api/training_service.dart';
+import 'package:meinbssb/services/api/user_service.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
+import 'package:meinbssb/services/api/verein_service.dart';
+import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/schulung.dart';
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
+import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
+import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/verein.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/fremde_verband.dart';
+import 'package:meinbssb/models/schulungsart.dart';
+import 'package:meinbssb/models/schulungstermine.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart';
 import 'core/network_service.dart';
-import '/models/contact.dart';
-import '/models/verein.dart';
-import '/models/user_data.dart';
-import '/models/fremde_verband.dart';
-import '/models/schulungsart.dart';
-import '/models/schulungstermine.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -242,5 +242,35 @@ class ApiService {
       bankData: bankData,
       felderArray: felderArray,
     );
+  }
+
+  // Auth service
+  Future<bool> findePersonID2(String nachname, String passnummer) async {
+    return _authService.findePersonID2(nachname, passnummer);
+  }
+
+  /// Clears the schulungen cache for a specific person
+  Future<void> clearSchulungenCache(int personId) async {
+    await _trainingService.clearSchulungenCache(personId);
+  }
+
+  /// Clears all schulungen caches
+  Future<void> clearAllSchulungenCache() async {
+    await _trainingService.clearAllSchulungenCache();
+  }
+
+  /// Clears the passdaten cache for a specific person
+  Future<void> clearPassdatenCache(int personId) async {
+    await _userService.clearPassdatenCache(personId);
+  }
+
+  /// Clears all passdaten caches
+  Future<void> clearAllPassdatenCache() async {
+    await _userService.clearAllPassdatenCache();
+  }
+
+  /// Clears the disziplinen cache
+  Future<void> clearDisziplinenCache() async {
+    await _trainingService.clearDisziplinenCache();
   }
 }

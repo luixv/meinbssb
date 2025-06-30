@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/contact_data_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import '../helpers/test_helper.dart';
 
 @GenerateMocks([ApiService])
 import 'contact_data_screen_test.mocks.dart';
@@ -27,6 +27,7 @@ void main() {
       passdatenId: 1,
       mitgliedschaftId: 1,
     );
+    TestHelper.setupMocks();
   });
 
   Widget createContactDataScreen({
@@ -34,14 +35,11 @@ void main() {
     bool isLoggedIn = true,
     VoidCallback? onLogout,
   }) {
-    return MaterialApp(
-      home: Provider<ApiService>.value(
-        value: mockApiService,
-        child: ContactDataScreen(
-          userData,
-          isLoggedIn: isLoggedIn,
-          onLogout: onLogout ?? () {},
-        ),
+    return TestHelper.createTestApp(
+      home: ContactDataScreen(
+        userData,
+        isLoggedIn: isLoggedIn,
+        onLogout: onLogout ?? () {},
       ),
     );
   }
@@ -75,7 +73,7 @@ void main() {
       await tester.pumpWidget(createContactDataScreen(userData: testUserData));
       await tester.pump(); // First pump to build the widget
 
-      // Assert
+      // Assert - should show loading indicator initially
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       // Wait for the delayed future to complete
@@ -112,7 +110,8 @@ void main() {
       await tester
           .pumpAndSettle(); // Wait for all animations and async operations
 
-      // Assert
+      // Assert - should find the floating action button with add icon
+      expect(find.byType(FloatingActionButton), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
     });
   });

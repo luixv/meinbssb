@@ -78,9 +78,7 @@ class StartScreenState extends State<StartScreen> {
   void _handleLogout() {
     LoggerService.logInfo('Logging out user: ${widget.userData?.vorname}');
     widget.onLogout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
+    // Navigation is handled by the app's logout handler
   }
 
   Future<void> _handleDeleteSchulung(
@@ -187,7 +185,7 @@ class StartScreenState extends State<StartScreen> {
           LoggerService.logInfo(
             'Unregistered from Schulung $schulungenTeilnehmerID',
           );
-          setState(() => schulungen.removeAt(index));
+          await fetchSchulungen();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

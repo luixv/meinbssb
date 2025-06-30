@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart';
-import '/screens/base_screen_layout.dart';
-import '/models/user_data.dart';
-import '/services/api_service.dart';
-
-import '/models/pass_data_zve.dart';
-import '/services/core/logger_service.dart';
-import '/models/disziplin.dart';
-import '/widgets/scaled_text.dart';
-import '/services/core/font_size_provider.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -51,6 +51,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     _searchController.dispose();
     // Do NOT dispose _autocompleteTextController, as it's managed by Autocomplete
     super.dispose();
+  }
+
+  Future<bool> _isOffline() async {
+    try {
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      return !(await networkService.hasInternet());
+    } catch (e) {
+      return true; // Assume offline if we can't check
+    }
   }
 
   Future<void> _fetchData() async {
@@ -111,207 +121,95 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Startrechte Ändern',
+      title: 'Startrechte',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? Center(
-                  child: ScaledText(
-                    _errorMessage!,
-                    style: UIStyles.bodyStyle.copyWith(color: Colors.red),
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(UIConstants.spacingM),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ScaledText(
-                        UIConstants.clubLabel,
-                        style: UIStyles.headerStyle.copyWith(
-                          color: UIConstants.defaultAppColor,
-                        ),
+      body: FutureBuilder<bool>(
+        future: _isOffline(),
+        builder: (context, offlineSnapshot) {
+          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+            return Center(
+              child: Padding(
+                padding: UIConstants.screenPadding,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.wifi_off,
+                      size: UIConstants.wifiOffIconSize,
+                      color: UIConstants.noConnectivityIcon,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ScaledText(
+                      'Startrechte sind offline nicht verfügbar',
+                      style: UIStyles.headerStyle.copyWith(
+                        color: UIConstants.textColor,
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      if (_passData != null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Consumer<FontSizeProvider>(
-                                    builder:
-                                        (context, fontSizeProvider, child) {
-                                      return RichText(
-                                        text: TextSpan(
-                                          style: UIStyles.bodyStyle.copyWith(
-                                            fontSize: UIStyles
-                                                    .bodyStyle.fontSize! *
-                                                fontSizeProvider.scaleFactor,
-                                          ),
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                              text: _passData!.passnummer,
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: UIStyles
-                                                        .bodyStyle.fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: ' - ',
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontSize: UIStyles
-                                                        .bodyStyle.fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: _passData!.vereinName,
-                                              style:
-                                                  UIStyles.bodyStyle.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: UIStyles
-                                                        .bodyStyle.fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um auf Ihre Startrechte zuzugreifen.',
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _errorMessage != null
+                  ? Center(
+                      child: ScaledText(
+                        _errorMessage!,
+                        style: UIStyles.bodyStyle
+                            .copyWith(color: UIConstants.errorColor),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(UIConstants.spacingM),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ScaledText(
+                            UIConstants.clubLabel,
+                            style: UIStyles.headerStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
                             ),
-                          ],
-                        )
-                      else
-                        Consumer<FontSizeProvider>(
-                          builder: (context, fontSizeProvider, child) {
-                            return ScaledText(
-                              UIConstants.noPrimaryClubDataAvailable,
-                              style: UIStyles.bodyStyle.copyWith(
-                                fontSize: UIStyles.bodyStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            );
-                          },
-                        ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      ScaledText(
-                        'Zweitvereine',
-                        style: UIStyles.headerStyle.copyWith(
-                          color: UIConstants.defaultAppColor,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      if (_zveData.isNotEmpty)
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _zveData.length,
-                          itemBuilder: (context, index) {
-                            final zve = _zveData[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: UIConstants.spacingS,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Consumer<FontSizeProvider>(
-                                          builder: (
-                                            context,
-                                            fontSizeProvider,
-                                            child,
-                                          ) {
-                                            return RichText(
-                                              text: TextSpan(
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontSize: UIStyles
-                                                          .bodyStyle.fontSize! *
-                                                      fontSizeProvider
-                                                          .scaleFactor,
-                                                ),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                    text: zve.vVereinNr
-                                                        .toString(),
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: UIStyles
-                                                              .bodyStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: ' - ',
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .bodyStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: zve.vereinName,
-                                                    style: UIStyles.bodyStyle
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: UIStyles
-                                                              .bodyStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (zve.disziplin.isNotEmpty) ...[
-                                    const SizedBox(
-                                      height: UIConstants.spacingS,
-                                    ),
-                                    ...zve.disziplin.map((selectedDisziplin) {
-                                      return Consumer<FontSizeProvider>(
+                          ),
+                          const SizedBox(height: UIConstants.spacingS),
+                          if (_passData != null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Consumer<FontSizeProvider>(
                                         builder:
                                             (context, fontSizeProvider, child) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: UIConstants.spacingXS,
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                ScaledText(
-                                                  '• ',
+                                          return RichText(
+                                            text: TextSpan(
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: _passData!.passnummer,
                                                   style: UIStyles.bodyStyle
                                                       .copyWith(
                                                     fontWeight: FontWeight.bold,
@@ -321,9 +219,83 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                             .scaleFactor,
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  child: ScaledText(
-                                                    '${selectedDisziplin.disziplinNr ?? 'N/A'} - ${selectedDisziplin.disziplin ?? 'N/A'}',
+                                                TextSpan(
+                                                  text: ' - ',
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontSize: UIStyles.bodyStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: _passData!.vereinName,
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: UIStyles.bodyStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          else
+                            Consumer<FontSizeProvider>(
+                              builder: (context, fontSizeProvider, child) {
+                                return ScaledText(
+                                  UIConstants.noPrimaryClubDataAvailable,
+                                  style: UIStyles.bodyStyle.copyWith(
+                                    fontSize: UIStyles.bodyStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
+                                );
+                              },
+                            ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          ScaledText(
+                            'Zweitvereine',
+                            style: UIStyles.headerStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
+                            ),
+                          ),
+                          const SizedBox(height: UIConstants.spacingS),
+                          if (_zveData.isNotEmpty)
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _zveData.length,
+                              itemBuilder: (context, index) {
+                                final zve = _zveData[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: UIConstants.spacingS,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Consumer<FontSizeProvider>(
+                                              builder: (
+                                                context,
+                                                fontSizeProvider,
+                                                child,
+                                              ) {
+                                                return RichText(
+                                                  text: TextSpan(
                                                     style: UIStyles.bodyStyle
                                                         .copyWith(
                                                       fontSize: UIStyles
@@ -332,169 +304,274 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                           fontSizeProvider
                                                               .scaleFactor,
                                                     ),
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                        text: zve.vVereinNr
+                                                            .toString(),
+                                                        style: UIStyles
+                                                            .bodyStyle
+                                                            .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: UIStyles
+                                                                  .bodyStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' - ',
+                                                        style: UIStyles
+                                                            .bodyStyle
+                                                            .copyWith(
+                                                          fontSize: UIStyles
+                                                                  .bodyStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: zve.vereinName,
+                                                        style: UIStyles
+                                                            .bodyStyle
+                                                            .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: UIStyles
+                                                                  .bodyStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                                IconButton(
-                                                  icon: Icon(
-                                                    Icons
-                                                        .delete_outline_outlined,
-                                                    color: UIConstants
-                                                        .defaultAppColor,
-                                                    size: 24 *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      final updatedZveData =
-                                                          List<
-                                                              PassDataZVE>.from(
-                                                        _zveData,
-                                                      );
-                                                      final index =
-                                                          updatedZveData
-                                                              .indexOf(zve);
-                                                      if (index != -1) {
-                                                        final currentDisciplines =
-                                                            List<
-                                                                Disziplin>.from(
-                                                          zve.disziplin,
-                                                        );
-                                                        currentDisciplines
-                                                            .remove(
-                                                          selectedDisziplin,
-                                                        );
-                                                        updatedZveData[index] =
-                                                            zve.copyWith(
-                                                          disziplin:
-                                                              currentDisciplines,
-                                                        );
-                                                        _zveData =
-                                                            updatedZveData;
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                                );
+                                              },
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                      if (zve.disziplin.isNotEmpty) ...[
+                                        const SizedBox(
+                                          height: UIConstants.spacingS,
+                                        ),
+                                        ...zve.disziplin
+                                            .map((selectedDisziplin) {
+                                          return Consumer<FontSizeProvider>(
+                                            builder: (
+                                              context,
+                                              fontSizeProvider,
+                                              child,
+                                            ) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                  bottom:
+                                                      UIConstants.spacingXXS,
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    ScaledText(
+                                                      '• ',
+                                                      style: UIStyles.bodyStyle
+                                                          .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: UIStyles
+                                                                .bodyStyle
+                                                                .fontSize! *
+                                                            fontSizeProvider
+                                                                .scaleFactor,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: ScaledText(
+                                                        '${selectedDisziplin.disziplinNr ?? 'N/A'} - ${selectedDisziplin.disziplin ?? 'N/A'}',
+                                                        style: UIStyles
+                                                            .bodyStyle
+                                                            .copyWith(
+                                                          fontSize: UIStyles
+                                                                  .bodyStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons
+                                                            .delete_outline_outlined,
+                                                        color: UIConstants
+                                                            .defaultAppColor,
+                                                        size: 24 *
+                                                            fontSizeProvider
+                                                                .scaleFactor,
+                                                      ),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          final updatedZveData =
+                                                              List<
+                                                                  PassDataZVE>.from(
+                                                            _zveData,
+                                                          );
+                                                          final index =
+                                                              updatedZveData
+                                                                  .indexOf(zve);
+                                                          if (index != -1) {
+                                                            final currentDisciplines =
+                                                                List<
+                                                                    Disziplin>.from(
+                                                              zve.disziplin,
+                                                            );
+                                                            currentDisciplines
+                                                                .remove(
+                                                              selectedDisziplin,
+                                                            );
+                                                            updatedZveData[
+                                                                    index] =
+                                                                zve.copyWith(
+                                                              disziplin:
+                                                                  currentDisciplines,
+                                                            );
+                                                            _zveData =
+                                                                updatedZveData;
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           );
-                                        },
-                                      );
-                                    }),
-                                  ],
-                                ],
-                              ),
-                            );
-                          },
-                        )
-                      else
-                        Consumer<FontSizeProvider>(
-                          builder: (context, fontSizeProvider, child) {
-                            return ScaledText(
-                              UIConstants.noSecondaryClubsAvailable,
-                              style: UIStyles.bodyStyle.copyWith(
-                                fontSize: UIStyles.bodyStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            );
-                          },
-                        ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: UIConstants.spacingM),
-                        child: Consumer<FontSizeProvider>(
-                          builder: (context, fontSizeProvider, child) {
-                            return Autocomplete<Disziplin>(
-                              optionsBuilder:
-                                  (TextEditingValue textEditingValue) {
-                                if (textEditingValue.text.isEmpty) {
-                                  return const Iterable<Disziplin>.empty();
-                                }
-                                return _disciplines.where((Disziplin option) {
-                                  return (option.disziplin?.toLowerCase() ?? '')
-                                          .contains(
-                                        textEditingValue.text.toLowerCase(),
-                                      ) ||
-                                      (option.disziplinNr?.toLowerCase() ?? '')
-                                          .contains(
-                                        textEditingValue.text.toLowerCase(),
-                                      );
-                                }).take(UIConstants.maxFilteredDisziplinen);
+                                        }),
+                                      ],
+                                    ],
+                                  ),
+                                );
                               },
-                              displayStringForOption: (Disziplin option) =>
-                                  '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
-                              fieldViewBuilder: (
-                                BuildContext context,
-                                TextEditingController textEditingController,
-                                FocusNode focusNode,
-                                VoidCallback onFieldSubmitted,
-                              ) {
-                                _autocompleteTextController =
-                                    textEditingController;
-                                return TextField(
-                                  controller: textEditingController,
-                                  focusNode: focusNode,
+                            )
+                          else
+                            Consumer<FontSizeProvider>(
+                              builder: (context, fontSizeProvider, child) {
+                                return ScaledText(
+                                  UIConstants.noSecondaryClubsAvailable,
                                   style: UIStyles.bodyStyle.copyWith(
                                     fontSize: UIStyles.bodyStyle.fontSize! *
                                         fontSizeProvider.scaleFactor,
                                   ),
-                                  decoration:
-                                      UIStyles.formInputDecoration.copyWith(
-                                    labelText: 'Disziplin hinzufügen',
-                                    labelStyle:
-                                        UIStyles.formLabelStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.formLabelStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
-                                    ),
-                                    floatingLabelStyle:
-                                        UIStyles.formLabelStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.formLabelStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
-                                    ),
-                                    hintStyle: UIStyles.formLabelStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.formLabelStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
-                                    ),
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                      size: 24 * fontSizeProvider.scaleFactor,
-                                    ),
-                                  ),
                                 );
                               },
-                              onSelected: (Disziplin selection) {
-                                setState(() {
-                                  if (_zveData.isNotEmpty) {
-                                    final updatedZveData =
-                                        List<PassDataZVE>.from(_zveData);
-                                    final firstZve = updatedZveData[0];
-                                    final currentDisciplines =
-                                        List<Disziplin>.from(
-                                      firstZve.disziplin,
-                                    );
-                                    if (!currentDisciplines
-                                        .contains(selection)) {
-                                      currentDisciplines.add(selection);
-                                      updatedZveData[0] = firstZve.copyWith(
-                                        disziplin: currentDisciplines,
-                                      );
-                                      _zveData = updatedZveData;
+                            ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: UIConstants.spacingM,
+                            ),
+                            child: Consumer<FontSizeProvider>(
+                              builder: (context, fontSizeProvider, child) {
+                                return Autocomplete<Disziplin>(
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text.isEmpty) {
+                                      return const Iterable<Disziplin>.empty();
                                     }
-                                  }
-                                });
-                                _autocompleteTextController.clear();
+                                    return _disciplines
+                                        .where((Disziplin option) {
+                                      return (option.disziplin?.toLowerCase() ??
+                                                  '')
+                                              .contains(
+                                            textEditingValue.text.toLowerCase(),
+                                          ) ||
+                                          (option.disziplinNr?.toLowerCase() ??
+                                                  '')
+                                              .contains(
+                                            textEditingValue.text.toLowerCase(),
+                                          );
+                                    }).take(UIConstants.maxFilteredDisziplinen);
+                                  },
+                                  displayStringForOption: (Disziplin option) =>
+                                      '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
+                                  fieldViewBuilder: (
+                                    BuildContext context,
+                                    TextEditingController textEditingController,
+                                    FocusNode focusNode,
+                                    VoidCallback onFieldSubmitted,
+                                  ) {
+                                    _autocompleteTextController =
+                                        textEditingController;
+                                    return TextField(
+                                      controller: textEditingController,
+                                      focusNode: focusNode,
+                                      style: UIStyles.bodyStyle.copyWith(
+                                        fontSize: UIStyles.bodyStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
+                                      decoration:
+                                          UIStyles.formInputDecoration.copyWith(
+                                        labelText: 'Disziplin hinzufügen',
+                                        labelStyle:
+                                            UIStyles.formLabelStyle.copyWith(
+                                          fontSize: UIStyles
+                                                  .formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        floatingLabelStyle:
+                                            UIStyles.formLabelStyle.copyWith(
+                                          fontSize: UIStyles
+                                                  .formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        hintStyle:
+                                            UIStyles.formLabelStyle.copyWith(
+                                          fontSize: UIStyles
+                                                  .formLabelStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          size:
+                                              24 * fontSizeProvider.scaleFactor,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  onSelected: (Disziplin selection) {
+                                    setState(() {
+                                      if (_zveData.isNotEmpty) {
+                                        final updatedZveData =
+                                            List<PassDataZVE>.from(_zveData);
+                                        final firstZve = updatedZveData[0];
+                                        final currentDisciplines =
+                                            List<Disziplin>.from(
+                                          firstZve.disziplin,
+                                        );
+                                        if (!currentDisciplines
+                                            .contains(selection)) {
+                                          currentDisciplines.add(selection);
+                                          updatedZveData[0] = firstZve.copyWith(
+                                            disziplin: currentDisciplines,
+                                          );
+                                          _zveData = updatedZveData;
+                                        }
+                                      }
+                                    });
+                                    _autocompleteTextController.clear();
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    );
+        },
+      ),
     );
   }
 }

@@ -44,7 +44,7 @@ Ihr Widerrufsrecht erlischt vorzeitig, wenn der Vertrag von beiden Seiten auf Ih
 5.1.1 Der Teilnehmer ist berechtigt, das Vertragsverhältnis bis 8 oder mehr Kalendertage vor Veranstaltungsbeginn (Eingang der Stornierung beim BSSB) kostenfrei zu stornieren.
 5.1.2 Bei Stornierung innerhalb der 8 Kalendertage vor Veranstaltungsbeginn oder Nichterscheinen ist die Rechnungssumme in voller Höhe zu zahlen.
 5.1.3 Stornierungen müssen über das Webportal "MeinBSSB" online erfolgen.
-5.1.4. Das Widerrufsrecht des Teilnehmers gemäß Ziffer 4 bleibt unberührt.
+5.1.4 Das Widerrufsrecht des Teilnehmers gemäß Ziffer 4 bleibt unberührt.
 
 5.2 Der BSSB ist berechtigt, Veranstaltungen bis 8 Kalendertage vor Veranstaltungsbeginn abzusagen oder räumlich zu verlegen und /oder einen anderen Termin ersatzweise zu benennen. Aus wichtigem Grund – u.a. bei Erkrankungen des oder der Referenten oder bei zu geringer Teilnehmerzahl – kann die Veranstaltung gegen volle Erstattung bereits gezahlter Gebühren kurzfristig abgesagt werden. Weitergehende Ansprüche bestehen nicht.
 
@@ -75,20 +75,181 @@ Stand: 01.12.2022
 
   @override
   Widget build(BuildContext context) {
+    final List<_AgbSection> sections = _parseAgbText(agbText);
     return Scaffold(
+      backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        title: const Text('AGB'),
-        backgroundColor: UIConstants.defaultAppColor,
+        title: const Text('AGB', style: UIStyles.appBarTitleStyle),
+        backgroundColor: UIConstants.backgroundColor,
+        elevation: UIConstants.appBarElevation,
+        iconTheme: const IconThemeData(color: UIConstants.textColor),
       ),
-      body: const Padding(
-        padding: UIConstants.defaultPadding,
+      body: Center(
         child: SingleChildScrollView(
-          child: SelectableText(
-            agbText,
-            style: UIStyles.bodyStyle,
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: UIConstants.spacingL,
+              horizontal: UIConstants.spacingM,
+            ),
+            padding: UIConstants.defaultPadding,
+            decoration: BoxDecoration(
+              color: UIConstants.cardColor,
+              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              boxShadow: UIStyles.cardDecoration.boxShadow,
+            ),
+            child: Builder(
+              builder: (context) {
+                // Remove the last line if it starts with 'Stand:' and treat as footer
+                final List<_AgbSection> mainSections = List.from(sections);
+                String? footer;
+                if (mainSections.isNotEmpty &&
+                    mainSections.last.paragraphs.isNotEmpty) {
+                  final lastParas = mainSections.last.paragraphs;
+                  final lastLine = lastParas.last.trim();
+                  if (lastLine.startsWith('Stand:')) {
+                    footer = lastLine;
+                    lastParas.removeLast();
+                    // If the last section is now empty, remove it
+                    if (lastParas.isEmpty) {
+                      mainSections.removeLast();
+                    }
+                  }
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final section in mainSections) ...[
+                      if (section.title != null) ...[
+                        Text(
+                          section.title!,
+                          style: UIStyles.sectionTitleStyle,
+                        ),
+                        UIConstants.verticalSpacingS,
+                      ],
+                      for (final para in section.paragraphs) ...[
+                        if (RegExp(r'^\d+(?:\.\d+)*\.\s*').hasMatch(para) &&
+                            !para.startsWith('Stand:'))
+                          _buildNumberedParagraph(para)
+                        else
+                          Text(
+                            para,
+                            style: UIStyles.bodyStyle,
+                          ),
+                        UIConstants.verticalSpacingXS,
+                      ],
+                      UIConstants.verticalSpacingM,
+                    ],
+                    if (footer != null)
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: UIConstants.spacingS),
+                        child: Text(
+                          footer,
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontStyle: FontStyle.italic,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.close,
+          color: Colors.white,
         ),
       ),
     );
   }
+}
+
+class _AgbSection {
+  _AgbSection({this.title, required this.paragraphs});
+  final String? title;
+  final List<String> paragraphs;
+}
+
+List<_AgbSection> _parseAgbText(String text) {
+  final lines = text.split('\n');
+  final List<_AgbSection> sections = [];
+  String? currentTitle;
+  List<String> currentParagraphs = [];
+  final sectionHeaderRegex = RegExp(r'^(\d+\.|[A-Z][a-z]+:?)');
+
+  for (final line in lines) {
+    final trimmed = line.trim();
+    if (trimmed.isEmpty) continue;
+    // Skip "Stand:" lines as they should be treated as footer, not section headers
+    if (trimmed.startsWith('Stand:')) {
+      currentParagraphs.add(trimmed);
+    } else if (sectionHeaderRegex.hasMatch(trimmed) &&
+        trimmed.length < UIConstants.maxSectionHeaderLength &&
+        // Exclude numbered subparagraphs (like 5.1, 5.1.1, 5.1.4.) from being section headers
+        !RegExp(r'^\d+\.\d').hasMatch(trimmed) &&
+        // Also exclude lines that end with a dot followed by text (like "5.1.4. Das Widerrufsrecht...")
+        !RegExp(r'^\d+\.\d+\.\s').hasMatch(trimmed)) {
+      if (currentParagraphs.isNotEmpty || currentTitle != null) {
+        sections.add(
+          _AgbSection(title: currentTitle, paragraphs: currentParagraphs),
+        );
+        currentParagraphs = [];
+      }
+      currentTitle = trimmed;
+    } else {
+      currentParagraphs.add(trimmed);
+    }
+  }
+  if (currentParagraphs.isNotEmpty || currentTitle != null) {
+    sections
+        .add(_AgbSection(title: currentTitle, paragraphs: currentParagraphs));
+  }
+  return sections;
+}
+
+Widget _buildNumberedParagraph(String para) {
+  // Match patterns like "5.1", "5.1.1", "5.1.2", "5.1.4.", etc.
+  // Handle both cases: with and without extra dot at the end
+  // More flexible regex that handles optional extra dot
+  final regex = RegExp(r'^(\d+(?:\.\d+)*)\.?\s*(.*)');
+  final match = regex.firstMatch(para);
+
+  if (match != null) {
+    final numbers = match.group(1)!; // e.g., "5.1" or "5.1.1"
+    final text = match.group(2)!; // The rest of the text
+
+    // Check if the original paragraph has a dot after the numbers
+    final hasExtraDot = para.trim().startsWith('$numbers. ');
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: hasExtraDot ? '$numbers.' : numbers,
+            style: UIStyles.bodyStyle.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: UIStyles.bodyStyle.fontSize! * 1.2, // Make it larger
+              color: UIConstants.textColor, // Use text color (black)
+            ),
+          ),
+          TextSpan(
+            text: hasExtraDot ? ' $text' : ' $text',
+            style: UIStyles.bodyStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Fallback for any other numbered paragraphs
+  return Text(
+    para,
+    style: UIStyles.bodyStyle,
+  );
 }
