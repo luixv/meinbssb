@@ -1279,7 +1279,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         Row(
                                                                           children: [
                                                                             const Icon(
-                                                                              Icons.people,
+                                                                              Icons.format_list_numbered, // Icons.people
                                                                               size: UIConstants.defaultIconSize,
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
