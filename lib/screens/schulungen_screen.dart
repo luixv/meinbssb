@@ -118,10 +118,18 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     if (!mounted) return;
     final parentContext = context;
     final user = widget.userData;
-    // Fetch bank data
     final apiService = Provider.of<ApiService>(parentContext, listen: false);
     final cacheService =
         Provider.of<CacheService>(parentContext, listen: false);
+
+    // Show the dialog immediately with a loading indicator
+    showDialog(
+      context: parentContext,
+      barrierDismissible: false,
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
 
     // Fetch bank data and contacts in parallel
     final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
@@ -135,15 +143,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     final List<BankData> bankDataList = await bankDataFuture;
     final List<Map<String, dynamic>> contacts = await contactsFuture;
 
-    // Get phone number from contacts (MINIMAL FIX: extract logic to helper, no context usage after async gap)
+    // Get phone number from contacts
     String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
-      // Try to find private phone number first
       final privateContacts = contacts.firstWhere(
         (category) => category['category'] == 'Privat',
         orElse: () => {'contacts': []},
       )['contacts'] as List<dynamic>;
-
-      // Look for any phone number in private contacts
       var phoneContact = privateContacts
           .cast<Map<String, dynamic>>()
           .firstWhere(
@@ -151,14 +156,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
             orElse: () => {'value': ''},
           );
-
       if (phoneContact['value'] == '') {
-        // If no private phone found, look for business phone
         final businessContacts = contacts.firstWhere(
           (category) => category['category'] == 'Geschäftlich',
           orElse: () => {'contacts': []},
         )['contacts'] as List<dynamic>;
-
         phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
               (contact) =>
                   contact['rawKontaktTyp'] == 5 ||
@@ -166,24 +168,20 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               orElse: () => {'value': ''},
             );
       }
-
       return phoneContact['value'] as String;
     }
 
     final String phoneNumber = extractPhoneNumber(contacts);
-
-    // Get email from cache
     final String email = await cacheService.getString('username') ?? '';
-
-    // Get bank data
     final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
 
     if (!mounted) return;
-
-    // Check if the BuildContext is still valid before using it
     if (!parentContext.mounted) return;
 
-    // Show the booking dialog with the fetched data
+    // Pop the loading indicator
+    Navigator.of(parentContext, rootNavigator: true).pop();
+
+    // Show the actual booking dialog with the fetched data
     bool agbChecked = false;
     bool lastschriftChecked = false;
     showDialog(
@@ -424,7 +422,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           title: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('Bestätigung des Lastschrifteinzugs'),
+                              Flexible(
+                                child: Text(
+                                  'Bestätigung des Lastschrifteinzugs',
+                                ),
+                              ),
                               SizedBox(width: UIConstants.spacingS),
                               Tooltip(
                                 message: // Hiermit ermächtige ich Sie widerruflich, fällige Zahlungen per Lastschrift von meinem MeinBSSB-Konto einzuziehen. Mein Kreditinstitut wird angewiesen, diese Lastschriften einzulösen
@@ -699,14 +701,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         }
 
         void submit() async {
-          if (!formKey.currentState!.validate()) return;
-          final apiService = Provider.of<ApiService>(
-            dialogContext,
-            listen: false,
-          );
-
           // TODO, find in which way has to be validated this
-/*
+          /*
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
           if (!dialogContext.mounted) return;
@@ -725,6 +721,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             return;
           }
           */
+          if (!formKey.currentState!.validate()) return;
+          final apiService = Provider.of<ApiService>(
+            dialogContext,
+            listen: false,
+          );
 
           Navigator.of(context).pop();
           try {
