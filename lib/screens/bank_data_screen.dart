@@ -87,12 +87,27 @@ class BankDataScreenState extends State<BankDataScreen> {
       return;
     }
 
+    // Check offline status before saving
+    final networkService = Provider.of<NetworkService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final isOffline = !(await networkService.hasInternet());
+    if (isOffline) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bankdaten können offline nicht gespeichert werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isSaving = true;
     });
 
     try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
       final bankData = BankData(
         id: 0, // Will be assigned by the server
         webloginId: widget.webloginId,
@@ -106,6 +121,7 @@ class BankDataScreenState extends State<BankDataScreen> {
 
       if (!mounted) return;
       if (success) {
+        if (!mounted) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => BankDataResultScreen(
@@ -117,6 +133,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
         );
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fehler beim Speichern der Bankdaten.'),
@@ -146,6 +163,7 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   Future<void> _onDeleteBankData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final networkService = Provider.of<NetworkService>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -231,6 +249,19 @@ class BankDataScreenState extends State<BankDataScreen> {
     if (!mounted) return;
 
     if (confirm == true) {
+      // Check offline status before deleting
+      final isOffline = !(await networkService.hasInternet());
+      if (isOffline) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bankdaten können offline nicht gelöscht werden'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+        return;
+      }
       setState(() {
         _isSaving = true;
       });
@@ -248,6 +279,7 @@ class BankDataScreenState extends State<BankDataScreen> {
 
         if (!mounted) return;
         if (success) {
+          if (!mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => BankDataResultScreen(
@@ -259,6 +291,7 @@ class BankDataScreenState extends State<BankDataScreen> {
             ),
           );
         } else {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Fehler beim Löschen der Bankdaten.'),
@@ -269,6 +302,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         }
       } catch (e) {
         LoggerService.logError('Exception during bank data delete: $e');
+        if (!mounted) return;
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -293,17 +327,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     _ibanController.dispose();
     _bicController.dispose();
     super.dispose();
-  }
-
-  Future<bool> _isOffline() async {
-    try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
-    } catch (e) {
-      LoggerService.logError('Error checking network status: $e');
-      return true; // Assume offline if we can't check
-    }
   }
 
   Widget _buildFABs() {
@@ -386,151 +409,88 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.webloginId == 0) {
-      return BaseScreenLayout(
-        title: 'Bankdaten',
-        userData: widget.userData,
-        isLoggedIn: widget.isLoggedIn,
-        onLogout: widget.onLogout,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: UIConstants.iconSizeM,
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              const ScaledText(
-                'Fehler beim Laden der Bankdaten',
-                style: UIStyles.headerStyle,
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              const ScaledText(
-                'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
-                textAlign: TextAlign.center,
-                style: UIStyles.bodyStyle,
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              ElevatedButton(
-                onPressed: () {
-                  widget.onLogout();
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-                child: const ScaledText('Zurück zum Login'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return BaseScreenLayout(
       title: 'Bankdaten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // Check if offline first
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return Center(
-              child: Padding(
-                padding: UIConstants.screenPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.wifi_off,
-                      size: UIConstants.wifiOffIconSize,
-                      color: UIConstants.noConnectivityIcon,
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
-                      'Bankdaten sind offline nicht verfügbar',
-                      style: UIStyles.headerStyle.copyWith(
-                        color: UIConstants.textColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    ScaledText(
-                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um auf Ihre Bankdaten zuzugreifen.',
-                      style: UIStyles.bodyStyle.copyWith(
-                        color: UIConstants.greySubtitleTextColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          // If online, show the normal bank data form
-          return FutureBuilder<BankData?>(
-            future: _bankDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasError) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: UIConstants.iconSizeM,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      const ScaledText(
-                        'Fehler beim Laden der Bankdaten',
-                        style: UIStyles.headerStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      ScaledText(
-                        snapshot.error.toString(),
-                        textAlign: TextAlign.center,
-                        style: UIStyles.bodyStyle,
-                      ),
-                    ],
+      body: widget.webloginId == 0
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: UIConstants.iconSizeM,
                   ),
-                );
-              }
-
-              if (snapshot.hasData && snapshot.data != null) {
-                final bankData = snapshot.data!;
-                if (!_isEditing) {
-                  _kontoinhaberController.text = bankData.kontoinhaber;
-                  _ibanController.text = bankData.iban;
-                  _bicController.text = bankData.bic;
+                  const SizedBox(height: UIConstants.spacingM),
+                  const ScaledText(
+                    'Fehler beim Laden der Bankdaten',
+                    style: UIStyles.headerStyle,
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  const ScaledText(
+                    'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
+                    textAlign: TextAlign.center,
+                    style: UIStyles.bodyStyle,
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  ElevatedButton(
+                    onPressed: () {
+                      widget.onLogout();
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    child: const ScaledText('Zurück zum Login'),
+                  ),
+                ],
+              ),
+            )
+          : FutureBuilder<BankData?>(
+              future: _bankDataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-                return _buildBankDataForm();
-              } else {
-                return _buildBankDataForm();
-              }
-            },
-          );
-        },
-      ),
-      floatingActionButton: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          if (!offlineSnapshot.hasData || offlineSnapshot.data == true) {
-            return const SizedBox.shrink();
-          }
-          return _buildFABs();
-        },
-      ),
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: UIConstants.iconSizeM,
+                        ),
+                        const SizedBox(height: UIConstants.spacingM),
+                        const ScaledText(
+                          'Fehler beim Laden der Bankdaten',
+                          style: UIStyles.headerStyle,
+                        ),
+                        const SizedBox(height: UIConstants.spacingS),
+                        ScaledText(
+                          snapshot.error.toString(),
+                          textAlign: TextAlign.center,
+                          style: UIStyles.bodyStyle,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                if (snapshot.hasData && snapshot.data != null) {
+                  final bankData = snapshot.data!;
+                  if (!_isEditing) {
+                    _kontoinhaberController.text = bankData.kontoinhaber;
+                    _ibanController.text = bankData.iban;
+                    _bicController.text = bankData.bic;
+                  }
+                  return _buildBankDataForm();
+                } else {
+                  return _buildBankDataForm();
+                }
+              },
+            ),
+      floatingActionButton: _buildFABs(),
     );
   }
 

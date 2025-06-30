@@ -197,7 +197,7 @@ class ApiService {
 
   // Bank Service
   Future<List<BankData>> fetchBankData(int webloginId) async {
-    return _bankService.fetchBankData(webloginId);
+    return _userService.fetchBankData(webloginId);
   }
 
   Future<bool> registerBankData(BankData bankData) async {

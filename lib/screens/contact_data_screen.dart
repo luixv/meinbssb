@@ -182,9 +182,28 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       return;
     }
 
+    // Check offline status before deleting
+    final networkService = Provider.of<NetworkService>(context, listen: false);
+    final isOffline = !(await networkService.hasInternet());
+    if (!mounted) return;
+    if (isOffline) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Kontaktdaten können offline nicht gelöscht werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      setState(() {
+        _isDeleting = false;
+      });
+      return;
+    }
+
     setState(() {
       _isDeleting = true;
     });
+    if (!mounted) return;
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
@@ -195,25 +214,23 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         value: '', // Value is not needed for deletion
       );
       final bool success = await apiService.deleteKontakt(contact);
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Kontaktdaten erfolgreich gelöscht.'),
-              duration: UIConstants.snackbarDuration,
-            ),
-          );
-          _fetchContacts();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler beim Löschen der Kontaktdaten.'),
-              duration: UIConstants.snackbarDuration,
-              backgroundColor: UIConstants.errorColor,
-            ),
-          );
-        }
+      if (!mounted) return;
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kontaktdaten erfolgreich gelöscht.'),
+            duration: UIConstants.snackbarDuration,
+          ),
+        );
+        _fetchContacts();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Löschen der Kontaktdaten.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
       }
     } catch (e) {
       LoggerService.logError('Exception during contact deletion: $e');
@@ -249,6 +266,21 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
         );
       }
+      return;
+    }
+
+    // Check offline status before adding
+    final networkService = Provider.of<NetworkService>(context, listen: false);
+    final isOffline = !(await networkService.hasInternet());
+    if (!mounted) return;
+    if (isOffline) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Kontaktdaten können offline nicht hinzugefügt werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
       return;
     }
 
@@ -295,26 +327,25 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final bool success = await apiService.addKontakt(contact);
 
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Kontaktdaten erfolgreich gespeichert.'),
-              duration: UIConstants.snackbarDuration,
-            ),
-          );
-          _kontaktController.clear();
-          _selectedKontaktTyp = null;
-          _fetchContacts();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler beim Speichern der Kontaktdaten.'),
-              duration: UIConstants.snackbarDuration,
-              backgroundColor: UIConstants.errorColor,
-            ),
-          );
-        }
+      if (!mounted) return;
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kontaktdaten erfolgreich gespeichert.'),
+            duration: UIConstants.snackbarDuration,
+          ),
+        );
+        _kontaktController.clear();
+        _selectedKontaktTyp = null;
+        _fetchContacts();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Speichern der Kontaktdaten.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
       }
     } catch (e) {
       LoggerService.logError('Exception during contact addition: $e');
@@ -524,17 +555,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     // Navigation is handled by the app's logout handler
   }
 
-  Future<bool> _isOffline() async {
-    try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
-    } catch (e) {
-      LoggerService.logError('Error checking network status: $e');
-      return true; // Assume offline if we can't check
-    }
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -549,97 +569,42 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: _handleLogout,
-      body: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _contactDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-
-          // Check if offline first
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
+          } else if (snapshot.hasError) {
+            LoggerService.logError(
+              'Error loading contact data in FutureBuilder: [${snapshot.error}',
+            );
             return Center(
-              child: Padding(
-                padding: UIConstants.screenPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.wifi_off,
-                      size: UIConstants.wifiOffIconSize,
-                      color: UIConstants.noConnectivityIcon,
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
-                      'Kontaktdaten sind offline nicht verfügbar',
-                      style: UIStyles.headerStyle.copyWith(
-                        color: UIConstants.textColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    ScaledText(
-                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um auf Ihre Kontaktdaten zuzugreifen.',
-                      style: UIStyles.bodyStyle.copyWith(
-                        color: UIConstants.greySubtitleTextColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+              child: ScaledText(
+                'Fehler beim Laden der Kontaktdaten: [${snapshot.error}',
+                style: UIStyles.errorStyle,
               ),
             );
+          } else if (snapshot.hasData && snapshot.data != null) {
+            final List<Map<String, dynamic>> categorizedContactData =
+                snapshot.data!;
+            return _buildContactDataList(
+              categorizedContactData,
+              widget.userData?.personId ?? 0,
+              _onDeleteContact,
+              _isDeleting,
+            );
+          } else {
+            return const Center(
+              child: ScaledText('Keine Kontaktdaten gefunden.'),
+            );
           }
-
-          // If online, show the normal contact data list
-          return FutureBuilder<List<Map<String, dynamic>>>(
-            future: _contactDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                LoggerService.logError(
-                  'Error loading contact data in FutureBuilder: ${snapshot.error}',
-                );
-                return Center(
-                  child: ScaledText(
-                    'Fehler beim Laden der Kontaktdaten: ${snapshot.error}',
-                    style: UIStyles.errorStyle,
-                  ),
-                );
-              } else if (snapshot.hasData && snapshot.data != null) {
-                final List<Map<String, dynamic>> categorizedContactData =
-                    snapshot.data!;
-                return _buildContactDataList(
-                  categorizedContactData,
-                  widget.userData?.personId ?? 0,
-                  _onDeleteContact,
-                  _isDeleting,
-                );
-              } else {
-                return const Center(
-                  child: ScaledText('Keine Kontaktdaten gefunden.'),
-                );
-              }
-            },
-          );
         },
       ),
-      floatingActionButton: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          // Hide FAB when offline
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return const SizedBox.shrink();
-          }
-
-          return FloatingActionButton(
-            heroTag: 'contactDataFab',
-            onPressed: _showAddContactForm,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.add, color: Colors.white),
-          );
-        },
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'contactDataFab',
+        onPressed: _showAddContactForm,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

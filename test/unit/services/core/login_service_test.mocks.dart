@@ -1314,6 +1314,16 @@ class MockUserService extends _i1.Mock implements _i21.UserService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<List<_i20.BankData>> fetchBankData(int? webloginId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBankData,
+          [webloginId],
+        ),
+        returnValue: _i2.Future<List<_i20.BankData>>.value(<_i20.BankData>[]),
+      ) as _i2.Future<List<_i20.BankData>>);
 }
 
 /// A class which mocks [BankService].

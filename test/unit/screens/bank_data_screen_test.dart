@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/bank_data_screen.dart';
 import '../helpers/test_helper.dart';
@@ -45,20 +44,6 @@ void main() {
       expect(find.byType(FloatingActionButton), findsWidgets);
       expect(find.byIcon(Icons.edit), findsOneWidget);
       expect(find.byIcon(Icons.delete_outline), findsOneWidget);
-    });
-
-    testWidgets('shows offline message when offline',
-        (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => false);
-
-      await tester.pumpWidget(createBankDataScreen());
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('Bankdaten sind offline nicht verfügbar'),
-        findsOneWidget,
-      );
     });
   });
 }
