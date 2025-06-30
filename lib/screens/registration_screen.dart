@@ -254,8 +254,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
       // Replace placeholders in the email content
       final emailBody = emailContent
-          .replaceAll('{verificationLink}', verificationLink)
-          .replaceAll('{firstName}', _firstNameController.text);
+          .replaceAll('{firstName}', _firstNameController.text)
+          .replaceAll('{verificationLink}', verificationLink);
 
       // Send the verification email
       final emailResponse = await widget.emailService.sendEmail(

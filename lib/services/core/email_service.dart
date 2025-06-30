@@ -68,7 +68,7 @@ class EmailService {
         ..from = mailer.Address(from)
         ..recipients.add(recipient)
         ..subject = subject
-        ..text = body;
+        ..html = body;
 
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');

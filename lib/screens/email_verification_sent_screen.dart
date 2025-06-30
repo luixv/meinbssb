@@ -19,10 +19,12 @@ class EmailVerificationSentScreen extends StatefulWidget {
   final AuthService authService;
 
   @override
-  EmailVerificationSentScreenState createState() => EmailVerificationSentScreenState();
+  EmailVerificationSentScreenState createState() =>
+      EmailVerificationSentScreenState();
 }
 
-class EmailVerificationSentScreenState extends State<EmailVerificationSentScreen> {
+class EmailVerificationSentScreenState
+    extends State<EmailVerificationSentScreen> {
   @override
   void initState() {
     super.initState();
@@ -32,7 +34,7 @@ class EmailVerificationSentScreenState extends State<EmailVerificationSentScreen
   Future<void> _verifyEmailAndNavigate() async {
     // Add a small delay to ensure the screen is built
     await Future.delayed(const Duration(milliseconds: 100));
-    
+
     if (!mounted) return;
 
     // Navigate to set password screen
@@ -60,7 +62,8 @@ class EmailVerificationSentScreenState extends State<EmailVerificationSentScreen
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(UIConstants.primaryColor),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(UIConstants.primaryColor),
             ),
             SizedBox(height: UIConstants.spacingM),
             ScaledText(
