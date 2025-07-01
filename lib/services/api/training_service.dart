@@ -512,4 +512,27 @@ class TrainingService {
       rethrow;
     }
   }
+
+  /// Fetch a single Schulungstermin by its ID.
+  Future<Schulungstermine?> fetchSchulungstermin(
+    String schulungenTerminID,
+  ) async {
+    try {
+      final response =
+          await _httpClient.get('Schulungstermin/$schulungenTerminID');
+      if (response is Map<String, dynamic>) {
+        return Schulungstermine.fromJson(response);
+      } else {
+        LoggerService.logError(
+          'Unexpected response type for fetchSchulungstermin: \\${response.runtimeType}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error fetching Schulungstermin: \\${e.toString()}',
+      );
+      return null;
+    }
+  }
 }

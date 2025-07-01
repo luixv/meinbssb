@@ -534,7 +534,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       backgroundColor: UIConstants.backgroundColor,
       title: const Center(
         child: ScaledText(
-          'Bereits angemeldet Personen',
+          'Bereits angemeldete Personen',
           style: UIStyles.dialogTitleStyle,
         ),
       ),
@@ -1431,8 +1431,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     heroTag:
                                                         'descDialogBookFab$index',
                                                     mini: true,
-                                                    tooltip:
-                                                        'Schulungen Buchen',
+                                                    tooltip: 'Buchen',
                                                     backgroundColor: isGesperrt
                                                         ? UIConstants
                                                             .cancelButtonBackground

@@ -40,7 +40,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Aus- und Weiterbildung'), findsOneWidget);
-      expect(find.text('Schulungen suchen'), findsOneWidget);
+      expect(find.text('Suchen'), findsOneWidget);
       expect(find.text('Datum wählen'), findsOneWidget);
       expect(find.text('Gruppe'), findsOneWidget);
       expect(find.text('Bezirk'), findsOneWidget);
@@ -62,7 +62,7 @@ void main() {
       await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
-      expect(find.text('Schulungen suchen'), findsOneWidget);
+      expect(find.text('Suchen'), findsOneWidget);
       expect(find.text('Datum wählen'), findsOneWidget);
       expect(find.text('Gruppe'), findsOneWidget);
       expect(find.text('Bezirk'), findsOneWidget);
