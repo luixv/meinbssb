@@ -406,7 +406,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 child: Icon(
                                   Icons.info_outline,
                                   color: UIConstants.defaultAppColor,
-                                  size: 20,
+                                  size: UIConstants.defaultIconSize,
                                 ),
                               ),
                             ],
@@ -434,7 +434,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 child: Icon(
                                   Icons.info_outline,
                                   color: UIConstants.defaultAppColor,
-                                  size: 20,
+                                  size: UIConstants.defaultIconSize,
                                 ),
                               ),
                             ],
@@ -1277,16 +1277,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           height:
                                                                               UIConstants.spacingXS,
                                                                         ),
-                                                                        Row(
-                                                                          children: [
-                                                                            const Icon(
-                                                                              Icons.format_list_numbered, // Icons.people
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
-                                                                            UIConstants.horizontalSpacingS,
-                                                                            Text('${t.angemeldeteTeilnehmer}/${t.maxTeilnehmer}'),
-                                                                          ],
-                                                                        ),
                                                                         const SizedBox(
                                                                           height:
                                                                               UIConstants.spacingXS,
@@ -1340,9 +1330,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             Flexible(child: Text(t.lehrgangsleiter)),
                                                                           ],
                                                                         ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
                                                                         if (t
                                                                             .lehrgangsleiterTel
-                                                                            .isNotEmpty)
+                                                                            .isNotEmpty) ...[
                                                                           Row(
                                                                             children: [
                                                                               const Icon(Icons.phone, size: UIConstants.defaultIconSize),
@@ -1350,9 +1343,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               Flexible(child: Text(t.lehrgangsleiterTel)),
                                                                             ],
                                                                           ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingXS,),
+                                                                        ],
                                                                         if (t
                                                                             .lehrgangsleiterMail
-                                                                            .isNotEmpty)
+                                                                            .isNotEmpty) ...[
                                                                           Row(
                                                                             children: [
                                                                               const Icon(Icons.email, size: UIConstants.defaultIconSize),
@@ -1360,6 +1356,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               Flexible(child: Text(t.lehrgangsleiterMail)),
                                                                             ],
                                                                           ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingXS,),
+                                                                        ],
                                                                       ],
                                                                     ),
                                                                   ),
@@ -1369,7 +1368,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           ],
                                                         ),
                                                       ),
-                                                      const Divider(height: 1),
+                                                      const Divider(
+                                                        height: UIConstants
+                                                            .defaultStrokeWidth,
+                                                      ),
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets

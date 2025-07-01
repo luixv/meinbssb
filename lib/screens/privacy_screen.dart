@@ -44,8 +44,10 @@ class PrivacyScreen extends StatelessWidget {
                 const Divider(),
                 UIConstants.verticalSpacingM,
                 // Verantwortlicher
-                const Text('Verantwortlicher und Datenschutzbeauftragter',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Verantwortlicher und Datenschutzbeauftragter',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingS,
                 _addressBlock([
                   'Bayerischer Sportschützenbund e.V.',
@@ -60,8 +62,10 @@ class PrivacyScreen extends StatelessWidget {
                   web: 'https://www.bssb.de',
                 ),
                 UIConstants.verticalSpacingXS,
-                const Text('Datenschutzbeauftragter:',
-                    style: UIStyles.bodyStyle,),
+                const Text(
+                  'Datenschutzbeauftragter:',
+                  style: UIStyles.bodyStyle,
+                ),
                 _addressBlock([
                   'Herbert Isdebski',
                   'Scheibenhalde 1',
@@ -85,8 +89,10 @@ class PrivacyScreen extends StatelessWidget {
                 ]),
                 UIConstants.verticalSpacingM,
                 // Welche Daten werden erfasst und wie?
-                const Text('Welche Daten werden erfasst und wie?',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Welche Daten werden erfasst und wie?',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text('Server-Log-Dateien', style: UIStyles.bodyStyle),
                 _bulletList([
@@ -98,91 +104,120 @@ class PrivacyScreen extends StatelessWidget {
                   'IP-Adresse',
                 ]),
                 const Text(
-                    'Diese werden benötigt, um Angriffe, einen fehlerhaften Code oder allgemeine Fehler zu identifizieren und werden nach vier Wochen vom Webserver automatisch gelöscht. Eine Zusammenführung dieser Daten mit anderen Datenquellen findet nicht statt. Grundlage für die Datenverarbeitung ist Art. 6 Abs. 1, b DSGVO, der die Verarbeitung von Daten zur Erfüllung eines Vertrags oder vorvertraglicher Maßnahmen gestattet.',
-                    style: UIStyles.bodyStyle,),
+                  'Diese werden benötigt, um Angriffe, einen fehlerhaften Code oder allgemeine Fehler zu identifizieren und werden nach vier Wochen vom Webserver automatisch gelöscht. Eine Zusammenführung dieser Daten mit anderen Datenquellen findet nicht statt. Grundlage für die Datenverarbeitung ist Art. 6 Abs. 1, b DSGVO, der die Verarbeitung von Daten zur Erfüllung eines Vertrags oder vorvertraglicher Maßnahmen gestattet.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text('Cookies', style: UIStyles.bodyStyle),
                 const Text(
-                    'Die Internetseiten verwendet so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren. Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen. Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.',
-                    style: UIStyles.bodyStyle,),
+                  'Die Internetseiten verwendet so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren. Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen. Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.',
+                  style: UIStyles.bodyStyle,
+                ),
                 _bulletList([
                   'Session-Cookies: Werden nach Ende Ihres Besuchs automatisch gelöscht.',
                   'Persistente Cookies: Bleiben auf Ihrem Endgerät gespeichert, bis Sie diese löschen.',
                 ]),
                 const Text(
-                    'Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert werden und Cookies nur im Einzelfall erlauben, die Annahme von Cookies für bestimmte Fälle oder generell ausschließen sowie das automatische Löschen der Cookies beim Schließen des Browsers aktivieren. Bei der Deaktivierung von Cookies kann die Funktionalität dieser Website eingeschränkt sein.',
-                    style: UIStyles.bodyStyle,),
+                  'Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert werden und Cookies nur im Einzelfall erlauben, die Annahme von Cookies für bestimmte Fälle oder generell ausschließen sowie das automatische Löschen der Cookies beim Schließen des Browsers aktivieren. Bei der Deaktivierung von Cookies kann die Funktionalität dieser Website eingeschränkt sein.',
+                  style: UIStyles.bodyStyle,
+                ),
                 const Text(
-                    'Cookies, die zur Durchführung des elektronischen Kommunikationsvorgangs oder zur Bereitstellung bestimmter, von Ihnen erwünschter Funktionen (z.B. Warenkorbfunktion) erforderlich sind, werden auf Grundlage von Art. 6 Abs. 1, f DSGVO gespeichert. Der Websitebetreiber hat ein berechtigtes Interesse an der Speicherung von Cookies zur technisch fehlerfreien und optimierten Bereitstellung seiner Dienste.',
-                    style: UIStyles.bodyStyle,),
+                  'Cookies, die zur Durchführung des elektronischen Kommunikationsvorgangs oder zur Bereitstellung bestimmter, von Ihnen erwünschter Funktionen (z.B. Warenkorbfunktion) erforderlich sind, werden auf Grundlage von Art. 6 Abs. 1, f DSGVO gespeichert. Der Websitebetreiber hat ein berechtigtes Interesse an der Speicherung von Cookies zur technisch fehlerfreien und optimierten Bereitstellung seiner Dienste.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
-                const Text('Cookie-Einstellungen und Widerruf der Einwilligung',
-                    style: UIStyles.bodyStyle,),
                 const Text(
-                    'Sie können Ihre Cookie-Einstellungen jederzeit in Ihrem Browser anpassen und bereits gesetzte Cookies löschen. Viele Browser bieten zudem die Möglichkeit, das Setzen von Cookies generell zu unterbinden. Hinweise dazu finden Sie in der Hilfefunktion Ihres Browsers.',
-                    style: UIStyles.bodyStyle,),
+                  'Cookie-Einstellungen und Widerruf der Einwilligung',
+                  style: UIStyles.bodyStyle,
+                ),
+                const Text(
+                  'Sie können Ihre Cookie-Einstellungen jederzeit in Ihrem Browser anpassen und bereits gesetzte Cookies löschen. Viele Browser bieten zudem die Möglichkeit, das Setzen von Cookies generell zu unterbinden. Hinweise dazu finden Sie in der Hilfefunktion Ihres Browsers.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Wofür werden erhobene Daten genutzt?
-                const Text('Wofür werden erhobene Daten genutzt?',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Wofür werden erhobene Daten genutzt?',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden.',
-                    style: UIStyles.bodyStyle,),
-                UIConstants.verticalSpacingXS,
-                const Text('Analyse-Tools und Tools von Drittanbietern',
-                    style: UIStyles.bodyStyle,),
-                const Text(
-                    'Wir verwenden keine Analyse-Tools und Tools von Drittanbietern.',
-                    style: UIStyles.bodyStyle,),
+                  'Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Kontaktformulare, RSS-Feeds, Onlinemelder, BSSB-Abo-Bestellung, BSSB-Online-Shop, Veasy-Lizenzprogramm des Deutschen Schützenbundes',
-                    style: UIStyles.bodyStyle,),
+                  'Analyse-Tools und Tools von Drittanbietern',
+                  style: UIStyles.bodyStyle,
+                ),
                 const Text(
-                    'Wir verarbeiten Daten (z. B. Namen und Adressen sowie Kontaktdaten von Nutzern), die in den Kontaktformularen, Anmeldung für RSS-Feeds oder im Onlinemelder erhoben werden, um vertraglichen Verpflichtungen, Serviceleistungen und der Organisation von Wettkämpfen und Veranstaltungen nachzukommen. Ebenso werden die Vertragsdaten bei einer Abo-Bestellung oder einer Bestellung im BSSB-Online-Shop (z.B. in Anspruch genommene Leistungen, Name, Adresse, Kontaktdaten, Zahlungsinformationen) zwecks Erfüllung unserer vertraglichen Verpflichtungen gem. Art. 6 Abs. 1 DSGVO verarbeitet.',
-                    style: UIStyles.bodyStyle,),
+                  'Wir verwenden keine Analyse-Tools und Tools von Drittanbietern.',
+                  style: UIStyles.bodyStyle,
+                ),
+                UIConstants.verticalSpacingXS,
+                const Text(
+                  'Kontaktformulare, RSS-Feeds, Onlinemelder, BSSB-Abo-Bestellung, BSSB-Online-Shop, Veasy-Lizenzprogramm des Deutschen Schützenbundes',
+                  style: UIStyles.bodyStyle,
+                ),
+                const Text(
+                  'Wir verarbeiten Daten (z. B. Namen und Adressen sowie Kontaktdaten von Nutzern), die in den Kontaktformularen, Anmeldung für RSS-Feeds oder im Onlinemelder erhoben werden, um vertraglichen Verpflichtungen, Serviceleistungen und der Organisation von Wettkämpfen und Veranstaltungen nachzukommen. Ebenso werden die Vertragsdaten bei einer Abo-Bestellung oder einer Bestellung im BSSB-Online-Shop (z.B. in Anspruch genommene Leistungen, Name, Adresse, Kontaktdaten, Zahlungsinformationen) zwecks Erfüllung unserer vertraglichen Verpflichtungen gem. Art. 6 Abs. 1 DSGVO verarbeitet.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text('Newsletter', style: UIStyles.bodyStyle),
                 const Text(
-                    'Wenn Sie den auf der Website angebotenen Newsletter beziehen möchten, benötigen wir von Ihnen eine E-Mail-Adresse sowie Informationen, welche uns die Überprüfung gestatten, dass Sie der Inhaber der angegebenen E-Mail-Adresse sind und mit dem Empfang des Newsletters einverstanden sind. Weitere Daten werden nicht bzw. nur auf freiwilliger Basis erhoben. Diese Daten verwenden wir ausschließlich für den Versand der angeforderten Informationen und geben diese nicht an Dritte weiter.',
-                    style: UIStyles.bodyStyle,),
+                  'Wenn Sie den auf der Website angebotenen Newsletter beziehen möchten, benötigen wir von Ihnen eine E-Mail-Adresse sowie Informationen, welche uns die Überprüfung gestatten, dass Sie der Inhaber der angegebenen E-Mail-Adresse sind und mit dem Empfang des Newsletters einverstanden sind. Weitere Daten werden nicht bzw. nur auf freiwilliger Basis erhoben. Diese Daten verwenden wir ausschließlich für den Versand der angeforderten Informationen und geben diese nicht an Dritte weiter.',
+                  style: UIStyles.bodyStyle,
+                ),
                 const Text(
-                    'Die erteilte Einwilligung zur Speicherung der Daten, der E-Mail-Adresse sowie deren Nutzung zum Versand des Newsletters können Sie jederzeit widerrufen, etwa über den "Austragen"-Link im Newsletter.',
-                    style: UIStyles.bodyStyle,),
+                  'Die erteilte Einwilligung zur Speicherung der Daten, der E-Mail-Adresse sowie deren Nutzung zum Versand des Newsletters können Sie jederzeit widerrufen, etwa über den "Austragen"-Link im Newsletter.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text('Routenplaner', style: UIStyles.bodyStyle),
                 const Text(
-                    'Im Service-Center auf unserer Homepage ist als Routenplaner Google Maps implementiert. Hierfür gelten die Datenschutzerklärung und Nutzungsbedingungen von Google: https://policies.google.com/privacy?hl=de&gl=de',
-                    style: UIStyles.bodyStyle,),
+                  'Im Service-Center auf unserer Homepage ist als Routenplaner Google Maps implementiert. Hierfür gelten die Datenschutzerklärung und Nutzungsbedingungen von Google: https://policies.google.com/privacy?hl=de&gl=de',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Datenübermittlung an Dritte und Drittstaaten
-                const Text('Datenübermittlung an Dritte und Drittstaaten',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Datenübermittlung an Dritte und Drittstaaten',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Eine Übermittlung Ihrer personenbezogenen Daten an Dritte findet nur statt, wenn dies gesetzlich erlaubt ist oder Sie eingewilligt haben. Eine Übermittlung in Drittstaaten außerhalb der EU/des EWR erfolgt nur, wenn dies zur Vertragserfüllung erforderlich ist, gesetzlich vorgeschrieben ist oder Sie uns Ihre Einwilligung erteilt haben.',
-                    style: UIStyles.bodyStyle,),
+                  'Eine Übermittlung Ihrer personenbezogenen Daten an Dritte findet nur statt, wenn dies gesetzlich erlaubt ist oder Sie eingewilligt haben. Eine Übermittlung in Drittstaaten außerhalb der EU/des EWR erfolgt nur, wenn dies zur Vertragserfüllung erforderlich ist, gesetzlich vorgeschrieben ist oder Sie uns Ihre Einwilligung erteilt haben.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Speicherdauer und Datenlöschung
-                const Text('Speicherdauer und Datenlöschung',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Speicherdauer und Datenlöschung',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Ihre personenbezogenen Daten werden gelöscht, sobald der Zweck der Speicherung entfällt, Sie Ihre Einwilligung widerrufen oder der Löschung keine gesetzlichen Aufbewahrungspflichten entgegenstehen.',
-                    style: UIStyles.bodyStyle,),
+                  'Ihre personenbezogenen Daten werden gelöscht, sobald der Zweck der Speicherung entfällt, Sie Ihre Einwilligung widerrufen oder der Löschung keine gesetzlichen Aufbewahrungspflichten entgegenstehen.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Datensicherheit
-                const Text('Datensicherheit',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Datensicherheit',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Wir setzen technische und organisatorische Sicherheitsmaßnahmen ein, um Ihre durch uns verwalteten Daten gegen zufällige oder vorsätzliche Manipulationen, Verlust, Zerstörung oder gegen den Zugriff unberechtigter Personen zu schützen. Unsere Sicherheitsmaßnahmen werden entsprechend der technologischen Entwicklung fortlaufend verbessert.',
-                    style: UIStyles.bodyStyle,),
+                  'Wir setzen technische und organisatorische Sicherheitsmaßnahmen ein, um Ihre durch uns verwalteten Daten gegen zufällige oder vorsätzliche Manipulationen, Verlust, Zerstörung oder gegen den Zugriff unberechtigter Personen zu schützen. Unsere Sicherheitsmaßnahmen werden entsprechend der technologischen Entwicklung fortlaufend verbessert.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Rechte der betroffenen Person
-                const Text('Rechte der betroffenen Person',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Rechte der betroffenen Person',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 _bulletList([
                   'gemäß Art. 15 DSGVO Auskunft über Ihre von uns verarbeiteten personenbezogenen Daten zu verlangen;',
@@ -195,26 +230,36 @@ class PrivacyScreen extends StatelessWidget {
                 ]),
                 UIConstants.verticalSpacingM,
                 // Widerspruchsrecht
-                const Text('Widerspruchsrecht',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Widerspruchsrecht',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Sofern Ihre personenbezogenen Daten auf Grundlage von berechtigten Interessen gemäß Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden, haben Sie das Recht, gemäß Art. 21 DSGVO Widerspruch gegen die Verarbeitung Ihrer personenbezogenen Daten einzulegen, soweit dafür Gründe vorliegen, die sich aus Ihrer besonderen Situation ergeben.',
-                    style: UIStyles.bodyStyle,),
+                  'Sofern Ihre personenbezogenen Daten auf Grundlage von berechtigten Interessen gemäß Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden, haben Sie das Recht, gemäß Art. 21 DSGVO Widerspruch gegen die Verarbeitung Ihrer personenbezogenen Daten einzulegen, soweit dafür Gründe vorliegen, die sich aus Ihrer besonderen Situation ergeben.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // SSL- bzw. TLS-Verschlüsselung
-                const Text('SSL- bzw. TLS-Verschlüsselung',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'SSL- bzw. TLS-Verschlüsselung',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel Bestellungen oder Anfragen, die Sie an uns als Seitenbetreiber senden, eine SSL-bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von "http://" auf "https://" wechselt und an dem Schloss-Symbol in Ihrer Browserzeile. Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist, können die Daten, die Sie an uns übermitteln, nicht von Dritten mitgelesen werden.',
-                    style: UIStyles.bodyStyle,),
+                  'Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel Bestellungen oder Anfragen, die Sie an uns als Seitenbetreiber senden, eine SSL-bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von "http://" auf "https://" wechselt und an dem Schloss-Symbol in Ihrer Browserzeile. Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist, können die Daten, die Sie an uns übermitteln, nicht von Dritten mitgelesen werden.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Footer
-                const Text('Weitere Informationen finden Sie unter:',
-                    style: UIStyles.bodyStyle,),
-                const _LinkText('https://www.bssb.de/datenschutz',
-                    'https://www.bssb.de/datenschutz',),
+                const Text(
+                  'Weitere Informationen finden Sie unter:',
+                  style: UIStyles.bodyStyle,
+                ),
+                const _LinkText(
+                  'https://www.bssb.de/datenschutz',
+                  'https://www.bssb.de/datenschutz',
+                ),
               ],
             ),
           ),
@@ -234,13 +279,13 @@ class PrivacyScreen extends StatelessWidget {
 
 Widget _addressBlock(List<String> lines) {
   return Padding(
-    padding: const EdgeInsets.only(bottom: 4.0),
+    padding: const EdgeInsets.only(bottom: UIConstants.spacingXS),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final line in lines)
           Padding(
-            padding: const EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(bottom: UIConstants.spacingXXS),
             child: Text(line, style: UIStyles.bodyStyle),
           ),
       ],
@@ -252,21 +297,32 @@ Widget _contactRow({String? phone, String? email, String? web}) {
   return Row(
     children: [
       if (phone != null) ...[
-        const Icon(Icons.phone, size: 18, color: UIConstants.defaultAppColor),
-        const SizedBox(width: 4),
+        const Icon(
+          Icons.phone,
+          size: UIConstants.defaultIconSize,
+          color: UIConstants.defaultAppColor,
+        ),
+        UIConstants.horizontalSpacingXS,
         _LinkText('Telefon', 'tel:$phone'),
-        const SizedBox(width: 12),
+        UIConstants.horizontalSpacingS,
       ],
       if (email != null) ...[
-        const Icon(Icons.email, size: 18, color: UIConstants.defaultAppColor),
-        const SizedBox(width: 4),
+        const Icon(
+          Icons.email,
+          size: UIConstants.defaultIconSize,
+          color: UIConstants.defaultAppColor,
+        ),
+        UIConstants.horizontalSpacingXS,
         _LinkText(email, 'mailto:$email'),
-        const SizedBox(width: 12),
+        UIConstants.horizontalSpacingS,
       ],
       if (web != null) ...[
-        const Icon(Icons.language,
-            size: 18, color: UIConstants.defaultAppColor,),
-        const SizedBox(width: 4),
+        const Icon(
+          Icons.language,
+          size: UIConstants.defaultIconSize,
+          color: UIConstants.defaultAppColor,
+        ),
+        UIConstants.horizontalSpacingXS,
         _LinkText('Webseite', web),
       ],
     ],
