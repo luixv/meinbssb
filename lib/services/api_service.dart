@@ -183,6 +183,12 @@ class ApiService {
     return _trainingService.fetchSchulungstermine(abDatum);
   }
 
+  Future<Schulungstermine?> fetchSchulungstermin(
+    String schulungenTerminID,
+  ) async {
+    return _trainingService.fetchSchulungstermin(schulungenTerminID);
+  }
+
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
     return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }

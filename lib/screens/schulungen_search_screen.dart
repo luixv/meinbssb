@@ -222,7 +222,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const ScaledText(
-              'Schulungen suchen',
+              'Suchen',
               style: UIStyles.headerStyle,
             ),
             const SizedBox(height: UIConstants.spacingM),

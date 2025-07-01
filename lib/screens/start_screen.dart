@@ -319,9 +319,19 @@ class StartScreenState extends State<StartScreen> {
                         schulung.bezeichnung,
                         style: UIStyles.listItemTitleStyle,
                       ),
-                      subtitle: ScaledText(
-                        formattedDate,
-                        style: UIStyles.listItemSubtitleStyle,
+                      subtitle: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: UIConstants.defaultIconSize,
+                            color: UIConstants.textColor,
+                          ),
+                          UIConstants.horizontalSpacingXS,
+                          Text(
+                            formattedDate,
+                            style: UIStyles.listItemSubtitleStyle,
+                          ),
+                        ],
                       ),
                       trailing: IconButton(
                         icon: const Icon(
