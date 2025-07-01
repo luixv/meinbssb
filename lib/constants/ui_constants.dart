@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class UIConstants {
   // Colors
-  static const Color primaryColor = Color(0xFF006400); // Main green color
+  static const Color primaryColor =
+      Color.fromARGB(255, 11, 75, 16); // Main green color 0xFF006400
   static const Color backgroundColor = Color(0xFFe2f0d9);
   static const Color foregroundColor = Colors.lightGreen;
   static const Color textColor = Colors.black;
@@ -333,9 +334,6 @@ class UIConstants {
   static const String registrationSuccessTitle = 'Registrierung erfolgreich';
   static const String registrationSuccessMessage =
       'Ihre Registrierung war erfolgreich.';
-  static const String privacyTitle = 'Datenschutz';
-  static const String privacyPlaceholder =
-      'Hier stehen die Datenschutzbestimmungen des BSSB.';
   static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
   static const String contactDataDeleteQuestion =
       'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
