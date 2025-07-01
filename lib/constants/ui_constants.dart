@@ -333,9 +333,6 @@ class UIConstants {
   static const String registrationSuccessTitle = 'Registrierung erfolgreich';
   static const String registrationSuccessMessage =
       'Ihre Registrierung war erfolgreich.';
-  static const String privacyTitle = 'Datenschutz';
-  static const String privacyPlaceholder =
-      'Hier stehen die Datenschutzbestimmungen des BSSB.';
   static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
   static const String contactDataDeleteQuestion =
       'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
