@@ -14,7 +14,7 @@ class UIConstants {
   static const Color successColor = Colors.green;
   static const Color warningColor = Color(0xFFFFA000);
   static const Color linkColor = primaryColor;
-  static const Color mydarkGreyColor = Color(0xFF616161);
+  static const Color mydarkGreyColor = Color.fromARGB(255, 46, 46, 46);
   static const Color whiteColor = Colors.white;
   static const Color greySubtitleTextColor = mydarkGreyColor;
   static const Color labelTextColor = Colors.grey;

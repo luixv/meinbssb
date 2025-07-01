@@ -940,7 +940,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Schulungen',
+      title: 'Aus- und Weiterbildung',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
