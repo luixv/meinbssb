@@ -1110,11 +1110,11 @@ class MockTrainingService extends _i1.Mock implements _i14.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> unregisterFromSchulung(int? teilnehmerId) =>
+  _i2.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerId) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
-          [teilnehmerId],
+          [schulungenTeilnehmerId],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);

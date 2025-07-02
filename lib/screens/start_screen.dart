@@ -132,7 +132,7 @@ class StartScreenState extends State<StartScreen> {
                         mainAxisAlignment: UIConstants.centerAlignment,
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
+                          UIConstants.horizontalSpacingM,
                           Flexible(
                             child: ScaledText(
                               'Abbrechen',
@@ -465,15 +465,16 @@ class StartScreenState extends State<StartScreen> {
                                                             .spacingM,
                                                       ),
                                                       Padding(
-                                                        padding: const EdgeInsets
-                                                            .fromLTRB(
-                                                            UIConstants
-                                                                .spacingXXXL,
-                                                            0,
-                                                            UIConstants
-                                                                .spacingXXL,
-                                                            UIConstants
-                                                                .spacingXL,),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                          UIConstants
+                                                              .spacingXXXL,
+                                                          0,
+                                                          UIConstants
+                                                              .spacingXXL,
+                                                          UIConstants.spacingXL,
+                                                        ),
                                                         child: Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -648,6 +649,29 @@ class StartScreenState extends State<StartScreen> {
                                           ),
                                         ),
                                       ),
+                                      Positioned(
+                                        bottom: UIConstants.spacingM,
+                                        right: UIConstants.spacingM,
+                                        child: FloatingActionButton(
+                                          heroTag: 'descDialogDeleteFab$index',
+                                          mini: true,
+                                          tooltip: 'Löschen',
+                                          backgroundColor:
+                                              UIConstants.defaultAppColor,
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            _handleDeleteSchulung(
+                                              schulung.schulungsTeilnehmerId,
+                                              index,
+                                              schulung.bezeichnung,
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.delete_outline_outlined,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   );
                                 },
@@ -660,9 +684,9 @@ class StartScreenState extends State<StartScreen> {
                               color: UIConstants.deleteIcon,
                             ),
                             onPressed: () {
-                              if (schulung.schulungsterminId > 0) {
+                              if (schulung.schulungsTeilnehmerId > 0) {
                                 _handleDeleteSchulung(
-                                  schulung.schulungsterminId,
+                                  schulung.schulungsTeilnehmerId,
                                   index,
                                   schulung.bezeichnung,
                                 );
