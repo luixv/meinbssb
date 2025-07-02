@@ -25,11 +25,14 @@
     "host": "smtp.dummyserver.com",
     "username": "mySmtpUsername",
     "password": "mySmtpPassword",
-    "fromEmail": "dummyemail@de.bssb.meinbssb",
-    "registrationSubject": "registration to BSSB",
-    "registrationContent": "user registered"
+    "port": 587
   },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
-  } 
+  },   
+  "emailRegistration": {
+    "registrationSubject": "Schulung Anmeldung",
+    "registrationContent": "Sie sind für einen Schulung angemeldet",
+    "registrationFrom": "do-not-reply@bssb.de"
+  }
 }

@@ -29,8 +29,8 @@ class EmailService {
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
-  }) : _emailSender = emailSender,
-       _configService = configService;
+  })  : _emailSender = emailSender,
+        _configService = configService;
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
 
@@ -42,6 +42,10 @@ class EmailService {
     int? emailId,
   }) async {
     LoggerService.logInfo('sendEmail called with emailId: $emailId');
+    LoggerService.logInfo('sendEmail called with from: $from');
+    LoggerService.logInfo('sendEmail called with recipient: $recipient');
+    LoggerService.logInfo('sendEmail called with subject: $subject');
+    LoggerService.logInfo('sendEmail called with body: $body');
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
@@ -64,12 +68,11 @@ class EmailService {
         password: password,
       );
 
-      final message =
-          mailer.Message()
-            ..from = mailer.Address(from)
-            ..recipients.add(recipient)
-            ..subject = subject
-            ..text = body;
+      final message = mailer.Message()
+        ..from = mailer.Address(from)
+        ..recipients.add(recipient)
+        ..subject = subject
+        ..text = body;
 
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');

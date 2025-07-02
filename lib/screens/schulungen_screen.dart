@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '../models/schulungstermin.dart';
+import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/screens/base_screen_layout.dart';
@@ -10,9 +10,11 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
+import '/services/core/email_service.dart';
 import '/services/api/bank_service.dart';
 import 'package:flutter_html/flutter_html.dart';
-import '../screens/agb.dart';
+import 'agb_screen.dart';
+import '/services/core/config_service.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -701,6 +703,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         }
 
         void submit() async {
+          // Get config and email service before any await
+          final configService =
+              Provider.of<ConfigService>(dialogContext, listen: false);
+          final emailService =
+              Provider.of<EmailService>(dialogContext, listen: false);
+
+          final from =
+              configService.getString('emailRegistration.registrationFrom') ??
+                  'do-not-reply@bssb.de';
+          final subject = configService
+                  .getString('emailRegistration.registrationSubject') ??
+              'Schulung Anmeldung';
+          final content =
+              '${configService.getString('emailRegistration.registrationContent') ?? 'Sie sind für einen Schulung angemeldet'}\n\nSchulung: ${schulungsTermin.bezeichnung}';
+
           final apiService = Provider.of<ApiService>(
             dialogContext,
             listen: false,
@@ -762,7 +779,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             if (msg == 'Teilnehmer erfolgreich erfasst' ||
                 msg == 'Teilnehmer bereits erfasst' ||
                 msg == 'Teilnehmer erfolgreich aktualisiert') {
-              // TODO: Send an email to the user regarding the registration
+              await emailService.sendEmail(
+                from: from,
+                recipient: emailController.text,
+                subject: subject,
+                body: content,
+              );
 
               if (!dialogContext.mounted) return;
               final updatedRegisteredPersons =
