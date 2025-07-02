@@ -279,4 +279,13 @@ class ApiService {
   Future<void> clearDisziplinenCache() async {
     await _trainingService.clearDisziplinenCache();
   }
+
+  // --- Bank validation helpers ---
+  bool validateIBAN(String? iban) {
+    return BankService.validateIBAN(iban);
+  }
+
+  String? validateBIC(String? bic) {
+    return BankService.validateBIC(bic);
+  }
 }

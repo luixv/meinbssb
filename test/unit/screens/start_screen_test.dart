@@ -78,6 +78,7 @@ void main() {
         Schulungstermin(
           schulungsterminId: 1,
           schulungsartId: 1,
+          schulungsTeilnehmerId: 12345,
           datum: DateTime.parse('2023-01-15T00:00:00.000'),
           bemerkung: 'Bemerkung',
           kosten: 100.0,

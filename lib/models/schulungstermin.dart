@@ -1,8 +1,8 @@
 class Schulungstermin {
-
   Schulungstermin({
     required this.schulungsterminId,
     required this.schulungsartId,
+    required this.schulungsTeilnehmerId,
     required this.datum,
     required this.bemerkung,
     required this.kosten,
@@ -45,6 +45,7 @@ class Schulungstermin {
     return Schulungstermin(
       schulungsterminId: json['SCHULUNGENTERMINID'] as int? ?? 0,
       schulungsartId: json['SCHULUNGSARTID'] as int? ?? 0,
+      schulungsTeilnehmerId: json['SCHULUNGENTEILNEHMERID'] as int? ?? 0,
       datum: _parseDate(json['DATUM']),
       bemerkung: json['BEMERKUNG'] as String? ?? '',
       kosten: (json['KOSTEN'] as num?)?.toDouble() ?? 0.0,
@@ -96,8 +97,10 @@ class Schulungstermin {
     }
     return DateTime(1970, 1, 1);
   }
+
   final int schulungsterminId;
   final int schulungsartId;
+  final int schulungsTeilnehmerId;
   final DateTime datum;
   final String bemerkung;
   final double kosten;
@@ -140,6 +143,7 @@ class Schulungstermin {
     return {
       'SCHULUNGENTERMINID': schulungsterminId,
       'SCHULUNGSARTID': schulungsartId,
+      'SCHULUNGENTEILNEHMERID': schulungsTeilnehmerId,
       'DATUM': datum.toIso8601String(),
       'BEMERKUNG': bemerkung,
       'KOSTEN': kosten,
@@ -184,6 +188,7 @@ class Schulungstermin {
   String toString() {
     return 'Schulungstermin(schulungsterminId: $schulungsterminId, '
         'schulungsartId: $schulungsartId, '
+        'schulungsTeilnehmerId: $schulungsTeilnehmerId, '
         'datum: $datum, '
         'bezeichnung: $bezeichnung, '
         'ort: $ort, '

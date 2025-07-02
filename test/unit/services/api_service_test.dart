@@ -426,6 +426,7 @@ void main() {
           Schulungstermin(
             schulungsterminId: 1,
             schulungsartId: 1,
+            schulungsTeilnehmerId: 12345,
             datum: DateTime.now(),
             bemerkung: 'Test',
             kosten: 50.0,
@@ -484,6 +485,7 @@ void main() {
           Schulungstermin(
             schulungsterminId: 1,
             schulungsartId: 1,
+            schulungsTeilnehmerId: 12345,
             datum: DateTime.now(),
             bemerkung: 'Test',
             kosten: 50.0,
