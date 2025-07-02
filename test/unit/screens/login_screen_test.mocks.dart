@@ -619,6 +619,15 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  bool validateIBAN(String? iban) => (super.noSuchMethod(
+        Invocation.method(
+          #validateIBAN,
+          [iban],
+        ),
+        returnValue: false,
+      ) as bool);
 }
 
 /// A class which mocks [EmailService].
