@@ -701,13 +701,32 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         }
 
         void submit() async {
-          // TODO, find in which way has to be validated this
-          /*
+          final apiService = Provider.of<ApiService>(
+            dialogContext,
+            listen: false,
+          );
+
+          // Show loading spinner
+          showDialog(
+            context: dialogContext,
+            barrierDismissible: false,
+            builder: (context) =>
+                const Center(child: CircularProgressIndicator()),
+          );
+
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
           if (!dialogContext.mounted) return;
+
           final isValidPerson =
               await apiService.findePersonID2(nachname, passnummer);
+
+          // Remove spinner
+          if (dialogContext.mounted) {
+            Navigator.of(dialogContext, rootNavigator: true).pop();
+          }
+
+          if (!dialogContext.mounted) return;
           if (!isValidPerson) {
             ScaffoldMessenger.of(parentContext).showSnackBar(
               const SnackBar(
@@ -720,12 +739,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             );
             return;
           }
-          */
+
           if (!formKey.currentState!.validate()) return;
-          final apiService = Provider.of<ApiService>(
-            dialogContext,
-            listen: false,
-          );
 
           Navigator.of(context).pop();
           try {
@@ -747,6 +762,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             if (msg == 'Teilnehmer erfolgreich erfasst' ||
                 msg == 'Teilnehmer bereits erfasst' ||
                 msg == 'Teilnehmer erfolgreich aktualisiert') {
+              // TODO: Send an email to the user regarding the registration
+
               if (!dialogContext.mounted) return;
               final updatedRegisteredPersons =
                   List<_RegisteredPerson>.from(registeredPersons)
