@@ -11,10 +11,9 @@ import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/email_service.dart';
-import '/services/api/bank_service.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'agb_screen.dart';
 import '/services/core/config_service.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -245,9 +244,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             decoration: BoxDecoration(
                               color: UIConstants.whiteColor,
                               border: Border.all(
-                                  color: UIConstants.mydarkGreyColor,),
+                                color: UIConstants.mydarkGreyColor,
+                              ),
                               borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,),
+                                UIConstants.cornerRadius,
+                              ),
                             ),
                             padding: UIConstants.defaultPadding,
                             child: Column(
@@ -329,9 +330,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             decoration: BoxDecoration(
                               color: UIConstants.whiteColor,
                               border: Border.all(
-                                  color: UIConstants.mydarkGreyColor,),
+                                color: UIConstants.mydarkGreyColor,
+                              ),
                               borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,),
+                                UIConstants.cornerRadius,
+                              ),
                             ),
                             padding: UIConstants.defaultPadding,
                             child: Column(
@@ -362,11 +365,15 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(labelText: 'IBAN'),
                                         validator: (value) {
+                                          final apiService =
+                                              Provider.of<ApiService>(
+                                            context,
+                                            listen: false,
+                                          );
                                           if (value == null || value.isEmpty) {
                                             return 'IBAN ist erforderlich';
                                           }
-                                          if (!BankService.validateIBAN(
-                                              value,)) {
+                                          if (!apiService.validateIBAN(value)) {
                                             return 'Ungültige IBAN';
                                           }
                                           return null;
@@ -380,8 +387,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(labelText: 'BIC'),
                                         validator: (value) {
+                                          final apiService =
+                                              Provider.of<ApiService>(
+                                            context,
+                                            listen: false,
+                                          );
                                           final bicError =
-                                              BankService.validateBIC(value);
+                                              apiService.validateBIC(value);
                                           if (bicError != null) {
                                             return bicError;
                                           }
