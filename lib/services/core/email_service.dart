@@ -66,6 +66,9 @@ class EmailService {
         smtpHost,
         username: username,
         password: password,
+        port: 1025,
+        ssl: false,
+        ignoreBadCertificate: true
       );
 
       final message = mailer.Message()
