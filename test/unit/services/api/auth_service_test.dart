@@ -540,7 +540,7 @@ void main() {
 
     group('FindePersonID2', () {
       test('returns true if list is not empty', () async {
-        when(mockHttpClient.get('FindePersonID/Rizoudis/40101205')).thenAnswer(
+        when(mockHttpClient.get('FindePersonID2/Rizoudis/40101205')).thenAnswer(
           (_) async => [
             {
               'NAMEN': 'Rizoudis',
@@ -559,14 +559,14 @@ void main() {
       });
 
       test('returns false if list is empty', () async {
-        when(mockHttpClient.get('FindePersonID/NoName/00000000'))
+        when(mockHttpClient.get('FindePersonID2/NoName/00000000'))
             .thenAnswer((_) async => []);
         final result = await authService.findePersonID2('NoName', '00000000');
         expect(result, isFalse);
       });
 
       test('returns false on exception', () async {
-        when(mockHttpClient.get('FindePersonID/Error/99999999'))
+        when(mockHttpClient.get('FindePersonID2/Error/99999999'))
             .thenThrow(Exception('fail'));
         final result = await authService.findePersonID2('Error', '99999999');
         expect(result, isFalse);

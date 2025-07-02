@@ -40,7 +40,23 @@ class TrainingService {
             'AngemeldeteSchulungen/$personId/$abDatum',
           );
           final mapped = _mapAngemeldeteSchulungenResponse(response);
-          return mapped.map((s) => s.toJson()).toList();
+          // Only cache minimal fields
+          return mapped
+              .map(
+                (s) => {
+                  'SCHULUNGENTERMINID': s.schulungsterminId,
+                  'SCHULUNGENTEILNEHMERID': s.schulungsTeilnehmerId,
+                  'DATUM': s.datum.toIso8601String(),
+                  'KOSTEN': s.kosten,
+                  'ORT': s.ort,
+                  'MAXTEILNEHMER': s.maxTeilnehmer,
+                  'ANGEMELDETETEILNEHMER': s.angemeldeteTeilnehmer,
+                  'STATUS': s.status,
+                  'BEZEICHNUNG': s.bezeichnung,
+                  'WEBGRUPPE': s.webGruppe,
+                },
+              )
+              .toList();
         },
         (data) {
           // Ensure the cached data is properly typed
@@ -286,10 +302,10 @@ class TrainingService {
     }
   }
 
-  Future<bool> unregisterFromSchulung(int teilnehmerId) async {
+  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerId) async {
     try {
       final response = await _httpClient.delete(
-        'SchulungenTeilnehmer/$teilnehmerId',
+        'SchulungenTeilnehmer/$schulungenTeilnehmerId',
         body: {},
       );
       final success = response['result'] == true;

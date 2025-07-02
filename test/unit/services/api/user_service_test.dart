@@ -830,8 +830,10 @@ void main() {
         expect(result.first.mandatNr, 'M123456');
         expect(result.first.mandatName, 'Test Mandate');
         expect(result.first.mandatSeq, 1);
-        expect(result.first.letzteNutzung,
-            DateTime.parse('2023-01-01T00:00:00.000Z'),);
+        expect(
+          result.first.letzteNutzung,
+          DateTime.parse('2023-01-01T00:00:00.000Z'),
+        );
         expect(result.first.ungueltig, false);
       });
 
@@ -910,6 +912,24 @@ void main() {
         final results = await futures;
         expect(results[0], equals(results[1]));
         verify(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId')).called(1);
+      });
+    });
+
+    group('Cache clearing', () {
+      test('clearPassdatenCache removes the correct cache key', () async {
+        const personId = 123;
+        when(mockCacheService.remove('passdaten_123'))
+            .thenAnswer((_) async => true);
+        await userService.clearPassdatenCache(personId);
+        verify(mockCacheService.remove('passdaten_123')).called(1);
+      });
+
+      test('clearAllPassdatenCache calls clearPattern with passdaten_',
+          () async {
+        when(mockCacheService.clearPattern('passdaten_'))
+            .thenAnswer((_) async => true);
+        await userService.clearAllPassdatenCache();
+        verify(mockCacheService.clearPattern('passdaten_')).called(1);
       });
     });
   });

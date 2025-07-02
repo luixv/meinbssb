@@ -7,6 +7,7 @@ void main() {
       final json = {
         'SCHULUNGENTERMINID': 1691,
         'SCHULUNGSARTID': 15,
+        'SCHULUNGENTEILNEHMERID': 12345,
         'DATUM': '2025-12-28T00:00:00.000+01:00',
         'BEMERKUNG': '',
         'KOSTEN': 72.07,
@@ -94,6 +95,7 @@ void main() {
       final schulungstermin = Schulungstermin(
         schulungsterminId: 1691,
         schulungsartId: 15,
+        schulungsTeilnehmerId: 12345,
         datum: DateTime.parse('2025-12-28T00:00:00.000+01:00'),
         bemerkung: '',
         kosten: 72.07,
@@ -137,6 +139,7 @@ void main() {
 
       expect(json['SCHULUNGENTERMINID'], 1691);
       expect(json['SCHULUNGSARTID'], 15);
+      expect(json['SCHULUNGENTEILNEHMERID'], 12345);
       expect(json['DATUM'], '2025-12-27T23:00:00.000Z');
       expect(json['BEMERKUNG'], '');
       expect(json['KOSTEN'], 72.07);
@@ -175,6 +178,7 @@ void main() {
       final schulungstermin = Schulungstermin(
         schulungsterminId: 1691,
         schulungsartId: 15,
+        schulungsTeilnehmerId: 12345,
         datum: DateTime.parse('2025-12-28T00:00:00.000+01:00'),
         bemerkung: '',
         kosten: 72.07,
@@ -218,6 +222,7 @@ void main() {
         schulungstermin.toString(),
         'Schulungstermin(schulungsterminId: 1691, '
         'schulungsartId: 15, '
+        'schulungsTeilnehmerId: 12345, '
         'datum: 2025-12-27 23:00:00.000Z, '
         'bezeichnung: Der Sportleiter im Verein / Kugeldisziplinen, '
         'ort: Online, '
