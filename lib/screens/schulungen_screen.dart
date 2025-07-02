@@ -1295,13 +1295,29 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               size: UIConstants.defaultIconSize,
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Text(DateFormat('dd.MM.yyyy').format(t.datum)),
+                                                                            Text(_formatDate(t.datum)),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
                                                                           height:
                                                                               UIConstants.spacingXS,
                                                                         ),
+                                                                        if (t
+                                                                            .bemerkung
+                                                                            .isNotEmpty) ...[
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(
+                                                                                Icons.info_outline,
+                                                                                size: UIConstants.defaultIconSize,
+                                                                              ),
+                                                                              UIConstants.horizontalSpacingS,
+                                                                              Flexible(child: Text(t.bemerkung)),
+                                                                            ],
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              height: UIConstants.spacingXS,),
+                                                                        ],
                                                                         Row(
                                                                           children: [
                                                                             const Icon(
@@ -1312,9 +1328,31 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             Flexible(child: Text(t.ort)),
                                                                           ],
                                                                         ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: UIConstants
+                                                                            .infoTableColumnSpacing *
+                                                                        2,
+                                                                  ),
+                                                                  Flexible(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.people,
+                                                                              size: UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text('${t.angemeldeteTeilnehmer} / ${t.maxTeilnehmer}'),
+                                                                          ],
                                                                         ),
                                                                         const SizedBox(
                                                                           height:
@@ -1344,65 +1382,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             Text(t.webGruppeLabel),
                                                                           ],
                                                                         ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    width: UIConstants
-                                                                            .infoTableColumnSpacing *
-                                                                        2,
-                                                                  ),
-                                                                  Flexible(
-                                                                    flex: 2,
-                                                                    child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Row(
-                                                                          children: [
-                                                                            const Text(
-                                                                              'Lehrgangsleiter: ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold),
-                                                                            ),
-                                                                            Flexible(child: Text(t.lehrgangsleiter)),
-                                                                          ],
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
-                                                                        if (t
-                                                                            .lehrgangsleiterTel
-                                                                            .isNotEmpty) ...[
-                                                                          Row(
-                                                                            children: [
-                                                                              const Icon(Icons.phone, size: UIConstants.defaultIconSize),
-                                                                              UIConstants.horizontalSpacingS,
-                                                                              Flexible(child: Text(t.lehrgangsleiterTel)),
-                                                                            ],
-                                                                          ),
-                                                                          const SizedBox(
-                                                                            height:
-                                                                                UIConstants.spacingXS,
-                                                                          ),
-                                                                        ],
-                                                                        if (t
-                                                                            .lehrgangsleiterMail
-                                                                            .isNotEmpty) ...[
-                                                                          Row(
-                                                                            children: [
-                                                                              const Icon(Icons.email, size: UIConstants.defaultIconSize),
-                                                                              UIConstants.horizontalSpacingS,
-                                                                              Flexible(child: Text(t.lehrgangsleiterMail)),
-                                                                            ],
-                                                                          ),
-                                                                          const SizedBox(
-                                                                            height:
-                                                                                UIConstants.spacingXS,
-                                                                          ),
-                                                                        ],
                                                                       ],
                                                                     ),
                                                                   ),

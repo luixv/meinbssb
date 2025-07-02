@@ -1347,4 +1347,22 @@ void main() {
       expect(result, isNull);
     });
   });
+
+  group('Cache clearing', () {
+    test('clearSchulungenCache removes the correct cache key', () async {
+      const personId = 123;
+      when(mockCacheService.remove('schulungen_123'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearSchulungenCache(personId);
+      verify(mockCacheService.remove('schulungen_123')).called(1);
+    });
+
+    test('clearAllSchulungenCache calls clearPattern with schulungen_',
+        () async {
+      when(mockCacheService.clearPattern('schulungen_'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearAllSchulungenCache();
+      verify(mockCacheService.clearPattern('schulungen_')).called(1);
+    });
+  });
 }
