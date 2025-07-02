@@ -315,7 +315,7 @@ Ergebnis der Abfrage:
   Future<bool> findePersonID2(String nachname, String passnummer) async {
     try {
       final response =
-          await _httpClient.get('FindePersonID2/$nachname/$passnummer');
+          await _httpClient.get('FindePersonID/$nachname/$passnummer');
       if (response is List && response.isNotEmpty) {
         return true;
       }
