@@ -74,16 +74,6 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
     super.dispose();
   }
 
-  Future<bool> _isOffline() async {
-    try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
-    } catch (e) {
-      return true; // Assume offline if we can't check
-    }
-  }
-
   String _formatDate(DateTime date) {
     return DateFormat('dd.MM.yyyy').format(date);
   }
@@ -192,188 +182,135 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Schulungen',
+      title: 'Aus- und Weiterbildung',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      floatingActionButton: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          // Hide FABs when offline
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return const SizedBox.shrink();
-          }
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              FloatingActionButton(
-                heroTag: 'resetFab',
-                onPressed: () {
-                  setState(() {
-                    _selectedDate = DateTime.now();
-                    _selectedWebGruppe = 0;
-                    _selectedBezirkId = 0;
-                    _ortController.clear();
-                    _titelController.clear();
-                    _fuerVerlaengerungen = false;
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                tooltip: 'Formular zurücksetzen',
-                child: const Icon(Icons.refresh),
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              FloatingActionButton(
-                heroTag: 'searchFab',
-                onPressed: _navigateToResults,
-                backgroundColor: UIConstants.defaultAppColor,
-                tooltip: 'Suchen',
-                child: const Icon(Icons.search),
-              ),
-            ],
-          );
-        },
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'resetFab',
+            onPressed: () {
+              setState(() {
+                _selectedDate = DateTime.now();
+                _selectedWebGruppe = 0;
+                _selectedBezirkId = 0;
+                _ortController.clear();
+                _titelController.clear();
+                _fuerVerlaengerungen = false;
+              });
+            },
+            backgroundColor: UIConstants.defaultAppColor,
+            tooltip: 'Formular zurücksetzen',
+            child: const Icon(Icons.refresh),
+          ),
+          const SizedBox(height: UIConstants.spacingS),
+          FloatingActionButton(
+            heroTag: 'searchFab',
+            onPressed: _navigateToResults,
+            backgroundColor: UIConstants.defaultAppColor,
+            tooltip: 'Suchen',
+            child: const Icon(Icons.search),
+          ),
+        ],
       ),
-      body: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return Center(
-              child: Padding(
-                padding: UIConstants.screenPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.wifi_off,
-                      size: UIConstants.wifiOffIconSize,
-                      color: UIConstants.noConnectivityIcon,
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
-                      'Schulungen suchen ist offline nicht verfügbar',
-                      style: UIStyles.headerStyle.copyWith(
-                        color: UIConstants.textColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    ScaledText(
-                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um nach Schulungen zu suchen.',
-                      style: UIStyles.bodyStyle.copyWith(
-                        color: UIConstants.greySubtitleTextColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+      body: Padding(
+        padding: const EdgeInsets.all(UIConstants.spacingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ScaledText(
+              'Suchen',
+              style: UIStyles.headerStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            InkWell(
+              onTap: _pickDate,
+              child: InputDecorator(
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: 'Datum wählen',
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  suffixIcon: const Icon(Icons.calendar_today),
+                ),
+                child: ScaledText(
+                  _selectedDate == null
+                      ? 'Bitte wählen Sie ein Datum'
+                      : _formatDate(_selectedDate!),
+                  style: UIStyles.bodyStyle,
                 ),
               ),
-            );
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(UIConstants.spacingM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const ScaledText(
-                  'Schulungen suchen',
-                  style: UIStyles.headerStyle,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                InkWell(
-                  onTap: _pickDate,
-                  child: InputDecorator(
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Datum wählen',
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      suffixIcon: const Icon(Icons.calendar_today),
-                    ),
-                    child: ScaledText(
-                      _selectedDate == null
-                          ? 'Bitte wählen Sie ein Datum'
-                          : _formatDate(_selectedDate!),
-                      style: UIStyles.bodyStyle,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                DropdownButtonFormField<int>(
-                  value: _selectedWebGruppe,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Gruppe',
-                  ),
-                  items: Schulungstermine.webGruppeMap.entries.map((entry) {
-                    return DropdownMenuItem<int>(
-                      value: entry.key,
-                      child: Text(entry.value),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedWebGruppe = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                _isLoadingBezirke
-                    ? const CircularProgressIndicator()
-                    : DropdownButtonFormField<int>(
-                        value: _selectedBezirkId,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'Bezirk',
-                        ),
-                        items: _bezirke
-                            .map(
-                              (bezirk) => DropdownMenuItem<int>(
-                                value: bezirk.bezirkId,
-                                child: Text(bezirk.bezirkName),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedBezirkId = value;
-                          });
-                        },
-                      ),
-                const SizedBox(height: UIConstants.spacingM),
-                TextFormField(
-                  controller: _ortController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Ort',
-                  ),
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                TextFormField(
-                  controller: _titelController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Titel',
-                  ),
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                CheckboxListTile(
-                  title: const Text('Für Lizenzverlängerung'),
-                  value: _fuerVerlaengerungen,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _fuerVerlaengerungen = value ?? false;
-                    });
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-              ],
             ),
-          );
-        },
+            const SizedBox(height: UIConstants.spacingM),
+            DropdownButtonFormField<int>(
+              value: _selectedWebGruppe,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Gruppe',
+              ),
+              items: Schulungstermine.webGruppeMap.entries.map((entry) {
+                return DropdownMenuItem<int>(
+                  value: entry.key,
+                  child: Text(entry.value),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedWebGruppe = value;
+                });
+              },
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            _isLoadingBezirke
+                ? const CircularProgressIndicator()
+                : DropdownButtonFormField<int>(
+                    value: _selectedBezirkId,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Bezirk',
+                    ),
+                    items: _bezirke
+                        .map(
+                          (bezirk) => DropdownMenuItem<int>(
+                            value: bezirk.bezirkId,
+                            child: Text(bezirk.bezirkName),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedBezirkId = value;
+                      });
+                    },
+                  ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextFormField(
+              controller: _ortController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Ort',
+              ),
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextFormField(
+              controller: _titelController,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Titel',
+              ),
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            CheckboxListTile(
+              title: const Text('Für Lizenzverlängerung'),
+              value: _fuerVerlaengerungen,
+              onChanged: (bool? value) {
+                setState(() {
+                  _fuerVerlaengerungen = value ?? false;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+          ],
+        ),
       ),
     );
   }

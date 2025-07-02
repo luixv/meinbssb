@@ -183,6 +183,12 @@ class ApiService {
     return _trainingService.fetchSchulungstermine(abDatum);
   }
 
+  Future<Schulungstermine?> fetchSchulungstermin(
+    String schulungenTerminID,
+  ) async {
+    return _trainingService.fetchSchulungstermin(schulungenTerminID);
+  }
+
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
     return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
@@ -197,7 +203,7 @@ class ApiService {
 
   // Bank Service
   Future<List<BankData>> fetchBankData(int webloginId) async {
-    return _bankService.fetchBankData(webloginId);
+    return _userService.fetchBankData(webloginId);
   }
 
   Future<bool> registerBankData(BankData bankData) async {

@@ -132,10 +132,12 @@ class StartScreenState extends State<StartScreen> {
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
+                          Flexible(
+                            child: ScaledText(
+                              'Abbrechen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.cancelButtonText,
+                              ),
                             ),
                           ),
                         ],
@@ -154,10 +156,12 @@ class StartScreenState extends State<StartScreen> {
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          ScaledText(
-                            'Löschen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
+                          Flexible(
+                            child: ScaledText(
+                              'Löschen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.deleteButtonText,
+                              ),
                             ),
                           ),
                         ],
@@ -315,9 +319,19 @@ class StartScreenState extends State<StartScreen> {
                         schulung.bezeichnung,
                         style: UIStyles.listItemTitleStyle,
                       ),
-                      subtitle: ScaledText(
-                        formattedDate,
-                        style: UIStyles.listItemSubtitleStyle,
+                      subtitle: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: UIConstants.defaultIconSize,
+                            color: UIConstants.textColor,
+                          ),
+                          UIConstants.horizontalSpacingXS,
+                          Text(
+                            formattedDate,
+                            style: UIStyles.listItemSubtitleStyle,
+                          ),
+                        ],
                       ),
                       trailing: IconButton(
                         icon: const Icon(

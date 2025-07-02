@@ -1278,4 +1278,72 @@ void main() {
       expect(ids, isNot(contains(4)));
     });
   });
+
+  group('fetchSchulungstermin', () {
+    test('returns a Schulungstermine object for a valid response', () async {
+      const schulungenTerminID = '42';
+      final mockResponse = {
+        'SCHULUNGENTERMINID': 42,
+        'SCHULUNGSARTID': 1,
+        'DATUM': '2024-07-01T10:00:00.000',
+        'BEMERKUNG': 'Bemerkung',
+        'KOSTEN': 100.0,
+        'ORT': 'Musterstadt',
+        'LEHRGANGSLEITER': 'Herr Lehrer',
+        'VERPFLEGUNGSKOSTEN': 10.0,
+        'UEBERNACHTUNGSKOSTEN': 20.0,
+        'LEHRMATERIALKOSTEN': 5.0,
+        'LEHRGANGSINHALT': 'Inhalt',
+        'MAXTEILNEHMER': 30,
+        'WEBVEROEFFENTLICHENAM': '2024-06-01T00:00:00.000',
+        'ANMELDUNGENGESPERRT': false,
+        'STATUS': 1,
+        'DATUMBIS': '2024-07-02T10:00:00.000',
+        'LEHRGANGSINHALTHTML': '<p>Inhalt</p>',
+        'LEHRGANGSLEITER2': '',
+        'LEHRGANGSLEITER3': '',
+        'LEHRGANGSLEITER4': '',
+        'LEHRGANGSLEITERTEL': '',
+        'LEHRGANGSLEITER2TEL': '',
+        'LEHRGANGSLEITER3TEL': '',
+        'LEHRGANGSLEITER4TEL': '',
+        'LEHRGANGSLEITERMAIL': '',
+        'LEHRGANGSLEITER2MAIL': '',
+        'LEHRGANGSLEITER3MAIL': '',
+        'LEHRGANGSLEITER4MAIL': '',
+        'ANMELDESTOPP': '',
+        'ABMELDESTOPP': '',
+        'GELOESCHT': false,
+        'STORNOGRUND': '',
+        'WEBGRUPPE': 1,
+        'VERANSTALTUNGSBEZIRK': 2,
+        'FUERVERLAENGERUNGEN': false,
+        'ANMELDENERLAUBT': 1,
+        'VERBANDSINTERNPASSWORT': '',
+        'BEZEICHNUNG': 'Test Schulung',
+        'ANGEMELDETETEILNEHMER': 10,
+      };
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+          .thenAnswer((_) async => mockResponse);
+
+      final result =
+          await trainingService.fetchSchulungstermin(schulungenTerminID);
+
+      expect(result, isNotNull);
+      expect(result!.schulungsterminId, 42);
+      expect(result.bezeichnung, 'Test Schulung');
+      expect(result.ort, 'Musterstadt');
+      expect(result.kosten, 100.0);
+    });
+
+    test('returns null for invalid response', () async {
+      const schulungenTerminID = '99';
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+          .thenAnswer((_) async => 'unexpected');
+
+      final result =
+          await trainingService.fetchSchulungstermin(schulungenTerminID);
+      expect(result, isNull);
+    });
+  });
 }

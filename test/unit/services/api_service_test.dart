@@ -457,9 +457,12 @@ void main() {
         final result =
             await apiService.fetchAngemeldeteSchulungen(123, '2024-01-01');
         expect(result, equals(expectedData));
-        verify(mockTrainingService.fetchAngemeldeteSchulungen(
-                123, '2024-01-01',),)
-            .called(1);
+        verify(
+          mockTrainingService.fetchAngemeldeteSchulungen(
+            123,
+            '2024-01-01',
+          ),
+        ).called(1);
       });
 
       test('fetchSchulungstermine delegates to training service', () async {
@@ -769,20 +772,20 @@ void main() {
           ),
         ];
 
-        when(mockBankService.fetchBankData(any))
+        when(mockUserService.fetchBankData(13901))
             .thenAnswer((_) async => testBankData);
 
         final result = await apiService.fetchBankData(13901);
         expect(result, equals(testBankData));
-        verify(mockBankService.fetchBankData(13901)).called(1);
+        verify(mockUserService.fetchBankData(13901)).called(1);
       });
 
       test('fetchBankData throws exception on API error', () async {
-        when(mockBankService.fetchBankData(any))
+        when(mockUserService.fetchBankData(13901))
             .thenThrow(Exception('API error'));
 
         expect(() => apiService.fetchBankData(13901), throwsException);
-        verify(mockBankService.fetchBankData(13901)).called(1);
+        verify(mockUserService.fetchBankData(13901)).called(1);
       });
 
       test('registerBankData returns true on successful registration',

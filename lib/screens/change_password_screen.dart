@@ -8,7 +8,6 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -46,16 +45,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     super.dispose();
   }
 
-  Future<bool> _isOffline() async {
-    try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
-    } catch (e) {
-      return true; // Assume offline if we can't check
-    }
-  }
-
   Future<void> _handleSave() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -86,14 +75,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       );
 
       if (loginResponse['ResultType'] != 1) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(UIConstants.currentPasswordIncorrect),
-              backgroundColor: UIConstants.errorColor,
-            ),
-          );
-        }
+        if (!mounted) return;
+        _showPasswordIncorrectSnackbar();
         return;
       }
 
@@ -103,31 +86,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         _newPasswordController.text,
       );
 
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ChangePasswordResultScreen(
-              success: result['result'] == true,
-              userData: widget.userData,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-            ),
-          ),
-        );
-      }
+      if (!mounted) return;
+      _navigateToResultScreen(result['result'] == true);
     } catch (e) {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ChangePasswordResultScreen(
-              success: false,
-              userData: widget.userData,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-            ),
-          ),
-        );
-      }
+      if (!mounted) return;
+      _navigateToResultScreen(false);
     } finally {
       if (mounted) {
         setState(() {
@@ -135,6 +98,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         });
       }
     }
+  }
+
+  void _showPasswordIncorrectSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(UIConstants.currentPasswordIncorrect),
+        backgroundColor: UIConstants.errorColor,
+      ),
+    );
+  }
+
+  void _navigateToResultScreen(bool success) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => ChangePasswordResultScreen(
+          success: success,
+          userData: widget.userData,
+          isLoggedIn: widget.isLoggedIn,
+          onLogout: widget.onLogout,
+        ),
+      ),
+    );
   }
 
   String? _validatePassword(String? value) {
@@ -167,153 +152,98 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
       automaticallyImplyLeading: true,
-      body: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          if (offlineSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return Center(
-              child: Padding(
-                padding: UIConstants.screenPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.wifi_off,
-                      size: UIConstants.wifiOffIconSize,
-                      color: UIConstants.noConnectivityIcon,
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    ScaledText(
-                      'Passwort ändern ist offline nicht verfügbar',
-                      style: UIStyles.headerStyle.copyWith(
-                        color: UIConstants.textColor,
+      body: Consumer<FontSizeProvider>(
+        builder: (context, fontSizeProvider, child) {
+          return SingleChildScrollView(
+            padding: UIConstants.defaultPadding,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: UIConstants.spacingM,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    ScaledText(
-                      'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zu ändern.',
-                      style: UIStyles.bodyStyle.copyWith(
-                        color: UIConstants.greySubtitleTextColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return Consumer<FontSizeProvider>(
-            builder: (context, fontSizeProvider, child) {
-              return SingleChildScrollView(
-                padding: UIConstants.defaultPadding,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (_errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: UIConstants.spacingM,
-                          ),
-                          child: ScaledText(
-                            _errorMessage!,
-                            style: UIStyles.errorStyle.copyWith(
-                              fontSize: UIStyles.errorStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                          ),
+                      child: ScaledText(
+                        _errorMessage!,
+                        style: UIStyles.errorStyle.copyWith(
+                          fontSize: UIStyles.errorStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
                         ),
-                      _buildPasswordField(
-                        controller: _currentPasswordController,
-                        label: 'Aktuelles Passwort',
-                        isVisible: _isCurrentPasswordVisible,
-                        onToggleVisibility: () {
-                          setState(() {
-                            _isCurrentPasswordVisible =
-                                !_isCurrentPasswordVisible;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Bitte geben Sie Ihr aktuelles Passwort ein';
-                          }
-                          return null;
-                        },
-                        fontSizeProvider: fontSizeProvider,
-                        eyeIconColor: Colors.black,
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      _buildPasswordField(
-                        controller: _newPasswordController,
-                        label: 'Neues Passwort',
-                        isVisible: _isNewPasswordVisible,
-                        onToggleVisibility: () {
-                          setState(() {
-                            _isNewPasswordVisible = !_isNewPasswordVisible;
-                          });
-                        },
-                        validator: _validatePassword,
-                        fontSizeProvider: fontSizeProvider,
-                        eyeIconColor: Colors.black,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      _buildPasswordField(
-                        controller: _confirmPasswordController,
-                        label: 'Neues Passwort wiederholen',
-                        isVisible: _isConfirmPasswordVisible,
-                        onToggleVisibility: () {
-                          setState(() {
-                            _isConfirmPasswordVisible =
-                                !_isConfirmPasswordVisible;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Bitte wiederholen Sie das neue Passwort';
-                          }
-                          if (value != _newPasswordController.text) {
-                            return 'Die Passwörter stimmen nicht überein';
-                          }
-                          return null;
-                        },
-                        fontSizeProvider: fontSizeProvider,
-                        eyeIconColor: Colors.black,
-                      ),
-                    ],
+                    ),
+                  _buildPasswordField(
+                    controller: _currentPasswordController,
+                    label: 'Aktuelles Passwort',
+                    isVisible: _isCurrentPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bitte geben Sie Ihr aktuelles Passwort ein';
+                      }
+                      return null;
+                    },
+                    fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
                   ),
-                ),
-              );
-            },
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildPasswordField(
+                    controller: _newPasswordController,
+                    label: 'Neues Passwort',
+                    isVisible: _isNewPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isNewPasswordVisible = !_isNewPasswordVisible;
+                      });
+                    },
+                    validator: _validatePassword,
+                    fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  _buildPasswordField(
+                    controller: _confirmPasswordController,
+                    label: 'Neues Passwort wiederholen',
+                    isVisible: _isConfirmPasswordVisible,
+                    onToggleVisibility: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bitte wiederholen Sie das neue Passwort';
+                      }
+                      if (value != _newPasswordController.text) {
+                        return 'Die Passwörter stimmen nicht überein';
+                      }
+                      return null;
+                    },
+                    fontSizeProvider: fontSizeProvider,
+                    eyeIconColor: Colors.black,
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
-      floatingActionButton: FutureBuilder<bool>(
-        future: _isOffline(),
-        builder: (context, offlineSnapshot) {
-          // Hide FAB when offline
-          if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
-            return const SizedBox.shrink();
-          }
-
-          return FloatingActionButton(
-            heroTag: 'save_password',
-            onPressed: _isLoading ? null : _handleSave,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: _isLoading
-                ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: UIConstants.defaultStrokeWidth,
-                  )
-                : const Icon(Icons.save, color: Colors.white),
-          );
-        },
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'save_password',
+        onPressed: _isLoading ? null : _handleSave,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                strokeWidth: UIConstants.defaultStrokeWidth,
+              )
+            : const Icon(Icons.save, color: Colors.white),
       ),
     );
   }

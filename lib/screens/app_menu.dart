@@ -126,7 +126,7 @@ class AppDrawer extends StatelessWidget {
                 color: UIStyles.menuIconColor,
               ),
               title: const ScaledText(
-                'Aus-und Weiterbildung',
+                'Aus- und Weiterbildung',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {

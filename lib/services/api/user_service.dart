@@ -8,6 +8,7 @@ import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
+import 'package:meinbssb/models/bank_data.dart';
 
 class UserService {
   UserService({
@@ -24,6 +25,7 @@ class UserService {
 
   // In-memory cache to prevent multiple simultaneous calls
   final Map<int, Future<UserData?>> _pendingRequests = {};
+  final Map<int, Future<List<BankData>>> _pendingBankDataRequests = {};
 
   Future<UserData?> fetchPassdaten(int personId) async {
     // Check if there's already a pending request for this personId
@@ -471,6 +473,50 @@ class UserService {
     } catch (e) {
       LoggerService.logError('Error updating contact: $e');
       return false;
+    }
+  }
+
+  Future<List<BankData>> fetchBankData(int webloginId) async {
+    // Deduplicate concurrent requests
+    if (_pendingBankDataRequests.containsKey(webloginId)) {
+      return await _pendingBankDataRequests[webloginId]!;
+    }
+    final request = _fetchBankDataInternal(webloginId);
+    _pendingBankDataRequests[webloginId] = request;
+    try {
+      final result = await request;
+      return result;
+    } finally {
+      _pendingBankDataRequests.remove(webloginId);
+    }
+  }
+
+  Future<List<BankData>> _fetchBankDataInternal(int webloginId) async {
+    try {
+      final List<dynamic> result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+        'bankdata_$webloginId',
+        _networkService.getCacheExpirationDuration(),
+        () async {
+          final response = await _httpClient.get('BankdatenMyBSSB/$webloginId');
+          if (response is List) {
+            return response;
+          }
+          return [];
+        },
+        (dynamic rawResponse) {
+          if (rawResponse is List) {
+            return rawResponse;
+          }
+          return [];
+        },
+      );
+      return result
+          .whereType<Map<String, dynamic>>()
+          .map((json) => BankData.fromJson(json))
+          .toList();
+    } catch (e) {
+      LoggerService.logError('Error fetching BankData: $e');
+      return [];
     }
   }
 }
