@@ -9,7 +9,7 @@ import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/schulung.dart';
 import 'package:meinbssb/models/schulungsart.dart';
-import 'package:meinbssb/models/schulungstermine.dart';
+import 'package:meinbssb/models/schulungstermin.dart';
 import 'package:meinbssb/models/disziplin.dart';
 import 'package:meinbssb/models/verein.dart';
 import 'package:meinbssb/models/fremde_verband.dart';
@@ -423,32 +423,46 @@ void main() {
       test('fetchAngemeldeteSchulungen delegates to training service',
           () async {
         final expectedData = [
-          const Schulung(
-            id: 1,
-            bezeichnung: 'Test Training',
-            datum: '2024-01-01',
-            ausgestelltAm: '2024-01-01',
-            teilnehmerId: 1,
+          Schulungstermin(
+            schulungsterminId: 1,
             schulungsartId: 1,
-            schulungsartBezeichnung: 'Test',
-            schulungsartKurzbezeichnung: 'Test',
-            schulungsartBeschreibung: 'Test',
-            maxTeilnehmer: 10,
-            anzahlTeilnehmer: 5,
+            datum: DateTime.now(),
+            bemerkung: 'Test',
+            kosten: 50.0,
             ort: 'Test',
-            uhrzeit: '10:00',
-            dauer: '2h',
-            preis: '50€',
-            zielgruppe: 'All',
-            voraussetzungen: 'None',
-            inhalt: 'Test content',
+            lehrgangsleiter: 'Test',
+            verpflegungskosten: 10.0,
+            uebernachtungskosten: 20.0,
+            lehrmaterialkosten: 5.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 10,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '2024-01-01',
             lehrgangsinhaltHtml: '<p>Test</p>',
-            abschluss: 'Certificate',
-            anmerkungen: 'Test notes',
-            isOnline: false,
-            link: '',
-            status: 'Active',
-            gueltigBis: '2024-12-31',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: '',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '',
+            abmeldeStopp: '',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1,
+            veranstaltungsBezirk: 1,
+            fuerVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Test Termin',
+            angemeldeteTeilnehmer: 5,
           ),
         ];
         when(mockTrainingService.fetchAngemeldeteSchulungen(any, any))
@@ -467,7 +481,7 @@ void main() {
 
       test('fetchSchulungstermine delegates to training service', () async {
         final expectedData = [
-          Schulungstermine(
+          Schulungstermin(
             schulungsterminId: 1,
             schulungsartId: 1,
             datum: DateTime.now(),

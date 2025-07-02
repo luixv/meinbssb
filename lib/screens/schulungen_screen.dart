@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/schulungstermine.dart';
+import '../models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/screens/base_screen_layout.dart';
@@ -43,7 +43,7 @@ class SchulungenScreen extends StatefulWidget {
 
 class _SchulungenScreenState extends State<SchulungenScreen> {
   bool _isLoading = false;
-  List<Schulungstermine> _results = [];
+  List<Schulungstermin> _results = [];
   String? _errorMessage;
 
   @override
@@ -112,7 +112,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   Future<void> _showBookingDialog(
-    Schulungstermine schulungsTermin, {
+    Schulungstermin schulungsTermin, {
     required List<_RegisteredPerson> registeredPersons,
   }) async {
     if (!mounted) return;
@@ -526,7 +526,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
   Widget _buildRegisterAnotherDialog(
     BuildContext parentContext,
-    Schulungstermine schulungsTermin,
+    Schulungstermin schulungsTermin,
     List<_RegisteredPerson> registeredPersons,
     BankData bankData,
   ) {
@@ -675,7 +675,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   void _showRegisterAnotherPersonDialog(
     BuildContext parentContext,
     BuildContext dialogContext,
-    Schulungstermine schulungsTermin,
+    Schulungstermin schulungsTermin,
     List<_RegisteredPerson> registeredPersons,
     BankData bankData, {
     UserData? prefillUser,
@@ -1331,8 +1331,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                            height:
-                                                                                UIConstants.spacingXS,),
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
                                                                         if (t
                                                                             .lehrgangsleiterTel
                                                                             .isNotEmpty) ...[
@@ -1344,7 +1345,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingXS,),
+                                                                            height:
+                                                                                UIConstants.spacingXS,
+                                                                          ),
                                                                         ],
                                                                         if (t
                                                                             .lehrgangsleiterMail
@@ -1357,7 +1360,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingXS,),
+                                                                            height:
+                                                                                UIConstants.spacingXS,
+                                                                          ),
                                                                         ],
                                                                       ],
                                                                     ),
