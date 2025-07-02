@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/screens/start_screen.dart';
-import 'package:meinbssb/models/schulung.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/schulungstermin.dart';
 import '../helpers/test_helper.dart';
 
 void main() {
@@ -75,32 +75,46 @@ void main() {
       TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
     ).thenAnswer(
       (_) async => [
-        const Schulung(
-          id: 1,
-          bezeichnung: 'Training 1',
-          datum: '2023-01-15',
-          ausgestelltAm: '2023-01-01',
-          teilnehmerId: 1,
+        Schulungstermin(
+          schulungsterminId: 1,
           schulungsartId: 1,
-          schulungsartBezeichnung: 'Basic',
-          schulungsartKurzbezeichnung: 'BSC',
-          schulungsartBeschreibung: 'Basic Training Course',
-          maxTeilnehmer: 20,
-          anzahlTeilnehmer: 10,
+          datum: DateTime.parse('2023-01-15T00:00:00.000'),
+          bemerkung: 'Bemerkung',
+          kosten: 100.0,
           ort: 'Location 1',
-          uhrzeit: '09:00',
-          dauer: '8 Stunden',
-          preis: '100€',
-          zielgruppe: 'Anfänger',
-          voraussetzungen: 'Keine',
-          inhalt: 'Grundlagen',
-          abschluss: 'Zertifikat',
-          anmerkungen: 'Bitte mitbringen: Schreibzeug',
-          isOnline: false,
-          link: '',
-          status: 'Aktiv',
-          gueltigBis: '2023-12-31',
-          lehrgangsinhaltHtml: '',
+          lehrgangsleiter: 'Leiter',
+          verpflegungskosten: 10.0,
+          uebernachtungskosten: 20.0,
+          lehrmaterialkosten: 5.0,
+          lehrgangsinhalt: 'Grundlagen',
+          maxTeilnehmer: 20,
+          webVeroeffentlichenAm: '2023-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '2023-01-16',
+          lehrgangsinhaltHtml: '<p>HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: '',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '',
+          abmeldeStopp: '',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Training 1',
+          angemeldeteTeilnehmer: 10,
         ),
       ],
     );

@@ -15,7 +15,7 @@ import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
 import 'package:meinbssb/models/schulung.dart' as _i9;
 import 'package:meinbssb/models/schulungsart.dart' as _i12;
-import 'package:meinbssb/models/schulungstermine.dart' as _i13;
+import 'package:meinbssb/models/schulungstermin.dart' as _i13;
 import 'package:meinbssb/models/user_data.dart' as _i6;
 import 'package:meinbssb/models/verein.dart' as _i16;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i8;
@@ -393,7 +393,7 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
       ) as _i3.Future<List<_i12.Schulungsart>>);
 
   @override
-  _i3.Future<List<_i9.Schulung>> fetchAngemeldeteSchulungen(
+  _i3.Future<List<_i13.Schulungstermin>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -405,20 +405,32 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i3.Future<List<_i9.Schulung>>.value(<_i9.Schulung>[]),
-      ) as _i3.Future<List<_i9.Schulung>>);
+        returnValue: _i3.Future<List<_i13.Schulungstermin>>.value(
+            <_i13.Schulungstermin>[]),
+      ) as _i3.Future<List<_i13.Schulungstermin>>);
 
   @override
-  _i3.Future<List<_i13.Schulungstermine>> fetchSchulungstermine(
+  _i3.Future<List<_i13.Schulungstermin>> fetchSchulungstermine(
           String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
           [abDatum],
         ),
-        returnValue: _i3.Future<List<_i13.Schulungstermine>>.value(
-            <_i13.Schulungstermine>[]),
-      ) as _i3.Future<List<_i13.Schulungstermine>>);
+        returnValue: _i3.Future<List<_i13.Schulungstermin>>.value(
+            <_i13.Schulungstermin>[]),
+      ) as _i3.Future<List<_i13.Schulungstermin>>);
+
+  @override
+  _i3.Future<_i13.Schulungstermin?> fetchSchulungstermin(
+          String? schulungenTerminID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungstermin,
+          [schulungenTerminID],
+        ),
+        returnValue: _i3.Future<_i13.Schulungstermin?>.value(),
+      ) as _i3.Future<_i13.Schulungstermin?>);
 
   @override
   _i3.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>

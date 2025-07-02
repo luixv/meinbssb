@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/schulungstermine.dart';
+import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/screens/base_screen_layout.dart';
@@ -10,9 +10,11 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
 import '/services/core/cache_service.dart';
+import '/services/core/email_service.dart';
 import '/services/api/bank_service.dart';
 import 'package:flutter_html/flutter_html.dart';
-import '../screens/agb.dart';
+import 'agb_screen.dart';
+import '/services/core/config_service.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -43,7 +45,7 @@ class SchulungenScreen extends StatefulWidget {
 
 class _SchulungenScreenState extends State<SchulungenScreen> {
   bool _isLoading = false;
-  List<Schulungstermine> _results = [];
+  List<Schulungstermin> _results = [];
   String? _errorMessage;
 
   @override
@@ -112,7 +114,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   Future<void> _showBookingDialog(
-    Schulungstermine schulungsTermin, {
+    Schulungstermin schulungsTermin, {
     required List<_RegisteredPerson> registeredPersons,
   }) async {
     if (!mounted) return;
@@ -526,7 +528,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
   Widget _buildRegisterAnotherDialog(
     BuildContext parentContext,
-    Schulungstermine schulungsTermin,
+    Schulungstermin schulungsTermin,
     List<_RegisteredPerson> registeredPersons,
     BankData bankData,
   ) {
@@ -675,7 +677,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   void _showRegisterAnotherPersonDialog(
     BuildContext parentContext,
     BuildContext dialogContext,
-    Schulungstermine schulungsTermin,
+    Schulungstermin schulungsTermin,
     List<_RegisteredPerson> registeredPersons,
     BankData bankData, {
     UserData? prefillUser,
@@ -701,13 +703,47 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         }
 
         void submit() async {
-          // TODO, find in which way has to be validated this
-          /*
+          // Get config and email service before any await
+          final configService =
+              Provider.of<ConfigService>(dialogContext, listen: false);
+          final emailService =
+              Provider.of<EmailService>(dialogContext, listen: false);
+
+          final from =
+              configService.getString('emailRegistration.registrationFrom') ??
+                  'do-not-reply@bssb.de';
+          final subject = configService
+                  .getString('emailRegistration.registrationSubject') ??
+              'Schulung Anmeldung';
+          final content =
+              '${configService.getString('emailRegistration.registrationContent') ?? 'Sie sind für einen Schulung angemeldet'}\n\nSchulung: ${schulungsTermin.bezeichnung}';
+
+          final apiService = Provider.of<ApiService>(
+            dialogContext,
+            listen: false,
+          );
+
+          // Show loading spinner
+          showDialog(
+            context: dialogContext,
+            barrierDismissible: false,
+            builder: (context) =>
+                const Center(child: CircularProgressIndicator()),
+          );
+
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
           if (!dialogContext.mounted) return;
+
           final isValidPerson =
               await apiService.findePersonID2(nachname, passnummer);
+
+          // Remove spinner
+          if (dialogContext.mounted) {
+            Navigator.of(dialogContext, rootNavigator: true).pop();
+          }
+
+          if (!dialogContext.mounted) return;
           if (!isValidPerson) {
             ScaffoldMessenger.of(parentContext).showSnackBar(
               const SnackBar(
@@ -720,12 +756,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             );
             return;
           }
-          */
+
           if (!formKey.currentState!.validate()) return;
-          final apiService = Provider.of<ApiService>(
-            dialogContext,
-            listen: false,
-          );
 
           Navigator.of(context).pop();
           try {
@@ -747,6 +779,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             if (msg == 'Teilnehmer erfolgreich erfasst' ||
                 msg == 'Teilnehmer bereits erfasst' ||
                 msg == 'Teilnehmer erfolgreich aktualisiert') {
+              await emailService.sendEmail(
+                from: from,
+                recipient: emailController.text,
+                subject: subject,
+                body: content,
+              );
+
               if (!dialogContext.mounted) return;
               final updatedRegisteredPersons =
                   List<_RegisteredPerson>.from(registeredPersons)
@@ -1331,8 +1370,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                            height:
-                                                                                UIConstants.spacingXS,),
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
                                                                         if (t
                                                                             .lehrgangsleiterTel
                                                                             .isNotEmpty) ...[
@@ -1344,7 +1384,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingXS,),
+                                                                            height:
+                                                                                UIConstants.spacingXS,
+                                                                          ),
                                                                         ],
                                                                         if (t
                                                                             .lehrgangsleiterMail
@@ -1357,7 +1399,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
-                                                                              height: UIConstants.spacingXS,),
+                                                                            height:
+                                                                                UIConstants.spacingXS,
+                                                                          ),
                                                                         ],
                                                                       ],
                                                                     ),

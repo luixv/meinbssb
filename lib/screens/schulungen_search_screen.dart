@@ -6,7 +6,7 @@ import '/screens/base_screen_layout.dart';
 import '/screens/schulungen_screen.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
-import '/models/schulungstermine.dart';
+import '../models/schulungstermin.dart';
 import '/services/api/bezirk_service.dart';
 import '/models/bezirk.dart';
 import 'package:provider/provider.dart';
@@ -248,7 +248,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               decoration: UIStyles.formInputDecoration.copyWith(
                 labelText: 'Gruppe',
               ),
-              items: Schulungstermine.webGruppeMap.entries.map((entry) {
+              items: Schulungstermin.webGruppeMap.entries.map((entry) {
                 return DropdownMenuItem<int>(
                   value: entry.key,
                   child: Text(entry.value),

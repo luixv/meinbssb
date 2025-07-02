@@ -1,49 +1,6 @@
-class Schulungstermine {
-  factory Schulungstermine.fromJson(Map<String, dynamic> json) {
-    return Schulungstermine(
-      schulungsterminId: json['SCHULUNGENTERMINID'] as int,
-      schulungsartId: json['SCHULUNGSARTID'] as int,
-      datum: DateTime.parse(json['DATUM'] as String),
-      bemerkung: json['BEMERKUNG'] as String,
-      kosten: (json['KOSTEN'] as num).toDouble(),
-      ort: json['ORT'] as String,
-      lehrgangsleiter: json['LEHRGANGSLEITER'] as String,
-      verpflegungskosten: (json['VERPFLEGUNGSKOSTEN'] as num).toDouble(),
-      uebernachtungskosten: (json['UEBERNACHTUNGSKOSTEN'] as num).toDouble(),
-      lehrmaterialkosten: (json['LEHRMATERIALKOSTEN'] as num).toDouble(),
-      lehrgangsinhalt: json['LEHRGANGSINHALT'] as String,
-      maxTeilnehmer: json['MAXTEILNEHMER'] as int,
-      webVeroeffentlichenAm: json['WEBVEROEFFENTLICHENAM'] as String,
-      anmeldungenGesperrt: json['ANMELDUNGENGESPERRT'] as bool,
-      status: json['STATUS'] as int,
-      datumBis: json['DATUMBIS'] as String,
-      lehrgangsinhaltHtml: json['LEHRGANGSINHALTHTML'] as String,
-      lehrgangsleiter2: json['LEHRGANGSLEITER2'] as String,
-      lehrgangsleiter3: json['LEHRGANGSLEITER3'] as String,
-      lehrgangsleiter4: json['LEHRGANGSLEITER4'] as String,
-      lehrgangsleiterTel: json['LEHRGANGSLEITERTEL'] as String,
-      lehrgangsleiter2Tel: json['LEHRGANGSLEITER2TEL'] as String,
-      lehrgangsleiter3Tel: json['LEHRGANGSLEITER3TEL'] as String,
-      lehrgangsleiter4Tel: json['LEHRGANGSLEITER4TEL'] as String,
-      lehrgangsleiterMail: json['LEHRGANGSLEITERMAIL'] as String,
-      lehrgangsleiter2Mail: json['LEHRGANGSLEITER2MAIL'] as String,
-      lehrgangsleiter3Mail: json['LEHRGANGSLEITER3MAIL'] as String,
-      lehrgangsleiter4Mail: json['LEHRGANGSLEITER4MAIL'] as String,
-      anmeldeStopp: json['ANMELDESTOPP'] as String,
-      abmeldeStopp: json['ABMELDESTOPP'] as String,
-      geloescht: json['GELOESCHT'] as bool,
-      stornoGrund: json['STORNOGRUND'] as String,
-      webGruppe: json['WEBGRUPPE'] as int,
-      veranstaltungsBezirk: json['VERANSTALTUNGSBEZIRK'] as int,
-      fuerVerlaengerungen: json['FUERVERLAENGERUNGEN'] as bool,
-      anmeldeErlaubt: json['ANMELDENERLAUBT'] as int,
-      verbandsInternPasswort: json['VERBANDSINTERNPASSWORT'] as String,
-      bezeichnung: json['BEZEICHNUNG'] as String,
-      angemeldeteTeilnehmer: json['ANGEMELDETETEILNEHMER'] as int,
-    );
-  }
+class Schulungstermin {
 
-  Schulungstermine({
+  Schulungstermin({
     required this.schulungsterminId,
     required this.schulungsartId,
     required this.datum,
@@ -84,6 +41,61 @@ class Schulungstermine {
     required this.bezeichnung,
     required this.angemeldeteTeilnehmer,
   });
+  factory Schulungstermin.fromJson(Map<String, dynamic> json) {
+    return Schulungstermin(
+      schulungsterminId: json['SCHULUNGENTERMINID'] as int? ?? 0,
+      schulungsartId: json['SCHULUNGSARTID'] as int? ?? 0,
+      datum: _parseDate(json['DATUM']),
+      bemerkung: json['BEMERKUNG'] as String? ?? '',
+      kosten: (json['KOSTEN'] as num?)?.toDouble() ?? 0.0,
+      ort: json['ORT'] as String? ?? '',
+      lehrgangsleiter: json['LEHRGANGSLEITER'] as String? ?? '',
+      verpflegungskosten:
+          (json['VERPFLEGUNGSKOSTEN'] as num?)?.toDouble() ?? 0.0,
+      uebernachtungskosten:
+          (json['UEBERNACHTUNGSKOSTEN'] as num?)?.toDouble() ?? 0.0,
+      lehrmaterialkosten:
+          (json['LEHRMATERIALKOSTEN'] as num?)?.toDouble() ?? 0.0,
+      lehrgangsinhalt: json['LEHRGANGSINHALT'] as String? ?? '',
+      maxTeilnehmer: json['MAXTEILNEHMER'] as int? ?? 0,
+      webVeroeffentlichenAm: json['WEBVEROEFFENTLICHENAM'] as String? ?? '',
+      anmeldungenGesperrt: json['ANMELDUNGENGESPERRT'] as bool? ?? false,
+      status: json['STATUS'] as int? ?? 0,
+      datumBis: json['DATUMBIS'] as String? ?? '',
+      lehrgangsinhaltHtml: json['LEHRGANGSINHALTHTML'] as String? ?? '',
+      lehrgangsleiter2: json['LEHRGANGSLEITER2'] as String? ?? '',
+      lehrgangsleiter3: json['LEHRGANGSLEITER3'] as String? ?? '',
+      lehrgangsleiter4: json['LEHRGANGSLEITER4'] as String? ?? '',
+      lehrgangsleiterTel: json['LEHRGANGSLEITERTEL'] as String? ?? '',
+      lehrgangsleiter2Tel: json['LEHRGANGSLEITER2TEL'] as String? ?? '',
+      lehrgangsleiter3Tel: json['LEHRGANGSLEITER3TEL'] as String? ?? '',
+      lehrgangsleiter4Tel: json['LEHRGANGSLEITER4TEL'] as String? ?? '',
+      lehrgangsleiterMail: json['LEHRGANGSLEITERMAIL'] as String? ?? '',
+      lehrgangsleiter2Mail: json['LEHRGANGSLEITER2MAIL'] as String? ?? '',
+      lehrgangsleiter3Mail: json['LEHRGANGSLEITER3MAIL'] as String? ?? '',
+      lehrgangsleiter4Mail: json['LEHRGANGSLEITER4MAIL'] as String? ?? '',
+      anmeldeStopp: json['ANMELDESTOPP'] as String? ?? '',
+      abmeldeStopp: json['ABMELDESTOPP'] as String? ?? '',
+      geloescht: json['GELOESCHT'] as bool? ?? false,
+      stornoGrund: json['STORNOGRUND'] as String? ?? '',
+      webGruppe: json['WEBGRUPPE'] as int? ?? 0,
+      veranstaltungsBezirk: json['VERANSTALTUNGSBEZIRK'] as int? ?? 0,
+      fuerVerlaengerungen: json['FUERVERLAENGERUNGEN'] as bool? ?? false,
+      anmeldeErlaubt: json['ANMELDENERLAUBT'] as int? ?? 0,
+      verbandsInternPasswort: json['VERBANDSINTERNPASSWORT'] as String? ?? '',
+      bezeichnung: json['BEZEICHNUNG'] as String? ?? '',
+      angemeldeteTeilnehmer: json['ANGEMELDETETEILNEHMER'] as int? ?? 0,
+    );
+  }
+
+  static DateTime _parseDate(dynamic value) {
+    if (value is String && value.isNotEmpty) {
+      try {
+        return DateTime.parse(value);
+      } catch (_) {}
+    }
+    return DateTime(1970, 1, 1);
+  }
   final int schulungsterminId;
   final int schulungsartId;
   final DateTime datum;
@@ -170,7 +182,7 @@ class Schulungstermine {
 
   @override
   String toString() {
-    return 'Schulungstermine(schulungsterminId: $schulungsterminId, '
+    return 'Schulungstermin(schulungsterminId: $schulungsterminId, '
         'schulungsartId: $schulungsartId, '
         'datum: $datum, '
         'bezeichnung: $bezeichnung, '
