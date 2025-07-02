@@ -633,24 +633,8 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.spacingM,
-                                        right: UIConstants.spacingM,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogCloseFab$index',
-                                          mini: true,
-                                          tooltip: 'Schließen',
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: UIConstants.spacingM,
+                                        bottom: UIConstants.spacingM +
+                                            UIConstants.fabSize,
                                         right: UIConstants.spacingM,
                                         child: FloatingActionButton(
                                           heroTag: 'descDialogDeleteFab$index',
@@ -668,6 +652,23 @@ class StartScreenState extends State<StartScreen> {
                                           },
                                           child: const Icon(
                                             Icons.delete_outline_outlined,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: UIConstants.spacingM,
+                                        right: UIConstants.spacingM,
+                                        child: FloatingActionButton(
+                                          heroTag: 'descDialogCloseFab$index',
+                                          mini: true,
+                                          tooltip: 'Schließen',
+                                          backgroundColor:
+                                              UIConstants.defaultAppColor,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Icon(
+                                            Icons.close,
                                             color: Colors.white,
                                           ),
                                         ),
