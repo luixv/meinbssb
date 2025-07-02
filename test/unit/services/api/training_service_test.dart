@@ -1364,5 +1364,12 @@ void main() {
       await trainingService.clearAllSchulungenCache();
       verify(mockCacheService.clearPattern('schulungen_')).called(1);
     });
+
+    test('clearDisziplinenCache removes the correct cache key', () async {
+      when(mockCacheService.remove('disziplinen'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearDisziplinenCache();
+      verify(mockCacheService.remove('disziplinen')).called(1);
+    });
   });
 }
