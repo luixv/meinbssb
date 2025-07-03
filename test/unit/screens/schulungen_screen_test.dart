@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/schulungen_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
-import 'package:meinbssb/models/bank_data.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -115,6 +114,49 @@ void main() {
       bezeichnung: 'Jugend Schulung',
       angemeldeteTeilnehmer: 12,
     ),
+    // Add a third test case with different content types
+    Schulungstermin(
+      schulungsterminId: 3,
+      schulungsartId: 3,
+      schulungsTeilnehmerId: 0,
+      datum: DateTime(2024, 8, 10),
+      bemerkung: '', // Empty bemerkung
+      kosten: 75.0,
+      ort: 'Augsburg',
+      lehrgangsleiter: 'Peter Müller',
+      verpflegungskosten: 25.0,
+      uebernachtungskosten: 50.0,
+      lehrmaterialkosten: 15.0,
+      lehrgangsinhalt: '', // Empty lehrgangsinhalt
+      maxTeilnehmer: 25,
+      webVeroeffentlichenAm: '2024-01-01',
+      anmeldungenGesperrt: false,
+      status: 1,
+      datumBis: '',
+      lehrgangsinhaltHtml: '', // Empty HTML
+      lehrgangsleiter2: '',
+      lehrgangsleiter3: '',
+      lehrgangsleiter4: '',
+      lehrgangsleiterTel: '0555123456',
+      lehrgangsleiter2Tel: '',
+      lehrgangsleiter3Tel: '',
+      lehrgangsleiter4Tel: '',
+      lehrgangsleiterMail: 'peter@example.com',
+      lehrgangsleiter2Mail: '',
+      lehrgangsleiter3Mail: '',
+      lehrgangsleiter4Mail: '',
+      anmeldeStopp: '2024-08-05',
+      abmeldeStopp: '2024-08-07',
+      geloescht: false,
+      stornoGrund: '',
+      webGruppe: 3, // Sport
+      veranstaltungsBezirk: 3,
+      fuerVerlaengerungen: false,
+      anmeldeErlaubt: 1,
+      verbandsInternPasswort: '',
+      bezeichnung: 'Sport Schulung',
+      angemeldeteTeilnehmer: 0, // No participants yet
+    ),
   ];
 
   group('SchulungenScreen', () {
@@ -214,8 +256,10 @@ void main() {
       expect(find.text('Verfügbare Schulungen'), findsOneWidget);
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
       expect(find.text('München'), findsOneWidget);
       expect(find.text('Nürnberg'), findsOneWidget);
+      expect(find.text('Augsburg'), findsOneWidget);
     });
 
     testWidgets('displays correct date format', (WidgetTester tester) async {
@@ -227,6 +271,7 @@ void main() {
 
       expect(find.text('15.06.2024'), findsOneWidget);
       expect(find.text('20.07.2024'), findsOneWidget);
+      expect(find.text('10.08.2024'), findsOneWidget);
     });
 
     testWidgets('displays webGruppe labels correctly',
@@ -239,6 +284,7 @@ void main() {
 
       expect(find.text('Wettbewerbe'), findsOneWidget);
       expect(find.text('Jugend'), findsOneWidget);
+      expect(find.text('Sport'), findsOneWidget);
     });
 
     testWidgets('filters by webGruppe when provided',
@@ -251,6 +297,7 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('filters by bezirkId when provided',
@@ -263,6 +310,7 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('filters by ort when provided', (WidgetTester tester) async {
@@ -274,6 +322,7 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('filters by titel when provided', (WidgetTester tester) async {
@@ -285,6 +334,7 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('filters by fuerVerlaengerungen when provided',
@@ -297,6 +347,7 @@ void main() {
 
       expect(find.text('Test Schulung'), findsNothing);
       expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('shows correct FAB colors based on anmeldungenGesperrt',
@@ -309,7 +360,7 @@ void main() {
 
       // Find FABs
       final fabs = find.byType(FloatingActionButton);
-      expect(fabs, findsNWidgets(2));
+      expect(fabs, findsNWidgets(3)); // One for each schulungstermin
     });
 
     testWidgets('shows empty state when no results',
@@ -321,8 +372,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Verfügbare Schulungen'), findsOneWidget);
+      expect(find.text('Keine Schulungen gefunden.'), findsOneWidget);
       expect(find.text('Test Schulung'), findsNothing);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
     });
 
     testWidgets('handles null userData gracefully',
@@ -397,6 +450,423 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsNothing);
+      expect(find.text('Sport Schulung'), findsNothing);
+    });
+
+    // New comprehensive tests for improved coverage
+
+    testWidgets('shows dialog when FAB is pressed',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap the first FAB
+      final fabs = find.byType(FloatingActionButton);
+      expect(fabs, findsNWidgets(3));
+
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      // Verify dialog is shown - look for dialog-specific content
+      expect(find.text('Es sind noch 15 von 20 Plätzen frei'), findsOneWidget);
+      expect(find.text('50.00 €'), findsOneWidget);
+      expect(find.text('5 / 20'), findsOneWidget);
+    });
+
+    testWidgets(
+        'shows gesperrt indicator in dialog when anmeldungenGesperrt is true',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap the second FAB (Jugend Schulung - gesperrt)
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.at(1));
+      await tester.pumpAndSettle();
+
+      // Verify gesperrt indicator is shown
+      expect(find.text('Anmeldungen gesperrt'), findsOneWidget);
+      expect(find.text('Es sind noch 3 von 15 Plätzen frei'), findsOneWidget);
+    });
+
+    testWidgets('shows correct content priority in dialog',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the third FAB (Sport Schulung - empty content)
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.at(2));
+      await tester.pumpAndSettle();
+
+      // Should show "Keine Beschreibung verfügbar" when all content is empty
+      expect(find.text('Keine Beschreibung verfügbar.'), findsOneWidget);
+    });
+
+    testWidgets('shows HTML content when lehrgangsinhaltHtml is available',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the first FAB (Test Schulung - has HTML content)
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      // Should show HTML content - verify dialog is open
+      expect(find.text('Es sind noch 15 von 20 Plätzen frei'), findsOneWidget);
+    });
+
+    testWidgets('shows text content when only lehrgangsinhalt is available',
+        (WidgetTester tester) async {
+      // Create a schulungstermin with only text content
+      final textOnlySchulung = Schulungstermin(
+        schulungsterminId: 4,
+        schulungsartId: 4,
+        schulungsTeilnehmerId: 0,
+        datum: DateTime(2024, 9, 1),
+        bemerkung: '',
+        kosten: 40.0,
+        ort: 'Stuttgart',
+        lehrgangsleiter: 'Test Leader',
+        verpflegungskosten: 10.0,
+        uebernachtungskosten: 0.0,
+        lehrmaterialkosten: 5.0,
+        lehrgangsinhalt: 'Only text content available',
+        maxTeilnehmer: 10,
+        webVeroeffentlichenAm: '2024-01-01',
+        anmeldungenGesperrt: false,
+        status: 1,
+        datumBis: '',
+        lehrgangsinhaltHtml: '', // Empty HTML
+        lehrgangsleiter2: '',
+        lehrgangsleiter3: '',
+        lehrgangsleiter4: '',
+        lehrgangsleiterTel: '0123456789',
+        lehrgangsleiter2Tel: '',
+        lehrgangsleiter3Tel: '',
+        lehrgangsleiter4Tel: '',
+        lehrgangsleiterMail: 'test@example.com',
+        lehrgangsleiter2Mail: '',
+        lehrgangsleiter3Mail: '',
+        lehrgangsleiter4Mail: '',
+        anmeldeStopp: '2024-08-25',
+        abmeldeStopp: '2024-08-27',
+        geloescht: false,
+        stornoGrund: '',
+        webGruppe: 4, // Überfachlich
+        veranstaltungsBezirk: 4,
+        fuerVerlaengerungen: false,
+        anmeldeErlaubt: 1,
+        verbandsInternPasswort: '',
+        bezeichnung: 'Text Only Schulung',
+        angemeldeteTeilnehmer: 2,
+      );
+
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => [textOnlySchulung]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the FAB
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      // Should show text content - verify dialog is open
+      expect(find.text('Es sind noch 8 von 10 Plätzen frei'), findsOneWidget);
+    });
+
+    testWidgets('shows bemerkung when no other content is available',
+        (WidgetTester tester) async {
+      // Create a schulungstermin with only bemerkung
+      final bemerkungOnlySchulung = Schulungstermin(
+        schulungsterminId: 5,
+        schulungsartId: 5,
+        schulungsTeilnehmerId: 0,
+        datum: DateTime(2024, 10, 1),
+        bemerkung: 'Only bemerkung available',
+        kosten: 35.0,
+        ort: 'Hamburg',
+        lehrgangsleiter: 'Test Leader',
+        verpflegungskosten: 8.0,
+        uebernachtungskosten: 0.0,
+        lehrmaterialkosten: 3.0,
+        lehrgangsinhalt: '', // Empty
+        maxTeilnehmer: 8,
+        webVeroeffentlichenAm: '2024-01-01',
+        anmeldungenGesperrt: false,
+        status: 1,
+        datumBis: '',
+        lehrgangsinhaltHtml: '', // Empty
+        lehrgangsleiter2: '',
+        lehrgangsleiter3: '',
+        lehrgangsleiter4: '',
+        lehrgangsleiterTel: '0123456789',
+        lehrgangsleiter2Tel: '',
+        lehrgangsleiter3Tel: '',
+        lehrgangsleiter4Tel: '',
+        lehrgangsleiterMail: 'test@example.com',
+        lehrgangsleiter2Mail: '',
+        lehrgangsleiter3Mail: '',
+        lehrgangsleiter4Mail: '',
+        anmeldeStopp: '2024-09-25',
+        abmeldeStopp: '2024-09-27',
+        geloescht: false,
+        stornoGrund: '',
+        webGruppe: 5, // Verbandsintern
+        veranstaltungsBezirk: 5,
+        fuerVerlaengerungen: false,
+        anmeldeErlaubt: 1,
+        verbandsInternPasswort: '',
+        bezeichnung: 'Bemerkung Only Schulung',
+        angemeldeteTeilnehmer: 1,
+      );
+
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => [bemerkungOnlySchulung]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the FAB
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      // Should show bemerkung content - verify dialog is open
+      expect(find.text('Es sind noch 7 von 8 Plätzen frei'), findsOneWidget);
+    });
+
+    testWidgets('handles case insensitive filtering',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget(ort: 'münchen')); // lowercase
+      await tester.pumpAndSettle();
+
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsNothing);
+    });
+
+    testWidgets('handles partial text filtering', (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester
+          .pumpWidget(createTestWidget(titel: 'Schulung')); // partial match
+      await tester.pumpAndSettle();
+
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
+    });
+
+    testWidgets('handles zero values correctly', (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the third FAB (Sport Schulung - 0 participants)
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.at(2));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Es sind noch 25 von 25 Plätzen frei'), findsOneWidget);
+      expect(find.text('0 / 25'), findsOneWidget);
+    });
+
+    testWidgets('handles full capacity correctly', (WidgetTester tester) async {
+      // Create a schulungstermin with full capacity
+      final fullCapacitySchulung = Schulungstermin(
+        schulungsterminId: 6,
+        schulungsartId: 6,
+        schulungsTeilnehmerId: 0,
+        datum: DateTime(2024, 11, 1),
+        bemerkung: 'Full capacity test',
+        kosten: 60.0,
+        ort: 'Berlin',
+        lehrgangsleiter: 'Test Leader',
+        verpflegungskosten: 15.0,
+        uebernachtungskosten: 0.0,
+        lehrmaterialkosten: 8.0,
+        lehrgangsinhalt: 'Test content',
+        maxTeilnehmer: 10,
+        webVeroeffentlichenAm: '2024-01-01',
+        anmeldungenGesperrt: false,
+        status: 1,
+        datumBis: '',
+        lehrgangsinhaltHtml: '<p>Test</p>',
+        lehrgangsleiter2: '',
+        lehrgangsleiter3: '',
+        lehrgangsleiter4: '',
+        lehrgangsleiterTel: '0123456789',
+        lehrgangsleiter2Tel: '',
+        lehrgangsleiter3Tel: '',
+        lehrgangsleiter4Tel: '',
+        lehrgangsleiterMail: 'test@example.com',
+        lehrgangsleiter2Mail: '',
+        lehrgangsleiter3Mail: '',
+        lehrgangsleiter4Mail: '',
+        anmeldeStopp: '2024-10-25',
+        abmeldeStopp: '2024-10-27',
+        geloescht: false,
+        stornoGrund: '',
+        webGruppe: 0, // Alle
+        veranstaltungsBezirk: 6,
+        fuerVerlaengerungen: false,
+        anmeldeErlaubt: 1,
+        verbandsInternPasswort: '',
+        bezeichnung: 'Full Capacity Schulung',
+        angemeldeteTeilnehmer: 10, // Full capacity
+      );
+
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => [fullCapacitySchulung]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the FAB
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Es sind noch 0 von 10 Plätzen frei'), findsOneWidget);
+      expect(find.text('10 / 10'), findsOneWidget);
+    });
+
+    testWidgets('handles unknown webGruppe correctly',
+        (WidgetTester tester) async {
+      // Create a schulungstermin with unknown webGruppe
+      final unknownWebGruppeSchulung = Schulungstermin(
+        schulungsterminId: 7,
+        schulungsartId: 7,
+        schulungsTeilnehmerId: 0,
+        datum: DateTime(2024, 12, 1),
+        bemerkung: 'Unknown webGruppe test',
+        kosten: 45.0,
+        ort: 'Köln',
+        lehrgangsleiter: 'Test Leader',
+        verpflegungskosten: 12.0,
+        uebernachtungskosten: 0.0,
+        lehrmaterialkosten: 6.0,
+        lehrgangsinhalt: 'Test content',
+        maxTeilnehmer: 12,
+        webVeroeffentlichenAm: '2024-01-01',
+        anmeldungenGesperrt: false,
+        status: 1,
+        datumBis: '',
+        lehrgangsinhaltHtml: '<p>Test</p>',
+        lehrgangsleiter2: '',
+        lehrgangsleiter3: '',
+        lehrgangsleiter4: '',
+        lehrgangsleiterTel: '0123456789',
+        lehrgangsleiter2Tel: '',
+        lehrgangsleiter3Tel: '',
+        lehrgangsleiter4Tel: '',
+        lehrgangsleiterMail: 'test@example.com',
+        lehrgangsleiter2Mail: '',
+        lehrgangsleiter3Mail: '',
+        lehrgangsleiter4Mail: '',
+        anmeldeStopp: '2024-11-25',
+        abmeldeStopp: '2024-11-27',
+        geloescht: false,
+        stornoGrund: '',
+        webGruppe: 999, // Unknown webGruppe
+        veranstaltungsBezirk: 7,
+        fuerVerlaengerungen: false,
+        anmeldeErlaubt: 1,
+        verbandsInternPasswort: '',
+        bezeichnung: 'Unknown WebGruppe Schulung',
+        angemeldeteTeilnehmer: 3,
+      );
+
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => [unknownWebGruppeSchulung]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('nicht zugeordnet'), findsOneWidget);
+    });
+
+    testWidgets('handles decimal costs correctly', (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap the first FAB
+      final fabs = find.byType(FloatingActionButton);
+      await tester.tap(fabs.first);
+      await tester.pumpAndSettle();
+
+      // Check that costs are displayed with 2 decimal places
+      expect(find.text('50.00 €'), findsOneWidget);
+    });
+
+    testWidgets('handles empty bemerkung in list view',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // The third schulungstermin has empty bemerkung, should still display
+      expect(find.text('Sport Schulung'), findsOneWidget);
+      expect(find.text('Augsburg'), findsOneWidget);
+    });
+
+    testWidgets('handles multiple rapid API calls',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Verify the screen still works correctly
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
+    });
+
+    testWidgets('handles different screen sizes', (WidgetTester tester) async {
+      when(mockApiService.fetchSchulungstermine(any))
+          .thenAnswer((_) async => sampleSchulungstermine);
+
+      // Test with a smaller screen size
+      tester.view.physicalSize = const Size(400, 600);
+      tester.view.devicePixelRatio = 1.0;
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should still display correctly
+      expect(find.text('Test Schulung'), findsOneWidget);
+
+      // Reset screen size
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
     });
   });
 }
