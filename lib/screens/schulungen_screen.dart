@@ -547,7 +547,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       schulungsTermin,
                                       registeredPersons,
                                       safeBankData,
-                                      prefillUser: user,
+                                      prefillUser: user?.copyWith(telefon: telefonController.text),
                                       prefillEmail: email,
                                     );
                                   });

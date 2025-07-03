@@ -6,17 +6,30 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'logger_service.dart';
-
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io' as io;
 
 class ImageService {
+
+  ImageService({
+    this.getCachedSchuetzenausweisFn,
+    this.cacheSchuetzenausweisFn,
+    this.connectivity,
+  });
+  // Dependency injection for testability
+  final Future<Uint8List?> Function(int, Duration)? getCachedSchuetzenausweisFn;
+  final Future<void> Function(int, Uint8List, int)? cacheSchuetzenausweisFn;
+  final dynamic connectivity;
+
   /// Cache a Schuetzenausweis entry
   Future<void> cacheSchuetzenausweis(
     int personId,
     Uint8List imageData,
     int timestamp,
   ) async {
+    if (cacheSchuetzenausweisFn != null) {
+      return await cacheSchuetzenausweisFn!(personId, imageData, timestamp);
+    }
     if (kIsWeb) {
       await _cacheImageWeb(
         'schuetzenausweis_$personId.jpg',
@@ -37,6 +50,9 @@ class ImageService {
     int personId,
     Duration validity,
   ) async {
+    if (getCachedSchuetzenausweisFn != null) {
+      return await getCachedSchuetzenausweisFn!(personId, validity);
+    }
     if (kIsWeb) {
       return await _getCachedImageWeb(
         'schuetzenausweis_$personId.jpg',
@@ -52,7 +68,8 @@ class ImageService {
   }
 
   Future<bool> isDeviceOnline() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
+    final conn = connectivity ?? Connectivity();
+    final connectivityResult = await conn.checkConnectivity();
     if (connectivityResult.isEmpty) {
       return false;
     }
