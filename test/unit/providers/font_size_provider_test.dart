@@ -736,5 +736,33 @@ void main() {
         expect(listenerCalled, isFalse);
       });
     });
+
+    group('Persistence', () {
+      test('should persist scale factor and load it in a new provider',
+          () async {
+        SharedPreferences.setMockInitialValues({});
+        final provider1 = FontSizeProvider();
+        await Future.delayed(const Duration(milliseconds: 100));
+        provider1.increaseFontSize();
+        await Future.delayed(const Duration(milliseconds: 100));
+        final savedScale = provider1.scaleFactor;
+        // New provider should load the saved value
+        final provider2 = FontSizeProvider();
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(provider2.scaleFactor, equals(savedScale));
+      });
+
+      test('should persist decrease and load in new provider', () async {
+        SharedPreferences.setMockInitialValues({});
+        final provider1 = FontSizeProvider();
+        await Future.delayed(const Duration(milliseconds: 100));
+        provider1.decreaseFontSize();
+        await Future.delayed(const Duration(milliseconds: 100));
+        final savedScale = provider1.scaleFactor;
+        final provider2 = FontSizeProvider();
+        await Future.delayed(const Duration(milliseconds: 100));
+        expect(provider2.scaleFactor, equals(savedScale));
+      });
+    });
   });
 }
