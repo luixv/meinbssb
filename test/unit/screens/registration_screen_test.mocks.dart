@@ -6,8 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i2;
-import 'package:meinbssb/services/core/email_service.dart' as _i4;
+import 'package:meinbssb/services/core/email_service.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -127,12 +128,27 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchLoginEmail,
+          [passnummer],
+        ),
+        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchLoginEmail,
+            [passnummer],
+          ),
+        )),
+      ) as _i3.Future<String>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i4.EmailService {
+class MockEmailService extends _i1.Mock implements _i5.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }

@@ -24,13 +24,13 @@ import 'package:meinbssb/services/api/bank_service.dart' as _i22;
 import 'package:meinbssb/services/api/training_service.dart' as _i17;
 import 'package:meinbssb/services/api/user_service.dart' as _i11;
 import 'package:meinbssb/services/api/verein_service.dart' as _i23;
-import 'package:meinbssb/services/core/cache_service.dart' as _i6;
-import 'package:meinbssb/services/core/config_service.dart' as _i5;
+import 'package:meinbssb/services/core/cache_service.dart' as _i7;
+import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/image_service.dart' as _i9;
 import 'package:meinbssb/services/core/network_service.dart' as _i8;
 import 'package:meinbssb/services/core/token_service.dart' as _i26;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -181,12 +181,27 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchLoginEmail,
+          [passnummer],
+        ),
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchLoginEmail,
+            [passnummer],
+          ),
+        )),
+      ) as _i2.Future<String>);
 }
 
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i5.ConfigService {
+class MockConfigService extends _i1.Mock implements _i6.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -221,7 +236,7 @@ class MockConfigService extends _i1.Mock implements _i5.ConfigService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i6.CacheService {
+class MockCacheService extends _i1.Mock implements _i7.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -401,8 +416,8 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i7.ifNotNull(
-              _i7.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -443,8 +458,8 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i7.ifNotNull(
-              _i7.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,
@@ -972,7 +987,7 @@ class MockTokenService extends _i1.Mock implements _i26.TokenService {
           #requestToken,
           [],
         ),
-        returnValue: _i2.Future<String>.value(_i7.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #requestToken,
@@ -997,7 +1012,7 @@ class MockTokenService extends _i1.Mock implements _i26.TokenService {
           #getAuthToken,
           [],
         ),
-        returnValue: _i2.Future<String>.value(_i7.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #getAuthToken,
