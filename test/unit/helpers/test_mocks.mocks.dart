@@ -1033,8 +1033,9 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
   @override
   _i3.Future<dynamic> post(
     String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #post,
@@ -1042,6 +1043,7 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
             endpoint,
             body,
           ],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
@@ -1049,8 +1051,9 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
   @override
   _i3.Future<dynamic> put(
     String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #put,
@@ -1058,6 +1061,7 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
             endpoint,
             body,
           ],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
@@ -1066,21 +1070,30 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
   _i3.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
+    String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #delete,
           [endpoint],
-          {#body: body},
+          {
+            #body: body,
+            #overrideBaseUrl: overrideBaseUrl,
+          },
         ),
         returnValue: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
 
   @override
-  _i3.Future<dynamic> get(String? endpoint) => (super.noSuchMethod(
+  _i3.Future<dynamic> get(
+    String? endpoint, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #get,
           [endpoint],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
@@ -1088,8 +1101,9 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
   @override
   _i3.Future<dynamic> getWithBody(
     String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getWithBody,
@@ -1097,15 +1111,21 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
             endpoint,
             body,
           ],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
 
   @override
-  _i3.Future<_i11.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
+  _i3.Future<_i11.Uint8List> getBytes(
+    String? endpoint, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getBytes,
           [endpoint],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<_i11.Uint8List>.value(_i11.Uint8List(0)),
       ) as _i3.Future<_i11.Uint8List>);

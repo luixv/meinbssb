@@ -7,6 +7,8 @@ import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:meinbssb/services/core/config_service.dart';
+import 'package:flutter/services.dart';
 
 import 'auth_service_test.mocks.dart';
 
@@ -570,6 +572,78 @@ void main() {
             .thenThrow(Exception('fail'));
         final result = await authService.findePersonID2('Error', '99999999');
         expect(result, isFalse);
+      });
+    });
+
+    group('fetchLoginEmail', () {
+      setUp(() async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        // Mock rootBundle.loadString to return the config JSON
+        const configJson =
+            '{"apiProtocol": "https", "api1BaseServer": "webintern.bssb.bayern", "api1Port": "56400", "api1BasePath": "rest/zmi/api1"}';
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler(
+          'flutter/assets',
+          (message) async {
+            final String? key = const StringCodec().decodeMessage(message);
+            if (key == 'assets/config.json') {
+              return const StringCodec().encodeMessage(configJson);
+            }
+            return null;
+          },
+        );
+        ConfigService.reset();
+        await ConfigService.load('assets/config.json');
+      });
+
+      test('returns LOGINMAIL when present in response', () async {
+        const passnummer = '40101205';
+        const expectedEmail = 'kostas@rizoudis1.de';
+        const expectedBaseUrl =
+            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        when(
+          mockHttpClient.get(
+            'FindeLoginMail/$passnummer',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'LOGINMAIL': expectedEmail},
+          ],
+        );
+
+        final result = await authService.fetchLoginEmail(passnummer);
+        expect(result, expectedEmail);
+      });
+
+      test('returns empty string when response is empty', () async {
+        const passnummer = '40101205';
+        const expectedBaseUrl =
+            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        when(
+          mockHttpClient.get(
+            'FindeLoginMail/$passnummer',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => []);
+
+        final result = await authService.fetchLoginEmail(passnummer);
+        expect(result, '');
+      });
+
+      test('returns empty string when LOGINMAIL is missing', () async {
+        const passnummer = '40101205';
+        const expectedBaseUrl =
+            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        when(
+          mockHttpClient.get(
+            'FindeLoginMail/$passnummer',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => [{}]);
+
+        final result = await authService.fetchLoginEmail(passnummer);
+        expect(result, '');
       });
     });
   });
