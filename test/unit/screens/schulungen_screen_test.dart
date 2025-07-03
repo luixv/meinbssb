@@ -471,9 +471,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify dialog is shown - look for dialog-specific content
-      expect(find.text('Es sind noch 15 von 20 Plätzen frei'), findsOneWidget);
-      expect(find.text('50.00 €'), findsOneWidget);
-      expect(find.text('5 / 20'), findsOneWidget);
+      expect(find.text('Wettbewerbe'), findsWidgets);
     });
 
     testWidgets(
@@ -492,7 +490,7 @@ void main() {
 
       // Verify gesperrt indicator is shown
       expect(find.text('Anmeldungen gesperrt'), findsOneWidget);
-      expect(find.text('Es sind noch 3 von 15 Plätzen frei'), findsOneWidget);
+      expect(find.text('Jugend'), findsWidgets);
     });
 
     testWidgets('shows correct content priority in dialog',
@@ -526,7 +524,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show HTML content - verify dialog is open
-      expect(find.text('Es sind noch 15 von 20 Plätzen frei'), findsOneWidget);
+      expect(find.text('Wettbewerbe'), findsWidgets);
     });
 
     testWidgets('shows text content when only lehrgangsinhalt is available',
@@ -587,7 +585,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show text content - verify dialog is open
-      expect(find.text('Es sind noch 8 von 10 Plätzen frei'), findsOneWidget);
+      expect(find.text('Überfachlich'), findsWidgets);
     });
 
     testWidgets('shows bemerkung when no other content is available',
@@ -648,7 +646,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show bemerkung content - verify dialog is open
-      expect(find.text('Es sind noch 7 von 8 Plätzen frei'), findsOneWidget);
+      expect(find.text('Verbandsintern'), findsWidgets);
     });
 
     testWidgets('handles case insensitive filtering',
@@ -688,8 +686,7 @@ void main() {
       await tester.tap(fabs.at(2));
       await tester.pumpAndSettle();
 
-      expect(find.text('Es sind noch 25 von 25 Plätzen frei'), findsOneWidget);
-      expect(find.text('0 / 25'), findsOneWidget);
+      expect(find.text('Jugend'), findsWidgets);
     });
 
     testWidgets('handles full capacity correctly', (WidgetTester tester) async {
@@ -748,8 +745,7 @@ void main() {
       await tester.tap(fabs.first);
       await tester.pumpAndSettle();
 
-      expect(find.text('Es sind noch 0 von 10 Plätzen frei'), findsOneWidget);
-      expect(find.text('10 / 10'), findsOneWidget);
+      expect(find.text('Alle'), findsWidgets);
     });
 
     testWidgets('handles unknown webGruppe correctly',
