@@ -1311,23 +1311,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                left: UIConstants
-                                                                    .spacingM,
-                                                                right: UIConstants
-                                                                    .spacingM,
-                                                                bottom:
-                                                                    UIConstants
-                                                                        .spacingM,
+                                                                bottom: UIConstants
+                                                                    .infoTableBottomPaddingSmall,
                                                               ),
-                                                              child: Row(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Flexible(
-                                                                    flex: 1,
-                                                                    child:
-                                                                        Column(
+                                                              child: Center(
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment
                                                                               .start,
@@ -1344,24 +1340,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         const SizedBox(
                                                                           height:
-                                                                              UIConstants.spacingXS,
+                                                                              UIConstants.spacingS,
                                                                         ),
                                                                         if (t
                                                                             .bemerkung
                                                                             .isNotEmpty) ...[
                                                                           Row(
                                                                             children: [
-                                                                              const Icon(
-                                                                                Icons.info_outline,
-                                                                                size: UIConstants.defaultIconSize,
-                                                                              ),
+                                                                              const Icon(Icons.info_outline, size: UIConstants.defaultIconSize),
                                                                               UIConstants.horizontalSpacingS,
-                                                                              Flexible(child: Text(t.bemerkung)),
+                                                                              Text(t.bemerkung, overflow: TextOverflow.ellipsis, maxLines: 2),
                                                                             ],
                                                                           ),
                                                                           const SizedBox(
                                                                             height:
-                                                                                UIConstants.spacingXS,
+                                                                                UIConstants.spacingS,
                                                                           ),
                                                                         ],
                                                                         Row(
@@ -1371,21 +1364,20 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               size: UIConstants.defaultIconSize,
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Flexible(child: Text(t.ort)),
+                                                                            Text(
+                                                                              t.ort,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    width: UIConstants
-                                                                            .infoTableColumnSpacing *
-                                                                        2,
-                                                                  ),
-                                                                  Flexible(
-                                                                    flex: 1,
-                                                                    child:
-                                                                        Column(
+                                                                    const SizedBox(
+                                                                      width: UIConstants
+                                                                          .infoTableColumnSpacingWide,
+                                                                    ),
+                                                                    Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment
                                                                               .start,
@@ -1402,7 +1394,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                         const SizedBox(
                                                                           height:
-                                                                              UIConstants.spacingXS,
+                                                                              UIConstants.spacingS,
                                                                         ),
                                                                         Row(
                                                                           children: [
@@ -1416,8 +1408,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ],

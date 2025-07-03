@@ -467,24 +467,20 @@ class StartScreenState extends State<StartScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .fromLTRB(
-                                                          UIConstants
-                                                              .spacingXXXL,
-                                                          0,
-                                                          UIConstants
-                                                              .spacingXXL,
-                                                          UIConstants.spacingXL,
+                                                                .only(
+                                                          bottom: UIConstants
+                                                              .infoTableBottomPaddingSmall,
                                                         ),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Expanded(
-                                                              child: Column(
+                                                        child: Center(
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
@@ -499,21 +495,18 @@ class StartScreenState extends State<StartScreen> {
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Expanded(
-                                                                        child:
-                                                                            Text(
-                                                                          '${schulung.datum.day.toString().padLeft(2, '0')}.${schulung.datum.month.toString().padLeft(2, '0')}.${schulung.datum.year}',
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        '${schulung.datum.day.toString().padLeft(2, '0')}.${schulung.datum.month.toString().padLeft(2, '0')}.${schulung.datum.year}',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),
                                                                   const SizedBox(
                                                                     height: UIConstants
-                                                                        .spacingXS,
+                                                                        .spacingS,
                                                                   ),
                                                                   Row(
                                                                     children: [
@@ -525,29 +518,23 @@ class StartScreenState extends State<StartScreen> {
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Expanded(
-                                                                        child:
-                                                                            Text(
-                                                                          termin
-                                                                              .ort,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        termin
+                                                                            .ort,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: UIConstants
-                                                                      .infoTableColumnSpacing *
-                                                                  2,
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
+                                                              const SizedBox(
+                                                                width: UIConstants
+                                                                    .infoTableColumnSpacingWide,
+                                                              ),
+                                                              Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
@@ -562,22 +549,19 @@ class StartScreenState extends State<StartScreen> {
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Expanded(
-                                                                        child:
-                                                                            Text(
-                                                                          termin
-                                                                              .webGruppeLabel,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        termin
+                                                                            .webGruppeLabel,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),
                                                                   const SizedBox(
                                                                     height: UIConstants
-                                                                        .spacingXS,
+                                                                        .spacingS,
                                                                   ),
                                                                   Row(
                                                                     children: [
@@ -596,8 +580,8 @@ class StartScreenState extends State<StartScreen> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ],

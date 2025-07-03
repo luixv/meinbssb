@@ -122,6 +122,9 @@ class UIConstants {
   /// Bottom padding for info tables/dialogs
   static const double infoTableBottomPadding = 16.0;
 
+  static const double infoTableColumnSpacingWide = infoTableColumnSpacing * 20;
+  static const double infoTableBottomPaddingSmall = infoTableBottomPadding / 2;
+
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
   static SizedBox get horizontalSpacingS => const SizedBox(width: spacingS);
