@@ -10,6 +10,7 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
+import '/services/core/config_service.dart';
 
 class AuthService {
   AuthService({
@@ -274,15 +275,43 @@ Ergebnis der Abfrage:
     String passNumber,
   ) async {
     try {
-      // Find the email!
-      String email = '';
+      String email = await fetchLoginEmail(passNumber);
+
+      if (email.isEmpty) {
+        // Propagate error: no email found for passNumber
+        return {
+          'ResultType': 99,
+          'ResultMessage': 'Keine Login-Email für diese Passnummer gefunden.',
+          'PersonID': 0,
+          'EmailListe': '',
+          'PasswortNeu': '',
+        };
+      }
 
       final response =
-          await _httpClient.get('PasswordReset/$passNumber/$email');
-      return response is Map<String, dynamic> ? response : {};
+          await _httpClient.get('MyBSSBPasswortReset/$passNumber/$email');
+
+      // Propagate all responses, let the screen check ResultType
+      if (response is Map<String, dynamic>) {
+        return response;
+      } else {
+        return {
+          'ResultType': 98,
+          'ResultMessage': 'Ungültige Serverantwort.',
+          'PersonID': 0,
+          'EmailListe': '',
+          'PasswortNeu': '',
+        };
+      }
     } catch (e) {
       LoggerService.logError('Password reset error: $e');
-      rethrow;
+      return {
+        'ResultType': 97,
+        'ResultMessage': 'Fehler beim Zurücksetzen des Passworts: $e',
+        'PersonID': 0,
+        'EmailListe': '',
+        'PasswortNeu': '',
+      };
     }
   }
 
@@ -323,6 +352,34 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('findePersonID2 error: $e');
       return false;
+    }
+  }
+
+  /// Fetches the login email for a given passnummer using a special base URL from config.json.
+  Future<String> fetchLoginEmail(String passnummer) async {
+    try {
+      final config = ConfigService.instance;
+      final protocol = config.getString('apiProtocol') ?? 'https';
+      final server = config.getString('api1BaseServer') ?? '';
+      final port = config.getString('api1Port') ?? '';
+      final path = config.getString('api1BasePath') ?? '';
+      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
+      final baseUrl = port.isNotEmpty
+          ? '$protocol://$server:$port/$path'
+          : '$protocol://$server/$path';
+      final endpoint = 'FindeLoginMail/$passnummer';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        final loginMail = response[0]['LOGINMAIL'];
+        if (loginMail is String) {
+          return loginMail;
+        }
+      }
+      return '';
+    } catch (e) {
+      LoggerService.logError('fetchLoginEmail error: $e');
+      return '';
     }
   }
 }

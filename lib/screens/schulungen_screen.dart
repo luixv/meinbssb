@@ -1394,7 +1394,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ),
                                                                     const SizedBox(
                                                                         width: UIConstants
-                                                                            .infoTableColumnSpacingWide),
+                                                                            .infoTableColumnSpacingWide,),
                                                                     Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment

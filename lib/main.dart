@@ -85,7 +85,6 @@ class AppInitializer {
       cacheService: cacheService,
       client: baseHttpClient, // Pass the shared http.Client
     );
-    // --- FIX ENDS HERE ---
 
     trainingService = TrainingService(
       httpClient: httpClient,

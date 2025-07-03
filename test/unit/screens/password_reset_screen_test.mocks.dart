@@ -8,10 +8,10 @@ import 'dart:ui' as _i7;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i2;
 import 'package:meinbssb/services/core/config_service.dart' as _i8;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i5;
-import 'package:meinbssb/services/core/network_service.dart' as _i4;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i6;
+import 'package:meinbssb/services/core/network_service.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -141,12 +141,27 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchLoginEmail,
+          [passnummer],
+        ),
+        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchLoginEmail,
+            [passnummer],
+          ),
+        )),
+      ) as _i3.Future<String>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i4.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i5.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -179,7 +194,7 @@ class MockNetworkService extends _i1.Mock implements _i4.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -238,7 +253,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
           #getScalePercentage,
           [],
         ),
-        returnValue: _i6.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #getScalePercentage,
