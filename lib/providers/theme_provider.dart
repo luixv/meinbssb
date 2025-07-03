@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../constants/ui_constants.dart';
-import '../../constants/ui_styles.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeProvider() {
-    _loadThemePreference();
+    loadThemePreference();
   }
 
-  Future<void> _loadThemePreference() async {
+  Future<void> loadThemePreference() async {
     notifyListeners();
   }
 

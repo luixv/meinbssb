@@ -12,7 +12,7 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'dart:typed_data';
 import 'test_mocks.mocks.dart';
-import 'package:meinbssb/services/core/theme_provider.dart';
+import 'package:meinbssb/providers/theme_provider.dart';
 
 class TestHelper {
   static late MockAuthService mockAuthService;
