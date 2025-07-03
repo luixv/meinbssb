@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -18,229 +17,289 @@ class ImpressumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Impressum',
-      userData: userData,
-      isLoggedIn: isLoggedIn,
-      onLogout: onLogout,
-      body: Container(
-        color: UIConstants.backgroundColor,
-        child: const SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: UIConstants.startCrossAlignment,
-            children: [
-              SizedBox(height: 16),
-              ScaledText(
-                'Für den Inhalt verantwortlich sind:',
-                style: TextStyle(
-                  fontSize: UIConstants.dialogFontSize,
-                  fontWeight: FontWeight.bold,
+    return Scaffold(
+      backgroundColor: UIConstants.backgroundColor,
+      appBar: AppBar(
+        title: const Text('Impressum', style: UIStyles.appBarTitleStyle),
+        backgroundColor: UIConstants.backgroundColor,
+        elevation: UIConstants.appBarElevation,
+        iconTheme: const IconThemeData(color: UIConstants.textColor),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: UIConstants.spacingL,
+              horizontal: UIConstants.spacingM,
+            ),
+            padding: UIConstants.defaultPadding,
+            decoration: BoxDecoration(
+              color: UIConstants.cardColor,
+              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              boxShadow: UIStyles.cardDecoration.boxShadow,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Main Title
+                const Text(
+                  'Impressum',
+                  style: UIStyles.headerStyle,
                 ),
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Gesamtverantwortung',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Bayerischer Sportschützenbund e.V.'),
-              ScaledText('1. Landesschützenmeister'),
-              SizedBox(height: UIConstants.spacingXS),
-              ScaledText('Christian Kühn'),
-              ScaledText('Olympia-Schießanlage Hochbrück'),
-              ScaledText('Ingolstädter Landstraße 110'),
-              ScaledText('85748 Garching'),
-              SizedBox(height: UIConstants.spacingS),
-              _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
-              _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
-              _LinkText('Website: https://www.bssb.de', 'https://www.bssb.de'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Realisierung des Internetauftritts',
-                style: TextStyle(
-                  fontSize: UIConstants.dialogFontSize,
-                  fontWeight: FontWeight.bold,
+                UIConstants.verticalSpacingM,
+                const Divider(),
+                UIConstants.verticalSpacingM,
+                // Gesamtverantwortung
+                const Text('Gesamtverantwortung', style: UIStyles.sectionTitleStyle),
+                UIConstants.verticalSpacingS,
+                Text('Bayerischer Sportschützenbund e.V.',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                const Text('1. Landesschützenmeister: Christian Kühn',
+                    style: UIStyles.bodyStyle,),
+                UIConstants.verticalSpacingXS,
+                _addressBlock([
+                  'Olympia-Schießanlage Hochbrück',
+                  'Ingolstädter Landstraße 110',
+                  '85748 Garching',
+                  'Eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
+                ]),
+                UIConstants.verticalSpacingXS,
+                _contactRow(
+                  phone: '0893169490',
+                  email: 'gs@bssb.bayern',
+                  web: 'https://www.bssb.de',
                 ),
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Datenschutzbeauftragter',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Herbert Isdebski'),
-              ScaledText('Scheibenhalde 1'),
-              ScaledText('72160 Horb-Nordstetten'),
-              SizedBox(height: UIConstants.spacingS),
-              _LinkText(
-                'E-Mail: datenschutz@bssb.de',
-                'mailto:datenschutz@bssb.de',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Telefon-Sprechstunde für BSSB-Mitglieder:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('jeder erste Donnerstag im Monat, 16 bis 18 Uhr'),
-              _LinkText('Telefon: (07451) 6 25 42 40', 'tel:074516254240'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Inhaltlich verantwortlich für die Teilbereiche',
-                style: TextStyle(
-                  fontSize: UIConstants.dialogFontSize,
-                  fontWeight: FontWeight.bold,
+                UIConstants.verticalSpacingM,
+                // Datenschutzbeauftragter
+                const Text('Datenschutzbeauftragter',
+                    style: UIStyles.sectionTitleStyle,),
+                UIConstants.verticalSpacingS,
+                _addressBlock([
+                  'Herbert Isdebski',
+                  'Scheibenhalde 1',
+                  '72160 Horb-Nordstetten',
+                ]),
+                UIConstants.verticalSpacingXS,
+                _contactRow(
+                  phone: '074516254240',
+                  email: 'datenschutz@bssb.de',
                 ),
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Verband',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Bayerischer Sportschützenbund e.V.'),
-              ScaledText('Herr Alexander Heidel'),
-              ScaledText('Olympia-Schießanlage Hochbrück'),
-              ScaledText('Ingolstädter Landstraße 110'),
-              ScaledText('85748 Garching'),
-              SizedBox(height: UIConstants.spacingS),
-              _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
-              _LinkText(
-                'E-Mail: alexander.heidel@bssb.bayern',
-                'mailto:alexander.heidel@bssb.bayern',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Sport',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Einstellen der Ergebnisse'),
-              ScaledText('Bayerischer Sportschützenbund e.V.'),
-              ScaledText('Herr Josef Lederer'),
-              ScaledText('Olympia-Schießanlage Hochbrück'),
-              ScaledText('Ingolstädter Landstraße 110'),
-              ScaledText('85748 Garching'),
-              SizedBox(height: UIConstants.spacingS),
-              _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
-              _LinkText(
-                'E-Mail: josef.lederer@bssb.bayern',
-                'mailto:josef.lederer@bssb.bayern',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Jugend',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Bayerischer Sportschützenbund e.V.'),
-              ScaledText('Herr Markus Maas'),
-              ScaledText('Olympia-Schießanlage Hochbrück'),
-              ScaledText('Ingolstädter Landstraße 110'),
-              ScaledText('85748 Garching'),
-              SizedBox(height: UIConstants.spacingS),
-              _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
-              _LinkText(
-                'E-Mail: jugend@bssb.bayern',
-                'mailto:jugend@bssb.bayern',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Bezirke / Gaue / Vereine',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText(
-                'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
-              ),
-              ScaledText(
-                'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
-              ),
-              ScaledText(
-                'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Haftung für weiterführende Links',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText(
-                'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung.',
-              ),
-              ScaledText(
-                'Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an.',
-              ),
-              ScaledText(
-                'Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
-                style: TextStyle(
-                  fontSize: UIConstants.dialogFontSize,
-                  fontWeight: FontWeight.bold,
+                UIConstants.verticalSpacingXS,
+                Text('Telefon-Sprechstunde für BSSB-Mitglieder:',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                const Text('jeder erste Donnerstag im Monat, 16 bis 18 Uhr',
+                    style: UIStyles.bodyStyle,),
+                UIConstants.verticalSpacingM,
+                // Inhaltlich verantwortlich für die Teilbereiche
+                const Text('Inhaltlich verantwortlich für die Teilbereiche',
+                    style: UIStyles.sectionTitleStyle,),
+                UIConstants.verticalSpacingS,
+                _subSection(
+                  title: 'Verband',
+                  name: 'Herr Alexander Heidel',
+                  address: [
+                    'Bayerischer Sportschützenbund e.V.',
+                    'Olympia-Schießanlage Hochbrück',
+                    'Ingolstädter Landstraße 110',
+                    '85748 Garching',
+                  ],
+                  phone: '0893169490',
+                  email: 'alexander.heidel@bssb.bayern',
                 ),
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Bayerischer Sportschützenbund e.V.',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText(
-                'eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText('Postanschrift der Geschäftsstelle:'),
-              ScaledText('Ingolstädter Landstrasse 110'),
-              ScaledText('85748 Garching'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Kommunikation',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              _LinkText('Telefon: 089 - 31 69 49 - 0', 'tel:0893169490'),
-              _LinkText('E-Mail: gs@bssb.bayern', 'mailto:gs@bssb.bayern'),
-              _LinkText(
-                'Homepage: https://www.bssb.de/',
-                'https://www.bssb.de/',
-              ),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Geschäftsführer',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('Alexander Heidel'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Vorstand i.S. §26 BGB',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('1. Landesschützenmeister: Christian Kühn'),
-              ScaledText('2. Landesschützenmeister: Dieter Vierlbeck'),
-              ScaledText('3. Landesschützenmeister: Hans Hainthaler'),
-              ScaledText('4. Landesschützenmeister: Albert Euba'),
-              ScaledText('5. Landesschützenmeister: Stefan Fersch'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Bankverbindung',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText(
-                'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
-              ),
-              ScaledText('IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX'),
-              SizedBox(height: UIConstants.spacingS),
-              ScaledText(
-                'Umsatzsteueridentifikationsnummer',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ScaledText('DE 129514004'),
-              SizedBox(height: UIConstants.spacingS),
-            ],
+                UIConstants.verticalSpacingS,
+                _subSection(
+                  title: 'Sport',
+                  name: 'Herr Josef Lederer',
+                  address: [
+                    'Bayerischer Sportschützenbund e.V.',
+                    'Olympia-Schießanlage Hochbrück',
+                    'Ingolstädter Landstraße 110',
+                    '85748 Garching',
+                  ],
+                  phone: '0893169490',
+                  email: 'josef.lederer@bssb.de',
+                ),
+                UIConstants.verticalSpacingS,
+                _subSection(
+                  title: 'Jugend',
+                  name: 'Herr Markus Maas',
+                  address: [
+                    'Bayerischer Sportschützenbund e.V.',
+                    'Olympia-Schießanlage Hochbrück',
+                    'Ingolstädter Landstraße 110',
+                    '85748 Garching',
+                  ],
+                  phone: '0893169490',
+                  email: 'jugend@bssb.bayern',
+                ),
+                UIConstants.verticalSpacingM,
+                const Text('Hinweis zur Sprache', style: UIStyles.sectionTitleStyle),
+                UIConstants.verticalSpacingXS,
+                const Text(
+                    'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
+                    style: UIStyles.bodyStyle,),
+                UIConstants.verticalSpacingM,
+                const Text('Bezirke / Gaue / Vereine',
+                    style: UIStyles.sectionTitleStyle,),
+                UIConstants.verticalSpacingXS,
+                const Text(
+                    'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
+                    style: UIStyles.bodyStyle,),
+                const Text(
+                    'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
+                    style: UIStyles.bodyStyle,),
+                Text(
+                    'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                UIConstants.verticalSpacingM,
+                const Text('Haftung für weiterführende Links',
+                    style: UIStyles.sectionTitleStyle,),
+                UIConstants.verticalSpacingXS,
+                const Text(
+                    'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung. Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an. Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
+                    style: UIStyles.bodyStyle,),
+                UIConstants.verticalSpacingM,
+                const Text(
+                    'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
+                    style: UIStyles.sectionTitleStyle,),
+                UIConstants.verticalSpacingXS,
+                _addressBlock([
+                  'Bayerischer Sportschützenbund e.V.',
+                  'Eingetragen im Vereinsregister des Amtsgerichts München: VR 4803',
+                  'Postanschrift der Geschäftsstelle:',
+                  'Ingolstädter Landstrasse 110',
+                  '85748 Garching',
+                ]),
+                UIConstants.verticalSpacingXS,
+                Text('Kommunikation',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                _contactRow(
+                  phone: '0893169490',
+                  email: 'gs@bssb.bayern',
+                  web: 'https://www.bssb.de/',
+                ),
+                UIConstants.verticalSpacingXS,
+                Text('Geschäftsführer',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                const Text('Alexander Heidel', style: UIStyles.bodyStyle),
+                UIConstants.verticalSpacingXS,
+                Text('Vorstand i.S. §26 BGB',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                _bulletList([
+                  '1. Landesschützenmeister: Christian Kühn',
+                  '2. Landesschützenmeister: Dieter Vierlbeck',
+                  '3. Landesschützenmeister: Hans Hainthaler',
+                  '4. Landesschützenmeister: Albert Euba',
+                  '5. Landesschützenmeister: Stefan Fersch',
+                ]),
+                UIConstants.verticalSpacingXS,
+                Text('Bankverbindung',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                _addressBlock([
+                  'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
+                  'IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX',
+                ]),
+                UIConstants.verticalSpacingXS,
+                Text('Umsatzsteueridentifikationsnummer',
+                    style: UIStyles.bodyStyle
+                        .copyWith(fontWeight: FontWeight.bold),),
+                const Text('DE 129514004', style: UIStyles.bodyStyle),
+              ],
+            ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.close,
+          color: Colors.white,
         ),
       ),
     );
   }
+}
+
+Widget _addressBlock(List<String> lines) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 4.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final line in lines)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2.0),
+            child: Text(line, style: UIStyles.bodyStyle),
+          ),
+      ],
+    ),
+  );
+}
+
+Widget _contactRow({String? phone, String? email, String? web}) {
+  return Row(
+    children: [
+      if (phone != null) ...[
+        const Icon(Icons.phone, size: 18, color: UIConstants.defaultAppColor),
+        const SizedBox(width: 4),
+        _LinkText('Telefon', 'tel:$phone'),
+        const SizedBox(width: 12),
+      ],
+      if (email != null) ...[
+        const Icon(Icons.email, size: 18, color: UIConstants.defaultAppColor),
+        const SizedBox(width: 4),
+        _LinkText(email, 'mailto:$email'),
+        const SizedBox(width: 12),
+      ],
+      if (web != null) ...[
+        const Icon(Icons.language, size: 18, color: UIConstants.defaultAppColor),
+        const SizedBox(width: 4),
+        _LinkText('Webseite', web),
+      ],
+    ],
+  );
+}
+
+Widget _subSection(
+    {required String title,
+    required String name,
+    required List<String> address,
+    String? phone,
+    String? email,}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(title,
+          style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),),
+      Text(name, style: UIStyles.bodyStyle),
+      _addressBlock(address),
+      _contactRow(phone: phone, email: email),
+    ],
+  );
+}
+
+Widget _bulletList(List<String> items) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      for (final item in items)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
+            Expanded(child: Text(item, style: UIStyles.bodyStyle)),
+          ],
+        ),
+    ],
+  );
 }
 
 class _LinkText extends StatelessWidget {
@@ -258,7 +317,7 @@ class _LinkText extends StatelessWidget {
           await launchUrl(uri);
         }
       },
-      child: ScaledText(
+      child: Text(
         text,
         style: const TextStyle(
           color: UIConstants.defaultAppColor,

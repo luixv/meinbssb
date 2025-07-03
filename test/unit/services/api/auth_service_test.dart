@@ -542,7 +542,7 @@ void main() {
 
     group('FindePersonID2', () {
       test('returns true if list is not empty', () async {
-        when(mockHttpClient.get('FindePersonID/Rizoudis/40101205')).thenAnswer(
+        when(mockHttpClient.get('FindePersonID2/Rizoudis/40101205')).thenAnswer(
           (_) async => [
             {
               'NAMEN': 'Rizoudis',

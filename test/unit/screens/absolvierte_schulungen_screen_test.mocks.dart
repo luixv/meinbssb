@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i10;
-import 'dart:ui' as _i19;
+import 'dart:ui' as _i20;
 
 import 'package:meinbssb/models/bank_data.dart' as _i14;
 import 'package:meinbssb/models/contact.dart' as _i9;
@@ -16,15 +16,16 @@ import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
 import 'package:meinbssb/models/schulung.dart' as _i8;
 import 'package:meinbssb/models/schulungsart.dart' as _i11;
-import 'package:meinbssb/models/schulungstermine.dart' as _i12;
+import 'package:meinbssb/models/schulungstermin.dart' as _i12;
 import 'package:meinbssb/models/user_data.dart' as _i5;
 import 'package:meinbssb/models/verein.dart' as _i15;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
 import 'package:meinbssb/services/api_service.dart' as _i3;
-import 'package:meinbssb/services/core/config_service.dart' as _i20;
+import 'package:meinbssb/services/core/config_service.dart' as _i21;
 import 'package:meinbssb/services/core/font_size_provider.dart' as _i18;
 import 'package:meinbssb/services/core/network_service.dart' as _i17;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i19;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -274,7 +275,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as _i4.Future<List<_i11.Schulungsart>>);
 
   @override
-  _i4.Future<List<_i8.Schulung>> fetchAngemeldeteSchulungen(
+  _i4.Future<List<_i12.Schulungstermin>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -286,20 +287,32 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
-      ) as _i4.Future<List<_i8.Schulung>>);
+        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
+            <_i12.Schulungstermin>[]),
+      ) as _i4.Future<List<_i12.Schulungstermin>>);
 
   @override
-  _i4.Future<List<_i12.Schulungstermine>> fetchSchulungstermine(
+  _i4.Future<List<_i12.Schulungstermin>> fetchSchulungstermine(
           String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
           [abDatum],
         ),
-        returnValue: _i4.Future<List<_i12.Schulungstermine>>.value(
-            <_i12.Schulungstermine>[]),
-      ) as _i4.Future<List<_i12.Schulungstermine>>);
+        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
+            <_i12.Schulungstermin>[]),
+      ) as _i4.Future<List<_i12.Schulungstermin>>);
+
+  @override
+  _i4.Future<_i12.Schulungstermin?> fetchSchulungstermin(
+          String? schulungenTerminID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungstermin,
+          [schulungenTerminID],
+        ),
+        returnValue: _i4.Future<_i12.Schulungstermin?>.value(),
+      ) as _i4.Future<_i12.Schulungstermin?>);
 
   @override
   _i4.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
@@ -503,6 +516,15 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  bool validateIBAN(String? iban) => (super.noSuchMethod(
+        Invocation.method(
+          #validateIBAN,
+          [iban],
+        ),
+        returnValue: false,
+      ) as bool);
 }
 
 /// A class which mocks [NetworkService].
@@ -586,7 +608,31 @@ class MockFontSizeProvider extends _i1.Mock implements _i18.FontSizeProvider {
       );
 
   @override
-  void addListener(_i19.VoidCallback? listener) => super.noSuchMethod(
+  double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
+        Invocation.method(
+          #getScaledFontSize,
+          [baseSize],
+        ),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
+  String getScalePercentage() => (super.noSuchMethod(
+        Invocation.method(
+          #getScalePercentage,
+          [],
+        ),
+        returnValue: _i19.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getScalePercentage,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
+  void addListener(_i20.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -595,7 +641,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i18.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i19.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i20.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -625,7 +671,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i18.FontSizeProvider {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i20.ConfigService {
+class MockConfigService extends _i1.Mock implements _i21.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

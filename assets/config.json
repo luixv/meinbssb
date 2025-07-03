@@ -6,7 +6,7 @@
   
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "/rest/zmi/api7",
-  "oktoberFestPort": "50211",
+  "oktoberFestPort": "56400",
 
   
   "apiBaseServer": "webintern.bssb.bayern",
@@ -18,17 +18,21 @@
   "api1Port": "56400",
 
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
+  
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
   "smtpSettings": {
     "host": "smtp.dummyserver.com",
     "username": "mySmtpUsername",
     "password": "mySmtpPassword",
-    "fromEmail": "dummyemail@de.bssb.meinbssb",
-    "registrationSubject": "registration to BSSB",
-    "registrationContent": "user registered"
+    "port": 587
   },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
-  } 
+  },   
+  "emailRegistration": {
+    "registrationSubject": "Schulung Anmeldung",
+    "registrationContent": "Sie sind für einen Schulung angemeldet",
+    "registrationFrom": "do-not-reply@bssb.de"
+  }
 }

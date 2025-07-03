@@ -70,7 +70,14 @@ void main() {
       );
 
       // Act
-      await tester.pumpWidget(createContactDataScreen(userData: testUserData));
+      await tester.pumpWidget(TestHelper.createTestApp(
+        home: ContactDataScreen(
+          testUserData,
+          isLoggedIn: true,
+          onLogout: () {},
+        ),
+        apiService: mockApiService,
+      ),);
       await tester.pump(); // First pump to build the widget
 
       // Assert - should show loading indicator initially

@@ -56,12 +56,15 @@ class AppDrawer extends StatelessWidget {
     required this.onLogout,
     super.key,
   });
-  static const double _drawerHeaderHeight = 120.0;
-  static const double _drawerHeaderTopPadding = 40.0;
-  static const double _drawerHeaderBottomPadding = 8.0;
-  static const double _drawerHeaderLeftPadding = 16.0;
-  static const double _menuTitleFontSize = 24.0;
-  static const double _menuItemFontSize = 18.0;
+  static const double _drawerHeaderHeight = UIConstants.drawerHeaderHeight;
+  static const double _drawerHeaderTopPadding =
+      UIConstants.drawerHeaderTopPadding;
+  static const double _drawerHeaderBottomPadding =
+      UIConstants.drawerHeaderBottomPadding;
+  static const double _drawerHeaderLeftPadding =
+      UIConstants.drawerHeaderLeftPadding;
+  static const double _menuTitleFontSize = UIConstants.menuTitleFontSize;
+  static const double _menuItemFontSize = UIConstants.menuItemFontSize;
 
   final UserData? userData;
   final bool isLoggedIn;
@@ -126,7 +129,7 @@ class AppDrawer extends StatelessWidget {
                 color: UIStyles.menuIconColor,
               ),
               title: const ScaledText(
-                'Aus-und Weiterbildung',
+                'Aus- und Weiterbildung',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {

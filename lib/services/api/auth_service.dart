@@ -343,8 +343,8 @@ Ergebnis der Abfrage:
   /// Checks if a person exists by Nachname and Passnummer. Returns true if found, false otherwise.
   Future<bool> findePersonID2(String nachname, String passnummer) async {
     try {
-      final response =
-          await _httpClient.get('FindePersonID/$nachname/$passnummer');
+      final endpoint = 'FindePersonID2/$nachname/$passnummer';
+      final response = await _httpClient.get(endpoint);
       if (response is List && response.isNotEmpty) {
         return true;
       }

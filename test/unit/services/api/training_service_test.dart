@@ -8,6 +8,7 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
 import 'package:meinbssb/models/disziplin.dart';
 import 'package:meinbssb/models/schulungsart.dart';
+import 'package:meinbssb/models/schulungstermin.dart';
 // Import for date formatting
 import 'dart:async';
 import 'dart:io';
@@ -43,58 +44,47 @@ void main() {
     const testPersonId = 123;
     const testAbDatum = '2023-01-01';
     final testResponse = [
-      // Raw map data mimicking API response
+      // Raw map data mimicking API response for Schulungstermin
       {
-        'SCHULUNGID': 1,
-        'BEZEICHNUNG': 'Basic Training',
-        'DATUM': '2023-01-15',
-        'AUSGESTELLTAM': '2023-01-01',
-        'SCHULUNGENTEILNEHMERID': 1,
+        'SCHULUNGENTERMINID': 1,
         'SCHULUNGSARTID': 1,
-        'SCHULUNGSARTBEZEICHNUNG': 'Basic',
-        'SCHULUNGSARTKURZBEZEICHNUNG': 'BSC',
-        'SCHULUNGSARTBESCHREIBUNG': 'Basic Training Course',
+        'DATUM': '2023-01-15T00:00:00.000',
+        'BEMERKUNG': 'Bemerkung',
+        'KOSTEN': 100.0,
+        'ORT': 'Ort',
+        'LEHRGANGSLEITER': 'Leiter',
+        'VERPFLEGUNGSKOSTEN': 10.0,
+        'UEBERNACHTUNGSKOSTEN': 20.0,
+        'LEHRMATERIALKOSTEN': 5.0,
+        'LEHRGANGSINHALT': 'Inhalt',
         'MAXTEILNEHMER': 20,
-        'ANZAHLTEILNEHMER': 15,
-        'ORT': 'Training Center',
-        'UHRZEIT': '09:00',
-        'DAUER': '8 Stunden',
-        'PREIS': '100€',
-        'ZIELGRUPPE': 'Anfänger',
-        'VORAUSSETZUNGEN': 'Keine',
-        'INHALT': 'Grundlagen',
-        'ABSCHLUSS': 'Zertifikat',
-        'ANMERKUNGEN': 'Bitte mitbringen: Schreibzeug',
-        'ISONLINE': false,
-        'LINK': '',
-        'STATUS': 'Aktiv',
-        'GUELTIGBIS': '2023-12-31',
-      },
-      {
-        'SCHULUNGID': 2,
-        'BEZEICHNUNG': 'Advanced Training',
-        'DATUM': '2023-02-20',
-        'AUSGESTELLTAM': '2023-02-01',
-        'SCHULUNGENTEILNEHMERID': 2,
-        'SCHULUNGSARTID': 2,
-        'SCHULUNGSARTBEZEICHNUNG': 'Advanced',
-        'SCHULUNGSARTKURZBEZEICHNUNG': 'ADV',
-        'SCHULUNGSARTBESCHREIBUNG': 'Advanced Training Course',
-        'MAXTEILNEHMER': 15,
-        'ANZAHLTEILNEHMER': 10,
-        'ORT': 'Training Center',
-        'UHRZEIT': '10:00',
-        'DAUER': '16 Stunden',
-        'PREIS': '200€',
-        'ZIELGRUPPE': 'Fortgeschrittene',
-        'VORAUSSETZUNGEN': 'Basic Training',
-        'INHALT': 'Erweiterte Themen',
-        'ABSCHLUSS': 'Zertifikat',
-        'ANMERKUNGEN': 'Bitte mitbringen: Laptop',
-        'ISONLINE': true,
-        'LINK': 'https://example.com',
-        'STATUS': 'Aktiv',
-        'GUELTIGBIS': '2023-12-31',
+        'WEBVEROEFFENTLICHENAM': '2023-01-01',
+        'ANMELDUNGENGESPERRT': false,
+        'STATUS': 1,
+        'DATUMBIS': '2023-01-16',
+        'LEHRGANGSINHALTHTML': '<p>HTML</p>',
+        'LEHRGANGSLEITER2': '',
+        'LEHRGANGSLEITER3': '',
+        'LEHRGANGSLEITER4': '',
+        'LEHRGANGSLEITERTEL': '',
+        'LEHRGANGSLEITER2TEL': '',
+        'LEHRGANGSLEITER3TEL': '',
+        'LEHRGANGSLEITER4TEL': '',
+        'LEHRGANGSLEITERMAIL': '',
+        'LEHRGANGSLEITER2MAIL': '',
+        'LEHRGANGSLEITER3MAIL': '',
+        'LEHRGANGSLEITER4MAIL': '',
+        'ANMELDESTOPP': '',
+        'ABMELDESTOPP': '',
+        'GELOESCHT': false,
+        'STORNOGRUND': '',
+        'WEBGRUPPE': 1,
+        'VERANSTALTUNGSBEZIRK': 1,
+        'FUERVERLAENGERUNGEN': false,
+        'ANMELDENERLAUBT': 1,
+        'VERBANDSINTERNPASSWORT': '',
+        'BEZEICHNUNG': 'Test Termin',
+        'ANGEMELDETETEILNEHMER': 5,
       },
     ];
 
@@ -103,8 +93,6 @@ void main() {
         mockNetworkService.getCacheExpirationDuration(),
       ).thenReturn(const Duration(hours: 1));
 
-      // Mock the cache service to return the raw map list as the 'fetchData' function
-      // already handles the mapping to Schulung models within TrainingService.
       when(
         mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
           any,
@@ -128,18 +116,11 @@ void main() {
         testAbDatum,
       );
 
-      expect(result, isA<List<Schulung>>());
-      expect(result.length, 2);
-      expect(result[0].id, 1);
-      expect(result[0].bezeichnung, 'Basic Training');
-      expect(result[0].teilnehmerId, 1);
-      expect(result[0].schulungsartBezeichnung, 'Basic');
-      expect(result[0].isOnline, false);
-      expect(result[1].id, 2);
-      expect(result[1].bezeichnung, 'Advanced Training');
-      expect(result[1].teilnehmerId, 2);
-      expect(result[1].schulungsartBezeichnung, 'Advanced');
-      expect(result[1].isOnline, true);
+      expect(result, isA<List<Schulungstermin>>());
+      expect(result.length, 1);
+      expect(result[0].schulungsterminId, 1);
+      expect(result[0].bezeichnung, 'Test Termin');
+      expect(result[0].angemeldeteTeilnehmer, 5);
     });
 
     test('handles null values correctly', () async {
@@ -152,30 +133,45 @@ void main() {
       ).thenAnswer(
         (_) async => [
           {
-            'SCHULUNGID': null,
-            'BEZEICHNUNG': null,
-            'DATUM': null,
-            'AUSGESTELLTAM': null,
-            'SCHULUNGENTEILNEHMERID': null,
+            'SCHULUNGENTERMINID': null,
             'SCHULUNGSARTID': null,
-            'SCHULUNGSARTBEZEICHNUNG': null,
-            'SCHULUNGSARTKURZBEZEICHNUNG': null,
-            'SCHULUNGSARTBESCHREIBUNG': null,
-            'MAXTEILNEHMER': null,
-            'ANZAHLTEILNEHMER': null,
+            'DATUM': null,
+            'BEMERKUNG': null,
+            'KOSTEN': null,
             'ORT': null,
-            'UHRZEIT': null,
-            'DAUER': null,
-            'PREIS': null,
-            'ZIELGRUPPE': null,
-            'VORAUSSETZUNGEN': null,
-            'INHALT': null,
-            'ABSCHLUSS': null,
-            'ANMERKUNGEN': null,
-            'ISONLINE': null,
-            'LINK': null,
+            'LEHRGANGSLEITER': null,
+            'VERPFLEGUNGSKOSTEN': null,
+            'UEBERNACHTUNGSKOSTEN': null,
+            'LEHRMATERIALKOSTEN': null,
+            'LEHRGANGSINHALT': null,
+            'MAXTEILNEHMER': null,
+            'WEBVEROEFFENTLICHENAM': null,
+            'ANMELDUNGENGESPERRT': null,
             'STATUS': null,
-            'GUELTIGBIS': null,
+            'DATUMBIS': null,
+            'LEHRGANGSINHALTHTML': null,
+            'LEHRGANGSLEITER2': null,
+            'LEHRGANGSLEITER3': null,
+            'LEHRGANGSLEITER4': null,
+            'LEHRGANGSLEITERTEL': null,
+            'LEHRGANGSLEITER2TEL': null,
+            'LEHRGANGSLEITER3TEL': null,
+            'LEHRGANGSLEITER4TEL': null,
+            'LEHRGANGSLEITERMAIL': null,
+            'LEHRGANGSLEITER2MAIL': null,
+            'LEHRGANGSLEITER3MAIL': null,
+            'LEHRGANGSLEITER4MAIL': null,
+            'ANMELDESTOPP': null,
+            'ABMELDESTOPP': null,
+            'GELOESCHT': null,
+            'STORNOGRUND': null,
+            'WEBGRUPPE': null,
+            'VERANSTALTUNGSBEZIRK': null,
+            'FUERVERLAENGERUNGEN': null,
+            'ANMELDENERLAUBT': null,
+            'VERBANDSINTERNPASSWORT': null,
+            'BEZEICHNUNG': null,
+            'ANGEMELDETETEILNEHMER': null,
           },
         ],
       );
@@ -200,31 +196,25 @@ void main() {
       );
 
       expect(result.length, 1);
-      // Assertions reflect the default values in Schulung.fromJson
-      expect(result[0].id, 0);
+      // Assertions reflect the default values in Schulungstermin.fromJson
+      expect(result[0].schulungsterminId, 0);
       expect(result[0].bezeichnung, '');
-      expect(result[0].datum, '');
-      expect(result[0].ausgestelltAm, '-');
-      expect(result[0].teilnehmerId, 0);
-      expect(result[0].schulungsartId, 0);
-      expect(result[0].schulungsartBezeichnung, '');
-      expect(result[0].schulungsartKurzbezeichnung, '');
-      expect(result[0].schulungsartBeschreibung, '');
-      expect(result[0].maxTeilnehmer, 0);
-      expect(result[0].anzahlTeilnehmer, 0);
+      expect(result[0].datum, DateTime(1970, 1, 1));
+      expect(result[0].bemerkung, '');
+      expect(result[0].kosten, 0.0);
       expect(result[0].ort, '');
-      expect(result[0].uhrzeit, '');
-      expect(result[0].dauer, '');
-      expect(result[0].preis, '');
-      expect(result[0].zielgruppe, '');
-      expect(result[0].voraussetzungen, '');
-      expect(result[0].inhalt, '');
-      expect(result[0].abschluss, '');
-      expect(result[0].anmerkungen, '');
-      expect(result[0].isOnline, false);
-      expect(result[0].link, '');
-      expect(result[0].status, '');
-      expect(result[0].gueltigBis, '-');
+      expect(result[0].lehrgangsleiter, '');
+      expect(result[0].verpflegungskosten, 0.0);
+      expect(result[0].uebernachtungskosten, 0.0);
+      expect(result[0].lehrmaterialkosten, 0.0);
+      expect(result[0].lehrgangsinhalt, '');
+      expect(result[0].lehrgangsinhaltHtml, '');
+      expect(result[0].maxTeilnehmer, 0);
+      expect(result[0].webVeroeffentlichenAm, '');
+      expect(result[0].anmeldungenGesperrt, false);
+      expect(result[0].status, 0);
+      expect(result[0].datumBis, '');
+      expect(result[0].angemeldeteTeilnehmer, 0);
     });
   });
   group('fetchSchulungsarten', () {
@@ -1078,7 +1068,18 @@ void main() {
         ],
       );
       final result = await trainingService.fetchSchulungstermine('01.01.2030');
-      expect(result, isEmpty);
+      expect(result.length, 1);
+      final s = result[0];
+      expect(s.schulungsterminId, 0);
+      expect(s.schulungsartId, 0);
+      expect(s.datum, DateTime(1970, 1, 1));
+      expect(s.ort, '');
+      expect(s.maxTeilnehmer, 0);
+      expect(s.angemeldeteTeilnehmer, 0);
+      expect(s.lehrgangsinhalt, '');
+      expect(s.lehrgangsinhaltHtml, '');
+      expect(s.status, 0);
+      expect(s.datumBis, '');
     });
 
     test('returns empty list for non-list response', () async {
@@ -1276,6 +1277,99 @@ void main() {
       expect(ids, containsAll([1, 2]));
       expect(ids, isNot(contains(3)));
       expect(ids, isNot(contains(4)));
+    });
+  });
+
+  group('fetchSchulungstermin', () {
+    test('returns a Schulungstermine object for a valid response', () async {
+      const schulungenTerminID = '42';
+      final mockResponse = {
+        'SCHULUNGENTERMINID': 42,
+        'SCHULUNGSARTID': 1,
+        'DATUM': '2024-07-01T10:00:00.000',
+        'BEMERKUNG': 'Bemerkung',
+        'KOSTEN': 100.0,
+        'ORT': 'Musterstadt',
+        'LEHRGANGSLEITER': 'Herr Lehrer',
+        'VERPFLEGUNGSKOSTEN': 10.0,
+        'UEBERNACHTUNGSKOSTEN': 20.0,
+        'LEHRMATERIALKOSTEN': 5.0,
+        'LEHRGANGSINHALT': 'Inhalt',
+        'MAXTEILNEHMER': 30,
+        'WEBVEROEFFENTLICHENAM': '2024-06-01T00:00:00.000',
+        'ANMELDUNGENGESPERRT': false,
+        'STATUS': 1,
+        'DATUMBIS': '2024-07-02T10:00:00.000',
+        'LEHRGANGSINHALTHTML': '<p>Inhalt</p>',
+        'LEHRGANGSLEITER2': '',
+        'LEHRGANGSLEITER3': '',
+        'LEHRGANGSLEITER4': '',
+        'LEHRGANGSLEITERTEL': '',
+        'LEHRGANGSLEITER2TEL': '',
+        'LEHRGANGSLEITER3TEL': '',
+        'LEHRGANGSLEITER4TEL': '',
+        'LEHRGANGSLEITERMAIL': '',
+        'LEHRGANGSLEITER2MAIL': '',
+        'LEHRGANGSLEITER3MAIL': '',
+        'LEHRGANGSLEITER4MAIL': '',
+        'ANMELDESTOPP': '',
+        'ABMELDESTOPP': '',
+        'GELOESCHT': false,
+        'STORNOGRUND': '',
+        'WEBGRUPPE': 1,
+        'VERANSTALTUNGSBEZIRK': 2,
+        'FUERVERLAENGERUNGEN': false,
+        'ANMELDENERLAUBT': 1,
+        'VERBANDSINTERNPASSWORT': '',
+        'BEZEICHNUNG': 'Test Schulung',
+        'ANGEMELDETETEILNEHMER': 10,
+      };
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+          .thenAnswer((_) async => mockResponse);
+
+      final result =
+          await trainingService.fetchSchulungstermin(schulungenTerminID);
+
+      expect(result, isNotNull);
+      expect(result!.schulungsterminId, 42);
+      expect(result.bezeichnung, 'Test Schulung');
+      expect(result.ort, 'Musterstadt');
+      expect(result.kosten, 100.0);
+    });
+
+    test('returns null for invalid response', () async {
+      const schulungenTerminID = '99';
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+          .thenAnswer((_) async => 'unexpected');
+
+      final result =
+          await trainingService.fetchSchulungstermin(schulungenTerminID);
+      expect(result, isNull);
+    });
+  });
+
+  group('Cache clearing', () {
+    test('clearSchulungenCache removes the correct cache key', () async {
+      const personId = 123;
+      when(mockCacheService.remove('schulungen_123'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearSchulungenCache(personId);
+      verify(mockCacheService.remove('schulungen_123')).called(1);
+    });
+
+    test('clearAllSchulungenCache calls clearPattern with schulungen_',
+        () async {
+      when(mockCacheService.clearPattern('schulungen_'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearAllSchulungenCache();
+      verify(mockCacheService.clearPattern('schulungen_')).called(1);
+    });
+
+    test('clearDisziplinenCache removes the correct cache key', () async {
+      when(mockCacheService.remove('disziplinen'))
+          .thenAnswer((_) async => true);
+      await trainingService.clearDisziplinenCache();
+      verify(mockCacheService.remove('disziplinen')).called(1);
     });
   });
 }

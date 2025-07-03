@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/schulungen_search_screen.dart';
 import '../helpers/test_helper.dart';
@@ -37,14 +36,11 @@ void main() {
   group('SchulungenSearchScreen', () {
     testWidgets('renders correctly with user data',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => true);
-
       await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
-      expect(find.text('Schulungen'), findsOneWidget);
-      expect(find.text('Schulungen suchen'), findsOneWidget);
+      expect(find.text('Aus- und Weiterbildung'), findsOneWidget);
+      expect(find.text('Suchen'), findsOneWidget);
       expect(find.text('Datum wählen'), findsOneWidget);
       expect(find.text('Gruppe'), findsOneWidget);
       expect(find.text('Bezirk'), findsOneWidget);
@@ -53,31 +49,7 @@ void main() {
       expect(find.text('Für Lizenzverlängerung'), findsOneWidget);
     });
 
-    testWidgets('shows offline message when offline',
-        (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => false);
-
-      await tester.pumpWidget(createSchulungenSearchScreen());
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('Schulungen suchen ist offline nicht verfügbar'),
-        findsOneWidget,
-      );
-      expect(
-        find.text(
-          'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um nach Schulungen zu suchen.',
-        ),
-        findsOneWidget,
-      );
-      expect(find.byType(FloatingActionButton), findsNothing);
-    });
-
-    testWidgets('shows FABs when online', (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => true);
-
+    testWidgets('shows FABs', (WidgetTester tester) async {
       await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
@@ -86,39 +58,11 @@ void main() {
       expect(find.byIcon(Icons.search), findsOneWidget);
     });
 
-    testWidgets('hides FABs when offline', (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => false);
-
+    testWidgets('displays form fields', (WidgetTester tester) async {
       await tester.pumpWidget(createSchulungenSearchScreen());
       await tester.pumpAndSettle();
 
-      expect(find.byType(FloatingActionButton), findsNothing);
-    });
-
-    testWidgets('shows loading indicator while checking network status',
-        (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet()).thenAnswer(
-        (_) => Future.delayed(const Duration(milliseconds: 100), () => true),
-      );
-
-      await tester.pumpWidget(createSchulungenSearchScreen());
-      await tester.pump();
-
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('displays form fields when online',
-        (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
-          .thenAnswer((_) async => true);
-
-      await tester.pumpWidget(createSchulungenSearchScreen());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Schulungen suchen'), findsOneWidget);
+      expect(find.text('Suchen'), findsOneWidget);
       expect(find.text('Datum wählen'), findsOneWidget);
       expect(find.text('Gruppe'), findsOneWidget);
       expect(find.text('Bezirk'), findsOneWidget);

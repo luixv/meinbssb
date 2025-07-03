@@ -7,6 +7,7 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/bank_data.dart';
 
 import 'user_service_test.mocks.dart';
 
@@ -773,6 +774,162 @@ void main() {
             'contacts': [],
           },
         ]);
+      });
+    });
+
+    group('fetchBankData', () {
+      const testWebloginId = 13901;
+      final testResponse = [
+        {
+          'BANKDATENWEBID': 1,
+          'WEBLOGINID': testWebloginId,
+          'KONTOINHABER': 'Test User',
+          'IBAN': 'DE89370400440532013000',
+          'BIC': 'DEUTDEBBXXX',
+          'BANKNAME': 'Test Bank',
+          'MANDATNR': 'M123456',
+          'MANDATNAME': 'Test Mandate',
+          'MANDATSEQ': 1,
+          'LETZTENUTZUNG': '2023-01-01T00:00:00.000Z',
+          'UNGUELTIG': false,
+        },
+      ];
+
+      test('returns BankData list from network', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
+        });
+
+        when(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId'))
+            .thenAnswer((_) async => testResponse);
+
+        final result = await userService.fetchBankData(testWebloginId);
+
+        expect(result, isA<List<BankData>>());
+        expect(result.length, 1);
+        expect(result.first.webloginId, testWebloginId);
+        expect(result.first.kontoinhaber, 'Test User');
+        expect(result.first.iban, 'DE89370400440532013000');
+        expect(result.first.bic, 'DEUTDEBBXXX');
+        expect(result.first.bankName, 'Test Bank');
+        expect(result.first.mandatNr, 'M123456');
+        expect(result.first.mandatName, 'Test Mandate');
+        expect(result.first.mandatSeq, 1);
+        expect(
+          result.first.letzteNutzung,
+          DateTime.parse('2023-01-01T00:00:00.000Z'),
+        );
+        expect(result.first.ungueltig, false);
+      });
+
+      test('returns empty list on empty response', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
+        });
+
+        when(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId'))
+            .thenAnswer((_) async => []);
+
+        final result = await userService.fetchBankData(testWebloginId);
+        expect(result, isEmpty);
+      });
+
+      test('returns empty list on error', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenThrow(Exception('Network error'));
+
+        final result = await userService.fetchBankData(testWebloginId);
+        expect(result, isEmpty);
+      });
+
+      test('deduplicates concurrent requests', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          await Future.delayed(const Duration(milliseconds: 50));
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
+        });
+
+        when(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId'))
+            .thenAnswer((_) async => testResponse);
+
+        final futures = Future.wait([
+          userService.fetchBankData(testWebloginId),
+          userService.fetchBankData(testWebloginId),
+        ]);
+        final results = await futures;
+        expect(results[0], equals(results[1]));
+        verify(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId')).called(1);
+      });
+    });
+
+    group('Cache clearing', () {
+      test('clearPassdatenCache removes the correct cache key', () async {
+        const personId = 123;
+        when(mockCacheService.remove('passdaten_123'))
+            .thenAnswer((_) async => true);
+        await userService.clearPassdatenCache(personId);
+        verify(mockCacheService.remove('passdaten_123')).called(1);
+      });
+
+      test('clearAllPassdatenCache calls clearPattern with passdaten_',
+          () async {
+        when(mockCacheService.clearPattern('passdaten_'))
+            .thenAnswer((_) async => true);
+        await userService.clearAllPassdatenCache();
+        verify(mockCacheService.clearPattern('passdaten_')).called(1);
       });
     });
   });

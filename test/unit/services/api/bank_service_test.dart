@@ -4,17 +4,20 @@ import 'package:mockito/annotations.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
 
-@GenerateMocks([HttpClient])
+@GenerateMocks([HttpClient, CacheService])
 import 'bank_service_test.mocks.dart';
 
 void main() {
   late BankService bankService;
   late MockHttpClient mockHttpClient;
+  late MockCacheService mockCacheService;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    bankService = BankService(mockHttpClient);
+    mockCacheService = MockCacheService();
+    bankService = BankService(mockHttpClient, mockCacheService);
   });
 
   group('BankService', () {
@@ -130,15 +133,18 @@ void main() {
         letzteNutzung: DateTime.now(),
       );
 
-      test('returns true on successful deletion', () async {
+      test('removes bank data from cache on successful deletion', () async {
         when(mockHttpClient.delete('BankdatenMyBSSB/13901', body: {}))
             .thenAnswer((_) async => {'result': true});
+        when(mockCacheService.remove('bankdata_13901'))
+            .thenAnswer((_) async => true);
 
         final result = await bankService.deleteBankData(testBankData);
 
         expect(result, isTrue);
         verify(mockHttpClient.delete('BankdatenMyBSSB/13901', body: {}))
             .called(1);
+        verify(mockCacheService.remove('bankdata_13901')).called(1);
       });
 
       test('returns false when API response indicates failure', () async {

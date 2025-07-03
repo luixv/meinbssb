@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class UIConstants {
   // Colors
-  static const Color primaryColor = Color(0xFF006400); // Main green color
+  static const Color primaryColor =
+      Color.fromARGB(255, 11, 75, 16); // Main green color 0xFF006400
   static const Color backgroundColor = Color(0xFFe2f0d9);
   static const Color foregroundColor = Colors.lightGreen;
   static const Color textColor = Colors.black;
@@ -14,7 +15,7 @@ class UIConstants {
   static const Color successColor = Colors.green;
   static const Color warningColor = Color(0xFFFFA000);
   static const Color linkColor = primaryColor;
-  static const Color mydarkGreyColor = Color(0xFF616161);
+  static const Color mydarkGreyColor = Color.fromARGB(255, 46, 46, 46);
   static const Color whiteColor = Colors.white;
   static const Color greySubtitleTextColor = mydarkGreyColor;
   static const Color labelTextColor = Colors.grey;
@@ -121,6 +122,9 @@ class UIConstants {
   /// Bottom padding for info tables/dialogs
   static const double infoTableBottomPadding = 16.0;
 
+  static const double infoTableColumnSpacingWide = infoTableColumnSpacing * 20;
+  static const double infoTableBottomPaddingSmall = infoTableBottomPadding / 2;
+
   // Common Widgets - Using getters instead of const
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
   static SizedBox get horizontalSpacingS => const SizedBox(width: spacingS);
@@ -150,7 +154,7 @@ class UIConstants {
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
   static const double fabHeight = 16.0;
-  static const double fabSize = 56.0; // Standard FAB size
+  static const double fabSize = 56.0; // Standard FAB size (height and width)
   static const double fabIconSize = 24.0; // Standard FAB icon size
   static const double defaultStrokeWidth = 2.0;
   static const double defaultIconSize = 16.0;
@@ -333,9 +337,6 @@ class UIConstants {
   static const String registrationSuccessTitle = 'Registrierung erfolgreich';
   static const String registrationSuccessMessage =
       'Ihre Registrierung war erfolgreich.';
-  static const String privacyTitle = 'Datenschutz';
-  static const String privacyPlaceholder =
-      'Hier stehen die Datenschutzbestimmungen des BSSB.';
   static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
   static const String contactDataDeleteQuestion =
       'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
@@ -355,4 +356,12 @@ class UIConstants {
       defaultAppColor; // For normal state
 
   static const double wifiOffIconSize = 64.0;
+
+  // Drawer header and menu font sizes
+  static const double drawerHeaderHeight = 120.0;
+  static const double drawerHeaderTopPadding = 40.0;
+  static const double drawerHeaderBottomPadding = 8.0;
+  static const double drawerHeaderLeftPadding = 16.0;
+  static const double menuTitleFontSize = 24.0;
+  static const double menuItemFontSize = 18.0;
 }

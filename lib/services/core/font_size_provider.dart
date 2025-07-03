@@ -45,4 +45,12 @@ class FontSizeProvider extends ChangeNotifier {
     _saveScale();
     notifyListeners();
   }
+
+  double getScaledFontSize(double baseSize) {
+    return baseSize * _scaleFactor;
+  }
+
+  String getScalePercentage() {
+    return '${(_scaleFactor * 100).toInt()}%';
+  }
 }
