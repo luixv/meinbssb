@@ -1393,11 +1393,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         Row(
                                                                           children: [
                                                                             const Icon(
-                                                                              Icons.people,
+                                                                              Icons.group,
                                                                               size: UIConstants.defaultIconSize,
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Text('${t.angemeldeteTeilnehmer} / ${t.maxTeilnehmer}'),
+                                                                            Text(t.webGruppeLabel),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
@@ -1412,20 +1412,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             ),
                                                                             UIConstants.horizontalSpacingS,
                                                                             Text('${t.kosten.toStringAsFixed(2)} €'),
-                                                                          ],
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            const Icon(
-                                                                              Icons.group,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
-                                                                            UIConstants.horizontalSpacingS,
-                                                                            Text(t.webGruppeLabel),
                                                                           ],
                                                                         ),
                                                                       ],

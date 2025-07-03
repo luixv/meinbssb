@@ -493,7 +493,7 @@ class StartScreenState extends State<StartScreen> {
                                                                     children: [
                                                                       const Icon(
                                                                         Icons
-                                                                            .location_on,
+                                                                            .calendar_today,
                                                                         size: UIConstants
                                                                             .defaultIconSize,
                                                                       ),
@@ -502,8 +502,7 @@ class StartScreenState extends State<StartScreen> {
                                                                       Expanded(
                                                                         child:
                                                                             Text(
-                                                                          termin
-                                                                              .ort,
+                                                                          '${schulung.datum.day.toString().padLeft(2, '0')}.${schulung.datum.month.toString().padLeft(2, '0')}.${schulung.datum.year}',
                                                                           overflow:
                                                                               TextOverflow.ellipsis,
                                                                           maxLines:
@@ -520,14 +519,22 @@ class StartScreenState extends State<StartScreen> {
                                                                     children: [
                                                                       const Icon(
                                                                         Icons
-                                                                            .request_quote,
+                                                                            .location_on,
                                                                         size: UIConstants
                                                                             .defaultIconSize,
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Text(
-                                                                        '${termin.kosten.toStringAsFixed(2)} €',
+                                                                      Expanded(
+                                                                        child:
+                                                                            Text(
+                                                                          termin
+                                                                              .ort,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                        ),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -576,14 +583,14 @@ class StartScreenState extends State<StartScreen> {
                                                                     children: [
                                                                       const Icon(
                                                                         Icons
-                                                                            .people,
+                                                                            .request_quote,
                                                                         size: UIConstants
                                                                             .defaultIconSize,
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
                                                                       Text(
-                                                                        '${termin.angemeldeteTeilnehmer} / ${termin.maxTeilnehmer}',
+                                                                        '${termin.kosten.toStringAsFixed(2)} €',
                                                                       ),
                                                                     ],
                                                                   ),
