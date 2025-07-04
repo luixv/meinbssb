@@ -30,8 +30,11 @@ class EmailService {
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
+    required HttpClient httpClient,
   })  : _emailSender = emailSender,
-        _configService = configService;
+        _configService = configService,
+        _httpClient = httpClient;
+
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
   final HttpClient _httpClient;
