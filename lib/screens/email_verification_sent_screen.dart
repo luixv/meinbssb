@@ -10,12 +10,14 @@ class EmailVerificationSentScreen extends StatefulWidget {
   const EmailVerificationSentScreen({
     required this.email,
     required this.token,
+    required this.passNumber,
     required this.authService,
     super.key,
   });
 
   final String email;
   final String token;
+  final String passNumber;
   final AuthService authService;
 
   @override
@@ -44,6 +46,7 @@ class EmailVerificationSentScreenState
         builder: (context) => SetPasswordScreen(
           email: widget.email,
           token: widget.token,
+          passNumber: widget.passNumber,
           authService: widget.authService,
         ),
       ),
