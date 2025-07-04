@@ -11,12 +11,14 @@ class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({
     required this.email,
     required this.token,
+    required this.passNumber,
     required this.authService,
     super.key,
   });
 
   final String email;
   final String token;
+  final String passNumber;
   final AuthService authService;
 
   @override
@@ -90,6 +92,7 @@ class SetPasswordScreenState extends State<SetPasswordScreen> {
         email: widget.email,
         password: _passwordController.text,
         token: widget.token,
+        passNumber: widget.passNumber,
       );
 
       if (response['ResultType'] == 1) {

@@ -18,6 +18,7 @@ import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/set_password_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 
@@ -199,6 +200,12 @@ class _MyAppState extends State<MyApp> {
                   userData: _userData,
                   isLoggedIn: _isLoggedIn,
                   onLogout: _handleLogout,
+                ),
+            '/set-password': (context) => SetPasswordScreen(
+                  email: '',
+                  token: '',
+                  passNumber: '',
+                  authService: Provider.of<AuthService>(context, listen: false),
                 ),
           },
         );

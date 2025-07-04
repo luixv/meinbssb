@@ -7,32 +7,39 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/constants/messages.dart';
+import 'package:uuid/uuid.dart';  // Add this for generating verification links
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/services/core/email_service.dart';
+import '/services/core/postgrest_service.dart';
 
 class AuthService {
   AuthService({
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required PostgrestService postgrestService,
     FlutterSecureStorage? secureStorage,
     required EmailService emailService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
         _networkService = networkService,
+        _postgrestService = postgrestService,
         _secureStorage = secureStorage ?? const FlutterSecureStorage(),
         _emailService = emailService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
-  final FlutterSecureStorage
-      _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
+  final PostgrestService _postgrestService;
+  final FlutterSecureStorage _secureStorage;
   final EmailService _emailService;
+
+  // Add getter for postgrestService
+  PostgrestService get postgrestService => _postgrestService;
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -43,6 +50,15 @@ class AuthService {
     required String zipCode,
   }) async {
     try {
+      // First check if user already exists in PostgreSQL
+      final existingUser = await _postgrestService.getUserByPassNumber(passNumber);
+      if (existingUser != null) {
+        return {
+          'ResultType': 0,
+          'ResultMessage': 'User with this pass number already exists'
+        };
+      }
+
       // Get PersonID first
       final personId = await getPersonIDByPassnummer(passNumber);
       if (personId == '0') {
@@ -51,6 +67,18 @@ class AuthService {
           'ResultMessage': Messages.noPersonIdFound
         };
       }
+
+      // Generate verification link
+      final verificationLink = const Uuid().v4();
+
+      // Create user in PostgreSQL
+      await _postgrestService.createUser(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        passNumber: passNumber,
+        verificationLink: verificationLink,
+      );
 
       // Store registration data for later use
       final registrationData = {
@@ -61,6 +89,7 @@ class AuthService {
         'email': email,
         'birthDate': birthDate,
         'zipCode': zipCode,
+        'verificationLink': verificationLink,
       };
 
       await _cacheService.setString(
@@ -115,26 +144,7 @@ Ergebnis der Abfrage:
     }
   }
 
-  Future<String> _findeMailadressen(
-    String personId,
-
-// This method will return THE FIRST EMAIL... Is thi correct??
-
-    /*
-    /FindeMailadressen/{PersonID}
-    Response
-    [
-    {
-        "MAILADRESSEN": "an719328@gmail.com",
-        "LOGINMAIL": "kostas@rizoudis1.de"
-    },
-    {
-        "MAILADRESSEN": "an963916@freenet.de",
-        "LOGINMAIL": "kostas@rizoudis1.de"
-    }
-  ]
-    */
-  ) async {
+  Future<String> _findeMailadressen(String personId) async {
     try {
       final response = await _httpClient.get('FindeMailadressen/$personId');
       if (response is List) {
@@ -312,10 +322,30 @@ Ergebnis der Abfrage:
     required String email,
     required String password,
     required String token,
+    required String passNumber,
   }) async {
     try {
+      // Verify the token matches the stored verification link
+      final user = await _postgrestService.getUserByPassNumber(passNumber);
+      if (user == null || user['verification_link'] != token) {
+        return {
+          'ResultType': 0,
+          'ResultMessage': 'Invalid verification link'
+        };
+      }
+
       // Get the PersonID from the stored registration data
-      final personId = await _getStoredPersonId(email);
+      final registrationDataJson = await _cacheService.getString('registration_$email');
+      if (registrationDataJson == null) {
+        return {
+          'ResultType': 0,
+          'ResultMessage': Messages.registrationDataNotFound
+        };
+      }
+
+      final registrationData = jsonDecode(registrationDataJson);
+      final personId = registrationData['personId'];
+
       if (personId == null || personId.isEmpty) {
         return {
           'ResultType': 0,
@@ -334,11 +364,14 @@ Ergebnis der Abfrage:
       );
 
       if (response['ResultType'] == 1) {
+        // Mark user as verified in PostgreSQL
+        await _postgrestService.verifyUser(token);
+        
         // Send notification emails to all associated email addresses
         await _emailService.sendAccountCreationNotifications(personId, email);
         
         // Clear stored registration data after successful account creation
-        await _clearStoredRegistrationData(email);
+        await _cacheService.remove('registration_$email');
       }
 
       return response;
@@ -348,29 +381,6 @@ Ergebnis der Abfrage:
         'ResultType': 0,
         'ResultMessage': Messages.accountCreationFailed
       };
-    }
-  }
-
-  // Helper method to get stored PersonID
-  Future<String?> _getStoredPersonId(String email) async {
-    try {
-      final registrationData = await _cacheService.getString('registration_$email');
-      if (registrationData != null) {
-        final data = jsonDecode(registrationData);
-        return data['personId'] as String?;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting stored PersonID: $e');
-    }
-    return null;
-  }
-
-  // Helper method to clear stored registration data
-  Future<void> _clearStoredRegistrationData(String email) async {
-    try {
-      await _cacheService.remove('registration_$email');
-    } catch (e) {
-      LoggerService.logError('Error clearing registration data: $e');
     }
   }
 

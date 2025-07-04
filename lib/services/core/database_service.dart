@@ -1,4 +1,4 @@
-import 'package:postgres_pool/postgres_pool.dart';
+import 'package:postgres/postgres.dart';
 import 'config_service.dart';
 import 'logger_service.dart';
 
@@ -6,39 +6,30 @@ class DatabaseService {
   DatabaseService({required this.configService});
 
   final ConfigService configService;
-  PgPool? _pool;
+  PostgreSQLConnection? _connection;
 
-  Future<PgPool> get pool async {
-    if (_pool == null) {
+  Future<PostgreSQLConnection> get connection async {
+    if (_connection == null || _connection!.isClosed) {
       await _connect();
     }
-    return _pool!;
+    return _connection!;
   }
 
   Future<void> _connect() async {
     try {
-      _pool = PgPool(
-        PgEndpoint(
-          host: configService.getString('dbHost', 'database') ?? 'localhost',
-          port: configService.getInt('dbPort', 'database') ?? 5432,
-          database: configService.getString('dbName', 'database') ?? 'devdb',
-          username: configService.getString('dbUsername', 'database') ?? 'devuser',
-          password: configService.getString('dbPassword', 'database') ?? 'devpass',
-        ),
-        settings: PgPoolSettings(
-          maxConnectionAge: Duration(hours: 1),
-          maxConnectionCount: 10,
-        ),
+      _connection = PostgreSQLConnection(
+        configService.getString('dbHost', 'database') ?? 'localhost',
+        configService.getInt('dbPort', 'database') ?? 5432,
+        configService.getString('dbName', 'database') ?? 'devdb',
+        username: configService.getString('dbUsername', 'database') ?? 'devuser',
+        password: configService.getString('dbPassword', 'database') ?? 'devpass',
       );
 
+      await _connection!.open();
+      
       // Test the connection
-      final conn = await _pool!.connect();
-      try {
-        await conn.execute('SELECT 1');
-        LoggerService.logInfo('Successfully connected to PostgreSQL database');
-      } finally {
-        await conn.close();
-      }
+      await _connection!.query('SELECT 1');
+      LoggerService.logInfo('Successfully connected to PostgreSQL database');
     } catch (e) {
       LoggerService.logError('Failed to connect to PostgreSQL database: $e');
       rethrow;
@@ -46,8 +37,8 @@ class DatabaseService {
   }
 
   Future<void> close() async {
-    if (_pool != null) {
-      await _pool!.close();
+    if (_connection != null && !_connection!.isClosed) {
+      await _connection!.close();
     }
   }
 
@@ -56,32 +47,32 @@ class DatabaseService {
     String sql, [
     Map<String, dynamic>? parameters,
   ]) async {
-    final pool = await this.pool;
-    final conn = await pool.connect();
+    final conn = await connection;
     
     try {
-      final results = await conn.execute(
+      final results = await conn.mappedResultsQuery(
         sql,
-        parameters: parameters?.values.toList(),
+        substitutionValues: parameters,
       );
 
-      return results.map((row) => row.toMap()).toList();
-    } finally {
-      await conn.close();
+      return results.map((row) => row.values.first).toList();
+    } catch (e) {
+      LoggerService.logError('Error executing query: $e');
+      rethrow;
     }
   }
 
   // Example transaction method
-  Future<T> transaction<T>(Future<T> Function(PooledConnection) operation) async {
-    final pool = await this.pool;
-    final conn = await pool.connect();
+  Future<T> transaction<T>(Future<T> Function(PostgreSQLExecutionContext) operation) async {
+    final conn = await connection;
     
     try {
       return await conn.transaction((ctx) async {
         return await operation(ctx);
       });
-    } finally {
-      await conn.close();
+    } catch (e) {
+      LoggerService.logError('Error executing transaction: $e');
+      rethrow;
     }
   }
 } 

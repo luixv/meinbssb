@@ -305,6 +305,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
+  executor:
+    dependency: transitive
+    description:
+      name: executor
+      sha256: "1a852bcb44c6425a93443be2fb4da13ea03b5cba89e4e2ae1072b8a53c69b405"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.5"
   fake_async:
     dependency: transitive
     description:
@@ -900,6 +908,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.4"
+  postgres_pool:
+    dependency: "direct main"
+    description:
+      name: postgres_pool
+      sha256: abc8f6abcae3e82c47bfbab0631b618e038b5b5cae767454e6a193796da415f4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.6+1"
   process:
     dependency: transitive
     description:
@@ -940,6 +956,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  retry:
+    dependency: transitive
+    description:
+      name: retry
+      sha256: "822e118d5b3aafed083109c72d5f484c6dc66707885e07c0fbcb8b986bba7efc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
   sasl_scram:
     dependency: transitive
     description:
@@ -1322,7 +1346,7 @@ packages:
     source: hosted
     version: "3.1.4"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       sha256: a5be9ef6618a7ac1e964353ef476418026db906c4facdedaa299b7a2e71690ff

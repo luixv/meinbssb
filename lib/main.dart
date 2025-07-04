@@ -18,6 +18,7 @@ import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
+import 'services/core/postgrest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,18 +40,19 @@ class AppInitializer {
   static late BankService bankService;
   static late VereinService vereinService;
   static late TokenService tokenService;
+  static late PostgrestService postgrestService;
 
   static Future<void> init() async {
     LoggerService.init();
     configService = await ConfigService.load('assets/config.json');
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
+    
+    // Main API configuration
     final protocol = configService.getString('apiProtocol', 'api') ?? 'https';
-    final baseIP =
-        configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
+    final baseIP = configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
     final port = configService.getString('apiPort', 'api') ?? '56400';
-    final path =
-        configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
+    final path = configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
 
     imageService = ImageService();
 
@@ -62,30 +64,42 @@ class AppInitializer {
     );
     networkService = NetworkService(configService: configService);
 
-    String baseUrl =
-        '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
+    // Construct URL for API
+    String baseUrl = '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
 
-    // --- FIX STARTS HERE ---
     // Initialize the http.Client instance once and pass it to both services
     final baseHttpClient = http.Client();
+
+    // Initialize PostgrestService
+    postgrestService = PostgrestService(
+      configService: configService,
+      client: baseHttpClient,
+    );
 
     // 1. Initialize TokenService FIRST
     tokenService = TokenService(
       configService: configService,
       cacheService: cacheService,
-      client: baseHttpClient, // Pass the shared http.Client
+      client: baseHttpClient,
     );
 
-    // 2. Then, initialize HttpClient, passing the now-initialized _tokenService
+    // 2. Then, initialize HttpClient for main API
     httpClient = HttpClient(
       baseUrl: baseUrl,
       serverTimeout: serverTimeout,
-      tokenService: tokenService, // This is now initialized!
+      tokenService: tokenService,
       configService: configService,
       cacheService: cacheService,
-      client: baseHttpClient, // Pass the shared http.Client
+      client: baseHttpClient,
     );
-    // --- FIX ENDS HERE ---
+
+    // Initialize EmailService before AuthService since AuthService depends on it
+    final emailSender = MailerEmailSender();
+    final emailService = EmailService(
+      emailSender: emailSender,
+      configService: configService,
+      httpClient: httpClient,
+    );
 
     trainingService = TrainingService(
       httpClient: httpClient,
@@ -103,6 +117,8 @@ class AppInitializer {
       httpClient: httpClient,
       cacheService: cacheService,
       networkService: networkService,
+      postgrestService: postgrestService,
+      emailService: emailService,
     );
 
     bankService = BankService(httpClient);
@@ -138,6 +154,7 @@ class AppInitializer {
       create: (context) => EmailService(
         emailSender: Provider.of<EmailSender>(context, listen: false),
         configService: Provider.of<ConfigService>(context, listen: false),
+        httpClient: httpClient,
       ),
     );
     authServiceProvider = Provider<AuthService>(

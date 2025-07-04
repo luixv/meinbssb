@@ -236,6 +236,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     if (!_validateForm()) return;
 
     try {
+      // First get PersonID
       final personId = await widget.authService
           .getPersonIDByPassnummer(_passNumberController.text);
 
@@ -246,7 +247,37 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
 
-      // Generate a verification token (you might want to move this to the server side)
+      // Check if user already exists in PostgreSQL
+      final existingUser = await widget.authService.postgrestService.getUserByPassNumber(_passNumberController.text);
+      if (existingUser != null) {
+        // Check if user exists with this email
+        final userWithEmail = await widget.authService.postgrestService.getUserByEmail(_emailController.text);
+        
+        // If either the pass number or email is verified, prevent registration
+        if ((existingUser['is_verified'] == true) || (userWithEmail != null && userWithEmail['is_verified'] == true)) {
+          setState(() {
+            _successMessage = 'Sie sind bereits registriert. Bitte melden Sie sich an.';
+          });
+          return;
+        }
+
+        // If not verified, check if registration is older than 24 hours
+        final createdAt = DateTime.parse(existingUser['created_at']);
+        final now = DateTime.now();
+        final difference = now.difference(createdAt);
+
+        if (difference.inHours > 24) {
+          // Delete the old registration
+          await widget.authService.postgrestService.deleteUserRegistration(existingUser['id']);
+        } else {
+          setState(() {
+            _successMessage = 'Eine Registrierung für diese Schützenausweisnummer ist bereits in Bearbeitung. Bitte überprüfen Sie Ihre E-Mails oder warten Sie 24 Stunden, um es erneut zu versuchen.';
+          });
+          return;
+        }
+      }
+
+      // Generate a verification token
       final verificationToken =
           DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -259,9 +290,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
 
-      // Create verification link
+      // Create verification link that leads to set password page
       final verificationLink =
-          '$baseUrl?email=${_emailController.text}&token=$verificationToken';
+          '$baseUrl/set-password?pass_number=${_passNumberController.text}&token=$verificationToken&email=${_emailController.text}';
 
       // Get email template
       final fromEmail = await widget.emailService.getFromEmail();
@@ -289,7 +320,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       );
 
       if (emailResponse['ResultType'] == 1) {
-        // Store the registration data temporarily (you might want to move this to the server)
+        // Store the registration data temporarily
         await widget.authService.register(
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
