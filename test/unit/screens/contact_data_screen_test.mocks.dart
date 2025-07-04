@@ -15,7 +15,7 @@ import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
 import 'package:meinbssb/models/schulung.dart' as _i8;
 import 'package:meinbssb/models/schulungsart.dart' as _i11;
-import 'package:meinbssb/models/schulungstermine.dart' as _i12;
+import 'package:meinbssb/models/schulungstermin.dart' as _i12;
 import 'package:meinbssb/models/user_data.dart' as _i5;
 import 'package:meinbssb/models/verein.dart' as _i15;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
@@ -270,7 +270,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as _i4.Future<List<_i11.Schulungsart>>);
 
   @override
-  _i4.Future<List<_i8.Schulung>> fetchAngemeldeteSchulungen(
+  _i4.Future<List<_i12.Schulungstermin>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -282,20 +282,32 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
-      ) as _i4.Future<List<_i8.Schulung>>);
+        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
+            <_i12.Schulungstermin>[]),
+      ) as _i4.Future<List<_i12.Schulungstermin>>);
 
   @override
-  _i4.Future<List<_i12.Schulungstermine>> fetchSchulungstermine(
+  _i4.Future<List<_i12.Schulungstermin>> fetchSchulungstermine(
           String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
           [abDatum],
         ),
-        returnValue: _i4.Future<List<_i12.Schulungstermine>>.value(
-            <_i12.Schulungstermine>[]),
-      ) as _i4.Future<List<_i12.Schulungstermine>>);
+        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
+            <_i12.Schulungstermin>[]),
+      ) as _i4.Future<List<_i12.Schulungstermin>>);
+
+  @override
+  _i4.Future<_i12.Schulungstermin?> fetchSchulungstermin(
+          String? schulungenTerminID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungstermin,
+          [schulungenTerminID],
+        ),
+        returnValue: _i4.Future<_i12.Schulungstermin?>.value(),
+      ) as _i4.Future<_i12.Schulungstermin?>);
 
   @override
   _i4.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
@@ -499,4 +511,13 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  bool validateIBAN(String? iban) => (super.noSuchMethod(
+        Invocation.method(
+          #validateIBAN,
+          [iban],
+        ),
+        returnValue: false,
+      ) as bool);
 }

@@ -214,8 +214,9 @@ class HttpClient {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> post(String endpoint, Map<String, dynamic> body,
+      {String? overrideBaseUrl,}) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
     LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
@@ -231,8 +232,9 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> put(String endpoint, Map<String, dynamic> body) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> put(String endpoint, Map<String, dynamic> body,
+      {String? overrideBaseUrl,}) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
     LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
@@ -248,8 +250,9 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> delete(String endpoint, {Map<String, dynamic>? body}) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> delete(String endpoint,
+      {Map<String, dynamic>? body, String? overrideBaseUrl,}) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = body != null ? jsonEncode(body) : null;
 
     LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
@@ -267,17 +270,18 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> get(String endpoint) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> get(String endpoint, {String? overrideBaseUrl}) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
     return _makeRequest('GET', apiUrl, null, null);
   }
 
   Future<dynamic> getWithBody(
     String endpoint,
-    Map<String, dynamic> body,
-  ) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+    Map<String, dynamic> body, {
+    String? overrideBaseUrl,
+  }) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     LoggerService.logWarning(
       'HttpClient: Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
     );
@@ -302,8 +306,8 @@ class HttpClient {
     return _makeRequest('GET', apiUrl, headers, requestBody);
   }
 
-  Future<Uint8List> getBytes(String endpoint) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<Uint8List> getBytes(String endpoint, {String? overrideBaseUrl}) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
     // Using _makeBytesRequest specifically for byte responses, maintaining its unique behavior
     return _makeBytesRequest('GET', apiUrl, null);

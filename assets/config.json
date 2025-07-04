@@ -1,24 +1,17 @@
 {
   "usernameWebUser": "webUser",
   "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
-  
   "apiProtocol": "https",
-  
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "/rest/zmi/api7",
   "oktoberFestPort": "56400",
-
-  
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
   "apiPort": "56400",
-
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1Port": "56400",
-
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
-  
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
   "smtpSettings": {
@@ -40,5 +33,10 @@
     "dbName": "devdb",
     "dbUsername": "devuser",
     "dbPassword": "devpass"
+  },
+  "emailRegistration": {
+    "registrationSubject": "Schulung Anmeldung",
+    "registrationContent": "Sie sind für einen Schulung angemeldet",
+    "registrationFrom": "do-not-reply@bssb.de"
   }
 }

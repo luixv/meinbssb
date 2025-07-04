@@ -30,10 +30,8 @@ class EmailService {
   EmailService({
     required EmailSender emailSender,
     required ConfigService configService,
-    required HttpClient httpClient,
   })  : _emailSender = emailSender,
-        _configService = configService,
-        _httpClient = httpClient;
+        _configService = configService;
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
   final HttpClient _httpClient;
@@ -46,6 +44,10 @@ class EmailService {
     int? emailId,
   }) async {
     LoggerService.logInfo('sendEmail called with emailId: $emailId');
+    LoggerService.logInfo('sendEmail called with from: $from');
+    LoggerService.logInfo('sendEmail called with recipient: $recipient');
+    LoggerService.logInfo('sendEmail called with subject: $subject');
+    LoggerService.logInfo('sendEmail called with body: $body');
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
@@ -62,20 +64,18 @@ class EmailService {
         };
       }
 
-      final smtpServer = smtp.SmtpServer(
-        smtpHost,
-        username: username,
-        password: password,
-        port: 1025,
-        ssl: false,
-        ignoreBadCertificate: true
-      );
+      final smtpServer = smtp.SmtpServer(smtpHost,
+          username: username,
+          password: password,
+          port: 1025,
+          ssl: false,
+          ignoreBadCertificate: true);
 
       final message = mailer.Message()
         ..from = mailer.Address(from)
         ..recipients.add(recipient)
         ..subject = subject
-        ..html = body;
+        ..text = body;
 
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');
@@ -138,18 +138,20 @@ class EmailService {
     }
   }
 
-  Future<void> sendAccountCreationNotifications(String personId, String registeredEmail) async {
+  Future<void> sendAccountCreationNotifications(
+      String personId, String registeredEmail) async {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
-      
+
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
       final emailContent = await getAccountCreatedContent();
 
       if (fromEmail == null || subject == null || emailContent == null) {
-        LoggerService.logError('Email configuration missing for account creation notification');
+        LoggerService.logError(
+            'Email configuration missing for account creation notification');
         return;
       }
 
@@ -157,7 +159,7 @@ class EmailService {
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null') {
           final emailBody = emailContent.replaceAll('{email}', registeredEmail);
-          
+
           await sendEmail(
             from: fromEmail,
             recipient: email,
@@ -167,7 +169,8 @@ class EmailService {
         }
       }
     } catch (e) {
-      LoggerService.logError('Error sending account creation notifications: $e');
+      LoggerService.logError(
+          'Error sending account creation notifications: $e');
     }
   }
 }

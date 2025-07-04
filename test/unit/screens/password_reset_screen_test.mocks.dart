@@ -4,13 +4,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
-import 'dart:ui' as _i6;
+import 'dart:ui' as _i7;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i2;
-import 'package:meinbssb/services/core/config_service.dart' as _i7;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i5;
-import 'package:meinbssb/services/core/network_service.dart' as _i4;
+import 'package:meinbssb/services/core/config_service.dart' as _i8;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i6;
+import 'package:meinbssb/services/core/network_service.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -140,12 +141,27 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchLoginEmail,
+          [passnummer],
+        ),
+        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchLoginEmail,
+            [passnummer],
+          ),
+        )),
+      ) as _i3.Future<String>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i4.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i5.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -178,7 +194,7 @@ class MockNetworkService extends _i1.Mock implements _i4.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -223,7 +239,31 @@ class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
       );
 
   @override
-  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
+  double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
+        Invocation.method(
+          #getScaledFontSize,
+          [baseSize],
+        ),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
+  String getScalePercentage() => (super.noSuchMethod(
+        Invocation.method(
+          #getScalePercentage,
+          [],
+        ),
+        returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getScalePercentage,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
+  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -232,7 +272,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -262,7 +302,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i5.FontSizeProvider {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i7.ConfigService {
+class MockConfigService extends _i1.Mock implements _i8.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

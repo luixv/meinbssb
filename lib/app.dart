@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
-import 'services/core/theme_provider.dart';
+import 'providers/theme_provider.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 

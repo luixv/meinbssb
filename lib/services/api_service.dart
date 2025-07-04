@@ -20,7 +20,7 @@ import 'package:meinbssb/models/verein.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/schulungsart.dart';
-import 'package:meinbssb/models/schulungstermine.dart';
+import 'package:meinbssb/models/schulungstermin.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -172,18 +172,18 @@ class ApiService {
     return _trainingService.fetchSchulungsarten();
   }
 
-  Future<List<Schulung>> fetchAngemeldeteSchulungen(
+  Future<List<Schulungstermin>> fetchAngemeldeteSchulungen(
     int personId,
     String abDatum,
   ) async {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<Schulungstermine>> fetchSchulungstermine(String abDatum) async {
+  Future<List<Schulungstermin>> fetchSchulungstermine(String abDatum) async {
     return _trainingService.fetchSchulungstermine(abDatum);
   }
 
-  Future<Schulungstermine?> fetchSchulungstermin(
+  Future<Schulungstermin?> fetchSchulungstermin(
     String schulungenTerminID,
   ) async {
     return _trainingService.fetchSchulungstermin(schulungenTerminID);
@@ -278,5 +278,14 @@ class ApiService {
   /// Clears the disziplinen cache
   Future<void> clearDisziplinenCache() async {
     await _trainingService.clearDisziplinenCache();
+  }
+
+  // --- Bank validation helpers ---
+  bool validateIBAN(String? iban) {
+    return BankService.validateIBAN(iban);
+  }
+
+  String? validateBIC(String? bic) {
+    return BankService.validateBIC(bic);
   }
 }

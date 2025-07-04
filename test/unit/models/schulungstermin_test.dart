@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/schulungstermine.dart';
+import 'package:meinbssb/models/schulungstermin.dart';
 
 void main() {
-  group('Schulungstermine', () {
+  group('Schulungstermin', () {
     test('creates instance from JSON', () {
       final json = {
         'SCHULUNGENTERMINID': 1691,
         'SCHULUNGSARTID': 15,
+        'SCHULUNGENTEILNEHMERID': 12345,
         'DATUM': '2025-12-28T00:00:00.000+01:00',
         'BEMERKUNG': '',
         'KOSTEN': 72.07,
@@ -46,54 +47,55 @@ void main() {
         'ANGEMELDETETEILNEHMER': 1,
       };
 
-      final schulungstermine = Schulungstermine.fromJson(json);
+      final schulungstermin = Schulungstermin.fromJson(json);
 
-      expect(schulungstermine.schulungsterminId, 1691);
-      expect(schulungstermine.schulungsartId, 15);
+      expect(schulungstermin.schulungsterminId, 1691);
+      expect(schulungstermin.schulungsartId, 15);
       expect(
-        schulungstermine.datum,
+        schulungstermin.datum,
         DateTime.parse('2025-12-28T00:00:00.000+01:00'),
       );
-      expect(schulungstermine.bemerkung, '');
-      expect(schulungstermine.kosten, 72.07);
-      expect(schulungstermine.ort, 'Online');
-      expect(schulungstermine.lehrgangsleiter, '');
-      expect(schulungstermine.verpflegungskosten, 0.0);
-      expect(schulungstermine.uebernachtungskosten, 0.0);
-      expect(schulungstermine.lehrmaterialkosten, 0.0);
-      expect(schulungstermine.lehrgangsinhalt, 'Test content');
-      expect(schulungstermine.maxTeilnehmer, 30);
-      expect(schulungstermine.webVeroeffentlichenAm, '');
-      expect(schulungstermine.anmeldungenGesperrt, false);
-      expect(schulungstermine.status, 2);
-      expect(schulungstermine.datumBis, '');
-      expect(schulungstermine.lehrgangsinhaltHtml, '<p>Test HTML</p>');
-      expect(schulungstermine.lehrgangsleiterTel, '089/316949-16');
+      expect(schulungstermin.bemerkung, '');
+      expect(schulungstermin.kosten, 72.07);
+      expect(schulungstermin.ort, 'Online');
+      expect(schulungstermin.lehrgangsleiter, '');
+      expect(schulungstermin.verpflegungskosten, 0.0);
+      expect(schulungstermin.uebernachtungskosten, 0.0);
+      expect(schulungstermin.lehrmaterialkosten, 0.0);
+      expect(schulungstermin.lehrgangsinhalt, 'Test content');
+      expect(schulungstermin.maxTeilnehmer, 30);
+      expect(schulungstermin.webVeroeffentlichenAm, '');
+      expect(schulungstermin.anmeldungenGesperrt, false);
+      expect(schulungstermin.status, 2);
+      expect(schulungstermin.datumBis, '');
+      expect(schulungstermin.lehrgangsinhaltHtml, '<p>Test HTML</p>');
+      expect(schulungstermin.lehrgangsleiterTel, '089/316949-16');
       expect(
-        schulungstermine.lehrgangsleiterMail,
+        schulungstermin.lehrgangsleiterMail,
         'sabine.freitag@bssb.bayern',
       );
-      expect(schulungstermine.geloescht, false);
+      expect(schulungstermin.geloescht, false);
       expect(
-        schulungstermine.stornoGrund,
+        schulungstermin.stornoGrund,
         'Test - Teams Besprechnung 03.03.2025 - Gerhard Reile',
       );
-      expect(schulungstermine.webGruppe, 4);
-      expect(schulungstermine.veranstaltungsBezirk, 4);
-      expect(schulungstermine.fuerVerlaengerungen, true);
-      expect(schulungstermine.anmeldeErlaubt, 0);
-      expect(schulungstermine.verbandsInternPasswort, '');
+      expect(schulungstermin.webGruppe, 4);
+      expect(schulungstermin.veranstaltungsBezirk, 4);
+      expect(schulungstermin.fuerVerlaengerungen, true);
+      expect(schulungstermin.anmeldeErlaubt, 0);
+      expect(schulungstermin.verbandsInternPasswort, '');
       expect(
-        schulungstermine.bezeichnung,
+        schulungstermin.bezeichnung,
         'Der Sportleiter im Verein / Kugeldisziplinen',
       );
-      expect(schulungstermine.angemeldeteTeilnehmer, 1);
+      expect(schulungstermin.angemeldeteTeilnehmer, 1);
     });
 
     test('converts to JSON', () {
-      final schulungstermine = Schulungstermine(
+      final schulungstermin = Schulungstermin(
         schulungsterminId: 1691,
         schulungsartId: 15,
+        schulungsTeilnehmerId: 12345,
         datum: DateTime.parse('2025-12-28T00:00:00.000+01:00'),
         bemerkung: '',
         kosten: 72.07,
@@ -133,10 +135,11 @@ void main() {
         angemeldeteTeilnehmer: 1,
       );
 
-      final json = schulungstermine.toJson();
+      final json = schulungstermin.toJson();
 
       expect(json['SCHULUNGENTERMINID'], 1691);
       expect(json['SCHULUNGSARTID'], 15);
+      expect(json['SCHULUNGENTEILNEHMERID'], 12345);
       expect(json['DATUM'], '2025-12-27T23:00:00.000Z');
       expect(json['BEMERKUNG'], '');
       expect(json['KOSTEN'], 72.07);
@@ -172,9 +175,10 @@ void main() {
     });
 
     test('toString returns correct format', () {
-      final schulungstermine = Schulungstermine(
+      final schulungstermin = Schulungstermin(
         schulungsterminId: 1691,
         schulungsartId: 15,
+        schulungsTeilnehmerId: 12345,
         datum: DateTime.parse('2025-12-28T00:00:00.000+01:00'),
         bemerkung: '',
         kosten: 72.07,
@@ -215,9 +219,10 @@ void main() {
       );
 
       expect(
-        schulungstermine.toString(),
-        'Schulungstermine(schulungsterminId: 1691, '
+        schulungstermin.toString(),
+        'Schulungstermin(schulungsterminId: 1691, '
         'schulungsartId: 15, '
+        'schulungsTeilnehmerId: 12345, '
         'datum: 2025-12-27 23:00:00.000Z, '
         'bezeichnung: Der Sportleiter im Verein / Kugeldisziplinen, '
         'ort: Online, '

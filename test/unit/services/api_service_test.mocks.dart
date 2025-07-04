@@ -13,9 +13,9 @@ import 'package:meinbssb/models/fremde_verband.dart' as _i25;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i14;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i3;
-import 'package:meinbssb/models/schulung.dart' as _i18;
-import 'package:meinbssb/models/schulungsart.dart' as _i20;
-import 'package:meinbssb/models/schulungstermine.dart' as _i19;
+import 'package:meinbssb/models/schulung.dart' as _i20;
+import 'package:meinbssb/models/schulungsart.dart' as _i19;
+import 'package:meinbssb/models/schulungstermin.dart' as _i18;
 import 'package:meinbssb/models/user_data.dart' as _i12;
 import 'package:meinbssb/models/verein.dart' as _i24;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i13;
@@ -24,13 +24,13 @@ import 'package:meinbssb/services/api/bank_service.dart' as _i22;
 import 'package:meinbssb/services/api/training_service.dart' as _i17;
 import 'package:meinbssb/services/api/user_service.dart' as _i11;
 import 'package:meinbssb/services/api/verein_service.dart' as _i23;
-import 'package:meinbssb/services/core/cache_service.dart' as _i6;
-import 'package:meinbssb/services/core/config_service.dart' as _i5;
+import 'package:meinbssb/services/core/cache_service.dart' as _i7;
+import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/image_service.dart' as _i9;
 import 'package:meinbssb/services/core/network_service.dart' as _i8;
 import 'package:meinbssb/services/core/token_service.dart' as _i26;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -181,12 +181,27 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchLoginEmail,
+          [passnummer],
+        ),
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #fetchLoginEmail,
+            [passnummer],
+          ),
+        )),
+      ) as _i2.Future<String>);
 }
 
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i5.ConfigService {
+class MockConfigService extends _i1.Mock implements _i6.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -221,7 +236,7 @@ class MockConfigService extends _i1.Mock implements _i5.ConfigService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i6.CacheService {
+class MockCacheService extends _i1.Mock implements _i7.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -401,8 +416,8 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i7.ifNotNull(
-              _i7.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -443,8 +458,8 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i7.ifNotNull(
-              _i7.dummyValueOrNull<T>(
+        returnValue: _i5.ifNotNull(
+              _i5.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,
@@ -712,7 +727,7 @@ class MockTrainingService extends _i1.Mock implements _i17.TrainingService {
   }
 
   @override
-  _i2.Future<List<_i18.Schulung>> fetchAngemeldeteSchulungen(
+  _i2.Future<List<_i18.Schulungstermin>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -724,41 +739,42 @@ class MockTrainingService extends _i1.Mock implements _i17.TrainingService {
             abDatum,
           ],
         ),
-        returnValue: _i2.Future<List<_i18.Schulung>>.value(<_i18.Schulung>[]),
-      ) as _i2.Future<List<_i18.Schulung>>);
+        returnValue: _i2.Future<List<_i18.Schulungstermin>>.value(
+            <_i18.Schulungstermin>[]),
+      ) as _i2.Future<List<_i18.Schulungstermin>>);
 
   @override
-  _i2.Future<List<_i19.Schulungstermine>> fetchSchulungstermine(
+  _i2.Future<List<_i18.Schulungstermin>> fetchSchulungstermine(
           String? abDatum) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
           [abDatum],
         ),
-        returnValue: _i2.Future<List<_i19.Schulungstermine>>.value(
-            <_i19.Schulungstermine>[]),
-      ) as _i2.Future<List<_i19.Schulungstermine>>);
+        returnValue: _i2.Future<List<_i18.Schulungstermin>>.value(
+            <_i18.Schulungstermin>[]),
+      ) as _i2.Future<List<_i18.Schulungstermin>>);
 
   @override
-  _i2.Future<List<_i20.Schulungsart>> fetchSchulungsarten() =>
+  _i2.Future<List<_i19.Schulungsart>> fetchSchulungsarten() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungsarten,
           [],
         ),
         returnValue:
-            _i2.Future<List<_i20.Schulungsart>>.value(<_i20.Schulungsart>[]),
-      ) as _i2.Future<List<_i20.Schulungsart>>);
+            _i2.Future<List<_i19.Schulungsart>>.value(<_i19.Schulungsart>[]),
+      ) as _i2.Future<List<_i19.Schulungsart>>);
 
   @override
-  _i2.Future<List<_i18.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i2.Future<List<_i20.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i2.Future<List<_i18.Schulung>>.value(<_i18.Schulung>[]),
-      ) as _i2.Future<List<_i18.Schulung>>);
+        returnValue: _i2.Future<List<_i20.Schulung>>.value(<_i20.Schulung>[]),
+      ) as _i2.Future<List<_i20.Schulung>>);
 
   @override
   _i2.Future<bool> registerForSchulung(
@@ -777,11 +793,11 @@ class MockTrainingService extends _i1.Mock implements _i17.TrainingService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> unregisterFromSchulung(int? teilnehmerId) =>
+  _i2.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerId) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
-          [teilnehmerId],
+          [schulungenTeilnehmerId],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -866,6 +882,17 @@ class MockTrainingService extends _i1.Mock implements _i17.TrainingService {
               ),
             )),
           ) as _i2.Future<_i3.RegisterSchulungenTeilnehmerResponse>);
+
+  @override
+  _i2.Future<_i18.Schulungstermin?> fetchSchulungstermin(
+          String? schulungenTerminID) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchSchulungstermin,
+          [schulungenTerminID],
+        ),
+        returnValue: _i2.Future<_i18.Schulungstermin?>.value(),
+      ) as _i2.Future<_i18.Schulungstermin?>);
 }
 
 /// A class which mocks [BankService].
@@ -960,7 +987,7 @@ class MockTokenService extends _i1.Mock implements _i26.TokenService {
           #requestToken,
           [],
         ),
-        returnValue: _i2.Future<String>.value(_i7.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #requestToken,
@@ -985,7 +1012,7 @@ class MockTokenService extends _i1.Mock implements _i26.TokenService {
           #getAuthToken,
           [],
         ),
-        returnValue: _i2.Future<String>.value(_i7.dummyValue<String>(
+        returnValue: _i2.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #getAuthToken,

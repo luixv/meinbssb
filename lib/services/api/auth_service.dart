@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/constants/messages.dart';
-import 'package:uuid/uuid.dart';  // Add this for generating verification links
+import 'package:uuid/uuid.dart'; // Add this for generating verification links
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
@@ -15,6 +15,7 @@ import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/postgrest_service.dart';
+import '/services/core/config_service.dart';
 
 class AuthService {
   AuthService({
@@ -51,7 +52,8 @@ class AuthService {
   }) async {
     try {
       // First check if user already exists in PostgreSQL
-      final existingUser = await _postgrestService.getUserByPassNumber(passNumber);
+      final existingUser =
+          await _postgrestService.getUserByPassNumber(passNumber);
       if (existingUser != null) {
         return {
           'ResultType': 0,
@@ -62,10 +64,7 @@ class AuthService {
       // Get PersonID first
       final personId = await getPersonIDByPassnummer(passNumber);
       if (personId == '0') {
-        return {
-          'ResultType': 0,
-          'ResultMessage': Messages.noPersonIdFound
-        };
+        return {'ResultType': 0, 'ResultMessage': Messages.noPersonIdFound};
       }
 
       // Generate verification link
@@ -290,15 +289,43 @@ Ergebnis der Abfrage:
     String passNumber,
   ) async {
     try {
-      // Find the email!
-      String email = '';
+      String email = await fetchLoginEmail(passNumber);
+
+      if (email.isEmpty) {
+        // Propagate error: no email found for passNumber
+        return {
+          'ResultType': 99,
+          'ResultMessage': 'Keine Login-Email für diese Passnummer gefunden.',
+          'PersonID': 0,
+          'EmailListe': '',
+          'PasswortNeu': '',
+        };
+      }
 
       final response =
-          await _httpClient.get('PasswordReset/$passNumber/$email');
-      return response is Map<String, dynamic> ? response : {};
+          await _httpClient.get('MyBSSBPasswortReset/$passNumber/$email');
+
+      // Propagate all responses, let the screen check ResultType
+      if (response is Map<String, dynamic>) {
+        return response;
+      } else {
+        return {
+          'ResultType': 98,
+          'ResultMessage': 'Ungültige Serverantwort.',
+          'PersonID': 0,
+          'EmailListe': '',
+          'PasswortNeu': '',
+        };
+      }
     } catch (e) {
       LoggerService.logError('Password reset error: $e');
-      rethrow;
+      return {
+        'ResultType': 97,
+        'ResultMessage': 'Fehler beim Zurücksetzen des Passworts: $e',
+        'PersonID': 0,
+        'EmailListe': '',
+        'PasswortNeu': '',
+      };
     }
   }
 
@@ -328,14 +355,12 @@ Ergebnis der Abfrage:
       // Verify the token matches the stored verification link
       final user = await _postgrestService.getUserByPassNumber(passNumber);
       if (user == null || user['verification_link'] != token) {
-        return {
-          'ResultType': 0,
-          'ResultMessage': 'Invalid verification link'
-        };
+        return {'ResultType': 0, 'ResultMessage': 'Invalid verification link'};
       }
 
       // Get the PersonID from the stored registration data
-      final registrationDataJson = await _cacheService.getString('registration_$email');
+      final registrationDataJson =
+          await _cacheService.getString('registration_$email');
       if (registrationDataJson == null) {
         return {
           'ResultType': 0,
@@ -366,10 +391,10 @@ Ergebnis der Abfrage:
       if (response['ResultType'] == 1) {
         // Mark user as verified in PostgreSQL
         await _postgrestService.verifyUser(token);
-        
+
         // Send notification emails to all associated email addresses
         await _emailService.sendAccountCreationNotifications(personId, email);
-        
+
         // Clear stored registration data after successful account creation
         await _cacheService.remove('registration_$email');
       }
@@ -377,10 +402,7 @@ Ergebnis der Abfrage:
       return response;
     } catch (e) {
       LoggerService.logError('Error in finalizeRegistration: $e');
-      return {
-        'ResultType': 0,
-        'ResultMessage': Messages.accountCreationFailed
-      };
+      return {'ResultType': 0, 'ResultMessage': Messages.accountCreationFailed};
     }
   }
 
@@ -396,8 +418,8 @@ Ergebnis der Abfrage:
   /// Checks if a person exists by Nachname and Passnummer. Returns true if found, false otherwise.
   Future<bool> findePersonID2(String nachname, String passnummer) async {
     try {
-      final response =
-          await _httpClient.get('FindePersonID/$nachname/$passnummer');
+      final endpoint = 'FindePersonID2/$nachname/$passnummer';
+      final response = await _httpClient.get(endpoint);
       if (response is List && response.isNotEmpty) {
         return true;
       }
@@ -405,6 +427,34 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('findePersonID2 error: $e');
       return false;
+    }
+  }
+
+  /// Fetches the login email for a given passnummer using a special base URL from config.json.
+  Future<String> fetchLoginEmail(String passnummer) async {
+    try {
+      final config = ConfigService.instance;
+      final protocol = config.getString('apiProtocol') ?? 'https';
+      final server = config.getString('api1BaseServer') ?? '';
+      final port = config.getString('api1Port') ?? '';
+      final path = config.getString('api1BasePath') ?? '';
+      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
+      final baseUrl = port.isNotEmpty
+          ? '$protocol://$server:$port/$path'
+          : '$protocol://$server/$path';
+      final endpoint = 'FindeLoginMail/$passnummer';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        final loginMail = response[0]['LOGINMAIL'];
+        if (loginMail is String) {
+          return loginMail;
+        }
+      }
+      return '';
+    } catch (e) {
+      LoggerService.logError('fetchLoginEmail error: $e');
+      return '';
     }
   }
 
