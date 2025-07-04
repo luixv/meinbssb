@@ -1,10 +1,15 @@
-http://localhost {
-  reverse_proxy postgrest:3000
+http://localhost:8081 {
+  root * /web
+  file_server
 
-  header {
-    Access-Control-Allow-Origin "*"
-    Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers "Authorization, Content-Type"
-    Access-Control-Allow-Credentials false
+  handle_path /api/* {
+    reverse_proxy postgrest:3000
+
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "GET, POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+      Access-Control-Allow-Credentials false
+    }
   }
 }
