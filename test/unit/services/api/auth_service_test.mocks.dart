@@ -9,8 +9,10 @@ import 'dart:typed_data' as _i6;
 import 'package:flutter/foundation.dart' as _i9;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/services/core/cache_service.dart' as _i7;
+import 'package:meinbssb/services/core/email_service.dart' as _i11;
 import 'package:meinbssb/services/core/http_client.dart' as _i4;
 import 'package:meinbssb/services/core/network_service.dart' as _i8;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 
@@ -810,4 +812,207 @@ class MockFlutterSecureStorage extends _i1.Mock
         ),
         returnValue: _i2.Future<bool?>.value(),
       ) as _i2.Future<bool?>);
+}
+
+/// A class which mocks [PostgrestService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
+  MockPostgrestService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<Map<String, dynamic>> createUser({
+    required String? firstName,
+    required String? lastName,
+    required String? email,
+    required String? passNumber,
+    required String? verificationLink,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUser,
+          [],
+          {
+            #firstName: firstName,
+            #lastName: lastName,
+            #email: email,
+            #passNumber: passNumber,
+            #verificationLink: verificationLink,
+          },
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getUserByEmail(String? email) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByEmail,
+          [email],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPassNumber,
+          [passNumber],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<bool> verifyUser(String? verificationLink) => (super.noSuchMethod(
+        Invocation.method(
+          #verifyUser,
+          [verificationLink],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> deleteUserRegistration(int? id) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteUserRegistration,
+          [id],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+}
+
+/// A class which mocks [EmailService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockEmailService extends _i1.Mock implements _i11.EmailService {
+  MockEmailService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<Map<String, dynamic>> sendEmail({
+    required String? from,
+    required String? recipient,
+    required String? subject,
+    String? body,
+    int? emailId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmail,
+          [],
+          {
+            #from: from,
+            #recipient: recipient,
+            #subject: subject,
+            #body: body,
+            #emailId: emailId,
+          },
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getRegistrationSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getRegistrationContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getRegistrationContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getVerificationBaseUrl() => (super.noSuchMethod(
+        Invocation.method(
+          #getVerificationBaseUrl,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getWelcomeSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getWelcomeSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getWelcomeContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getWelcomeContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getFromEmail() => (super.noSuchMethod(
+        Invocation.method(
+          #getFromEmail,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getAccountCreatedSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getAccountCreatedSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getAccountCreatedContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getAccountCreatedContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailAddressesByPersonId,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<String>>.value(<String>[]),
+      ) as _i2.Future<List<String>>);
+
+  @override
+  _i2.Future<void> sendAccountCreationNotifications(
+    String? personId,
+    String? registeredEmail,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendAccountCreationNotifications,
+          [
+            personId,
+            registeredEmail,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 }

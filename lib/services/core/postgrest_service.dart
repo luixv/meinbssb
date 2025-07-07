@@ -7,10 +7,8 @@ class PostgrestService {
   PostgrestService({
     required ConfigService configService,
     http.Client? client,
-  })  : _configService = configService,
-        _client = client ?? http.Client();
+  })  : _client = client ?? http.Client();
 
-  final ConfigService _configService;
   final http.Client _client;
 
   String get _baseUrl => 'http://localhost'; // Caddy server
@@ -18,7 +16,7 @@ class PostgrestService {
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Prefer': 'return=representation'  // This tells PostgREST to return the affected rows
+        'Prefer': 'return=representation',  // This tells PostgREST to return the affected rows
       };
 
   /// Create a new user registration

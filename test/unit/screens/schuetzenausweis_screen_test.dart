@@ -19,6 +19,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/providers/theme_provider.dart';
+import 'package:meinbssb/services/core/postgrest_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:mockito/annotations.dart';
 
 void main() {
   setUp(() async {
@@ -288,6 +293,34 @@ class DummyUserService extends UserService {
         );
 }
 
+class DummyEmailSender implements EmailSender {
+  @override
+  Future<SendReport> send(Message message, SmtpServer server) async {
+    return SendReport(message, DateTime.now(), DateTime.now(), DateTime.now());
+  }
+}
+
+class DummyEmailService extends EmailService {
+  DummyEmailService()
+      : super(
+          emailSender: DummyEmailSender(),
+          configService: ConfigService.instance,
+          httpClient: DummyHttpClient(),
+        );
+
+  @override
+  Future<Map<String, dynamic>> sendEmail({
+    required String from,
+    required String recipient,
+    required String subject,
+    String? body,
+    int? emailId,
+  }) async {
+    return {'ResultType': 1, 'ResultMessage': 'Email sent successfully'};
+  }
+}
+
+@GenerateMocks([EmailSender], customMocks: [MockSpec<EmailSender>(as: #TestEmailSender)])
 class DummyAuthService extends AuthService {
   DummyAuthService()
       : super(
@@ -295,6 +328,8 @@ class DummyAuthService extends AuthService {
           cacheService: DummyCacheService(),
           networkService: DummyNetworkService(),
           secureStorage: null,
+          postgrestService: PostgrestService(configService: ConfigService.instance),
+          emailService: DummyEmailService(),
         );
 }
 

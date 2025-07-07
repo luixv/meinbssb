@@ -72,7 +72,7 @@ class EmailService {
           password: password,
           port: 1025,
           ssl: false,
-          ignoreBadCertificate: true);
+          ignoreBadCertificate: true,);
 
       final message = mailer.Message()
         ..from = mailer.Address(from)
@@ -142,7 +142,7 @@ class EmailService {
   }
 
   Future<void> sendAccountCreationNotifications(
-      String personId, String registeredEmail) async {
+      String personId, String registeredEmail,) async {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
@@ -154,7 +154,7 @@ class EmailService {
 
       if (fromEmail == null || subject == null || emailContent == null) {
         LoggerService.logError(
-            'Email configuration missing for account creation notification');
+            'Email configuration missing for account creation notification',);
         return;
       }
 
@@ -173,7 +173,7 @@ class EmailService {
       }
     } catch (e) {
       LoggerService.logError(
-          'Error sending account creation notifications: $e');
+          'Error sending account creation notifications: $e',);
     }
   }
 }

@@ -11,7 +11,6 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/privacy_screen.dart';
-import 'package:meinbssb/screens/registration_result_screen.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';

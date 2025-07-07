@@ -57,7 +57,7 @@ class AuthService {
       if (existingUser != null) {
         return {
           'ResultType': 0,
-          'ResultMessage': 'User with this pass number already exists'
+          'ResultMessage': 'User with this pass number already exists',
         };
       }
 
@@ -98,13 +98,13 @@ class AuthService {
 
       return {
         'ResultType': 1,
-        'ResultMessage': Messages.registrationDataStored
+        'ResultMessage': Messages.registrationDataStored,
       };
     } catch (e) {
       LoggerService.logError('Registration error: $e');
       return {
         'ResultType': 0,
-        'ResultMessage': Messages.registrationDataStoreFailed
+        'ResultMessage': Messages.registrationDataStoreFailed,
       };
     }
   }
@@ -116,53 +116,7 @@ Ergebnis der Abfrage:
 [{"PERSONID":439287}]
 */
 
-  Future<String> _findePersonID(
-    String namen,
-    String vorname,
-    String geburtsdatum,
-    String passNumber,
-    String plz,
-  ) async {
-    try {
-      final response = await _httpClient
-          .get('FindePersonID/$namen/$vorname/$geburtsdatum/$passNumber/$plz');
-      if (response is Map<String, dynamic>) {
-        if (response['PERSONID'] != 0) {
-          return response['PERSONID'].toString();
-        } else {
-          LoggerService.logError('Person ID not found.');
-          return '0';
-        }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '0';
-      }
-    } catch (e) {
-      LoggerService.logError('Find Person ID error: $e');
-      rethrow;
-    }
-  }
 
-  Future<String> _findeMailadressen(String personId) async {
-    try {
-      final response = await _httpClient.get('FindeMailadressen/$personId');
-      if (response is List) {
-        if (response.isNotEmpty) {
-          final email = response[0]['LOGINMAIL'];
-          return email;
-        } else {
-          LoggerService.logError('No email addresses found.');
-          return '';
-        }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '';
-      }
-    } catch (e) {
-      LoggerService.logError('Find email address error: $e');
-      rethrow;
-    }
-  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -364,7 +318,7 @@ Ergebnis der Abfrage:
       if (registrationDataJson == null) {
         return {
           'ResultType': 0,
-          'ResultMessage': Messages.registrationDataNotFound
+          'ResultMessage': Messages.registrationDataNotFound,
         };
       }
 
@@ -374,7 +328,7 @@ Ergebnis der Abfrage:
       if (personId == null || personId.isEmpty) {
         return {
           'ResultType': 0,
-          'ResultMessage': Messages.registrationDataNotFound
+          'ResultMessage': Messages.registrationDataNotFound,
         };
       }
 

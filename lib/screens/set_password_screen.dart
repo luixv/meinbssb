@@ -3,7 +3,6 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/constants/messages.dart';
 import '/services/api/auth_service.dart';
-import '/services/core/error_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/widgets/scaled_text.dart';
 
@@ -31,7 +30,6 @@ class SetPasswordScreenState extends State<SetPasswordScreen> {
   String? _passwordError;
   String? _confirmPasswordError;
   String _successMessage = '';
-  String _errorMessage = '';
   bool _isLoading = false;
 
   bool validatePassword(String value) {
@@ -84,7 +82,6 @@ class SetPasswordScreenState extends State<SetPasswordScreen> {
     setState(() {
       _isLoading = true;
       _successMessage = '';
-      _errorMessage = '';
     });
 
     try {
@@ -98,7 +95,6 @@ class SetPasswordScreenState extends State<SetPasswordScreen> {
       if (response['ResultType'] == 1) {
         setState(() {
           _successMessage = Messages.passwordSetSuccess;
-          _errorMessage = '';
         });
         
         // Wait for 2 seconds before navigating to login screen
@@ -108,13 +104,11 @@ class SetPasswordScreenState extends State<SetPasswordScreen> {
         Navigator.of(context).pushReplacementNamed('/login');
       } else {
         setState(() {
-          _errorMessage = response['ResultMessage'] ?? Messages.passwordSetError;
           _successMessage = '';
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = Messages.generalError;
         _successMessage = '';
       });
     } finally {

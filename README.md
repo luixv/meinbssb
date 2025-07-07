@@ -107,3 +107,68 @@ Then with a web browser address the URL: localhost:8080 et voila!
 
 For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
+
+# Database Setup
+
+This directory contains database migrations and setup scripts for the MeinBSSB application.
+
+## Prerequisites
+
+1. PostgreSQL installed and running
+2. PostgREST installed
+3. Database user `devuser` with password `devpass` created with appropriate permissions
+
+## Initial Setup
+
+1. Create the database user if not exists:
+```sql
+CREATE USER devuser WITH PASSWORD 'devpass' CREATEDB;
+```
+
+2. Run the initialization script:
+```bash
+cd scripts
+chmod +x init_db.sh
+./init_db.sh
+```
+
+This will:
+- Create the database if it doesn't exist
+- Run all migrations in order
+- Set up necessary permissions
+
+## Starting PostgREST
+
+After database initialization, start PostgREST:
+
+```bash
+postgrest postgrest.conf
+```
+
+PostgREST will run on port 3000 and provide a REST API for the database.
+
+## Manual Migration
+
+If you need to run migrations manually:
+
+```bash
+psql -U devuser -d devdb -f db/migrations/001_create_users_table.sql
+```
+
+## Database Structure
+
+### Users Table
+- `id`: Serial primary key
+- `username`: Unique email address
+- `pass_number`: Unique BSSB pass number
+- `verification_link`: Unique verification token
+- `created_at`: Timestamp of user creation
+- `verified_at`: Timestamp of email verification
+- `is_verified`: Boolean flag for verification status
+
+## Adding New Migrations
+
+1. Create a new SQL file in `db/migrations/` with an incremental number
+2. Add the file to the initialization script
+3. Test the migration on a development database first 
+

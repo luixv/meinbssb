@@ -4,12 +4,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
+import 'dart:typed_data' as _i9;
 
 import 'package:mailer/mailer.dart' as _i2;
 import 'package:mailer/smtp_server.dart' as _i5;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/email_service.dart' as _i3;
+import 'package:meinbssb/services/core/http_client.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -102,4 +105,128 @@ class MockConfigService extends _i1.Mock implements _i6.ConfigService {
           section,
         ],
       )) as String?);
+}
+
+/// A class which mocks [HttpClient].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
+  MockHttpClient() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  String get baseUrl => (super.noSuchMethod(
+        Invocation.getter(#baseUrl),
+        returnValue: _i8.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+      ) as String);
+
+  @override
+  int get serverTimeout => (super.noSuchMethod(
+        Invocation.getter(#serverTimeout),
+        returnValue: 0,
+      ) as int);
+
+  @override
+  _i4.Future<dynamic> post(
+    String? endpoint,
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #post,
+          [
+            endpoint,
+            body,
+          ],
+          {#overrideBaseUrl: overrideBaseUrl},
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<dynamic> put(
+    String? endpoint,
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #put,
+          [
+            endpoint,
+            body,
+          ],
+          {#overrideBaseUrl: overrideBaseUrl},
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<dynamic> delete(
+    String? endpoint, {
+    Map<String, dynamic>? body,
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [endpoint],
+          {
+            #body: body,
+            #overrideBaseUrl: overrideBaseUrl,
+          },
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<dynamic> get(
+    String? endpoint, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #get,
+          [endpoint],
+          {#overrideBaseUrl: overrideBaseUrl},
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<dynamic> getWithBody(
+    String? endpoint,
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getWithBody,
+          [
+            endpoint,
+            body,
+          ],
+          {#overrideBaseUrl: overrideBaseUrl},
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<_i9.Uint8List> getBytes(
+    String? endpoint, {
+    String? overrideBaseUrl,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBytes,
+          [endpoint],
+          {#overrideBaseUrl: overrideBaseUrl},
+        ),
+        returnValue: _i4.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
+      ) as _i4.Future<_i9.Uint8List>);
 }

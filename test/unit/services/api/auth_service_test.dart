@@ -8,18 +8,29 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/postgrest_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
 import 'package:flutter/services.dart';
 
 import 'auth_service_test.mocks.dart';
 
 // Ensure the mock is generated for FlutterSecureStorage
-@GenerateMocks([HttpClient, CacheService, NetworkService, FlutterSecureStorage])
+@GenerateMocks([
+  HttpClient,
+  CacheService,
+  NetworkService,
+  FlutterSecureStorage,
+  PostgrestService,
+  EmailService,
+])
 void main() {
   late AuthService authService;
   late MockHttpClient mockHttpClient;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
+  late MockPostgrestService mockPostgrestService;
+  late MockEmailService mockEmailService;
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -29,13 +40,17 @@ void main() {
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
     mockSecureStorage = MockFlutterSecureStorage();
+    mockPostgrestService = MockPostgrestService();
+    mockEmailService = MockEmailService();
 
     // Create AuthService instance for each test, injecting all mocks
     authService = AuthService(
       httpClient: mockHttpClient,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
-      secureStorage: mockSecureStorage, // INJECT THE MOCK HERE
+      secureStorage: mockSecureStorage,
+      postgrestService: mockPostgrestService,
+      emailService: mockEmailService,
     );
 
     when(mockSecureStorage.read(key: anyNamed('key')))
@@ -73,9 +88,23 @@ void main() {
         .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
     when(mockCacheService.getCacheTimestampForKey('webLoginId'))
         .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
-  });
 
-  // No tearDown needed for platform channel handler since it's removed from setUp.
+    // Default behavior for PostgrestService
+    when(mockPostgrestService.getUserByPassNumber(any))
+        .thenAnswer((_) async => null);
+    when(mockPostgrestService.createUser(
+      firstName: anyNamed('firstName'),
+      lastName: anyNamed('lastName'),
+      email: anyNamed('email'),
+      passNumber: anyNamed('passNumber'),
+      verificationLink: anyNamed('verificationLink'),
+    ),).thenAnswer((_) async => <String, dynamic>{});
+    when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
+
+    // Default behavior for EmailService
+    when(mockEmailService.sendAccountCreationNotifications(any, any))
+        .thenAnswer((_) async => <String, dynamic>{});
+  });
 
   group('AuthService', () {
     group('register', () {
