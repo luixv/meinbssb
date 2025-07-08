@@ -308,6 +308,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       // Replace placeholders in the email content
       final emailBody = emailContent
           .replaceAll('{firstName}', _firstNameController.text)
+          .replaceAll('{lastName}', _lastNameController.text)
           .replaceAll('{verificationLink}', verificationLink);
 
       // Send the verification email
@@ -315,7 +316,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         from: fromEmail,
         recipient: _emailController.text,
         subject: subject,
-        body: emailBody,
+        htmlBody: emailBody,
       );
 
       if (emailResponse['ResultType'] == 1) {
