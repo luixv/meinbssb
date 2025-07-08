@@ -7,16 +7,17 @@ class PostgrestService {
   PostgrestService({
     required ConfigService configService,
     http.Client? client,
-  })  : _client = client ?? http.Client();
+  }) : _client = client ?? http.Client();
 
   final http.Client _client;
 
-  String get _baseUrl => 'http://localhost'; // Caddy server
+  String get _baseUrl => 'http://localhost:8081/api'; // Caddy server
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Prefer': 'return=representation',  // This tells PostgREST to return the affected rows
+        'Prefer':
+            'return=representation', // This tells PostgREST to return the affected rows
       };
 
   /// Create a new user registration
@@ -32,8 +33,8 @@ class PostgrestService {
         Uri.parse('$_baseUrl/user_registrations'),
         headers: _headers,
         body: jsonEncode({
-          'firstName': firstName,
-          'lastName': lastName,
+          'firstname': firstName,
+          'lastname': lastName,
           'email': email,
           'pass_number': passNumber,
           'verification_link': verificationLink,
@@ -43,7 +44,8 @@ class PostgrestService {
       );
 
       if (response.statusCode == 201) {
-        LoggerService.logInfo('User registration created successfully in PostgreSQL');
+        LoggerService.logInfo(
+            'User registration created successfully in PostgreSQL');
         return jsonDecode(response.body)[0]; // PostgREST returns an array
       } else {
         LoggerService.logError(
@@ -107,7 +109,8 @@ class PostgrestService {
   Future<bool> verifyUser(String verificationLink) async {
     try {
       final response = await _client.patch(
-        Uri.parse('$_baseUrl/user_registrations?verification_link=eq.$verificationLink'),
+        Uri.parse(
+            '$_baseUrl/user_registrations?verification_link=eq.$verificationLink'),
         headers: _headers,
         body: jsonEncode({
           'is_verified': true,
@@ -152,4 +155,4 @@ class PostgrestService {
       return false;
     }
   }
-} 
+}
