@@ -426,17 +426,14 @@ Ergebnis der Abfrage:
       final endpoint = 'PersonID/$passNumber';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
-      if (response is Map<String, dynamic>) {
-        if (response['PERSONID'] != null && response['PERSONID'] != 0) {
-          return response['PERSONID'].toString();
-        } else {
-          LoggerService.logError('Person ID not found.');
-          return '0';
+      if (response is List && response.isNotEmpty) {
+        final personId = response[0]['PERSONID'];
+        if (personId != null && personId != 0) {
+          return personId.toString();
         }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '0';
       }
+      LoggerService.logError('Person ID not found.');
+      return '0';
     } catch (e) {
       LoggerService.logError('Find Person ID error: $e');
       rethrow;
