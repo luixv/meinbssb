@@ -100,7 +100,9 @@ class Schulungstermin {
 
   final int schulungsterminId;
   final int schulungsartId;
-  final int schulungsTeilnehmerId;
+  int schulungsTeilnehmerId;
+  int get getSchulungsTeilnehmerId => schulungsTeilnehmerId;
+  set setSchulungsTeilnehmerId(int value) => schulungsTeilnehmerId = value;
   final DateTime datum;
   final String bemerkung;
   final double kosten;

@@ -235,349 +235,290 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               setState(() {});
             });
 
-            return Stack(
-              children: [
-                AlertDialog(
-                  backgroundColor: UIConstants.backgroundColor,
-                  title: const Center(
-                    child: ScaledText(
-                      'Buchungsdaten Erfassen',
-                      style: UIStyles.dialogTitleStyle,
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 500,
+                  maxHeight: 520,
+                ),
+                child: Stack(
+                  children: [
+                    AlertDialog(
+                      backgroundColor: UIConstants.backgroundColor,
+                      title: const Center(
+                        child: ScaledText(
+                          'Buchungsdaten Erfassen',
+                          style: UIStyles.dialogTitleStyle,
+                        ),
+                      ),
+                      content: SingleChildScrollView(
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // --- Bank Data Block ---
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: UIConstants.whiteColor,
+                                  border: Border.all(
+                                    color: UIConstants.mydarkGreyColor,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                padding: UIConstants.defaultPadding,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Bankdaten',
+                                      style: UIStyles.subtitleStyle,
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    TextFormField(
+                                      controller: kontoinhaberController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'Kontoinhaber'),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Kontoinhaber ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: ibanController,
+                                            decoration: UIStyles
+                                                .formInputDecoration
+                                                .copyWith(labelText: 'IBAN'),
+                                            validator: (value) {
+                                              final apiService =
+                                                  Provider.of<ApiService>(
+                                                context,
+                                                listen: false,
+                                              );
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'IBAN ist erforderlich';
+                                              }
+                                              if (!apiService
+                                                  .validateIBAN(value)) {
+                                                return 'Ungültige IBAN';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: UIConstants.spacingM,
+                                        ),
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: bicController,
+                                            decoration: UIStyles
+                                                .formInputDecoration
+                                                .copyWith(labelText: 'BIC'),
+                                            validator: (value) {
+                                              final apiService =
+                                                  Provider.of<ApiService>(
+                                                context,
+                                                listen: false,
+                                              );
+                                              final bicError =
+                                                  apiService.validateBIC(value);
+                                              if (bicError != null) {
+                                                return bicError;
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: UIConstants.spacingL),
+                              CheckboxListTile(
+                                value: agbChecked,
+                                onChanged: (val) {
+                                  setState(() => agbChecked = val ?? false);
+                                },
+                                title: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => const AgbScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'AGB',
+                                        style: UIStyles.linkStyle.copyWith(
+                                          color: UIConstants.linkColor,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: UIConstants.spacingS),
+                                    const Text('akzeptieren'),
+                                    const SizedBox(width: UIConstants.spacingS),
+                                    const Tooltip(
+                                      message:
+                                          'Ich bin mit den AGB einverstanden.',
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: UIConstants.defaultAppColor,
+                                        size: UIConstants.defaultIconSize,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              CheckboxListTile(
+                                value: lastschriftChecked,
+                                onChanged: (val) {
+                                  setState(
+                                    () => lastschriftChecked = val ?? false,
+                                  );
+                                },
+                                title: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        'Bestätigung des Lastschrifteinzugs',
+                                      ),
+                                    ),
+                                    SizedBox(width: UIConstants.spacingS),
+                                    Tooltip(
+                                      message: // Hiermit ermächtige ich Sie widerruflich, fällige Zahlungen per Lastschrift von meinem MeinBSSB-Konto einzuziehen. Mein Kreditinstitut wird angewiesen, diese Lastschriften einzulösen
+                                          'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: UIConstants.defaultAppColor,
+                                        size: UIConstants.defaultIconSize,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  content: SingleChildScrollView(
-                    child: Form(
-                      key: formKey,
+                    Positioned(
+                      bottom: UIConstants.spacingM,
+                      right: UIConstants.spacingM,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          // --- Personal Data Block ---
-                          Container(
-                            decoration: BoxDecoration(
-                              color: UIConstants.whiteColor,
-                              border: Border.all(
-                                color: UIConstants.mydarkGreyColor,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                            ),
-                            padding: UIConstants.defaultPadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Persönliche Daten',
-                                  style: UIStyles.sectionTitleStyle,
-                                ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextField(
-                                        controller: TextEditingController(
-                                          text: user?.vorname ?? '',
-                                        ),
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'Vorname'),
-                                        readOnly: true,
-                                        style: UIStyles.formValueBoldStyle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: UIConstants.spacingM),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: TextEditingController(
-                                          text: user?.namen ?? '',
-                                        ),
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'Nachname'),
-                                        readOnly: true,
-                                        style: UIStyles.formValueBoldStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextField(
-                                        controller: emailController,
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'E-Mail'),
-                                        readOnly: true,
-                                        style: UIStyles.formValueBoldStyle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: UIConstants.spacingM),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: telefonController,
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'Telefon'),
-                                        readOnly: true,
-                                        style: UIStyles.formValueBoldStyle,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                const Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Text(
-                                    'Daten aus ZMI',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color: UIConstants.greySubtitleTextColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          FloatingActionButton(
+                            heroTag: 'bookingDialogCancelFab',
+                            mini: true,
+                            tooltip: 'Abbrechen',
+                            backgroundColor: UIConstants.defaultAppColor,
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: UIConstants.spacingM),
-                          // --- Bank Data Block ---
-                          Container(
-                            decoration: BoxDecoration(
-                              color: UIConstants.whiteColor,
-                              border: Border.all(
-                                color: UIConstants.mydarkGreyColor,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                            ),
-                            padding: UIConstants.defaultPadding,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Bankdaten',
-                                  style: UIStyles.sectionTitleStyle,
-                                ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                TextFormField(
-                                  controller: kontoinhaberController,
-                                  decoration: UIStyles.formInputDecoration
-                                      .copyWith(labelText: 'Kontoinhaber'),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Kontoinhaber ist erforderlich';
+                          const SizedBox(height: UIConstants.spacingS),
+                          FloatingActionButton(
+                            heroTag: 'bookingDialogOkFab',
+                            mini: true,
+                            tooltip: 'Buchen',
+                            backgroundColor: (agbChecked &&
+                                    lastschriftChecked &&
+                                    kontoinhaberController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    ibanController.text.trim().isNotEmpty &&
+                                    bicController.text.trim().isNotEmpty)
+                                ? UIConstants.defaultAppColor
+                                : UIConstants.cancelButtonBackground,
+                            onPressed: (agbChecked &&
+                                    lastschriftChecked &&
+                                    kontoinhaberController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    ibanController.text.trim().isNotEmpty &&
+                                    bicController.text.trim().isNotEmpty)
+                                ? () async {
+                                    if (formKey.currentState != null &&
+                                        formKey.currentState!.validate()) {
+                                      Navigator.of(context).pop();
+                                      final cacheService =
+                                          Provider.of<CacheService>(
+                                        parentContext,
+                                        listen: false,
+                                      );
+                                      final String email = await cacheService
+                                              .getString('username') ??
+                                          '';
+                                      final BankData safeBankData = bankData ??
+                                          BankData(
+                                            id: 0,
+                                            webloginId: user?.webLoginId ?? 0,
+                                            kontoinhaber: '',
+                                            iban: '',
+                                            bic: '',
+                                            mandatSeq: 2,
+                                            bankName: '',
+                                            mandatNr: '',
+                                            mandatName: '',
+                                          );
+                                      Future.delayed(Duration.zero, () {
+                                        if (!parentContext.mounted) return;
+                                        _showRegisterAnotherPersonDialog(
+                                          parentContext,
+                                          parentContext,
+                                          schulungsTermin,
+                                          registeredPersons,
+                                          safeBankData,
+                                          prefillUser: user?.copyWith(
+                                            telefon: telefonController.text,
+                                          ),
+                                          prefillEmail: email,
+                                        );
+                                      });
                                     }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: ibanController,
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'IBAN'),
-                                        validator: (value) {
-                                          final apiService =
-                                              Provider.of<ApiService>(
-                                            context,
-                                            listen: false,
-                                          );
-                                          if (value == null || value.isEmpty) {
-                                            return 'IBAN ist erforderlich';
-                                          }
-                                          if (!apiService.validateIBAN(value)) {
-                                            return 'Ungültige IBAN';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: UIConstants.spacingM),
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: bicController,
-                                        decoration: UIStyles.formInputDecoration
-                                            .copyWith(labelText: 'BIC'),
-                                        validator: (value) {
-                                          final apiService =
-                                              Provider.of<ApiService>(
-                                            context,
-                                            listen: false,
-                                          );
-                                          final bicError =
-                                              apiService.validateBIC(value);
-                                          if (bicError != null) {
-                                            return bicError;
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  }
+                                : null,
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
                             ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-                          CheckboxListTile(
-                            value: agbChecked,
-                            onChanged: (val) {
-                              setState(() => agbChecked = val ?? false);
-                            },
-                            title: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => const AgbScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'AGB',
-                                    style: UIStyles.linkStyle.copyWith(
-                                      color: UIConstants.linkColor,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: UIConstants.spacingS),
-                                const Text('akzeptieren'),
-                                const SizedBox(width: UIConstants.spacingS),
-                                const Tooltip(
-                                  message: 'Ich bin mit den AGB einverstanden.',
-                                  child: Icon(
-                                    Icons.info_outline,
-                                    color: UIConstants.defaultAppColor,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          CheckboxListTile(
-                            value: lastschriftChecked,
-                            onChanged: (val) {
-                              setState(() => lastschriftChecked = val ?? false);
-                            },
-                            title: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'Bestätigung des Lastschrifteinzugs',
-                                  ),
-                                ),
-                                SizedBox(width: UIConstants.spacingS),
-                                Tooltip(
-                                  message: // Hiermit ermächtige ich Sie widerruflich, fällige Zahlungen per Lastschrift von meinem MeinBSSB-Konto einzuziehen. Mein Kreditinstitut wird angewiesen, diese Lastschriften einzulösen
-                                      'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                  child: Icon(
-                                    Icons.info_outline,
-                                    color: UIConstants.defaultAppColor,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                Positioned(
-                  bottom: UIConstants.spacingM,
-                  right: UIConstants.spacingM,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      FloatingActionButton(
-                        heroTag: 'bookingDialogCancelFab',
-                        mini: true,
-                        tooltip: 'Abbrechen',
-                        backgroundColor: UIConstants.defaultAppColor,
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      FloatingActionButton(
-                        heroTag: 'bookingDialogOkFab',
-                        mini: true,
-                        tooltip: 'Buchen',
-                        backgroundColor: (agbChecked &&
-                                lastschriftChecked &&
-                                kontoinhaberController.text.trim().isNotEmpty &&
-                                ibanController.text.trim().isNotEmpty &&
-                                bicController.text.trim().isNotEmpty)
-                            ? UIConstants.defaultAppColor
-                            : UIConstants.cancelButtonBackground,
-                        onPressed: (agbChecked &&
-                                lastschriftChecked &&
-                                kontoinhaberController.text.trim().isNotEmpty &&
-                                ibanController.text.trim().isNotEmpty &&
-                                bicController.text.trim().isNotEmpty)
-                            ? () async {
-                                if (formKey.currentState != null &&
-                                    formKey.currentState!.validate()) {
-                                  Navigator.of(context).pop();
-                                  final cacheService =
-                                      Provider.of<CacheService>(
-                                    parentContext,
-                                    listen: false,
-                                  );
-                                  final String email = await cacheService
-                                          .getString('username') ??
-                                      '';
-                                  final BankData safeBankData = bankData ??
-                                      BankData(
-                                        id: 0,
-                                        webloginId: user?.webLoginId ?? 0,
-                                        kontoinhaber: '',
-                                        iban: '',
-                                        bic: '',
-                                        mandatSeq: 2,
-                                        bankName: '',
-                                        mandatNr: '',
-                                        mandatName: '',
-                                      );
-                                  Future.delayed(Duration.zero, () {
-                                    if (!parentContext.mounted) return;
-                                    _showRegisterAnotherPersonDialog(
-                                      parentContext,
-                                      parentContext,
-                                      schulungsTermin,
-                                      registeredPersons,
-                                      safeBankData,
-                                      prefillUser: user?.copyWith(
-                                        telefon: telefonController.text,
-                                      ),
-                                      prefillEmail: email,
-                                    );
-                                  });
-                                }
-                              }
-                            : null,
-                        child: const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             );
           },
         );
@@ -1169,21 +1110,59 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       schulungsTermin.anmeldungenGesperrt
                                           ? UIConstants.schulungenGesperrtColor
                                           : UIConstants.schulungenNormalColor,
-                                  onPressed: () {
-                                    final t = schulungsTermin;
-                                    final freiePlaetze = t.maxTeilnehmer -
-                                        t.angemeldeteTeilnehmer;
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      barrierDismissible: false,
+                                    );
+                                    final apiService = Provider.of<ApiService>(
+                                      context,
+                                      listen: false,
+                                    );
+                                    final termin =
+                                        await apiService.fetchSchulungstermin(
+                                      schulungsTermin.schulungsterminId
+                                          .toString(),
+                                    );
+                                    if (!context.mounted) return;
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop(); // Remove spinner
+                                    if (termin == null) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text('Fehler'),
+                                          content: const Text(
+                                            'Details konnten nicht geladen werden.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return;
+                                    }
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        final bool isGesperrt =
-                                            t.anmeldungenGesperrt;
+                                        final t = termin;
+                                        final freiePlaetze = t.maxTeilnehmer -
+                                            t.angemeldeteTeilnehmer;
                                         return Stack(
                                           children: [
                                             AlertDialog(
                                               backgroundColor:
                                                   UIConstants.backgroundColor,
                                               contentPadding: EdgeInsets.zero,
+                                              // Move header into content for full-width white background
+                                              actions: null,
                                               content: ConstrainedBox(
                                                 constraints: BoxConstraints(
                                                   maxHeight:
@@ -1201,172 +1180,94 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      // White header and info container
+                                                      // Header: white background, title, availability, and info table
                                                       Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: UIConstants
-                                                              .whiteColor,
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                              UIConstants
-                                                                  .cornerRadius,
-                                                            ),
-                                                            topRight:
-                                                                Radius.circular(
-                                                              UIConstants
-                                                                  .cornerRadius,
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        width: double.infinity,
+                                                        color: UIConstants
+                                                            .whiteColor,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 12,
+                                                                horizontal: 0,),
                                                         child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .stretch,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           children: [
-                                                            // Title
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                top: UIConstants
-                                                                    .spacingM,
-                                                                left: UIConstants
-                                                                    .spacingM,
-                                                                right: UIConstants
-                                                                    .spacingM,
-                                                              ),
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    t.bezeichnung,
-                                                                    style: UIStyles
-                                                                        .dialogTitleStyle,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                  ),
-                                                                  if (isGesperrt) ...[
-                                                                    const SizedBox(
-                                                                      height: UIConstants
-                                                                          .spacingS,
-                                                                    ),
-                                                                    Container(
-                                                                      padding:
-                                                                          const EdgeInsets
-                                                                              .symmetric(
-                                                                        horizontal:
-                                                                            UIConstants.spacingM,
-                                                                        vertical:
-                                                                            UIConstants.spacingS,
-                                                                      ),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: UIConstants
-                                                                            .schulungenGesperrtColor,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(UIConstants.cornerRadius),
-                                                                      ),
-                                                                      child:
-                                                                          const Text(
-                                                                        'Anmeldungen gesperrt',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Colors.white,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ],
-                                                              ),
+                                                            Text(
+                                                              (t.bezeichnung
+                                                                      .isNotEmpty
+                                                                  ? t
+                                                                      .bezeichnung
+                                                                  : schulungsTermin
+                                                                      .bezeichnung),
+                                                              style: UIStyles
+                                                                  .dialogTitleStyle,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
                                                             const SizedBox(
-                                                              height:
-                                                                  UIConstants
-                                                                      .spacingM,
+                                                                height: 4,),
+                                                            Text(
+                                                              'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
+                                                              style: UIStyles
+                                                                  .bodyStyle
+                                                                  .copyWith(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
-                                                            // Free places sentence
+                                                            // Info table below availability (in header)
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .only(
-                                                                left: UIConstants
-                                                                    .spacingM,
-                                                                right: UIConstants
-                                                                    .spacingM,
-                                                                bottom:
+                                                                      .symmetric(
+                                                                horizontal:
                                                                     UIConstants
-                                                                        .spacingM,
+                                                                        .infoTableHorizontalPadding,
+                                                                vertical:
+                                                                    UIConstants
+                                                                        .spacingS,
                                                               ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Es sind noch $freiePlaetze von ${t.maxTeilnehmer} Plätzen frei',
-                                                                  style: UIStyles
-                                                                      .bodyStyle
-                                                                      .copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            // Info table
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                left: UIConstants
-                                                                    .infoTableHorizontalPadding,
-                                                                right: UIConstants
-                                                                    .infoTableHorizontalPadding,
-                                                                bottom: UIConstants
-                                                                    .infoTableBottomPaddingSmall,
-                                                              ),
-                                                              child: Center(
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Column(
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  // Left column
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment
                                                                               .start,
                                                                       children: [
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(
-                                                                              Icons.calendar_today,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
+                                                                            const Icon(Icons.calendar_today,
+                                                                                size: UIConstants.defaultIconSize,),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Text(_formatDate(t.datum)),
+                                                                            Text(
+                                                                              '${t.datum.day.toString().padLeft(2, '0')}.${t.datum.month.toString().padLeft(2, '0')}.${t.datum.year}',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(
-                                                                              Icons.location_on,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
+                                                                            const Icon(Icons.location_on,
+                                                                                size: UIConstants.defaultIconSize,),
                                                                             UIConstants.horizontalSpacingS,
                                                                             Text(
                                                                               t.ort,
@@ -1376,40 +1277,41 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(
-                                                                              Icons.group,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
+                                                                            const Icon(Icons.group,
+                                                                                size: UIConstants.defaultIconSize,),
                                                                             UIConstants.horizontalSpacingS,
-                                                                            Text(t.webGruppeLabel),
+                                                                            Text(
+                                                                              t.webGruppeLabel,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(
-                                                                              Icons.request_quote,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
+                                                                            const Icon(Icons.request_quote,
+                                                                                size: UIConstants.defaultIconSize,),
                                                                             UIConstants.horizontalSpacingS,
                                                                             Text('${t.kosten.toStringAsFixed(2)} €'),
                                                                           ],
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    const SizedBox(
+                                                                  ),
+                                                                  const SizedBox(
                                                                       width: UIConstants
-                                                                          .infoTableColumnSpacingWide,
-                                                                    ),
-                                                                    Column(
+                                                                          .infoTableColumnSpacingWide,),
+                                                                  // Right column
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment
                                                                               .start,
@@ -1423,57 +1325,45 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
                                                                         Row(
                                                                           children: [
-                                                                            const Icon(
-                                                                              Icons.email,
-                                                                              size: UIConstants.defaultIconSize,
+                                                                            const Icon(Icons.person,
+                                                                                size: UIConstants.defaultIconSize,),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              t.lehrgangsleiter,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
                                                                             ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                UIConstants.spacingXS,),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(Icons.email,
+                                                                                size: UIConstants.defaultIconSize,),
                                                                             UIConstants.horizontalSpacingS,
                                                                             Text(
                                                                               t.lehrgangsleiterMail,
-                                                                              style: UIStyles.bodyStyle,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
                                                                             ),
-                                                                          ],
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            const Icon(
-                                                                              Icons.phone,
-                                                                              size: UIConstants.defaultIconSize,
-                                                                            ),
-                                                                            UIConstants.horizontalSpacingS,
-                                                                            Text(
-                                                                              t.lehrgangsleiterTel,
-                                                                              style: UIStyles.bodyStyle,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              UIConstants.spacingXS,
-                                                                        ),
-                                                                        const Row(
-                                                                          children: [
-                                                                            // Empty fourth value
                                                                           ],
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ],
                                                         ),
                                                       ),
+                                                      // ... rest of dialog content ...
                                                       const Divider(
                                                         height: UIConstants
                                                             .defaultStrokeWidth,
@@ -1509,18 +1399,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 ),
                                               ),
                                             ),
-                                            // FABs positioned over the entire dialog
                                             Positioned(
                                               bottom: UIConstants.spacingM,
                                               right: UIConstants.spacingM,
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
                                                 children: [
                                                   FloatingActionButton(
                                                     heroTag:
-                                                        'descDialogCancelFab$index',
+                                                        'descDialogCloseFab$index',
                                                     mini: true,
-                                                    tooltip: 'Abbrechen',
+                                                    tooltip: 'Schließen',
                                                     backgroundColor: UIConstants
                                                         .defaultAppColor,
                                                     onPressed: () =>
@@ -1540,22 +1431,24 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         'descDialogBookFab$index',
                                                     mini: true,
                                                     tooltip: 'Buchen',
-                                                    backgroundColor: isGesperrt
+                                                    backgroundColor: t
+                                                            .anmeldungenGesperrt
                                                         ? UIConstants
                                                             .cancelButtonBackground
                                                         : UIConstants
                                                             .defaultAppColor,
-                                                    onPressed: isGesperrt
-                                                        ? null
-                                                        : () {
-                                                            Navigator.of(
-                                                              context,
-                                                            ).pop();
-                                                            _showBookingDialog(
-                                                              t,
-                                                              registeredPersons: [],
-                                                            );
-                                                          },
+                                                    onPressed:
+                                                        t.anmeldungenGesperrt
+                                                            ? null
+                                                            : () {
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                                _showBookingDialog(
+                                                                  t,
+                                                                  registeredPersons: [],
+                                                                );
+                                                              },
                                                     child: const Icon(
                                                       Icons.event_available,
                                                       color: Colors.white,
