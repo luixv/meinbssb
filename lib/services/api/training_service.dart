@@ -6,7 +6,9 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
-import '../../models/schulungstermin.dart';
+import '/services/core/config_service.dart';
+
+import '/models/schulungstermin.dart';
 import '/models/register_schulungen_teilnehmer_response.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
@@ -113,23 +115,79 @@ class TrainingService {
         .toList();
   }
 
-  Future<List<Schulungstermin>> fetchSchulungstermine(String abDatum) async {
+/* 
+/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}
+*/
+  Future<List<Schulungstermin>> fetchSchulungstermine(
+    String abDatum,
+    String webGruppe,
+    String bezirk,
+    String fuerVerlaengerung,
+  ) async {
     try {
-      final response = await _httpClient.get('Schulungstermine/$abDatum/false');
+      String endpoint =
+          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*';
+
+      LoggerService.logInfo(
+        'endpoint $endpoint',
+      );
+
+      final config = ConfigService.instance;
+      final protocol = config.getString('apiProtocol') ?? 'https';
+      final server = config.getString('api1BaseServer') ?? '';
+      final port = config.getString('api1Port') ?? '';
+      final path = config.getString('api1BasePath') ?? '';
+      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
+      final baseUrl = port.isNotEmpty
+          ? '$protocol://$server:$port/$path'
+          : '$protocol://$server/$path';
+
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+
       final now = DateTime.now();
-      final termine =
-          _mapSchulungstermineResponseToTermine(response).where((t) {
+      final mappedTermine = _mapSchulungstermineResponseToTermine(response);
+      LoggerService.logInfo(
+        'Mapped ${mappedTermine.length} termine from response',
+      );
+
+      final termine = mappedTermine.where((t) {
+        LoggerService.logInfo(
+          'Checking termine ${t.schulungsterminId}: status=${t.status}, webVeroeffentlichenAm="${t.webVeroeffentlichenAm}"',
+        );
+
         // Status darf NICHT 2 sein!
-        if (t.status == 2) return false;
+        if (t.status == 2) {
+          LoggerService.logInfo(
+            'Filtered out termine ${t.schulungsterminId} due to status == 2',
+          );
+          return false;
+        }
         // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
-        if (t.webVeroeffentlichenAm.isEmpty) return true;
+        if (t.webVeroeffentlichenAm.isEmpty) {
+          LoggerService.logInfo(
+            'Including termine ${t.schulungsterminId} due to empty webVeroeffentlichenAm',
+          );
+          return true;
+        }
         try {
           final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
-          return now.isAfter(veroeff);
-        } catch (_) {
+          final shouldInclude = now.isAfter(veroeff);
+          LoggerService.logInfo(
+            'Termine ${t.schulungsterminId}: now=$now, veroeff=$veroeff, shouldInclude=$shouldInclude',
+          );
+          return shouldInclude;
+        } catch (e) {
+          LoggerService.logInfo(
+            'Filtered out termine ${t.schulungsterminId} due to date parsing error: $e',
+          );
           return false;
         }
       }).toList();
+
+      LoggerService.logInfo(
+        'After filtering: ${termine.length} termine remaining',
+      );
       termine.sort((a, b) => a.datum.compareTo(b.datum));
       return termine;
     } catch (e) {

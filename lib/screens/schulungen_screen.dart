@@ -65,8 +65,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final result = await apiService
-          .fetchSchulungstermine(_formatDate(widget.searchDate));
+      final abDatum = _formatDate(widget.searchDate);
+      final webGruppe = (widget.webGruppe != null && widget.webGruppe != 0)
+          ? widget.webGruppe.toString()
+          : '*';
+      final bezirk = (widget.bezirkId != null && widget.bezirkId != 0)
+          ? widget.bezirkId.toString()
+          : '*';
+      final fuerVerlaengerung =
+          (widget.fuerVerlaengerungen == true) ? 'true' : '*';
+      final result = await apiService.fetchSchulungstermine(
+        abDatum,
+        webGruppe,
+        bezirk,
+        fuerVerlaengerung,
+      );
       setState(() {
         var filteredResults = result;
         if (widget.webGruppe != null && widget.webGruppe != 0) {
@@ -1393,8 +1406,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                        width: UIConstants
-                                                                            .infoTableColumnSpacingWide,),
+                                                                      width: UIConstants
+                                                                          .infoTableColumnSpacingWide,
+                                                                    ),
                                                                     Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment

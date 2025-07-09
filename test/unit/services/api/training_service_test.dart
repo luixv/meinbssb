@@ -919,7 +919,8 @@ void main() {
 
   group('fetchSchulungstermine', () {
     test('maps valid Schulungstermine response correctly', () async {
-      when(mockHttpClient.get('Schulungstermine/15.08.2025/false')).thenAnswer(
+      when(mockHttpClient.get('Schulungstermine/15.08.2025/*/1/1/true/*'))
+          .thenAnswer(
         (_) async => [
           {
             'SCHULUNGENTERMINID': 42,
@@ -1006,7 +1007,8 @@ void main() {
           },
         ],
       );
-      final result = await trainingService.fetchSchulungstermine('15.08.2025');
+      final result = await trainingService.fetchSchulungstermine(
+          '15.08.2025', '1', '1', 'true',);
       expect(result.length, 1);
       final s = result[0];
       expect(s.schulungsterminId, 42);
@@ -1022,7 +1024,8 @@ void main() {
     });
 
     test('handles null/missing fields with defaults', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2030/false')).thenAnswer(
+      when(mockHttpClient.get('Schulungstermine/01.01.2030/*/*/*/*'))
+          .thenAnswer(
         (_) async => [
           {
             'SCHULUNGENTERMINID': null,
@@ -1067,7 +1070,8 @@ void main() {
           },
         ],
       );
-      final result = await trainingService.fetchSchulungstermine('01.01.2030');
+      final result = await trainingService.fetchSchulungstermine(
+          '01.01.2030', '*', '*', '*',);
       expect(result.length, 1);
       final s = result[0];
       expect(s.schulungsterminId, 0);
@@ -1083,16 +1087,18 @@ void main() {
     });
 
     test('returns empty list for non-list response', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2040/false'))
+      when(mockHttpClient.get('Schulungstermine/01.01.2040/*/*/*/*'))
           .thenAnswer((_) async => {'error': 'not a list'});
-      final result = await trainingService.fetchSchulungstermine('01.01.2040');
+      final result = await trainingService.fetchSchulungstermine(
+          '01.01.2040', '*', '*', '*',);
       expect(result, isEmpty);
     });
 
     test('returns empty list and logs error on exception', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2050/false'))
+      when(mockHttpClient.get('Schulungstermine/01.01.2050/*/*/*/*'))
           .thenThrow(Exception('Network error'));
-      final result = await trainingService.fetchSchulungstermine('01.01.2050');
+      final result = await trainingService.fetchSchulungstermine(
+          '01.01.2050', '*', '*', '*',);
       expect(result, isEmpty);
     });
 
@@ -1270,9 +1276,10 @@ void main() {
           'ANGEMELDETETEILNEHMER': 0,
         },
       ];
-      when(mockHttpClient.get('Schulungstermine/01.01.2099/false'))
+      when(mockHttpClient.get('Schulungstermine/01.01.2099/*/*/*/*'))
           .thenAnswer((_) async => testResponse);
-      final result = await trainingService.fetchSchulungstermine('01.01.2099');
+      final result = await trainingService.fetchSchulungstermine(
+          '01.01.2099', '*', '*', '*',);
       final ids = result.map((e) => e.schulungsterminId).toList();
       expect(ids, containsAll([1, 2]));
       expect(ids, isNot(contains(3)));
