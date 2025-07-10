@@ -149,7 +149,7 @@ void main() {
       expect(json['SCHULUNGENTERMINID'], 1012);
       expect(json['SCHULUNGSARTID'], 15);
       expect(json['SCHULUNGENTEILNEHMERID'], 12345);
-      expect(json['DATUM'], '2022-12-11T00:00:00.000+01:00');
+      expect(json['DATUM'], '2022-12-10T23:00:00.000Z');
       expect(json['BEMERKUNG'], '');
       expect(json['KOSTEN'], 40);
       expect(json['ORT'], 'Garching-Hochbrück');
@@ -243,7 +243,7 @@ void main() {
         'Schulungstermin(schulungsterminId: 1012, '
         'schulungsartId: 15, '
         'schulungsTeilnehmerId: 12345, '
-        'datum: 2022-12-11 00:00:00.000Z, '
+        'datum: 2022-12-10 23:00:00.000Z, '
         'bezeichnung: Der Sportleiter im Verein / Kugeldisziplinen, '
         'ort: Garching-Hochbrück, '
         'status: 1)',

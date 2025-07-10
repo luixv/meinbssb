@@ -90,6 +90,7 @@ class AppInitializer {
       httpClient: httpClient,
       cacheService: cacheService,
       networkService: networkService,
+      configService: configService,
     );
 
     userService = UserService(

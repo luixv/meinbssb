@@ -119,9 +119,11 @@ void main() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FontSizeProvider>(
-            create: (_) => TestFontSizeProvider(),),
+          create: (_) => TestFontSizeProvider(),
+        ),
         ChangeNotifierProvider<ThemeProvider>(
-            create: (_) => TestThemeProvider(),),
+          create: (_) => TestThemeProvider(),
+        ),
         Provider<ApiService>.value(value: apiService),
         Provider<ConfigService>.value(value: ConfigService.instance),
       ],
@@ -140,14 +142,17 @@ void main() {
     );
   }
 
-  testWidgets('shows loading indicator while waiting',
-      (WidgetTester tester) async {
-    final apiService = MockApiService();
-    await tester.pumpWidget(createTestWidget(apiService: apiService));
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    // Skipped due to pending timer from a widget/provider (see test log)
-    // To fix, refactor providers/widgets to avoid timers, or use a custom FakeAsync zone.
-  }, skip: true,);
+  testWidgets(
+    'shows loading indicator while waiting',
+    (WidgetTester tester) async {
+      final apiService = MockApiService();
+      await tester.pumpWidget(createTestWidget(apiService: apiService));
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Skipped due to pending timer from a widget/provider (see test log)
+      // To fix, refactor providers/widgets to avoid timers, or use a custom FakeAsync zone.
+    },
+    skip: true,
+  );
 
   testWidgets('shows error message on error', (WidgetTester tester) async {
     final apiService = MockApiService(shouldThrow: true);
@@ -276,6 +281,7 @@ class DummyTrainingService extends TrainingService {
           httpClient: DummyHttpClient(),
           cacheService: DummyCacheService(),
           networkService: DummyNetworkService(),
+          configService: ConfigService.instance,
         );
 }
 

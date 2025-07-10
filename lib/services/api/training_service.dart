@@ -18,13 +18,16 @@ class TrainingService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ConfigService configService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
-        _networkService = networkService;
+        _networkService = networkService,
+        _configService = configService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
+  final ConfigService _configService;
 
   Future<List<Schulungstermin>> fetchAngemeldeteSchulungen(
     int personId,
@@ -132,7 +135,7 @@ class TrainingService {
         'endpoint $endpoint',
       );
 
-      final config = ConfigService.instance;
+      final config = _configService;
       final protocol = config.getString('apiProtocol') ?? 'https';
       final server = config.getString('api1BaseServer') ?? '';
       final port = config.getString('api1Port') ?? '';
@@ -145,42 +148,25 @@ class TrainingService {
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
 
-      final now = DateTime.now();
       final mappedTermine = _mapSchulungstermineResponseToTermine(response);
       LoggerService.logInfo(
         'Mapped ${mappedTermine.length} termine from response',
       );
 
       final termine = mappedTermine.where((t) {
-        LoggerService.logInfo(
-          'Checking termine ${t.schulungsterminId}: status=${t.status}, webVeroeffentlichenAm="${t.webVeroeffentlichenAm}"',
-        );
-
         // Status darf NICHT 2 sein!
         if (t.status == 2) {
-          LoggerService.logInfo(
-            'Filtered out termine ${t.schulungsterminId} due to status == 2',
-          );
           return false;
         }
         // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
         if (t.webVeroeffentlichenAm.isEmpty) {
-          LoggerService.logInfo(
-            'Including termine ${t.schulungsterminId} due to empty webVeroeffentlichenAm',
-          );
           return true;
         }
         try {
           final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
-          final shouldInclude = now.isAfter(veroeff);
-          LoggerService.logInfo(
-            'Termine ${t.schulungsterminId}: now=$now, veroeff=$veroeff, shouldInclude=$shouldInclude',
-          );
+          final shouldInclude = DateTime.now().isAfter(veroeff);
           return shouldInclude;
         } catch (e) {
-          LoggerService.logInfo(
-            'Filtered out termine ${t.schulungsterminId} due to date parsing error: $e',
-          );
           return false;
         }
       }).toList();
