@@ -939,7 +939,7 @@ void main() {
         ),
       ).thenAnswer((invocation) async {
         throw Exception(
-              invocation.positionalArguments[0],
+          invocation.positionalArguments[0],
         );
       });
       // Mock configService for fetchSchulungstermine
@@ -1111,7 +1111,13 @@ void main() {
         'BEZEICHNUNG': 'Test Schulung',
         'ANGEMELDETETEILNEHMER': 10,
       };
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID',
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
           .thenAnswer((_) async => mockResponse);
 
       final result =
@@ -1126,7 +1132,13 @@ void main() {
 
     test('returns null for invalid response', () async {
       const schulungenTerminID = '99';
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID',
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
           .thenAnswer((_) async => 'unexpected');
 
       final result =
