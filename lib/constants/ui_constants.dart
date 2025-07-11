@@ -352,6 +352,12 @@ class UIConstants {
   static const double dialogFabBottom = 80.0;
   static const double dialogFabDeleteOffset = 56.0;
 
+  /// Extra offset for vertically stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
+  static const double dialogFabVerticalOffset = 112.0;
+
+  /// Extra offset for horizontally stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
+  static const double dialogFabHorizontalOffset = 64.0;
+
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =
       Colors.red; // For gesperrt/locked state

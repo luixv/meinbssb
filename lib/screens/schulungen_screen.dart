@@ -14,6 +14,7 @@ import '/services/core/email_service.dart';
 import 'agb_screen.dart';
 import '/services/core/config_service.dart';
 import 'package:flutter_html/flutter_html.dart';
+import '../widgets/dialog_fabs.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -449,88 +450,98 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      bottom: UIConstants.dialogFabBottom +
-                          UIConstants.dialogFabDeleteOffset,
-                      right: UIConstants.dialogFabRight,
-                      child: FloatingActionButton(
-                        heroTag: 'bookingDialogCancelFab',
-                        mini: true,
-                        tooltip: 'Abbrechen',
-                        backgroundColor: UIConstants.defaultAppColor,
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    // Replace DialogFABs with a Positioned DialogFABs inside the Stack
                     Positioned(
                       bottom: UIConstants.dialogFabBottom,
                       right: UIConstants.dialogFabRight,
-                      child: FloatingActionButton(
-                        heroTag: 'bookingDialogOkFab',
-                        mini: true,
-                        tooltip: 'Buchen',
-                        backgroundColor: (agbChecked &&
-                                lastschriftChecked &&
-                                kontoinhaberController.text.trim().isNotEmpty &&
-                                ibanController.text.trim().isNotEmpty &&
-                                (!_isBicRequired(ibanController.text.trim()) ||
-                                    bicController.text.trim().isNotEmpty))
-                            ? UIConstants.defaultAppColor
-                            : UIConstants.cancelButtonBackground,
-                        onPressed: (agbChecked &&
-                                lastschriftChecked &&
-                                kontoinhaberController.text.trim().isNotEmpty &&
-                                ibanController.text.trim().isNotEmpty &&
-                                (!_isBicRequired(ibanController.text.trim()) ||
-                                    bicController.text.trim().isNotEmpty))
-                            ? () async {
-                                if (formKey.currentState != null &&
-                                    formKey.currentState!.validate()) {
-                                  Navigator.of(context).pop();
-                                  final cacheService =
-                                      Provider.of<CacheService>(
-                                    parentContext,
-                                    listen: false,
-                                  );
-                                  final String email = await cacheService
-                                          .getString('username') ??
-                                      '';
-                                  final BankData safeBankData = bankData ??
-                                      BankData(
-                                        id: 0,
-                                        webloginId: user?.webLoginId ?? 0,
-                                        kontoinhaber: '',
-                                        iban: '',
-                                        bic: '',
-                                        mandatSeq: 2,
-                                        bankName: '',
-                                        mandatNr: '',
-                                        mandatName: '',
+                      child: DialogFABs(
+                        alignment: MainAxisAlignment.end,
+                        children: [
+                          FloatingActionButton(
+                            heroTag: 'bookingDialogCancelFab',
+                            mini: true,
+                            tooltip: 'Abbrechen',
+                            backgroundColor: UIConstants.defaultAppColor,
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                          ),
+                          FloatingActionButton(
+                            heroTag: 'bookingDialogOkFab',
+                            mini: true,
+                            tooltip: 'Buchen',
+                            backgroundColor: (agbChecked &&
+                                    lastschriftChecked &&
+                                    kontoinhaberController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    ibanController.text.trim().isNotEmpty &&
+                                    (!_isBicRequired(
+                                          ibanController.text.trim(),
+                                        ) ||
+                                        bicController.text.trim().isNotEmpty))
+                                ? UIConstants.defaultAppColor
+                                : UIConstants.cancelButtonBackground,
+                            onPressed: (agbChecked &&
+                                    lastschriftChecked &&
+                                    kontoinhaberController.text
+                                        .trim()
+                                        .isNotEmpty &&
+                                    ibanController.text.trim().isNotEmpty &&
+                                    (!_isBicRequired(
+                                          ibanController.text.trim(),
+                                        ) ||
+                                        bicController.text.trim().isNotEmpty))
+                                ? () async {
+                                    if (formKey.currentState != null &&
+                                        formKey.currentState!.validate()) {
+                                      Navigator.of(context).pop();
+                                      final cacheService =
+                                          Provider.of<CacheService>(
+                                        parentContext,
+                                        listen: false,
                                       );
-                                  Future.delayed(Duration.zero, () {
-                                    if (!parentContext.mounted) return;
-                                    _showRegisterAnotherPersonDialog(
-                                      parentContext,
-                                      parentContext,
-                                      schulungsTermin,
-                                      registeredPersons,
-                                      safeBankData,
-                                      prefillUser: user?.copyWith(
-                                        telefon: telefonController.text,
-                                      ),
-                                      prefillEmail: email,
-                                    );
-                                  });
-                                }
-                              }
-                            : null,
-                        child: const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                        ),
+                                      final String email = await cacheService
+                                              .getString('username') ??
+                                          '';
+                                      final BankData safeBankData = bankData ??
+                                          BankData(
+                                            id: 0,
+                                            webloginId: user?.webLoginId ?? 0,
+                                            kontoinhaber: '',
+                                            iban: '',
+                                            bic: '',
+                                            mandatSeq: 2,
+                                            bankName: '',
+                                            mandatNr: '',
+                                            mandatName: '',
+                                          );
+                                      Future.delayed(Duration.zero, () {
+                                        if (!parentContext.mounted) return;
+                                        _showRegisterAnotherPersonDialog(
+                                          parentContext,
+                                          parentContext,
+                                          schulungsTermin,
+                                          registeredPersons,
+                                          safeBankData,
+                                          prefillUser: user?.copyWith(
+                                            telefon: telefonController.text,
+                                          ),
+                                          prefillEmail: email,
+                                        );
+                                      });
+                                    }
+                                  }
+                                : null,
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                        // Remove padding from DialogFABs, as Positioned handles placement
                       ),
                     ),
                   ],
@@ -847,146 +858,133 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           }
         }
 
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 970,
-              maxHeight: 600,
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Person anmelden',
+              style: UIStyles.dialogTitleStyle,
             ),
-            child: AlertDialog(
-              backgroundColor: UIConstants.backgroundColor,
-              title: const Center(
-                child: ScaledText(
-                  'Person anmelden',
-                  style: UIStyles.dialogTitleStyle,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: UIConstants.whiteColor,
+                  border: Border.all(color: UIConstants.mydarkGreyColor),
+                  borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+                ),
+                padding: UIConstants.defaultPadding,
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: vornameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Vorname',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Vorname ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      TextFormField(
+                        controller: nachnameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nachname',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Nachname ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      TextFormField(
+                        controller: passnummerController,
+                        decoration: const InputDecoration(
+                          labelText: 'Passnummer',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Passnummer ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'E-Mail',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'E-Mail ist erforderlich';
+                          }
+                          if (!isEmailValid(value.trim())) {
+                            return 'Ungültige E-Mail-Adresse';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      TextFormField(
+                        controller: telefonnummerController,
+                        decoration: const InputDecoration(
+                          labelText: 'Telefonnummer',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Telefonnummer ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              content: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: UIConstants.whiteColor,
-                        border: Border.all(color: UIConstants.mydarkGreyColor),
-                        borderRadius:
-                            BorderRadius.circular(UIConstants.cornerRadius),
-                      ),
-                      padding: UIConstants.defaultPadding,
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: vornameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Vorname',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Vorname ist erforderlich';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            TextFormField(
-                              controller: nachnameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Nachname',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Nachname ist erforderlich';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            TextFormField(
-                              controller: passnummerController,
-                              decoration: const InputDecoration(
-                                labelText: 'Passnummer',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Passnummer ist erforderlich';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            TextFormField(
-                              controller: emailController,
-                              decoration: const InputDecoration(
-                                labelText: 'E-Mail',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'E-Mail ist erforderlich';
-                                }
-                                if (!isEmailValid(value.trim())) {
-                                  return 'Ungültige E-Mail-Adresse';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            TextFormField(
-                              controller: telefonnummerController,
-                              decoration: const InputDecoration(
-                                labelText: 'Telefonnummer',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Telefonnummer ist erforderlich';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
+              const SizedBox(height: UIConstants.spacingL),
+              Align(
+                alignment: Alignment.centerRight,
+                child: DialogFABs(
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'cancelRegisterAnotherFab',
+                      mini: true,
+                      tooltip: 'Abbrechen',
+                      backgroundColor: UIConstants.defaultAppColor,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  // FABs positioned over the dialog content
-                  Positioned(
-                    bottom: UIConstants.spacingM,
-                    right: UIConstants.spacingM,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'cancelRegisterAnotherFab',
-                          mini: true,
-                          tooltip: 'Abbrechen',
-                          backgroundColor: UIConstants.defaultAppColor,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: UIConstants.spacingS),
-                        FloatingActionButton(
-                          heroTag: 'okRegisterAnotherFab',
-                          mini: true,
-                          tooltip: 'OK',
-                          backgroundColor: UIConstants.defaultAppColor,
-                          onPressed: submit,
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+                    FloatingActionButton(
+                      heroTag: 'okRegisterAnotherFab',
+                      mini: true,
+                      tooltip: 'OK',
+                      backgroundColor: UIConstants.defaultAppColor,
+                      onPressed: submit,
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         );
       },
