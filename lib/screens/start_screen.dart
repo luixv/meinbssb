@@ -692,9 +692,9 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.spacingM +
-                                            UIConstants.fabSize,
-                                        right: UIConstants.spacingM,
+                                        bottom: UIConstants.dialogFabBottom +
+                                            UIConstants.dialogFabDeleteOffset,
+                                        right: UIConstants.dialogFabRight,
                                         child: FloatingActionButton(
                                           heroTag: 'descDialogDeleteFab$index',
                                           mini: true,
@@ -716,8 +716,8 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.spacingM,
-                                        right: UIConstants.spacingM,
+                                        bottom: UIConstants.dialogFabBottom,
+                                        right: UIConstants.dialogFabRight,
                                         child: FloatingActionButton(
                                           heroTag: 'descDialogCloseFab$index',
                                           mini: true,

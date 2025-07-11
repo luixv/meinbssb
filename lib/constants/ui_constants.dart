@@ -348,8 +348,9 @@ class UIConstants {
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
-  static const double dialogFabBottom = 24.0;
-  static const double dialogFabRight = 24.0;
+  static const double dialogFabRight = 48.0;
+  static const double dialogFabBottom = 80.0;
+  static const double dialogFabDeleteOffset = 56.0;
 
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =
