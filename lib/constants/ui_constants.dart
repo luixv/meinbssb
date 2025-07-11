@@ -352,6 +352,15 @@ class UIConstants {
   static const double dialogFabBottom = 80.0;
   static const double dialogFabDeleteOffset = 56.0;
 
+  /// Compact dialog height for small forms
+  static const double dialogHeightCompact = 140.0;
+
+  /// Tall dialog height for overlapping FABs (e.g., Personen anmelden)
+  static const double dialogHeightTall = 400.0;
+
+  /// Offset for overlapping FABs in dialogs
+  static const double dialogFabOverlapOffset = 24.0;
+
   /// Extra offset for vertically stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
   static const double dialogFabVerticalOffset = 112.0;
 
