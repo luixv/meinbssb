@@ -867,7 +867,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             ),
           ),
           content: SizedBox(
-            height: UIConstants.dialogHeightTall,
+            height: UIConstants.dialogHeightTallShorter,
             child: Stack(
               children: [
                 Container(
@@ -956,8 +956,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: UIConstants.dialogFabOverlapOffset,
-                  right: UIConstants.dialogFabOverlapOffset,
+                  bottom: UIConstants.dialogFabOverlapOffsetBottomDouble,
+                  right: UIConstants.dialogFabOverlapOffsetRightDouble,
                   child: DialogFABs(
                     children: [
                       FloatingActionButton(

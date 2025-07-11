@@ -358,8 +358,31 @@ class UIConstants {
   /// Tall dialog height for overlapping FABs (e.g., Personen anmelden)
   static const double dialogHeightTall = 400.0;
 
+  /// Tall dialog height minus one FAB (for more compact dialogs)
+  static const double dialogHeightTallShorter = dialogHeightTall - 56.0;
+
   /// Offset for overlapping FABs in dialogs
   static const double dialogFabOverlapOffset = 24.0;
+
+  /// Offset for overlapping FABs in dialogs, 10px more to the right
+  static const double dialogFabOverlapOffsetRight =
+      dialogFabOverlapOffset + 10.0;
+
+  /// Offset for overlapping FABs in dialogs, one FAB more to the right
+  static const double dialogFabOverlapOffsetRightMore =
+      dialogFabOverlapOffset + 56.0;
+
+  /// Offset for overlapping FABs in dialogs, one FAB more to the bottom
+  static const double dialogFabOverlapOffsetBottomMore =
+      dialogFabOverlapOffset + 56.0;
+
+  /// Offset for overlapping FABs in dialogs, two FABs more to the right
+  static const double dialogFabOverlapOffsetRightDouble =
+      dialogFabOverlapOffset + 2 * 56.0;
+
+  /// Offset for overlapping FABs in dialogs, two FABs more to the bottom
+  static const double dialogFabOverlapOffsetBottomDouble =
+      dialogFabOverlapOffset + 2 * 56.0;
 
   /// Extra offset for vertically stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
   static const double dialogFabVerticalOffset = 112.0;
