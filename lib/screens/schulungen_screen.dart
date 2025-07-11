@@ -450,97 +450,87 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       ),
                     ),
                     Positioned(
-                      bottom: UIConstants.spacingM,
-                      right: UIConstants.spacingM,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          FloatingActionButton(
-                            heroTag: 'bookingDialogCancelFab',
-                            mini: true,
-                            tooltip: 'Abbrechen',
-                            backgroundColor: UIConstants.defaultAppColor,
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingS),
-                          FloatingActionButton(
-                            heroTag: 'bookingDialogOkFab',
-                            mini: true,
-                            tooltip: 'Buchen',
-                            backgroundColor: (agbChecked &&
-                                    lastschriftChecked &&
-                                    kontoinhaberController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(
-                                          ibanController.text.trim(),
-                                        ) ||
-                                        bicController.text.trim().isNotEmpty))
-                                ? UIConstants.defaultAppColor
-                                : UIConstants.cancelButtonBackground,
-                            onPressed: (agbChecked &&
-                                    lastschriftChecked &&
-                                    kontoinhaberController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(
-                                          ibanController.text.trim(),
-                                        ) ||
-                                        bicController.text.trim().isNotEmpty))
-                                ? () async {
-                                    if (formKey.currentState != null &&
-                                        formKey.currentState!.validate()) {
-                                      Navigator.of(context).pop();
-                                      final cacheService =
-                                          Provider.of<CacheService>(
-                                        parentContext,
-                                        listen: false,
+                      bottom: UIConstants.dialogFabBottom +
+                          UIConstants.dialogFabDeleteOffset,
+                      right: UIConstants.dialogFabRight,
+                      child: FloatingActionButton(
+                        heroTag: 'bookingDialogCancelFab',
+                        mini: true,
+                        tooltip: 'Abbrechen',
+                        backgroundColor: UIConstants.defaultAppColor,
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: UIConstants.dialogFabBottom,
+                      right: UIConstants.dialogFabRight,
+                      child: FloatingActionButton(
+                        heroTag: 'bookingDialogOkFab',
+                        mini: true,
+                        tooltip: 'Buchen',
+                        backgroundColor: (agbChecked &&
+                                lastschriftChecked &&
+                                kontoinhaberController.text.trim().isNotEmpty &&
+                                ibanController.text.trim().isNotEmpty &&
+                                (!_isBicRequired(ibanController.text.trim()) ||
+                                    bicController.text.trim().isNotEmpty))
+                            ? UIConstants.defaultAppColor
+                            : UIConstants.cancelButtonBackground,
+                        onPressed: (agbChecked &&
+                                lastschriftChecked &&
+                                kontoinhaberController.text.trim().isNotEmpty &&
+                                ibanController.text.trim().isNotEmpty &&
+                                (!_isBicRequired(ibanController.text.trim()) ||
+                                    bicController.text.trim().isNotEmpty))
+                            ? () async {
+                                if (formKey.currentState != null &&
+                                    formKey.currentState!.validate()) {
+                                  Navigator.of(context).pop();
+                                  final cacheService =
+                                      Provider.of<CacheService>(
+                                    parentContext,
+                                    listen: false,
+                                  );
+                                  final String email = await cacheService
+                                          .getString('username') ??
+                                      '';
+                                  final BankData safeBankData = bankData ??
+                                      BankData(
+                                        id: 0,
+                                        webloginId: user?.webLoginId ?? 0,
+                                        kontoinhaber: '',
+                                        iban: '',
+                                        bic: '',
+                                        mandatSeq: 2,
+                                        bankName: '',
+                                        mandatNr: '',
+                                        mandatName: '',
                                       );
-                                      final String email = await cacheService
-                                              .getString('username') ??
-                                          '';
-                                      final BankData safeBankData = bankData ??
-                                          BankData(
-                                            id: 0,
-                                            webloginId: user?.webLoginId ?? 0,
-                                            kontoinhaber: '',
-                                            iban: '',
-                                            bic: '',
-                                            mandatSeq: 2,
-                                            bankName: '',
-                                            mandatNr: '',
-                                            mandatName: '',
-                                          );
-                                      Future.delayed(Duration.zero, () {
-                                        if (!parentContext.mounted) return;
-                                        _showRegisterAnotherPersonDialog(
-                                          parentContext,
-                                          parentContext,
-                                          schulungsTermin,
-                                          registeredPersons,
-                                          safeBankData,
-                                          prefillUser: user?.copyWith(
-                                            telefon: telefonController.text,
-                                          ),
-                                          prefillEmail: email,
-                                        );
-                                      });
-                                    }
-                                  }
-                                : null,
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                                  Future.delayed(Duration.zero, () {
+                                    if (!parentContext.mounted) return;
+                                    _showRegisterAnotherPersonDialog(
+                                      parentContext,
+                                      parentContext,
+                                      schulungsTermin,
+                                      registeredPersons,
+                                      safeBankData,
+                                      prefillUser: user?.copyWith(
+                                        telefon: telefonController.text,
+                                      ),
+                                      prefillEmail: email,
+                                    );
+                                  });
+                                }
+                              }
+                            : null,
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
@@ -1491,61 +1481,55 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               ),
                                             ),
                                             Positioned(
-                                              bottom: UIConstants.spacingM,
-                                              right: UIConstants.spacingM,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  FloatingActionButton(
-                                                    heroTag:
-                                                        'descDialogCloseFab$index',
-                                                    mini: true,
-                                                    tooltip: 'Schließen',
-                                                    backgroundColor: UIConstants
+                                              bottom: UIConstants
+                                                      .dialogFabBottom +
+                                                  UIConstants
+                                                      .dialogFabDeleteOffset,
+                                              right: UIConstants.dialogFabRight,
+                                              child: FloatingActionButton(
+                                                heroTag:
+                                                    'descDialogCloseFab$index',
+                                                mini: true,
+                                                tooltip: 'Schließen',
+                                                backgroundColor:
+                                                    UIConstants.defaultAppColor,
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              bottom:
+                                                  UIConstants.dialogFabBottom,
+                                              right: UIConstants.dialogFabRight,
+                                              child: FloatingActionButton(
+                                                heroTag:
+                                                    'descDialogBookFab$index',
+                                                mini: true,
+                                                tooltip: 'Buchen',
+                                                backgroundColor: t
+                                                        .anmeldungenGesperrt
+                                                    ? UIConstants
+                                                        .cancelButtonBackground
+                                                    : UIConstants
                                                         .defaultAppColor,
-                                                    onPressed: () =>
+                                                onPressed: t.anmeldungenGesperrt
+                                                    ? null
+                                                    : () {
                                                         Navigator.of(context)
-                                                            .pop(),
-                                                    child: const Icon(
-                                                      Icons.close,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingS,
-                                                  ),
-                                                  FloatingActionButton(
-                                                    heroTag:
-                                                        'descDialogBookFab$index',
-                                                    mini: true,
-                                                    tooltip: 'Buchen',
-                                                    backgroundColor: t
-                                                            .anmeldungenGesperrt
-                                                        ? UIConstants
-                                                            .cancelButtonBackground
-                                                        : UIConstants
-                                                            .defaultAppColor,
-                                                    onPressed:
-                                                        t.anmeldungenGesperrt
-                                                            ? null
-                                                            : () {
-                                                                Navigator.of(
-                                                                  context,
-                                                                ).pop();
-                                                                _showBookingDialog(
-                                                                  t,
-                                                                  registeredPersons: [],
-                                                                );
-                                                              },
-                                                    child: const Icon(
-                                                      Icons.event_available,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
+                                                            .pop();
+                                                        _showBookingDialog(
+                                                          t,
+                                                          registeredPersons: [],
+                                                        );
+                                                      },
+                                                child: const Icon(
+                                                  Icons.event_available,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ],
