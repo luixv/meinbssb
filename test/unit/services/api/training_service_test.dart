@@ -1116,9 +1116,12 @@ void main() {
           .thenReturn('example.com');
       when(mockConfigService.getString('api1Port')).thenReturn('1234');
       when(mockConfigService.getString('api1BasePath')).thenReturn('api');
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID',
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => mockResponse);
+      when(
+        mockHttpClient.get(
+          'Schulungstermin/$schulungenTerminID',
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final result =
           await trainingService.fetchSchulungstermin(schulungenTerminID);
@@ -1137,9 +1140,12 @@ void main() {
           .thenReturn('example.com');
       when(mockConfigService.getString('api1Port')).thenReturn('1234');
       when(mockConfigService.getString('api1BasePath')).thenReturn('api');
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID',
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => 'unexpected');
+      when(
+        mockHttpClient.get(
+          'Schulungstermin/$schulungenTerminID',
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => 'unexpected');
 
       final result =
           await trainingService.fetchSchulungstermin(schulungenTerminID);

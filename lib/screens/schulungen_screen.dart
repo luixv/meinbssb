@@ -332,10 +332,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             decoration: UIStyles
                                                 .formInputDecoration
                                                 .copyWith(
-                                                  labelText: _isBicRequired(ibanController.text.trim()) 
-                                                      ? 'BIC *' 
-                                                      : 'BIC (optional)',
-                                                ),
+                                              labelText: _isBicRequired(
+                                                ibanController.text.trim(),
+                                              )
+                                                  ? 'BIC *'
+                                                  : 'BIC (optional)',
+                                            ),
                                             validator: (value) {
                                               final apiService =
                                                   Provider.of<ApiService>(
@@ -343,12 +345,18 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 listen: false,
                                               );
                                               // BIC is required only if IBAN doesn't start with DE
-                                              final iban = ibanController.text.trim().toUpperCase();
-                                              if (!iban.startsWith('DE') && (value == null || value.trim().isEmpty)) {
+                                              final iban = ibanController.text
+                                                  .trim()
+                                                  .toUpperCase();
+                                              if (!iban.startsWith('DE') &&
+                                                  (value == null ||
+                                                      value.trim().isEmpty)) {
                                                 return 'BIC ist erforderlich für nicht-deutsche IBANs';
                                               }
-                                              if (value != null && value.trim().isNotEmpty) {
-                                                final bicError = apiService.validateBIC(value);
+                                              if (value != null &&
+                                                  value.trim().isNotEmpty) {
+                                                final bicError = apiService
+                                                    .validateBIC(value);
                                                 if (bicError != null) {
                                                   return bicError;
                                                 }
@@ -470,7 +478,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         .trim()
                                         .isNotEmpty &&
                                     ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(ibanController.text.trim()) || bicController.text.trim().isNotEmpty))
+                                    (!_isBicRequired(
+                                          ibanController.text.trim(),
+                                        ) ||
+                                        bicController.text.trim().isNotEmpty))
                                 ? UIConstants.defaultAppColor
                                 : UIConstants.cancelButtonBackground,
                             onPressed: (agbChecked &&
@@ -479,7 +490,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         .trim()
                                         .isNotEmpty &&
                                     ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(ibanController.text.trim()) || bicController.text.trim().isNotEmpty))
+                                    (!_isBicRequired(
+                                          ibanController.text.trim(),
+                                        ) ||
+                                        bicController.text.trim().isNotEmpty))
                                 ? () async {
                                     if (formKey.currentState != null &&
                                         formKey.currentState!.validate()) {
