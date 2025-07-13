@@ -858,134 +858,178 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           }
         }
 
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Person anmelden',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: SizedBox(
-            height: UIConstants.dialogHeightTallShorter,
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: UIConstants.whiteColor,
-                    border: Border.all(color: UIConstants.mydarkGreyColor),
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.cornerRadius),
-                  ),
-                  padding: UIConstants.defaultPadding,
-                  child: Form(
-                    key: formKey,
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(UIConstants.spacingXL),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 300),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: UIConstants.backgroundColor,
+                      borderRadius:
+                          BorderRadius.circular(UIConstants.cornerRadius),
+                    ),
+                    padding: const EdgeInsets.only(
+                      top: UIConstants.spacingXL,
+                      left: UIConstants.spacingM,
+                      right: UIConstants.spacingM,
+                      bottom: UIConstants.spacingXL,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextFormField(
-                          controller: vornameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Vorname',
+                        const Center(
+                          child: ScaledText(
+                            'Person anmelden',
+                            style: UIStyles.dialogTitleStyle,
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Vorname ist erforderlich';
-                            }
-                            return null;
-                          },
                         ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: nachnameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nachname',
+                        const SizedBox(height: UIConstants.spacingL),
+                        Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 240),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: UIConstants.whiteColor,
+                                border: Border.all(
+                                    color: UIConstants.mydarkGreyColor,),
+                                borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,),
+                              ),
+                              padding: const EdgeInsets.only(
+                                left: UIConstants.spacingM,
+                                right: UIConstants.spacingM,
+                                top: UIConstants.spacingM,
+                                bottom: UIConstants.spacingM,
+                              ),
+                              child: Form(
+                                key: formKey,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    TextFormField(
+                                      controller: vornameController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Vorname',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return 'Vorname ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                        height: UIConstants.spacingM,),
+                                    TextFormField(
+                                      controller: nachnameController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nachname',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return 'Nachname ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                        height: UIConstants.spacingM,),
+                                    TextFormField(
+                                      controller: passnummerController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Passnummer',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return 'Passnummer ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                        height: UIConstants.spacingM,),
+                                    TextFormField(
+                                      controller: emailController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'E-Mail',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return 'E-Mail ist erforderlich';
+                                        }
+                                        if (!isEmailValid(value.trim())) {
+                                          return 'Ungültige E-Mail-Adresse';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                        height: UIConstants.spacingM,),
+                                    TextFormField(
+                                      controller: telefonnummerController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Telefonnummer',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return 'Telefonnummer ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Nachname ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: passnummerController,
-                          decoration: const InputDecoration(
-                            labelText: 'Passnummer',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Passnummer ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'E-Mail',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'E-Mail ist erforderlich';
-                            }
-                            if (!isEmailValid(value.trim())) {
-                              return 'Ungültige E-Mail-Adresse';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        TextFormField(
-                          controller: telefonnummerController,
-                          decoration: const InputDecoration(
-                            labelText: 'Telefonnummer',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Telefonnummer ist erforderlich';
-                            }
-                            return null;
-                          },
                         ),
                       ],
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: DialogFABs(
-                    children: [
-                      FloatingActionButton(
-                        heroTag: 'cancelRegisterAnotherFab',
-                        mini: true,
-                        tooltip: 'Abbrechen',
-                        backgroundColor: UIConstants.defaultAppColor,
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
+                  Positioned(
+                    bottom: UIConstants.dialogFabTightBottom,
+                    right: UIConstants.dialogFabTightRight,
+                    child: DialogFABs(
+                      children: [
+                        FloatingActionButton(
+                          heroTag: 'cancelRegisterAnotherFab',
+                          mini: true,
+                          tooltip: 'Abbrechen',
+                          backgroundColor: UIConstants.defaultAppColor,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      FloatingActionButton(
-                        heroTag: 'okRegisterAnotherFab',
-                        mini: true,
-                        tooltip: 'OK',
-                        backgroundColor: UIConstants.defaultAppColor,
-                        onPressed: submit,
-                        child: const Icon(
-                          Icons.check,
-                          color: Colors.white,
+                        FloatingActionButton(
+                          heroTag: 'okRegisterAnotherFab',
+                          mini: true,
+                          tooltip: 'OK',
+                          backgroundColor: UIConstants.defaultAppColor,
+                          onPressed: submit,
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
