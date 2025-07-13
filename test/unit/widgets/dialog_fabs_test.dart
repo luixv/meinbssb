@@ -25,11 +25,16 @@ void main() {
     final columnFinder = find.byType(Column);
     expect(columnFinder, findsOneWidget);
 
-    // Optionally, check that the FABs are children of the Column
+    // Check the structure of the Column
     final columnWidget = tester.widget<Column>(columnFinder);
-    expect(columnWidget.children.whereType<FloatingActionButton>().length, 0,
-        reason:
-            'FABs are wrapped in SizedBox, so direct children are not FABs',);
-    // The main test is that the Column exists and both FABs are present
+    expect(columnWidget.children.length, 3, reason: 'Should have 2 FABs and 1 spacing SizedBox');
+    
+    // Verify the spacing between FABs
+    final spacingWidget = columnWidget.children[1];
+    expect(spacingWidget, isA<SizedBox>());
+    expect((spacingWidget as SizedBox).height, equals(16));
+    
+    // Verify the FABs are present
+    expect(find.byType(FloatingActionButton), findsNWidgets(2));
   });
 }
