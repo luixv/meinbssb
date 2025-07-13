@@ -348,8 +348,14 @@ class UIConstants {
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
+
+  /// Standard margin for FABs in most dialogs
   static const double dialogFabRight = 48.0;
   static const double dialogFabBottom = 80.0;
+
+  /// Tight margin for FABs in special dialogs (e.g., Personen anmelden)
+  static const double dialogFabTightRight = 16.0;
+  static const double dialogFabTightBottom = 16.0;
   static const double dialogFabDeleteOffset = 56.0;
 
   /// Compact dialog height for small forms
@@ -389,6 +395,14 @@ class UIConstants {
 
   /// Extra offset for horizontally stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
   static const double dialogFabHorizontalOffset = 64.0;
+
+  /// Offset for overlapping FABs in dialogs, three FABs more to the right
+  static const double dialogFabOverlapOffsetRightTriple =
+      dialogFabOverlapOffset + 3 * 56.0;
+
+  /// Offset for overlapping FABs in dialogs, three FABs more to the bottom
+  static const double dialogFabOverlapOffsetBottomTriple =
+      dialogFabOverlapOffset + 3 * 56.0;
 
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =

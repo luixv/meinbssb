@@ -956,8 +956,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: UIConstants.dialogFabOverlapOffsetBottomDouble,
-                  right: UIConstants.dialogFabOverlapOffsetRightDouble,
+                  bottom: 0,
+                  right: 0,
                   child: DialogFABs(
                     children: [
                       FloatingActionButton(
