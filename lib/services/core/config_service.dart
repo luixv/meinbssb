@@ -76,4 +76,20 @@ class ConfigService {
     }
     return null;
   }
+
+  static String buildApiBaseUrl(
+    ConfigService config, {
+    String protocolKey = 'apiProtocol',
+    String serverKey = 'api1BaseServer',
+    String portKey = 'api1Port',
+    String pathKey = 'api1BasePath',
+  }) {
+    final protocol = config.getString(protocolKey) ?? 'https';
+    final server = config.getString(serverKey) ?? '';
+    final port = config.getString(portKey) ?? '';
+    final path = config.getString(pathKey) ?? '';
+    return port.isNotEmpty
+        ? '$protocol://$server:$port/$path'
+        : '$protocol://$server/$path';
+  }
 }

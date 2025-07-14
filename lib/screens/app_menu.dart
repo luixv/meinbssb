@@ -73,6 +73,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: UIConstants.drawerWidth, // Use constant for maintainability
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

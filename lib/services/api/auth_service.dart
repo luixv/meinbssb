@@ -17,15 +17,18 @@ class AuthService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ConfigService configService,
     FlutterSecureStorage? secureStorage,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
         _networkService = networkService,
+        _configService = configService,
         _secureStorage = secureStorage ?? const FlutterSecureStorage();
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
+  final ConfigService _configService;
   final FlutterSecureStorage
       _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
 
@@ -152,10 +155,16 @@ Ergebnis der Abfrage:
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _httpClient.getWithBody('LoginMyBSSB', {
-        'Email': email,
-        'Passwort': password,
-      });
+      final baseUrl = ConfigService.buildApiBaseUrl(_configService);
+
+      final response = await _httpClient.post(
+        'LoginMyBSSB',
+        {
+          'Email': email,
+          'Passwort': password,
+        },
+        overrideBaseUrl: baseUrl,
+      );
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
@@ -358,15 +367,9 @@ Ergebnis der Abfrage:
   /// Fetches the login email for a given passnummer using a special base URL from config.json.
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
-      final config = ConfigService.instance;
-      final protocol = config.getString('apiProtocol') ?? 'https';
-      final server = config.getString('api1BaseServer') ?? '';
-      final port = config.getString('api1Port') ?? '';
-      final path = config.getString('api1BasePath') ?? '';
+
       // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl = port.isNotEmpty
-          ? '$protocol://$server:$port/$path'
-          : '$protocol://$server/$path';
+      final baseUrl = ConfigService.buildApiBaseUrl(_configService);
       final endpoint = 'FindeLoginMail/$passnummer';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);

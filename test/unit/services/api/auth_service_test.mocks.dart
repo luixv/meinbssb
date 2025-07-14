@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i6;
 import 'package:flutter/foundation.dart' as _i9;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:meinbssb/services/core/cache_service.dart' as _i7;
+import 'package:meinbssb/services/core/config_service.dart' as _i10;
 import 'package:meinbssb/services/core/http_client.dart' as _i4;
 import 'package:meinbssb/services/core/network_service.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
@@ -196,24 +197,6 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
         Invocation.method(
           #get,
           [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
-
-  @override
-  _i2.Future<dynamic> getWithBody(
-    String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getWithBody,
-          [
-            endpoint,
-            body,
-          ],
           {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i2.Future<dynamic>.value(),
@@ -810,4 +793,39 @@ class MockFlutterSecureStorage extends _i1.Mock
         ),
         returnValue: _i2.Future<bool?>.value(),
       ) as _i2.Future<bool?>);
+}
+
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i10.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
 }

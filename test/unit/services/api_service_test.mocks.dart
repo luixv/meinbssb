@@ -745,11 +745,20 @@ class MockTrainingService extends _i1.Mock implements _i17.TrainingService {
 
   @override
   _i2.Future<List<_i18.Schulungstermin>> fetchSchulungstermine(
-          String? abDatum) =>
+    String? abDatum,
+    String? webGruppe,
+    String? bezirk,
+    String? fuerVerlaengerung,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
-          [abDatum],
+          [
+            abDatum,
+            webGruppe,
+            bezirk,
+            fuerVerlaengerung,
+          ],
         ),
         returnValue: _i2.Future<List<_i18.Schulungstermin>>.value(
             <_i18.Schulungstermin>[]),

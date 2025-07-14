@@ -359,7 +359,7 @@ class StylesScreen extends StatelessWidget {
 
   Widget _buildIconExample(IconData icon, String description) {
     return Container(
-      width: 200,
+      width: UIConstants.stylesPreviewWidth,
       padding: const EdgeInsets.all(UIConstants.spacingS),
       decoration: BoxDecoration(
         border: Border.all(color: UIConstants.mydarkGreyColor),

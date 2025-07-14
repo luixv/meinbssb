@@ -426,11 +426,20 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
 
   @override
   _i3.Future<List<_i14.Schulungstermin>> fetchSchulungstermine(
-          String? abDatum) =>
+    String? abDatum,
+    String? webGruppe,
+    String? bezirk,
+    String? fuerVerlaengerung,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
-          [abDatum],
+          [
+            abDatum,
+            webGruppe,
+            bezirk,
+            fuerVerlaengerung,
+          ],
         ),
         returnValue: _i3.Future<List<_i14.Schulungstermin>>.value(
             <_i14.Schulungstermin>[]),
@@ -1129,24 +1138,6 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
         Invocation.method(
           #get,
           [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i3.Future<dynamic>.value(),
-      ) as _i3.Future<dynamic>);
-
-  @override
-  _i3.Future<dynamic> getWithBody(
-    String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getWithBody,
-          [
-            endpoint,
-            body,
-          ],
           {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i3.Future<dynamic>.value(),

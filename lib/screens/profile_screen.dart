@@ -180,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
           semanticLabel: 'Weiter',
         ),
         onTap: onTap,
-        minLeadingWidth: 48,
+        minLeadingWidth: UIConstants.defaultIconWidth,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: UIConstants.spacingM,
           vertical: UIConstants.spacingS,
