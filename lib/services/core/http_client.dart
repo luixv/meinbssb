@@ -212,13 +212,16 @@ class HttpClient {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body,
-      {String? overrideBaseUrl,}) async {
+  Future<dynamic> post(
+    String endpoint,
+    Map<String, dynamic> body, {
+    String? overrideBaseUrl,
+  }) async {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
-    LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
-    LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    //LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
+    //LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'POST',
@@ -230,13 +233,16 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> put(String endpoint, Map<String, dynamic> body,
-      {String? overrideBaseUrl,}) async {
+  Future<dynamic> put(
+    String endpoint,
+    Map<String, dynamic> body, {
+    String? overrideBaseUrl,
+  }) async {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
-    LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
-    LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    //LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
+    //LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'PUT',
@@ -248,15 +254,18 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> delete(String endpoint,
-      {Map<String, dynamic>? body, String? overrideBaseUrl,}) async {
+  Future<dynamic> delete(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    String? overrideBaseUrl,
+  }) async {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = body != null ? jsonEncode(body) : null;
 
-    LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
-    if (requestBody != null) {
-      LoggerService.logInfo('HttpClient: Request body: $requestBody');
-    }
+    //LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
+    //if (requestBody != null) {
+    //   LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    //}
 
     return _makeRequest(
       'DELETE',
