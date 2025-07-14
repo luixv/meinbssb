@@ -8,18 +8,24 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:flutter/services.dart';
 
 import 'auth_service_test.mocks.dart';
 
 // Ensure the mock is generated for FlutterSecureStorage
-@GenerateMocks([HttpClient, CacheService, NetworkService, FlutterSecureStorage])
+@GenerateMocks([
+  HttpClient,
+  CacheService,
+  NetworkService,
+  FlutterSecureStorage,
+  ConfigService,
+])
 void main() {
   late AuthService authService;
   late MockHttpClient mockHttpClient;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
+  late MockConfigService mockConfigService;
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -29,12 +35,14 @@ void main() {
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
     mockSecureStorage = MockFlutterSecureStorage();
+    mockConfigService = MockConfigService();
 
     // Create AuthService instance for each test, injecting all mocks
     authService = AuthService(
       httpClient: mockHttpClient,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
+      configService: mockConfigService,
       secureStorage: mockSecureStorage, // INJECT THE MOCK HERE
     );
 
@@ -73,6 +81,21 @@ void main() {
         .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
     when(mockCacheService.getCacheTimestampForKey('webLoginId'))
         .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
+    when(mockHttpClient.get(any)).thenAnswer((_) async => {});
+    when(
+      mockHttpClient.post(
+        any,
+        any,
+        overrideBaseUrl: anyNamed('overrideBaseUrl'),
+      ),
+    ).thenAnswer((_) async => {});
+
+    when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
+    when(mockConfigService.getString('api1BaseServer', any))
+        .thenReturn('webintern.bssb.bayern');
+    when(mockConfigService.getString('api1Port', any)).thenReturn('56400');
+    when(mockConfigService.getString('api1BasePath', any))
+        .thenReturn('rest/zmi/api1');
   });
 
   // No tearDown needed for platform channel handler since it's removed from setUp.
@@ -240,11 +263,12 @@ void main() {
           'ResultMessage': 'Success',
         };
 
-        // Stub the successful online login
+        // Stub the successful online login - AuthService uses POST, not GET
         when(
-          mockHttpClient.getWithBody(
+          mockHttpClient.post(
             'LoginMyBSSB',
-            {'Email': email, 'Passwort': password},
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
         ).thenAnswer((_) async => expectedResponse);
 
@@ -261,9 +285,10 @@ void main() {
         verify(mockCacheService.setCacheTimestampForKey('webLoginId'))
             .called(1);
         verify(
-          mockHttpClient.getWithBody(
+          mockHttpClient.post(
             'LoginMyBSSB',
-            {'Email': email, 'Passwort': password},
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
         ).called(1);
       });
@@ -275,10 +300,13 @@ void main() {
           'ResultType': 0,
           'ResultMessage': 'Invalid credentials',
         };
+
+        // AuthService uses POST, not GET
         when(
-          mockHttpClient.getWithBody(
+          mockHttpClient.post(
             'LoginMyBSSB',
-            {'Email': email, 'Passwort': password},
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
         ).thenAnswer((_) async => expectedResponse);
 
@@ -286,9 +314,10 @@ void main() {
 
         expect(result, expectedResponse);
         verify(
-          mockHttpClient.getWithBody(
+          mockHttpClient.post(
             'LoginMyBSSB',
-            {'Email': email, 'Passwort': password},
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
         ).called(1);
         verifyNever(mockCacheService.setString(any, any));
@@ -307,8 +336,14 @@ void main() {
         const cachedPersonId = 123;
         const cachedWebloginId = 456;
 
-        // Simulate network error for online login
-        when(mockHttpClient.getWithBody(any, any)).thenThrow(
+        // Simulate network error for online login - AuthService uses POST
+        when(
+          mockHttpClient.post(
+            any,
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(
           http.ClientException('Network error during online login'),
         );
 
@@ -337,7 +372,13 @@ void main() {
           'WebLoginID': cachedWebloginId,
         });
 
-        verify(mockHttpClient.getWithBody(any, any)).called(1);
+        verify(
+          mockHttpClient.post(
+            any,
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).called(1);
         verify(mockCacheService.getString('username')).called(1);
         verify(mockSecureStorage.read(key: 'password')).called(1);
       });
@@ -348,8 +389,14 @@ void main() {
         const email = 'test@example.com';
         const password = 'password123';
 
-        when(mockHttpClient.getWithBody(any, any))
-            .thenThrow(Exception('Some other unexpected error'));
+        // AuthService uses POST, not GET
+        when(
+          mockHttpClient.post(
+            any,
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(Exception('Some other unexpected error'));
 
         final result = await authService.login(email, password);
 
@@ -357,7 +404,13 @@ void main() {
           'ResultType': 0,
           'ResultMessage': 'Benutzername oder Passwort ist falsch',
         });
-        verify(mockHttpClient.getWithBody(any, any)).called(1);
+        verify(
+          mockHttpClient.post(
+            any,
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).called(1);
         verifyNever(mockCacheService.getString(any));
       });
     });
@@ -369,7 +422,13 @@ void main() {
 
       setUp(() {
         // Ensure online login attempt throws ClientException to trigger offline flow
-        when(mockHttpClient.getWithBody(any, any)).thenThrow(
+        when(
+          mockHttpClient.post(
+            any,
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(
           http.ClientException('Network error during online login'),
         );
 
@@ -561,14 +620,14 @@ void main() {
       });
 
       test('returns false if list is empty', () async {
-        when(mockHttpClient.get('FindePersonID/NoName/00000000'))
+        when(mockHttpClient.get('FindePersonID2/NoName/00000000'))
             .thenAnswer((_) async => []);
         final result = await authService.findePersonID2('NoName', '00000000');
         expect(result, isFalse);
       });
 
       test('returns false on exception', () async {
-        when(mockHttpClient.get('FindePersonID/Error/99999999'))
+        when(mockHttpClient.get('FindePersonID2/Error/99999999'))
             .thenThrow(Exception('fail'));
         final result = await authService.findePersonID2('Error', '99999999');
         expect(result, isFalse);
@@ -578,22 +637,14 @@ void main() {
     group('fetchLoginEmail', () {
       setUp(() async {
         TestWidgetsFlutterBinding.ensureInitialized();
-        // Mock rootBundle.loadString to return the config JSON
-        const configJson =
-            '{"apiProtocol": "https", "api1BaseServer": "webintern.bssb.bayern", "api1Port": "56400", "api1BasePath": "rest/zmi/api1"}';
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMessageHandler(
-          'flutter/assets',
-          (message) async {
-            final String? key = const StringCodec().decodeMessage(message);
-            if (key == 'assets/config.json') {
-              return const StringCodec().encodeMessage(configJson);
-            }
-            return null;
-          },
-        );
-        ConfigService.reset();
-        await ConfigService.load('assets/config.json');
+        // Stub config values for base URL construction
+        when(mockConfigService.getString('apiProtocol', any))
+            .thenReturn('https');
+        when(mockConfigService.getString('api1BaseServer', any))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('api1Port', any)).thenReturn('56400');
+        when(mockConfigService.getString('api1BasePath', any))
+            .thenReturn('rest/zmi/api1');
       });
 
       test('returns LOGINMAIL when present in response', () async {

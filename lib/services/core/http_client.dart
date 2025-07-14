@@ -16,14 +16,12 @@ class HttpClient {
     required CacheService cacheService,
     http.Client? client,
   })  : _client = client ?? http.Client(),
-        _tokenService = tokenService,
-        _configService = configService;
+        _tokenService = tokenService;
 
   final String baseUrl;
   final int serverTimeout;
   final http.Client _client;
   final TokenService _tokenService;
-  final ConfigService _configService;
 
   // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
@@ -274,36 +272,6 @@ class HttpClient {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
     return _makeRequest('GET', apiUrl, null, null);
-  }
-
-  Future<dynamic> getWithBody(
-    String endpoint,
-    Map<String, dynamic> body, {
-    String? overrideBaseUrl,
-  }) async {
-    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
-    LoggerService.logWarning(
-      'HttpClient: Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
-    );
-
-    final baseIP = _configService.getString('apiBaseServer', 'api') ??
-        'webintern.bssb.bayern';
-    final port = _configService.getString('apiPort', 'api') ?? '56400';
-    final host = '$baseIP:$port';
-
-    final requestBody = jsonEncode(body);
-
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Content-Length': utf8.encode(requestBody).length.toString(),
-      'Host': host,
-    };
-
-    LoggerService.logInfo('HttpClient: Sending GET to: $apiUrl');
-    LoggerService.logInfo('HttpClient: Headers: $headers');
-    LoggerService.logInfo('HttpClient: Body: $requestBody');
-
-    return _makeRequest('GET', apiUrl, headers, requestBody);
   }
 
   Future<Uint8List> getBytes(String endpoint, {String? overrideBaseUrl}) async {

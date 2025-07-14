@@ -1144,24 +1144,6 @@ class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
       ) as _i3.Future<dynamic>);
 
   @override
-  _i3.Future<dynamic> getWithBody(
-    String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getWithBody,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i3.Future<dynamic>.value(),
-      ) as _i3.Future<dynamic>);
-
-  @override
   _i3.Future<_i12.Uint8List> getBytes(
     String? endpoint, {
     String? overrideBaseUrl,

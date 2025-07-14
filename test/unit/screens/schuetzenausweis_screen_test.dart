@@ -300,6 +300,7 @@ class DummyAuthService extends AuthService {
           httpClient: DummyHttpClient(),
           cacheService: DummyCacheService(),
           networkService: DummyNetworkService(),
+          configService: ConfigService.instance,
           secureStorage: null,
         );
 }

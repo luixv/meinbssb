@@ -151,6 +151,7 @@ class UIConstants {
   static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
   // Sizes
+  static const double drawerWidth = 320.0;
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
   static const double fabHeight = 16.0;
@@ -404,6 +405,13 @@ class UIConstants {
   static const double dialogFabOverlapOffsetBottomTriple =
       dialogFabOverlapOffset + 3 * 56.0;
 
+  // Dialog sizing and spacing
+  static const double dialogMaxWidth = 500.0;
+  static const double dialogMaxHeight = 520.0;
+  static const double dialogMinWidth = 300.0;
+  static const double dialogNarrowWidth = 240.0;
+  static const double dialogColumnGap = 40.0;
+
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =
       Colors.red; // For gesperrt/locked state
@@ -419,4 +427,5 @@ class UIConstants {
   static const double drawerHeaderLeftPadding = 16.0;
   static const double menuTitleFontSize = 24.0;
   static const double menuItemFontSize = 18.0;
+  static const double stylesPreviewWidth = 200.0;
 }

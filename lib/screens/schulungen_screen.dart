@@ -242,8 +242,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxWidth: 500,
-                  maxHeight: 520,
+                  maxWidth: UIConstants.dialogMaxWidth,
+                  maxHeight: UIConstants.dialogMaxHeight,
                 ),
                 child: Stack(
                   children: [
@@ -863,7 +863,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           insetPadding: const EdgeInsets.all(UIConstants.spacingXL),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 300),
+              constraints: const BoxConstraints(maxWidth: UIConstants.dialogMinWidth),
               child: Stack(
                 children: [
                   Container(
@@ -891,14 +891,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         const SizedBox(height: UIConstants.spacingL),
                         Center(
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 240),
+                            constraints: const BoxConstraints(
+                                maxWidth: UIConstants.dialogNarrowWidth,),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: UIConstants.whiteColor,
                                 border: Border.all(
-                                    color: UIConstants.mydarkGreyColor,),
+                                  color: UIConstants.mydarkGreyColor,
+                                ),
                                 borderRadius: BorderRadius.circular(
-                                    UIConstants.cornerRadius,),
+                                  UIConstants.cornerRadius,
+                                ),
                               ),
                               padding: const EdgeInsets.only(
                                 left: UIConstants.spacingM,
@@ -927,7 +930,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       },
                                     ),
                                     const SizedBox(
-                                        height: UIConstants.spacingM,),
+                                      height: UIConstants.spacingM,
+                                    ),
                                     TextFormField(
                                       controller: nachnameController,
                                       decoration: const InputDecoration(
@@ -942,7 +946,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       },
                                     ),
                                     const SizedBox(
-                                        height: UIConstants.spacingM,),
+                                      height: UIConstants.spacingM,
+                                    ),
                                     TextFormField(
                                       controller: passnummerController,
                                       decoration: const InputDecoration(
@@ -957,7 +962,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       },
                                     ),
                                     const SizedBox(
-                                        height: UIConstants.spacingM,),
+                                      height: UIConstants.spacingM,
+                                    ),
                                     TextFormField(
                                       controller: emailController,
                                       decoration: const InputDecoration(
@@ -975,7 +981,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       },
                                     ),
                                     const SizedBox(
-                                        height: UIConstants.spacingM,),
+                                      height: UIConstants.spacingM,
+                                    ),
                                     TextFormField(
                                       controller: telefonnummerController,
                                       decoration: const InputDecoration(
@@ -1238,7 +1245,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               .size
                                                               .height *
                                                           0.8,
-                                                  minWidth: 300,
+                                                  minWidth: UIConstants
+                                                      .dialogMinWidth,
                                                 ),
                                                 child: SingleChildScrollView(
                                                   child: Column(
@@ -1418,7 +1426,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ],
                                                                   ),
                                                                   const SizedBox(
-                                                                    width: 40,
+                                                                    width: UIConstants
+                                                                        .dialogColumnGap,
                                                                   ), // reduced space between columns
                                                                   // Right column (right-aligned)
                                                                   Column(
