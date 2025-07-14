@@ -91,7 +91,7 @@ class UIConstants {
   static const Color calendarDisabledSelectedBorderColor = Colors.grey;
 
   // Font Properties
-  static const String defaultFontFamily = 'OpenSans';
+  static const String defaultFontFamily = 'Roboto'; // OpenSans
 
   // Font Sizes
   static const double headerFontSize = 24.0;
@@ -151,7 +151,7 @@ class UIConstants {
   static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
   // Sizes
-  static const double drawerWidth = 320.0;
+  static const double drawerWidth = 309.0;
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
   static const double fabHeight = 16.0;
@@ -164,11 +164,14 @@ class UIConstants {
   static const double defaultButtonHeight = 36.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
-  static const double iconSizeL = 32.0;
+
   static const double iconSizeXL = 64.0;
+  static const double iconSizeL = 32.0;
   static const double iconSizeM = 48.0;
+
   static const double dialogFontSize = 18.0;
   static const double largeFontSize = 24.0;
+
   static const double smallButtonSize = 40.0;
   static const double fabSmallIconSize = 20.0;
   static const double dividerThick = 6.0;

@@ -11,6 +11,7 @@ import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/services/core/config_service.dart';
+import 'package:meinbssb/services/core/token_service.dart';
 
 class AuthService {
   AuthService({
@@ -31,6 +32,8 @@ class AuthService {
   final ConfigService _configService;
   final FlutterSecureStorage
       _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
+
+  TokenService? _tokenService;
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -367,7 +370,6 @@ Ergebnis der Abfrage:
   /// Fetches the login email for a given passnummer using a special base URL from config.json.
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
-
       // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
       final baseUrl = ConfigService.buildApiBaseUrl(_configService);
       final endpoint = 'FindeLoginMail/$passnummer';
@@ -383,6 +385,21 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('fetchLoginEmail error: $e');
       return '';
+    }
+  }
+
+  /// Checks if the current authentication token is valid (exists and is not empty).
+  Future<bool> isTokenValid() async {
+    try {
+      final tokenService = _tokenService ??= TokenService(
+        configService: _configService,
+        cacheService: _cacheService,
+      );
+      final token = await tokenService.getAuthToken();
+      return token.isNotEmpty;
+    } catch (e) {
+      LoggerService.logError('isTokenValid error: $e');
+      return false;
     }
   }
 }

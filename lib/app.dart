@@ -57,10 +57,13 @@ class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  late final AuthService _authService;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _authService = Provider.of<AuthService>(context, listen: false);
     _checkLoginStatus();
   }
 
@@ -77,10 +80,35 @@ class _MyAppState extends State<MyApp> {
         debugPrint('Error decoding user data: $e');
       }
     }
+
+    bool valid = false;
+    if (isLoggedIn) {
+      try {
+        valid = await _authService.isTokenValid();
+      } catch (e) {
+        valid = false;
+      }
+    }
+
+    if (!mounted) return;
+
     setState(() {
-      _isLoggedIn = isLoggedIn;
-      _userData = userData;
+      _isLoggedIn = isLoggedIn && valid;
+      _userData = isLoggedIn && valid ? userData : null;
+      _loading = false;
     });
+    // After setState, force navigation if needed
+    if (!_isLoggedIn && _navigatorKey.currentState != null) {
+      try {
+        final currentRoute =
+            ModalRoute.of(_navigatorKey.currentContext!)?.settings.name;
+        if (currentRoute == '/home') {
+          _navigatorKey.currentState!.pushReplacementNamed('/login');
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
   }
 
   void _handleLogin(UserData userData) {
@@ -128,6 +156,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      // Only show a splash/loading screen, not MaterialApp with routes
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+    // Only now build the MaterialApp with all routes
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
         return MaterialApp(
@@ -164,45 +201,137 @@ class _MyAppState extends State<MyApp> {
               ),
             );
           },
-          routes: {
-            '/splash': (context) => SplashScreen(
-                  onFinish: () {
-                    _navigatorKey.currentState!.pushReplacementNamed(
-                      _isLoggedIn ? '/home' : '/login',
-                    );
-                  },
+          // Only use onGenerateRoute, no static routes map
+          onGenerateRoute: (settings) {
+            if (_loading) {
+              return MaterialPageRoute(
+                builder: (_) => const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
                 ),
-            '/login': (context) => LoginScreen(
-                  onLoginSuccess: _handleLogin,
-                ),
-            '/home': (context) => StartScreen(
-                  _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/help': (context) => HelpScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/impressum': (context) => ImpressumScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/settings': (context) => SettingsScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/profile': (context) => ProfileScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
+                settings: settings,
+              );
+            }
+            if (!_isLoggedIn || _userData == null) {
+              // Always redirect to login if not logged in
+              return MaterialPageRoute(
+                builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
+                settings: settings,
+              );
+            }
+            // Now handle the actual routes
+            switch (settings.name) {
+              case '/home':
+                return MaterialPageRoute(
+                  builder: (_) => SafeStartScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/help':
+                return MaterialPageRoute(
+                  builder: (_) => HelpScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/impressum':
+                return MaterialPageRoute(
+                  builder: (_) => ImpressumScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/settings':
+                return MaterialPageRoute(
+                  builder: (_) => SettingsScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/profile':
+                return MaterialPageRoute(
+                  builder: (_) => ProfileScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/splash':
+              default:
+                return MaterialPageRoute(
+                  builder: (_) => SplashScreen(
+                    onFinish: () {
+                      _navigatorKey.currentState!.pushReplacementNamed(
+                        _isLoggedIn ? '/home' : '/login',
+                      );
+                    },
+                  ),
+                  settings: settings,
+                );
+            }
           },
         );
       },
+    );
+  }
+}
+
+class AuthGuard extends StatelessWidget {
+  const AuthGuard({
+    required this.isLoggedIn,
+    required this.userData,
+    required this.child,
+    super.key,
+  });
+  final bool isLoggedIn;
+  final UserData? userData;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isLoggedIn || userData == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      return const SizedBox.shrink();
+    }
+    return child;
+  }
+}
+
+// Defensive wrapper for StartScreen to avoid crash if userData is null
+class SafeStartScreen extends StatelessWidget {
+  const SafeStartScreen({
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
+    super.key,
+  });
+  final UserData? userData;
+  final bool isLoggedIn;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    if (userData == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      return const SizedBox.shrink();
+    }
+    return StartScreen(
+      userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
     );
   }
 }
