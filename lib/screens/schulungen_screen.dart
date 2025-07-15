@@ -16,6 +16,7 @@ import '/services/core/config_service.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../widgets/dialog_fabs.dart';
 import 'schulungen_search_screen.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -28,6 +29,8 @@ class SchulungenScreen extends StatefulWidget {
     this.ort,
     this.titel,
     this.fuerVerlaengerungen,
+    this.showMenu = true,
+    this.showConnectivityIcon = true,
     super.key,
   });
   final UserData? userData;
@@ -39,6 +42,8 @@ class SchulungenScreen extends StatefulWidget {
   final String? ort;
   final String? titel;
   final bool? fuerVerlaengerungen;
+  final bool showMenu;
+  final bool showConnectivityIcon;
 
   @override
   State<SchulungenScreen> createState() => _SchulungenScreenState();
@@ -48,10 +53,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   bool _isLoading = false;
   List<Schulungstermin> _results = [];
   String? _errorMessage;
+  late bool _isLoggedIn;
+  UserData? _userData;
 
   @override
   void initState() {
     super.initState();
+    _isLoggedIn = widget.isLoggedIn;
+    _userData = widget.userData;
     _search();
   }
 
@@ -137,7 +146,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }) async {
     if (!mounted) return;
     final parentContext = context;
-    final user = widget.userData;
+    final user = _userData;
     final apiService = Provider.of<ApiService>(parentContext, listen: false);
     Provider.of<CacheService>(parentContext, listen: false);
 
@@ -160,7 +169,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
 
     final List<BankData> bankDataList = await bankDataFuture;
+    if (!mounted) return;
     final List<Map<String, dynamic>> contacts = await contactsFuture;
+    if (!mounted) return;
 
     // Get phone number from contacts
     String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
@@ -1066,6 +1077,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
+      automaticallyImplyLeading: widget.showMenu,
+      showMenu: widget.showMenu,
+      showConnectivityIcon: widget.showConnectivityIcon,
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
         child: _isLoading
@@ -1589,10 +1603,40 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     : () {
                                                         Navigator.of(context)
                                                             .pop();
-                                                        _showBookingDialog(
-                                                          t,
-                                                          registeredPersons: [],
-                                                        );
+                                                        Future.microtask(() {
+                                                          if (!mounted) return;
+                                                          if (!_isLoggedIn) {
+                                                            showDialog(
+                                                              // ignore: use_build_context_synchronously
+                                                              context: context,
+                                                              barrierDismissible:
+                                                                  false,
+                                                              builder:
+                                                                  (context) =>
+                                                                      LoginDialog(
+                                                                onLoginSuccess:
+                                                                    (userData) {
+                                                                  setState(() {
+                                                                    _isLoggedIn =
+                                                                        true;
+                                                                    _userData =
+                                                                        userData;
+                                                                  });
+                                                                  // Proceed with booking after login
+                                                                  _showBookingDialog(
+                                                                    t,
+                                                                    registeredPersons: [],
+                                                                  );
+                                                                },
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            _showBookingDialog(
+                                                              t,
+                                                              registeredPersons: [],
+                                                            );
+                                                          }
+                                                        });
                                                       },
                                                 child: const Icon(
                                                   Icons.event_available,
@@ -1633,4 +1677,189 @@ class _RegisteredPerson {
   final String vorname;
   final String nachname;
   final String passnummer;
+}
+
+class LoginDialog extends StatefulWidget {
+  const LoginDialog({
+    super.key,
+    required this.onLoginSuccess,
+  });
+  final Function(UserData) onLoginSuccess;
+
+  @override
+  State<LoginDialog> createState() => _LoginDialogState();
+}
+
+class _LoginDialogState extends State<LoginDialog> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  String _errorMessage = '';
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    try {
+      final response = await authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+      if (!mounted) return;
+      if (response['ResultType'] == 1) {
+        final personId = response['PersonID'];
+        final webloginId = response['WebLoginID'];
+        var passdaten = await apiService.fetchPassdaten(personId);
+        if (passdaten != null) {
+          final userData = passdaten.copyWith(webLoginId: webloginId);
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pop();
+          widget.onLoginSuccess(userData);
+        } else {
+          setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
+        }
+      } else {
+        setState(
+          () => _errorMessage =
+              response['ResultMessage'] ?? 'Login fehlgeschlagen.',
+        );
+      }
+    } catch (e) {
+      setState(() => _errorMessage = 'Fehler: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: UIConstants.backgroundColor,
+      title: const Center(
+        child: ScaledText(
+          'Login erforderlich',
+          style: UIStyles.dialogTitleStyle,
+        ),
+      ),
+      content: Padding(
+        padding: UIConstants.dialogPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+                child: ScaledText(
+                  _errorMessage,
+                  style: UIStyles.errorStyle,
+                ),
+              ),
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration:
+                  UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
+              enabled: !_isLoading,
+              style: UIStyles.dialogContentStyle,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            TextField(
+              controller: _passwordController,
+              obscureText: !_isPasswordVisible,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Passwort',
+                suffixIcon: IconButton(
+                  icon: Icon(_isPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off,),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                ),
+              ),
+              enabled: !_isLoading,
+              style: UIStyles.dialogContentStyle,
+              onSubmitted: (_) => _handleLogin(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: UIConstants.dialogPadding,
+          child: Row(
+            mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed:
+                      _isLoading ? null : () => Navigator.of(context).pop(),
+                  style: UIStyles.dialogCancelButtonStyle,
+                  child: Row(
+                    mainAxisAlignment: UIConstants.centerAlignment,
+                    children: [
+                      const Icon(
+                        Icons.close,
+                        color: UIConstants.closeIcon,
+                      ),
+                      const SizedBox(width: UIConstants.spacingS),
+                      ScaledText(
+                        'Abbrechen',
+                        style: UIStyles.dialogButtonTextStyle.copyWith(
+                          color: UIConstants.cancelButtonText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              UIConstants.horizontalSpacingM,
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleLogin,
+                  style: UIStyles.dialogAcceptButtonStyle,
+                  child: Row(
+                    mainAxisAlignment: UIConstants.centerAlignment,
+                    children: [
+                      const Icon(
+                        Icons.login,
+                        color: UIConstants.checkIcon,
+                      ),
+                      const SizedBox(width: UIConstants.spacingS),
+                      _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : ScaledText(
+                              'Login',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.submitButtonText,
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

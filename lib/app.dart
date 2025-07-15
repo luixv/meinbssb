@@ -20,6 +20,7 @@ import 'screens/settings_screen.dart';
 import 'screens/profile_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
+import 'screens/schulungen_search_screen.dart';
 
 class MyAppWrapper extends StatelessWidget {
   const MyAppWrapper({super.key});
@@ -227,6 +228,18 @@ class _MyAppState extends State<MyApp> {
               return MaterialPageRoute(
                 builder: (_) => const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
+                ),
+                settings: settings,
+              );
+            }
+            // Allow anonymous access to SchulungenSearchScreen
+            if (settings.name == '/schulungen_search') {
+              return MaterialPageRoute(
+                builder: (_) => SchulungenSearchScreen(
+                  _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                  showMenu: false,
                 ),
                 settings: settings,
               );

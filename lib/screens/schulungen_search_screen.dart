@@ -19,11 +19,13 @@ class SchulungenSearchScreen extends StatefulWidget {
     this.userData, {
     required this.isLoggedIn,
     required this.onLogout,
+    this.showMenu = true,
     super.key,
   });
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
+  final bool showMenu;
 
   @override
   State<SchulungenSearchScreen> createState() => _SchulungenSearchScreenState();
@@ -174,6 +176,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           ort: _ortController.text,
           titel: _titelController.text,
           fuerVerlaengerungen: _fuerVerlaengerungen,
+          showMenu: widget.showMenu,
+          showConnectivityIcon: widget.showMenu,
         ),
       ),
     );
@@ -186,6 +190,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
+      automaticallyImplyLeading: widget.showMenu,
+      showMenu: widget.showMenu,
+      showConnectivityIcon: widget.showMenu,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
