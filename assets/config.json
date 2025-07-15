@@ -14,7 +14,7 @@
 
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
-  "api1Port": "56400",
+  "api1BasePort": "56400",
 
   "api1PassantragServer": "webintern.bssb.bayern",
   "api1PassantragPath": "rest/zmi/api1",

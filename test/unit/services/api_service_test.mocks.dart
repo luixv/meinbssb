@@ -196,6 +196,15 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
           ),
         )),
       ) as _i2.Future<String>);
+
+  @override
+  _i2.Future<bool> isTokenValid() => (super.noSuchMethod(
+        Invocation.method(
+          #isTokenValid,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].

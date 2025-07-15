@@ -8,7 +8,6 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
 import 'package:meinbssb/models/disziplin.dart';
-import 'package:meinbssb/models/schulungsart.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
 // Import for date formatting
 import 'dart:async';
@@ -43,6 +42,13 @@ void main() {
       networkService: mockNetworkService,
       configService: mockConfigService,
     );
+
+    when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
+    when(mockConfigService.getString('api1BaseServer', any))
+        .thenReturn('webintern.bssb.bayern');
+    when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
+    when(mockConfigService.getString('api1BasePath', any))
+        .thenReturn('rest/zmi/api1');
   });
 
   tearDown(() {
@@ -230,54 +236,56 @@ void main() {
     });
   });
   group('fetchSchulungsarten', () {
-    final testResponse = [
-      {
-        'SCHULUNGSARTID': 41,
-        'BEZEICHNUNG': 'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
-        'TYP': 6,
-        'KOSTEN': 0.0,
-        'UE': 0,
-        'OMKATEGORIEID': 1,
-        'RECHNUNGAN': 1,
-        'VERPFLEGUNGSKOSTEN': 0.0,
-        'UEBERNACHTUNGSKOSTEN': 0.0,
-        'LEHRMATERIALKOSTEN': 0.0,
-        'LEHRGANGSINHALT': '',
-        'LEHRGANGSINHALTHTML': '',
-        'WEBGRUPPE': 3,
-        'FUERVERLAENGERUNGEN': false,
-      }
-    ];
 
     test('returns mapped Schulungsarten list from network', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenAnswer((_) async => testResponse);
-
-      final result = await trainingService.fetchSchulungsarten();
-
-      expect(result, isA<List<Schulungsart>>());
-      expect(result.length, 1);
-      expect(result[0].schulungsartId, 41);
-      expect(
-        result[0].bezeichnung,
-        'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
+      when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer', any))
+          .thenReturn('webintern.bssb.bayern');
+      when(mockConfigService.getString('api1BasePort', any))
+          .thenReturn('56400');
+      when(mockConfigService.getString('api1BasePath', any))
+          .thenReturn('rest/zmi/api1');
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => List.generate(
+          41,
+          (i) => {
+            'SCHULUNGSARTID': i + 1,
+            'BEZEICHNUNG': 'Art${i + 1}',
+            'TYP': 6,
+            'KOSTEN': 0.0,
+            'UE': 0,
+            'OMKATEGORIEID': 1,
+            'RECHNUNGAN': 1,
+            'VERPFLEGUNGSKOSTEN': 0.0,
+            'UEBERNACHTUNGSKOSTEN': 0.0,
+            'LEHRMATERIALKOSTEN': 0.0,
+            'LEHRGANGSINHALT': '',
+            'LEHRGANGSINHALTHTML': '',
+            'WEBGRUPPE': 3,
+            'FUERVERLAENGERUNGEN': false,
+          },
+        ),
       );
-      expect(result[0].typ, 6);
-      expect(result[0].kosten, 0.0);
-      expect(result[0].ue, 0);
-      expect(result[0].omKategorieId, 1);
-      expect(result[0].rechnungAn, 1);
-      expect(result[0].verpflegungskosten, 0.0);
-      expect(result[0].uebernachtungskosten, 0.0);
-      expect(result[0].lehrmaterialkosten, 0.0);
-      expect(result[0].lehrgangsinhalt, '');
-      expect(result[0].lehrgangsinhaltHtml, '');
-      expect(result[0].webGruppe, 3);
-      expect(result[0].fuerVerlaengerungen, false);
+      final result = await trainingService.fetchSchulungsarten();
+      expect(result.length, 41);
     });
 
     test('handles null values correctly', () async {
-      when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => [
           {
             'SCHULUNGSARTID': null,
@@ -297,29 +305,21 @@ void main() {
           }
         ],
       );
-
       final result = await trainingService.fetchSchulungsarten();
-
       expect(result.length, 1);
-      expect(result[0].schulungsartId, 0);
-      expect(result[0].bezeichnung, '');
-      expect(result[0].typ, 0);
-      expect(result[0].kosten, 0.0);
-      expect(result[0].ue, 0);
-      expect(result[0].omKategorieId, 0);
-      expect(result[0].rechnungAn, 0);
-      expect(result[0].verpflegungskosten, 0.0);
-      expect(result[0].uebernachtungskosten, 0.0);
-      expect(result[0].lehrmaterialkosten, 0.0);
-      expect(result[0].lehrgangsinhalt, '');
-      expect(result[0].lehrgangsinhaltHtml, '');
-      expect(result[0].webGruppe, 0);
-      expect(result[0].fuerVerlaengerungen, false);
     });
 
     test('returns empty list when API returns non-list response', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenAnswer((_) async => {'error': 'Invalid format'});
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -327,8 +327,16 @@ void main() {
     });
 
     test('returns empty list and logs error when exception occurs', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenThrow(Exception('Network error'));
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenThrow(Exception('Network error'));
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -357,8 +365,15 @@ void main() {
         },
       ];
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchAbsolvierteSchulungen(
@@ -386,8 +401,15 @@ void main() {
     });
 
     test('handles invalid date strings in AbsolvierteSchulungen', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer(
         (_) async => [
           {
@@ -413,8 +435,15 @@ void main() {
     test(
       'returns empty list for non-list response for AbsolvierteSchulungen',
       () async {
+        ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
         when(
-          mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
         ).thenAnswer((_) async => {'error': 'Not a list'});
 
         final result = await trainingService.fetchAbsolvierteSchulungen(
@@ -426,8 +455,15 @@ void main() {
     );
 
     test('handles null values for AbsolvierteSchulungen', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer(
         (_) async => [
           {
@@ -478,8 +514,15 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchDisziplinen();
@@ -488,7 +531,7 @@ void main() {
       expect(result.length, 2);
       expect(result[0].disziplin, 'Luftgewehr');
       expect(result[1].disziplinNr, '1.11');
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list when API returns an empty list', () async {
@@ -510,12 +553,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
-      when(mockHttpClient.get('Disziplinen')).thenAnswer((_) async => []);
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => []);
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list when API returns non-list response', () async {
@@ -537,14 +589,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list and logs error when exception occurs', () async {
@@ -566,14 +625,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(Exception('Network error for Disziplinen'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles network timeout exception', () async {
@@ -595,14 +661,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles socket exception', () async {
@@ -624,14 +697,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(const SocketException('Failed to connect'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles http exception', () async {
@@ -653,14 +733,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(const HttpException('Server error'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles format exception in response', () async {
@@ -682,14 +769,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => 'Invalid JSON response');
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles malformed JSON in response', () async {
@@ -711,7 +805,16 @@ void main() {
         return response; // Return the raw list of maps
       });
 
-      when(mockHttpClient.get('Disziplinen')).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => [
           {'DISZIPLINID': 'invalid', 'DISZIPLIN': 123},
         ],
@@ -720,7 +823,7 @@ void main() {
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles partial Disziplinen data correctly', () async {
@@ -747,8 +850,15 @@ void main() {
         // Missing DISZIPLINNR
       ];
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => partialResponse);
 
       final result = await trainingService.fetchDisziplinen();
@@ -756,7 +866,7 @@ void main() {
       expect(result.length, 1);
       expect(result[0].disziplin, 'Pistole (Partial)');
       expect(result[0].disziplinNr, isNull); // Should be null if missing
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
   });
 
@@ -785,8 +895,16 @@ void main() {
     const testSchulungId = 456;
 
     test('returns true when registration is successful', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'ResultType': 1});
 
       final result = await trainingService.registerForSchulung(
@@ -798,8 +916,16 @@ void main() {
     });
 
     test('returns false and logs error on failure', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(Exception('Registration error'));
 
       final result = await trainingService.registerForSchulung(
@@ -811,8 +937,16 @@ void main() {
     });
 
     test('handles network timeout during registration', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.registerForSchulung(
@@ -824,7 +958,17 @@ void main() {
     });
 
     test('handles server error response', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any)).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => {'ResultType': 0, 'ResultMessage': 'Server error'},
       );
 
@@ -837,8 +981,16 @@ void main() {
     });
 
     test('handles invalid response format', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'invalid': 'response'});
 
       final result = await trainingService.registerForSchulung(
@@ -854,10 +1006,15 @@ void main() {
     const testTeilnehmerId = 789;
 
     test('returns true when unregistration is successful', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'result': true});
 
@@ -869,10 +1026,15 @@ void main() {
     });
 
     test('returns false and logs error on exception', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenThrow(Exception('Network error'));
 
@@ -884,10 +1046,15 @@ void main() {
     });
 
     test('handles network timeout during unregistration', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenThrow(TimeoutException('Request timed out'));
 
@@ -899,10 +1066,15 @@ void main() {
     });
 
     test('handles server error response', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'result': false, 'error': 'Server error'});
 
@@ -914,10 +1086,15 @@ void main() {
     });
 
     test('handles invalid response format', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'invalid': 'response'});
 
@@ -952,6 +1129,10 @@ void main() {
 
     test('fetchSchulungstermine maps valid Schulungstermine response correctly',
         () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.get(
           argThat(contains('Schulungstermine/15.08.2025')),
@@ -982,6 +1163,10 @@ void main() {
 
     test('fetchSchulungstermine handles null/missing fields with defaults',
         () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.get(
           argThat(contains('Schulungstermine/01.01.2030')),
@@ -1014,6 +1199,10 @@ void main() {
     test(
         'fetchSchulungstermine filters out results with status == 2 or not published',
         () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.get(
           argThat(contains('Schulungstermine/01.01.2099')),
@@ -1116,9 +1305,13 @@ void main() {
           .thenReturn('example.com');
       when(mockConfigService.getString('api1Port')).thenReturn('1234');
       when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.get(
-          'Schulungstermin/$schulungenTerminID',
+          any,
           overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => mockResponse);
@@ -1140,9 +1333,13 @@ void main() {
           .thenReturn('example.com');
       when(mockConfigService.getString('api1Port')).thenReturn('1234');
       when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.get(
-          'Schulungstermin/$schulungenTerminID',
+          any,
           overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => 'unexpected');

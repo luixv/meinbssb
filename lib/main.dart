@@ -45,13 +45,8 @@ class AppInitializer {
     configService = await ConfigService.load('assets/config.json');
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
-    final protocol = configService.getString('apiProtocol', 'api') ?? 'https';
-
-    final baseIP =
-        configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
-    final port = configService.getString('apiBasePort', 'api') ?? '56400';
-    final path =
-        configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
+    final apiBaseUrl =
+        ConfigService.buildBaseUrlForServer(configService, name: 'apiBase');
 
     imageService = ImageService();
 
@@ -63,11 +58,6 @@ class AppInitializer {
     );
     networkService = NetworkService(configService: configService);
 
-    String baseUrl =
-        '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
-
-    // --- FIX STARTS HERE ---
-    // Initialize the http.Client instance once and pass it to both services
     final baseHttpClient = http.Client();
 
     // 1. Initialize TokenService FIRST
@@ -79,7 +69,7 @@ class AppInitializer {
 
     // 2. Then, initialize HttpClient, passing the now-initialized _tokenService
     httpClient = HttpClient(
-      baseUrl: baseUrl,
+      baseUrl: apiBaseUrl,
       serverTimeout: serverTimeout,
       tokenService: tokenService, // This is now initialized!
       configService: configService,

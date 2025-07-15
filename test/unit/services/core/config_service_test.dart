@@ -8,6 +8,9 @@ import 'dart:convert'; // Import dart:convert for utf8
 class MockRootBundle extends Mock
     implements AssetBundle {} // Implement AssetBundle, not RootBundle
 
+// Use mocktail for mocking ConfigService in the test
+class MockConfigService extends Mock implements ConfigService {}
+
 void main() {
   // Initialize binding before all tests
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -93,6 +96,17 @@ void main() {
       // Verify nested data types
       expect(service.getString('host', 'smtpSettings'), isA<String>());
       expect(service.getString('logoName', 'appTheme'), isA<String>());
+    });
+
+    test('should build base URL for apiBase', () async {
+      final mock = MockConfigService();
+      when(() => mock.getString('apiProtocol', any())).thenReturn('https');
+      when(() => mock.getString('apiBaseServer', any()))
+          .thenReturn('127.0.0.1');
+      when(() => mock.getString('apiBasePort', any())).thenReturn('3001');
+      when(() => mock.getString('apiBasePath', any())).thenReturn('/');
+      final url = ConfigService.buildBaseUrlForServer(mock, name: 'apiBase');
+      expect(url, 'https://127.0.0.1:3001//');
     });
   });
 }
