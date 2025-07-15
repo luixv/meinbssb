@@ -39,7 +39,7 @@ void main() {
       expect(obj.evVereinName, 'EV Verein');
       expect(obj.passNummer, 'P123');
       expect(
-          obj.erstelltAm, DateTime.parse('2023-01-01T12:00:00.000Z').toUtc());
+          obj.erstelltAm, DateTime.parse('2023-01-01T12:00:00.000Z').toUtc(),);
       expect(obj.erstelltVon, 'admin');
       expect(obj.zves.length, 1);
       expect(obj.zves.first, ZVE.fromJson(zveJson));
@@ -71,7 +71,7 @@ void main() {
     test('toString returns readable string', () {
       final obj = PassdatenAkzeptOrAktiv.fromJson(json);
       expect(
-          obj.toString(), contains('PassdatenAkzeptOrAktiv(passdatenId: 10'));
+          obj.toString(), contains('PassdatenAkzeptOrAktiv(passdatenId: 10'),);
     });
 
     test('handles nullables and empty ZVEs', () {
