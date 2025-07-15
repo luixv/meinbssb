@@ -93,7 +93,7 @@ void main() {
     when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
     when(mockConfigService.getString('api1BaseServer', any))
         .thenReturn('webintern.bssb.bayern');
-    when(mockConfigService.getString('api1Port', any)).thenReturn('56400');
+    when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
     when(mockConfigService.getString('api1BasePath', any))
         .thenReturn('rest/zmi/api1');
   });
@@ -650,8 +650,9 @@ void main() {
       test('returns LOGINMAIL when present in response', () async {
         const passnummer = '40101205';
         const expectedEmail = 'kostas@rizoudis1.de';
-        const expectedBaseUrl =
-            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+            mockConfigService,
+            name: 'api1Base',);
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',
@@ -669,8 +670,9 @@ void main() {
 
       test('returns empty string when response is empty', () async {
         const passnummer = '40101205';
-        const expectedBaseUrl =
-            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+            mockConfigService,
+            name: 'api1Base',);
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',
@@ -684,8 +686,9 @@ void main() {
 
       test('returns empty string when LOGINMAIL is missing', () async {
         const passnummer = '40101205';
-        const expectedBaseUrl =
-            'https://webintern.bssb.bayern:56400/rest/zmi/api1';
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+            mockConfigService,
+            name: 'api1Base',);
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',

@@ -220,8 +220,8 @@ class HttpClient {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
-    //LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
-    //LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'POST',
@@ -241,8 +241,8 @@ class HttpClient {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
-    //LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
-    //LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
+    LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     return _makeRequest(
       'PUT',
@@ -262,10 +262,10 @@ class HttpClient {
     final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = body != null ? jsonEncode(body) : null;
 
-    //LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
-    //if (requestBody != null) {
-    //   LoggerService.logInfo('HttpClient: Request body: $requestBody');
-    //}
+    LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
+    if (requestBody != null) {
+      LoggerService.logInfo('HttpClient: Request body: $requestBody');
+    }
 
     return _makeRequest(
       'DELETE',

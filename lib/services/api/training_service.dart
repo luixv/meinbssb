@@ -135,15 +135,8 @@ class TrainingService {
         'endpoint $endpoint',
       );
 
-      final config = _configService;
-      final protocol = config.getString('apiProtocol') ?? 'https';
-      final server = config.getString('api1BaseServer') ?? '';
-      final port = config.getString('api1Port') ?? '';
-      final path = config.getString('api1BasePath') ?? '';
-      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl = port.isNotEmpty
-          ? '$protocol://$server:$port/$path'
-          : '$protocol://$server/$path';
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
@@ -525,15 +518,8 @@ class TrainingService {
     String schulungenTerminID,
   ) async {
     try {
-      final config = _configService;
-      final protocol = config.getString('apiProtocol') ?? 'https';
-      final server = config.getString('api1BaseServer') ?? '';
-      final port = config.getString('api1Port') ?? '';
-      final path = config.getString('api1BasePath') ?? '';
-      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl = port.isNotEmpty
-          ? '$protocol://$server:$port/$path'
-          : '$protocol://$server/$path';
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
       final response = await _httpClient
           .get('Schulungstermin/$schulungenTerminID', overrideBaseUrl: baseUrl);
