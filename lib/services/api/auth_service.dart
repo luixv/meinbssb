@@ -158,7 +158,7 @@ Ergebnis der Abfrage:
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final baseUrl = ConfigService.buildApiBaseUrl(_configService);
+      final baseUrl = ConfigService.buildApi1BaseUrl(_configService);
 
       final response = await _httpClient.post(
         'LoginMyBSSB',
@@ -371,7 +371,7 @@ Ergebnis der Abfrage:
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
       // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl = ConfigService.buildApiBaseUrl(_configService);
+      final baseUrl = ConfigService.buildApi1BaseUrl(_configService);
       final endpoint = 'FindeLoginMail/$passnummer';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);

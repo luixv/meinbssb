@@ -7,15 +7,18 @@
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "/rest/zmi/api7",
   "oktoberFestPort": "56400",
-
   
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
-  "apiPort": "56400",
+  "apiBasePort": "56400",
 
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1Port": "56400",
+
+  "api1PassantragServer": "webintern.bssb.bayern",
+  "api1PassantragPath": "rest/zmi/api1",
+  "api1PassantragPort": "50211",
 
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   
