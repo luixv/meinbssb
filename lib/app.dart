@@ -23,7 +23,9 @@ import 'main.dart';
 import 'screens/schulungen_search_screen.dart';
 
 class MyAppWrapper extends StatelessWidget {
-  const MyAppWrapper({super.key});
+  const MyAppWrapper({super.key, this.initialScreen});
+
+  final Widget? initialScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,16 @@ class MyAppWrapper extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         Provider<HttpClient>(create: (_) => AppInitializer.httpClient),
       ],
-      child: const MyApp(),
+      child: initialScreen != null
+          ? Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) => MaterialApp(
+                home: initialScreen,
+                theme: themeProvider.getTheme(false),
+                darkTheme: themeProvider.getTheme(true),
+                themeMode: ThemeMode.system,
+              ),
+            )
+          : const MyApp(),
     );
   }
 }
@@ -55,6 +66,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  static bool _bypassDone = false;
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -177,6 +189,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final fragment = Uri.base.fragment;
+    final path = Uri.base.path;
+    final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+        fragment == 'schulungen_search' ||
+        path == '/schulungen_search' ||
+        path == 'schulungen_search';
+    if (isDirectSchulungenSearch && !_bypassDone) {
+      _bypassDone = true;
+      return MaterialApp(
+        home: SchulungenSearchScreen(
+          null,
+          isLoggedIn: false,
+          onLogout: () {},
+          showMenu: false,
+          showConnectivityIcon: false,
+        ),
+      );
+    }
+    final String initialRoute =
+        (fragment == '/schulungen_search' || fragment == 'schulungen_search')
+            ? '/schulungen_search'
+            : '/splash';
     if (_loading) {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
@@ -200,7 +234,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
-          initialRoute: '/splash',
+          initialRoute: initialRoute,
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(

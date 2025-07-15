@@ -20,12 +20,14 @@ class SchulungenSearchScreen extends StatefulWidget {
     required this.isLoggedIn,
     required this.onLogout,
     this.showMenu = true,
+    this.showConnectivityIcon = true,
     super.key,
   });
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
   final bool showMenu;
+  final bool showConnectivityIcon;
 
   @override
   State<SchulungenSearchScreen> createState() => _SchulungenSearchScreenState();
@@ -162,7 +164,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       );
       return;
     }
-
+    final safeDate = _selectedDate ?? DateTime.now();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -170,14 +172,14 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           widget.userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
-          searchDate: _selectedDate!,
+          searchDate: safeDate,
           webGruppe: _selectedWebGruppe,
           bezirkId: _selectedBezirkId,
           ort: _ortController.text,
           titel: _titelController.text,
           fuerVerlaengerungen: _fuerVerlaengerungen,
           showMenu: widget.showMenu,
-          showConnectivityIcon: widget.showMenu,
+          showConnectivityIcon: widget.showConnectivityIcon,
         ),
       ),
     );
@@ -192,7 +194,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       onLogout: widget.onLogout,
       automaticallyImplyLeading: widget.showMenu,
       showMenu: widget.showMenu,
-      showConnectivityIcon: widget.showMenu,
+      showConnectivityIcon: widget.showConnectivityIcon,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -244,7 +246,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 child: ScaledText(
                   _selectedDate == null
                       ? 'Bitte wählen Sie ein Datum'
-                      : _formatDate(_selectedDate!),
+                      : _formatDate(_selectedDate ?? DateTime.now()),
                   style: UIStyles.bodyStyle,
                 ),
               ),

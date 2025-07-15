@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,12 +19,49 @@ import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
+import 'screens/schulungen_search_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Global error handler for all uncaught errors
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint(
+      'GLOBAL FLUTTER ERROR: \n [31m${details.exceptionAsString()}\u001b[0m',
+    );
+    if (details.stack != null) {
+      debugPrint('STACK TRACE: \n${details.stack}');
+    }
+  };
   await AppInitializer.init();
 
-  runApp(const MyAppWrapper());
+  final fragment = Uri.base.fragment;
+  final path = Uri.base.path;
+  final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+      fragment == 'schulungen_search' ||
+      path == '/schulungen_search' ||
+      path == 'schulungen_search';
+
+  runZonedGuarded(() {
+    if (isDirectSchulungenSearch) {
+      runApp(
+        MyAppWrapper(
+          initialScreen: SchulungenSearchScreen(
+            null,
+            isLoggedIn: false,
+            onLogout: () {},
+            showMenu: false,
+            showConnectivityIcon: false,
+          ),
+        ),
+      );
+    } else {
+      runApp(const MyAppWrapper());
+    }
+  }, (error, stack) {
+    debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
+    debugPrint('STACK TRACE: \n$stack');
+  });
 }
 
 class AppInitializer {

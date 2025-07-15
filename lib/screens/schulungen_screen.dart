@@ -53,13 +53,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   bool _isLoading = false;
   List<Schulungstermin> _results = [];
   String? _errorMessage;
-  late bool _isLoggedIn;
   UserData? _userData;
 
   @override
   void initState() {
     super.initState();
-    _isLoggedIn = widget.isLoggedIn;
     _userData = widget.userData;
     _search();
   }
@@ -81,12 +79,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final abDatum = _formatDate(widget.searchDate);
-      final webGruppe = (widget.webGruppe != null && widget.webGruppe != 0)
-          ? widget.webGruppe.toString()
-          : '*';
-      final bezirk = (widget.bezirkId != null && widget.bezirkId != 0)
-          ? widget.bezirkId.toString()
-          : '*';
+      final webGruppe =
+          (widget.webGruppe != null && widget.webGruppe != 0)
+              ? widget.webGruppe.toString()
+              : '*';
+      final bezirk =
+          (widget.bezirkId != null && widget.bezirkId != 0)
+              ? widget.bezirkId.toString()
+              : '*';
       final fuerVerlaengerung =
           (widget.fuerVerlaengerungen == true) ? 'true' : '*';
       final result = await apiService.fetchSchulungstermine(
@@ -98,30 +98,35 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       setState(() {
         var filteredResults = result;
         if (widget.webGruppe != null && widget.webGruppe != 0) {
-          filteredResults = filteredResults
-              .where((s) => s.webGruppe == widget.webGruppe)
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where((s) => s.webGruppe == widget.webGruppe)
+                  .toList();
         }
         if (widget.bezirkId != null && widget.bezirkId != 0) {
-          filteredResults = filteredResults
-              .where((s) => s.veranstaltungsBezirk == widget.bezirkId)
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where((s) => s.veranstaltungsBezirk == widget.bezirkId)
+                  .toList();
         }
         if (widget.ort != null && widget.ort!.isNotEmpty) {
-          filteredResults = filteredResults
-              .where(
-                (s) => s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),
-              )
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where(
+                    (s) =>
+                        s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),
+                  )
+                  .toList();
         }
         if (widget.titel != null && widget.titel!.isNotEmpty) {
-          filteredResults = filteredResults
-              .where(
-                (s) => s.bezeichnung
-                    .toLowerCase()
-                    .contains(widget.titel!.toLowerCase()),
-              )
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where(
+                    (s) => s.bezeichnung.toLowerCase().contains(
+                      widget.titel!.toLowerCase(),
+                    ),
+                  )
+                  .toList();
         }
         if (widget.fuerVerlaengerungen == true) {
           filteredResults =
@@ -147,6 +152,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     if (!mounted) return;
     final parentContext = context;
     final user = _userData;
+    if (user == null) {
+      ScaffoldMessenger.of(parentContext).showSnackBar(
+        const SnackBar(
+          content: Text('Kein Benutzer für die Buchung verfügbar.'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
     final apiService = Provider.of<ApiService>(parentContext, listen: false);
     Provider.of<CacheService>(parentContext, listen: false);
 
@@ -155,18 +170,22 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       context: parentContext,
       barrierDismissible: false,
       builder: (context) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              UIConstants.defaultAppColor,
+            ),
+          ),
+        );
       },
     );
 
     // Fetch bank data and contacts in parallel
     final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
-      user?.webLoginId ?? 0,
+      user.webLoginId,
     );
-    final Future<List<Map<String, dynamic>>> contactsFuture =
-        apiService.fetchKontakte(
-      user?.personId ?? 0,
-    );
+    final Future<List<Map<String, dynamic>>> contactsFuture = apiService
+        .fetchKontakte(user.personId);
 
     final List<BankData> bankDataList = await bankDataFuture;
     if (!mounted) return;
@@ -175,10 +194,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     // Get phone number from contacts
     String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
-      final privateContacts = contacts.firstWhere(
-        (category) => category['category'] == 'Privat',
-        orElse: () => {'contacts': []},
-      )['contacts'] as List<dynamic>;
+      final privateContacts =
+          contacts.firstWhere(
+                (category) => category['category'] == 'Privat',
+                orElse: () => {'contacts': []},
+              )['contacts']
+              as List<dynamic>;
       var phoneContact = privateContacts
           .cast<Map<String, dynamic>>()
           .firstWhere(
@@ -187,16 +208,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             orElse: () => {'value': ''},
           );
       if (phoneContact['value'] == '') {
-        final businessContacts = contacts.firstWhere(
-          (category) => category['category'] == 'Geschäftlich',
-          orElse: () => {'contacts': []},
-        )['contacts'] as List<dynamic>;
+        final businessContacts =
+            contacts.firstWhere(
+                  (category) => category['category'] == 'Geschäftlich',
+                  orElse: () => {'contacts': []},
+                )['contacts']
+                as List<dynamic>;
         phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
-              (contact) =>
-                  contact['rawKontaktTyp'] == 5 ||
-                  contact['rawKontaktTyp'] == 6,
-              orElse: () => {'value': ''},
-            );
+          (contact) =>
+              contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
+          orElse: () => {'value': ''},
+        );
       }
       return phoneContact['value'] as String;
     }
@@ -218,18 +240,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     showDialog(
       context: parentContext,
       builder: (context) {
-        final telefonController = TextEditingController(
-          text: phoneNumber,
-        );
+        final telefonController = TextEditingController(text: phoneNumber);
         final kontoinhaberController = TextEditingController(
           text: bankData?.kontoinhaber ?? '',
         );
         final ibanController = TextEditingController(
           text: bankData?.iban ?? '',
         );
-        final bicController = TextEditingController(
-          text: bankData?.bic ?? '',
-        );
+        final bicController = TextEditingController(text: bankData?.bic ?? '');
 
         return StatefulBuilder(
           builder: (context, setState) {
@@ -321,15 +339,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             validator: (value) {
                                               final apiService =
                                                   Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
+                                                    context,
+                                                    listen: false,
+                                                  );
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'IBAN ist erforderlich';
                                               }
-                                              if (!apiService
-                                                  .validateIBAN(value)) {
+                                              if (!apiService.validateIBAN(
+                                                value,
+                                              )) {
                                                 return 'Ungültige IBAN';
                                               }
                                               return null;
@@ -345,22 +364,25 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             decoration: UIStyles
                                                 .formInputDecoration
                                                 .copyWith(
-                                              labelText: _isBicRequired(
-                                                ibanController.text.trim(),
-                                              )
-                                                  ? 'BIC *'
-                                                  : 'BIC (optional)',
-                                            ),
+                                                  labelText:
+                                                      _isBicRequired(
+                                                            ibanController.text
+                                                                .trim(),
+                                                          )
+                                                          ? 'BIC *'
+                                                          : 'BIC (optional)',
+                                                ),
                                             validator: (value) {
                                               final apiService =
                                                   Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
+                                                    context,
+                                                    listen: false,
+                                                  );
                                               // BIC is required only if IBAN doesn't start with DE
-                                              final iban = ibanController.text
-                                                  .trim()
-                                                  .toUpperCase();
+                                              final iban =
+                                                  ibanController.text
+                                                      .trim()
+                                                      .toUpperCase();
                                               if (!iban.startsWith('DE') &&
                                                   (value == null ||
                                                       value.trim().isEmpty)) {
@@ -475,82 +497,85 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             tooltip: 'Abbrechen',
                             backgroundColor: UIConstants.defaultAppColor,
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                            ),
+                            child: const Icon(Icons.close, color: Colors.white),
                           ),
                           FloatingActionButton(
                             heroTag: 'bookingDialogOkFab',
                             mini: true,
                             tooltip: 'Buchen',
-                            backgroundColor: (agbChecked &&
-                                    lastschriftChecked &&
-                                    kontoinhaberController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(
-                                          ibanController.text.trim(),
-                                        ) ||
-                                        bicController.text.trim().isNotEmpty))
-                                ? UIConstants.defaultAppColor
-                                : UIConstants.cancelButtonBackground,
-                            onPressed: (agbChecked &&
-                                    lastschriftChecked &&
-                                    kontoinhaberController.text
-                                        .trim()
-                                        .isNotEmpty &&
-                                    ibanController.text.trim().isNotEmpty &&
-                                    (!_isBicRequired(
-                                          ibanController.text.trim(),
-                                        ) ||
-                                        bicController.text.trim().isNotEmpty))
-                                ? () async {
-                                    if (formKey.currentState != null &&
-                                        formKey.currentState!.validate()) {
-                                      Navigator.of(context).pop();
-                                      final cacheService =
-                                          Provider.of<CacheService>(
-                                        parentContext,
-                                        listen: false,
-                                      );
-                                      final String email = await cacheService
-                                              .getString('username') ??
-                                          '';
-                                      final BankData safeBankData = bankData ??
-                                          BankData(
-                                            id: 0,
-                                            webloginId: user?.webLoginId ?? 0,
-                                            kontoinhaber: '',
-                                            iban: '',
-                                            bic: '',
-                                            mandatSeq: 2,
-                                            bankName: '',
-                                            mandatNr: '',
-                                            mandatName: '',
+                            backgroundColor:
+                                (agbChecked &&
+                                        lastschriftChecked &&
+                                        kontoinhaberController.text
+                                            .trim()
+                                            .isNotEmpty &&
+                                        ibanController.text.trim().isNotEmpty &&
+                                        (!_isBicRequired(
+                                              ibanController.text.trim(),
+                                            ) ||
+                                            bicController.text
+                                                .trim()
+                                                .isNotEmpty))
+                                    ? UIConstants.defaultAppColor
+                                    : UIConstants.cancelButtonBackground,
+                            onPressed:
+                                (agbChecked &&
+                                        lastschriftChecked &&
+                                        kontoinhaberController.text
+                                            .trim()
+                                            .isNotEmpty &&
+                                        ibanController.text.trim().isNotEmpty &&
+                                        (!_isBicRequired(
+                                              ibanController.text.trim(),
+                                            ) ||
+                                            bicController.text
+                                                .trim()
+                                                .isNotEmpty))
+                                    ? () async {
+                                      if (formKey.currentState != null &&
+                                          formKey.currentState!.validate()) {
+                                        Navigator.of(context).pop();
+                                        final cacheService =
+                                            Provider.of<CacheService>(
+                                              parentContext,
+                                              listen: false,
+                                            );
+                                        final String email =
+                                            await cacheService.getString(
+                                              'username',
+                                            ) ??
+                                            '';
+                                        final BankData safeBankData =
+                                            bankData ??
+                                            BankData(
+                                              id: 0,
+                                              webloginId: user.webLoginId,
+                                              kontoinhaber: '',
+                                              iban: '',
+                                              bic: '',
+                                              mandatSeq: 2,
+                                              bankName: '',
+                                              mandatNr: '',
+                                              mandatName: '',
+                                            );
+                                        Future.delayed(Duration.zero, () {
+                                          if (!parentContext.mounted) return;
+                                          _showRegisterAnotherPersonDialog(
+                                            parentContext,
+                                            parentContext,
+                                            schulungsTermin,
+                                            registeredPersons,
+                                            safeBankData,
+                                            prefillUser: user.copyWith(
+                                              telefon: telefonController.text,
+                                            ),
+                                            prefillEmail: email,
                                           );
-                                      Future.delayed(Duration.zero, () {
-                                        if (!parentContext.mounted) return;
-                                        _showRegisterAnotherPersonDialog(
-                                          parentContext,
-                                          parentContext,
-                                          schulungsTermin,
-                                          registeredPersons,
-                                          safeBankData,
-                                          prefillUser: user?.copyWith(
-                                            telefon: telefonController.text,
-                                          ),
-                                          prefillEmail: email,
-                                        );
-                                      });
+                                        });
+                                      }
                                     }
-                                  }
-                                : null,
-                            child: const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                            ),
+                                    : null,
+                            child: const Icon(Icons.check, color: Colors.white),
                           ),
                         ],
                         // Remove padding from DialogFABs, as Positioned handles placement
@@ -603,8 +628,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                               ),
                               TextSpan(
                                 text: '${p.vorname} ${p.nachname}',
-                                style: UIStyles.dialogContentStyle
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                style: UIStyles.dialogContentStyle.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               TextSpan(
                                 text: ' (${p.passnummer})',
@@ -625,9 +651,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             text: TextSpan(
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(
-                  text: 'Sie sind angemeldet für die Schulung\n',
-                ),
+                const TextSpan(text: 'Sie sind angemeldet für die Schulung\n'),
                 TextSpan(
                   text: schulungsTermin.bezeichnung,
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -656,11 +680,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     Navigator.of(parentContext).pop(); // Close the dialog
                     Navigator.of(parentContext).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (context) => SchulungenSearchScreen(
-                          widget.userData,
-                          isLoggedIn: widget.isLoggedIn,
-                          onLogout: widget.onLogout,
-                        ),
+                        builder:
+                            (context) => SchulungenSearchScreen(
+                              widget.userData,
+                              isLoggedIn: widget.isLoggedIn,
+                              onLogout: widget.onLogout,
+                            ),
                       ),
                       (route) => false, // Remove all previous routes
                     );
@@ -669,10 +694,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   child: Row(
                     mainAxisAlignment: UIConstants.centerAlignment,
                     children: [
-                      const Icon(
-                        Icons.close,
-                        color: UIConstants.closeIcon,
-                      ),
+                      const Icon(Icons.close, color: UIConstants.closeIcon),
                       const SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         'Nein',
@@ -704,10 +726,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   child: Row(
                     mainAxisAlignment: UIConstants.centerAlignment,
                     children: [
-                      const Icon(
-                        Icons.check,
-                        color: UIConstants.checkIcon,
-                      ),
+                      const Icon(Icons.check, color: UIConstants.checkIcon),
                       const SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         'Ja',
@@ -739,15 +758,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       context: dialogContext,
       barrierDismissible: false,
       builder: (context) {
-        final vornameController =
-            TextEditingController(text: prefillUser?.vorname ?? '');
-        final nachnameController =
-            TextEditingController(text: prefillUser?.namen ?? '');
-        final passnummerController =
-            TextEditingController(text: prefillUser?.passnummer ?? '');
+        final vornameController = TextEditingController(
+          text: prefillUser?.vorname ?? '',
+        );
+        final nachnameController = TextEditingController(
+          text: prefillUser?.namen ?? '',
+        );
+        final passnummerController = TextEditingController(
+          text: prefillUser?.passnummer ?? '',
+        );
         final emailController = TextEditingController(text: prefillEmail);
-        final telefonnummerController =
-            TextEditingController(text: prefillUser?.telefon ?? '');
+        final telefonnummerController = TextEditingController(
+          text: prefillUser?.telefon ?? '',
+        );
         final formKey = GlobalKey<FormState>();
         bool isEmailValid(String email) {
           final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}');
@@ -756,16 +779,22 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
         void submit() async {
           // Get config and email service before any await
-          final configService =
-              Provider.of<ConfigService>(dialogContext, listen: false);
-          final emailService =
-              Provider.of<EmailService>(dialogContext, listen: false);
+          final configService = Provider.of<ConfigService>(
+            dialogContext,
+            listen: false,
+          );
+          final emailService = Provider.of<EmailService>(
+            dialogContext,
+            listen: false,
+          );
 
           final from =
               configService.getString('emailRegistration.registrationFrom') ??
-                  'do-not-reply@bssb.de';
-          final subject = configService
-                  .getString('emailRegistration.registrationSubject') ??
+              'do-not-reply@bssb.de';
+          final subject =
+              configService.getString(
+                'emailRegistration.registrationSubject',
+              ) ??
               'Schulung Anmeldung';
           final content =
               '${configService.getString('emailRegistration.registrationContent') ?? 'Sie sind für einen Schulung angemeldet'}\n\nSchulung: ${schulungsTermin.bezeichnung}';
@@ -779,16 +808,24 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           showDialog(
             context: dialogContext,
             barrierDismissible: false,
-            builder: (context) =>
-                const Center(child: CircularProgressIndicator()),
+            builder:
+                (context) => const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.defaultAppColor,
+                    ),
+                  ),
+                ),
           );
 
           final nachname = nachnameController.text.trim();
           final passnummer = passnummerController.text.trim();
           if (!dialogContext.mounted) return;
 
-          final isValidPerson =
-              await apiService.findePersonID2(nachname, passnummer);
+          final isValidPerson = await apiService.findePersonID2(
+            nachname,
+            passnummer,
+          );
 
           // Remove spinner
           if (dialogContext.mounted) {
@@ -813,7 +850,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
           Navigator.of(context).pop();
           try {
-            final userData = prefillUser ?? widget.userData!;
+            final userData = prefillUser ?? widget.userData;
+            if (userData == null) {
+              ScaffoldMessenger.of(parentContext).showSnackBar(
+                const SnackBar(
+                  content: Text('Kein Benutzer für die Anmeldung verfügbar.'),
+                  duration: UIConstants.snackbarDuration,
+                  backgroundColor: UIConstants.errorColor,
+                ),
+              );
+              return;
+            }
             final response = await apiService.registerSchulungenTeilnehmer(
               schulungTerminId: schulungsTermin.schulungsterminId,
               user: userData.copyWith(
@@ -839,26 +886,27 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               );
 
               if (!dialogContext.mounted) return;
-              final updatedRegisteredPersons =
-                  List<_RegisteredPerson>.from(registeredPersons)
-                    ..add(
-                      _RegisteredPerson(
-                        vornameController.text,
-                        nachnameController.text,
-                        passnummerController.text,
-                      ),
-                    );
+              final updatedRegisteredPersons = List<_RegisteredPerson>.from(
+                registeredPersons,
+              )..add(
+                _RegisteredPerson(
+                  vornameController.text,
+                  nachnameController.text,
+                  passnummerController.text,
+                ),
+              );
               // Check if dialogContext is still mounted before using it
               if (!dialogContext.mounted) return;
               showDialog(
                 context: dialogContext,
                 barrierDismissible: false,
-                builder: (context) => _buildRegisterAnotherDialog(
-                  parentContext,
-                  schulungsTermin,
-                  updatedRegisteredPersons,
-                  bankData,
-                ),
+                builder:
+                    (context) => _buildRegisterAnotherDialog(
+                      parentContext,
+                      schulungsTermin,
+                      updatedRegisteredPersons,
+                      bankData,
+                    ),
               );
             } else {
               if (!parentContext.mounted) return;
@@ -887,15 +935,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           insetPadding: const EdgeInsets.all(UIConstants.spacingXL),
           child: Center(
             child: ConstrainedBox(
-              constraints:
-                  const BoxConstraints(maxWidth: UIConstants.dialogMinWidth),
+              constraints: const BoxConstraints(
+                maxWidth: UIConstants.dialogMinWidth,
+              ),
               child: Stack(
                 children: [
                   Container(
                     decoration: BoxDecoration(
                       color: UIConstants.backgroundColor,
-                      borderRadius:
-                          BorderRadius.circular(UIConstants.cornerRadius),
+                      borderRadius: BorderRadius.circular(
+                        UIConstants.cornerRadius,
+                      ),
                     ),
                     padding: const EdgeInsets.only(
                       top: UIConstants.spacingXL,
@@ -1042,10 +1092,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           tooltip: 'Abbrechen',
                           backgroundColor: UIConstants.defaultAppColor,
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          ),
+                          child: const Icon(Icons.close, color: Colors.white),
                         ),
                         FloatingActionButton(
                           heroTag: 'okRegisterAnotherFab',
@@ -1053,10 +1100,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           tooltip: 'OK',
                           backgroundColor: UIConstants.defaultAppColor,
                           onPressed: submit,
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                          ),
+                          child: const Icon(Icons.check, color: Colors.white),
                         ),
                       ],
                     ),
@@ -1082,591 +1126,632 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       showConnectivityIcon: widget.showConnectivityIcon,
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const ScaledText(
-                    'Verfügbare Schulungen',
-                    style: UIStyles.headerStyle,
-                  ),
-                  const SizedBox(height: UIConstants.spacingM),
-                  if (_errorMessage != null)
-                    ScaledText(
-                      _errorMessage!,
-                      style: UIStyles.errorStyle,
+        child:
+            _isLoading
+                ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.defaultAppColor,
                     ),
-                  if (!_isLoading &&
-                      _errorMessage == null &&
-                      _results.isNotEmpty)
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: _results.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: UIConstants.spacingS),
-                        itemBuilder: (context, index) {
-                          final schulungsTermin = _results[index];
-                          String formattedDate = DateFormat('dd.MM.yyyy')
-                              .format(schulungsTermin.datum);
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: UIConstants.tileColor,
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
+                  ),
+                )
+                : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ScaledText(
+                      'Verfügbare Schulungen',
+                      style: UIStyles.headerStyle,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    if (_errorMessage != null)
+                      ScaledText(_errorMessage!, style: UIStyles.errorStyle),
+                    if (!_isLoading &&
+                        _errorMessage == null &&
+                        _results.isNotEmpty)
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: _results.length,
+                          separatorBuilder:
+                              (_, __) =>
+                                  const SizedBox(height: UIConstants.spacingS),
+                          itemBuilder: (context, index) {
+                            final schulungsTermin = _results[index];
+                            String formattedDate = DateFormat(
+                              'dd.MM.yyyy',
+                            ).format(schulungsTermin.datum);
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: UIConstants.tileColor,
+                                borderRadius: BorderRadius.circular(
+                                  UIConstants.cornerRadius,
+                                ),
                               ),
-                            ),
-                            padding: const EdgeInsets.all(UIConstants.spacingM),
-                            child: Row(
-                              children: [
-                                // Left: date, group, location
-                                Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.calendar_today,
-                                            size: UIConstants.defaultIconSize,
-                                          ),
-                                          const SizedBox(
-                                            width: UIConstants.spacingXS,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              formattedDate,
-                                              style: UIStyles.bodyStyle,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
+                              padding: const EdgeInsets.all(
+                                UIConstants.spacingM,
+                              ),
+                              child: Row(
+                                children: [
+                                  // Left: date, group, location
+                                  Expanded(
+                                    flex: 1,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.calendar_today,
+                                              size: UIConstants.defaultIconSize,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.group,
-                                            size: UIConstants.defaultIconSize,
-                                          ),
-                                          const SizedBox(
-                                            width: UIConstants.spacingXS,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              schulungsTermin.webGruppeLabel,
-                                              style: UIStyles.bodyStyle,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
+                                            const SizedBox(
+                                              width: UIConstants.spacingXS,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.place,
-                                            size: UIConstants.defaultIconSize,
-                                          ),
-                                          const SizedBox(
-                                            width: UIConstants.spacingXS,
-                                          ),
-                                          Flexible(
-                                            child: Text(
-                                              schulungsTermin.ort,
-                                              style: UIStyles.bodyStyle,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                // Center: title (centered horizontally)
-                                const SizedBox(width: UIConstants.spacingM),
-                                Expanded(
-                                  flex: 2,
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      schulungsTermin.bezeichnung,
-                                      style: UIStyles.subtitleStyle,
-                                      textAlign: TextAlign.left,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                                // Right: description icon
-                                FloatingActionButton(
-                                  heroTag: 'schulungenContentFab$index',
-                                  backgroundColor:
-                                      schulungsTermin.anmeldungenGesperrt
-                                          ? UIConstants.schulungenGesperrtColor
-                                          : UIConstants.schulungenNormalColor,
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                      barrierDismissible: false,
-                                    );
-                                    final apiService = Provider.of<ApiService>(
-                                      context,
-                                      listen: false,
-                                    );
-                                    final termin =
-                                        await apiService.fetchSchulungstermin(
-                                      schulungsTermin.schulungsterminId
-                                          .toString(),
-                                    );
-                                    if (!context.mounted) return;
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(); // Remove spinner
-                                    if (termin == null) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('Fehler'),
-                                          content: const Text(
-                                            'Details konnten nicht geladen werden.',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: const Text('OK'),
+                                            Flexible(
+                                              child: Text(
+                                                formattedDate,
+                                                style: UIStyles.bodyStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      );
-                                      return;
-                                    }
-                                    // Fallback for lehrgangsleiterMail and lehrgangsleiterTel
-                                    final lehrgangsleiterMail = (termin
-                                            .lehrgangsleiterMail.isNotEmpty)
-                                        ? termin.lehrgangsleiterMail
-                                        : schulungsTermin.lehrgangsleiterMail;
-                                    final lehrgangsleiterTel = (termin
-                                            .lehrgangsleiterTel.isNotEmpty)
-                                        ? termin.lehrgangsleiterTel
-                                        : schulungsTermin.lehrgangsleiterTel;
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        final t = termin;
-                                        return Stack(
+                                        Row(
                                           children: [
-                                            AlertDialog(
-                                              backgroundColor:
-                                                  UIConstants.backgroundColor,
-                                              contentPadding: EdgeInsets.zero,
-                                              // Move header into content for full-width white background
-                                              actions: null,
-                                              content: ConstrainedBox(
-                                                constraints: BoxConstraints(
-                                                  maxHeight:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.8,
-                                                  minWidth: UIConstants
-                                                      .dialogMinWidth,
+                                            const Icon(
+                                              Icons.group,
+                                              size: UIConstants.defaultIconSize,
+                                            ),
+                                            const SizedBox(
+                                              width: UIConstants.spacingXS,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                schulungsTermin.webGruppeLabel,
+                                                style: UIStyles.bodyStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.place,
+                                              size: UIConstants.defaultIconSize,
+                                            ),
+                                            const SizedBox(
+                                              width: UIConstants.spacingXS,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                schulungsTermin.ort,
+                                                style: UIStyles.bodyStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Center: title (centered horizontally)
+                                  const SizedBox(width: UIConstants.spacingM),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        schulungsTermin.bezeichnung,
+                                        style: UIStyles.subtitleStyle,
+                                        textAlign: TextAlign.left,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  // Right: description icon
+                                  FloatingActionButton(
+                                    heroTag: 'schulungenContentFab$index',
+                                    backgroundColor:
+                                        schulungsTermin.anmeldungenGesperrt
+                                            ? UIConstants
+                                                .schulungenGesperrtColor
+                                            : UIConstants.schulungenNormalColor,
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder:
+                                            (context) => const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(
+                                                      UIConstants
+                                                          .defaultAppColor,
+                                                    ),
+                                              ),
+                                            ),
+                                        barrierDismissible: false,
+                                      );
+                                      final apiService =
+                                          Provider.of<ApiService>(
+                                            context,
+                                            listen: false,
+                                          );
+                                      final termin = await apiService
+                                          .fetchSchulungstermin(
+                                            schulungsTermin.schulungsterminId
+                                                .toString(),
+                                          );
+                                      if (!context.mounted) return;
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pop(); // Remove spinner
+                                      if (termin == null) {
+                                        showDialog(
+                                          context: context,
+                                          builder:
+                                              (context) => AlertDialog(
+                                                title: const Text('Fehler'),
+                                                content: const Text(
+                                                  'Details konnten nicht geladen werden.',
                                                 ),
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .stretch,
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      // Header: white background, title, availability, and info table
-                                                      Container(
-                                                        width: double.infinity,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          vertical: 28,
-                                                          horizontal: 0,
-                                                        ), // enlarged vertical padding
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: UIConstants
-                                                              .whiteColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                            UIConstants
-                                                                .cornerRadius,
-                                                          ), // rounded all corners
-                                                        ),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                horizontal:
-                                                                    24.0,
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed:
+                                                        () =>
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop(),
+                                                    child: const Text('OK'),
+                                                  ),
+                                                ],
+                                              ),
+                                        );
+                                        return;
+                                      }
+                                      // Fallback for lehrgangsleiterMail and lehrgangsleiterTel
+                                      final lehrgangsleiterMail =
+                                          (termin
+                                                  .lehrgangsleiterMail
+                                                  .isNotEmpty)
+                                              ? termin.lehrgangsleiterMail
+                                              : schulungsTermin
+                                                  .lehrgangsleiterMail;
+                                      final lehrgangsleiterTel =
+                                          (termin.lehrgangsleiterTel.isNotEmpty)
+                                              ? termin.lehrgangsleiterTel
+                                              : schulungsTermin
+                                                  .lehrgangsleiterTel;
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          final t = termin;
+                                          return Stack(
+                                            children: [
+                                              AlertDialog(
+                                                backgroundColor:
+                                                    UIConstants.backgroundColor,
+                                                contentPadding: EdgeInsets.zero,
+                                                // Move header into content for full-width white background
+                                                actions: null,
+                                                content: ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                    maxHeight:
+                                                        MediaQuery.of(
+                                                          context,
+                                                        ).size.height *
+                                                        0.8,
+                                                    minWidth:
+                                                        UIConstants
+                                                            .dialogMinWidth,
+                                                  ),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .stretch,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        // Header: white background, title, availability, and info table
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 28,
+                                                                horizontal: 0,
+                                                              ), // enlarged vertical padding
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                UIConstants
+                                                                    .whiteColor,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  UIConstants
+                                                                      .cornerRadius,
+                                                                ), // rounded all corners
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          24.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  (t.bezeichnung.isNotEmpty
+                                                                      ? t.bezeichnung
+                                                                      : schulungsTermin
+                                                                          .bezeichnung),
+                                                                  style:
+                                                                      UIStyles
+                                                                          .dialogTitleStyle,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
                                                               ),
-                                                              child: Text(
-                                                                (t.bezeichnung
-                                                                        .isNotEmpty
-                                                                    ? t
-                                                                        .bezeichnung
-                                                                    : schulungsTermin
-                                                                        .bezeichnung),
+                                                              const SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Text(
+                                                                'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
                                                                 style: UIStyles
-                                                                    .dialogTitleStyle,
+                                                                    .bodyStyle
+                                                                    .copyWith(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
                                                               ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 4,
-                                                            ),
-                                                            Text(
-                                                              'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
-                                                              style: UIStyles
-                                                                  .bodyStyle
-                                                                  .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 24,
-                                                            ), // enlarged space between availability and table
-                                                            // Info table below availability (centered, compact, visually matching screenshot)
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                horizontal:
-                                                                    32, // tighter, equal left/right padding
-                                                                vertical:
-                                                                    UIConstants
-                                                                        .spacingS,
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  // Left column (left-aligned)
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.calendar_today,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            _formatDate(
-                                                                              t.datum,
+                                                              const SizedBox(
+                                                                height: 24,
+                                                              ), // enlarged space between availability and table
+                                                              // Info table below availability (centered, compact, visually matching screenshot)
+                                                              Padding(
+                                                                padding: const EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      32, // tighter, equal left/right padding
+                                                                  vertical:
+                                                                      UIConstants
+                                                                          .spacingS,
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    // Left column (left-aligned)
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.calendar_today,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
                                                                             ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.location_on,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              _formatDate(
+                                                                                t.datum,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.location_on,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              t.ort,
+                                                                              overflow:
+                                                                                  TextOverflow.ellipsis,
+                                                                              maxLines:
+                                                                                  1,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.group,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              t.webGruppeLabel,
+                                                                              overflow:
+                                                                                  TextOverflow.ellipsis,
+                                                                              maxLines:
+                                                                                  1,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.request_quote,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              '${t.kosten.toStringAsFixed(2)} €',
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width:
                                                                           UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            t.ort,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
+                                                                              .dialogColumnGap,
+                                                                    ), // reduced space between columns
+                                                                    // Right column (right-aligned)
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          'Lehrgangsleiter:',
+                                                                          style: UIStyles.bodyStyle.copyWith(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
                                                                           ),
-                                                                        ],
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.group,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            t.webGruppeLabel,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.request_quote,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            '${t.kosten.toStringAsFixed(2)} €',
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    width: UIConstants
-                                                                        .dialogColumnGap,
-                                                                  ), // reduced space between columns
-                                                                  // Right column (right-aligned)
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Lehrgangsleiter:',
-                                                                        style: UIStyles
-                                                                            .bodyStyle
-                                                                            .copyWith(fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.email,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            lehrgangsleiterMail,
-                                                                            style:
-                                                                                UIStyles.bodyStyle,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                            Icons.phone,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,
-                                                                          ),
-                                                                          UIConstants
-                                                                              .horizontalSpacingS,
-                                                                          Text(
-                                                                            lehrgangsleiterTel,
-                                                                            style:
-                                                                                UIStyles.bodyStyle,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.email,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              lehrgangsleiterMail,
+                                                                              style:
+                                                                                  UIStyles.bodyStyle,
+                                                                              overflow:
+                                                                                  TextOverflow.ellipsis,
+                                                                              maxLines:
+                                                                                  1,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              UIConstants.spacingXS,
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            const Icon(
+                                                                              Icons.phone,
+                                                                              size:
+                                                                                  UIConstants.defaultIconSize,
+                                                                            ),
+                                                                            UIConstants.horizontalSpacingS,
+                                                                            Text(
+                                                                              lehrgangsleiterTel,
+                                                                              style:
+                                                                                  UIStyles.bodyStyle,
+                                                                              overflow:
+                                                                                  TextOverflow.ellipsis,
+                                                                              maxLines:
+                                                                                  1,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      // ... rest of dialog content ...
-                                                      const Divider(
-                                                        height: UIConstants
-                                                            .defaultStrokeWidth,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(
-                                                          UIConstants.spacingM,
+                                                        // ... rest of dialog content ...
+                                                        const Divider(
+                                                          height:
+                                                              UIConstants
+                                                                  .defaultStrokeWidth,
                                                         ),
-                                                        child: t.lehrgangsinhaltHtml
-                                                                .isNotEmpty
-                                                            ? Html(
-                                                                data: t
-                                                                    .lehrgangsinhaltHtml,
-                                                              )
-                                                            : t.lehrgangsinhalt
-                                                                    .isNotEmpty
-                                                                ? Text(
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets.all(
+                                                                UIConstants
+                                                                    .spacingM,
+                                                              ),
+                                                          child:
+                                                              t
+                                                                      .lehrgangsinhaltHtml
+                                                                      .isNotEmpty
+                                                                  ? Html(
+                                                                    data:
+                                                                        t.lehrgangsinhaltHtml,
+                                                                  )
+                                                                  : t
+                                                                      .lehrgangsinhalt
+                                                                      .isNotEmpty
+                                                                  ? Text(
                                                                     t.lehrgangsinhalt,
                                                                   )
-                                                                : t.bemerkung
-                                                                        .isNotEmpty
-                                                                    ? Text(
-                                                                        t.bemerkung,
-                                                                      )
-                                                                    : const Text(
-                                                                        'Keine Beschreibung verfügbar.',
-                                                                      ),
-                                                      ),
-                                                    ],
+                                                                  : t
+                                                                      .bemerkung
+                                                                      .isNotEmpty
+                                                                  ? Text(
+                                                                    t.bemerkung,
+                                                                  )
+                                                                  : const Text(
+                                                                    'Keine Beschreibung verfügbar.',
+                                                                  ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            Positioned(
-                                              bottom: UIConstants
-                                                      .dialogFabBottom +
-                                                  UIConstants
-                                                      .dialogFabDeleteOffset,
-                                              right: UIConstants.dialogFabRight,
-                                              child: FloatingActionButton(
-                                                heroTag:
-                                                    'descDialogCloseFab$index',
-                                                mini: true,
-                                                tooltip: 'Schließen',
-                                                backgroundColor:
-                                                    UIConstants.defaultAppColor,
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.white,
+                                              Positioned(
+                                                bottom:
+                                                    UIConstants
+                                                        .dialogFabBottom +
+                                                    UIConstants
+                                                        .dialogFabDeleteOffset,
+                                                right:
+                                                    UIConstants.dialogFabRight,
+                                                child: FloatingActionButton(
+                                                  heroTag:
+                                                      'descDialogCloseFab$index',
+                                                  mini: true,
+                                                  tooltip: 'Schließen',
+                                                  backgroundColor:
+                                                      UIConstants
+                                                          .defaultAppColor,
+                                                  onPressed:
+                                                      () =>
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop(),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            Positioned(
-                                              bottom:
-                                                  UIConstants.dialogFabBottom,
-                                              right: UIConstants.dialogFabRight,
-                                              child: FloatingActionButton(
-                                                heroTag:
-                                                    'descDialogBookFab$index',
-                                                mini: true,
-                                                tooltip: 'Buchen',
-                                                backgroundColor: t
-                                                        .anmeldungenGesperrt
-                                                    ? UIConstants
-                                                        .cancelButtonBackground
-                                                    : UIConstants
-                                                        .defaultAppColor,
-                                                onPressed: t.anmeldungenGesperrt
-                                                    ? null
-                                                    : () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Future.microtask(() {
-                                                          if (!mounted) return;
-                                                          if (!_isLoggedIn) {
-                                                            showDialog(
-                                                              // ignore: use_build_context_synchronously
-                                                              context: context,
-                                                              barrierDismissible:
-                                                                  false,
-                                                              builder:
-                                                                  (context) =>
-                                                                      LoginDialog(
-                                                                onLoginSuccess:
-                                                                    (userData) {
-                                                                  setState(() {
-                                                                    _isLoggedIn =
-                                                                        true;
-                                                                    _userData =
-                                                                        userData;
-                                                                  });
-                                                                  // Proceed with booking after login
-                                                                  _showBookingDialog(
-                                                                    t,
-                                                                    registeredPersons: [],
-                                                                  );
-                                                                },
-                                                              ),
-                                                            );
-                                                          } else {
-                                                            _showBookingDialog(
-                                                              t,
-                                                              registeredPersons: [],
-                                                            );
-                                                          }
-                                                        });
-                                                      },
-                                                child: const Icon(
-                                                  Icons.event_available,
-                                                  color: Colors.white,
+                                              Positioned(
+                                                bottom:
+                                                    UIConstants.dialogFabBottom,
+                                                right:
+                                                    UIConstants.dialogFabRight,
+                                                child: FloatingActionButton(
+                                                  heroTag:
+                                                      'descDialogBookFab$index',
+                                                  mini: true,
+                                                  tooltip: 'Buchen',
+                                                  backgroundColor:
+                                                      t.anmeldungenGesperrt
+                                                          ? UIConstants
+                                                              .cancelButtonBackground
+                                                          : UIConstants
+                                                              .defaultAppColor,
+                                                  onPressed:
+                                                      t.anmeldungenGesperrt
+                                                          ? null
+                                                          : () {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop();
+                                                            Future.microtask(() {
+                                                              if (!mounted)
+                                                                return;
+                                                              if (_userData ==
+                                                                  null) {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  barrierDismissible:
+                                                                      false,
+                                                                  builder:
+                                                                      (
+                                                                        context,
+                                                                      ) => LoginDialog(
+                                                                        onLoginSuccess: (
+                                                                          userData,
+                                                                        ) {
+                                                                          setState(() {
+                                                                            _userData =
+                                                                                userData;
+                                                                          });
+                                                                          _showBookingDialog(
+                                                                            t,
+                                                                            registeredPersons:
+                                                                                [],
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                );
+                                                              } else {
+                                                                _showBookingDialog(
+                                                                  t,
+                                                                  registeredPersons:
+                                                                      [],
+                                                                );
+                                                              }
+                                                            });
+                                                          },
+                                                  child: const Icon(
+                                                    Icons.event_available,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Icon(
-                                    Icons.description,
-                                    color: Colors.white,
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.description,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  if (!_isLoading && _errorMessage == null && _results.isEmpty)
-                    const ScaledText(
-                      'Keine Schulungen gefunden.',
-                      style: UIStyles.bodyStyle,
-                    ),
-                ],
-              ),
+                    if (!_isLoading &&
+                        _errorMessage == null &&
+                        _results.isEmpty)
+                      const ScaledText(
+                        'Keine Schulungen gefunden.',
+                        style: UIStyles.bodyStyle,
+                      ),
+                  ],
+                ),
       ),
     );
   }
@@ -1680,10 +1765,7 @@ class _RegisteredPerson {
 }
 
 class LoginDialog extends StatefulWidget {
-  const LoginDialog({
-    super.key,
-    required this.onLoginSuccess,
-  });
+  const LoginDialog({super.key, required this.onLoginSuccess});
   final Function(UserData) onLoginSuccess;
 
   @override
@@ -1731,8 +1813,9 @@ class _LoginDialogState extends State<LoginDialog> {
         }
       } else {
         setState(
-          () => _errorMessage =
-              response['ResultMessage'] ?? 'Login fehlgeschlagen.',
+          () =>
+              _errorMessage =
+                  response['ResultMessage'] ?? 'Login fehlgeschlagen.',
         );
       }
     } catch (e) {
@@ -1761,16 +1844,14 @@ class _LoginDialogState extends State<LoginDialog> {
             if (_errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-                child: ScaledText(
-                  _errorMessage,
-                  style: UIStyles.errorStyle,
-                ),
+                child: ScaledText(_errorMessage, style: UIStyles.errorStyle),
               ),
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration:
-                  UIStyles.formInputDecoration.copyWith(labelText: 'E-Mail'),
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'E-Mail',
+              ),
               enabled: !_isLoading,
               style: UIStyles.dialogContentStyle,
             ),
@@ -1781,9 +1862,11 @@ class _LoginDialogState extends State<LoginDialog> {
               decoration: UIStyles.formInputDecoration.copyWith(
                 labelText: 'Passwort',
                 suffixIcon: IconButton(
-                  icon: Icon(_isPasswordVisible
-                      ? Icons.visibility
-                      : Icons.visibility_off,),
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
                   onPressed: () {
                     setState(() {
                       _isPasswordVisible = !_isPasswordVisible;
@@ -1812,10 +1895,7 @@ class _LoginDialogState extends State<LoginDialog> {
                   child: Row(
                     mainAxisAlignment: UIConstants.centerAlignment,
                     children: [
-                      const Icon(
-                        Icons.close,
-                        color: UIConstants.closeIcon,
-                      ),
+                      const Icon(Icons.close, color: UIConstants.closeIcon),
                       const SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         'Abbrechen',
@@ -1835,23 +1915,24 @@ class _LoginDialogState extends State<LoginDialog> {
                   child: Row(
                     mainAxisAlignment: UIConstants.centerAlignment,
                     children: [
-                      const Icon(
-                        Icons.login,
-                        color: UIConstants.checkIcon,
-                      ),
+                      const Icon(Icons.login, color: UIConstants.checkIcon),
                       const SizedBox(width: UIConstants.spacingS),
                       _isLoading
                           ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : ScaledText(
-                              'Login',
-                              style: UIStyles.dialogButtonTextStyle.copyWith(
-                                color: UIConstants.submitButtonText,
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.defaultAppColor,
                               ),
                             ),
+                          )
+                          : ScaledText(
+                            'Login',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.submitButtonText,
+                            ),
+                          ),
                     ],
                   ),
                 ),

@@ -49,7 +49,7 @@ class UIConstants {
   static const Color noConnectivityIcon = Colors.red;
   static const Color bluetoothConnected = Colors.grey;
   static const Color networkCheck = Colors.grey;
-  static const Color circularProgressIndicator = Colors.white;
+  static const Color circularProgressIndicator = defaultAppColor;
 
   // Card Colors
   static const Color cardColor = Colors.white;
@@ -240,7 +240,7 @@ class UIConstants {
 
   // Loading Indicator
   static const Widget defaultLoadingIndicator = CircularProgressIndicator(
-    valueColor: AlwaysStoppedAnimation<Color>(circularProgressIndicator),
+    valueColor: AlwaysStoppedAnimation<Color>(defaultAppColor),
   );
 
   // Layout
