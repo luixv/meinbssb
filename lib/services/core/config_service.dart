@@ -77,7 +77,7 @@ class ConfigService {
     return null;
   }
 
-  static String buildApiBaseUrl(
+  static String buildApi1BaseUrl(
     ConfigService config, {
     String protocolKey = 'apiProtocol',
     String serverKey = 'api1BaseServer',

@@ -59,12 +59,23 @@ class _MyAppState extends State<MyApp> {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   late final AuthService _authService;
   bool _loading = true;
+  bool _splashDone = false;
+  bool _authCheckDone = false;
 
   @override
   void initState() {
     super.initState();
     _authService = Provider.of<AuthService>(context, listen: false);
+    _startSplashAndAuthCheck();
+  }
+
+  void _startSplashAndAuthCheck() {
+    // Start both splash and auth check in parallel
     _checkLoginStatus();
+    Future.delayed(const Duration(seconds: 3)).then((_) {
+      _splashDone = true;
+      _maybeFinishLoading();
+    });
   }
 
   Future<void> _checkLoginStatus() async {
@@ -95,8 +106,9 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isLoggedIn = isLoggedIn && valid;
       _userData = isLoggedIn && valid ? userData : null;
-      _loading = false;
     });
+    _authCheckDone = true;
+    _maybeFinishLoading();
     // After setState, force navigation if needed
     if (!_isLoggedIn && _navigatorKey.currentState != null) {
       try {
@@ -108,6 +120,14 @@ class _MyAppState extends State<MyApp> {
       } catch (e) {
         // ignore
       }
+    }
+  }
+
+  void _maybeFinishLoading() {
+    if (_splashDone && _authCheckDone && mounted) {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -157,10 +177,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      // Only show a splash/loading screen, not MaterialApp with routes
-      return const MaterialApp(
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+      // Show the animated SplashScreen for at least 3 seconds
+      return MaterialApp(
+        home: SplashScreen(
+          onFinish: () {}, // No-op, we control timing in _MyAppState
         ),
       );
     }

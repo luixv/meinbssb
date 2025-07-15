@@ -46,9 +46,10 @@ class AppInitializer {
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
     final protocol = configService.getString('apiProtocol', 'api') ?? 'https';
+
     final baseIP =
         configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
-    final port = configService.getString('apiPort', 'api') ?? '56400';
+    final port = configService.getString('apiBasePort', 'api') ?? '56400';
     final path =
         configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
 
