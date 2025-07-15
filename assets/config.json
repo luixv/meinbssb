@@ -16,10 +16,6 @@
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
 
-  "api1PassantragServer": "webintern.bssb.bayern",
-  "api1PassantragPath": "rest/zmi/api1",
-  "api1PassantragPort": "50211",
-
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   
   "serverTimeout": 15,
