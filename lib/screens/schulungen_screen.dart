@@ -1684,8 +1684,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               context,
                                                             ).pop();
                                                             Future.microtask(() {
-                                                              if (!mounted)
+                                                              if (!mounted) {
                                                                 return;
+                                                              }
                                                               if (_userData ==
                                                                   null) {
                                                                 showDialog(
