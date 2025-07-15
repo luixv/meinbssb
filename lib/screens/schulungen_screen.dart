@@ -15,6 +15,7 @@ import 'agb_screen.dart';
 import '/services/core/config_service.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../widgets/dialog_fabs.dart';
+import 'schulungen_search_screen.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -640,7 +641,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => Navigator.of(parentContext).pop(),
+                  onPressed: () {
+                    Navigator.of(parentContext).pop(); // Close the dialog
+                    Navigator.of(parentContext).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => SchulungenSearchScreen(
+                          widget.userData,
+                          isLoggedIn: widget.isLoggedIn,
+                          onLogout: widget.onLogout,
+                        ),
+                      ),
+                      (route) => false, // Remove all previous routes
+                    );
+                  },
                   style: UIStyles.dialogCancelButtonStyle,
                   child: Row(
                     mainAxisAlignment: UIConstants.centerAlignment,
@@ -863,7 +876,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           insetPadding: const EdgeInsets.all(UIConstants.spacingXL),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: UIConstants.dialogMinWidth),
+              constraints:
+                  const BoxConstraints(maxWidth: UIConstants.dialogMinWidth),
               child: Stack(
                 children: [
                   Container(
@@ -892,7 +906,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         Center(
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(
-                                maxWidth: UIConstants.dialogNarrowWidth,),
+                              maxWidth: UIConstants.dialogNarrowWidth,
+                            ),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: UIConstants.whiteColor,
