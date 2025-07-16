@@ -43,14 +43,14 @@ class EmailService {
     required String from,
     required String recipient,
     required String subject,
-    String? body,
+    String? htmlBody,
     int? emailId,
   }) async {
     LoggerService.logInfo('sendEmail called with emailId: $emailId');
     LoggerService.logInfo('sendEmail called with from: $from');
     LoggerService.logInfo('sendEmail called with recipient: $recipient');
     LoggerService.logInfo('sendEmail called with subject: $subject');
-    LoggerService.logInfo('sendEmail called with body: $body');
+    LoggerService.logInfo('sendEmail called with htmlBody: $htmlBody');
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
@@ -67,18 +67,25 @@ class EmailService {
         };
       }
 
-      final smtpServer = smtp.SmtpServer(smtpHost,
-          username: username,
-          password: password,
-          port: 1025,
-          ssl: false,
-          ignoreBadCertificate: true,);
+      final smtpServer = smtp.SmtpServer(
+        smtpHost,
+        username: username,
+        password: password,
+        port: 1025,
+        ssl: false,
+        allowInsecure: true,
+        ignoreBadCertificate: true,
+      );
 
       final message = mailer.Message()
         ..from = mailer.Address(from)
         ..recipients.add(recipient)
         ..subject = subject
-        ..text = body;
+        ..html = htmlBody
+        ..headers = {
+          'Content-Type': 'text/html; charset=utf-8',
+          'content-transfer-encoding': 'quoted-printable',
+        };
 
       final sendReport = await _emailSender.send(message, smtpServer);
       LoggerService.logInfo('Message sent: ${sendReport.toString()}');
@@ -101,7 +108,12 @@ class EmailService {
   }
 
   Future<String?> getRegistrationContent() async {
-    return _configService.getString('registrationContent', 'smtpSettings');
+    try {
+      return File('lib/html/registrationEmail.html').readAsString();
+    } catch (e) {
+      LoggerService.logError('Error reading accountCreatedEmail.html: $e');
+      return null;
+    }
   }
 
   Future<String?> getVerificationBaseUrl() async {
@@ -125,7 +137,12 @@ class EmailService {
   }
 
   Future<String?> getAccountCreatedContent() async {
-    return _configService.getString('accountCreatedContent', 'smtpSettings');
+    try {
+      return File('lib/html/accountCreatedEmail.html').readAsString();
+    } catch (e) {
+      LoggerService.logError('Error reading accountCreatedEmail.html: $e');
+      return null;
+    }
   }
 
   Future<List<String>> getEmailAddressesByPersonId(String personId) async {
@@ -142,7 +159,9 @@ class EmailService {
   }
 
   Future<void> sendAccountCreationNotifications(
-      String personId, String registeredEmail,) async {
+    String personId,
+    String registeredEmail,
+  ) async {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
@@ -154,10 +173,17 @@ class EmailService {
 
       if (fromEmail == null || subject == null || emailContent == null) {
         LoggerService.logError(
-            'Email configuration missing for account creation notification',);
+          'Email configuration missing for account creation notification',
+        );
         return;
       }
-
+      final emailBody = emailContent.replaceAll('{email}', registeredEmail);
+      await sendEmail(
+        from: fromEmail,
+        recipient: registeredEmail,
+        subject: subject,
+        htmlBody: emailBody,
+      );
       // Send notification to each email address
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null') {
@@ -167,13 +193,14 @@ class EmailService {
             from: fromEmail,
             recipient: email,
             subject: subject,
-            body: emailBody,
+            htmlBody: emailBody,
           );
         }
       }
     } catch (e) {
       LoggerService.logError(
-          'Error sending account creation notifications: $e',);
+        'Error sending account creation notifications: $e',
+      );
     }
   }
 }

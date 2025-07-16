@@ -109,6 +109,7 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
     required String? email,
     required String? birthDate,
     required String? zipCode,
+    required String? personId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -121,6 +122,7 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
             #email: email,
             #birthDate: birthDate,
             #zipCode: zipCode,
+            #personId: personId,
           },
         ),
         returnValue:

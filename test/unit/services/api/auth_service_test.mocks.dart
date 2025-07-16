@@ -4,17 +4,18 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i6;
+import 'dart:typed_data' as _i7;
 
-import 'package:flutter/foundation.dart' as _i9;
+import 'package:flutter/foundation.dart' as _i10;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
-import 'package:meinbssb/services/core/cache_service.dart' as _i7;
-import 'package:meinbssb/services/core/email_service.dart' as _i11;
-import 'package:meinbssb/services/core/http_client.dart' as _i4;
-import 'package:meinbssb/services/core/network_service.dart' as _i8;
-import 'package:meinbssb/services/core/postgrest_service.dart' as _i10;
+import 'package:http/http.dart' as _i4;
+import 'package:meinbssb/services/core/cache_service.dart' as _i8;
+import 'package:meinbssb/services/core/email_service.dart' as _i12;
+import 'package:meinbssb/services/core/http_client.dart' as _i5;
+import 'package:meinbssb/services/core/network_service.dart' as _i9;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -112,10 +113,20 @@ class _FakeMacOsOptions_7 extends _i1.SmartFake implements _i3.MacOsOptions {
         );
 }
 
+class _FakeResponse_8 extends _i1.SmartFake implements _i4.Response {
+  _FakeResponse_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i5.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -123,7 +134,7 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
@@ -138,9 +149,8 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   @override
   _i2.Future<dynamic> post(
     String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
+    Map<String, dynamic>? body,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #post,
@@ -148,7 +158,6 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
             endpoint,
             body,
           ],
-          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
@@ -156,9 +165,8 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   @override
   _i2.Future<dynamic> put(
     String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
+    Map<String, dynamic>? body,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #put,
@@ -166,7 +174,6 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
             endpoint,
             body,
           ],
-          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
@@ -175,16 +182,12 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   _i2.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
-    String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #delete,
           [endpoint],
-          {
-            #body: body,
-            #overrideBaseUrl: overrideBaseUrl,
-          },
+          {#body: body},
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
@@ -204,11 +207,19 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
       ) as _i2.Future<dynamic>);
 
   @override
+  _i2.Future<dynamic> get2(String? endpoint) => (super.noSuchMethod(
+        Invocation.method(
+          #get2,
+          [endpoint],
+        ),
+        returnValue: _i2.Future<dynamic>.value(),
+      ) as _i2.Future<dynamic>);
+
+  @override
   _i2.Future<dynamic> getWithBody(
     String? endpoint,
-    Map<String, dynamic>? body, {
-    String? overrideBaseUrl,
-  }) =>
+    Map<String, dynamic>? body,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #getWithBody,
@@ -216,30 +227,24 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
             endpoint,
             body,
           ],
-          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i2.Future<dynamic>.value(),
       ) as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<_i6.Uint8List> getBytes(
-    String? endpoint, {
-    String? overrideBaseUrl,
-  }) =>
-      (super.noSuchMethod(
+  _i2.Future<_i7.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #getBytes,
           [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
         ),
-        returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
-      ) as _i2.Future<_i6.Uint8List>);
+        returnValue: _i2.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+      ) as _i2.Future<_i7.Uint8List>);
 }
 
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i7.CacheService {
+class MockCacheService extends _i1.Mock implements _i8.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -419,8 +424,8 @@ class MockCacheService extends _i1.Mock implements _i7.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -461,8 +466,8 @@ class MockCacheService extends _i1.Mock implements _i7.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i5.ifNotNull(
-              _i5.dummyValueOrNull<T>(
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,
@@ -494,7 +499,7 @@ class MockCacheService extends _i1.Mock implements _i7.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i8.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i9.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -590,7 +595,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void registerListener({
     required String? key,
-    required _i9.ValueChanged<String?>? listener,
+    required _i10.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -607,7 +612,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void unregisterListener({
     required String? key,
-    required _i9.ValueChanged<String?>? listener,
+    required _i10.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -817,7 +822,7 @@ class MockFlutterSecureStorage extends _i1.Mock
 /// A class which mocks [PostgrestService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
+class MockPostgrestService extends _i1.Mock implements _i11.PostgrestService {
   MockPostgrestService() {
     _i1.throwOnMissingStub(this);
   }
@@ -828,7 +833,8 @@ class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
     required String? lastName,
     required String? email,
     required String? passNumber,
-    required String? verificationLink,
+    required String? personId,
+    required String? verificationToken,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -839,7 +845,8 @@ class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
             #lastName: lastName,
             #email: email,
             #passNumber: passNumber,
-            #verificationLink: verificationLink,
+            #personId: personId,
+            #verificationToken: verificationToken,
           },
         ),
         returnValue:
@@ -867,10 +874,10 @@ class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
       ) as _i2.Future<Map<String, dynamic>?>);
 
   @override
-  _i2.Future<bool> verifyUser(String? verificationLink) => (super.noSuchMethod(
+  _i2.Future<bool> verifyUser(String? verificationToken) => (super.noSuchMethod(
         Invocation.method(
           #verifyUser,
-          [verificationLink],
+          [verificationToken],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
@@ -883,12 +890,47 @@ class MockPostgrestService extends _i1.Mock implements _i10.PostgrestService {
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getUserByVerificationToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByVerificationToken,
+          [token],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<_i4.Response> updateUserByVerificationToken(
+    String? token,
+    Map<String, dynamic>? fields,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateUserByVerificationToken,
+          [
+            token,
+            fields,
+          ],
+        ),
+        returnValue: _i2.Future<_i4.Response>.value(_FakeResponse_8(
+          this,
+          Invocation.method(
+            #updateUserByVerificationToken,
+            [
+              token,
+              fields,
+            ],
+          ),
+        )),
+      ) as _i2.Future<_i4.Response>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i11.EmailService {
+class MockEmailService extends _i1.Mock implements _i12.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -898,7 +940,7 @@ class MockEmailService extends _i1.Mock implements _i11.EmailService {
     required String? from,
     required String? recipient,
     required String? subject,
-    String? body,
+    String? htmlBody,
     int? emailId,
   }) =>
       (super.noSuchMethod(
@@ -909,7 +951,7 @@ class MockEmailService extends _i1.Mock implements _i11.EmailService {
             #from: from,
             #recipient: recipient,
             #subject: subject,
-            #body: body,
+            #htmlBody: htmlBody,
             #emailId: emailId,
           },
         ),

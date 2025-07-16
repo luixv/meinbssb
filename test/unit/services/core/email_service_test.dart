@@ -57,7 +57,7 @@ void main() {
           from: 'from@example.com',
           recipient: 'recipient@example.com',
           subject: 'Subject',
-          body: 'Body',
+          htmlBody: 'Body',
         );
 
         // Assert
@@ -80,7 +80,7 @@ void main() {
           from: 'from@example.com',
           recipient: 'recipient@example.com',
           subject: 'Subject',
-          body: 'Body',
+          htmlBody: 'Body',
         );
 
         // Assert
@@ -102,7 +102,7 @@ void main() {
           from: 'from@example.com',
           recipient: 'recipient@example.com',
           subject: 'Subject',
-          body: 'Body',
+          htmlBody: 'Body',
         );
 
         // Assert

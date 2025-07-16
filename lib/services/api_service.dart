@@ -79,6 +79,7 @@ class ApiService {
     required String email,
     required String birthDate,
     required String zipCode,
+    required String personId,
   }) async {
     return _authService.register(
       firstName: firstName,
@@ -87,6 +88,7 @@ class ApiService {
       email: email,
       birthDate: birthDate,
       zipCode: zipCode,
+      personId: personId,
     );
   }
 

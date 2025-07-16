@@ -97,6 +97,7 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
     required String? email,
     required String? birthDate,
     required String? zipCode,
+    required String? personId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -109,6 +110,7 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
             #email: email,
             #birthDate: birthDate,
             #zipCode: zipCode,
+            #personId: personId,
           },
         ),
         returnValue:
@@ -161,10 +163,11 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<Map<String, dynamic>> finalizeRegistration({
+  _i5.Future<dynamic> finalizeRegistration({
     required String? email,
     required String? password,
     required String? token,
+    required String? personId,
     required String? passNumber,
   }) =>
       (super.noSuchMethod(
@@ -175,12 +178,12 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
             #email: email,
             #password: password,
             #token: token,
+            #personId: personId,
             #passNumber: passNumber,
           },
         ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+        returnValue: _i5.Future<dynamic>.value(),
+      ) as _i5.Future<dynamic>);
 
   @override
   _i5.Future<void> logout() => (super.noSuchMethod(
@@ -280,6 +283,7 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
     required String? email,
     required String? birthDate,
     required String? zipCode,
+    required String? personId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -292,6 +296,7 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
             #email: email,
             #birthDate: birthDate,
             #zipCode: zipCode,
+            #personId: personId,
           },
         ),
         returnValue:
@@ -718,7 +723,7 @@ class MockEmailService extends _i1.Mock implements _i20.EmailService {
     required String? from,
     required String? recipient,
     required String? subject,
-    String? body,
+    String? htmlBody,
     int? emailId,
   }) =>
       (super.noSuchMethod(
@@ -729,7 +734,7 @@ class MockEmailService extends _i1.Mock implements _i20.EmailService {
             #from: from,
             #recipient: recipient,
             #subject: subject,
-            #body: body,
+            #htmlBody: htmlBody,
             #emailId: emailId,
           },
         ),

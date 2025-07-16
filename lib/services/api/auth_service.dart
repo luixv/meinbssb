@@ -4,10 +4,10 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/constants/messages.dart';
-import 'package:uuid/uuid.dart'; // Add this for generating verification links
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
@@ -49,26 +49,13 @@ class AuthService {
     required String email,
     required String birthDate,
     required String zipCode,
+    required String personId,
   }) async {
     try {
-      // First check if user already exists in PostgreSQL
-      final existingUser =
-          await _postgrestService.getUserByPassNumber(passNumber);
-      if (existingUser != null) {
-        return {
-          'ResultType': 0,
-          'ResultMessage': 'User with this pass number already exists',
-        };
-      }
-
-      // Get PersonID first
-      final personId = await getPersonIDByPassnummer(passNumber);
-      if (personId == '0') {
-        return {'ResultType': 0, 'ResultMessage': Messages.noPersonIdFound};
-      }
-
-      // Generate verification link
-      final verificationLink = const Uuid().v4();
+      // Generate a secure verification token
+      final secureRandom = Random.secure();
+      final bytes = List<int>.generate(32, (_) => secureRandom.nextInt(256));
+      final verificationToken = base64Url.encode(bytes);
 
       // Create user in PostgreSQL
       await _postgrestService.createUser(
@@ -76,8 +63,35 @@ class AuthService {
         lastName: lastName,
         email: email,
         passNumber: passNumber,
-        verificationLink: verificationLink,
+        personId: personId,
+        verificationToken: verificationToken, // pass as verificationToken
       );
+
+      // Send registration email
+      final fromEmail = await _emailService.getFromEmail();
+      final subject = await _emailService.getRegistrationSubject();
+      final emailContent = await _emailService.getRegistrationContent();
+      // Use the app's frontend URL for the verification link
+      final configService = ConfigService.instance;
+      final baseUrl =
+          configService.getString('frontendBaseUrl') ?? 'https://meinbssb.de';
+      if (fromEmail != null &&
+          subject != null &&
+          emailContent != null &&
+          baseUrl.isNotEmpty) {
+        final verificationLink =
+            '$baseUrl/set-password?token=$verificationToken';
+        final emailBody = emailContent
+            .replaceAll('{firstName}', firstName)
+            .replaceAll('{lastName}', lastName)
+            .replaceAll('{verificationToken}', verificationLink);
+        await _emailService.sendEmail(
+          from: fromEmail,
+          recipient: email,
+          subject: subject,
+          htmlBody: emailBody,
+        );
+      }
 
       // Store registration data for later use
       final registrationData = {
@@ -88,7 +102,8 @@ class AuthService {
         'email': email,
         'birthDate': birthDate,
         'zipCode': zipCode,
-        'verificationLink': verificationLink,
+        'verificationToken':
+            verificationToken, // keep as verificationToken in Dart
       };
 
       await _cacheService.setString(
@@ -115,8 +130,6 @@ class AuthService {
 Ergebnis der Abfrage:
 [{"PERSONID":439287}]
 */
-
-
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -299,60 +312,35 @@ Ergebnis der Abfrage:
     }
   }
 
-  Future<Map<String, dynamic>> finalizeRegistration({
+  Future finalizeRegistration({
     required String email,
     required String password,
     required String token,
+    required String personId,
     required String passNumber,
   }) async {
     try {
-      // Verify the token matches the stored verification link
-      final user = await _postgrestService.getUserByPassNumber(passNumber);
-      if (user == null || user['verification_link'] != token) {
-        return {'ResultType': 0, 'ResultMessage': 'Invalid verification link'};
-      }
-
-      // Get the PersonID from the stored registration data
-      final registrationDataJson =
-          await _cacheService.getString('registration_$email');
-      if (registrationDataJson == null) {
-        return {
-          'ResultType': 0,
-          'ResultMessage': Messages.registrationDataNotFound,
-        };
-      }
-
-      final registrationData = jsonDecode(registrationDataJson);
-      final personId = registrationData['personId'];
-
-      if (personId == null || personId.isEmpty) {
-        return {
-          'ResultType': 0,
-          'ResultMessage': Messages.registrationDataNotFound,
-        };
-      }
-
-      // Call the API to create the account
       final response = await _httpClient.post(
         'ErstelleMyBSSBAccount',
         {
-          'PersonID': personId,
+          'PersonID': int.tryParse(personId),
           'Email': email,
-          'Passwort': password,
+          'Passwort': jsonEncode(password),
         },
       );
+      if (response is List && response.isNotEmpty) {
+        final result = response[0];
+        if (result['ResultType'] == 1) {
+          // Mark user as verified in PostgreSQL
+          await _postgrestService.verifyUser(token);
 
-      if (response['ResultType'] == 1) {
-        // Mark user as verified in PostgreSQL
-        await _postgrestService.verifyUser(token);
+          // Send notification emails to all associated email addresses
+          await _emailService.sendAccountCreationNotifications(personId, email);
 
-        // Send notification emails to all associated email addresses
-        await _emailService.sendAccountCreationNotifications(personId, email);
-
-        // Clear stored registration data after successful account creation
-        await _cacheService.remove('registration_$email');
+          // Clear stored registration data after successful account creation
+          await _cacheService.remove('registration_$email');
+        }
       }
-
       return response;
     } catch (e) {
       LoggerService.logError('Error in finalizeRegistration: $e');

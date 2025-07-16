@@ -169,6 +169,7 @@ void main() {
             email: anyNamed('email'),
             birthDate: anyNamed('birthDate'),
             zipCode: anyNamed('zipCode'),
+            personId: anyNamed('personId'),
           ),
         ).thenAnswer((_) async => expectedResponse);
 
@@ -179,6 +180,7 @@ void main() {
           email: 'john@example.com',
           birthDate: '01.01.1990',
           zipCode: '12345',
+          personId: 'testId',
         );
 
         expect(result, equals(expectedResponse));
@@ -190,6 +192,7 @@ void main() {
             email: 'john@example.com',
             birthDate: '01.01.1990',
             zipCode: '12345',
+            personId: 'testId',
           ),
         ).called(1);
       });

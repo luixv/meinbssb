@@ -829,7 +829,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 from: from,
                 recipient: emailController.text,
                 subject: subject,
-                body: content,
+                htmlBody: content,
               );
 
               if (!dialogContext.mounted) return;
@@ -1393,8 +1393,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                        width: UIConstants
-                                                                            .infoTableColumnSpacingWide,),
+                                                                      width: UIConstants
+                                                                          .infoTableColumnSpacingWide,
+                                                                    ),
                                                                     Column(
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment

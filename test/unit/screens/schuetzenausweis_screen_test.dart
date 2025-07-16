@@ -313,7 +313,7 @@ class DummyEmailService extends EmailService {
     required String from,
     required String recipient,
     required String subject,
-    String? body,
+    String? htmlBody,
     int? emailId,
   }) async {
     return {'ResultType': 1, 'ResultMessage': 'Email sent successfully'};

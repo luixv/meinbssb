@@ -26,7 +26,8 @@ class PostgrestService {
     required String lastName,
     required String email,
     required String passNumber,
-    required String verificationLink,
+    required String personId,
+    required String verificationToken,
   }) async {
     try {
       final response = await _client.post(
@@ -37,7 +38,8 @@ class PostgrestService {
           'lastname': lastName,
           'email': email,
           'pass_number': passNumber,
-          'verification_link': verificationLink,
+          'person_id': personId,
+          'verification_token': verificationToken,
           'created_at': DateTime.now().toIso8601String(),
           'is_verified': false,
         }),
@@ -45,7 +47,8 @@ class PostgrestService {
 
       if (response.statusCode == 201) {
         LoggerService.logInfo(
-            'User registration created successfully in PostgreSQL');
+          'User registration created successfully in PostgreSQL',
+        );
         return jsonDecode(response.body)[0]; // PostgREST returns an array
       } else {
         LoggerService.logError(
@@ -106,11 +109,12 @@ class PostgrestService {
   }
 
   /// Update user verification status
-  Future<bool> verifyUser(String verificationLink) async {
+  Future<bool> verifyUser(String verificationToken) async {
     try {
       final response = await _client.patch(
         Uri.parse(
-            '$_baseUrl/user_registrations?verification_link=eq.$verificationLink'),
+          '$_baseUrl/user_registrations?verification_token=eq.$verificationToken',
+        ),
         headers: _headers,
         body: jsonEncode({
           'is_verified': true,
@@ -154,5 +158,36 @@ class PostgrestService {
       LoggerService.logError('Error deleting user registration: $e');
       return false;
     }
+  }
+
+  Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$_baseUrl/user_registrations?verification_token=eq.$token'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> users = jsonDecode(response.body);
+        return users.isNotEmpty ? users[0] : null;
+      } else {
+        LoggerService.logError(
+          'Failed to get user by verification_token. Status: \\${response.statusCode}, Body: \\${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting user by verification_token: $e');
+      return null;
+    }
+  }
+
+  Future<http.Response> updateUserByVerificationToken(
+      String token, Map<String, dynamic> fields,) async {
+    final response = await _client.patch(
+      Uri.parse('$_baseUrl/user_registrations?verification_token=eq.$token'),
+      headers: _headers,
+      body: jsonEncode(fields),
+    );
+    return response;
   }
 }

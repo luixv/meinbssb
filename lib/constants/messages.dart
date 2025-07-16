@@ -24,6 +24,12 @@ class Messages {
   static const String registrationDataStored = 'Registrierungsdaten erfolgreich gespeichert';
   static const String registrationDataStoreFailed = 'Fehler beim Speichern der Registrierungsdaten';
   static const String registrationDataNotFound = 'Registrierungsdaten nicht gefunden. Bitte registrieren Sie sich erneut.';
+  static const String registrationDataExpired = 'Registrierungsdaten abgelaufen. Bitte registrieren Sie sich erneut.';
+  static const String registrationDataAlreadyUsed = 'Sie sind bereits registriert. Bitte melden Sie sich an.';
+  static const String registrationDataNotVerified = 'Registrierungsdaten nicht verifiziert. Bitte registrieren Sie sich erneut.';
+  static const String registrationDataAlreadyExists = 'Eine Registrierung für diese Schützenausweisnummer ist bereits in Bearbeitung. Bitte überprüfen Sie Ihre E-Mails oder warten Sie 24 Stunden, um es erneut zu versuchen.';
+  static const String registrationOffline = 'Registrierung ist offline nicht verfügbar. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind.';
+  static const String registrationSuccess = 'Registrierung erfolgreich. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.';
 
   // Password Setting Messages
   static const String passwordSetSuccess = 'Passwort erfolgreich gesetzt! Sie können sich jetzt anmelden.';

@@ -161,7 +161,7 @@ psql -U devuser -d devdb -f db/migrations/001_create_users_table.sql
 - `id`: Serial primary key
 - `username`: Unique email address
 - `pass_number`: Unique BSSB pass number
-- `verification_link`: Unique verification token
+- `verification_token`: Unique verification token
 - `created_at`: Timestamp of user creation
 - `verified_at`: Timestamp of email verification
 - `is_verified`: Boolean flag for verification status

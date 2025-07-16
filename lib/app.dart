@@ -131,6 +131,43 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
+        final routes = {
+          '/splash': (context) => SplashScreen(
+                onFinish: () {
+                  _navigatorKey.currentState!.pushReplacementNamed(
+                    _isLoggedIn ? '/home' : '/login',
+                  );
+                },
+              ),
+          '/login': (context) => LoginScreen(
+                onLoginSuccess: _handleLogin,
+              ),
+          '/home': (context) => StartScreen(
+                _userData,
+                isLoggedIn: _isLoggedIn,
+                onLogout: _handleLogout,
+              ),
+          '/help': (context) => HelpScreen(
+                userData: _userData,
+                isLoggedIn: _isLoggedIn,
+                onLogout: _handleLogout,
+              ),
+          '/impressum': (context) => ImpressumScreen(
+                userData: _userData,
+                isLoggedIn: _isLoggedIn,
+                onLogout: _handleLogout,
+              ),
+          '/settings': (context) => SettingsScreen(
+                userData: _userData,
+                isLoggedIn: _isLoggedIn,
+                onLogout: _handleLogout,
+              ),
+          '/profile': (context) => ProfileScreen(
+                userData: _userData,
+                isLoggedIn: _isLoggedIn,
+                onLogout: _handleLogout,
+              ),
+        };
         return MaterialApp(
           navigatorKey: _navigatorKey,
           title: 'Mein BSSB',
@@ -165,48 +202,19 @@ class _MyAppState extends State<MyApp> {
               ),
             );
           },
-          routes: {
-            '/splash': (context) => SplashScreen(
-                  onFinish: () {
-                    _navigatorKey.currentState!.pushReplacementNamed(
-                      _isLoggedIn ? '/home' : '/login',
-                    );
-                  },
-                ),
-            '/login': (context) => LoginScreen(
-                  onLoginSuccess: _handleLogin,
-                ),
-            '/home': (context) => StartScreen(
-                  _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/help': (context) => HelpScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/impressum': (context) => ImpressumScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/settings': (context) => SettingsScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/profile': (context) => ProfileScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                ),
-            '/set-password': (context) => SetPasswordScreen(
-                  email: '',
-                  token: '',
-                  passNumber: '',
-                  authService: Provider.of<AuthService>(context, listen: false),
-                ),
+          routes: routes,
+          onGenerateRoute: (settings) {
+            if (settings.name != null && settings.name!.startsWith('/set-password')) {
+              final uri = Uri.parse(settings.name!);
+              final token = uri.queryParameters['token'] ?? '';
+              return MaterialPageRoute(
+                builder: (context) => SetPasswordScreen(token: token, authService: Provider.of<AuthService>(context, listen: false)),
+                settings: settings,
+              );
+            }
+            // fallback to named routes
+            final builder = (routes[settings.name] ?? routes['/splash']);
+            return MaterialPageRoute(builder: builder!, settings: settings);
           },
         );
       },

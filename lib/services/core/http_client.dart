@@ -271,24 +271,10 @@ class HttpClient {
     String endpoint, {
     String? overrideBaseUrl,
   }) async {
-    try {
-      final url = overrideBaseUrl != null 
-          ? '$overrideBaseUrl/$endpoint'
-          : '$baseUrl/$endpoint';
-      
-      final response = await _client
-          .get(Uri.parse(url))
-          .timeout(Duration(seconds: serverTimeout));
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-      LoggerService.logError('HTTP GET error: $e');
-      rethrow;
-    }
+    final url = overrideBaseUrl != null 
+        ? '$overrideBaseUrl/$endpoint'
+        : '$baseUrl/$endpoint';
+    return _makeRequest('GET', url, null, null);
   }
 
     Future<dynamic> get2(String endpoint) async {

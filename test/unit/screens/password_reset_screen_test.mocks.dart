@@ -74,6 +74,7 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     required String? email,
     required String? birthDate,
     required String? zipCode,
+    required String? personId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -86,6 +87,7 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
             #email: email,
             #birthDate: birthDate,
             #zipCode: zipCode,
+            #personId: personId,
           },
         ),
         returnValue:
@@ -138,10 +140,11 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
       ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> finalizeRegistration({
+  _i4.Future<dynamic> finalizeRegistration({
     required String? email,
     required String? password,
     required String? token,
+    required String? personId,
     required String? passNumber,
   }) =>
       (super.noSuchMethod(
@@ -152,12 +155,12 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
             #email: email,
             #password: password,
             #token: token,
+            #personId: personId,
             #passNumber: passNumber,
           },
         ),
-        returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
 
   @override
   _i4.Future<void> logout() => (super.noSuchMethod(

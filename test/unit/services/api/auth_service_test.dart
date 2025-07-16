@@ -97,7 +97,7 @@ void main() {
       lastName: anyNamed('lastName'),
       email: anyNamed('email'),
       passNumber: anyNamed('passNumber'),
-      verificationLink: anyNamed('verificationLink'),
+      verificationToken: anyNamed('verificationToken'), personId: anyNamed('personId'),
     ),).thenAnswer((_) async => <String, dynamic>{});
     when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
 
@@ -116,6 +116,7 @@ void main() {
         const birthDate = '1990-01-01';
         const zipCode = '10001';
         const expectedPersonId = '123';
+        const personId = '439287';
 
         when(
           mockHttpClient.get(
@@ -145,7 +146,7 @@ void main() {
           passNumber: passNumber,
           email: email,
           birthDate: birthDate,
-          zipCode: zipCode,
+          zipCode: zipCode, personId: personId,
         );
 
         expect(result, expectedResponse);
@@ -168,6 +169,7 @@ void main() {
         const email = 'john.doe@example.com';
         const birthDate = '1990-01-01';
         const zipCode = '10001';
+        const personId = '439287';
 
         when(mockHttpClient.get(any))
             .thenThrow(http.ClientException('Failed to find person ID'));
@@ -179,7 +181,7 @@ void main() {
             passNumber: passNumber,
             email: email,
             birthDate: birthDate,
-            zipCode: zipCode,
+            zipCode: zipCode, personId: personId,
           ),
           throwsA(isA<http.ClientException>()),
         );
@@ -202,6 +204,7 @@ void main() {
         const birthDate = '1990-01-01';
         const zipCode = '10001';
         const expectedPersonId = '123';
+        const personId = '439287';
 
         when(
           mockHttpClient.get(
@@ -241,7 +244,7 @@ void main() {
           passNumber: passNumber,
           email: email,
           birthDate: birthDate,
-          zipCode: zipCode,
+          zipCode: zipCode, personId: personId,
         );
 
         expect(result, expectedFailureResponse); // Expect failure from post
