@@ -108,67 +108,79 @@ Then with a web browser address the URL: localhost:8080 et voila!
 For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
 
-# Database Setup
+# Local Development Setup
 
-This directory contains database migrations and setup scripts for the MeinBSSB application.
+This project uses Docker Compose to orchestrate a local development environment consisting of:
 
-## Prerequisites
+- PostgreSQL
+- PostgREST
+- MailHog
+- Caddy
 
-1. PostgreSQL installed and running
-2. PostgREST installed
-3. Database user `devuser` with password `devpass` created with appropriate permissions
+## Services Overview
 
-## Initial Setup
+### 1. PostgreSQL (`local_postgres`)
+- **Image:** `postgres:16`
+- **Port:** `5432`
+- **Volumes:**
+  - Persists data: `pgdata:/var/lib/postgresql/data`
+  - Initializes DB schema: `./init-postgrest.sql:/docker-entrypoint-initdb.d/init-postgrest.sql`
+- **Credentials:**
+  - **DB Name:** `devdb`
+  - **User:** `devuser`
+  - **Password:** `devpass`
 
-1. Create the database user if not exists:
-```sql
-CREATE USER devuser WITH PASSWORD 'devpass' CREATEDB;
-```
+### 2. PostgREST (`postgrest`)
+- **Image:** `postgrest/postgrest`
+- **Port:** `3000`
+- **Depends on:** PostgreSQL
+- **Environment:**
+  - Connects to PostgreSQL on `local_postgres:5432`
+  - Anonymous role: `web_anon`
+  - Schema: `public`
+  - CORS enabled
+  - Proxy URI: `http://localhost:3000`
 
-2. Run the initialization script:
-```bash
-cd scripts
-chmod +x init_db.sh
-./init_db.sh
-```
+### 3. MailHog (`local_mailhog`)
+- **Image:** `mailhog/mailhog`
+- **Ports:**
+  - SMTP (send mail): `1025`
+  - Web UI: `8025`
+- **Access Web UI:** [http://localhost:8025](http://localhost:8025)
 
-This will:
-- Create the database if it doesn't exist
-- Run all migrations in order
-- Set up necessary permissions
+### 4. Caddy (`caddy`)
+- **Image:** `caddy:2`
+- **Port:** `8081`
+- **Depends on:** PostgREST
+- **Volumes:**
+  - `./Caddyfile:/etc/caddy/Caddyfile`
+  - `./build/web:/web`
 
-## Starting PostgREST
+## How to Start
 
-After database initialization, start PostgREST:
+1. Install Docker and Docker Compose.
 
-```bash
-postgrest postgrest.conf
-```
+2. Start the containers:
+   ```bash
+   docker-compose up -d
+   ```
 
-PostgREST will run on port 3000 and provide a REST API for the database.
+3. Check running containers:
+   ```bash
+   docker ps
+   ```
 
-## Manual Migration
+## How to Access Services
 
-If you need to run migrations manually:
+| Service      | URL                              |
+|--------------|----------------------------------|
+| Caddy        | http://localhost:8081            |
+| PostgREST    | http://localhost:3000            |
+| MailHog UI   | http://localhost:8025            |
+| Mail SMTP    | localhost:1025                   |
+| PostgreSQL   | localhost:5432 (external tools)  |
 
-```bash
-psql -U devuser -d devdb -f db/migrations/001_create_users_table.sql
-```
+## Notes
 
-## Database Structure
-
-### Users Table
-- `id`: Serial primary key
-- `username`: Unique email address
-- `pass_number`: Unique BSSB pass number
-- `verification_token`: Unique verification token
-- `created_at`: Timestamp of user creation
-- `verified_at`: Timestamp of email verification
-- `is_verified`: Boolean flag for verification status
-
-## Adding New Migrations
-
-1. Create a new SQL file in `db/migrations/` with an incremental number
-2. Add the file to the initialization script
-3. Test the migration on a development database first 
-
+- Ensure `init-postgrest.sql` creates necessary schema and roles (especially `web_anon`) for PostgREST.
+- You can add HTTPS support in the `Caddyfile` for production-like testing.
