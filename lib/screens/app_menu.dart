@@ -16,7 +16,7 @@ import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
-import '/screens/schulungen_search_screen.dart';
+import 'schulungen/schulungen_search_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
