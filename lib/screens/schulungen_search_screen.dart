@@ -165,11 +165,12 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       return;
     }
     final safeDate = _selectedDate ?? DateTime.now();
+    final userData = widget.userData;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SchulungenScreen(
-          widget.userData,
+          userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
           searchDate: safeDate,
