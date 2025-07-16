@@ -133,8 +133,9 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
   @override
   _i4.Future<dynamic> post(
     String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #post,
@@ -142,6 +143,7 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
             endpoint,
             body,
           ],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i4.Future<dynamic>.value(),
       ) as _i4.Future<dynamic>);
@@ -149,8 +151,9 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
   @override
   _i4.Future<dynamic> put(
     String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
+    Map<String, dynamic>? body, {
+    String? overrideBaseUrl,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #put,
@@ -158,6 +161,7 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
             endpoint,
             body,
           ],
+          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i4.Future<dynamic>.value(),
       ) as _i4.Future<dynamic>);
@@ -166,12 +170,16 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
   _i4.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
+    String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #delete,
           [endpoint],
-          {#body: body},
+          {
+            #body: body,
+            #overrideBaseUrl: overrideBaseUrl,
+          },
         ),
         returnValue: _i4.Future<dynamic>.value(),
       ) as _i4.Future<dynamic>);
@@ -195,22 +203,6 @@ class MockHttpClient extends _i1.Mock implements _i7.HttpClient {
         Invocation.method(
           #get2,
           [endpoint],
-        ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
-
-  @override
-  _i4.Future<dynamic> getWithBody(
-    String? endpoint,
-    Map<String, dynamic>? body,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getWithBody,
-          [
-            endpoint,
-            body,
-          ],
         ),
         returnValue: _i4.Future<dynamic>.value(),
       ) as _i4.Future<dynamic>);

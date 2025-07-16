@@ -11,7 +11,10 @@ import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 
-import 'auth_service_test.mocks.dart';
+import '../../helpers/test_mocks.mocks.dart';
+
+// Add this fallback mock if the generated one is missing
+class MockPostgrestService extends Mock implements PostgrestService {}
 
 // Ensure the mock is generated for FlutterSecureStorage
 @GenerateMocks([
@@ -24,7 +27,6 @@ import 'auth_service_test.mocks.dart';
  
   FlutterSecureStorage,
   ConfigService,
-,
   PostgrestService,
   EmailService,
 ])

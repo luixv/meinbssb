@@ -201,16 +201,32 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
             [passnummer],
           ),
         )),
-      ) as _i3.Future<String>);
+      ) as _i4.Future<String>);
 
   @override
-  _i3.Future<bool> isTokenValid() => (super.noSuchMethod(
+  _i4.Future<bool> isTokenValid() => (super.noSuchMethod(
         Invocation.method(
           #isTokenValid,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<String> getPersonIDByPassnummer(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPersonIDByPassnummer,
+          [passNumber],
+        ),
+        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getPersonIDByPassnummer,
+            [passNumber],
+          ),
+        )),
+      ) as _i4.Future<String>);
 }
 
 /// A class which mocks [NetworkService].

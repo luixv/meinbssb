@@ -244,6 +244,15 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
       ) as _i3.Future<String>);
 
   @override
+  _i3.Future<bool> isTokenValid() => (super.noSuchMethod(
+        Invocation.method(
+          #isTokenValid,
+          [],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<String> getPersonIDByPassnummer(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -258,15 +267,6 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
           ),
         )),
       ) as _i3.Future<String>);
-
-  @override
-  _i2.Future<bool> isTokenValid() => (super.noSuchMethod(
-        Invocation.method(
-          #isTokenValid,
-          [],
-        ),
-        returnValue: _i2.Future<bool>.value(false),
-      ) as _i2.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].
@@ -815,7 +815,7 @@ class MockTrainingService extends _i1.Mock implements _i18.TrainingService {
       ) as _i3.Future<List<_i19.Schulungstermin>>);
 
   @override
-  _i2.Future<List<_i18.Schulungstermin>> fetchSchulungstermine(
+  _i3.Future<List<_i19.Schulungstermin>> fetchSchulungstermine(
     String? abDatum,
     String? webGruppe,
     String? bezirk,
