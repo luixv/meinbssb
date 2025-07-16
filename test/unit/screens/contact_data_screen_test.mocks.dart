@@ -11,6 +11,7 @@ import 'package:meinbssb/models/contact.dart' as _i9;
 import 'package:meinbssb/models/disziplin.dart' as _i13;
 import 'package:meinbssb/models/fremde_verband.dart' as _i16;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i6;
+import 'package:meinbssb/models/person.dart' as _i17;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
 import 'package:meinbssb/models/schulung.dart' as _i8;
@@ -520,6 +521,16 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i17.Person>> fetchAdresseVonPersonID(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAdresseVonPersonID,
+          [personId],
+        ),
+        returnValue: _i4.Future<List<_i17.Person>>.value(<_i17.Person>[]),
+      ) as _i4.Future<List<_i17.Person>>);
 
   @override
   bool validateIBAN(String? iban) => (super.noSuchMethod(

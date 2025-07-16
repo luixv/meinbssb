@@ -19,23 +19,14 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Total duration: 2 seconds
+      duration: const Duration(seconds: 3), // Fade-in duration: 3 seconds
       vsync: this,
     );
 
-    // Fade-in for first second, fade-out for second second
-    _animation = TweenSequence([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.0, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeOut)),
-        weight: 1,
-      ),
-    ]).animate(_controller);
+    // Fade-in only
+    _animation = Tween<double>(begin: 0.0, end: 1.0)
+        .chain(CurveTween(curve: Curves.easeIn))
+        .animate(_controller);
 
     _controller.forward().then((_) {
       widget.onFinish();
