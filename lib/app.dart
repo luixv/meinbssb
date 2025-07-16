@@ -22,6 +22,9 @@ import 'utils/cookie_consent.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 
+final GlobalKey<NavigatorState> globalNavigatorKey =
+    GlobalKey<NavigatorState>();
+
 class MyAppWrapper extends StatelessWidget {
   const MyAppWrapper({super.key, this.initialScreen});
 
