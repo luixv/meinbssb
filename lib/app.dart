@@ -21,9 +21,12 @@ import 'screens/profile_screen.dart';
 import 'screens/set_password_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
+import 'screens/schulungen_search_screen.dart';
 
 class MyAppWrapper extends StatelessWidget {
-  const MyAppWrapper({super.key});
+  const MyAppWrapper({super.key, this.initialScreen});
+
+  final Widget? initialScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,16 @@ class MyAppWrapper extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         Provider<HttpClient>(create: (_) => AppInitializer.httpClient),
       ],
-      child: const MyApp(),
+      child: initialScreen != null
+          ? Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) => MaterialApp(
+                home: initialScreen,
+                theme: themeProvider.getTheme(false),
+                darkTheme: themeProvider.getTheme(true),
+                themeMode: ThemeMode.system,
+              ),
+            )
+          : const MyApp(),
     );
   }
 }
@@ -55,14 +67,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  static bool _bypassDone = false;
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  late final AuthService _authService;
+  bool _loading = true;
+  bool _splashDone = false;
+  bool _authCheckDone = false;
 
   @override
   void initState() {
     super.initState();
+    _authService = Provider.of<AuthService>(context, listen: false);
+    _startSplashAndAuthCheck();
+  }
+
+  void _startSplashAndAuthCheck() {
+    // Start both splash and auth check in parallel
     _checkLoginStatus();
+    Future.delayed(const Duration(seconds: 3)).then((_) {
+      _splashDone = true;
+      _maybeFinishLoading();
+    });
   }
 
   Future<void> _checkLoginStatus() async {
@@ -78,10 +105,44 @@ class _MyAppState extends State<MyApp> {
         debugPrint('Error decoding user data: $e');
       }
     }
+
+    bool valid = false;
+    if (isLoggedIn) {
+      try {
+        valid = await _authService.isTokenValid();
+      } catch (e) {
+        valid = false;
+      }
+    }
+
+    if (!mounted) return;
+
     setState(() {
-      _isLoggedIn = isLoggedIn;
-      _userData = userData;
+      _isLoggedIn = isLoggedIn && valid;
+      _userData = isLoggedIn && valid ? userData : null;
     });
+    _authCheckDone = true;
+    _maybeFinishLoading();
+    // After setState, force navigation if needed
+    if (!_isLoggedIn && _navigatorKey.currentState != null) {
+      try {
+        final currentRoute =
+            ModalRoute.of(_navigatorKey.currentContext!)?.settings.name;
+        if (currentRoute == '/home') {
+          _navigatorKey.currentState!.pushReplacementNamed('/login');
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+
+  void _maybeFinishLoading() {
+    if (_splashDone && _authCheckDone && mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   void _handleLogin(UserData userData) {
@@ -129,6 +190,37 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final fragment = Uri.base.fragment;
+    final path = Uri.base.path;
+    final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+        fragment == 'schulungen_search' ||
+        path == '/schulungen_search' ||
+        path == 'schulungen_search';
+    if (isDirectSchulungenSearch && !_bypassDone) {
+      _bypassDone = true;
+      return MaterialApp(
+        home: SchulungenSearchScreen(
+          null,
+          isLoggedIn: false,
+          onLogout: () {},
+          showMenu: false,
+          showConnectivityIcon: false,
+        ),
+      );
+    }
+    final String initialRoute =
+        (fragment == '/schulungen_search' || fragment == 'schulungen_search')
+            ? '/schulungen_search'
+            : '/splash';
+    if (_loading) {
+      // Show the animated SplashScreen for at least 3 seconds
+      return MaterialApp(
+        home: SplashScreen(
+          onFinish: () {}, // No-op, we control timing in _MyAppState
+        ),
+      );
+    }
+    // Only now build the MaterialApp with all routes
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
         final routes = {
@@ -180,7 +272,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
-          initialRoute: '/splash',
+          initialRoute: initialRoute,
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(
@@ -202,22 +294,161 @@ class _MyAppState extends State<MyApp> {
               ),
             );
           },
-          routes: routes,
+          // Only use onGenerateRoute, no static routes map
           onGenerateRoute: (settings) {
-            if (settings.name != null && settings.name!.startsWith('/set-password')) {
-              final uri = Uri.parse(settings.name!);
-              final token = uri.queryParameters['token'] ?? '';
+            if (_loading) {
               return MaterialPageRoute(
-                builder: (context) => SetPasswordScreen(token: token, authService: Provider.of<AuthService>(context, listen: false)),
+                builder: (_) => const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                ),
                 settings: settings,
               );
             }
-            // fallback to named routes
-            final builder = (routes[settings.name] ?? routes['/splash']);
-            return MaterialPageRoute(builder: builder!, settings: settings);
+            if (settings.name != null &&
+                settings.name!.startsWith('/set-password')) {
+              final uri = Uri.parse(settings.name!);
+              final token = uri.queryParameters['token'] ?? '';
+              return MaterialPageRoute(
+                builder: (context) => SetPasswordScreen(
+                    token: token,
+                    authService:
+                        Provider.of<AuthService>(context, listen: false)),
+                settings: settings,
+              );
+            }
+            // Allow anonymous access to SchulungenSearchScreen
+            if (settings.name == '/schulungen_search') {
+              return MaterialPageRoute(
+                builder: (_) => SchulungenSearchScreen(
+                  _userData,
+                  isLoggedIn: _isLoggedIn,
+                  onLogout: _handleLogout,
+                  showMenu: false,
+                ),
+                settings: settings,
+              );
+            }
+            if (!_isLoggedIn || _userData == null) {
+              // Always redirect to login if not logged in
+              return MaterialPageRoute(
+                builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
+                settings: settings,
+              );
+            }
+            // Now handle the actual routes
+            switch (settings.name) {
+              case '/home':
+                return MaterialPageRoute(
+                  builder: (_) => SafeStartScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/help':
+                return MaterialPageRoute(
+                  builder: (_) => HelpScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/impressum':
+                return MaterialPageRoute(
+                  builder: (_) => ImpressumScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/settings':
+                return MaterialPageRoute(
+                  builder: (_) => SettingsScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/profile':
+                return MaterialPageRoute(
+                  builder: (_) => ProfileScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              case '/splash':
+              default:
+                return MaterialPageRoute(
+                  builder: (_) => SplashScreen(
+                    onFinish: () {
+                      _navigatorKey.currentState!.pushReplacementNamed(
+                        _isLoggedIn ? '/home' : '/login',
+                      );
+                    },
+                  ),
+                  settings: settings,
+                );
+            }
           },
         );
       },
+    );
+  }
+}
+
+class AuthGuard extends StatelessWidget {
+  const AuthGuard({
+    required this.isLoggedIn,
+    required this.userData,
+    required this.child,
+    super.key,
+  });
+  final bool isLoggedIn;
+  final UserData? userData;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isLoggedIn || userData == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      return const SizedBox.shrink();
+    }
+    return child;
+  }
+}
+
+// Defensive wrapper for StartScreen to avoid crash if userData is null
+class SafeStartScreen extends StatelessWidget {
+  const SafeStartScreen({
+    required this.userData,
+    required this.isLoggedIn,
+    required this.onLogout,
+    super.key,
+  });
+  final UserData? userData;
+  final bool isLoggedIn;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    if (userData == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      return const SizedBox.shrink();
+    }
+    return StartScreen(
+      userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
     );
   }
 }

@@ -511,7 +511,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     UIConstants.circularProgressIndicator,
                                   ),
-                                  strokeWidth: 2,
+                                  strokeWidth: UIConstants.defaultStrokeWidth,
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -576,11 +576,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             LoggerService.logError(
-              'Error loading contact data in FutureBuilder: [${snapshot.error}',
+              'Error loading contact data in FutureBuilder:  [${snapshot.error}',
             );
             return Center(
               child: ScaledText(
-                'Fehler beim Laden der Kontaktdaten: [${snapshot.error}',
+                'Fehler beim Laden der Kontaktdaten:  [${snapshot.error}',
                 style: UIStyles.errorStyle,
               ),
             );

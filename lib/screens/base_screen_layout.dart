@@ -19,6 +19,8 @@ class BaseScreenLayout extends StatelessWidget {
     this.actions = const [],
     this.automaticallyImplyLeading = true,
     this.floatingActionButton,
+    this.showMenu = true,
+    this.showConnectivityIcon = true,
   });
 
   final String title;
@@ -29,6 +31,8 @@ class BaseScreenLayout extends StatelessWidget {
   final List<Widget> actions;
   final bool automaticallyImplyLeading;
   final Widget? floatingActionButton;
+  final bool showMenu;
+  final bool showConnectivityIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -44,25 +48,29 @@ class BaseScreenLayout extends StatelessWidget {
         ),
         actions: [
           ...actions,
-          const Padding(
-            padding: UIConstants.appBarRightPadding,
-            child: ConnectivityIcon(),
-          ),
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu, color: UIConstants.textColor),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
+          if (showConnectivityIcon)
+            const Padding(
+              padding: UIConstants.appBarRightPadding,
+              child: ConnectivityIcon(),
             ),
-          ),
+          if (showMenu)
+            Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu, color: UIConstants.textColor),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              ),
+            ),
         ],
       ),
-      endDrawer: AppDrawer(
-        userData: userData,
-        isLoggedIn: isLoggedIn,
-        onLogout: onLogout,
-      ),
+      endDrawer: showMenu
+          ? AppDrawer(
+              userData: userData,
+              isLoggedIn: isLoggedIn,
+              onLogout: onLogout,
+            )
+          : null,
       body: Consumer<FontSizeProvider>(
         builder: (context, fontSizeProvider, child) => body,
       ),

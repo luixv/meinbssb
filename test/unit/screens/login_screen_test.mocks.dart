@@ -241,6 +241,15 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
           ),
         )),
       ) as _i5.Future<String>);
+
+  @override
+  _i4.Future<bool> isTokenValid() => (super.noSuchMethod(
+        Invocation.method(
+          #isTokenValid,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 }
 
 /// A class which mocks [ApiService].
@@ -475,12 +484,21 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
       ) as _i5.Future<List<_i15.Schulungstermin>>);
 
   @override
-  _i5.Future<List<_i15.Schulungstermin>> fetchSchulungstermine(
-          String? abDatum) =>
+  _i4.Future<List<_i14.Schulungstermin>> fetchSchulungstermine(
+    String? abDatum,
+    String? webGruppe,
+    String? bezirk,
+    String? fuerVerlaengerung,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
-          [abDatum],
+          [
+            abDatum,
+            webGruppe,
+            bezirk,
+            fuerVerlaengerung,
+          ],
         ),
         returnValue: _i5.Future<List<_i15.Schulungstermin>>.value(
             <_i15.Schulungstermin>[]),

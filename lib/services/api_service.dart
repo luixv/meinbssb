@@ -181,8 +181,18 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
-  Future<List<Schulungstermin>> fetchSchulungstermine(String abDatum) async {
-    return _trainingService.fetchSchulungstermine(abDatum);
+  Future<List<Schulungstermin>> fetchSchulungstermine(
+    String abDatum,
+    String webGruppe,
+    String bezirk,
+    String fuerVerlaengerung,
+  ) async {
+    return _trainingService.fetchSchulungstermine(
+      abDatum,
+      webGruppe,
+      bezirk,
+      fuerVerlaengerung,
+    );
   }
 
   Future<Schulungstermin?> fetchSchulungstermin(

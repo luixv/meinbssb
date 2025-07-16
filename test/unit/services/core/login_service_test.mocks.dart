@@ -1075,6 +1075,15 @@ class MockAuthService extends _i1.Mock implements _i13.AuthService {
       ) as _i2.Future<String>);
 
   @override
+  _i2.Future<bool> isTokenValid() => (super.noSuchMethod(
+        Invocation.method(
+          #isTokenValid,
+          [],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
   _i2.Future<String> getPersonIDByPassnummer(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1152,12 +1161,21 @@ class MockTrainingService extends _i1.Mock implements _i15.TrainingService {
       ) as _i2.Future<List<_i16.Schulungstermin>>);
 
   @override
-  _i2.Future<List<_i16.Schulungstermin>> fetchSchulungstermine(
-          String? abDatum) =>
+  _i2.Future<List<_i15.Schulungstermin>> fetchSchulungstermine(
+    String? abDatum,
+    String? webGruppe,
+    String? bezirk,
+    String? fuerVerlaengerung,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermine,
-          [abDatum],
+          [
+            abDatum,
+            webGruppe,
+            bezirk,
+            fuerVerlaengerung,
+          ],
         ),
         returnValue: _i2.Future<List<_i16.Schulungstermin>>.value(
             <_i16.Schulungstermin>[]),

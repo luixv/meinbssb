@@ -6,7 +6,9 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
-import '../../models/schulungstermin.dart';
+import '/services/core/config_service.dart';
+
+import '/models/schulungstermin.dart';
 import '/models/register_schulungen_teilnehmer_response.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
@@ -16,13 +18,16 @@ class TrainingService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ConfigService configService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
-        _networkService = networkService;
+        _networkService = networkService,
+        _configService = configService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
+  final ConfigService _configService;
 
   Future<List<Schulungstermin>> fetchAngemeldeteSchulungen(
     int personId,
@@ -113,23 +118,55 @@ class TrainingService {
         .toList();
   }
 
-  Future<List<Schulungstermin>> fetchSchulungstermine(String abDatum) async {
+/* 
+/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}
+*/
+  Future<List<Schulungstermin>> fetchSchulungstermine(
+    String abDatum,
+    String webGruppe,
+    String bezirk,
+    String fuerVerlaengerung,
+  ) async {
     try {
-      final response = await _httpClient.get('Schulungstermine/$abDatum/false');
-      final now = DateTime.now();
-      final termine =
-          _mapSchulungstermineResponseToTermine(response).where((t) {
+      String endpoint =
+          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*';
+
+      LoggerService.logInfo(
+        'endpoint $endpoint',
+      );
+
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+
+      final mappedTermine = _mapSchulungstermineResponseToTermine(response);
+      LoggerService.logInfo(
+        'Mapped ${mappedTermine.length} termine from response',
+      );
+
+      final termine = mappedTermine.where((t) {
         // Status darf NICHT 2 sein!
-        if (t.status == 2) return false;
+        if (t.status == 2) {
+          return false;
+        }
         // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
-        if (t.webVeroeffentlichenAm.isEmpty) return true;
+        if (t.webVeroeffentlichenAm.isEmpty) {
+          return true;
+        }
         try {
           final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
-          return now.isAfter(veroeff);
-        } catch (_) {
+          final shouldInclude = DateTime.now().isAfter(veroeff);
+          return shouldInclude;
+        } catch (e) {
           return false;
         }
       }).toList();
+
+      LoggerService.logInfo(
+        'After filtering: ${termine.length} termine remaining',
+      );
       termine.sort((a, b) => a.datum.compareTo(b.datum));
       return termine;
     } catch (e) {
@@ -481,8 +518,12 @@ class TrainingService {
     String schulungenTerminID,
   ) async {
     try {
-      final response =
-          await _httpClient.get('Schulungstermin/$schulungenTerminID');
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final response = await _httpClient
+          .get('Schulungstermin/$schulungenTerminID', overrideBaseUrl: baseUrl);
+
       Map<String, dynamic>? data;
       if (response is Map<String, dynamic>) {
         data = response;

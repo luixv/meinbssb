@@ -76,4 +76,33 @@ class ConfigService {
     }
     return null;
   }
+
+  /// Builds a base URL for any server defined in config.json by name prefix.
+  /// Example: name = 'api1Base' will use keys 'api1BaseServer', 'api1Port', 'api1BasePath'.
+  static String buildBaseUrlForServer(
+    ConfigService config, {
+    required String name,
+    String protocolKey = 'apiProtocol',
+  }) {
+    final protocol = config.getString(protocolKey);
+    final server = config.getString('${name}Server');
+    final port = config.getString('${name}Port');
+    final path = config.getString('${name}Path');
+
+    if (protocol == null || protocol.isEmpty) {
+      throw StateError(
+        'ConfigService: protocol for $name is missing or empty.',
+      );
+    }
+    if (server == null || server.isEmpty) {
+      throw StateError('ConfigService: server for $name is missing or empty.');
+    }
+    if (port == null || port.isEmpty) {
+      throw StateError('ConfigService: port for $name is missing or empty.');
+    }
+    if (path == null || path.isEmpty) {
+      throw StateError('ConfigService: path for $name is missing or empty.');
+    }
+    return '$protocol://$server:$port/$path';
+  }
 }

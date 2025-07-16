@@ -214,7 +214,8 @@ void main() {
               (e) =>
                   e is Exception &&
                   e.toString().contains(
-                      'HttpClient: Token refresh failed for request: 401, body: Unauthorized',), // Updated predicate
+                        'HttpClient: Token refresh failed for request: 401, body: Unauthorized',
+                      ), // Updated predicate
             ),
           ),
         );
@@ -413,64 +414,6 @@ void main() {
       });
     });
 
-    group('GET with body requests', () {
-      test('should make successful GET request with body', () async {
-        // Arrange
-        final responseBody = {'filtered_users': []};
-        final mockStreamedResponse = http.StreamedResponse(
-          Stream.fromIterable([utf8.encode(jsonEncode(responseBody))]),
-          200,
-        );
-
-        when(mockConfigService.getString('apiBaseServer', 'api'))
-            .thenReturn('webintern.bssb.bayern');
-        when(mockConfigService.getString('apiPort', 'api')).thenReturn('56400');
-
-        // Mock the send method of the http.Client
-        when(mockHttpClient.send(any))
-            .thenAnswer((_) async => mockStreamedResponse);
-
-        // Act
-        final result =
-            await httpClient.getWithBody('users/search', {'query': 'test'});
-
-        // Assert
-        expect(result, equals(responseBody));
-        verify(mockTokenService.getAuthToken()).called(1);
-        verify(mockConfigService.getString('apiBaseServer', 'api')).called(1);
-        verify(mockConfigService.getString('apiPort', 'api')).called(1);
-        verify(mockHttpClient.send(any)).called(1); // Verify send is called
-      });
-
-      test('should use default config values when not found', () async {
-        // Arrange
-        final responseBody = {'filtered_users': []};
-        final mockStreamedResponse = http.StreamedResponse(
-          Stream.fromIterable([utf8.encode(jsonEncode(responseBody))]),
-          200,
-        );
-
-        when(mockConfigService.getString('apiBaseServer', 'api'))
-            .thenReturn(null);
-        when(mockConfigService.getString('apiPort', 'api')).thenReturn(null);
-
-        // Mock the send method of the http.Client
-        when(mockHttpClient.send(any))
-            .thenAnswer((_) async => mockStreamedResponse);
-
-        // Act
-        final result =
-            await httpClient.getWithBody('users/search', {'query': 'test'});
-
-        // Assert
-        expect(result, equals(responseBody));
-        verify(mockTokenService.getAuthToken()).called(1);
-        verify(mockConfigService.getString('apiBaseServer', 'api')).called(1);
-        verify(mockConfigService.getString('apiPort', 'api')).called(1);
-        verify(mockHttpClient.send(any)).called(1); // Verify send is called
-      });
-    });
-
     group('GET bytes requests', () {
       test('should make successful GET bytes request', () async {
         // Arrange
@@ -658,7 +601,8 @@ void main() {
               (e) =>
                   e is Exception &&
                   e.toString().contains(
-                      'HttpClient: Token refresh failed for request: 401, body: Unauthorized',), // Updated predicate
+                        'HttpClient: Token refresh failed for request: 401, body: Unauthorized',
+                      ), // Updated predicate
             ),
           ),
         );

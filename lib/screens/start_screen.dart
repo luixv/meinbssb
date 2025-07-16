@@ -480,6 +480,7 @@ class StartScreenState extends State<StartScreen> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              // Left column
                                                               Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -528,17 +529,10 @@ class StartScreenState extends State<StartScreen> {
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                ],
-                                                              ),
-                                                              const SizedBox(
-                                                                width: UIConstants
-                                                                    .infoTableColumnSpacingWide,
-                                                              ),
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
+                                                                  const SizedBox(
+                                                                    height: UIConstants
+                                                                        .spacingXS,
+                                                                  ),
                                                                   Row(
                                                                     children: [
                                                                       const Icon(
@@ -561,7 +555,7 @@ class StartScreenState extends State<StartScreen> {
                                                                   ),
                                                                   const SizedBox(
                                                                     height: UIConstants
-                                                                        .spacingS,
+                                                                        .spacingXS,
                                                                   ),
                                                                   Row(
                                                                     children: [
@@ -575,6 +569,80 @@ class StartScreenState extends State<StartScreen> {
                                                                           .horizontalSpacingS,
                                                                       Text(
                                                                         '${termin.kosten.toStringAsFixed(2)} €',
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                width: UIConstants
+                                                                    .infoTableColumnSpacingWide,
+                                                              ),
+                                                              // Right column
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    'Lehrgangsleiter:',
+                                                                    style: UIStyles
+                                                                        .bodyStyle
+                                                                        .copyWith(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: UIConstants
+                                                                        .spacingXS,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                        Icons
+                                                                            .email,
+                                                                        size: UIConstants
+                                                                            .defaultIconSize,
+                                                                      ),
+                                                                      UIConstants
+                                                                          .horizontalSpacingS,
+                                                                      Text(
+                                                                        termin
+                                                                            .lehrgangsleiterMail,
+                                                                        style: UIStyles
+                                                                            .bodyStyle,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: UIConstants
+                                                                        .spacingXS,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                        Icons
+                                                                            .phone,
+                                                                        size: UIConstants
+                                                                            .defaultIconSize,
+                                                                      ),
+                                                                      UIConstants
+                                                                          .horizontalSpacingS,
+                                                                      Text(
+                                                                        termin
+                                                                            .lehrgangsleiterTel,
+                                                                        style: UIStyles
+                                                                            .bodyStyle,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),
@@ -624,9 +692,9 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.spacingM +
-                                            UIConstants.fabSize,
-                                        right: UIConstants.spacingM,
+                                        bottom: UIConstants.dialogFabBottom +
+                                            UIConstants.dialogFabDeleteOffset,
+                                        right: UIConstants.dialogFabRight,
                                         child: FloatingActionButton(
                                           heroTag: 'descDialogDeleteFab$index',
                                           mini: true,
@@ -648,8 +716,8 @@ class StartScreenState extends State<StartScreen> {
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.spacingM,
-                                        right: UIConstants.spacingM,
+                                        bottom: UIConstants.dialogFabBottom,
+                                        right: UIConstants.dialogFabRight,
                                         child: FloatingActionButton(
                                           heroTag: 'descDialogCloseFab$index',
                                           mini: true,

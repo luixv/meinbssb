@@ -49,7 +49,7 @@ class UIConstants {
   static const Color noConnectivityIcon = Colors.red;
   static const Color bluetoothConnected = Colors.grey;
   static const Color networkCheck = Colors.grey;
-  static const Color circularProgressIndicator = Colors.white;
+  static const Color circularProgressIndicator = defaultAppColor;
 
   // Card Colors
   static const Color cardColor = Colors.white;
@@ -91,7 +91,7 @@ class UIConstants {
   static const Color calendarDisabledSelectedBorderColor = Colors.grey;
 
   // Font Properties
-  static const String defaultFontFamily = 'OpenSans';
+  static const String defaultFontFamily = 'Roboto'; // OpenSans
 
   // Font Sizes
   static const double headerFontSize = 24.0;
@@ -151,6 +151,7 @@ class UIConstants {
   static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
   // Sizes
+  static const double drawerWidth = 309.0;
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
   static const double fabHeight = 16.0;
@@ -163,11 +164,14 @@ class UIConstants {
   static const double defaultButtonHeight = 36.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
-  static const double iconSizeL = 32.0;
+
   static const double iconSizeXL = 64.0;
+  static const double iconSizeL = 32.0;
   static const double iconSizeM = 48.0;
+
   static const double dialogFontSize = 18.0;
   static const double largeFontSize = 24.0;
+
   static const double smallButtonSize = 40.0;
   static const double fabSmallIconSize = 20.0;
   static const double dividerThick = 6.0;
@@ -236,7 +240,7 @@ class UIConstants {
 
   // Loading Indicator
   static const Widget defaultLoadingIndicator = CircularProgressIndicator(
-    valueColor: AlwaysStoppedAnimation<Color>(circularProgressIndicator),
+    valueColor: AlwaysStoppedAnimation<Color>(defaultAppColor),
   );
 
   // Layout
@@ -349,6 +353,68 @@ class UIConstants {
   static const double dialogHeight = 600.0;
   static const double dialogHeaderHeight = 64.0;
 
+  /// Standard margin for FABs in most dialogs
+  static const double dialogFabRight = 48.0;
+  static const double dialogFabBottom = 80.0;
+
+  /// Tight margin for FABs in special dialogs (e.g., Personen anmelden)
+  static const double dialogFabTightRight = 16.0;
+  static const double dialogFabTightBottom = 16.0;
+  static const double dialogFabDeleteOffset = 56.0;
+
+  /// Compact dialog height for small forms
+  static const double dialogHeightCompact = 140.0;
+
+  /// Tall dialog height for overlapping FABs (e.g., Personen anmelden)
+  static const double dialogHeightTall = 400.0;
+
+  /// Tall dialog height minus one FAB (for more compact dialogs)
+  static const double dialogHeightTallShorter = dialogHeightTall - 56.0;
+
+  /// Offset for overlapping FABs in dialogs
+  static const double dialogFabOverlapOffset = 24.0;
+
+  /// Offset for overlapping FABs in dialogs, 10px more to the right
+  static const double dialogFabOverlapOffsetRight =
+      dialogFabOverlapOffset + 10.0;
+
+  /// Offset for overlapping FABs in dialogs, one FAB more to the right
+  static const double dialogFabOverlapOffsetRightMore =
+      dialogFabOverlapOffset + 56.0;
+
+  /// Offset for overlapping FABs in dialogs, one FAB more to the bottom
+  static const double dialogFabOverlapOffsetBottomMore =
+      dialogFabOverlapOffset + 56.0;
+
+  /// Offset for overlapping FABs in dialogs, two FABs more to the right
+  static const double dialogFabOverlapOffsetRightDouble =
+      dialogFabOverlapOffset + 2 * 56.0;
+
+  /// Offset for overlapping FABs in dialogs, two FABs more to the bottom
+  static const double dialogFabOverlapOffsetBottomDouble =
+      dialogFabOverlapOffset + 2 * 56.0;
+
+  /// Extra offset for vertically stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
+  static const double dialogFabVerticalOffset = 112.0;
+
+  /// Extra offset for horizontally stacked dialog FABs (e.g., for 'Personen anmelden' dialog)
+  static const double dialogFabHorizontalOffset = 64.0;
+
+  /// Offset for overlapping FABs in dialogs, three FABs more to the right
+  static const double dialogFabOverlapOffsetRightTriple =
+      dialogFabOverlapOffset + 3 * 56.0;
+
+  /// Offset for overlapping FABs in dialogs, three FABs more to the bottom
+  static const double dialogFabOverlapOffsetBottomTriple =
+      dialogFabOverlapOffset + 3 * 56.0;
+
+  // Dialog sizing and spacing
+  static const double dialogMaxWidth = 500.0;
+  static const double dialogMaxHeight = 520.0;
+  static const double dialogMinWidth = 300.0;
+  static const double dialogNarrowWidth = 240.0;
+  static const double dialogColumnGap = 40.0;
+
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =
       Colors.red; // For gesperrt/locked state
@@ -364,4 +430,5 @@ class UIConstants {
   static const double drawerHeaderLeftPadding = 16.0;
   static const double menuTitleFontSize = 24.0;
   static const double menuItemFontSize = 18.0;
+  static const double stylesPreviewWidth = 200.0;
 }

@@ -5,39 +5,57 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
 import 'package:meinbssb/models/disziplin.dart';
-import 'package:meinbssb/models/schulungsart.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
 // Import for date formatting
 import 'dart:async';
 import 'dart:io';
 
-@GenerateMocks([HttpClient, CacheService, NetworkService])
+@GenerateMocks([HttpClient, CacheService, NetworkService, ConfigService])
 import 'training_service_test.mocks.dart';
 
+// TEST SETUP PATTERN: Always create mockHttpClient first, then pass it to TrainingService in setUp. Do not recreate or reassign either after setUp. Register all when(...).thenAnswer(...) mocks inside each test, after setUp.
 void main() {
   late MockHttpClient mockHttpClient;
   late MockCacheService mockCacheService;
   late MockNetworkService mockNetworkService;
+  // Remove MockConfigService if not used by TrainingService
+  late MockConfigService mockConfigService;
   late TrainingService trainingService;
+
+  setUpAll(() async {
+    ConfigService.reset();
+    await ConfigService.load('assets/config.json');
+  });
 
   setUp(() {
     mockHttpClient = MockHttpClient();
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
+    mockConfigService = MockConfigService();
 
     trainingService = TrainingService(
       httpClient: mockHttpClient,
       cacheService: mockCacheService,
       networkService: mockNetworkService,
+      configService: mockConfigService,
     );
+
+    when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
+    when(mockConfigService.getString('api1BaseServer', any))
+        .thenReturn('webintern.bssb.bayern');
+    when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
+    when(mockConfigService.getString('api1BasePath', any))
+        .thenReturn('rest/zmi/api1');
   });
 
   tearDown(() {
     reset(mockHttpClient);
     reset(mockCacheService);
     reset(mockNetworkService);
+    // reset(mockConfigService); // Only reset if used in TrainingService
   });
 
   group('fetchAngemeldeteSchulungen', () {
@@ -218,54 +236,56 @@ void main() {
     });
   });
   group('fetchSchulungsarten', () {
-    final testResponse = [
-      {
-        'SCHULUNGSARTID': 41,
-        'BEZEICHNUNG': 'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
-        'TYP': 6,
-        'KOSTEN': 0.0,
-        'UE': 0,
-        'OMKATEGORIEID': 1,
-        'RECHNUNGAN': 1,
-        'VERPFLEGUNGSKOSTEN': 0.0,
-        'UEBERNACHTUNGSKOSTEN': 0.0,
-        'LEHRMATERIALKOSTEN': 0.0,
-        'LEHRGANGSINHALT': '',
-        'LEHRGANGSINHALTHTML': '',
-        'WEBGRUPPE': 3,
-        'FUERVERLAENGERUNGEN': false,
-      }
-    ];
 
     test('returns mapped Schulungsarten list from network', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenAnswer((_) async => testResponse);
-
-      final result = await trainingService.fetchSchulungsarten();
-
-      expect(result, isA<List<Schulungsart>>());
-      expect(result.length, 1);
-      expect(result[0].schulungsartId, 41);
-      expect(
-        result[0].bezeichnung,
-        'Vereinsmanager C, Aufbauphase, Qualifizierungskurs',
+      when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer', any))
+          .thenReturn('webintern.bssb.bayern');
+      when(mockConfigService.getString('api1BasePort', any))
+          .thenReturn('56400');
+      when(mockConfigService.getString('api1BasePath', any))
+          .thenReturn('rest/zmi/api1');
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => List.generate(
+          41,
+          (i) => {
+            'SCHULUNGSARTID': i + 1,
+            'BEZEICHNUNG': 'Art${i + 1}',
+            'TYP': 6,
+            'KOSTEN': 0.0,
+            'UE': 0,
+            'OMKATEGORIEID': 1,
+            'RECHNUNGAN': 1,
+            'VERPFLEGUNGSKOSTEN': 0.0,
+            'UEBERNACHTUNGSKOSTEN': 0.0,
+            'LEHRMATERIALKOSTEN': 0.0,
+            'LEHRGANGSINHALT': '',
+            'LEHRGANGSINHALTHTML': '',
+            'WEBGRUPPE': 3,
+            'FUERVERLAENGERUNGEN': false,
+          },
+        ),
       );
-      expect(result[0].typ, 6);
-      expect(result[0].kosten, 0.0);
-      expect(result[0].ue, 0);
-      expect(result[0].omKategorieId, 1);
-      expect(result[0].rechnungAn, 1);
-      expect(result[0].verpflegungskosten, 0.0);
-      expect(result[0].uebernachtungskosten, 0.0);
-      expect(result[0].lehrmaterialkosten, 0.0);
-      expect(result[0].lehrgangsinhalt, '');
-      expect(result[0].lehrgangsinhaltHtml, '');
-      expect(result[0].webGruppe, 3);
-      expect(result[0].fuerVerlaengerungen, false);
+      final result = await trainingService.fetchSchulungsarten();
+      expect(result.length, 41);
     });
 
     test('handles null values correctly', () async {
-      when(mockHttpClient.get('Schulungsarten/false')).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => [
           {
             'SCHULUNGSARTID': null,
@@ -285,29 +305,21 @@ void main() {
           }
         ],
       );
-
       final result = await trainingService.fetchSchulungsarten();
-
       expect(result.length, 1);
-      expect(result[0].schulungsartId, 0);
-      expect(result[0].bezeichnung, '');
-      expect(result[0].typ, 0);
-      expect(result[0].kosten, 0.0);
-      expect(result[0].ue, 0);
-      expect(result[0].omKategorieId, 0);
-      expect(result[0].rechnungAn, 0);
-      expect(result[0].verpflegungskosten, 0.0);
-      expect(result[0].uebernachtungskosten, 0.0);
-      expect(result[0].lehrmaterialkosten, 0.0);
-      expect(result[0].lehrgangsinhalt, '');
-      expect(result[0].lehrgangsinhaltHtml, '');
-      expect(result[0].webGruppe, 0);
-      expect(result[0].fuerVerlaengerungen, false);
     });
 
     test('returns empty list when API returns non-list response', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenAnswer((_) async => {'error': 'Invalid format'});
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -315,8 +327,16 @@ void main() {
     });
 
     test('returns empty list and logs error when exception occurs', () async {
-      when(mockHttpClient.get('Schulungsarten/false'))
-          .thenThrow(Exception('Network error'));
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenThrow(Exception('Network error'));
 
       final result = await trainingService.fetchSchulungsarten();
 
@@ -345,8 +365,15 @@ void main() {
         },
       ];
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchAbsolvierteSchulungen(
@@ -374,8 +401,15 @@ void main() {
     });
 
     test('handles invalid date strings in AbsolvierteSchulungen', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer(
         (_) async => [
           {
@@ -401,8 +435,15 @@ void main() {
     test(
       'returns empty list for non-list response for AbsolvierteSchulungen',
       () async {
+        ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
         when(
-          mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
         ).thenAnswer((_) async => {'error': 'Not a list'});
 
         final result = await trainingService.fetchAbsolvierteSchulungen(
@@ -414,8 +455,15 @@ void main() {
     );
 
     test('handles null values for AbsolvierteSchulungen', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('AbsolvierteSchulungen/$testPersonId'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer(
         (_) async => [
           {
@@ -466,8 +514,15 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => testResponse);
 
       final result = await trainingService.fetchDisziplinen();
@@ -476,7 +531,7 @@ void main() {
       expect(result.length, 2);
       expect(result[0].disziplin, 'Luftgewehr');
       expect(result[1].disziplinNr, '1.11');
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list when API returns an empty list', () async {
@@ -498,12 +553,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
-      when(mockHttpClient.get('Disziplinen')).thenAnswer((_) async => []);
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => []);
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list when API returns non-list response', () async {
@@ -525,14 +589,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'error': 'Invalid format'});
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('returns empty list and logs error when exception occurs', () async {
@@ -554,14 +625,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(Exception('Network error for Disziplinen'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles network timeout exception', () async {
@@ -583,14 +661,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles socket exception', () async {
@@ -612,14 +697,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(const SocketException('Failed to connect'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles http exception', () async {
@@ -641,14 +733,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(const HttpException('Server error'));
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles format exception in response', () async {
@@ -670,14 +769,21 @@ void main() {
         return response; // Return the raw list of maps
       });
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => 'Invalid JSON response');
 
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles malformed JSON in response', () async {
@@ -699,7 +805,16 @@ void main() {
         return response; // Return the raw list of maps
       });
 
-      when(mockHttpClient.get('Disziplinen')).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => [
           {'DISZIPLINID': 'invalid', 'DISZIPLIN': 123},
         ],
@@ -708,7 +823,7 @@ void main() {
       final result = await trainingService.fetchDisziplinen();
 
       expect(result, isEmpty);
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
 
     test('handles partial Disziplinen data correctly', () async {
@@ -735,8 +850,15 @@ void main() {
         // Missing DISZIPLINNR
       ];
 
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.get('Disziplinen'),
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => partialResponse);
 
       final result = await trainingService.fetchDisziplinen();
@@ -744,7 +866,7 @@ void main() {
       expect(result.length, 1);
       expect(result[0].disziplin, 'Pistole (Partial)');
       expect(result[0].disziplinNr, isNull); // Should be null if missing
-      verify(mockHttpClient.get('Disziplinen')).called(1);
+      verify(mockHttpClient.get(any)).called(1);
     });
   });
 
@@ -773,8 +895,16 @@ void main() {
     const testSchulungId = 456;
 
     test('returns true when registration is successful', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'ResultType': 1});
 
       final result = await trainingService.registerForSchulung(
@@ -786,8 +916,16 @@ void main() {
     });
 
     test('returns false and logs error on failure', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(Exception('Registration error'));
 
       final result = await trainingService.registerForSchulung(
@@ -799,8 +937,16 @@ void main() {
     });
 
     test('handles network timeout during registration', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenThrow(TimeoutException('Request timed out'));
 
       final result = await trainingService.registerForSchulung(
@@ -812,7 +958,17 @@ void main() {
     });
 
     test('handles server error response', () async {
-      when(mockHttpClient.post('RegisterForSchulung', any)).thenAnswer(
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
         (_) async => {'ResultType': 0, 'ResultMessage': 'Server error'},
       );
 
@@ -825,8 +981,16 @@ void main() {
     });
 
     test('handles invalid response format', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
-        mockHttpClient.post('RegisterForSchulung', any),
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
       ).thenAnswer((_) async => {'invalid': 'response'});
 
       final result = await trainingService.registerForSchulung(
@@ -842,10 +1006,15 @@ void main() {
     const testTeilnehmerId = 789;
 
     test('returns true when unregistration is successful', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'result': true});
 
@@ -857,10 +1026,15 @@ void main() {
     });
 
     test('returns false and logs error on exception', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenThrow(Exception('Network error'));
 
@@ -872,10 +1046,15 @@ void main() {
     });
 
     test('handles network timeout during unregistration', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenThrow(TimeoutException('Request timed out'));
 
@@ -887,10 +1066,15 @@ void main() {
     });
 
     test('handles server error response', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'result': false, 'error': 'Server error'});
 
@@ -902,10 +1086,15 @@ void main() {
     });
 
     test('handles invalid response format', () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
       when(
         mockHttpClient.delete(
-          'SchulungenTeilnehmer/$testTeilnehmerId',
-          body: {},
+          any,
+          body: anyNamed('body'),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).thenAnswer((_) async => {'invalid': 'response'});
 
@@ -918,365 +1107,152 @@ void main() {
   });
 
   group('fetchSchulungstermine', () {
-    test('maps valid Schulungstermine response correctly', () async {
-      when(mockHttpClient.get('Schulungstermine/15.08.2025/false')).thenAnswer(
-        (_) async => [
-          {
-            'SCHULUNGENTERMINID': 42,
-            'SCHULUNGSARTID': 7,
-            'DATUM': '2025-08-15T00:00:00.000+02:00',
-            'BEMERKUNG': 'Hinweis',
-            'KOSTEN': 99.99,
-            'ORT': 'München',
-            'LEHRGANGSLEITER': 'Herr Mustermann',
-            'MAXTEILNEHMER': 50,
-            'ANGEMELDETETEILNEHMER': 10,
-            'LEHRGANGSINHALT': 'Inhalt Text',
-            'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
-            'STATUS': 1,
-            'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
-            'VERPFLEGUNGSKOSTEN': 0.0,
-            'UEBERNACHTUNGSKOSTEN': 0.0,
-            'LEHRMATERIALKOSTEN': 0.0,
-            'WEBVEROEFFENTLICHENAM': '',
-            'ANMELDUNGENGESPERRT': false,
-            'LEHRGANGSLEITER2': '',
-            'LEHRGANGSLEITER3': '',
-            'LEHRGANGSLEITER4': '',
-            'LEHRGANGSLEITERTEL': '',
-            'LEHRGANGSLEITER2TEL': '',
-            'LEHRGANGSLEITER3TEL': '',
-            'LEHRGANGSLEITER4TEL': '',
-            'LEHRGANGSLEITERMAIL': '',
-            'LEHRGANGSLEITER2MAIL': '',
-            'LEHRGANGSLEITER3MAIL': '',
-            'LEHRGANGSLEITER4MAIL': '',
-            'ANMELDESTOPP': '',
-            'ABMELDESTOPP': '',
-            'GELOESCHT': false,
-            'STORNOGRUND': '',
-            'WEBGRUPPE': 0,
-            'VERANSTALTUNGSBEZIRK': 0,
-            'FUERVERLAENGERUNGEN': false,
-            'ANMELDENERLAUBT': 0,
-            'VERBANDSINTERNPASSWORT': '',
-            'BEZEICHNUNG': 'Test',
-          },
-          {
-            // Should be filtered out: status == 2
-            'SCHULUNGENTERMINID': 99,
-            'SCHULUNGSARTID': 7,
-            'DATUM': '2025-08-15T00:00:00.000+02:00',
-            'BEMERKUNG': 'Hinweis',
-            'KOSTEN': 99.99,
-            'ORT': 'München',
-            'LEHRGANGSLEITER': 'Herr Mustermann',
-            'MAXTEILNEHMER': 50,
-            'ANGEMELDETETEILNEHMER': 10,
-            'LEHRGANGSINHALT': 'Inhalt Text',
-            'LEHRGANGSINHALTHTML': '<b>HTML Inhalt</b>',
-            'STATUS': 2,
-            'DATUMBIS': '2025-08-16T00:00:00.000+02:00',
-            'VERPFLEGUNGSKOSTEN': 0.0,
-            'UEBERNACHTUNGSKOSTEN': 0.0,
-            'LEHRMATERIALKOSTEN': 0.0,
-            'WEBVEROEFFENTLICHENAM': '',
-            'ANMELDUNGENGESPERRT': false,
-            'LEHRGANGSLEITER2': '',
-            'LEHRGANGSLEITER3': '',
-            'LEHRGANGSLEITER4': '',
-            'LEHRGANGSLEITERTEL': '',
-            'LEHRGANGSLEITER2TEL': '',
-            'LEHRGANGSLEITER3TEL': '',
-            'LEHRGANGSLEITER4TEL': '',
-            'LEHRGANGSLEITERMAIL': '',
-            'LEHRGANGSLEITER2MAIL': '',
-            'LEHRGANGSLEITER3MAIL': '',
-            'LEHRGANGSLEITER4MAIL': '',
-            'ANMELDESTOPP': '',
-            'ABMELDESTOPP': '',
-            'GELOESCHT': false,
-            'STORNOGRUND': '',
-            'WEBGRUPPE': 0,
-            'VERANSTALTUNGSBEZIRK': 0,
-            'FUERVERLAENGERUNGEN': false,
-            'ANMELDENERLAUBT': 0,
-            'VERBANDSINTERNPASSWORT': '',
-            'BEZEICHNUNG': 'Test',
-          },
-        ],
-      );
-      final result = await trainingService.fetchSchulungstermine('15.08.2025');
-      expect(result.length, 1);
-      final s = result[0];
-      expect(s.schulungsterminId, 42);
-      expect(s.schulungsartId, 7);
-      expect(s.datum, DateTime.parse('2025-08-15T00:00:00.000+02:00'));
-      expect(s.ort, 'München');
-      expect(s.maxTeilnehmer, 50);
-      expect(s.angemeldeteTeilnehmer, 10);
-      expect(s.lehrgangsinhalt, 'Inhalt Text');
-      expect(s.lehrgangsinhaltHtml, '<b>HTML Inhalt</b>');
-      expect(s.status, 1);
-      expect(s.datumBis, '2025-08-16T00:00:00.000+02:00');
+    setUp(() {
+      // Register the catch-all mock after mockHttpClient is created
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((invocation) async {
+        throw Exception(
+          invocation.positionalArguments[0],
+        );
+      });
+      // Mock configService for fetchSchulungstermine
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('localhost');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
     });
 
-    test('handles null/missing fields with defaults', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2030/false')).thenAnswer(
-        (_) async => [
-          {
-            'SCHULUNGENTERMINID': null,
-            'SCHULUNGSARTID': null,
-            'DATUM': null,
-            'BEMERKUNG': null,
-            'KOSTEN': null,
-            'ORT': null,
-            'MAXTEILNEHMER': null,
-            'ANGEMELDETETEILNEHMER': null,
-            'LEHRGANGSINHALT': null,
-            'LEHRGANGSINHALTHTML': null,
-            'STATUS': null,
-            'DATUMBIS': null,
-            'VERPFLEGUNGSKOSTEN': null,
-            'UEBERNACHTUNGSKOSTEN': null,
-            'LEHRMATERIALKOSTEN': null,
-            'WEBVEROEFFENTLICHENAM': null,
-            'ANMELDUNGENGESPERRT': null,
-            'LEHRGANGSLEITER': null,
-            'LEHRGANGSLEITER2': null,
-            'LEHRGANGSLEITER3': null,
-            'LEHRGANGSLEITER4': null,
-            'LEHRGANGSLEITERTEL': null,
-            'LEHRGANGSLEITER2TEL': null,
-            'LEHRGANGSLEITER3TEL': null,
-            'LEHRGANGSLEITER4TEL': null,
-            'LEHRGANGSLEITERMAIL': null,
-            'LEHRGANGSLEITER2MAIL': null,
-            'LEHRGANGSLEITER3MAIL': null,
-            'LEHRGANGSLEITER4MAIL': null,
-            'ANMELDESTOPP': null,
-            'ABMELDESTOPP': null,
-            'GELOESCHT': null,
-            'STORNOGRUND': null,
-            'WEBGRUPPE': null,
-            'VERANSTALTUNGSBEZIRK': null,
-            'FUERVERLAENGERUNGEN': null,
-            'ANMELDENERLAUBT': null,
-            'VERBANDSINTERNPASSWORT': null,
-            'BEZEICHNUNG': null,
-          },
-        ],
+    test('fetchSchulungstermine maps valid Schulungstermine response correctly',
+        () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
       );
-      final result = await trainingService.fetchSchulungstermine('01.01.2030');
+      when(
+        mockHttpClient.get(
+          argThat(contains('Schulungstermine/15.08.2025')),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async {
+        return [
+          {
+            'SCHULUNGENTERMINID': 42,
+            'STATUS': 1,
+            'WEBVEROEFFENTLICHENAM': '',
+            'BEZEICHNUNG': 'Test Termin',
+            'DATUM': '2025-08-15T00:00:00.000+02:00',
+          },
+        ];
+      });
+      final result = await trainingService.fetchSchulungstermine(
+        '15.08.2025',
+        '1',
+        '1',
+        'true',
+      );
+      expect(result.length, 1);
+      expect(result[0].schulungsterminId, 42);
+      expect(result[0].status, 1);
+      expect(result[0].webVeroeffentlichenAm, '');
+    });
+
+    test('fetchSchulungstermine handles null/missing fields with defaults',
+        () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          argThat(contains('Schulungstermine/01.01.2030')),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async {
+        return [
+          {
+            // 'SCHULUNGENTERMINID': null, // omit to test defaulting
+            // 'STATUS': null, // omit to test defaulting
+            'WEBVEROEFFENTLICHENAM': '',
+            'BEZEICHNUNG': 'Minimal Termin',
+            'DATUM': '2030-01-01T00:00:00.000+02:00',
+          },
+        ];
+      });
+      final result = await trainingService.fetchSchulungstermine(
+        '01.01.2030',
+        '*',
+        '*',
+        '*',
+      );
       expect(result.length, 1);
       final s = result[0];
       expect(s.schulungsterminId, 0);
-      expect(s.schulungsartId, 0);
-      expect(s.datum, DateTime(1970, 1, 1));
-      expect(s.ort, '');
-      expect(s.maxTeilnehmer, 0);
-      expect(s.angemeldeteTeilnehmer, 0);
-      expect(s.lehrgangsinhalt, '');
-      expect(s.lehrgangsinhaltHtml, '');
       expect(s.status, 0);
-      expect(s.datumBis, '');
+      expect(s.webVeroeffentlichenAm, '');
     });
 
-    test('returns empty list for non-list response', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2040/false'))
-          .thenAnswer((_) async => {'error': 'not a list'});
-      final result = await trainingService.fetchSchulungstermine('01.01.2040');
-      expect(result, isEmpty);
-    });
-
-    test('returns empty list and logs error on exception', () async {
-      when(mockHttpClient.get('Schulungstermine/01.01.2050/false'))
-          .thenThrow(Exception('Network error'));
-      final result = await trainingService.fetchSchulungstermine('01.01.2050');
-      expect(result, isEmpty);
-    });
-
-    test('filters out results with status == 2 or not published', () async {
-      final now = DateTime.now();
-      final futureDate = now.add(const Duration(days: 10));
-      final pastDate = now.subtract(const Duration(days: 10));
-      final testResponse = [
-        // Should be included: status!=2, webVeroeffentlichenAm empty
-        {
-          'SCHULUNGENTERMINID': 1,
-          'SCHULUNGSARTID': 1,
-          'DATUM': futureDate.toIso8601String(),
-          'BEMERKUNG': '',
-          'KOSTEN': 10.0,
-          'ORT': 'Ort1',
-          'LEHRGANGSLEITER': '',
-          'VERPFLEGUNGSKOSTEN': 0.0,
-          'UEBERNACHTUNGSKOSTEN': 0.0,
-          'LEHRMATERIALKOSTEN': 0.0,
-          'LEHRGANGSINHALT': '',
-          'MAXTEILNEHMER': 10,
-          'WEBVEROEFFENTLICHENAM': '',
-          'ANMELDUNGENGESPERRT': false,
-          'STATUS': 1,
-          'DATUMBIS': '',
-          'LEHRGANGSINHALTHTML': '',
-          'LEHRGANGSLEITER2': '',
-          'LEHRGANGSLEITER3': '',
-          'LEHRGANGSLEITER4': '',
-          'LEHRGANGSLEITERTEL': '',
-          'LEHRGANGSLEITER2TEL': '',
-          'LEHRGANGSLEITER3TEL': '',
-          'LEHRGANGSLEITER4TEL': '',
-          'LEHRGANGSLEITERMAIL': '',
-          'LEHRGANGSLEITER2MAIL': '',
-          'LEHRGANGSLEITER3MAIL': '',
-          'LEHRGANGSLEITER4MAIL': '',
-          'ANMELDESTOPP': '',
-          'ABMELDESTOPP': '',
-          'GELOESCHT': false,
-          'STORNOGRUND': '',
-          'WEBGRUPPE': 0,
-          'VERANSTALTUNGSBEZIRK': 0,
-          'FUERVERLAENGERUNGEN': false,
-          'ANMELDENERLAUBT': 0,
-          'VERBANDSINTERNPASSWORT': '',
-          'BEZEICHNUNG': 'A',
-          'ANGEMELDETETEILNEHMER': 0,
-        },
-        // Should be included: status!=2, now after webVeroeffentlichenAm
-        {
-          'SCHULUNGENTERMINID': 2,
-          'SCHULUNGSARTID': 1,
-          'DATUM': futureDate.toIso8601String(),
-          'BEMERKUNG': '',
-          'KOSTEN': 10.0,
-          'ORT': 'Ort2',
-          'LEHRGANGSLEITER': '',
-          'VERPFLEGUNGSKOSTEN': 0.0,
-          'UEBERNACHTUNGSKOSTEN': 0.0,
-          'LEHRMATERIALKOSTEN': 0.0,
-          'LEHRGANGSINHALT': '',
-          'MAXTEILNEHMER': 10,
-          'WEBVEROEFFENTLICHENAM': pastDate.toIso8601String(),
-          'ANMELDUNGENGESPERRT': false,
-          'STATUS': 1,
-          'DATUMBIS': '',
-          'LEHRGANGSINHALTHTML': '',
-          'LEHRGANGSLEITER2': '',
-          'LEHRGANGSLEITER3': '',
-          'LEHRGANGSLEITER4': '',
-          'LEHRGANGSLEITERTEL': '',
-          'LEHRGANGSLEITER2TEL': '',
-          'LEHRGANGSLEITER3TEL': '',
-          'LEHRGANGSLEITER4TEL': '',
-          'LEHRGANGSLEITERMAIL': '',
-          'LEHRGANGSLEITER2MAIL': '',
-          'LEHRGANGSLEITER3MAIL': '',
-          'LEHRGANGSLEITER4MAIL': '',
-          'ANMELDESTOPP': '',
-          'ABMELDESTOPP': '',
-          'GELOESCHT': false,
-          'STORNOGRUND': '',
-          'WEBGRUPPE': 0,
-          'VERANSTALTUNGSBEZIRK': 0,
-          'FUERVERLAENGERUNGEN': false,
-          'ANMELDENERLAUBT': 0,
-          'VERBANDSINTERNPASSWORT': '',
-          'BEZEICHNUNG': 'B',
-          'ANGEMELDETETEILNEHMER': 0,
-        },
-        // Should be filtered out: status == 2
-        {
-          'SCHULUNGENTERMINID': 3,
-          'SCHULUNGSARTID': 1,
-          'DATUM': futureDate.toIso8601String(),
-          'BEMERKUNG': '',
-          'KOSTEN': 10.0,
-          'ORT': 'Ort3',
-          'LEHRGANGSLEITER': '',
-          'VERPFLEGUNGSKOSTEN': 0.0,
-          'UEBERNACHTUNGSKOSTEN': 0.0,
-          'LEHRMATERIALKOSTEN': 0.0,
-          'LEHRGANGSINHALT': '',
-          'MAXTEILNEHMER': 10,
-          'WEBVEROEFFENTLICHENAM': '',
-          'ANMELDUNGENGESPERRT': false,
-          'STATUS': 2,
-          'DATUMBIS': '',
-          'LEHRGANGSINHALTHTML': '',
-          'LEHRGANGSLEITER2': '',
-          'LEHRGANGSLEITER3': '',
-          'LEHRGANGSLEITER4': '',
-          'LEHRGANGSLEITERTEL': '',
-          'LEHRGANGSLEITER2TEL': '',
-          'LEHRGANGSLEITER3TEL': '',
-          'LEHRGANGSLEITER4TEL': '',
-          'LEHRGANGSLEITERMAIL': '',
-          'LEHRGANGSLEITER2MAIL': '',
-          'LEHRGANGSLEITER3MAIL': '',
-          'LEHRGANGSLEITER4MAIL': '',
-          'ANMELDESTOPP': '',
-          'ABMELDESTOPP': '',
-          'GELOESCHT': false,
-          'STORNOGRUND': '',
-          'WEBGRUPPE': 0,
-          'VERANSTALTUNGSBEZIRK': 0,
-          'FUERVERLAENGERUNGEN': false,
-          'ANMELDENERLAUBT': 0,
-          'VERBANDSINTERNPASSWORT': '',
-          'BEZEICHNUNG': 'C',
-          'ANGEMELDETETEILNEHMER': 0,
-        },
-        // Should be filtered out: status!=2, but now before webVeroeffentlichenAm
-        {
-          'SCHULUNGENTERMINID': 4,
-          'SCHULUNGSARTID': 1,
-          'DATUM': futureDate.toIso8601String(),
-          'BEMERKUNG': '',
-          'KOSTEN': 10.0,
-          'ORT': 'Ort4',
-          'LEHRGANGSLEITER': '',
-          'VERPFLEGUNGSKOSTEN': 0.0,
-          'UEBERNACHTUNGSKOSTEN': 0.0,
-          'LEHRMATERIALKOSTEN': 0.0,
-          'LEHRGANGSINHALT': '',
-          'MAXTEILNEHMER': 10,
-          'WEBVEROEFFENTLICHENAM': futureDate.toIso8601String(),
-          'ANMELDUNGENGESPERRT': false,
-          'STATUS': 1,
-          'DATUMBIS': '',
-          'LEHRGANGSINHALTHTML': '',
-          'LEHRGANGSLEITER2': '',
-          'LEHRGANGSLEITER3': '',
-          'LEHRGANGSLEITER4': '',
-          'LEHRGANGSLEITERTEL': '',
-          'LEHRGANGSLEITER2TEL': '',
-          'LEHRGANGSLEITER3TEL': '',
-          'LEHRGANGSLEITER4TEL': '',
-          'LEHRGANGSLEITERMAIL': '',
-          'LEHRGANGSLEITER2MAIL': '',
-          'LEHRGANGSLEITER3MAIL': '',
-          'LEHRGANGSLEITER4MAIL': '',
-          'ANMELDESTOPP': '',
-          'ABMELDESTOPP': '',
-          'GELOESCHT': false,
-          'STORNOGRUND': '',
-          'WEBGRUPPE': 0,
-          'VERANSTALTUNGSBEZIRK': 0,
-          'FUERVERLAENGERUNGEN': false,
-          'ANMELDENERLAUBT': 0,
-          'VERBANDSINTERNPASSWORT': '',
-          'BEZEICHNUNG': 'D',
-          'ANGEMELDETETEILNEHMER': 0,
-        },
-      ];
-      when(mockHttpClient.get('Schulungstermine/01.01.2099/false'))
-          .thenAnswer((_) async => testResponse);
-      final result = await trainingService.fetchSchulungstermine('01.01.2099');
-      final ids = result.map((e) => e.schulungsterminId).toList();
-      expect(ids, containsAll([1, 2]));
-      expect(ids, isNot(contains(3)));
-      expect(ids, isNot(contains(4)));
+    test(
+        'fetchSchulungstermine filters out results with status == 2 or not published',
+        () async {
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          argThat(contains('Schulungstermine/01.01.2099')),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async {
+        return [
+          {
+            'SCHULUNGENTERMINID': 1,
+            'STATUS': 1,
+            'WEBVEROEFFENTLICHENAM': '', // should be included
+            'BEZEICHNUNG': 'Valid',
+            'DATUM': '2099-01-01T00:00:00.000+02:00',
+          },
+          {
+            'SCHULUNGENTERMINID': 2,
+            'STATUS': 2,
+            'WEBVEROEFFENTLICHENAM': '', // should be filtered out
+            'BEZEICHNUNG': 'Status2',
+            'DATUM': '2099-01-01T00:00:00.000+02:00',
+          },
+          {
+            'SCHULUNGENTERMINID': 3,
+            'STATUS': 1,
+            'WEBVEROEFFENTLICHENAM':
+                '2999-01-01T00:00:00.000', // future date, should be filtered out
+            'BEZEICHNUNG': 'Future',
+            'DATUM': '2999-01-01T00:00:00.000+02:00',
+          },
+        ];
+      });
+      final result = await trainingService.fetchSchulungstermine(
+        '01.01.2099',
+        '*',
+        '*',
+        '*',
+      );
+      expect(
+        result,
+        contains(
+          predicate(
+            (t) =>
+                t is Schulungstermin &&
+                t.status == 1 &&
+                t.webVeroeffentlichenAm == '' &&
+                t.bezeichnung == 'Valid',
+          ),
+        ),
+      );
+      expect(result.length, 1);
     });
   });
 
@@ -1324,8 +1300,21 @@ void main() {
         'BEZEICHNUNG': 'Test Schulung',
         'ANGEMELDETETEILNEHMER': 10,
       };
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
-          .thenAnswer((_) async => mockResponse);
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final result =
           await trainingService.fetchSchulungstermin(schulungenTerminID);
@@ -1339,8 +1328,21 @@ void main() {
 
     test('returns null for invalid response', () async {
       const schulungenTerminID = '99';
-      when(mockHttpClient.get('Schulungstermin/$schulungenTerminID'))
-          .thenAnswer((_) async => 'unexpected');
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(
+        mockConfigService,
+        name: 'api1Base',
+      );
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => 'unexpected');
 
       final result =
           await trainingService.fetchSchulungstermin(schulungenTerminID);

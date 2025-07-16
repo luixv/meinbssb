@@ -8,6 +8,9 @@ import 'dart:convert'; // Import dart:convert for utf8
 class MockRootBundle extends Mock
     implements AssetBundle {} // Implement AssetBundle, not RootBundle
 
+// Use mocktail for mocking ConfigService in the test
+class MockConfigService extends Mock implements ConfigService {}
+
 void main() {
   // Initialize binding before all tests
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +19,7 @@ void main() {
     const testJson = '''
     {
       "apiBaseServer": "127.0.0.1",
-      "apiPort": "3001",
+      "apiBasePort": "3001",
       "serverTimeout": 8,
       "cacheExpirationHours": "24",
       "smtpSettings": {
@@ -62,7 +65,7 @@ void main() {
 
       // Test top-level values
       expect(service.getString('apiBaseServer'), '127.0.0.1');
-      expect(service.getString('apiPort'), '3001');
+      expect(service.getString('apiBasePort'), '3001');
       expect(service.getInt('serverTimeout'), 8);
       expect(service.getString('cacheExpirationHours'), '24');
 
@@ -86,13 +89,24 @@ void main() {
 
       // Verify data types
       expect(service.getString('apiBaseServer'), isA<String>());
-      expect(service.getString('apiPort'), isA<String>());
+      expect(service.getString('apiBasePort'), isA<String>());
       expect(service.getInt('serverTimeout'), isA<int>());
       expect(service.getString('cacheExpirationHours'), isA<String>());
 
       // Verify nested data types
       expect(service.getString('host', 'smtpSettings'), isA<String>());
       expect(service.getString('logoName', 'appTheme'), isA<String>());
+    });
+
+    test('should build base URL for apiBase', () async {
+      final mock = MockConfigService();
+      when(() => mock.getString('apiProtocol', any())).thenReturn('https');
+      when(() => mock.getString('apiBaseServer', any()))
+          .thenReturn('127.0.0.1');
+      when(() => mock.getString('apiBasePort', any())).thenReturn('3001');
+      when(() => mock.getString('apiBasePath', any())).thenReturn('/');
+      final url = ConfigService.buildBaseUrlForServer(mock, name: 'apiBase');
+      expect(url, 'https://127.0.0.1:3001//');
     });
   });
 }

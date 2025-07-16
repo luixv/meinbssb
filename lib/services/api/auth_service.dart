@@ -16,18 +16,21 @@ import '/services/core/network_service.dart';
 import '/services/core/email_service.dart';
 import '/services/core/postgrest_service.dart';
 import '/services/core/config_service.dart';
+import 'package:meinbssb/services/core/token_service.dart';
 
 class AuthService {
   AuthService({
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ConfigService configService,
     required PostgrestService postgrestService,
     FlutterSecureStorage? secureStorage,
     required EmailService emailService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
         _networkService = networkService,
+        _configService = configService,
         _postgrestService = postgrestService,
         _secureStorage = secureStorage ?? const FlutterSecureStorage(),
         _emailService = emailService;
@@ -35,12 +38,15 @@ class AuthService {
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
+  final ConfigService _configService;
   final PostgrestService _postgrestService;
   final FlutterSecureStorage _secureStorage;
   final EmailService _emailService;
 
   // Add getter for postgrestService
   PostgrestService get postgrestService => _postgrestService;
+
+  TokenService? _tokenService;
 
   Future<Map<String, dynamic>> register({
     required String firstName,
@@ -133,10 +139,17 @@ Ergebnis der Abfrage:
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _httpClient.getWithBody('LoginMyBSSB', {
-        'Email': email,
-        'Passwort': password,
-      });
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final response = await _httpClient.post(
+        'LoginMyBSSB',
+        {
+          'Email': email,
+          'Passwort': password,
+        },
+        overrideBaseUrl: baseUrl,
+      );
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
@@ -375,15 +388,9 @@ Ergebnis der Abfrage:
   /// Fetches the login email for a given passnummer using a special base URL from config.json.
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
-      final config = ConfigService.instance;
-      final protocol = config.getString('apiProtocol') ?? 'https';
-      final server = config.getString('api1BaseServer') ?? '';
-      final port = config.getString('api1Port') ?? '';
-      final path = config.getString('api1BasePath') ?? '';
       // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl = port.isNotEmpty
-          ? '$protocol://$server:$port/$path'
-          : '$protocol://$server/$path';
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
       final endpoint = 'FindeLoginMail/$passnummer';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
@@ -397,6 +404,21 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('fetchLoginEmail error: $e');
       return '';
+    }
+  }
+
+  /// Checks if the current authentication token is valid (exists and is not empty).
+  Future<bool> isTokenValid() async {
+    try {
+      final tokenService = _tokenService ??= TokenService(
+        configService: _configService,
+        cacheService: _cacheService,
+      );
+      final token = await tokenService.getAuthToken();
+      return token.isNotEmpty;
+    } catch (e) {
+      LoggerService.logError('isTokenValid error: $e');
+      return false;
     }
   }
 

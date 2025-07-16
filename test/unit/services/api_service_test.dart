@@ -528,13 +528,26 @@ void main() {
             angemeldeteTeilnehmer: 5,
           ),
         ];
-        when(mockTrainingService.fetchSchulungstermine(any))
-            .thenAnswer((_) async => expectedData);
+        when(mockTrainingService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+        ),).thenAnswer((_) async => expectedData);
 
-        final result = await apiService.fetchSchulungstermine('2024-01-01');
+        final result = await apiService.fetchSchulungstermine(
+          '2024-01-01',
+          '1',
+          '1',
+          'true',
+        );
         expect(result, equals(expectedData));
-        verify(mockTrainingService.fetchSchulungstermine('2024-01-01'))
-            .called(1);
+        verify(mockTrainingService.fetchSchulungstermine(
+          '2024-01-01',
+          '1',
+          '1',
+          'true',
+        ),).called(1);
       });
 
       test('unregisterFromSchulung delegates to training service', () async {

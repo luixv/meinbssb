@@ -11,6 +11,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i4;
 import 'package:meinbssb/services/core/cache_service.dart' as _i8;
 import 'package:meinbssb/services/core/email_service.dart' as _i12;
+import 'package:meinbssb/services/core/config_service.dart' as _i10;
 import 'package:meinbssb/services/core/http_client.dart' as _i5;
 import 'package:meinbssb/services/core/network_service.dart' as _i9;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i11;
@@ -817,6 +818,41 @@ class MockFlutterSecureStorage extends _i1.Mock
         ),
         returnValue: _i2.Future<bool?>.value(),
       ) as _i2.Future<bool?>);
+}
+
+/// A class which mocks [ConfigService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfigService extends _i1.Mock implements _i10.ConfigService {
+  MockConfigService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  int? getInt(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getInt,
+        [
+          key,
+          section,
+        ],
+      )) as int?);
+
+  @override
+  String? getString(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getString,
+        [
+          key,
+          section,
+        ],
+      )) as String?);
 }
 
 /// A class which mocks [PostgrestService].

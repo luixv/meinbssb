@@ -16,14 +16,12 @@ class HttpClient {
     required CacheService cacheService,
     http.Client? client,
   })  : _client = client ?? http.Client(),
-        _tokenService = tokenService,
-        _configService = configService;
+        _tokenService = tokenService;
 
   final String baseUrl;
   final int serverTimeout;
   final http.Client _client;
   final TokenService _tokenService;
-  final ConfigService _configService;
 
   // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
@@ -214,8 +212,12 @@ class HttpClient {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> post(
+    String endpoint,
+    Map<String, dynamic> body, {
+    String? overrideBaseUrl,
+  }) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
     LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
@@ -231,8 +233,12 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> put(String endpoint, Map<String, dynamic> body) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> put(
+    String endpoint,
+    Map<String, dynamic> body, {
+    String? overrideBaseUrl,
+  }) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = jsonEncode(body);
 
     LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
@@ -248,8 +254,12 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> delete(String endpoint, {Map<String, dynamic>? body}) async {
-    final String apiUrl = '$baseUrl/$endpoint';
+  Future<dynamic> delete(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    String? overrideBaseUrl,
+  }) async {
+    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
     final requestBody = body != null ? jsonEncode(body) : null;
 
     LoggerService.logInfo('HttpClient: Sending DELETE request to: $apiUrl');
@@ -271,13 +281,13 @@ class HttpClient {
     String endpoint, {
     String? overrideBaseUrl,
   }) async {
-    final url = overrideBaseUrl != null 
+    final url = overrideBaseUrl != null
         ? '$overrideBaseUrl/$endpoint'
         : '$baseUrl/$endpoint';
     return _makeRequest('GET', url, null, null);
   }
 
-    Future<dynamic> get2(String endpoint) async {
+  Future<dynamic> get2(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
     return _makeRequest('GET', apiUrl, null, null);

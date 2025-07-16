@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,13 +19,50 @@ import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
+import 'screens/schulungen_search_screen.dart';
 import 'services/core/postgrest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Global error handler for all uncaught errors
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint(
+      'GLOBAL FLUTTER ERROR: \n [31m${details.exceptionAsString()}\u001b[0m',
+    );
+    if (details.stack != null) {
+      debugPrint('STACK TRACE: \n${details.stack}');
+    }
+  };
   await AppInitializer.init();
 
-  runApp(const MyAppWrapper());
+  final fragment = Uri.base.fragment;
+  final path = Uri.base.path;
+  final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+      fragment == 'schulungen_search' ||
+      path == '/schulungen_search' ||
+      path == 'schulungen_search';
+
+  runZonedGuarded(() {
+    if (isDirectSchulungenSearch) {
+      runApp(
+        MyAppWrapper(
+          initialScreen: SchulungenSearchScreen(
+            null,
+            isLoggedIn: false,
+            onLogout: () {},
+            showMenu: false,
+            showConnectivityIcon: false,
+          ),
+        ),
+      );
+    } else {
+      runApp(const MyAppWrapper());
+    }
+  }, (error, stack) {
+    debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
+    debugPrint('STACK TRACE: \n$stack');
+  });
 }
 
 class AppInitializer {
@@ -47,12 +85,8 @@ class AppInitializer {
     configService = await ConfigService.load('assets/config.json');
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
-    
-    // Main API configuration
-    final protocol = configService.getString('apiProtocol', 'api') ?? 'https';
-    final baseIP = configService.getString('apiBaseServer', 'api') ?? '127.0.0.1';
-    final port = configService.getString('apiPort', 'api') ?? '56400';
-    final path = configService.getString('apiBasePath', 'api') ?? '/rest/zmi/api';
+    final apiBaseUrl =
+        ConfigService.buildBaseUrlForServer(configService, name: 'apiBase');
 
     imageService = ImageService();
 
@@ -64,10 +98,6 @@ class AppInitializer {
     );
     networkService = NetworkService(configService: configService);
 
-    // Construct URL for API
-    String baseUrl = '$protocol://$baseIP:$port${path.isNotEmpty ? '/$path' : ''}';
-
-    // Initialize the http.Client instance once and pass it to both services
     final baseHttpClient = http.Client();
 
     // Initialize PostgrestService
@@ -85,7 +115,7 @@ class AppInitializer {
 
     // 2. Then, initialize HttpClient for main API
     httpClient = HttpClient(
-      baseUrl: baseUrl,
+      baseUrl: apiBaseUrl,
       serverTimeout: serverTimeout,
       tokenService: tokenService,
       configService: configService,
@@ -105,6 +135,7 @@ class AppInitializer {
       httpClient: httpClient,
       cacheService: cacheService,
       networkService: networkService,
+      configService: configService,
     );
 
     userService = UserService(
@@ -117,6 +148,7 @@ class AppInitializer {
       httpClient: httpClient,
       cacheService: cacheService,
       networkService: networkService,
+      configService: configService,
       postgrestService: postgrestService,
       emailService: emailService,
     );

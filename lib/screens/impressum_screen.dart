@@ -50,13 +50,20 @@ class ImpressumScreen extends StatelessWidget {
                 const Divider(),
                 UIConstants.verticalSpacingM,
                 // Gesamtverantwortung
-                const Text('Gesamtverantwortung', style: UIStyles.sectionTitleStyle),
+                const Text(
+                  'Gesamtverantwortung',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingS,
-                Text('Bayerischer Sportschützenbund e.V.',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
-                const Text('1. Landesschützenmeister: Christian Kühn',
-                    style: UIStyles.bodyStyle,),
+                Text(
+                  'Bayerischer Sportschützenbund e.V.',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  '1. Landesschützenmeister: Christian Kühn',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 _addressBlock([
                   'Olympia-Schießanlage Hochbrück',
@@ -72,8 +79,10 @@ class ImpressumScreen extends StatelessWidget {
                 ),
                 UIConstants.verticalSpacingM,
                 // Datenschutzbeauftragter
-                const Text('Datenschutzbeauftragter',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Datenschutzbeauftragter',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingS,
                 _addressBlock([
                   'Herbert Isdebski',
@@ -86,15 +95,21 @@ class ImpressumScreen extends StatelessWidget {
                   email: 'datenschutz@bssb.de',
                 ),
                 UIConstants.verticalSpacingXS,
-                Text('Telefon-Sprechstunde für BSSB-Mitglieder:',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
-                const Text('jeder erste Donnerstag im Monat, 16 bis 18 Uhr',
-                    style: UIStyles.bodyStyle,),
+                Text(
+                  'Telefon-Sprechstunde für BSSB-Mitglieder:',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  'jeder erste Donnerstag im Monat, 16 bis 18 Uhr',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 // Inhaltlich verantwortlich für die Teilbereiche
-                const Text('Inhaltlich verantwortlich für die Teilbereiche',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Inhaltlich verantwortlich für die Teilbereiche',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingS,
                 _subSection(
                   title: 'Verband',
@@ -135,36 +150,49 @@ class ImpressumScreen extends StatelessWidget {
                   email: 'jugend@bssb.bayern',
                 ),
                 UIConstants.verticalSpacingM,
-                const Text('Hinweis zur Sprache', style: UIStyles.sectionTitleStyle),
+                const Text(
+                  'Hinweis zur Sprache',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
-                    style: UIStyles.bodyStyle,),
+                  'Aus Gründen der besseren Lesbarkeit wird auf die gleichzeitige Verwendung männlicher und weiblicher Sprachformen verzichtet. Sämtliche Personenbezeichnungen gelten gleichermaßen für alle Geschlechter.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
-                const Text('Bezirke / Gaue / Vereine',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Bezirke / Gaue / Vereine',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
-                    style: UIStyles.bodyStyle,),
+                  'Für die Liste aller Bezirke und Gaue ist der BSSB verantwortlich.',
+                  style: UIStyles.bodyStyle,
+                ),
                 const Text(
-                    'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
-                    style: UIStyles.bodyStyle,),
+                  'Für die Liste aller Vereine sind die Vereine selbst verantwortlich.',
+                  style: UIStyles.bodyStyle,
+                ),
                 Text(
-                    'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                  'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 UIConstants.verticalSpacingM,
-                const Text('Haftung für weiterführende Links',
-                    style: UIStyles.sectionTitleStyle,),
+                const Text(
+                  'Haftung für weiterführende Links',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 const Text(
-                    'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung. Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an. Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
-                    style: UIStyles.bodyStyle,),
+                  'Der BSSB stellt an verschiedenen Stellen Links zu Internet-Seiten Dritter zur Verfügung. Bei Benutzung dieser Links erkennen Sie diese Nutzungsbedingungen an. Sie erkennen ebenso an, dass der BSSB keine Kontrolle über die Inhalte solcher Seiten hat und für diese Inhalte und deren Qualität keine Verantwortung übernimmt.',
+                  style: UIStyles.bodyStyle,
+                ),
                 UIConstants.verticalSpacingM,
                 const Text(
-                    'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
-                    style: UIStyles.sectionTitleStyle,),
+                  'Angaben zur allgemeinen Informationspflicht § 5 Digitale-Dienste-Gesetz (DDG)',
+                  style: UIStyles.sectionTitleStyle,
+                ),
                 UIConstants.verticalSpacingXS,
                 _addressBlock([
                   'Bayerischer Sportschützenbund e.V.',
@@ -174,23 +202,29 @@ class ImpressumScreen extends StatelessWidget {
                   '85748 Garching',
                 ]),
                 UIConstants.verticalSpacingXS,
-                Text('Kommunikation',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                Text(
+                  'Kommunikation',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 _contactRow(
                   phone: '0893169490',
                   email: 'gs@bssb.bayern',
                   web: 'https://www.bssb.de/',
                 ),
                 UIConstants.verticalSpacingXS,
-                Text('Geschäftsführer',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                Text(
+                  'Geschäftsführer',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const Text('Alexander Heidel', style: UIStyles.bodyStyle),
                 UIConstants.verticalSpacingXS,
-                Text('Vorstand i.S. §26 BGB',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                Text(
+                  'Vorstand i.S. §26 BGB',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 _bulletList([
                   '1. Landesschützenmeister: Christian Kühn',
                   '2. Landesschützenmeister: Dieter Vierlbeck',
@@ -199,17 +233,21 @@ class ImpressumScreen extends StatelessWidget {
                   '5. Landesschützenmeister: Stefan Fersch',
                 ]),
                 UIConstants.verticalSpacingXS,
-                Text('Bankverbindung',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                Text(
+                  'Bankverbindung',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 _addressBlock([
                   'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
                   'IBAN: DE79 7002 0270 0000 8400 00, BIC: HYVEDEMMXXX',
                 ]),
                 UIConstants.verticalSpacingXS,
-                Text('Umsatzsteueridentifikationsnummer',
-                    style: UIStyles.bodyStyle
-                        .copyWith(fontWeight: FontWeight.bold),),
+                Text(
+                  'Umsatzsteueridentifikationsnummer',
+                  style:
+                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const Text('DE 129514004', style: UIStyles.bodyStyle),
               ],
             ),
@@ -230,13 +268,13 @@ class ImpressumScreen extends StatelessWidget {
 
 Widget _addressBlock(List<String> lines) {
   return Padding(
-    padding: const EdgeInsets.only(bottom: 4.0),
+    padding: const EdgeInsets.only(bottom: UIConstants.spacingXS),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final line in lines)
           Padding(
-            padding: const EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(bottom: UIConstants.spacingXXS),
             child: Text(line, style: UIStyles.bodyStyle),
           ),
       ],
@@ -249,36 +287,43 @@ Widget _contactRow({String? phone, String? email, String? web}) {
     children: [
       if (phone != null) ...[
         const Icon(Icons.phone, size: 18, color: UIConstants.defaultAppColor),
-        const SizedBox(width: 4),
+        const SizedBox(width: UIConstants.spacingXS),
         _LinkText('Telefon', 'tel:$phone'),
-        const SizedBox(width: 12),
+        const SizedBox(width: UIConstants.spacingSM),
       ],
       if (email != null) ...[
         const Icon(Icons.email, size: 18, color: UIConstants.defaultAppColor),
-        const SizedBox(width: 4),
+        const SizedBox(width: UIConstants.spacingXS),
         _LinkText(email, 'mailto:$email'),
-        const SizedBox(width: 12),
+        const SizedBox(width: UIConstants.spacingSM),
       ],
       if (web != null) ...[
-        const Icon(Icons.language, size: 18, color: UIConstants.defaultAppColor),
-        const SizedBox(width: 4),
+        const Icon(
+          Icons.language,
+          size: 18,
+          color: UIConstants.defaultAppColor,
+        ),
+        const SizedBox(width: UIConstants.spacingXS),
         _LinkText('Webseite', web),
       ],
     ],
   );
 }
 
-Widget _subSection(
-    {required String title,
-    required String name,
-    required List<String> address,
-    String? phone,
-    String? email,}) {
+Widget _subSection({
+  required String title,
+  required String name,
+  required List<String> address,
+  String? phone,
+  String? email,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title,
-          style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),),
+      Text(
+        title,
+        style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+      ),
       Text(name, style: UIStyles.bodyStyle),
       _addressBlock(address),
       _contactRow(phone: phone, email: email),
