@@ -293,35 +293,6 @@ class HttpClient {
     return _makeRequest('GET', apiUrl, null, null);
   }
 
-  Future<dynamic> getWithBody(
-    String endpoint,
-    Map<String, dynamic> body,
-  ) async {
-    final String apiUrl = '$baseUrl/$endpoint';
-    LoggerService.logWarning(
-      'HttpClient: Sending GET request with a body to: $apiUrl. This is not standard HTTP practice.',
-    );
-
-    final baseIP = _configService.getString('apiBaseServer', 'api') ??
-        'webintern.bssb.bayern';
-    final port = _configService.getString('apiPort', 'api') ?? '56400';
-    final host = '$baseIP:$port';
-
-    final requestBody = jsonEncode(body);
-
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Content-Length': utf8.encode(requestBody).length.toString(),
-      'Host': host,
-    };
-
-    LoggerService.logInfo('HttpClient: Sending GET to: $apiUrl');
-    LoggerService.logInfo('HttpClient: Headers: $headers');
-    LoggerService.logInfo('HttpClient: Body: $requestBody');
-
-    return _makeRequest('GET', apiUrl, headers, requestBody);
-  }
-
   Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
