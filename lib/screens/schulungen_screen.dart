@@ -685,6 +685,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                               widget.userData,
                               isLoggedIn: widget.isLoggedIn,
                               onLogout: widget.onLogout,
+                              showMenu: false,
+                              showConnectivityIcon: false,
                             ),
                       ),
                       (route) => false, // Remove all previous routes
