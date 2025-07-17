@@ -89,6 +89,7 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
           const SnackBar(
             content: Text('Keine Gewinne für das gewählte Jahr gefunden.'),
             duration: Duration(seconds: 3),
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }
@@ -116,8 +117,10 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Bitte Jahr wählen:',
-                  style: TextStyle(fontSize: UIConstants.titleFontSize),),
+              const Text(
+                'Bitte Jahr wählen:',
+                style: TextStyle(fontSize: UIConstants.titleFontSize),
+              ),
               const SizedBox(height: UIConstants.spacingL),
               DropdownButton<int>(
                 value: _selectedYear,
