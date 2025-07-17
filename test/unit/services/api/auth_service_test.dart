@@ -18,16 +18,11 @@ class MockPostgrestService extends Mock implements PostgrestService {}
 
 // Ensure the mock is generated for FlutterSecureStorage
 @GenerateMocks([
-  
   HttpClient,
- 
   CacheService,
- 
   NetworkService,
- 
   FlutterSecureStorage,
   ConfigService,
-  PostgrestService,
   EmailService,
 ])
 void main() {
@@ -37,7 +32,7 @@ void main() {
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
   late MockConfigService mockConfigService;
-  late MockPostgrestService mockPostgrestService;
+  late TestPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
 
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +44,7 @@ void main() {
     mockNetworkService = MockNetworkService();
     mockSecureStorage = MockFlutterSecureStorage();
     mockConfigService = MockConfigService();
-    mockPostgrestService = MockPostgrestService();
+    mockPostgrestService = TestPostgrestService();
     mockEmailService = MockEmailService();
 
     // Create AuthService instance for each test, injecting all mocks
@@ -117,13 +112,16 @@ void main() {
     // Default behavior for PostgrestService
     when(mockPostgrestService.getUserByPassNumber(any))
         .thenAnswer((_) async => null);
-    when(mockPostgrestService.createUser(
-      firstName: anyNamed('firstName'),
-      lastName: anyNamed('lastName'),
-      email: anyNamed('email'),
-      passNumber: anyNamed('passNumber'),
-      verificationToken: anyNamed('verificationToken'), personId: anyNamed('personId'),
-    ),).thenAnswer((_) async => <String, dynamic>{});
+    when(
+      mockPostgrestService.createUser(
+        firstName: anyNamed('firstName'),
+        lastName: anyNamed('lastName'),
+        email: anyNamed('email'),
+        passNumber: anyNamed('passNumber'),
+        verificationToken: anyNamed('verificationToken'),
+        personId: anyNamed('personId'),
+      ),
+    ).thenAnswer((_) async => <String, dynamic>{});
     when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
 
     // Default behavior for EmailService
@@ -171,7 +169,8 @@ void main() {
           passNumber: passNumber,
           email: email,
           birthDate: birthDate,
-          zipCode: zipCode, personId: personId,
+          zipCode: zipCode,
+          personId: personId,
         );
 
         expect(result, expectedResponse);
@@ -206,7 +205,8 @@ void main() {
             passNumber: passNumber,
             email: email,
             birthDate: birthDate,
-            zipCode: zipCode, personId: personId,
+            zipCode: zipCode,
+            personId: personId,
           ),
           throwsA(isA<http.ClientException>()),
         );
@@ -269,7 +269,8 @@ void main() {
           passNumber: passNumber,
           email: email,
           birthDate: birthDate,
-          zipCode: zipCode, personId: personId,
+          zipCode: zipCode,
+          personId: personId,
         );
 
         expect(result, expectedFailureResponse); // Expect failure from post
