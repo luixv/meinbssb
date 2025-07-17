@@ -88,6 +88,8 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     final personId =
         await widget.apiService.findePersonID2(nachname, passnummer);
     if (!mounted) return;
+
+    // Check if the person is valid
     if (personId == 0) {
       setState(() => isLoading = false);
       if (!mounted) return;
@@ -138,9 +140,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     );
     if (!mounted) return;
     final msg = response.msg;
+
     if (msg == 'Teilnehmer erfolgreich erfasst' ||
         msg == 'Teilnehmer bereits erfasst' ||
         msg == 'Teilnehmer erfolgreich aktualisiert') {
+      // TODO Email in HTML
       await widget.emailService.sendEmail(
         from: widget.configService
                 .getString('emailRegistration.registrationFrom') ??
