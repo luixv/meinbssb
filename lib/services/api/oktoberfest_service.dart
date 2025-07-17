@@ -59,7 +59,7 @@ class OktoberfestService {
       final body = {
         'GewinnIDs': gewinnIDs,
         'IBAN': iban,
-        'Passnummer': passnummer,
+        'Passnummer': int.tryParse(passnummer) ?? passnummer,
       };
       final response =
           await _httpClient.post(endpoint, body, overrideBaseUrl: baseUrl);
@@ -68,12 +68,14 @@ class OktoberfestService {
           return true;
         } else if (response.containsKey('Error')) {
           LoggerService.logError(
-              'GewinneAbrufen error: \\${response['Error']}',);
+            'GewinneAbrufen error: \\${response['Error']}',
+          );
           return false;
         }
       }
       LoggerService.logWarning(
-          'Unexpected response for GewinneAbrufen: \\${response.runtimeType}',);
+        'Unexpected response for GewinneAbrufen: \\${response.runtimeType}',
+      );
       return false;
     } catch (e) {
       LoggerService.logError('Error in gewinneAbrufen: $e');

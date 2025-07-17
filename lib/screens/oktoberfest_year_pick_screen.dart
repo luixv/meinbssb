@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/api/oktoberfest_service.dart';
-import '../services/core/config_service.dart';
-import '../models/gewinn.dart';
-import '../constants/ui_styles.dart';
+import '/services/api/oktoberfest_service.dart';
+import '/services/core/config_service.dart';
+import '/models/gewinn.dart';
+import '/constants/ui_styles.dart';
 import 'base_screen_layout.dart';
-import '../models/user_data.dart';
+import '/models/user_data.dart';
+import '/services/api_service.dart';
+import '/models/bank_data.dart';
+import '/constants/ui_constants.dart';
+import 'agb_screen.dart';
+import '/widgets/dialog_fabs.dart';
+import '/widgets/scaled_text.dart';
 
 class OktoberfestYearPickScreen extends StatefulWidget {
   const OktoberfestYearPickScreen({
@@ -30,13 +36,78 @@ class OktoberfestYearPickScreen extends StatefulWidget {
 class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
   int _selectedYear = DateTime.now().year < 2024 ? 2024 : DateTime.now().year;
   bool _loading = false;
-  List<Gewinn> _gewinne = [];
+  final List<Gewinn> _gewinne = [];
+  _BankDataResult? _bankDataResult;
+
+  Future<void> _openBankDataDialog() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final userData = widget.userData;
+    BankData? bankData;
+    if (userData != null) {
+      final bankList = await apiService.fetchBankData(userData.webLoginId);
+      if (bankList.isNotEmpty) {
+        bankData = bankList.first;
+      }
+    }
+    final result = await showDialog<_BankDataResult>(
+      // ignore: use_build_context_synchronously
+      context: context,
+      builder: (dialogContext) => BankDataDialog(
+        initialBankData: bankData,
+      ),
+    );
+    if (!mounted) return;
+    if (result != null) {
+      setState(() {
+        _bankDataResult = result;
+      });
+    }
+  }
+
+  Future<void> _fetchGewinne() async {
+    setState(() {
+      _loading = true;
+      _gewinne.clear();
+      _bankDataResult = null;
+    });
+    final oktoberfestService =
+        Provider.of<OktoberfestService>(context, listen: false);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    try {
+      final result = await oktoberfestService.fetchGewinne(
+        jahr: _selectedYear,
+        passnummer: widget.passnummer,
+        configService: widget.configService,
+      );
+      if (!mounted) return;
+      setState(() {
+        _gewinne.clear();
+        _gewinne.addAll(result);
+      });
+      if (result.isEmpty) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Keine Gewinne für das gewählte Jahr gefunden.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Fehler beim Laden der Gewinne: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final currentYear = DateTime.now().year;
     return BaseScreenLayout(
-      title: 'Oktoberfest Landesschiessen',
+      title: 'Oktoberfestlandesschießen',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -120,79 +191,122 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () async {
-                    final bankData = await showDialog<_BankDataResult>(
-                      context: context,
-                      builder: (context) => const BankDataDialog(),
-                    );
-                    if (!mounted) return;
-                    if (bankData != null) {
-                      final oktoberfestService =
-                          Provider.of<OktoberfestService>(context,
-                              listen: false,);
-                      setState(() {
-                        _loading = true;
-                      });
-                      final result = await oktoberfestService.gewinneAbrufen(
-                        gewinnIDs: _gewinne.map((g) => g.gewinnId).toList(),
-                        iban: bankData.iban,
-                        passnummer: widget.passnummer,
-                        configService: widget.configService,
-                      );
-                      setState(() {
-                        _loading = false;
-                      });
-                      if (!mounted) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              OktoberfestAbrufResultScreen(success: result),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Gewinne abrufen'),
+                  onPressed: _openBankDataDialog,
+                  child: const Text('Bankdaten'),
                 ),
               ],
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _loading
-            ? null
-            : () async {
-                setState(() {
-                  _loading = true;
-                });
-                try {
-                  debugPrint(
-                    'Calling fetchGewinne with jahr=2024, passnummer=40100709',
-                  );
-                  final oktoberfestService =
-                      Provider.of<OktoberfestService>(context, listen: false);
-                  final List<Gewinn> gewinne =
-                      await oktoberfestService.fetchGewinne(
-                    jahr: 2024, // hardcoded for debugging
-                    passnummer: '40100709', // hardcoded for debugging
-                    configService: widget.configService,
-                  );
-                  debugPrint(
-                    'fetchGewinne returned: \\${gewinne.length} gewinne',
-                  );
-                  setState(() {
-                    _gewinne = gewinne;
-                  });
-                } catch (e) {
-                  debugPrint('Fehler beim Abrufen der Gewinne: $e');
-                } finally {
-                  setState(() {
-                    _loading = false;
-                  });
-                }
-              },
-        child: const Icon(Icons.check),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: SizedBox(
+          height: 56,
+          width: 56,
+          child: Stack(
+            children: [
+              // Year pick FAB
+              Visibility(
+                visible: _gewinne.isEmpty && !_loading,
+                maintainState: true,
+                child: FloatingActionButton(
+                  heroTag: 'pickYear',
+                  onPressed: _loading ? null : _fetchGewinne,
+                  tooltip: 'Gewinne für Jahr abrufen',
+                  backgroundColor: _loading
+                      ? UIConstants.cancelButtonBackground
+                      : UIConstants.defaultAppColor,
+                  child: const Icon(Icons.search, color: Colors.white),
+                ),
+              ),
+              // Gewinne abrufen FAB
+              Visibility(
+                visible: _gewinne.isNotEmpty,
+                maintainState: true,
+                child: FloatingActionButton(
+                  heroTag: 'abrufen',
+                  onPressed: (_bankDataResult != null &&
+                          _bankDataResult!.kontoinhaber.isNotEmpty &&
+                          _bankDataResult!.iban.isNotEmpty &&
+                          _bankDataResult!.bic.isNotEmpty)
+                      ? () async {
+                          final oktoberfestService =
+                              Provider.of<OktoberfestService>(
+                            context,
+                            listen: false,
+                          );
+                          setState(() {
+                            _loading = true;
+                          });
+                          final scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+                          final navigator = Navigator.of(context);
+                          try {
+                            final result =
+                                await oktoberfestService.gewinneAbrufen(
+                              gewinnIDs:
+                                  _gewinne.map((g) => g.gewinnId).toList(),
+                              iban: _bankDataResult!.iban,
+                              passnummer: widget.passnummer,
+                              configService: widget.configService,
+                            );
+                            if (!mounted) return;
+                            if (result) {
+                              navigator.push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const OktoberfestAbrufResultScreen(
+                                    success: true,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              if (!mounted) return;
+                              scaffoldMessenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Fehler beim Abrufen der Gewinne.',
+                                  ),
+                                  duration: UIConstants.snackbarDuration,
+                                  backgroundColor: UIConstants.errorColor,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            debugPrint('Fehler beim Abrufen der Gewinne: $e');
+                            if (!mounted) return;
+                            scaffoldMessenger.showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Fehler beim Abrufen der Gewinne: $e',
+                                ),
+                                duration: UIConstants.snackbarDuration,
+                                backgroundColor: UIConstants.errorColor,
+                              ),
+                            );
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                _loading = false;
+                              });
+                            }
+                          }
+                        }
+                      : null,
+                  tooltip: 'Gewinne abrufen',
+                  backgroundColor: (_bankDataResult != null &&
+                          _bankDataResult!.kontoinhaber.isNotEmpty &&
+                          _bankDataResult!.iban.isNotEmpty &&
+                          _bankDataResult!.bic.isNotEmpty)
+                      ? UIConstants.defaultAppColor
+                      : UIConstants.cancelButtonBackground,
+                  child: const Icon(Icons.check, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -210,7 +324,8 @@ class _BankDataResult {
 }
 
 class BankDataDialog extends StatefulWidget {
-  const BankDataDialog({super.key});
+  const BankDataDialog({super.key, this.initialBankData});
+  final BankData? initialBankData;
 
   @override
   State<BankDataDialog> createState() => _BankDataDialogState();
@@ -218,79 +333,279 @@ class BankDataDialog extends StatefulWidget {
 
 class _BankDataDialogState extends State<BankDataDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _kontoinhaberController = TextEditingController();
-  final _ibanController = TextEditingController();
-  final _bicController = TextEditingController();
+  late final TextEditingController _kontoinhaberController;
+  late final TextEditingController _ibanController;
+  late final TextEditingController _bicController;
+  bool _agbChecked = false;
+
+  bool _isBicRequired(String iban) {
+    return !iban.toUpperCase().startsWith('DE');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _kontoinhaberController =
+        TextEditingController(text: widget.initialBankData?.kontoinhaber ?? '');
+    _ibanController =
+        TextEditingController(text: widget.initialBankData?.iban ?? '');
+    _bicController =
+        TextEditingController(text: widget.initialBankData?.bic ?? '');
+    _ibanController.addListener(() {
+      setState(() {}); // Update BIC label if IBAN changes
+    });
+  }
+
+  @override
+  void dispose() {
+    _kontoinhaberController.dispose();
+    _ibanController.dispose();
+    _bicController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Bankdaten bearbeiten'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _kontoinhaberController,
-              decoration: const InputDecoration(labelText: 'Kontoinhaber'),
-              validator: (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-            ),
-            TextFormField(
-              controller: _ibanController,
-              decoration: const InputDecoration(labelText: 'IBAN'),
-              validator: (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-            ),
-            TextFormField(
-              controller: _bicController,
-              decoration: const InputDecoration(labelText: 'BIC'),
-              validator: (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState?.validate() ?? false) {
-              Navigator.of(context).pop(
-                _BankDataResult(
-                  kontoinhaber: _kontoinhaberController.text,
-                  iban: _ibanController.text,
-                  bic: _bicController.text,
+    return Dialog(
+      backgroundColor: UIConstants.backgroundColor,
+      insetPadding: const EdgeInsets.all(32),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: UIConstants.dialogWidth,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Center(
+                        child: Text(
+                          'Bankdaten bearbeiten',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: UIConstants.whiteColor,
+                          border: Border.all(
+                            color: UIConstants.mydarkGreyColor,
+                          ),
+                          borderRadius:
+                              BorderRadius.circular(UIConstants.cornerRadius),
+                        ),
+                        padding: UIConstants.defaultPadding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Bankdaten',
+                              style: UIStyles.subtitleStyle,
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: _kontoinhaberController,
+                              decoration: UIStyles.formInputDecoration
+                                  .copyWith(labelText: 'Kontoinhaber'),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Kontoinhaber ist erforderlich';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _ibanController,
+                                    decoration: UIStyles.formInputDecoration
+                                        .copyWith(labelText: 'IBAN'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'IBAN ist erforderlich';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: UIConstants.spacingM),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _bicController,
+                                    decoration:
+                                        UIStyles.formInputDecoration.copyWith(
+                                      labelText: _isBicRequired(
+                                        _ibanController.text.trim(),
+                                      )
+                                          ? 'BIC *'
+                                          : 'BIC (optional)',
+                                    ),
+                                    validator: (value) {
+                                      final iban = _ibanController.text
+                                          .trim()
+                                          .toUpperCase();
+                                      if (!iban.startsWith('DE') &&
+                                          (value == null ||
+                                              value.trim().isEmpty)) {
+                                        return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
+                      CheckboxListTile(
+                        value: _agbChecked,
+                        onChanged: (val) {
+                          setState(() => _agbChecked = val ?? false);
+                        },
+                        title: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const AgbScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'AGB',
+                                style: UIStyles.linkStyle.copyWith(
+                                  color: UIConstants.linkColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            const Text('akzeptieren'),
+                            const SizedBox(width: UIConstants.spacingS),
+                            const Tooltip(
+                              message: 'Ich bin mit den AGB einverstanden.',
+                              child: Icon(
+                                Icons.info_outline,
+                                color: UIConstants.defaultAppColor,
+                                size: UIConstants.defaultIconSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            }
-          },
-          child: const Text('OK'),
-        ),
-      ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: UIConstants.dialogFabTightBottom,
+            right: UIConstants.dialogFabTightRight,
+            child: DialogFABs(
+              alignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'bankDialogCancelFab',
+                  mini: true,
+                  tooltip: 'Abbrechen',
+                  backgroundColor: UIConstants.defaultAppColor,
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Icon(Icons.close, color: Colors.white),
+                ),
+                FloatingActionButton(
+                  heroTag: 'bankDialogOkFab',
+                  mini: true,
+                  tooltip: 'OK',
+                  backgroundColor: (_agbChecked &&
+                          _kontoinhaberController.text.trim().isNotEmpty &&
+                          _ibanController.text.trim().isNotEmpty &&
+                          _bicController.text.trim().isNotEmpty)
+                      ? UIConstants.defaultAppColor
+                      : UIConstants.cancelButtonBackground,
+                  onPressed: (_agbChecked &&
+                          _kontoinhaberController.text.trim().isNotEmpty &&
+                          _ibanController.text.trim().isNotEmpty &&
+                          _bicController.text.trim().isNotEmpty)
+                      ? () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            Navigator.of(context).pop(
+                              _BankDataResult(
+                                kontoinhaber: _kontoinhaberController.text,
+                                iban: _ibanController.text,
+                                bic: _bicController.text,
+                              ),
+                            );
+                          }
+                        }
+                      : null,
+                  child: const Icon(Icons.check, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class OktoberfestAbrufResultScreen extends StatelessWidget {
-  const OktoberfestAbrufResultScreen({super.key, required this.success});
+  const OktoberfestAbrufResultScreen({
+    super.key,
+    required this.success,
+    this.errorMessage,
+  });
   final bool success;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Abruf Ergebnis')),
       body: Center(
-        child: success
-            ? const Text(
-                'Gewinne erfolgreich abgerufen!',
-                style: TextStyle(fontSize: 20, color: Colors.green),
-              )
-            : const Text(
-                'Fehler beim Abrufen der Gewinne.',
-                style: TextStyle(fontSize: 20, color: Colors.red),
-              ),
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: success
+              ? const ScaledText(
+                  'Gewinne erfolgreich abgerufen!',
+                  style: UIStyles.successStyle,
+                  textAlign: TextAlign.center,
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: UIConstants.errorColor,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 24),
+                    ScaledText(
+                      errorMessage ?? 'Fehler beim Abrufen der Gewinne.',
+                      style: UIStyles.errorStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
