@@ -112,7 +112,7 @@ void main() {
     final requestBody = {
       'GewinnIDs': gewinnIDs,
       'IBAN': iban,
-      'Passnummer': passnummer,
+      'Passnummer': int.parse(passnummer),
     };
 
     setUp(() {
@@ -197,20 +197,26 @@ void main() {
     });
 
     test('sends correct body to HttpClient', () async {
-      when(mockHttpClient.post(any, any,
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => {'result': true});
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'result': true});
       await service.gewinneAbrufen(
         gewinnIDs: gewinnIDs,
         iban: iban,
         passnummer: passnummer,
         configService: mockConfigService,
       );
-      verify(mockHttpClient.post(
-        'GewinneAbrufen',
-        requestBody,
-        overrideBaseUrl: anyNamed('overrideBaseUrl'),
-      ),).called(1);
+      verify(
+        mockHttpClient.post(
+          'GewinneAbrufen',
+          requestBody,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).called(1);
     });
   });
 }
