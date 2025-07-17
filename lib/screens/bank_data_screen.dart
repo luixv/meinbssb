@@ -138,6 +138,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           const SnackBar(
             content: Text('Fehler beim Speichern der Bankdaten.'),
             duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
           ),
         );
       }

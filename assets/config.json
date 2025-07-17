@@ -5,8 +5,8 @@
   "apiProtocol": "https",
   
   "oktoberFestBaseServer": "webintern.bssb.bayern",
-  "oktoberFestBasePath": "/rest/zmi/api7",
-  "oktoberFestPort": "56400",
+  "oktoberFestBasePath": "rest/zmi/api7",
+  "oktoberFestBasePort": "50211",
   
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
