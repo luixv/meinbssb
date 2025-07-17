@@ -1245,6 +1245,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     // After registration, show the 'register another' dialog
     final bool? registerAnother = await showDialog<bool>(
+      // ignore: use_build_context_synchronously
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
@@ -1263,7 +1264,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         );
       },
     );
-    // Move the mounted check here, before any use of context
     if (!mounted) return;
     if (registerAnother == true) {
       // Call the method again for the next person
