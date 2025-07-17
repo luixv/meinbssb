@@ -370,18 +370,21 @@ Ergebnis der Abfrage:
     }
   }
 
-  /// Checks if a person exists by Nachname and Passnummer. Returns true if found, false otherwise.
-  Future<bool> findePersonID2(String nachname, String passnummer) async {
+  /// Looks up a person by Nachname and Passnummer. Returns the PERSONID as a String if found, or an empty string otherwise.
+  Future<int> findePersonID2(String nachname, String passnummer) async {
     try {
       final endpoint = 'FindePersonID2/$nachname/$passnummer';
       final response = await _httpClient.get(endpoint);
       if (response is List && response.isNotEmpty) {
-        return true;
+        final person = response[0];
+        if (person is Map<String, dynamic> && person['PERSONID'] != null) {
+          return person['PERSONID'];
+        }
       }
-      return false;
+      return 0;
     } catch (e) {
       LoggerService.logError('findePersonID2 error: $e');
-      return false;
+      return 0;
     }
   }
 

@@ -18,6 +18,7 @@ import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
 import '/screens/styles_screen.dart';
+import 'schulungen/schulungen_search_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';

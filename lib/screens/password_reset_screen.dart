@@ -208,7 +208,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                                       Icon(
                                         Icons.lock_reset,
                                         color: Colors.white,
-                                        size: 24 * fontSizeProvider.scaleFactor,
+                                        size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
                                       ),
                                       const SizedBox(
                                         width: UIConstants.spacingS,

@@ -6,27 +6,27 @@
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i13;
 
-import 'package:meinbssb/models/bank_data.dart' as _i17;
-import 'package:meinbssb/models/contact.dart' as _i12;
-import 'package:meinbssb/models/disziplin.dart' as _i16;
-import 'package:meinbssb/models/fremde_verband.dart' as _i19;
-import 'package:meinbssb/models/pass_data_zve.dart' as _i9;
+import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/contact.dart' as _i11;
+import 'package:meinbssb/models/disziplin.dart' as _i15;
+import 'package:meinbssb/models/fremde_verband.dart' as _i18;
+import 'package:meinbssb/models/pass_data_zve.dart' as _i8;
+import 'package:meinbssb/models/person.dart' as _i19;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
-    as _i3;
-import 'package:meinbssb/models/schulung.dart' as _i11;
-import 'package:meinbssb/models/schulungsart.dart' as _i14;
-import 'package:meinbssb/models/schulungstermin.dart' as _i15;
-import 'package:meinbssb/models/user_data.dart' as _i8;
-import 'package:meinbssb/models/verein.dart' as _i18;
-import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i10;
-import 'package:meinbssb/services/api/auth_service.dart' as _i5;
-import 'package:meinbssb/services/api_service.dart' as _i7;
+    as _i2;
+import 'package:meinbssb/models/schulung.dart' as _i10;
+import 'package:meinbssb/models/schulungsart.dart' as _i13;
+import 'package:meinbssb/models/schulungstermin.dart' as _i14;
+import 'package:meinbssb/models/user_data.dart' as _i7;
+import 'package:meinbssb/models/verein.dart' as _i17;
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
+import 'package:meinbssb/services/api/auth_service.dart' as _i4;
+import 'package:meinbssb/services/api_service.dart' as _i6;
 import 'package:meinbssb/services/core/cache_service.dart' as _i22;
 import 'package:meinbssb/services/core/config_service.dart' as _i20;
 import 'package:meinbssb/services/core/email_service.dart' as _i21;
 import 'package:meinbssb/services/core/http_client.dart' as _i24;
 import 'package:meinbssb/services/core/network_service.dart' as _i23;
-import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 
@@ -210,7 +210,7 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -222,8 +222,8 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
             passnummer,
           ],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i4.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
@@ -667,7 +667,7 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
           ) as _i4.Future<_i3.RegisterSchulungenTeilnehmerResponse>);
 
   @override
-  _i4.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -679,8 +679,8 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
             passnummer,
           ],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i4.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
@@ -728,9 +728,19 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
           #clearDisziplinenCache,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<List<_i19.Person>> fetchAdresseVonPersonID(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAdresseVonPersonID,
+          [personId],
+        ),
+        returnValue: _i3.Future<List<_i19.Person>>.value(<_i19.Person>[]),
+      ) as _i3.Future<List<_i19.Person>>);
 
   @override
   bool validateIBAN(String? iban) => (super.noSuchMethod(

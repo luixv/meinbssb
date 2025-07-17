@@ -6,7 +6,7 @@ import '/screens/base_screen_layout.dart';
 import '/screens/schulungen_screen.dart';
 import '/widgets/scaled_text.dart';
 import 'package:intl/intl.dart';
-import '../models/schulungstermin.dart';
+import '/models/schulungstermin.dart';
 import '/services/api/bezirk_service.dart';
 import '/models/bezirk.dart';
 import 'package:provider/provider.dart';

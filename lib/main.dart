@@ -19,7 +19,7 @@ import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
-import 'screens/schulungen_search_screen.dart';
+import 'screens/schulungen/schulungen_search_screen.dart';
 import 'services/core/postgrest_service.dart';
 
 void main() async {

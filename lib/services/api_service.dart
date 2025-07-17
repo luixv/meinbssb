@@ -21,6 +21,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/schulungsart.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
+import 'package:meinbssb/models/person.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -263,7 +264,7 @@ class ApiService {
   }
 
   // Auth service
-  Future<bool> findePersonID2(String nachname, String passnummer) async {
+  Future<int> findePersonID2(String nachname, String passnummer) async {
     return _authService.findePersonID2(nachname, passnummer);
   }
 
@@ -290,6 +291,10 @@ class ApiService {
   /// Clears the disziplinen cache
   Future<void> clearDisziplinenCache() async {
     await _trainingService.clearDisziplinenCache();
+  }
+
+  Future<List<Person>> fetchAdresseVonPersonID(int personId) async {
+    return _userService.fetchAdresseVonPersonID(personId);
   }
 
   // --- Bank validation helpers ---

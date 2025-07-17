@@ -114,7 +114,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         kontoinhaber: _kontoinhaberController.text,
         iban: _ibanController.text,
         bic: _bicController.text,
-        mandatSeq: 2,
+        mandatSeq: 2, // No UIConstants for this, keep as is
       );
 
       final bool success = await apiService.registerBankData(bankData);
@@ -273,7 +273,7 @@ class BankDataScreenState extends State<BankDataScreen> {
           kontoinhaber: _kontoinhaberController.text,
           iban: _ibanController.text,
           bic: _bicController.text,
-          mandatSeq: 2,
+          mandatSeq: 2, // No UIConstants for this, keep as is
         );
         final bool success = await apiService.deleteBankData(bankData);
 
