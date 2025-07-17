@@ -116,8 +116,9 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Bitte Jahr wählen:', style: TextStyle(fontSize: 20)),
-              const SizedBox(height: 24),
+              const Text('Bitte Jahr wählen:',
+                  style: TextStyle(fontSize: UIConstants.titleFontSize),),
+              const SizedBox(height: UIConstants.spacingL),
               DropdownButton<int>(
                 value: _selectedYear,
                 items: List.generate(
@@ -140,14 +141,14 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
                 },
               ),
               if (_loading) ...[
-                const SizedBox(height: 32),
+                const SizedBox(height: UIConstants.spacingXL),
                 const CircularProgressIndicator(),
               ],
               if (_gewinne.isNotEmpty) ...[
-                const SizedBox(height: 32),
+                const SizedBox(height: UIConstants.spacingXL),
                 const Text(
                   'Gefundene Gewinne:',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: UIConstants.subtitleFontSize),
                 ),
                 ListView.separated(
                   shrinkWrap: true,
@@ -159,14 +160,14 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
                     final gewinn = _gewinne[index];
                     return Card(
                       margin: const EdgeInsets.symmetric(
-                        vertical: 6,
-                        horizontal: 16,
+                        vertical: UIConstants.spacingS,
+                        horizontal: UIConstants.spacingL,
                       ),
-                      elevation: 2,
+                      elevation: UIConstants.appBarElevation,
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 16,
+                          vertical: UIConstants.spacingM,
+                          horizontal: UIConstants.spacingL,
                         ),
                         title: Text(
                           gewinn.wettbewerb,
@@ -189,7 +190,7 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UIConstants.spacingM),
                 ElevatedButton(
                   onPressed: _openBankDataDialog,
                   child: const Text('Bankdaten'),
@@ -202,8 +203,8 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
       floatingActionButton: Align(
         alignment: Alignment.bottomRight,
         child: SizedBox(
-          height: 56,
-          width: 56,
+          height: UIConstants.fabSize,
+          width: UIConstants.fabSize,
           child: Stack(
             children: [
               // Year pick FAB
@@ -580,7 +581,7 @@ class OktoberfestAbrufResultScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Abruf Ergebnis')),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: UIConstants.defaultPadding,
           child: success
               ? const ScaledText(
                   'Gewinne erfolgreich abgerufen!',
@@ -595,9 +596,9 @@ class OktoberfestAbrufResultScreen extends StatelessWidget {
                     const Icon(
                       Icons.error_outline,
                       color: UIConstants.errorColor,
-                      size: 48,
+                      size: UIConstants.iconSizeL,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: UIConstants.spacingL),
                     ScaledText(
                       errorMessage ?? 'Fehler beim Abrufen der Gewinne.',
                       style: UIStyles.errorStyle,
