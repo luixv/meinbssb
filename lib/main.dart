@@ -20,6 +20,7 @@ import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
+import 'services/api/oktoberfest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,9 @@ void main() async {
       path == '/schulungen_search' ||
       path == 'schulungen_search';
 
+  final oktoberfestService =
+      OktoberfestService(httpClient: AppInitializer.httpClient);
+
   runZonedGuarded(() {
     if (isDirectSchulungenSearch) {
       runApp(
@@ -56,7 +60,25 @@ void main() async {
         ),
       );
     } else {
-      runApp(const MyAppWrapper());
+      runApp(
+        MultiProvider(
+          providers: [
+            AppInitializer.configServiceProvider,
+            AppInitializer.emailSenderProvider,
+            AppInitializer.emailServiceProvider,
+            AppInitializer.authServiceProvider,
+            AppInitializer.apiServiceProvider,
+            AppInitializer.networkServiceProvider,
+            AppInitializer.cacheServiceProvider,
+            AppInitializer.trainingServiceProvider,
+            AppInitializer.userServiceProvider,
+            AppInitializer.tokenServiceProvider,
+            AppInitializer.fontSizeProvider,
+            Provider<OktoberfestService>.value(value: oktoberfestService),
+          ],
+          child: const MyAppWrapper(),
+        ),
+      );
     }
   }, (error, stack) {
     debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
