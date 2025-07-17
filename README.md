@@ -107,3 +107,8 @@ Then with a web browser address the URL: localhost:8080 et voila!
 
 For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
 
+
+For testing you can use the following credentials
+
+Elke Jakob: 40905849
+Josef Mayr: 41505803

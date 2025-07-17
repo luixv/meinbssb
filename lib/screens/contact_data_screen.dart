@@ -485,7 +485,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                               Icon(
                                 Icons.close,
                                 color: UIConstants.closeIcon,
-                                size: 24 * fontSizeProvider.scaleFactor,
+                                size: UIConstants.iconSizeL *
+                                    fontSizeProvider.scaleFactor,
                               ),
                               const SizedBox(width: UIConstants.spacingS),
                               ScaledText(
@@ -519,7 +520,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                     Icon(
                                       Icons.check,
                                       color: UIConstants.checkIcon,
-                                      size: (UIConstants.bodyFontSize + 4.0) *
+                                      size: (UIConstants.bodyFontSize +
+                                              UIConstants.spacingS) *
                                           fontSizeProvider.scaleFactor,
                                     ),
                                     const SizedBox(width: UIConstants.spacingS),
@@ -658,7 +660,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.delete_outline,
-                  size: 24 * fontSizeProvider.scaleFactor,
+                  size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
                 ),
                 color: UIConstants.deleteIcon,
                 onPressed: isDeleting
@@ -691,8 +693,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           Expanded(
             child: Scrollbar(
               controller: _scrollController,
-              thickness: 6,
-              radius: const Radius.circular(8),
+              thickness: UIConstants.dividerThick,
+              radius: const Radius.circular(UIConstants.cornerRadius),
               child: ListView.builder(
                 controller: _scrollController,
                 shrinkWrap: true,

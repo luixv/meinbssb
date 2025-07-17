@@ -9,6 +9,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/person.dart';
 
 class UserService {
   UserService({
@@ -493,7 +494,8 @@ class UserService {
 
   Future<List<BankData>> _fetchBankDataInternal(int webloginId) async {
     try {
-      final List<dynamic> result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      final List<dynamic> result =
+          await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         'bankdata_$webloginId',
         _networkService.getCacheExpirationDuration(),
         () async {
@@ -516,6 +518,28 @@ class UserService {
           .toList();
     } catch (e) {
       LoggerService.logError('Error fetching BankData: $e');
+      return [];
+    }
+  }
+
+  Future<List<Person>> fetchAdresseVonPersonID(int personId) async {
+    try {
+      final response = await _httpClient.get('AdresseVonPersonID/$personId');
+      List<dynamic> dataList;
+      if (response is List) {
+        dataList = response;
+      } else if (response is Map<String, dynamic>) {
+        dataList = [response];
+      } else {
+        LoggerService.logWarning(
+            'Unexpected response type for AdresseVonPersonID: ${response.runtimeType}',);
+        return [];
+      }
+      return dataList
+          .map((json) => Person.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      LoggerService.logError('Error fetching AdresseVonPersonID: $e');
       return [];
     }
   }

@@ -26,6 +26,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
+import 'package:meinbssb/models/person.dart';
 
 @GenerateMocks([
   AuthService,
@@ -38,6 +39,7 @@ import 'package:meinbssb/services/core/token_service.dart';
   BankService,
   VereinService,
   TokenService,
+  HttpClient, // <-- Added for MockHttpClient
 ])
 import 'api_service_test.mocks.dart';
 
@@ -216,10 +218,10 @@ void main() {
 
       test('findePersonID2 delegates to auth service', () async {
         when(mockAuthService.findePersonID2(any, any))
-            .thenAnswer((_) async => true);
+            .thenAnswer((_) async => 439287);
 
         final result = await apiService.findePersonID2('Doe', '12345678');
-        expect(result, isTrue);
+        expect(result, equals(439287));
         verify(mockAuthService.findePersonID2('Doe', '12345678')).called(1);
       });
     });
@@ -525,12 +527,14 @@ void main() {
             angemeldeteTeilnehmer: 5,
           ),
         ];
-        when(mockTrainingService.fetchSchulungstermine(
-          any,
-          any,
-          any,
-          any,
-        ),).thenAnswer((_) async => expectedData);
+        when(
+          mockTrainingService.fetchSchulungstermine(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((_) async => expectedData);
 
         final result = await apiService.fetchSchulungstermine(
           '2024-01-01',
@@ -539,12 +543,14 @@ void main() {
           'true',
         );
         expect(result, equals(expectedData));
-        verify(mockTrainingService.fetchSchulungstermine(
-          '2024-01-01',
-          '1',
-          '1',
-          'true',
-        ),).called(1);
+        verify(
+          mockTrainingService.fetchSchulungstermine(
+            '2024-01-01',
+            '1',
+            '1',
+            'true',
+          ),
+        ).called(1);
       });
 
       test('unregisterFromSchulung delegates to training service', () async {
@@ -904,6 +910,49 @@ void main() {
 
         expect(() => apiService.deleteBankData(testBankData), throwsException);
         verify(mockBankService.deleteBankData(testBankData)).called(1);
+      });
+    });
+
+    group('fetchAdresseVonPersonID', () {
+      late ApiService apiService;
+      late MockUserService mockUserService;
+      setUp(() {
+        mockUserService = MockUserService();
+        apiService = ApiService(
+          configService: MockConfigService(),
+          httpClient: MockHttpClient(),
+          imageService: MockImageService(),
+          cacheService: MockCacheService(),
+          networkService: MockNetworkService(),
+          trainingService: MockTrainingService(),
+          userService: mockUserService,
+          authService: MockAuthService(),
+          bankService: MockBankService(),
+          vereinService: MockVereinService(),
+        );
+      });
+
+      test('returns List<Person> from userService', () async {
+        const testPersonId = 439287;
+        final testPersons = [
+          Person(
+            personId: 439287,
+            namen: 'Rizoudis',
+            vorname: 'Kostas',
+            geschlecht: true,
+            geburtsdatum: DateTime.parse('1955-07-16T00:00:00.000+02:00'),
+            passnummer: '40100709',
+            strasse: 'Eisenacherstr 9',
+            plz: '80804',
+            ort: 'München',
+          ),
+        ];
+        when(mockUserService.fetchAdresseVonPersonID(testPersonId))
+            .thenAnswer((_) async => testPersons);
+        final result = await apiService.fetchAdresseVonPersonID(testPersonId);
+        expect(result, isA<List<Person>>());
+        expect(result.length, 1);
+        expect(result.first.namen, 'Rizoudis');
       });
     });
   });

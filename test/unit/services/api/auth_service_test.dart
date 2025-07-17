@@ -616,21 +616,21 @@ void main() {
           ],
         );
         final result = await authService.findePersonID2('Rizoudis', '40101205');
-        expect(result, isTrue);
+        expect(result, 439287);
       });
 
       test('returns false if list is empty', () async {
         when(mockHttpClient.get('FindePersonID2/NoName/00000000'))
             .thenAnswer((_) async => []);
         final result = await authService.findePersonID2('NoName', '00000000');
-        expect(result, isFalse);
+        expect(result, 0);
       });
 
       test('returns false on exception', () async {
         when(mockHttpClient.get('FindePersonID2/Error/99999999'))
             .thenThrow(Exception('fail'));
         final result = await authService.findePersonID2('Error', '99999999');
-        expect(result, isFalse);
+        expect(result, 0);
       });
     });
 
@@ -651,8 +651,9 @@ void main() {
         const passnummer = '40101205';
         const expectedEmail = 'kostas@rizoudis1.de';
         final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
-            mockConfigService,
-            name: 'api1Base',);
+          mockConfigService,
+          name: 'api1Base',
+        );
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',
@@ -671,8 +672,9 @@ void main() {
       test('returns empty string when response is empty', () async {
         const passnummer = '40101205';
         final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
-            mockConfigService,
-            name: 'api1Base',);
+          mockConfigService,
+          name: 'api1Base',
+        );
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',
@@ -687,8 +689,9 @@ void main() {
       test('returns empty string when LOGINMAIL is missing', () async {
         const passnummer = '40101205';
         final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
-            mockConfigService,
-            name: 'api1Base',);
+          mockConfigService,
+          name: 'api1Base',
+        );
         when(
           mockHttpClient.get(
             'FindeLoginMail/$passnummer',

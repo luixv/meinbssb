@@ -11,6 +11,7 @@ import 'package:meinbssb/models/contact.dart' as _i11;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
 import 'package:meinbssb/models/fremde_verband.dart' as _i18;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i8;
+import 'package:meinbssb/models/person.dart' as _i19;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
 import 'package:meinbssb/models/schulung.dart' as _i10;
@@ -21,11 +22,11 @@ import 'package:meinbssb/models/verein.dart' as _i17;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api/auth_service.dart' as _i4;
 import 'package:meinbssb/services/api_service.dart' as _i6;
-import 'package:meinbssb/services/core/cache_service.dart' as _i21;
-import 'package:meinbssb/services/core/config_service.dart' as _i19;
-import 'package:meinbssb/services/core/email_service.dart' as _i20;
-import 'package:meinbssb/services/core/http_client.dart' as _i23;
-import 'package:meinbssb/services/core/network_service.dart' as _i22;
+import 'package:meinbssb/services/core/cache_service.dart' as _i22;
+import 'package:meinbssb/services/core/config_service.dart' as _i20;
+import 'package:meinbssb/services/core/email_service.dart' as _i21;
+import 'package:meinbssb/services/core/http_client.dart' as _i24;
+import 'package:meinbssb/services/core/network_service.dart' as _i23;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 
@@ -164,7 +165,7 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -176,8 +177,8 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
@@ -603,7 +604,7 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
           ) as _i3.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
 
   @override
-  _i3.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -615,8 +616,8 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
@@ -669,6 +670,16 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<List<_i19.Person>> fetchAdresseVonPersonID(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAdresseVonPersonID,
+          [personId],
+        ),
+        returnValue: _i3.Future<List<_i19.Person>>.value(<_i19.Person>[]),
+      ) as _i3.Future<List<_i19.Person>>);
+
+  @override
   bool validateIBAN(String? iban) => (super.noSuchMethod(
         Invocation.method(
           #validateIBAN,
@@ -681,7 +692,7 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i19.ConfigService {
+class MockConfigService extends _i1.Mock implements _i20.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -716,7 +727,7 @@ class MockConfigService extends _i1.Mock implements _i19.ConfigService {
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i20.EmailService {
+class MockEmailService extends _i1.Mock implements _i21.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -776,7 +787,7 @@ class MockEmailService extends _i1.Mock implements _i20.EmailService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i21.CacheService {
+class MockCacheService extends _i1.Mock implements _i22.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1031,7 +1042,7 @@ class MockCacheService extends _i1.Mock implements _i21.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i22.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i23.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1064,7 +1075,7 @@ class MockNetworkService extends _i1.Mock implements _i22.NetworkService {
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i23.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i24.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }

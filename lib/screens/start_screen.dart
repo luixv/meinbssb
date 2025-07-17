@@ -185,6 +185,8 @@ class StartScreenState extends State<StartScreen> {
       setState(() => isLoading = true);
       final success =
           await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
+
+      // TODO Mail in HTML
       if (mounted) {
         if (success) {
           LoggerService.logInfo(

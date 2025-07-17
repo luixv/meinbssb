@@ -35,9 +35,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  static const double _menuIconSize = 24.0;
-  static const double _menuIconPadding = 8.0;
-  static const double _menuIconSpacing = 16.0;
+  static const double _menuIconSize = UIConstants.iconSizeL;
+  static const double _menuIconPadding = UIConstants.spacingS;
+  static const double _menuIconSpacing = UIConstants.spacingM;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

@@ -8,6 +8,7 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/person.dart';
 
 import 'user_service_test.mocks.dart';
 
@@ -912,6 +913,59 @@ void main() {
         final results = await futures;
         expect(results[0], equals(results[1]));
         verify(mockHttpClient.get('BankdatenMyBSSB/$testWebloginId')).called(1);
+      });
+    });
+
+    group('fetchAdresseVonPersonID', () {
+      const testPersonId = 439287;
+      final testResponse = [
+        {
+          'PERSONID': 439287,
+          'NAMEN': 'Rizoudis',
+          'VORNAME': 'Kostas',
+          'GESCHLECHT': true,
+          'GEBURTSDATUM': '1955-07-16T00:00:00.000+02:00',
+          'PASSNUMMER': '40100709',
+          'STRASSE': 'Eisenacherstr 9',
+          'PLZ': '80804',
+          'ORT': 'München',
+        },
+      ];
+
+      test('returns List<Person> from network', () async {
+        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
+            .thenAnswer((_) async => testResponse);
+
+        final result = await userService.fetchAdresseVonPersonID(testPersonId);
+
+        expect(result, isA<List<Person>>());
+        expect(result.length, 1);
+        expect(result.first.personId, 439287);
+        expect(result.first.namen, 'Rizoudis');
+        expect(result.first.vorname, 'Kostas');
+        expect(result.first.geschlecht, true);
+        expect(result.first.geburtsdatum,
+            DateTime.parse('1955-07-16T00:00:00.000+02:00'),);
+        expect(result.first.passnummer, '40100709');
+        expect(result.first.strasse, 'Eisenacherstr 9');
+        expect(result.first.plz, '80804');
+        expect(result.first.ort, 'München');
+      });
+
+      test('handles empty response', () async {
+        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
+            .thenAnswer((_) async => []);
+
+        final result = await userService.fetchAdresseVonPersonID(testPersonId);
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
+            .thenThrow(Exception('Network error'));
+
+        final result = await userService.fetchAdresseVonPersonID(testPersonId);
+        expect(result, isEmpty);
       });
     });
 
