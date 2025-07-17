@@ -88,7 +88,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     final personId =
         await widget.apiService.findePersonID2(nachname, passnummer);
     if (!mounted) return;
-    if (personId != 0) {
+    if (personId == 0) {
       setState(() => isLoading = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
