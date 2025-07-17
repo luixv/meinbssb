@@ -462,7 +462,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           ) as _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
 
   @override
-  _i4.Future<bool> findePersonID2(
+  _i4.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -474,8 +474,8 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             passnummer,
           ],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 
   @override
   _i4.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(

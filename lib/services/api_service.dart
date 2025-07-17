@@ -262,7 +262,7 @@ class ApiService {
   }
 
   // Auth service
-  Future<bool> findePersonID2(String nachname, String passnummer) async {
+  Future<int> findePersonID2(String nachname, String passnummer) async {
     return _authService.findePersonID2(nachname, passnummer);
   }
 

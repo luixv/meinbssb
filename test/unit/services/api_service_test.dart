@@ -218,10 +218,10 @@ void main() {
 
       test('findePersonID2 delegates to auth service', () async {
         when(mockAuthService.findePersonID2(any, any))
-            .thenAnswer((_) async => true);
+            .thenAnswer((_) async => 439287);
 
         final result = await apiService.findePersonID2('Doe', '12345678');
-        expect(result, isTrue);
+        expect(result, equals(439287));
         verify(mockAuthService.findePersonID2('Doe', '12345678')).called(1);
       });
     });

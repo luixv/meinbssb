@@ -84,10 +84,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     setState(() => isLoading = true);
     final nachname = nachnameController.text.trim();
     final passnummer = passnummerController.text.trim();
-    final isValidPerson =
+
+    final personId =
         await widget.apiService.findePersonID2(nachname, passnummer);
     if (!mounted) return;
-    if (!isValidPerson) {
+    if (personId != 0) {
       setState(() => isLoading = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +111,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
           telefon: telefonnummerController.text,
         ) ??
         UserData(
-          personId: 0,
+          personId: personId,
           webLoginId: 0,
           passnummer: passnummerController.text,
           vereinNr: 0,

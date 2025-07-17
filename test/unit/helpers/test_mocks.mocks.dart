@@ -165,7 +165,7 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -177,8 +177,8 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
@@ -604,7 +604,7 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
           ) as _i3.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
 
   @override
-  _i3.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -616,8 +616,8 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(

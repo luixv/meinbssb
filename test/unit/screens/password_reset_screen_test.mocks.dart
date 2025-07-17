@@ -127,7 +127,7 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> findePersonID2(
+  _i3.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -139,8 +139,8 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
