@@ -89,12 +89,13 @@ class MockAuthService extends _i1.Mock implements _i4.AuthService {
 
   @override
   _i2.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
+    required String firstName,
+    required String lastName,
+    required String passNumber,
+    required String email,
+    required String personId,
+    required String birthDate,
+    required String zipCode,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

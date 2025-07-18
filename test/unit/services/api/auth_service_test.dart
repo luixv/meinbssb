@@ -32,7 +32,7 @@ void main() {
   late MockNetworkService mockNetworkService;
   late MockFlutterSecureStorage mockSecureStorage;
   late MockConfigService mockConfigService;
-  late TestPostgrestService mockPostgrestService;
+  late MockPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
 
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -42,9 +42,8 @@ void main() {
     mockHttpClient = MockHttpClient();
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
-    mockSecureStorage = MockFlutterSecureStorage();
     mockConfigService = MockConfigService();
-    mockPostgrestService = TestPostgrestService();
+    mockPostgrestService = MockPostgrestService();
     mockEmailService = MockEmailService();
 
     // Create AuthService instance for each test, injecting all mocks

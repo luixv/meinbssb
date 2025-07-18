@@ -34,12 +34,13 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
 
   @override
   _i3.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
+    required String birthDate,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String passNumber,
+    required String personId,
+    required String zipCode,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -164,11 +165,11 @@ class MockEmailService extends _i1.Mock implements _i5.EmailService {
 
   @override
   _i3.Future<Map<String, dynamic>> sendEmail({
-    required String? from,
-    required String? recipient,
-    required String? subject,
-    String? body,
     int? emailId,
+    required String from,
+    required String recipient,
+    required String subject,
+    String? htmlBody,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -178,7 +179,7 @@ class MockEmailService extends _i1.Mock implements _i5.EmailService {
             #from: from,
             #recipient: recipient,
             #subject: subject,
-            #body: body,
+            #htmlBody: htmlBody,
             #emailId: emailId,
           },
         ),

@@ -71,12 +71,13 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
 
   @override
   _i4.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
+    required String firstName,
+    required String lastName,
+    required String passNumber,
+    required String personId,
+    required String email,
+    required String birthDate,
+    required String zipCode,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -225,12 +226,13 @@ class MockApiService extends _i1.Mock implements _i6.ApiService {
 
   @override
   _i4.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
+    required String birthDate,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String passNumber,
+    required String personId,
+    required String zipCode,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -685,11 +687,11 @@ class MockEmailService extends _i1.Mock implements _i20.EmailService {
 
   @override
   _i4.Future<Map<String, dynamic>> sendEmail({
-    required String? from,
-    required String? recipient,
-    required String? subject,
-    String? body,
     int? emailId,
+    required String from,
+    String? htmlBody,
+    required String recipient,
+    required String subject,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -699,7 +701,7 @@ class MockEmailService extends _i1.Mock implements _i20.EmailService {
             #from: from,
             #recipient: recipient,
             #subject: subject,
-            #body: body,
+            #htmlBody: htmlBody,
             #emailId: emailId,
           },
         ),
