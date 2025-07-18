@@ -6,17 +6,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 
-import 'absolvierte_schulungen_screen.dart';
-import '/screens/bank_data_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/help_screen.dart';
-import '/screens/impressum_screen.dart';
 import '/screens/password_reset_screen.dart';
-import '/screens/personal_data_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
+import '/screens/help_screen.dart';
+import '/screens/impressum_screen.dart';
+import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
 import 'schulungen/schulungen_search_screen.dart';
 import 'oktoberfest_year_pick_screen.dart';
@@ -45,7 +43,7 @@ class AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.menu),
+      icon: const Icon(Icons.menu, color: UIStyles.menuIconColor),
       onPressed: () {
         Scaffold.of(context).openEndDrawer();
       },
@@ -60,6 +58,15 @@ class AppDrawer extends StatelessWidget {
     required this.onLogout,
     super.key,
   });
+  static const double _drawerHeaderHeight = UIConstants.drawerHeaderHeight;
+  static const double _drawerHeaderTopPadding =
+      UIConstants.drawerHeaderTopPadding;
+  static const double _drawerHeaderBottomPadding =
+      UIConstants.drawerHeaderBottomPadding;
+  static const double _drawerHeaderLeftPadding =
+      UIConstants.drawerHeaderLeftPadding;
+  static const double _menuTitleFontSize = UIConstants.menuTitleFontSize;
+  static const double _menuItemFontSize = UIConstants.menuItemFontSize;
 
   final UserData? userData;
   final bool isLoggedIn;
@@ -73,13 +80,13 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-            height: 120.0,
+            height: _drawerHeaderHeight,
             decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
             child: const Padding(
               padding: EdgeInsets.only(
-                left: 16.0,
-                top: 40.0,
-                bottom: 8.0,
+                left: _drawerHeaderLeftPadding,
+                top: _drawerHeaderTopPadding,
+                bottom: _drawerHeaderBottomPadding,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +95,7 @@ class AppDrawer extends StatelessWidget {
                     'Mein BSSB',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: _menuTitleFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -98,30 +105,42 @@ class AppDrawer extends StatelessWidget {
           ),
           if (isLoggedIn) ...[
             ListTile(
-              leading: const Icon(Icons.home),
-              title: const ScaledText('Home'),
+              leading: const Icon(Icons.home, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Home',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/home');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.school),
-              title: const ScaledText('Schulungen buchen'),
+              leading: const Icon(Icons.person, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Profil',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Schulungen buchen functionality
+                Navigator.pushNamed(context, '/profile');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.task_alt),
-              title: const ScaledText('Absolvierte Schulungen'),
+              leading: const Icon(
+                Icons.school_outlined,
+                color: UIStyles.menuIconColor,
+              ),
+              title: const ScaledText(
+                'Aus- und Weiterbildung',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AbsolvierteSchulungenScreen(
+                    builder: (context) => SchulungenSearchScreen(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -131,8 +150,11 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.badge),
-              title: const ScaledText('Schützenausweis'),
+              leading: const Icon(Icons.badge, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Schützenausweis',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -149,8 +171,11 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.rule),
-              title: const ScaledText('Startrechte Ändern'),
+              leading: const Icon(Icons.rule, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Startrechte',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -166,16 +191,14 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.celebration),
-              title: const ScaledText('Oktoberfestlandesschießen'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: Implement Oktoberfestlandesschießen functionality
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: const ScaledText('Profilbild'),
+              leading: const Icon(
+                Icons.sports_bar_outlined,
+                color: UIStyles.menuIconColor,
+              ),
+              title: const ScaledText(
+                'Oktoberfestlandesschießen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -193,68 +216,20 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
+            const Divider(),
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const ScaledText('Persönliche Daten'),
+              leading:
+                  const Icon(Icons.info_outline, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Impressum',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.contact_phone),
-              title: const ScaledText('Kontaktdaten'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ContactDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.account_balance),
-              title: const ScaledText('Bankdaten'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BankDataScreen(
-                      userData,
-                      webloginId: userData?.webLoginId ?? 0,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            /*
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const ScaledText('Einstellungen'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
+                    builder: (context) => ImpressumScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -262,10 +237,13 @@ class AppDrawer extends StatelessWidget {
                   ),
                 );
               },
-            ), */ // TODO: Implement Einstellungen functionality
+            ),
             ListTile(
-              leading: const Icon(Icons.style),
-              title: const ScaledText('Styles'),
+              leading: const Icon(Icons.style, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Styles',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -281,8 +259,52 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const ScaledText('Abmelden'),
+              leading:
+                  const Icon(Icons.settings, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Einstellungen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Hilfe',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HelpScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Abmelden',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onLogout();
@@ -290,16 +312,25 @@ class AppDrawer extends StatelessWidget {
             ),
           ] else ...[
             ListTile(
-              leading: const Icon(Icons.login),
-              title: const ScaledText('Anmelden'),
+              leading: const Icon(Icons.login, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Anmelden',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.app_registration),
-              title: const ScaledText('Registrieren'),
+              leading: const Icon(
+                Icons.app_registration,
+                color: UIStyles.menuIconColor,
+              ),
+              title: const ScaledText(
+                'Registrieren',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 final authService =
@@ -318,8 +349,12 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.lock_reset),
-              title: const ScaledText('Passwort zurücksetzen'),
+              leading:
+                  const Icon(Icons.lock_reset, color: UIStyles.menuIconColor),
+              title: const ScaledText(
+                'Passwort zurücksetzen',
+                style: TextStyle(fontSize: _menuItemFontSize),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 final authService =
@@ -338,41 +373,6 @@ class AppDrawer extends StatelessWidget {
               },
             ),
           ],
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.help_outline),
-            title: const ScaledText('Hilfe'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HelpScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const ScaledText('Impressum'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImpressumScreen(
-                    userData: userData,
-                    isLoggedIn: isLoggedIn,
-                    onLogout: onLogout,
-                  ),
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
