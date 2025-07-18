@@ -22,12 +22,12 @@ class PostgrestService {
 
   /// Create a new user registration
   Future<Map<String, dynamic>> createUser({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String passNumber,
-    required String personId,
-    required String verificationToken,
+    required String? firstName,
+    required String? lastName,
+    required String? email,
+    required String? passNumber,
+    required String? personId,
+    required String? verificationToken,
   }) async {
     try {
       final response = await _client.post(
@@ -86,7 +86,7 @@ class PostgrestService {
   }
 
   /// Get user by pass number
-  Future<Map<String, dynamic>?> getUserByPassNumber(String passNumber) async {
+  Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
       final response = await _client.get(
         Uri.parse('$_baseUrl/user_registrations?pass_number=eq.$passNumber'),
@@ -109,7 +109,7 @@ class PostgrestService {
   }
 
   /// Update user verification status
-  Future<bool> verifyUser(String verificationToken) async {
+  Future<bool> verifyUser(String? verificationToken) async {
     try {
       final response = await _client.patch(
         Uri.parse(

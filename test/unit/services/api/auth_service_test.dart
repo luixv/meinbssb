@@ -1,30 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/services/api/auth_service.dart';
-import 'package:meinbssb/services/core/cache_service.dart';
-import 'package:meinbssb/services/core/http_client.dart';
-import 'package:meinbssb/services/core/network_service.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/services/core/postgrest_service.dart';
-import 'package:meinbssb/services/core/email_service.dart';
 
 import '../../helpers/test_mocks.mocks.dart';
 
-// Add this fallback mock if the generated one is missing
-class MockPostgrestService extends Mock implements PostgrestService {}
-
-// Ensure the mock is generated for FlutterSecureStorage
-@GenerateMocks([
-  HttpClient,
-  CacheService,
-  NetworkService,
-  FlutterSecureStorage,
-  ConfigService,
-  EmailService,
-])
 void main() {
   late AuthService authService;
   late MockHttpClient mockHttpClient;
@@ -45,6 +26,7 @@ void main() {
     mockConfigService = MockConfigService();
     mockPostgrestService = MockPostgrestService();
     mockEmailService = MockEmailService();
+    mockSecureStorage = MockFlutterSecureStorage();
 
     // Create AuthService instance for each test, injecting all mocks
     authService = AuthService(
