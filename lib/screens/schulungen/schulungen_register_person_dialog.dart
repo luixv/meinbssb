@@ -350,6 +350,22 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                   ],
                 ),
               ),
+              if (isLoading)
+                Positioned.fill(
+                  child: AbsorbPointer(
+                    absorbing: true,
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 77),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.circularProgressIndicator,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
