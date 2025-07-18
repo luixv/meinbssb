@@ -2,10 +2,13 @@
   "usernameWebUser": "webUser",
   "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
   "apiProtocol": "https",
+  "localProtocol": "http",
+  "localServer": "localhost",
+  "localPort": "8081",
+  "localPath": "",
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "rest/zmi/api7",
   "oktoberFestBasePort": "50211",
-  
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
   "apiBasePort": "56400",
@@ -19,9 +22,7 @@
     "host": "localhost",
     "username": "",
     "password": "",
-    "fromEmail": "test@example.com",
-    "registrationSubject": "Bestätigung der E-Mail Adresse",
-    "accountCreatedSubject": "MeinBSSB Account wurde erstellt"
+    "fromEmail": "do-not-reply@bssb.de"
   },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
@@ -33,9 +34,10 @@
     "dbUsername": "devuser",
     "dbPassword": "devpass"
   },
-  "emailRegistration": {
-    "registrationSubject": "Schulung Anmeldung",
-    "registrationContent": "Sie sind für einen Schulung angemeldet",
-    "registrationFrom": "do-not-reply@bssb.de"
+  "emailContent": {
+    "schulungAnmeldungSubject": "Schulung Anmeldung",
+    "schulungContent": "Sie sind für einen Schulung angemeldet",
+    "registrationSubject": "Bestätigung der E-Mail Adresse",
+    "accountCreatedSubject": "MeinBSSB Account wurde erstellt"
   }
 }

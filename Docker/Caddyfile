@@ -2,6 +2,9 @@ http://localhost:8081 {
   root * /web
   file_server
 
+  # Support client-side routing for Flutter or other SPAs
+  try_files {path} /index.html
+
   handle_path /api/* {
     reverse_proxy postgrest:3000
 

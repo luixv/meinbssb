@@ -78,15 +78,17 @@ class AuthService {
       final subject = await _emailService.getRegistrationSubject();
       final emailContent = await _emailService.getRegistrationContent();
       // Use the app's frontend URL for the verification link
-      final configService = ConfigService.instance;
-      final baseUrl =
-          configService.getString('frontendBaseUrl') ?? 'https://meinbssb.de';
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'local',
+        protocolKey: 'localProtocol',
+      );
       if (fromEmail != null &&
           subject != null &&
           emailContent != null &&
           baseUrl.isNotEmpty) {
         final verificationLink =
-            '$baseUrl/set-password?token=$verificationToken';
+            '${baseUrl}set-password?token=$verificationToken';
         final emailBody = emailContent
             .replaceAll('{firstName}', firstName)
             .replaceAll('{lastName}', lastName)

@@ -104,7 +104,7 @@ class EmailService {
   }
 
   Future<String?> getRegistrationSubject() async {
-    return _configService.getString('registrationSubject', 'smtpSettings');
+    return _configService.getString('registrationSubject', 'emailContent');
   }
 
   Future<String?> getRegistrationContent() async {
@@ -133,7 +133,7 @@ class EmailService {
   }
 
   Future<String?> getAccountCreatedSubject() async {
-    return _configService.getString('accountCreatedSubject', 'smtpSettings');
+    return _configService.getString('accountCreatedSubject', 'emailContent');
   }
 
   Future<String?> getAccountCreatedContent() async {

@@ -146,14 +146,14 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
         msg == 'Teilnehmer erfolgreich aktualisiert') {
       await widget.emailService.sendEmail(
         from: widget.configService
-                .getString('emailRegistration.registrationFrom') ??
+                .getString('smtpSettings.fromEmail') ??
             'do-not-reply@bssb.de',
         recipient: emailController.text,
         subject: widget.configService
-                .getString('emailRegistration.registrationSubject') ??
+                .getString('emailContent.schulungAnmeldungSubject') ??
             'Schulung Anmeldung',
         htmlBody: widget.configService
-                .getString('emailRegistration.registrationContent') ??
+                .getString('emailContent.schulungContent') ??
             'Sie sind für einen Schulung angemeldet',
       );
       if (!mounted) return;

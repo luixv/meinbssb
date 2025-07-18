@@ -100,7 +100,7 @@ class ConfigService {
     if (port == null || port.isEmpty) {
       throw StateError('ConfigService: port for $name is missing or empty.');
     }
-    if (path == null || path.isEmpty) {
+    if (path == null) {
       throw StateError('ConfigService: path for $name is missing or empty.');
     }
     return '$protocol://$server:$port/$path';

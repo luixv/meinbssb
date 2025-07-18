@@ -211,6 +211,7 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
+
     final String initialRoute =
         (fragment == '/schulungen_search' || fragment == 'schulungen_search')
             ? '/schulungen_search'
@@ -270,8 +271,8 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            if (settings.name != null &&
-                settings.name!.startsWith('/set-password')) {
+            // Always allow anonymous access to /set-password
+            if (settings.name!.startsWith('/set-password')) {
               final uri = Uri.parse(settings.name!);
               final token = uri.queryParameters['token'] ?? '';
               return MaterialPageRoute(
@@ -294,8 +295,8 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
+            // For all other routes, redirect to login if not logged in
             if (!_isLoggedIn || _userData == null) {
-              // Always redirect to login if not logged in
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
                 settings: settings,

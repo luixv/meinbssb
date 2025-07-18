@@ -166,9 +166,9 @@ void main() {
         // Default stubs for email templates
         when(mockConfigService.getString('fromEmail', 'smtpSettings'))
             .thenReturn('noreply@example.com');
-        when(mockConfigService.getString('accountCreatedSubject', 'smtpSettings'))
+        when(mockConfigService.getString('accountCreatedSubject', 'emailContent'))
             .thenReturn('Account Created');
-        when(mockConfigService.getString('accountCreatedContent', 'smtpSettings'))
+        when(mockConfigService.getString('accountCreatedContent', 'emailContent'))
             .thenReturn('New account created with email: {email}');
 
         // Default stub for email sending
