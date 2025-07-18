@@ -90,7 +90,7 @@ class AuthService {
         final emailBody = emailContent
             .replaceAll('{firstName}', firstName)
             .replaceAll('{lastName}', lastName)
-            .replaceAll('{verificationToken}', verificationLink);
+            .replaceAll('{verificationLink}', verificationLink);
         await _emailService.sendEmail(
           from: fromEmail,
           recipient: email,
