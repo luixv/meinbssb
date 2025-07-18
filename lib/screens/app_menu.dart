@@ -18,12 +18,15 @@ import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
 import '/screens/styles_screen.dart';
+import 'schulungen/schulungen_search_screen.dart';
+import 'oktoberfest_year_pick_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import '/services/core/config_service.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -175,7 +178,19 @@ class AppDrawer extends StatelessWidget {
               title: const ScaledText('Profilbild'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement Profilbild functionality
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OktoberfestYearPickScreen(
+                      passnummer: userData?.passnummer ?? '',
+                      configService:
+                          Provider.of<ConfigService>(context, listen: false),
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
