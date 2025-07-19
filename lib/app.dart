@@ -21,6 +21,8 @@ import 'screens/profile_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web;
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -193,10 +195,36 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
-    final String initialRoute = (fragment.startsWith('schulungen_search') ||
-            path.startsWith('/schulungen_search'))
-        ? '/schulungen_search'
-        : '/splash';
+
+    // Use sessionStorage to remember intended destination during reloads
+    String? rememberedRoute;
+    if (kIsWeb) {
+      rememberedRoute = web.window.sessionStorage['intendedRoute'];
+    }
+
+    // Determine initial route based on fragment and remembered route
+    String initialRoute;
+    if (fragment.startsWith('schulungen_search') ||
+        path.startsWith('/schulungen_search')) {
+      // Schulungen-only system
+      initialRoute = '/schulungen_search';
+    } else if (fragment.isEmpty &&
+        rememberedRoute != null &&
+        rememberedRoute != '/schulungen_search') {
+      // Empty fragment but we remember a non-Schulungen route - use remembered route
+      initialRoute = rememberedRoute;
+    } else if (fragment.isEmpty) {
+      // Empty fragment - default to Schulungen-only system
+      initialRoute = '/schulungen_search';
+    } else {
+      // Any other route (like /home, /help, etc.) - use normal login system
+      initialRoute = '/splash';
+    }
+
+    // Store the current route for future reloads
+    if (kIsWeb && fragment.isNotEmpty) {
+      web.window.sessionStorage['intendedRoute'] = fragment;
+    }
     // Skip splash if Schulungen-only mode
     if (_loading && initialRoute != '/schulungen_search') {
       // Show the animated SplashScreen for at least 3 seconds
@@ -262,6 +290,8 @@ class _MyAppState extends State<MyApp> {
                   isLoggedIn: _isLoggedIn,
                   onLogout: _handleLogout,
                   showMenu: false,
+                  showConnectivityIcon:
+                      false, // Hide connectivity icon for Schulungen-only system
                 ),
                 settings: settings,
               );

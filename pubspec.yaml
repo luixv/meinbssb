@@ -53,6 +53,7 @@ dependencies:
   url_launcher: ^6.1.14
   image_picker: ^1.0.4
   syncfusion_flutter_pdfviewer: ^24.2.8
+  web: ^0.5.0
   
   flutter_localizations:
     sdk: flutter
