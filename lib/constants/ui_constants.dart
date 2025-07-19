@@ -61,6 +61,7 @@ class UIConstants {
   static const Color selectionHandleColor = Colors.transparent;
   static const Color highlightColor = Colors.transparent;
   static const Color splashColor = Colors.transparent;
+  static const Color overlayColor = Color.fromRGBO(0, 0, 0, 0.3); // Semi-transparent black overlay
 
   // Table Colors
   static const Color tableBackground = Colors.white;
