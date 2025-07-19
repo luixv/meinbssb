@@ -69,7 +69,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static bool _bypassDone = false;
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -194,27 +193,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
-    final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
-        fragment == 'schulungen_search' ||
-        path == '/schulungen_search' ||
-        path == 'schulungen_search';
-    if (isDirectSchulungenSearch && !_bypassDone) {
-      _bypassDone = true;
-      return MaterialApp(
-        home: SchulungenSearchScreen(
-          null,
-          isLoggedIn: false,
-          onLogout: () {},
-          showMenu: false,
-          showConnectivityIcon: false,
-        ),
-      );
-    }
-    final String initialRoute =
-        (fragment == '/schulungen_search' || fragment == 'schulungen_search')
-            ? '/schulungen_search'
-            : '/splash';
-    if (_loading) {
+    final String initialRoute = (fragment.startsWith('schulungen_search') ||
+            path.startsWith('/schulungen_search'))
+        ? '/schulungen_search'
+        : '/splash';
+    // Skip splash if Schulungen-only mode
+    if (_loading && initialRoute != '/schulungen_search') {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
@@ -269,8 +253,9 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Allow anonymous access to SchulungenSearchScreen
-            if (settings.name == '/schulungen_search') {
+            // Allow anonymous access to SchulungenSearchScreen and all its subroutes
+            if (settings.name != null &&
+                settings.name!.startsWith('/schulungen_search')) {
               return MaterialPageRoute(
                 builder: (_) => SchulungenSearchScreen(
                   _userData,
@@ -281,8 +266,8 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
+            // Only redirect to login for other routes
             if (!_isLoggedIn || _userData == null) {
-              // Always redirect to login if not logged in
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
                 settings: settings,
