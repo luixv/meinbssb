@@ -355,7 +355,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                   child: AbsorbPointer(
                     absorbing: true,
                     child: Container(
-                      color: Colors.black.withValues(alpha: 77),
+                      color: UIConstants.overlayColor,
                       child: const Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
