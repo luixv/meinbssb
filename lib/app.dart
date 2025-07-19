@@ -21,6 +21,8 @@ import 'screens/profile_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web;
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -69,7 +71,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  static bool _bypassDone = false;
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -194,27 +195,38 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
-    final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
-        fragment == 'schulungen_search' ||
-        path == '/schulungen_search' ||
-        path == 'schulungen_search';
-    if (isDirectSchulungenSearch && !_bypassDone) {
-      _bypassDone = true;
-      return MaterialApp(
-        home: SchulungenSearchScreen(
-          null,
-          isLoggedIn: false,
-          onLogout: () {},
-          showMenu: false,
-          showConnectivityIcon: false,
-        ),
-      );
+
+    // Use sessionStorage to remember intended destination during reloads
+    String? rememberedRoute;
+    if (kIsWeb) {
+      rememberedRoute = web.window.sessionStorage['intendedRoute'];
     }
-    final String initialRoute =
-        (fragment == '/schulungen_search' || fragment == 'schulungen_search')
-            ? '/schulungen_search'
-            : '/splash';
-    if (_loading) {
+
+    // Determine initial route based on fragment and remembered route
+    String initialRoute;
+    if (fragment.startsWith('schulungen_search') ||
+        path.startsWith('/schulungen_search')) {
+      // Schulungen-only system
+      initialRoute = '/schulungen_search';
+    } else if (fragment.isEmpty &&
+        rememberedRoute != null &&
+        rememberedRoute != '/schulungen_search') {
+      // Empty fragment but we remember a non-Schulungen route - use remembered route
+      initialRoute = rememberedRoute;
+    } else if (fragment.isEmpty) {
+      // Empty fragment - default to Schulungen-only system
+      initialRoute = '/schulungen_search';
+    } else {
+      // Any other route (like /home, /help, etc.) - use normal login system
+      initialRoute = '/splash';
+    }
+
+    // Store the current route for future reloads
+    if (kIsWeb && fragment.isNotEmpty) {
+      web.window.sessionStorage['intendedRoute'] = fragment;
+    }
+    // Skip splash if Schulungen-only mode
+    if (_loading && initialRoute != '/schulungen_search') {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
@@ -269,20 +281,23 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Allow anonymous access to SchulungenSearchScreen
-            if (settings.name == '/schulungen_search') {
+            // Allow anonymous access to SchulungenSearchScreen and all its subroutes
+            if (settings.name != null &&
+                settings.name!.startsWith('/schulungen_search')) {
               return MaterialPageRoute(
                 builder: (_) => SchulungenSearchScreen(
                   _userData,
                   isLoggedIn: _isLoggedIn,
                   onLogout: _handleLogout,
                   showMenu: false,
+                  showConnectivityIcon:
+                      false, // Hide connectivity icon for Schulungen-only system
                 ),
                 settings: settings,
               );
             }
+            // Only redirect to login for other routes
             if (!_isLoggedIn || _userData == null) {
-              // Always redirect to login if not logged in
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
                 settings: settings,

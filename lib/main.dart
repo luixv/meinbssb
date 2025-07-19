@@ -21,9 +21,11 @@ import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'services/api/oktoberfest_service.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {}
   // Global error handler for all uncaught errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
