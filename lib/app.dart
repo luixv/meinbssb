@@ -22,7 +22,7 @@ import 'utils/cookie_consent.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web/web.dart' as web;
+import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -196,34 +196,47 @@ class _MyAppState extends State<MyApp> {
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
-    // Use sessionStorage to remember intended destination during reloads
-    String? rememberedRoute;
-    if (kIsWeb) {
-      rememberedRoute = web.window.sessionStorage['intendedRoute'];
-    }
-
     // Determine initial route based on fragment and remembered route
     String initialRoute;
-    if (fragment.startsWith('schulungen_search') ||
-        path.startsWith('/schulungen_search')) {
-      // Schulungen-only system
-      initialRoute = '/schulungen_search';
-    } else if (fragment.isEmpty &&
-        rememberedRoute != null &&
-        rememberedRoute != '/schulungen_search') {
-      // Empty fragment but we remember a non-Schulungen route - use remembered route
-      initialRoute = rememberedRoute;
-    } else if (fragment.isEmpty) {
-      // Empty fragment - default to Schulungen-only system
-      initialRoute = '/schulungen_search';
+    if (kIsWeb) {
+      // Robust logic for web: handle Schulungen-only and login systems
+      bool isSchulungenUrl = fragment.startsWith('schulungen_search') ||
+          path.startsWith('/schulungen_search');
+      String? rememberedRoute = WebStorage.getItem('intendedRoute');
+      if (isSchulungenUrl) {
+        // If on Schulungen-only URL, clear any login-related remembered route
+        if (rememberedRoute != null &&
+            !rememberedRoute.startsWith('schulungen_search')) {
+          WebStorage.removeItem('intendedRoute');
+        }
+        initialRoute = '/schulungen_search';
+      } else if (fragment.isEmpty && rememberedRoute != null) {
+        // If fragment is empty but we remember a route, use it
+        if (rememberedRoute.startsWith('schulungen_search')) {
+          initialRoute = '/schulungen_search';
+        } else {
+          // If remembered route is login system, but URL is for Schulungen, clear it and use Schulungen
+          if (Uri.base.toString().contains('schulungen_search')) {
+            WebStorage.removeItem('intendedRoute');
+            initialRoute = '/schulungen_search';
+          } else {
+            initialRoute = rememberedRoute;
+          }
+        }
+      } else if (fragment.isEmpty) {
+        // Empty fragment - default to Schulungen-only system
+        initialRoute = '/schulungen_search';
+      } else {
+        // Any other route (like /home, /help, etc.) - use normal login system
+        initialRoute = '/splash';
+      }
+      // Store the current route for future reloads
+      if (fragment.isNotEmpty) {
+        WebStorage.setItem('intendedRoute', fragment);
+      }
     } else {
-      // Any other route (like /home, /help, etc.) - use normal login system
+      // Non-web platforms: always start with splash
       initialRoute = '/splash';
-    }
-
-    // Store the current route for future reloads
-    if (kIsWeb && fragment.isNotEmpty) {
-      web.window.sessionStorage['intendedRoute'] = fragment;
     }
     // Skip splash if Schulungen-only mode
     if (_loading && initialRoute != '/schulungen_search') {
