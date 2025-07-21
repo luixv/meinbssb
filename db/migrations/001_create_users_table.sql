@@ -1,5 +1,5 @@
--- Create user_registrations table
-CREATE TABLE IF NOT EXISTS user_registrations (
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS user_registrations (
 );
 
 -- Create index for faster lookups
-CREATE INDEX IF NOT EXISTS idx_user_registrations_email ON user_registrations(email);
-CREATE INDEX IF NOT EXISTS idx_user_registrations_pass_number ON user_registrations(pass_number);
-CREATE INDEX IF NOT EXISTS idx_user_registrations_verification_token ON user_registrations(verification_token);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
+CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_token);
 
 -- Grant permissions for PostgREST
-GRANT SELECT, INSERT, UPDATE ON user_registrations TO devuser;
-GRANT USAGE ON SEQUENCE user_registrations_id_seq TO devuser; 
+GRANT SELECT, INSERT, UPDATE ON users TO devuser;
+GRANT USAGE ON SEQUENCE users_id_seq TO devuser; 

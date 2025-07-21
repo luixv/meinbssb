@@ -12,7 +12,8 @@ import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/privacy_screen.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/set_password_screen.dart';
+import 'package:meinbssb/screens/registration_success_screen.dart';
+import 'package:meinbssb/screens/registration_fail_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/error_service.dart';
@@ -44,7 +45,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? zipCodeError;
   String? passNumberError;
   String? emailError;
-  String _successMessage = '';
+  final String _successMessage = '';
   UserData? userData;
   final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
   bool _emailFieldTouched = false; // New flag
@@ -232,9 +233,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     final isOffline = !(await networkService.hasInternet());
     if (isOffline) {
       setState(() {
-        _successMessage = Messages.registrationOffline;
         _isRegistering = false;
       });
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => const RegistrationFailScreen(
+            message: Messages.registrationOffline,
+            userData: null,
+          ),
+        ),
+      );
       return;
     }
 
@@ -252,9 +261,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
       if (personId == '0') {
         setState(() {
-          _successMessage = Messages.noPersonIdFound;
           _isRegistering = false;
         });
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const RegistrationFailScreen(
+              message: Messages.noPersonIdFound,
+              userData: null,
+            ),
+          ),
+        );
         return;
       }
 
@@ -270,9 +287,17 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         if ((existingUser['is_verified'] == true) ||
             (userWithEmail != null && userWithEmail['is_verified'] == true)) {
           setState(() {
-            _successMessage = Messages.registrationDataAlreadyUsed;
             _isRegistering = false;
           });
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => const RegistrationFailScreen(
+                message: Messages.registrationDataAlreadyUsed,
+                userData: null,
+              ),
+            ),
+          );
           return;
         }
 
@@ -281,17 +306,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         final now = DateTime.now();
         final difference = now.difference(createdAt);
 
-        if (difference.inHours > 24) {
-          // Delete the old registration
-          await widget.authService.postgrestService
-              .deleteUserRegistration(existingUser['id']);
-        } else {
+        if (difference.inHours <= 24) {
           setState(() {
-            _successMessage = Messages.registrationDataAlreadyExists;
             _isRegistering = false;
           });
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => const RegistrationFailScreen(
+                message: Messages.registrationDataAlreadyExists,
+                userData: null,
+              ),
+            ),
+          );
           return;
         }
+        // Delete the old registration if it's older than 24 hours
+        await widget.authService.postgrestService
+            .deleteUserRegistration(existingUser['id']);
       }
 
       // Store the registration data temporarily
@@ -305,31 +337,34 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         personId: personId,
       );
       setState(() {
-        _successMessage = Messages.registrationSuccess;
         _isRegistering = false;
       });
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => const RegistrationSuccessScreen(
+            message: Messages.registrationSuccess,
+            userData: null,
+          ),
+        ),
+      );
     } catch (e) {
       setState(() {
-        _successMessage = ErrorService.handleValidationError(
-          'Registration',
-          Messages.generalError,
-        );
         _isRegistering = false;
       });
-    }
-  }
-
-  void _navigateToSetPassword() {
-    // Simulation button - will be removed in production
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SetPasswordScreen(
-          token: 'simulation-token-12345',
-          authService: widget.authService,
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => RegistrationFailScreen(
+            message: ErrorService.handleValidationError(
+              'Registration',
+              Messages.generalError,
+            ),
+            userData: null,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -451,8 +486,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 _buildPrivacyCheckbox(),
                 const SizedBox(height: UIConstants.spacingM),
                 _buildRegisterButton(),
-                const SizedBox(height: UIConstants.spacingM),
-                _buildSimulationButton(),
               ],
             ),
           ),
@@ -527,30 +560,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(width: UIConstants.spacingS),
             ScaledText(
               'Registrieren',
-              style: UIStyles.buttonStyle,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSimulationButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        key: const Key('simulationButton'),
-        onPressed: _navigateToSetPassword,
-        style: UIStyles.defaultButtonStyle.copyWith(
-          backgroundColor: const WidgetStatePropertyAll(Colors.orange),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.settings, color: Colors.white),
-            SizedBox(width: UIConstants.spacingS),
-            ScaledText(
-              'Simulation: Passwort setzen',
               style: UIStyles.buttonStyle,
             ),
           ],

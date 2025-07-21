@@ -5,14 +5,19 @@ import 'config_service.dart';
 
 class PostgrestService {
   PostgrestService({
-    required ConfigService configService,
+    required this.configService,
     http.Client? client,
   }) : _client = client ?? http.Client();
 
+  final ConfigService configService;
+
   final http.Client _client;
 
-  String get _baseUrl => 'http://localhost:8081/api'; // Caddy server
-
+  String get _baseUrl => ConfigService.buildBaseUrlForServer(
+        configService,
+        name: 'postgrest',
+        protocolKey: 'postgrestProtocol',
+      );
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -31,7 +36,7 @@ class PostgrestService {
   }) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_baseUrl/user_registrations'),
+        Uri.parse('${_baseUrl}users'),
         headers: _headers,
         body: jsonEncode({
           'firstname': firstName,
@@ -66,7 +71,7 @@ class PostgrestService {
   Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     try {
       final response = await _client.get(
-        Uri.parse('$_baseUrl/user_registrations?email=eq.$email'),
+        Uri.parse('${_baseUrl}users?email=eq.$email'),
         headers: _headers,
       );
 
@@ -89,7 +94,7 @@ class PostgrestService {
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
       final response = await _client.get(
-        Uri.parse('$_baseUrl/user_registrations?pass_number=eq.$passNumber'),
+        Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber'),
         headers: _headers,
       );
 
@@ -113,7 +118,7 @@ class PostgrestService {
     try {
       final response = await _client.patch(
         Uri.parse(
-          '$_baseUrl/user_registrations?verification_token=eq.$verificationToken',
+          '${_baseUrl}users?verification_token=eq.$verificationToken',
         ),
         headers: _headers,
         body: jsonEncode({
@@ -141,7 +146,7 @@ class PostgrestService {
   Future<bool> deleteUserRegistration(int id) async {
     try {
       final response = await _client.delete(
-        Uri.parse('$_baseUrl/user_registrations?id=eq.$id'),
+        Uri.parse('${_baseUrl}users?id=eq.$id'),
         headers: _headers,
       );
 
@@ -163,7 +168,7 @@ class PostgrestService {
   Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
     try {
       final response = await _client.get(
-        Uri.parse('$_baseUrl/user_registrations?verification_token=eq.$token'),
+        Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
         headers: _headers,
       );
       if (response.statusCode == 200) {
@@ -182,12 +187,64 @@ class PostgrestService {
   }
 
   Future<http.Response> updateUserByVerificationToken(
-      String token, Map<String, dynamic> fields,) async {
+    String token,
+    Map<String, dynamic> fields,
+  ) async {
     final response = await _client.patch(
-      Uri.parse('$_baseUrl/user_registrations?verification_token=eq.$token'),
+      Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
       headers: _headers,
       body: jsonEncode(fields),
     );
     return response;
+  }
+
+  /// Upload a new profile photo for a user (insert or update)
+  Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
+    try {
+      final response = await _client.patch(
+        Uri.parse('${_baseUrl}users?id=eq.$userId'),
+        headers: _headers,
+        body: jsonEncode({
+          'profile_photo': base64Encode(photoBytes),
+        }),
+      );
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('Profile photo uploaded successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to upload profile photo. Status: \\${response.statusCode}, Body: \\${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error uploading profile photo: $e');
+      return false;
+    }
+  }
+
+  /// Delete the profile photo for a user (set to null)
+  Future<bool> deleteProfilePhoto(String userId) async {
+    try {
+      final response = await _client.patch(
+        Uri.parse('${_baseUrl}users?id=eq.$userId'),
+        headers: _headers,
+        body: jsonEncode({
+          'profile_photo': null,
+        }),
+      );
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('Profile photo deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete profile photo. Status: \\${response.statusCode}, Body: \\${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting profile photo: $e');
+      return false;
+    }
   }
 }

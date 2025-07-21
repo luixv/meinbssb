@@ -154,7 +154,8 @@ This project uses Docker Compose to orchestrate a local development environment 
 
 ### 4. Caddy (`caddy`)
 - **Image:** `caddy:2`
-- **Port:** `8081`
+- **Port:** `8080` (Web App)
+- **Port:** `8081` (Postgrest)
 - **Depends on:** PostgREST
 - **Volumes:**
   - `./Caddyfile:/etc/caddy/Caddyfile`
@@ -165,21 +166,23 @@ This project uses Docker Compose to orchestrate a local development environment 
 1. Install Docker and Docker Compose.
 
 2. Start the containers:
-   ```bash
    docker-compose up -d
-   ```
 
 3. Check running containers:
-   ```bash
    docker ps
-   ```
+
+4. Stop all running containers:
+   docker-compose down
+
+4. Stop all running containers + delete data:
+   docker-compose down -v1
 
 ## How to Access Services
 
 | Service      | URL                              |
 |--------------|----------------------------------|
-| Caddy        | http://localhost:8081            |
-| PostgREST    | http://localhost:3000            |
+| Web App      | http://localhost:8080            |
+| PostgREST    | http://localhost:8081/api        |
 | MailHog UI   | http://localhost:8025            |
 | Mail SMTP    | localhost:1025                   |
 | PostgreSQL   | localhost:5432 (external tools)  |

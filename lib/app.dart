@@ -232,6 +232,10 @@ class _MyAppState extends State<MyApp> {
           path.startsWith('/schulungen_search')) {
         // Schulungen-only system
         initialRoute = '/schulungen_search';
+      } else if (fragment.startsWith('/set-password') ||
+          path.startsWith('/set-password')) {
+        // Allow direct access to set-password
+        initialRoute = fragment.isNotEmpty ? fragment : path;
       } else if (fragment.isEmpty &&
           rememberedRoute != null &&
           rememberedRoute != '/schulungen_search') {
@@ -309,15 +313,15 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Always allow anonymous access to /set-password
+            // Allow anonymous access to /set-password
             if (settings.name!.startsWith('/set-password')) {
-              final uri = Uri.parse(settings.name!);
+              final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
               return MaterialPageRoute(
                 builder: (context) => SetPasswordScreen(
-                    token: token,
-                    authService:
-                        Provider.of<AuthService>(context, listen: false),),
+                  token: token,
+                  authService: Provider.of<AuthService>(context, listen: false),
+                ),
                 settings: settings,
               );
             }

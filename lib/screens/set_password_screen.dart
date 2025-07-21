@@ -4,6 +4,8 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/registration_fail_screen.dart';
+import 'package:meinbssb/screens/registration_success_screen.dart';
 
 class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({
@@ -36,17 +38,25 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     _checkToken();
   }
 
+  void _failAndExit(String message) {
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => RegistrationFailScreen(
+          message: message,
+          userData: null,
+        ),
+      ),
+    );
+  }
+
   Future<void> _checkToken() async {
     final user = await widget.authService.postgrestService
         .getUserByVerificationToken(widget.token);
     if (user != null) {
       // Check if already verified
       if (user['is_verified'] == true) {
-        setState(() {
-          _tokenValid = false;
-          _loading = false;
-          _error = 'Dieser Link wurde bereits verwendet.';
-        });
+        _failAndExit('Dieser Link wurde bereits verwendet.');
         return;
       }
       // Check if verified_at is older than 24 hours
@@ -55,11 +65,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         final verifiedAt = DateTime.tryParse(user['verified_at']);
         if (verifiedAt != null &&
             DateTime.now().difference(verifiedAt).inHours > 24) {
-          setState(() {
-            _tokenValid = false;
-            _loading = false;
-            _error = 'Der Link ist abgelaufen.';
-          });
+          _failAndExit('Der Link ist abgelaufen.');
           return;
         }
       }
@@ -69,11 +75,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       });
       return;
     }
-    setState(() {
-      _tokenValid = false;
-      _loading = false;
-      _error = 'Ungültiger oder abgelaufener Link.';
-    });
+    _failAndExit('Ungültiger oder abgelaufener Link.');
   }
 
   String? _validatePassword(String? value) {
@@ -122,10 +124,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     final user = await widget.authService.postgrestService
         .getUserByVerificationToken(widget.token);
     if (user == null) {
-      setState(() {
-        _error = 'Benutzer nicht gefunden.';
-        _loading = false;
-      });
+      _failAndExit('Benutzer nicht gefunden.');
       return;
     }
 
@@ -134,10 +133,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     final email = user['email'];
 
     if (personId == null || email == null) {
-      setState(() {
-        _error = 'Ungültige Benutzerdaten.';
-        _loading = false;
-      });
+      _failAndExit('Ungültige Benutzerdaten.');
       return;
     }
 
@@ -151,21 +147,23 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       );
       final result = response[0];
       if (result['ResultType'] != 1) {
-        setState(() {
-          _error = result['RESULTMESSAGE'];
-          _loading = false;
-        });
+        _failAndExit(result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
         return;
       }
       setState(() {
-        _success = 'Passwort gesetzt! Sie können sich jetzt anmelden.';
         _loading = false;
       });
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => const RegistrationSuccessScreen(
+            message: 'Passwort gesetzt! Sie können sich jetzt anmelden.',
+            userData: null,
+          ),
+        ),
+      );
     } catch (e) {
-      setState(() {
-        _error = 'Fehler beim Erstellen des Kontos: $e';
-        _loading = false;
-      });
+      _failAndExit('Fehler beim Erstellen des Kontos: $e');
     }
   }
 

@@ -3,8 +3,8 @@ import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 
-class RegistrationSuccessScreen extends StatelessWidget {
-  const RegistrationSuccessScreen({
+class RegistrationFailScreen extends StatelessWidget {
+  const RegistrationFailScreen({
     super.key,
     required this.message,
     required this.userData,
@@ -15,7 +15,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Registrierung erfolgreich',
+      title: 'Registrierung fehlgeschlagen',
       userData: userData,
       isLoggedIn: false,
       onLogout: () {
@@ -26,8 +26,8 @@ class RegistrationSuccessScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Icon(
-              Icons.check_circle,
-              color: Colors.green,
+              Icons.error,
+              color: Colors.red,
               size: UIConstants.iconSizeXL,
             ),
             const SizedBox(height: UIConstants.spacingM),
@@ -40,7 +40,7 @@ class RegistrationSuccessScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'registrationSuccessFab',
+        heroTag: 'registrationFailFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/login',

@@ -80,15 +80,20 @@ class AuthService {
       // Use the app's frontend URL for the verification link
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
-        name: 'local',
-        protocolKey: 'localProtocol',
+        name: 'email',
+        protocolKey: 'emailProtocol',
+      );
+      final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'web',
+        protocolKey: 'webProtocol',
       );
       if (fromEmail != null &&
           subject != null &&
           emailContent != null &&
           baseUrl.isNotEmpty) {
         final verificationLink =
-            '${baseUrl}set-password?token=$verificationToken';
+            '${baseUrlWebApp}set-password?token=$verificationToken';
         final emailBody = emailContent
             .replaceAll('{firstName}', firstName)
             .replaceAll('{lastName}', lastName)

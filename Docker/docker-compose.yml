@@ -36,17 +36,18 @@ services:
       PGRST_SERVER_CORS: "true"
       PGRST_SERVER_PROXY_URI: http://localhost:3000
       PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost:3000
-     
+
   caddy:
-      image: caddy:2
-      container_name: caddy
-      ports:
-        - "8081:8081"
-      volumes:
-        - ./Caddyfile:/etc/caddy/Caddyfile
-        - ../build/web:/web
-      depends_on:
-        - postgrest
+    image: caddy:2
+    container_name: caddy
+    ports:
+      - "8080:8080" # Web app
+      - "8081:8081" # PostgREST API
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ../build/web:/web
+    depends_on:
+      - postgrest
 
 volumes:
   pgdata:
