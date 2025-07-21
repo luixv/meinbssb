@@ -542,7 +542,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         key: const Key('simulationButton'),
         onPressed: _navigateToSetPassword,
         style: UIStyles.defaultButtonStyle.copyWith(
-          backgroundColor: WidgetStatePropertyAll(Colors.orange),
+          backgroundColor: const WidgetStatePropertyAll(Colors.orange),
         ),
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
