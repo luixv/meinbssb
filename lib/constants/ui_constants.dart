@@ -61,7 +61,12 @@ class UIConstants {
   static const Color selectionHandleColor = Colors.transparent;
   static const Color highlightColor = Colors.transparent;
   static const Color splashColor = Colors.transparent;
-  static const Color overlayColor = Color.fromRGBO(0, 0, 0, 0.3); // Semi-transparent black overlay
+  static const Color overlayColor =
+      Color.fromRGBO(0, 0, 0, 0.3); // Semi-transparent black overlay
+
+  //Colors for Schulungen
+  static const Color sportColor = Color.fromRGBO(0, 93, 218, 1); //#005dda
+  static const Color jugendColor = Color.fromRGBO(153, 30, 124, 1); // #991e7c
 
   // Table Colors
   static const Color tableBackground = Colors.white;
