@@ -492,7 +492,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           if (_isRegistering)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: Colors.black.withOpacity(0.3),
                 child: const Center(
                   child: CircularProgressIndicator(),
                 ),

@@ -119,30 +119,52 @@ void main() {
         const email = 'john.doe@example.com';
         const birthDate = '1990-01-01';
         const zipCode = '10001';
-        const expectedPersonId = '123';
         const personId = '439287';
 
+        // Mock getUserByPassNumber to return null (no existing user)
+        when(mockPostgrestService.getUserByPassNumber(passNumber))
+            .thenAnswer((_) async => null);
+
+        // Mock getUserByEmail to return null (no existing user)
+        when(mockPostgrestService.getUserByEmail(email))
+            .thenAnswer((_) async => null);
+
+        // Mock createUser to succeed
         when(
-          mockHttpClient.get(
-            'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode',
+          mockPostgrestService.createUser(
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            email: anyNamed('email'),
+            passNumber: anyNamed('passNumber'),
+            verificationToken: anyNamed('verificationToken'),
+            personId: anyNamed('personId'),
           ),
-        ).thenAnswer((_) async => {'PERSONID': int.parse(expectedPersonId)});
+        ).thenAnswer((_) async => <String, dynamic>{
+          'id': 1,
+          'firstname': firstName,
+          'lastname': lastName,
+          'email': email,
+          'pass_number': passNumber,
+          'person_id': personId,
+        });
 
-        when(mockHttpClient.get('FindeMailadressen/$expectedPersonId'))
-            .thenAnswer(
-          (_) async => [
-            {'LOGINMAIL': email, 'MAILADRESSEN': 'another@example.com'},
-          ],
-        );
+        // Mock email service methods
+        when(mockEmailService.getFromEmail()).thenAnswer((_) async => 'noreply@bssb.bayern');
+        when(mockEmailService.getRegistrationSubject()).thenAnswer((_) async => 'Registration');
+        when(mockConfigService.getString('frontendBaseUrl')).thenReturn('https://meinbssb.de');
 
-        final registrationBody = {
-          'PersonId': expectedPersonId,
-          'Email': email,
-          'Passwort': '',
-        };
-        final expectedResponse = {'ResultType': 1, 'PersonID': 123};
-        when(mockHttpClient.post('RegisterMyBSSB', registrationBody))
-            .thenAnswer((_) async => expectedResponse);
+        // Mock sendEmail to succeed
+        when(
+          mockEmailService.sendEmail(
+            from: anyNamed('from'),
+            recipient: anyNamed('recipient'),
+            subject: anyNamed('subject'),
+            htmlBody: anyNamed('htmlBody'),
+          ),
+        ).thenAnswer((_) async => <String, dynamic>{
+          'ResultType': 1,
+          'ResultMessage': 'Email sent successfully'
+        });
 
         final result = await authService.register(
           firstName: firstName,
@@ -154,95 +176,54 @@ void main() {
           personId: personId,
         );
 
-        expect(result, expectedResponse);
+        // The register method now returns a success message, not the old registration response
+        expect(result, isA<Map<String, dynamic>>());
+        
+        // Verify the PostgreSQL user was created
         verify(
-          mockHttpClient.get(
-            'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode',
-          ),
-        ).called(1);
-        verify(mockHttpClient.get('FindeMailadressen/$expectedPersonId'))
-            .called(1);
-        verify(mockHttpClient.post('RegisterMyBSSB', registrationBody))
-            .called(1);
-      });
-
-      test('should rethrow error on registration failure from person ID lookup',
-          () async {
-        const firstName = 'John';
-        const lastName = 'Doe';
-        const passNumber = '12345';
-        const email = 'john.doe@example.com';
-        const birthDate = '1990-01-01';
-        const zipCode = '10001';
-        const personId = '439287';
-
-        when(mockHttpClient.get(any))
-            .thenThrow(http.ClientException('Failed to find person ID'));
-
-        expect(
-          () => authService.register(
+          mockPostgrestService.createUser(
             firstName: firstName,
             lastName: lastName,
-            passNumber: passNumber,
             email: email,
-            birthDate: birthDate,
-            zipCode: zipCode,
+            passNumber: passNumber,
+            verificationToken: anyNamed('verificationToken'),
             personId: personId,
           ),
-          throwsA(isA<http.ClientException>()),
-        );
-        verify(
-          mockHttpClient.get(
-            'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode',
-          ),
         ).called(1);
-        verifyNever(mockHttpClient.get('FindeMailadressen/any'));
-        verifyNever(mockHttpClient.post(any, any));
+
+        // Verify email was sent (but don't verify the exact method since it's called internally)
+        verify(mockEmailService.getFromEmail()).called(1);
+        verify(mockEmailService.getRegistrationSubject()).called(1);
       });
 
-      test(
-          'should call post and return failure if email address check logic leads to it',
-          () async {
+      test('should handle registration failure when user creation fails', () async {
         const firstName = 'John';
         const lastName = 'Doe';
         const passNumber = '12345';
         const email = 'john.doe@example.com';
         const birthDate = '1990-01-01';
         const zipCode = '10001';
-        const expectedPersonId = '123';
         const personId = '439287';
 
+        // Mock getUserByPassNumber to return null (no existing user)
+        when(mockPostgrestService.getUserByPassNumber(passNumber))
+            .thenAnswer((_) async => null);
+
+        // Mock getUserByEmail to return null (no existing user)
+        when(mockPostgrestService.getUserByEmail(email))
+            .thenAnswer((_) async => null);
+
+        // Mock createUser to fail
         when(
-          mockHttpClient.get(
-            'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode',
+          mockPostgrestService.createUser(
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            email: anyNamed('email'),
+            passNumber: anyNamed('passNumber'),
+            verificationToken: anyNamed('verificationToken'),
+            personId: anyNamed('personId'),
           ),
-        ).thenAnswer((_) async => {'PERSONID': int.parse(expectedPersonId)});
-
-        // Simulate _findeMailadressen returning an email that doesn't match the input email
-        // With the current AuthService logic, this will still lead to the post call.
-        when(mockHttpClient.get('FindeMailadressen/$expectedPersonId'))
-            .thenAnswer(
-          (_) async => [
-            {
-              'LOGINMAIL': 'different@example.com',
-              'MAILADRESSEN': 'another@example.com',
-            }
-          ],
-        );
-
-        // Stub the final registration POST call to return a failure,
-        // as the email check inside AuthService is flawed and won't prevent the POST.
-        final registrationBody = {
-          'PersonId': expectedPersonId,
-          'Email': email,
-          'Passwort': '',
-        };
-        final expectedFailureResponse = {
-          'ResultType': 0,
-          'ResultMessage': 'Email mismatch or invalid',
-        };
-        when(mockHttpClient.post('RegisterMyBSSB', registrationBody))
-            .thenAnswer((_) async => expectedFailureResponse);
+        ).thenThrow(Exception('Database error'));
 
         final result = await authService.register(
           firstName: firstName,
@@ -254,16 +235,53 @@ void main() {
           personId: personId,
         );
 
-        expect(result, expectedFailureResponse); // Expect failure from post
-        verify(
-          mockHttpClient.get(
-            'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode',
+        // The register method catches exceptions and returns error response
+        expect(result['ResultType'], 0);
+        expect(result['ResultMessage'], isA<String>());
+      });
+
+      test('should handle existing verified user', () async {
+        const firstName = 'John';
+        const lastName = 'Doe';
+        const passNumber = '12345';
+        const email = 'john.doe@example.com';
+        const birthDate = '1990-01-01';
+        const zipCode = '10001';
+        const personId = '439287';
+
+        // Mock getUserByPassNumber to return an existing verified user
+        when(mockPostgrestService.getUserByPassNumber(passNumber))
+            .thenAnswer((_) async => {
+              'id': 1,
+              'is_verified': true,
+              'created_at': DateTime.now().toIso8601String(),
+            });
+
+        // Mock createUser to throw exception (since this would be handled in registration screen)
+        when(
+          mockPostgrestService.createUser(
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            email: anyNamed('email'),
+            passNumber: anyNamed('passNumber'),
+            verificationToken: anyNamed('verificationToken'),
+            personId: anyNamed('personId'),
           ),
-        ).called(1);
-        verify(mockHttpClient.get('FindeMailadressen/$expectedPersonId'))
-            .called(1);
-        verify(mockHttpClient.post('RegisterMyBSSB', registrationBody))
-            .called(1); // Post is called
+        ).thenThrow(Exception('User already exists'));
+
+        final result = await authService.register(
+          firstName: firstName,
+          lastName: lastName,
+          passNumber: passNumber,
+          email: email,
+          birthDate: birthDate,
+          zipCode: zipCode,
+          personId: personId,
+        );
+
+        // The register method catches exceptions and returns error response
+        expect(result['ResultType'], 0);
+        expect(result['ResultMessage'], isA<String>());
       });
     });
 
