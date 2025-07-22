@@ -146,7 +146,7 @@ void main() {
           'email': email,
           'pass_number': passNumber,
           'person_id': personId,
-        });
+        },);
 
         // Mock email service methods
         when(mockEmailService.getFromEmail()).thenAnswer((_) async => 'noreply@bssb.bayern');
@@ -163,8 +163,8 @@ void main() {
           ),
         ).thenAnswer((_) async => <String, dynamic>{
           'ResultType': 1,
-          'ResultMessage': 'Email sent successfully'
-        });
+          'ResultMessage': 'Email sent successfully',
+        },);
 
         final result = await authService.register(
           firstName: firstName,
@@ -255,7 +255,7 @@ void main() {
               'id': 1,
               'is_verified': true,
               'created_at': DateTime.now().toIso8601String(),
-            });
+            },);
 
         // Mock createUser to throw exception (since this would be handled in registration screen)
         when(
