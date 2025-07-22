@@ -28,6 +28,7 @@
   "cacheExpirationHours": "24",
   "smtpSettings": {
     "host": "localhost",
+    "port": "1025",
     "username": "",
     "password": "",
     "fromEmail": "do-not-reply@bssb.de"

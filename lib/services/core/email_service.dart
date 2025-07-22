@@ -54,6 +54,7 @@ class EmailService {
 
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
+      final smtpPort = _configService.getString('port', 'smtpSettings');
       final username = _configService.getString('username', 'smtpSettings');
       final password = _configService.getString('password', 'smtpSettings');
 
@@ -71,7 +72,7 @@ class EmailService {
         smtpHost,
         username: username,
         password: password,
-        port: 1025,
+        port: int.parse(smtpPort!),
         ssl: false,
         allowInsecure: true,
         ignoreBadCertificate: true,
