@@ -363,6 +363,8 @@ class UIConstants {
   static const double dialogFabRight = 48.0;
   static const double dialogFabBottom = 80.0;
 
+  static const double profilePictureSize = 60.0; // Size for the profile picture
+
   /// Tight margin for FABs in special dialogs (e.g., Personen anmelden)
   static const double dialogFabTightRight = 16.0;
   static const double dialogFabTightBottom = 16.0;

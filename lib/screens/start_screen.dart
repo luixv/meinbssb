@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/screens/logo_widget.dart';
@@ -29,17 +30,40 @@ class StartScreen extends StatefulWidget {
 class StartScreenState extends State<StartScreen> {
   List<Schulungstermin> schulungen = [];
   bool isLoading = true;
+  Uint8List? _profilePictureBytes; // State variable for profile picture bytes
 
   @override
   void initState() {
     super.initState();
-    fetchSchulungen();
+    _fetchSchulungen();
+    _fetchProfilePicture(); // Fetch profile picture on init
+
     LoggerService.logInfo(
       'StartScreen initialized with user: ${widget.userData}',
     );
   }
 
-  Future<void> fetchSchulungen() async {
+  Future<void> _fetchProfilePicture() async {
+    if (widget.userData?.personId == null) {
+      return;
+    }
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      // Call the updated fetchProfilPicture method that returns Uint8List
+      String personId = widget.userData!.personId.toString();
+      final bytes = await apiService.fetchProfilPicture(personId);
+      setState(() {
+        _profilePictureBytes = bytes;
+      });
+    } catch (e) {
+      print('Error fetching profile picture: $e');
+      setState(() {
+        _profilePictureBytes = null; // Ensure it's null on error
+      });
+    }
+  }
+
+  Future<void> _fetchSchulungen() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     final personId = widget.userData?.personId;
 
@@ -191,11 +215,12 @@ class StartScreenState extends State<StartScreen> {
           LoggerService.logInfo(
             'Unregistered from Schulung $schulungenTeilnehmerID',
           );
-          
+
           // Send unregistration email notification
           if (widget.userData != null) {
-            final formattedDate = '${schulungen[index].datum.day.toString().padLeft(2, '0')}.${schulungen[index].datum.month.toString().padLeft(2, '0')}.${schulungen[index].datum.year}';
-            
+            final formattedDate =
+                '${schulungen[index].datum.day.toString().padLeft(2, '0')}.${schulungen[index].datum.month.toString().padLeft(2, '0')}.${schulungen[index].datum.year}';
+
             await apiService.sendSchulungAbmeldungEmail(
               personId: widget.userData!.personId.toString(),
               schulungName: schulungDescription,
@@ -204,8 +229,8 @@ class StartScreenState extends State<StartScreen> {
               lastName: widget.userData!.namen,
             );
           }
-          
-          await fetchSchulungen();
+
+          await _fetchSchulungen();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -246,7 +271,34 @@ class StartScreenState extends State<StartScreen> {
         child: Column(
           crossAxisAlignment: UIConstants.startCrossAlignment,
           children: [
-            const LogoWidget(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const LogoWidget(),
+                // Display profile picture or default icon
+                _profilePictureBytes != null && _profilePictureBytes!.isNotEmpty
+                    ? ClipOval(
+                        child: Image.memory(
+                          _profilePictureBytes!,
+                          width: UIConstants.profilePictureSize,
+                          height: UIConstants.profilePictureSize,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.person,
+                              size: UIConstants.profilePictureSize,
+                              color: UIConstants.defaultAppColor,
+                            );
+                          },
+                        ),
+                      )
+                    : const Icon(
+                        Icons.person,
+                        size: UIConstants.profilePictureSize,
+                        color: UIConstants.defaultAppColor,
+                      ),
+              ],
+            ),
             const SizedBox(height: UIConstants.spacingM),
             ScaledText(
               "${userData?.vorname ?? ''} ${userData?.namen ?? ''}",

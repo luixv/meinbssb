@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
+import 'dart:typed_data'; // Import Uint8List
 
 class PostgrestService {
   PostgrestService({
@@ -246,5 +247,43 @@ class PostgrestService {
       LoggerService.logError('Error deleting profile photo: $e');
       return false;
     }
+  }
+
+  /// Fake method to fetch a profile picture URL for a given user ID.
+  /// Returns a placeholder image URL or null if no picture is available.
+  /// Fake method to fetch a profile picture as Uint8List for a given user ID.
+  /// Returns dummy image data or null if no picture is available.
+  Future<Uint8List?> fetchProfilPicture(String userId) async {
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    ); // Simulate network delay
+    if (userId == 'user123') {
+      // Return a very small, simple dummy image (e.g., a 1x1 transparent PNG)
+      // In a real application, you would fetch actual image bytes from a server.
+      // This is a base64 encoded 1x1 transparent PNG.
+      const String base64Image =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      return Uint8List.fromList(
+        List.from(base64Decode(base64Image)),
+      ); // Decode base64 to Uint8List
+    }
+    return null; // No picture available for other users
+  }
+}
+
+// Helper function to decode base64 string (not part of Flutter, usually in dart:convert)
+Uint8List base64Decode(String source) {
+  // This is a simplified example. In a real Flutter app, you'd use dart:convert:
+  // import 'dart:convert';
+  // return base64Decode(source);
+  // For this isolated example, we'll just return a dummy list.
+  // This part needs to be replaced with actual base64 decoding if running outside a full Flutter env.
+  // For demonstration purposes, we'll just return an empty list if dart:convert is not available.
+  try {
+    return Uint8List.fromList(
+      List.from(source.codeUnits),
+    ); // Placeholder for actual base64 decoding
+  } catch (e) {
+    return Uint8List(0); // Return empty list on error
   }
 }

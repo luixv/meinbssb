@@ -444,4 +444,10 @@ class ApiService {
   ) async {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
+
+  /// Fake method to fetch a profile picture URL for a given user ID.
+  /// Returns a placeholder image URL or null if no picture is available.
+  Future<Uint8List?> fetchProfilPicture(String userId) async {
+    return _postgrestService.fetchProfilPicture(userId);
+  }
 }
