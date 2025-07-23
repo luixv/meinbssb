@@ -321,6 +321,42 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
       ) as _i4.Future<String?>);
 
   @override
+  _i4.Future<String?> getSchulungAbmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungSubject,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<String?> getSchulungAbmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungContent,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<String?> getSchulungAnmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungSubject,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
+  _i4.Future<String?> getSchulungAnmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungContent,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
   _i4.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -342,6 +378,66 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
             personId,
             registeredEmail,
           ],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> sendSchulungAbmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAbmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> sendSchulungAnmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+    required String? passnumber,
+    required String? email,
+    required int? schulungRegistered,
+    required int? schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAnmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+            #passnumber: passnumber,
+            #email: email,
+            #schulungRegistered: schulungRegistered,
+            #schulungTotal: schulungTotal,
+            #location: location,
+            #eventDateTime: eventDateTime,
+          },
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

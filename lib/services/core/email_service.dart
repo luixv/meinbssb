@@ -8,6 +8,7 @@ import 'package:mailer/smtp_server.dart' as smtp;
 import 'config_service.dart';
 import 'logger_service.dart';
 import 'http_client.dart';
+import 'calendar_service.dart';
 
 abstract class EmailSender {
   Future<mailer.SendReport> send(
@@ -31,13 +32,16 @@ class EmailService {
     required EmailSender emailSender,
     required ConfigService configService,
     required HttpClient httpClient,
+    CalendarService? calendarService,
   })  : _emailSender = emailSender,
         _configService = configService,
-        _httpClient = httpClient;
+        _httpClient = httpClient,
+        _calendarService = calendarService;
 
   final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
   final HttpClient _httpClient;
+  final CalendarService? _calendarService;
 
   Future<Map<String, dynamic>> sendEmail({
     required String from,
@@ -146,6 +150,32 @@ class EmailService {
     }
   }
 
+  Future<String?> getSchulungAbmeldungSubject() async {
+    return _configService.getString('schulungAbmeldungSubject', 'emailContent');
+  }
+
+  Future<String?> getSchulungAbmeldungContent() async {
+    try {
+      return File('lib/html/schulungAbmeldungEmail.html').readAsString();
+    } catch (e) {
+      LoggerService.logError('Error reading schulungAbmeldungEmail.html: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getSchulungAnmeldungSubject() async {
+    return _configService.getString('schulungAnmeldungSubject', 'emailContent');
+  }
+
+  Future<String?> getSchulungAnmeldungContent() async {
+    try {
+      return File('lib/html/schulungAnmeldungEmail.html').readAsString();
+    } catch (e) {
+      LoggerService.logError('Error reading schulungAnmeldungEmail.html: $e');
+      return null;
+    }
+  }
+
   Future<List<String>> getEmailAddressesByPersonId(String personId) async {
     try {
       final response = await _httpClient.get('FindeMailadressen/$personId');
@@ -202,6 +232,146 @@ class EmailService {
       LoggerService.logError(
         'Error sending account creation notifications: $e',
       );
+    }
+  }
+
+  Future<void> sendSchulungAbmeldungEmail({
+    required String personId,
+    required String schulungName,
+    required String schulungDate,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      // Get all email addresses for this person
+      final emailAddresses = await getEmailAddressesByPersonId(personId);
+
+      if (emailAddresses.isEmpty) {
+        LoggerService.logWarning(
+          'No email addresses found for person ID: $personId',
+        );
+        return;
+      }
+
+      // Get email template and subject
+      final fromEmail = await getFromEmail();
+      final subject = await getSchulungAbmeldungSubject();
+      final emailContent = await getSchulungAbmeldungContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        LoggerService.logError(
+          'Email configuration missing for training unregistration notification',
+        );
+        return;
+      }
+
+      // Replace placeholders in the email content
+      final personalizedContent = emailContent
+          .replaceAll('{schulung_name}', schulungName)
+          .replaceAll('{schulung_date}', schulungDate)
+          .replaceAll('{firstname}', firstName)
+          .replaceAll('{lastname}', lastName);
+
+      // Send email to all addresses
+      for (final emailAddress in emailAddresses) {
+        try {
+          await sendEmail(
+            from: fromEmail,
+            recipient: emailAddress,
+            subject: subject,
+            htmlBody: personalizedContent,
+          );
+          LoggerService.logInfo(
+            'Sent training unregistration notification to: $emailAddress',
+          );
+        } catch (e) {
+          LoggerService.logError(
+            'Failed to send training unregistration notification to $emailAddress: $e',
+          );
+        }
+      }
+
+      LoggerService.logInfo('Sent training unregistration notification emails');
+    } catch (e) {
+      LoggerService.logError('Error sending training unregistration notifications: $e');
+    }
+  }
+
+  Future<void> sendSchulungAnmeldungEmail({
+    required String personId,
+    required String schulungName,
+    required String schulungDate,
+    required String firstName,
+    required String lastName,
+    required String passnumber,
+    required String email,
+    required int schulungRegistered,
+    required int schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) async {
+    try {
+      // Get email template and subject
+      final fromEmail = await getFromEmail();
+      final subject = await getSchulungAnmeldungSubject();
+      final emailContent = await getSchulungAnmeldungContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        LoggerService.logError(
+          'Email configuration missing for training registration notification',
+        );
+        return;
+      }
+
+      // Generate calendar link if CalendarService is available
+      String calendarLink = '#';
+      if (_calendarService != null && eventDateTime != null) {
+        try {
+          calendarLink = await _calendarService.generateCalendarLink(
+            eventTitle: schulungName,
+            eventDate: eventDateTime,
+            location: location ?? 'BSSB Schulung',
+            description: 'Schulung: $schulungName\nTeilnehmer: $firstName $lastName\nPassnummer: $passnumber',
+            organizerEmail: fromEmail,
+          );
+        } catch (e) {
+          LoggerService.logError('Error generating calendar link: $e');
+          calendarLink = '#';
+        }
+      }
+
+      // Replace placeholders in the email content
+      final personalizedContent = emailContent
+          .replaceAll('{schulung_name}', schulungName)
+          .replaceAll('{schulung_date}', schulungDate)
+          .replaceAll('{firstname}', firstName)
+          .replaceAll('{lastname}', lastName)
+          .replaceAll('{passnumber}', passnumber)
+          .replaceAll('{email}', email)
+          .replaceAll('{schulung_registered}', schulungRegistered.toString())
+          .replaceAll('{schulung_total}', schulungTotal.toString())
+          .replaceAll('{calendar_link}', calendarLink);
+
+      // Send email to the provided email address
+      try {
+        await sendEmail(
+          from: fromEmail,
+          recipient: email,
+          subject: subject,
+          htmlBody: personalizedContent,
+        );
+        LoggerService.logInfo(
+          'Sent training registration notification to: $email',
+        );
+      } catch (e) {
+        LoggerService.logError(
+          'Failed to send training registration notification to $email: $e',
+        );
+      }
+
+      LoggerService.logInfo('Sent training registration notification email');
+    } catch (e) {
+      LoggerService.logError('Error sending training registration notification: $e');
     }
   }
 }

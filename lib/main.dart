@@ -19,6 +19,7 @@ import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
+import 'services/core/calendar_service.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'services/api/oktoberfest_service.dart';
 import 'package:flutter/foundation.dart';
@@ -103,6 +104,7 @@ class AppInitializer {
   static late VereinService vereinService;
   static late TokenService tokenService;
   static late PostgrestService postgrestService;
+  static late CalendarService calendarService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -147,12 +149,15 @@ class AppInitializer {
       client: baseHttpClient,
     );
 
+    calendarService = CalendarService();
+
     // Initialize EmailService before AuthService since AuthService depends on it
     final emailSender = MailerEmailSender();
     final emailService = EmailService(
       emailSender: emailSender,
       configService: configService,
       httpClient: httpClient,
+      calendarService: calendarService,
     );
 
     trainingService = TrainingService(
@@ -196,6 +201,7 @@ class AppInitializer {
       vereinService: vereinService,
       postgrestService: postgrestService,
       emailService: emailService,
+      calendarService: calendarService,
     );
 
     _registerProviders();
@@ -242,6 +248,10 @@ class AppInitializer {
     fontSizeProvider = ChangeNotifierProvider<FontSizeProvider>(
       create: (context) => FontSizeProvider(),
     );
+
+    calendarServiceProvider = Provider<CalendarService>(
+      create: (context) => calendarService,
+    );
   }
 
   // Public static provider instances
@@ -256,4 +266,5 @@ class AppInitializer {
   static late Provider<UserService> userServiceProvider;
   static late Provider<TokenService> tokenServiceProvider;
   static late ChangeNotifierProvider<FontSizeProvider> fontSizeProvider;
+  static late Provider<CalendarService> calendarServiceProvider;
 }

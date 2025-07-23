@@ -144,18 +144,23 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     if (msg == 'Teilnehmer erfolgreich erfasst' ||
         msg == 'Teilnehmer bereits erfasst' ||
         msg == 'Teilnehmer erfolgreich aktualisiert') {
-      await widget.emailService.sendEmail(
-        from: widget.configService
-                .getString('smtpSettings.fromEmail') ??
-            'do-not-reply@bssb.de',
-        recipient: emailController.text,
-        subject: widget.configService
-                .getString('emailContent.schulungAnmeldungSubject') ??
-            'Schulung Anmeldung',
-        htmlBody: widget.configService
-                .getString('emailContent.schulungContent') ??
-            'Sie sind für einen Schulung angemeldet',
+      // Send email notification
+      final formattedDate = '${widget.schulungsTermin.datum.day.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.month.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.year}';
+      
+      await widget.apiService.sendSchulungAnmeldungEmail(
+        personId: personId.toString(),
+        schulungName: widget.schulungsTermin.bezeichnung,
+        schulungDate: formattedDate,
+        firstName: vornameController.text,
+        lastName: nachnameController.text,
+        passnumber: passnummerController.text,
+        email: emailController.text,
+        schulungRegistered: response.platz,
+        schulungTotal: response.maxPlaetze,
+        location: widget.schulungsTermin.ort,
+        eventDateTime: widget.schulungsTermin.datum,
       );
+      
       if (!mounted) return;
       setState(() => isLoading = false);
       if (!mounted) return;

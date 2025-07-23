@@ -47,6 +47,7 @@ class MyAppWrapper extends StatelessWidget {
         AppInitializer.userServiceProvider,
         AppInitializer.trainingServiceProvider,
         AppInitializer.fontSizeProvider,
+        AppInitializer.calendarServiceProvider,
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         Provider<HttpClient>(create: (_) => AppInitializer.httpClient),
       ],
@@ -203,8 +204,13 @@ class _MyAppState extends State<MyApp> {
       // Robust logic for web: handle Schulungen-only and login systems
       bool isSchulungenUrl = fragment.startsWith('schulungen_search') ||
           path.startsWith('/schulungen_search');
+      bool isSetPasswordUrl = fragment.startsWith('set-password') ||
+          path.startsWith('/set-password');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
-      if (isSchulungenUrl) {
+      if (isSetPasswordUrl) {
+        // If on set-password URL, route directly to set-password
+        initialRoute = '/set-password';
+      } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
             !rememberedRoute.startsWith('schulungen_search')) {

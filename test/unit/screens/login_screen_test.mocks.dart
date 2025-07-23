@@ -700,6 +700,66 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> sendSchulungAbmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAbmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendSchulungAnmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+    required String? passnumber,
+    required String? email,
+    required int? schulungRegistered,
+    required int? schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAnmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+            #passnumber: passnumber,
+            #email: email,
+            #schulungRegistered: schulungRegistered,
+            #schulungTotal: schulungTotal,
+            #location: location,
+            #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
         Invocation.method(
           #clearAllPassdatenCache,
@@ -1011,6 +1071,42 @@ class MockEmailService extends _i1.Mock implements _i21.EmailService {
       ) as _i5.Future<String?>);
 
   @override
+  _i5.Future<String?> getSchulungAbmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getSchulungAbmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getSchulungAnmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getSchulungAnmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
   _i5.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1032,6 +1128,66 @@ class MockEmailService extends _i1.Mock implements _i21.EmailService {
             personId,
             registeredEmail,
           ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendSchulungAbmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAbmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendSchulungAnmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+    required String? passnumber,
+    required String? email,
+    required int? schulungRegistered,
+    required int? schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAnmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+            #passnumber: passnumber,
+            #email: email,
+            #schulungRegistered: schulungRegistered,
+            #schulungTotal: schulungTotal,
+            #location: location,
+            #eventDateTime: eventDateTime,
+          },
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),

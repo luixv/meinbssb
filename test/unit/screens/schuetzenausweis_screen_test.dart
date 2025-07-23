@@ -21,6 +21,7 @@ import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/providers/theme_provider.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/calendar_service.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:mockito/annotations.dart';
@@ -348,6 +349,8 @@ class DummyVereinService extends VereinService {
   DummyVereinService() : super(httpClient: DummyHttpClient());
 }
 
+class DummyCalendarService extends CalendarService {}
+
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
       : super(
@@ -363,6 +366,7 @@ class MockApiService extends ApiService {
           vereinService: DummyVereinService(),
           postgrestService: PostgrestService(configService: ConfigService.instance),
           emailService: DummyEmailService(),
+          calendarService: DummyCalendarService(),
         );
   final Uint8List? fetchResult;
   final bool shouldThrow;

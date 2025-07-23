@@ -35,8 +35,8 @@ services:
     image: caddy:2
     container_name: caddy
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8080:8080" #Flutter Web
+      - "8081:8081" #Postgrest API
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ../build/web:/web
@@ -51,50 +51,5 @@ services:
       - "1025:1025"
       - "8025:8025"
 
-  #Redis is used by Mailu for caching and background task coordination 
-  redis:
-    image: redis:alpine
-    container_name: mailu_redis
-    restart: always
-
-  # Admin interface for Mailu, used to configure domains, users, and policies
-  mailu_admin:
-    image: ghcr.io/mailu/admin:2.0
-    container_name: mailu_admin
-    restart: always
-    env_file: .env
-    volumes:
-      - mailu_data:/data
-    depends_on:
-      - redis
-
-  # SMTP server (Postfix) for sending emails
-  # Restrict it to only send (disable incoming mail config in .env)
-  mailu_smtp:
-    image: ghcr.io/mailu/postfix:2.0
-    container_name: mailu_smtp
-    restart: always
-    env_file: .env
-    volumes:
-      - mailu_data:/data
-    depends_on:
-      - mailu_admin
-
-  # Frontend proxy (Nginx) for exposing Mailu admin UI and handling mail traffic
-  mailu_front:
-    image: ghcr.io/mailu/nginx:2.0
-    container_name: mailu_front
-    restart: always
-    env_file: .env
-    ports:
-      - "80:80" # Admin UI
-      - "587:587" # SMTP AUTH (submission port)
-    volumes:
-      - mailu_cert:/certs
-    depends_on:
-      - mailu_smtp
-
 volumes:
-  mailu_data:
-  mailu_cert:
   pgdata:

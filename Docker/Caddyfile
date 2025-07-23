@@ -1,18 +1,18 @@
-# Web app (Flutter)
+# Serve Flutter Web App
 http://:8080 {
   root * /web
   file_server
   try_files {path} /index.html
 }
 
-# PostgREST API (no /api prefix)
+# Serve PostgREST API with full CORS support
 http://:8081 {
 
+  # Handle CORS preflight requests (OPTIONS)
   @cors_preflight {
     method OPTIONS
   }
 
-  # Handle CORS preflight for all routes
   handle @cors_preflight {
     respond "" 204
     header Access-Control-Allow-Origin "*"
@@ -21,10 +21,9 @@ http://:8081 {
     header Access-Control-Allow-Credentials "false"
   }
 
-  # Handle all actual requests with CORS headers
+  # Handle all actual API calls with CORS headers
   handle {
     reverse_proxy postgrest:3000
-    header Access-Control-Allow-Origin "*"
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
     header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
     header Access-Control-Allow-Credentials "false"
