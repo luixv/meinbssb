@@ -10,6 +10,7 @@ import '/screens/app_menu.dart';
 import '/services/api_service.dart'; // Import your ApiService
 import '/services/core/logger_service.dart'; // Import LoggerService
 import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
+import '/screens/personal_pict_upload_success.dart';
 
 class PersonalPictUploadScreen extends StatefulWidget {
   const PersonalPictUploadScreen({
@@ -30,7 +31,17 @@ class PersonalPictUploadScreen extends StatefulWidget {
 
 class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   XFile? _selectedImage;
-  bool _isUploading = false; // New state variable for upload process
+  bool _isUploading = false; // State variable for upload process
+  bool _isDeleting = false; // New state variable for delete process
+  bool _isImageUploadedToServer =
+      false; // New state to track successful upload to server
+
+  @override
+  void initState() {
+    super.initState();
+    // Potentially load existing profile picture here if available and set _isImageUploadedToServer accordingly
+    // For now, we assume _selectedImage is null and _isImageUploadedToServer is false initially.
+  }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -39,6 +50,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       if (image != null) {
         setState(() {
           _selectedImage = image;
+          _isImageUploadedToServer =
+              false; // Reset this when a new image is selected
         });
         LoggerService.logInfo('Image selected: ${image.path}');
       } else {
@@ -135,9 +148,22 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             ),
           );
           setState(() {
-            _selectedImage =
-                null; // Clear selected image after successful upload
+            _isImageUploadedToServer = true; // Set to true on successful upload
           });
+          // Navigate to the success screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PersonalPictUploadSuccessScreen(
+                userData: widget.userData,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+              ),
+            ),
+          );
+          LoggerService.logInfo(
+            'Navigating to PersonalPictUploadSuccessScreen (placeholder).',
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -175,6 +201,102 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       if (mounted) {
         setState(() {
           _isUploading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deleteImage() async {
+    if (widget.userData == null || widget.userData!.personId == 0) {
+      LoggerService.logError('User data or Person ID is missing for deletion.');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Benutzerdaten fehlen. Bild kann nicht gelöscht werden.',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final String userId = widget.userData!.personId
+          .toString(); // Assuming personId is the userId
+
+      LoggerService.logInfo('Attempting to delete image for userId: $userId');
+      final bool success = await apiService.deleteProfilePhoto(userId);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: ScaledText(
+                'Profilbild erfolgreich gelöscht!',
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIStyles.bodyStyle.fontSize! *
+                      Provider.of<FontSizeProvider>(context, listen: false)
+                          .scaleFactor,
+                ),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          setState(() {
+            _selectedImage =
+                null; // Clear the displayed image after successful deletion
+            _isImageUploadedToServer =
+                false; // Reset this when image is deleted
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: ScaledText(
+                'Fehler beim Löschen des Profilbilds.',
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIStyles.bodyStyle.fontSize! *
+                      Provider.of<FontSizeProvider>(context, listen: false)
+                          .scaleFactor,
+                ),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during image deletion: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Ein Fehler ist aufgetreten: $e',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDeleting = false;
         });
       }
     }
@@ -302,14 +424,38 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isUploading ? null : _uploadImage, // Call _uploadImage
-        backgroundColor: UIConstants.defaultAppColor,
-        child: _isUploading
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              )
-            : const Icon(Icons.save, color: Colors.white),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end, // Aligns FABs to the bottom
+        children: [
+          // Delete FAB (visible only if an image is selected AND successfully uploaded to server)
+          if (_selectedImage != null && _isImageUploadedToServer)
+            FloatingActionButton(
+              heroTag: 'deleteFab', // Unique tag for delete FAB
+              onPressed: _isDeleting ? null : _deleteImage,
+              backgroundColor:
+                  UIConstants.defaultAppColor, // Same color as save
+              child: _isDeleting
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Icon(Icons.delete, color: Colors.white),
+            ),
+          if (_selectedImage != null && _isImageUploadedToServer)
+            const SizedBox(
+              height: UIConstants.spacingM,
+            ), // Spacing between buttons
+          // Save FAB
+          FloatingActionButton(
+            heroTag: 'saveFab', // Unique tag for save FAB
+            onPressed: _isUploading ? null : _uploadImage,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: _isUploading
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                : const Icon(Icons.save, color: Colors.white),
+          ),
+        ],
       ),
       endDrawer: AppDrawer(
         userData: widget.userData,
