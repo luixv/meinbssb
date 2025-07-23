@@ -781,6 +781,16 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<_i10.Uint8List?> fetchProfilPicture(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchProfilPicture,
+          [userId],
+        ),
+        returnValue: _i3.Future<_i10.Uint8List?>.value(),
+      ) as _i3.Future<_i10.Uint8List?>);
 }
 
 /// A class which mocks [CacheService].

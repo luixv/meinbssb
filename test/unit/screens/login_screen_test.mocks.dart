@@ -964,6 +964,16 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<_i13.Uint8List?> fetchProfilPicture(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchProfilPicture,
+          [userId],
+        ),
+        returnValue: _i5.Future<_i13.Uint8List?>.value(),
+      ) as _i5.Future<_i13.Uint8List?>);
 }
 
 /// A class which mocks [EmailService].

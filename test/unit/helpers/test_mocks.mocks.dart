@@ -1063,6 +1063,16 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i16.Uint8List?> fetchProfilPicture(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchProfilPicture,
+          [userId],
+        ),
+        returnValue: _i4.Future<_i16.Uint8List?>.value(),
+      ) as _i4.Future<_i16.Uint8List?>);
 }
 
 /// A class which mocks [ConfigService].
@@ -2147,4 +2157,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
         ),
         returnValue: _i4.Future<bool>.value(false),
       ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<_i16.Uint8List?> fetchProfilPicture(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchProfilPicture,
+          [userId],
+        ),
+        returnValue: _i4.Future<_i16.Uint8List?>.value(),
+      ) as _i4.Future<_i16.Uint8List?>);
 }
