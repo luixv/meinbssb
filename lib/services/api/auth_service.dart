@@ -3,13 +3,18 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:meinbssb/constants/messages.dart';
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
+import '/services/core/email_service.dart';
+import '/services/core/postgrest_service.dart';
 import '/services/core/config_service.dart';
 import 'package:meinbssb/services/core/token_service.dart';
 
@@ -19,19 +24,27 @@ class AuthService {
     required CacheService cacheService,
     required NetworkService networkService,
     required ConfigService configService,
+    required PostgrestService postgrestService,
     FlutterSecureStorage? secureStorage,
+    required EmailService emailService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
         _networkService = networkService,
         _configService = configService,
-        _secureStorage = secureStorage ?? const FlutterSecureStorage();
+        _postgrestService = postgrestService,
+        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+        _emailService = emailService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
   final ConfigService _configService;
-  final FlutterSecureStorage
-      _secureStorage; // <--- Declare it here, but DO NOT initialize it with 'const FlutterSecureStorage()'
+  final PostgrestService _postgrestService;
+  final FlutterSecureStorage _secureStorage;
+  final EmailService _emailService;
+
+  // Add getter for postgrestService
+  PostgrestService get postgrestService => _postgrestService;
 
   TokenService? _tokenService;
 
@@ -42,43 +55,85 @@ class AuthService {
     required String email,
     required String birthDate,
     required String zipCode,
+    required String personId,
   }) async {
     try {
-      /* ErstelleMyBSSBAccount/
-           Body as JSON
-           {"PersonID": 439287,
-            "Email": "kostas@rizoudis1.de",
-            "Passwort": "test1"}
-      */
+      // Generate a secure verification token
+      final secureRandom = Random.secure();
+      final bytes = List<int>.generate(32, (_) => secureRandom.nextInt(256));
+      final verificationToken = base64Url.encode(bytes);
 
-      String password = '';
-      String personId = await _findePersonID(
-        lastName,
-        firstName,
-        birthDate,
-        passNumber,
-        zipCode,
+      // Create user in PostgreSQL
+      await _postgrestService.createUser(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        passNumber: passNumber,
+        personId: personId,
+        verificationToken: verificationToken, // pass as verificationToken
       );
 
-      String loginMail = await _findeMailadressen(personId);
-
-      // ERROR - This logical condition (loginMail.isEmpty && loginMail == 'null' && loginMail != email)
-      // is always false and will never return {}. The post call will always be made.
-      if (loginMail.isEmpty && loginMail == 'null' && loginMail != email) {
-        LoggerService.logError('No email address found.');
-        return {};
+      // Send registration email
+      final fromEmail = await _emailService.getFromEmail();
+      final subject = await _emailService.getRegistrationSubject();
+      final emailContent = await _emailService.getRegistrationContent();
+      // Use the app's frontend URL for the verification link
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'email',
+        protocolKey: 'emailProtocol',
+      );
+      final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'web',
+        protocolKey: 'webProtocol',
+      );
+      if (fromEmail != null &&
+          subject != null &&
+          emailContent != null &&
+          baseUrl.isNotEmpty) {
+        final verificationLink =
+            '${baseUrlWebApp}set-password?token=$verificationToken';
+        final emailBody = emailContent
+            .replaceAll('{firstName}', firstName)
+            .replaceAll('{lastName}', lastName)
+            .replaceAll('{verificationLink}', verificationLink);
+        await _emailService.sendEmail(
+          from: fromEmail,
+          recipient: email,
+          subject: subject,
+          htmlBody: emailBody,
+        );
       }
 
-      final response = await _httpClient.post('RegisterMyBSSB', {
-        'PersonId': personId,
-        'Email': email,
-        'Passwort': password,
-      });
+      // Store registration data for later use
+      final registrationData = {
+        'personId': personId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'passNumber': passNumber,
+        'email': email,
+        'birthDate': birthDate,
+        'zipCode': zipCode,
+        'verificationToken':
+            verificationToken, // keep as verificationToken in Dart
+      };
 
-      return response is Map<String, dynamic> ? response : {};
+      await _cacheService.setString(
+        'registration_$email',
+        jsonEncode(registrationData),
+      );
+
+      return {
+        'ResultType': 1,
+        'ResultMessage': Messages.registrationDataStored,
+      };
     } catch (e) {
       LoggerService.logError('Registration error: $e');
-      rethrow;
+      return {
+        'ResultType': 0,
+        'ResultMessage': Messages.registrationDataStoreFailed,
+      };
     }
   }
 
@@ -88,73 +143,6 @@ class AuthService {
 Ergebnis der Abfrage:
 [{"PERSONID":439287}]
 */
-
-  Future<String> _findePersonID(
-    String namen,
-    String vorname,
-    String geburtsdatum,
-    String passNumber,
-    String plz,
-  ) async {
-    try {
-      final response = await _httpClient
-          .get('FindePersonID/$namen/$vorname/$geburtsdatum/$passNumber/$plz');
-      if (response is Map<String, dynamic>) {
-        if (response['PERSONID'] != 0) {
-          return response['PERSONID'].toString();
-        } else {
-          LoggerService.logError('Person ID not found.');
-          return '0';
-        }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '0';
-      }
-    } catch (e) {
-      LoggerService.logError('Find Person ID error: $e');
-      rethrow;
-    }
-  }
-
-  Future<String> _findeMailadressen(
-    String personId,
-
-// This method will return THE FIRST EMAIL... Is thi correct??
-
-    /*
-    /FindeMailadressen/{PersonID}
-    Response
-    [
-    {
-        "MAILADRESSEN": "an719328@gmail.com",
-        "LOGINMAIL": "kostas@rizoudis1.de"
-    },
-    {
-        "MAILADRESSEN": "an963916@freenet.de",
-        "LOGINMAIL": "kostas@rizoudis1.de"
-    }
-  ]
-    */
-  ) async {
-    try {
-      final response = await _httpClient.get('FindeMailadressen/$personId');
-      if (response is List) {
-        if (response.isNotEmpty) {
-          final email = response[0]['LOGINMAIL'];
-          return email;
-        } else {
-          LoggerService.logError('No email addresses found.');
-          return '';
-        }
-      } else {
-        LoggerService.logError('Invalid server response.');
-        return '';
-      }
-    } catch (e) {
-      LoggerService.logError('Find email address error: $e');
-      rethrow;
-    }
-  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -344,6 +332,42 @@ Ergebnis der Abfrage:
     }
   }
 
+  Future finalizeRegistration({
+    required String email,
+    required String password,
+    required String token,
+    required String personId,
+    required String passNumber,
+  }) async {
+    try {
+      final response = await _httpClient.post(
+        'ErstelleMyBSSBAccount',
+        {
+          'PersonID': int.tryParse(personId),
+          'Email': email,
+          'Passwort': jsonEncode(password),
+        },
+      );
+      if (response is List && response.isNotEmpty) {
+        final result = response[0];
+        if (result['ResultType'] == 1) {
+          // Mark user as verified in PostgreSQL
+          await _postgrestService.verifyUser(token);
+
+          // Send notification emails to all associated email addresses
+          await _emailService.sendAccountCreationNotifications(personId, email);
+
+          // Clear stored registration data after successful account creation
+          await _cacheService.remove('registration_$email');
+        }
+      }
+      return response;
+    } catch (e) {
+      LoggerService.logError('Error in finalizeRegistration: $e');
+      return {'ResultType': 0, 'ResultMessage': Messages.accountCreationFailed};
+    }
+  }
+
   Future<void> logout() async {
     try {
       LoggerService.logInfo('User logged out successfully.');
@@ -405,6 +429,27 @@ Ergebnis der Abfrage:
     } catch (e) {
       LoggerService.logError('isTokenValid error: $e');
       return false;
+    }
+  }
+
+  Future<String> getPersonIDByPassnummer(String passNumber) async {
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final endpoint = 'PersonID/$passNumber';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        final personId = response[0]['PERSONID'];
+        if (personId != null && personId != 0) {
+          return personId.toString();
+        }
+      }
+      LoggerService.logError('Person ID not found.');
+      return '0';
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
     }
   }
 }

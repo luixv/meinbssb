@@ -3,15 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-import 'dart:ui' as _i7;
+import 'dart:async' as _i4;
+import 'dart:ui' as _i8;
 
-import 'package:meinbssb/services/api/auth_service.dart' as _i2;
-import 'package:meinbssb/services/core/config_service.dart' as _i8;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i6;
-import 'package:meinbssb/services/core/network_service.dart' as _i5;
+import 'package:meinbssb/services/api/auth_service.dart' as _i3;
+import 'package:meinbssb/services/core/config_service.dart' as _i9;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i7;
+import 'package:meinbssb/services/core/network_service.dart' as _i6;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -27,8 +28,19 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDuration_0 extends _i1.SmartFake implements Duration {
-  _FakeDuration_0(
+class _FakePostgrestService_0 extends _i1.SmartFake
+    implements _i2.PostgrestService {
+  _FakePostgrestService_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDuration_1 extends _i1.SmartFake implements Duration {
+  _FakeDuration_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -40,19 +52,29 @@ class _FakeDuration_0 extends _i1.SmartFake implements Duration {
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i2.AuthService {
+class MockAuthService extends _i1.Mock implements _i3.AuthService {
   MockAuthService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<Map<String, dynamic>> register({
+  _i2.PostgrestService get postgrestService => (super.noSuchMethod(
+        Invocation.getter(#postgrestService),
+        returnValue: _FakePostgrestService_0(
+          this,
+          Invocation.getter(#postgrestService),
+        ),
+      ) as _i2.PostgrestService);
+
+  @override
+  _i4.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
     required String? email,
     required String? birthDate,
     required String? zipCode,
+    required String? personId,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -65,14 +87,15 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
             #email: email,
             #birthDate: birthDate,
             #zipCode: zipCode,
+            #personId: personId,
           },
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> login(
+  _i4.Future<Map<String, dynamic>> login(
     String? email,
     String? password,
   ) =>
@@ -85,22 +108,22 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
+  _i4.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #passwordReset,
           [passNumber],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> changePassword(
+  _i4.Future<Map<String, dynamic>> changePassword(
     int? personId,
     String? newPassword,
   ) =>
@@ -113,21 +136,44 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
           ],
         ),
         returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
+            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i4.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<void> logout() => (super.noSuchMethod(
+  _i4.Future<dynamic> finalizeRegistration({
+    required String? email,
+    required String? password,
+    required String? token,
+    required String? personId,
+    required String? passNumber,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #finalizeRegistration,
+          [],
+          {
+            #email: email,
+            #password: password,
+            #token: token,
+            #personId: personId,
+            #passNumber: passNumber,
+          },
+        ),
+        returnValue: _i4.Future<dynamic>.value(),
+      ) as _i4.Future<dynamic>);
+
+  @override
+  _i4.Future<void> logout() => (super.noSuchMethod(
         Invocation.method(
           #logout,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<int> findePersonID2(
+  _i4.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -139,50 +185,66 @@ class MockAuthService extends _i1.Mock implements _i2.AuthService {
             passnummer,
           ],
         ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
+        returnValue: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 
   @override
-  _i3.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
+  _i4.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
         Invocation.method(
           #fetchLoginEmail,
           [passnummer],
         ),
-        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #fetchLoginEmail,
             [passnummer],
           ),
         )),
-      ) as _i3.Future<String>);
+      ) as _i4.Future<String>);
 
   @override
-  _i3.Future<bool> isTokenValid() => (super.noSuchMethod(
+  _i4.Future<bool> isTokenValid() => (super.noSuchMethod(
         Invocation.method(
           #isTokenValid,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<String> getPersonIDByPassnummer(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPersonIDByPassnummer,
+          [passNumber],
+        ),
+        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getPersonIDByPassnummer,
+            [passNumber],
+          ),
+        )),
+      ) as _i4.Future<String>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i5.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i6.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<bool> hasInternet() => (super.noSuchMethod(
+  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
         Invocation.method(
           #hasInternet,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() => (super.noSuchMethod(
@@ -190,7 +252,7 @@ class MockNetworkService extends _i1.Mock implements _i5.NetworkService {
           #getCacheExpirationDuration,
           [],
         ),
-        returnValue: _FakeDuration_0(
+        returnValue: _FakeDuration_1(
           this,
           Invocation.method(
             #getCacheExpirationDuration,
@@ -203,7 +265,7 @@ class MockNetworkService extends _i1.Mock implements _i5.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i7.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -262,7 +324,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
           #getScalePercentage,
           [],
         ),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #getScalePercentage,
@@ -272,7 +334,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
       ) as String);
 
   @override
-  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -281,7 +343,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -311,7 +373,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i6.FontSizeProvider {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i8.ConfigService {
+class MockConfigService extends _i1.Mock implements _i9.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

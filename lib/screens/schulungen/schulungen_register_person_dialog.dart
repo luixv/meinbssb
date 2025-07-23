@@ -144,17 +144,16 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     if (msg == 'Teilnehmer erfolgreich erfasst' ||
         msg == 'Teilnehmer bereits erfasst' ||
         msg == 'Teilnehmer erfolgreich aktualisiert') {
-      // TODO Email in HTML
       await widget.emailService.sendEmail(
         from: widget.configService
-                .getString('emailRegistration.registrationFrom') ??
+                .getString('smtpSettings.fromEmail') ??
             'do-not-reply@bssb.de',
         recipient: emailController.text,
         subject: widget.configService
-                .getString('emailRegistration.registrationSubject') ??
+                .getString('emailContent.schulungAnmeldungSubject') ??
             'Schulung Anmeldung',
-        body: widget.configService
-                .getString('emailRegistration.registrationContent') ??
+        htmlBody: widget.configService
+                .getString('emailContent.schulungContent') ??
             'Sie sind für einen Schulung angemeldet',
       );
       if (!mounted) return;

@@ -1,15 +1,32 @@
-http://localhost:8081 {
+# Web app (Flutter)
+http://:8080 {
   root * /web
   file_server
+  try_files {path} /index.html
+}
 
-  handle_path /api/* {
+# PostgREST API (no /api prefix)
+http://:8081 {
+
+  @cors_preflight {
+    method OPTIONS
+  }
+
+  # Handle CORS preflight for all routes
+  handle @cors_preflight {
+    respond "" 204
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
+  }
+
+  # Handle all actual requests with CORS headers
+  handle {
     reverse_proxy postgrest:3000
-
-    header {
-      Access-Control-Allow-Origin "*"
-      Access-Control-Allow-Methods "GET, POST, OPTIONS"
-      Access-Control-Allow-Headers "Authorization, Content-Type"
-      Access-Control-Allow-Credentials false
-    }
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
   }
 }
