@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart'; // Import provider
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/screens/app_menu.dart';
+import '/services/api_service.dart'; // Import your ApiService
+import '/services/core/logger_service.dart'; // Import LoggerService
+import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
 
 class PersonalPictUploadScreen extends StatefulWidget {
   const PersonalPictUploadScreen({
@@ -26,27 +30,171 @@ class PersonalPictUploadScreen extends StatefulWidget {
 
 class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   XFile? _selectedImage;
+  bool _isUploading = false; // New state variable for upload process
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
+    try {
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          _selectedImage = image;
+        });
+        LoggerService.logInfo('Image selected: ${image.path}');
+      } else {
+        LoggerService.logInfo('Image selection cancelled.');
+      }
+    } catch (e) {
+      LoggerService.logError('Error picking image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Fehler beim Bildauswahl: $e',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_selectedImage == null) {
+      LoggerService.logWarning('No image selected for upload.');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Bitte wählen Sie zuerst ein Bild aus.',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (widget.userData == null || widget.userData!.personId == 0) {
+      LoggerService.logError('User data or Person ID is missing for upload.');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Benutzerdaten fehlen. Bild kann nicht hochgeladen werden.',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final imageBytes = await _selectedImage!.readAsBytes();
+      final String userId = widget.userData!.personId
+          .toString(); // Assuming personId is the userId
+
+      LoggerService.logInfo('Attempting to upload image for userId: $userId');
+      final bool success =
+          await apiService.uploadProfilePhoto(userId, imageBytes);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: ScaledText(
+                'Profilbild erfolgreich hochgeladen!',
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIStyles.bodyStyle.fontSize! *
+                      Provider.of<FontSizeProvider>(context, listen: false)
+                          .scaleFactor,
+                ),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          setState(() {
+            _selectedImage =
+                null; // Clear selected image after successful upload
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: ScaledText(
+                'Fehler beim Hochladen des Profilbilds.',
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIStyles.bodyStyle.fontSize! *
+                      Provider.of<FontSizeProvider>(context, listen: false)
+                          .scaleFactor,
+                ),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during image upload: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: ScaledText(
+              'Ein Fehler ist aufgetreten: $e',
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize: UIStyles.bodyStyle.fontSize! *
+                    Provider.of<FontSizeProvider>(context, listen: false)
+                        .scaleFactor,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
         backgroundColor: UIConstants.backgroundColor,
         iconTheme: const IconThemeData(color: UIConstants.textColor),
-        title: const ScaledText(
+        title: ScaledText(
           'Profilbild',
-          style: UIStyles.appBarTitleStyle,
+          style: UIStyles.appBarTitleStyle.copyWith(
+            fontSize: UIStyles.appBarTitleStyle.fontSize! *
+                fontSizeProvider.scaleFactor,
+          ),
         ),
         actions: [
           AppMenu(
@@ -117,7 +265,6 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                       )
                     : ClipOval(
                         child: Image.file(
-                          // ignore: use_build_context_synchronously
                           File(_selectedImage!.path),
                           width: UIConstants.defaultImageHeight + 60,
                           height: UIConstants.defaultImageHeight + 60,
@@ -131,7 +278,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               child: ElevatedButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.upload_file),
-                label: const Text('Bild auswählen'),
+                label: ScaledText(
+                  'Bild auswählen',
+                  style: UIStyles.buttonStyle.copyWith(
+                    fontSize: UIStyles.buttonStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+                ),
                 style: UIStyles.defaultButtonStyle,
               ),
             ),
@@ -140,16 +293,23 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               Center(
                 child: ScaledText(
                   'Bild ausgewählt: ${_selectedImage!.name}',
-                  style: UIStyles.bodyStyle,
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontSize: UIStyles.bodyStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
                 ),
               ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {}, // No action for now
+        onPressed: _isUploading ? null : _uploadImage, // Call _uploadImage
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.save, color: Colors.white),
+        child: _isUploading
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              )
+            : const Icon(Icons.save, color: Colors.white),
       ),
       endDrawer: AppDrawer(
         userData: widget.userData,
