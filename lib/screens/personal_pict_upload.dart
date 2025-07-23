@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/screens/app_menu.dart';
-import '/services/api_service.dart'; // Import your ApiService
-import '/services/core/logger_service.dart'; // Import LoggerService
-import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
+import '/services/api_service.dart';
+import '/services/core/logger_service.dart';
+import '/services/core/font_size_provider.dart';
 import '/screens/personal_pict_upload_success.dart';
 
 class PersonalPictUploadScreen extends StatefulWidget {
