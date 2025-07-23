@@ -277,14 +277,18 @@ class HttpClient {
     );
   }
 
-  Future<dynamic> get(String endpoint, {String? overrideBaseUrl}) async {
-    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
-    LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
-    return _makeRequest('GET', apiUrl, null, null);
+  Future<dynamic> get(
+    String endpoint, {
+    String? overrideBaseUrl,
+  }) async {
+    final url = overrideBaseUrl != null
+        ? '$overrideBaseUrl/$endpoint'
+        : '$baseUrl/$endpoint';
+    return _makeRequest('GET', url, null, null);
   }
 
-  Future<Uint8List> getBytes(String endpoint, {String? overrideBaseUrl}) async {
-    final String apiUrl = '${overrideBaseUrl ?? baseUrl}/$endpoint';
+  Future<Uint8List> getBytes(String endpoint) async {
+    final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
     // Using _makeBytesRequest specifically for byte responses, maintaining its unique behavior
     return _makeBytesRequest('GET', apiUrl, null);

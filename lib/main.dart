@@ -22,6 +22,7 @@ import 'services/core/font_size_provider.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'services/api/oktoberfest_service.dart';
 import 'package:flutter/foundation.dart';
+import 'services/core/postgrest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,6 +102,7 @@ class AppInitializer {
   static late BankService bankService;
   static late VereinService vereinService;
   static late TokenService tokenService;
+  static late PostgrestService postgrestService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -122,21 +124,35 @@ class AppInitializer {
 
     final baseHttpClient = http.Client();
 
+    // Initialize PostgrestService
+    postgrestService = PostgrestService(
+      configService: configService,
+      client: baseHttpClient,
+    );
+
     // 1. Initialize TokenService FIRST
     tokenService = TokenService(
       configService: configService,
       cacheService: cacheService,
-      client: baseHttpClient, // Pass the shared http.Client
+      client: baseHttpClient,
     );
 
-    // 2. Then, initialize HttpClient, passing the now-initialized _tokenService
+    // 2. Then, initialize HttpClient for main API
     httpClient = HttpClient(
       baseUrl: apiBaseUrl,
       serverTimeout: serverTimeout,
-      tokenService: tokenService, // This is now initialized!
+      tokenService: tokenService,
       configService: configService,
       cacheService: cacheService,
-      client: baseHttpClient, // Pass the shared http.Client
+      client: baseHttpClient,
+    );
+
+    // Initialize EmailService before AuthService since AuthService depends on it
+    final emailSender = MailerEmailSender();
+    final emailService = EmailService(
+      emailSender: emailSender,
+      configService: configService,
+      httpClient: httpClient,
     );
 
     trainingService = TrainingService(
@@ -157,6 +173,8 @@ class AppInitializer {
       cacheService: cacheService,
       networkService: networkService,
       configService: configService,
+      postgrestService: postgrestService,
+      emailService: emailService,
     );
 
     bankService = BankService(httpClient);
@@ -176,6 +194,8 @@ class AppInitializer {
       authService: authService,
       bankService: bankService,
       vereinService: vereinService,
+      postgrestService: postgrestService,
+      emailService: emailService,
     );
 
     _registerProviders();
@@ -192,6 +212,7 @@ class AppInitializer {
       create: (context) => EmailService(
         emailSender: Provider.of<EmailSender>(context, listen: false),
         configService: Provider.of<ConfigService>(context, listen: false),
+        httpClient: httpClient,
       ),
     );
     authServiceProvider = Provider<AuthService>(

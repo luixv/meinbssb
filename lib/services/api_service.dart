@@ -28,6 +28,8 @@ import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart';
 import 'core/network_service.dart';
+import 'core/postgrest_service.dart';
+import 'core/email_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -49,6 +51,8 @@ class ApiService {
     required AuthService authService,
     required BankService bankService,
     required VereinService vereinService,
+    required PostgrestService postgrestService,
+    required EmailService emailService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _networkService = networkService,
@@ -56,7 +60,9 @@ class ApiService {
         _userService = userService,
         _authService = authService,
         _bankService = bankService,
-        _vereinService = vereinService;
+        _vereinService = vereinService,
+        _postgrestService = postgrestService,
+        _emailService = emailService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -66,6 +72,8 @@ class ApiService {
   final AuthService _authService;
   final BankService _bankService;
   final VereinService _vereinService;
+  final PostgrestService _postgrestService;
+  final EmailService _emailService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -80,6 +88,7 @@ class ApiService {
     required String email,
     required String birthDate,
     required String zipCode,
+    required String personId,
   }) async {
     return _authService.register(
       firstName: firstName,
@@ -88,6 +97,7 @@ class ApiService {
       email: email,
       birthDate: birthDate,
       zipCode: zipCode,
+      personId: personId,
     );
   }
 
@@ -302,5 +312,88 @@ class ApiService {
 
   String? validateBIC(String? bic) {
     return BankService.validateBIC(bic);
+  }
+
+  // --- PostgrestService methods ---
+  Future<Map<String, dynamic>> createUser({
+    required String? firstName,
+    required String? lastName,
+    required String? email,
+    required String? passNumber,
+    required String? personId,
+    required String? verificationToken,
+  }) async {
+    return _postgrestService.createUser(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      passNumber: passNumber,
+      personId: personId,
+      verificationToken: verificationToken,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    return _postgrestService.getUserByEmail(email);
+  }
+
+  Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
+    return _postgrestService.getUserByPassNumber(passNumber);
+  }
+
+  Future<bool> verifyUser(String? verificationToken) async {
+    return _postgrestService.verifyUser(verificationToken);
+  }
+
+  Future<bool> deleteUserRegistration(int id) async {
+    return _postgrestService.deleteUserRegistration(id);
+  }
+
+  Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
+    return _postgrestService.getUserByVerificationToken(token);
+  }
+
+  Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
+    return _postgrestService.uploadProfilePhoto(userId, photoBytes);
+  }
+
+  Future<bool> deleteProfilePhoto(String userId) async {
+    return _postgrestService.deleteProfilePhoto(userId);
+  }
+
+  // --- EmailService methods ---
+  Future<String?> getFromEmail() async {
+    return _emailService.getFromEmail();
+  }
+
+  Future<String?> getRegistrationSubject() async {
+    return _emailService.getRegistrationSubject();
+  }
+
+  Future<String?> getRegistrationContent() async {
+    return _emailService.getRegistrationContent();
+  }
+
+  Future<Map<String, dynamic>> sendEmail({
+    required String from,
+    required String recipient,
+    required String subject,
+    String? htmlBody,
+    int? emailId,
+  }) async {
+    return _emailService.sendEmail(
+      from: from,
+      recipient: recipient,
+      subject: subject,
+      htmlBody: htmlBody,
+      emailId: emailId,
+    );
+  }
+
+  Future<void> sendAccountCreationNotifications(
+    String personId,
+    String email,
+  ) async {
+    return _emailService.sendAccountCreationNotifications(personId, email);
   }
 }

@@ -139,15 +139,10 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
       ) as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<_i5.Uint8List> getBytes(
-    String? endpoint, {
-    String? overrideBaseUrl,
-  }) =>
-      (super.noSuchMethod(
+  _i2.Future<_i5.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
         Invocation.method(
           #getBytes,
           [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
         ),
         returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
       ) as _i2.Future<_i5.Uint8List>);

@@ -18,6 +18,7 @@ import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/set_password_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
@@ -290,6 +291,18 @@ class _MyAppState extends State<MyApp> {
               return MaterialPageRoute(
                 builder: (_) => const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
+                ),
+                settings: settings,
+              );
+            }
+            // Allow anonymous access to /set-password
+            if (settings.name!.startsWith('/set-password')) {
+              final uri = Uri.base;
+              final token = uri.queryParameters['token'] ?? '';
+              return MaterialPageRoute(
+                builder: (context) => SetPasswordScreen(
+                  token: token,
+                  authService: Provider.of<AuthService>(context, listen: false),
                 ),
                 settings: settings,
               );

@@ -1,37 +1,52 @@
 {
   "usernameWebUser": "webUser",
   "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
-  
   "apiProtocol": "https",
-  
+  "emailProtocol": "http",
+  "emailServer": "localhost",
+  "emailPort": "8081",
+  "emailPath": "",
+  "postgrestProtocol": "http",
+  "postgrestServer": "localhost",
+  "postgrestPort": "8081",
+  "postgrestPath": "",
+  "webProtocol": "http",
+  "webServer": "localhost",
+  "webPort": "8080",
+  "webPath": "",
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "rest/zmi/api7",
   "oktoberFestBasePort": "50211",
-  
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
   "apiBasePort": "56400",
-
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
-
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
-  
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
   "smtpSettings": {
-    "host": "smtp.dummyserver.com",
-    "username": "mySmtpUsername",
-    "password": "mySmtpPassword",
-    "port": 587
+    "host": "localhost",
+    "port": "1025",
+    "username": "",
+    "password": "",
+    "fromEmail": "do-not-reply@bssb.de"
   },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
-  },   
-  "emailRegistration": {
-    "registrationSubject": "Schulung Anmeldung",
-    "registrationContent": "Sie sind für einen Schulung angemeldet",
-    "registrationFrom": "do-not-reply@bssb.de"
+  },
+  "database": {
+    "dbHost": "localhost",
+    "dbPort": 5432,
+    "dbName": "devdb",
+    "dbUsername": "devuser",
+    "dbPassword": "devpass"
+  },
+  "emailContent": {
+    "schulungAnmeldungSubject": "Schulung Anmeldung",
+    "schulungContent": "Sie sind für einen Schulung angemeldet",
+    "registrationSubject": "Bestätigung der E-Mail Adresse",
+    "accountCreatedSubject": "MeinBSSB Account wurde erstellt"
   }
 }

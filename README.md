@@ -112,3 +112,82 @@ For testing you can use the following credentials
 
 Elke Jakob: 40905849
 Josef Mayr: 41505803
+# Local Development Setup
+
+This project uses Docker Compose to orchestrate a local development environment consisting of:
+
+- PostgreSQL
+- PostgREST
+- MailHog
+- Caddy
+
+## Services Overview
+
+### 1. PostgreSQL (`local_postgres`)
+- **Image:** `postgres:16`
+- **Port:** `5432`
+- **Volumes:**
+  - Persists data: `pgdata:/var/lib/postgresql/data`
+  - Initializes DB schema: `./init-postgrest.sql:/docker-entrypoint-initdb.d/init-postgrest.sql`
+- **Credentials:**
+  - **DB Name:** `devdb`
+  - **User:** `devuser`
+  - **Password:** `devpass`
+
+### 2. PostgREST (`postgrest`)
+- **Image:** `postgrest/postgrest`
+- **Port:** `3000`
+- **Depends on:** PostgreSQL
+- **Environment:**
+  - Connects to PostgreSQL on `local_postgres:5432`
+  - Anonymous role: `web_anon`
+  - Schema: `public`
+  - CORS enabled
+  - Proxy URI: `http://localhost:3000`
+
+### 3. MailHog (`local_mailhog`)
+- **Image:** `mailhog/mailhog`
+- **Ports:**
+  - SMTP (send mail): `1025`
+  - Web UI: `8025`
+- **Access Web UI:** [http://localhost:8025](http://localhost:8025)
+
+### 4. Caddy (`caddy`)
+- **Image:** `caddy:2`
+- **Port:** `8080` (Web App)
+- **Port:** `8081` (Postgrest)
+- **Depends on:** PostgREST
+- **Volumes:**
+  - `./Caddyfile:/etc/caddy/Caddyfile`
+  - `./build/web:/web`
+
+## How to Start
+
+1. Install Docker and Docker Compose.
+
+2. Start the containers:
+   docker-compose up -d
+
+3. Check running containers:
+   docker ps
+
+4. Stop all running containers:
+   docker-compose down
+
+4. Stop all running containers + delete data:
+   docker-compose down -v1
+
+## How to Access Services
+
+| Service      | URL                              |
+|--------------|----------------------------------|
+| Web App      | http://localhost:8080            |
+| PostgREST    | http://localhost:8081/api        |
+| MailHog UI   | http://localhost:8025            |
+| Mail SMTP    | localhost:1025                   |
+| PostgreSQL   | localhost:5432 (external tools)  |
+
+## Notes
+
+- Ensure `init-postgrest.sql` creates necessary schema and roles (especially `web_anon`) for PostgREST.
+- You can add HTTPS support in the `Caddyfile` for production-like testing.
