@@ -361,6 +361,8 @@ class MockApiService extends ApiService {
           authService: DummyAuthService(),
           bankService: DummyBankService(),
           vereinService: DummyVereinService(),
+          postgrestService: PostgrestService(configService: ConfigService.instance),
+          emailService: DummyEmailService(),
         );
   final Uint8List? fetchResult;
   final bool shouldThrow;

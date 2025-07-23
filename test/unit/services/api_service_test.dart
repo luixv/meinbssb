@@ -26,6 +26,8 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
+import 'package:meinbssb/services/core/postgrest_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/models/person.dart';
 
 @GenerateMocks([
@@ -40,6 +42,8 @@ import 'package:meinbssb/models/person.dart';
   VereinService,
   TokenService,
   HttpClient, // <-- Added for MockHttpClient
+  PostgrestService,
+  EmailService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -55,6 +59,8 @@ void main() {
   late MockBankService mockBankService;
   late MockVereinService mockVereinService;
   late MockTokenService mockTokenService;
+  late MockPostgrestService mockPostgrestService;
+  late MockEmailService mockEmailService;
   late HttpClient httpClient;
 
   setUp(() {
@@ -68,6 +74,8 @@ void main() {
     mockBankService = MockBankService();
     mockVereinService = MockVereinService();
     mockTokenService = MockTokenService();
+    mockPostgrestService = MockPostgrestService();
+    mockEmailService = MockEmailService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -88,6 +96,8 @@ void main() {
       bankService: mockBankService,
       vereinService: mockVereinService,
       httpClient: httpClient,
+      postgrestService: mockPostgrestService,
+      emailService: mockEmailService,
     );
   });
 
@@ -932,6 +942,8 @@ void main() {
           authService: MockAuthService(),
           bankService: MockBankService(),
           vereinService: MockVereinService(),
+          postgrestService: MockPostgrestService(),
+          emailService: MockEmailService(),
         );
       });
 

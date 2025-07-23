@@ -13,6 +13,8 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/postgrest_service.dart';
+import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/exceptions/network_exception.dart' as network_ex;
 
 import 'login_service_test.mocks.dart';
@@ -29,6 +31,8 @@ import 'login_service_test.mocks.dart';
   UserService,
   BankService,
   VereinService,
+  PostgrestService,
+  EmailService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +49,8 @@ void main() {
   late MockUserService mockUserService;
   late MockBankService mockBankService;
   late MockVereinService mockVereinService;
+  late MockPostgrestService mockPostgrestService;
+  late MockEmailService mockEmailService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -61,6 +67,8 @@ void main() {
     mockUserService = MockUserService();
     mockBankService = MockBankService();
     mockVereinService = MockVereinService();
+    mockPostgrestService = MockPostgrestService();
+    mockEmailService = MockEmailService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -73,6 +81,8 @@ void main() {
       userService: mockUserService,
       bankService: mockBankService,
       vereinService: mockVereinService,
+      postgrestService: mockPostgrestService,
+      emailService: mockEmailService,
     );
   });
 

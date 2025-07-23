@@ -737,6 +737,173 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
         ),
         returnValue: false,
       ) as bool);
+
+  @override
+  _i5.Future<Map<String, dynamic>> createUser({
+    required String? firstName,
+    required String? lastName,
+    required String? email,
+    required String? passNumber,
+    required String? personId,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUser,
+          [],
+          {
+            #firstName: firstName,
+            #lastName: lastName,
+            #email: email,
+            #passNumber: passNumber,
+            #personId: personId,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getUserByEmail(String? email) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByEmail,
+          [email],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPassNumber,
+          [passNumber],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<bool> verifyUser(String? verificationToken) => (super.noSuchMethod(
+        Invocation.method(
+          #verifyUser,
+          [verificationToken],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> deleteUserRegistration(int? id) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteUserRegistration,
+          [id],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getUserByVerificationToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByVerificationToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<bool> uploadProfilePhoto(
+    String? userId,
+    List<int>? photoBytes,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadProfilePhoto,
+          [
+            userId,
+            photoBytes,
+          ],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> deleteProfilePhoto(String? userId) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteProfilePhoto,
+          [userId],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<String?> getFromEmail() => (super.noSuchMethod(
+        Invocation.method(
+          #getFromEmail,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getRegistrationSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getRegistrationContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getRegistrationContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> sendEmail({
+    required String? from,
+    required String? recipient,
+    required String? subject,
+    String? htmlBody,
+    int? emailId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmail,
+          [],
+          {
+            #from: from,
+            #recipient: recipient,
+            #subject: subject,
+            #htmlBody: htmlBody,
+            #emailId: emailId,
+          },
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<void> sendAccountCreationNotifications(
+    String? personId,
+    String? email,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendAccountCreationNotifications,
+          [
+            personId,
+            email,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [EmailService].

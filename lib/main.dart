@@ -194,6 +194,8 @@ class AppInitializer {
       authService: authService,
       bankService: bankService,
       vereinService: vereinService,
+      postgrestService: postgrestService,
+      emailService: emailService,
     );
 
     _registerProviders();

@@ -287,12 +287,6 @@ class HttpClient {
     return _makeRequest('GET', url, null, null);
   }
 
-  Future<dynamic> get2(String endpoint) async {
-    final String apiUrl = '$baseUrl/$endpoint';
-    LoggerService.logInfo('HttpClient: Sending GET request to: $apiUrl');
-    return _makeRequest('GET', apiUrl, null, null);
-  }
-
   Future<Uint8List> getBytes(String endpoint) async {
     final String apiUrl = '$baseUrl/$endpoint';
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
