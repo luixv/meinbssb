@@ -15,6 +15,7 @@ import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/calendar_service.dart';
 import 'package:meinbssb/exceptions/network_exception.dart' as network_ex;
 
 import 'login_service_test.mocks.dart';
@@ -33,6 +34,7 @@ import 'login_service_test.mocks.dart';
   VereinService,
   PostgrestService,
   EmailService,
+  CalendarService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +53,7 @@ void main() {
   late MockVereinService mockVereinService;
   late MockPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
+  late MockCalendarService mockCalendarService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -69,6 +72,7 @@ void main() {
     mockVereinService = MockVereinService();
     mockPostgrestService = MockPostgrestService();
     mockEmailService = MockEmailService();
+    mockCalendarService = MockCalendarService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -83,6 +87,7 @@ void main() {
       vereinService: mockVereinService,
       postgrestService: mockPostgrestService,
       emailService: mockEmailService,
+      calendarService: mockCalendarService,
     );
   });
 

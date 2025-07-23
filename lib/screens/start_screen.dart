@@ -186,12 +186,25 @@ class StartScreenState extends State<StartScreen> {
       final success =
           await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
 
-      // TODO Mail in HTML
       if (mounted) {
         if (success) {
           LoggerService.logInfo(
             'Unregistered from Schulung $schulungenTeilnehmerID',
           );
+          
+          // Send unregistration email notification
+          if (widget.userData != null) {
+            final formattedDate = '${schulungen[index].datum.day.toString().padLeft(2, '0')}.${schulungen[index].datum.month.toString().padLeft(2, '0')}.${schulungen[index].datum.year}';
+            
+            await apiService.sendSchulungAbmeldungEmail(
+              personId: widget.userData!.personId.toString(),
+              schulungName: schulungDescription,
+              schulungDate: formattedDate,
+              firstName: widget.userData!.vorname,
+              lastName: widget.userData!.namen,
+            );
+          }
+          
           await fetchSchulungen();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

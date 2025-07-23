@@ -28,6 +28,7 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/core/calendar_service.dart';
 import 'package:meinbssb/models/person.dart';
 
 @GenerateMocks([
@@ -44,6 +45,7 @@ import 'package:meinbssb/models/person.dart';
   HttpClient, // <-- Added for MockHttpClient
   PostgrestService,
   EmailService,
+  CalendarService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -61,6 +63,7 @@ void main() {
   late MockTokenService mockTokenService;
   late MockPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
+  late MockCalendarService mockCalendarService;
   late HttpClient httpClient;
 
   setUp(() {
@@ -76,6 +79,7 @@ void main() {
     mockTokenService = MockTokenService();
     mockPostgrestService = MockPostgrestService();
     mockEmailService = MockEmailService();
+    mockCalendarService = MockCalendarService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -98,6 +102,7 @@ void main() {
       httpClient: httpClient,
       postgrestService: mockPostgrestService,
       emailService: mockEmailService,
+      calendarService: mockCalendarService,
     );
   });
 
@@ -944,6 +949,7 @@ void main() {
           vereinService: MockVereinService(),
           postgrestService: MockPostgrestService(),
           emailService: MockEmailService(),
+          calendarService: MockCalendarService(),
         );
       });
 

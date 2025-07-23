@@ -30,6 +30,7 @@ import 'core/image_service.dart';
 import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
+import 'core/calendar_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -53,6 +54,7 @@ class ApiService {
     required VereinService vereinService,
     required PostgrestService postgrestService,
     required EmailService emailService,
+    required CalendarService calendarService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _networkService = networkService,
@@ -289,6 +291,52 @@ class ApiService {
   /// Clears the passdaten cache for a specific person
   Future<void> clearPassdatenCache(int personId) async {
     await _userService.clearPassdatenCache(personId);
+  }
+
+  /// Sends a training unregistration email notification
+  Future<void> sendSchulungAbmeldungEmail({
+    required String personId,
+    required String schulungName,
+    required String schulungDate,
+    required String firstName,
+    required String lastName,
+  }) async {
+    await _emailService.sendSchulungAbmeldungEmail(
+      personId: personId,
+      schulungName: schulungName,
+      schulungDate: schulungDate,
+      firstName: firstName,
+      lastName: lastName,
+    );
+  }
+
+  /// Sends a training registration email notification
+  Future<void> sendSchulungAnmeldungEmail({
+    required String personId,
+    required String schulungName,
+    required String schulungDate,
+    required String firstName,
+    required String lastName,
+    required String passnumber,
+    required String email,
+    required int schulungRegistered,
+    required int schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) async {
+    await _emailService.sendSchulungAnmeldungEmail(
+      personId: personId,
+      schulungName: schulungName,
+      schulungDate: schulungDate,
+      firstName: firstName,
+      lastName: lastName,
+      passnumber: passnumber,
+      email: email,
+      schulungRegistered: schulungRegistered,
+      schulungTotal: schulungTotal,
+      location: location,
+      eventDateTime: eventDateTime,
+    );
   }
 
   /// Clears all passdaten caches

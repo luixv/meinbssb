@@ -29,6 +29,7 @@ import 'package:meinbssb/services/api/training_service.dart' as _i16;
 import 'package:meinbssb/services/api/user_service.dart' as _i23;
 import 'package:meinbssb/services/api/verein_service.dart' as _i29;
 import 'package:meinbssb/services/core/cache_service.dart' as _i12;
+import 'package:meinbssb/services/core/calendar_service.dart' as _i33;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/email_service.dart' as _i32;
 import 'package:meinbssb/services/core/http_client.dart' as _i8;
@@ -1788,6 +1789,42 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
       ) as _i2.Future<String?>);
 
   @override
+  _i2.Future<String?> getSchulungAbmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getSchulungAbmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAbmeldungContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getSchulungAnmeldungSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getSchulungAnmeldungContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getSchulungAnmeldungContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
   _i2.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1813,4 +1850,172 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
         returnValue: _i2.Future<void>.value(),
         returnValueForMissingStub: _i2.Future<void>.value(),
       ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendSchulungAbmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAbmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendSchulungAnmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+    required String? passnumber,
+    required String? email,
+    required int? schulungRegistered,
+    required int? schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAnmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+            #passnumber: passnumber,
+            #email: email,
+            #schulungRegistered: schulungRegistered,
+            #schulungTotal: schulungTotal,
+            #location: location,
+            #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+}
+
+/// A class which mocks [CalendarService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCalendarService extends _i1.Mock implements _i33.CalendarService {
+  MockCalendarService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<String> generateIcsFile({
+    required String? eventTitle,
+    required DateTime? eventDate,
+    required String? location,
+    required String? description,
+    required String? organizerEmail,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateIcsFile,
+          [],
+          {
+            #eventTitle: eventTitle,
+            #eventDate: eventDate,
+            #location: location,
+            #description: description,
+            #organizerEmail: organizerEmail,
+          },
+        ),
+        returnValue: _i2.Future<String>.value(_i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateIcsFile,
+            [],
+            {
+              #eventTitle: eventTitle,
+              #eventDate: eventDate,
+              #location: location,
+              #description: description,
+              #organizerEmail: organizerEmail,
+            },
+          ),
+        )),
+      ) as _i2.Future<String>);
+
+  @override
+  _i2.Future<String> saveIcsFile({
+    required String? icsContent,
+    required String? fileName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #saveIcsFile,
+          [],
+          {
+            #icsContent: icsContent,
+            #fileName: fileName,
+          },
+        ),
+        returnValue: _i2.Future<String>.value(_i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #saveIcsFile,
+            [],
+            {
+              #icsContent: icsContent,
+              #fileName: fileName,
+            },
+          ),
+        )),
+      ) as _i2.Future<String>);
+
+  @override
+  _i2.Future<String> generateCalendarLink({
+    required String? eventTitle,
+    required DateTime? eventDate,
+    required String? location,
+    required String? description,
+    required String? organizerEmail,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateCalendarLink,
+          [],
+          {
+            #eventTitle: eventTitle,
+            #eventDate: eventDate,
+            #location: location,
+            #description: description,
+            #organizerEmail: organizerEmail,
+          },
+        ),
+        returnValue: _i2.Future<String>.value(_i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateCalendarLink,
+            [],
+            {
+              #eventTitle: eventTitle,
+              #eventDate: eventDate,
+              #location: location,
+              #description: description,
+              #organizerEmail: organizerEmail,
+            },
+          ),
+        )),
+      ) as _i2.Future<String>);
 }

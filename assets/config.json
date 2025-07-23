@@ -47,6 +47,7 @@
     "schulungAnmeldungSubject": "Schulung Anmeldung",
     "schulungContent": "Sie sind für einen Schulung angemeldet",
     "registrationSubject": "Bestätigung der E-Mail Adresse",
-    "accountCreatedSubject": "MeinBSSB Account wurde erstellt"
+    "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
+    "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
   }
 }

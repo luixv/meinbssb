@@ -510,6 +510,66 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as _i4.Future<void>);
 
   @override
+  _i4.Future<void> sendSchulungAbmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAbmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> sendSchulungAnmeldungEmail({
+    required String? personId,
+    required String? schulungName,
+    required String? schulungDate,
+    required String? firstName,
+    required String? lastName,
+    required String? passnumber,
+    required String? email,
+    required int? schulungRegistered,
+    required int? schulungTotal,
+    String? location,
+    DateTime? eventDateTime,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendSchulungAnmeldungEmail,
+          [],
+          {
+            #personId: personId,
+            #schulungName: schulungName,
+            #schulungDate: schulungDate,
+            #firstName: firstName,
+            #lastName: lastName,
+            #passnumber: passnumber,
+            #email: email,
+            #schulungRegistered: schulungRegistered,
+            #schulungTotal: schulungTotal,
+            #location: location,
+            #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i4.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
         Invocation.method(
           #clearAllPassdatenCache,
