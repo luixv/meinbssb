@@ -208,8 +208,8 @@ class _MyAppState extends State<MyApp> {
           path.startsWith('/set-password');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
       if (isSetPasswordUrl) {
-        // If on set-password URL, route to splash to handle it properly
-        initialRoute = '/splash';
+        // If on set-password URL, route directly to set-password
+        initialRoute = '/set-password';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&

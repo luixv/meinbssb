@@ -35,8 +35,8 @@ services:
     image: caddy:2
     container_name: caddy
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8080:8080" #Flutter Web
+      - "8081:8081" #Postgrest API
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ../build/web:/web
