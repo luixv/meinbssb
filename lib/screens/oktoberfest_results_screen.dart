@@ -8,6 +8,7 @@ import '/models/user_data.dart';
 
 import '/constants/ui_constants.dart';
 import 'base_screen_layout.dart';
+import '/widgets/scaled_text.dart'; // Assuming ScaledText is available
 
 class OktoberfestResultsScreen extends StatefulWidget {
   const OktoberfestResultsScreen({
@@ -35,9 +36,16 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
   @override
   void initState() {
     super.initState();
+    _fetchResults();
+  }
+
+  // Method to fetch results, allowing it to be called on refresh
+  void _fetchResults() {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    _resultsFuture =
-        apiService.fetchResults(widget.passnummer, widget.configService);
+    setState(() {
+      _resultsFuture =
+          apiService.fetchResults(widget.passnummer, widget.configService);
+    });
   }
 
   @override
@@ -58,60 +66,99 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
             return const Center(child: Text('Keine Ergebnisse gefunden.'));
           } else {
             final results = snapshot.data!;
+
+            // Define column widths using FractionColumnWidth for responsiveness
+            const Map<int, TableColumnWidth> columnWidths = {
+              0: FractionColumnWidth(0.5), // Wettbewerb (50%)
+              1: FractionColumnWidth(0.16), // Rang (approx 16%)
+              2: FractionColumnWidth(0.34), // Ergebnis (approx 34%)
+            };
+
             return Column(
               children: [
-                // Fixed header
-                Container(
-                  color: Theme.of(context).colorScheme.primary,
-                  padding: const EdgeInsets.all(UIConstants.spacingS),
-                  child: const Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text('Wettbewerb',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,),),
+                // Fixed header using a Table
+                Table(
+                  columnWidths: columnWidths,
+                  border: TableBorder.all(
+                      color: Colors.transparent,), // No border for header table
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Text('Rang',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,),),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text('Ergebnis',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,),),
-                      ),
-                    ],
-                  ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(UIConstants.spacingS),
+                          child: ScaledText(
+                            'Wettbewerb',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(UIConstants.spacingS),
+                          child: ScaledText(
+                            'Rang',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(UIConstants.spacingS),
+                          child: ScaledText(
+                            'Ergebnis',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                // Scrollable table with "dummy" column headers
+                // Scrollable table content using a ListView of TableRows
                 Expanded(
                   child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: DataTable(
-                      columnSpacing: UIConstants.spacingM,
-                      columns: const [
-                        DataColumn(label: SizedBox()), // Empty headers
-                        DataColumn(label: SizedBox()),
-                        DataColumn(label: SizedBox()),
-                      ],
-                      rows: results
-                          .map(
-                            (result) => DataRow(
-                              cells: [
-                                DataCell(Text(result.wettbewerb)),
-                                DataCell(Text('${result.platz}')),
-                                DataCell(Text('${result.gesamt}')),
-                              ],
+                    child: Table(
+                      columnWidths:
+                          columnWidths, // Apply the same column widths
+                      border: TableBorder.all(
+                          color: Colors.grey.shade300,), // Border for data table
+                      children: results.map((result) {
+                        return TableRow(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.all(UIConstants.spacingS),
+                              child: ScaledText(result.wettbewerb),
                             ),
-                          )
-                          .toList(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.all(UIConstants.spacingS),
+                              child: ScaledText('${result.platz}'),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.all(UIConstants.spacingS),
+                              child: ScaledText('${result.gesamt}'),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
@@ -120,28 +167,12 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
           }
         },
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomRight,
-        child: SizedBox(
-          height: UIConstants.fabSize,
-          width: UIConstants.fabSize,
-          child: FloatingActionButton(
-            heroTag: 'refreshResults',
-            onPressed: () {
-              setState(() {
-                final apiService =
-                    Provider.of<ApiService>(context, listen: false);
-                _resultsFuture = apiService.fetchResults(
-                  widget.passnummer,
-                  widget.configService,
-                );
-              });
-            },
-            tooltip: 'Ergebnisse aktualisieren',
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.refresh, color: Colors.white),
-          ),
-        ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'refreshResults',
+        onPressed: _fetchResults, // Call the new _fetchResults method
+        tooltip: 'Ergebnisse aktualisieren',
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.refresh, color: Colors.white),
       ),
     );
   }
