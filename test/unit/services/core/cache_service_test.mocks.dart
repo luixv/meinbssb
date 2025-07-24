@@ -55,4 +55,20 @@ class MockConfigService extends _i1.Mock implements _i2.ConfigService {
         ),
         returnValueForMissingStub: null,
       ) as String?);
+
+  @override
+  List<String>? getList(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getList,
+          [
+            key,
+            section,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      ) as List<String>?);
 }

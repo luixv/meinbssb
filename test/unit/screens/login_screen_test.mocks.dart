@@ -838,6 +838,16 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
       ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
+  _i5.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPersonId,
+          [personId],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
   _i5.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(

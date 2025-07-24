@@ -1143,6 +1143,19 @@ class MockConfigService extends _i1.Mock implements _i6.ConfigService {
           section,
         ],
       )) as String?);
+
+  @override
+  List<String>? getList(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getList,
+        [
+          key,
+          section,
+        ],
+      )) as List<String>?);
 }
 
 /// A class which mocks [TrainingService].
@@ -1594,6 +1607,16 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
         Invocation.method(
           #getUserByEmail,
           [email],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPersonId,
+          [personId],
         ),
         returnValue: _i2.Future<Map<String, dynamic>?>.value(),
       ) as _i2.Future<Map<String, dynamic>?>);
