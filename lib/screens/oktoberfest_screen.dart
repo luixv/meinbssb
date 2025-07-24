@@ -8,6 +8,7 @@ import '/screens/logo_widget.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 import '/screens/oktoberfest_results_screen.dart';
+import '/screens/oktoberfest_gewinn_screen.dart';
 
 import '/services/core/config_service.dart';
 
@@ -70,7 +71,7 @@ class OktoberfestScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OktoberfestResultsScreen(
+                    builder: (context) => OktoberfestGewinnScreen(
                       passnummer: userData?.passnummer ?? '',
                       configService:
                           Provider.of<ConfigService>(context, listen: false),
