@@ -80,7 +80,8 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                 Table(
                   columnWidths: columnWidths,
                   border: TableBorder.all(
-                      color: Colors.transparent,), // No border for header table
+                    color: Colors.transparent,
+                  ), // No border for header table
                   children: [
                     TableRow(
                       decoration: BoxDecoration(
@@ -130,14 +131,15 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                     ),
                   ],
                 ),
-                // Scrollable table content using a ListView of TableRows
-                Expanded(
+                // Center the table horizontally
+                Center(
                   child: SingleChildScrollView(
                     child: Table(
                       columnWidths:
                           columnWidths, // Apply the same column widths
                       border: TableBorder.all(
-                          color: Colors.grey.shade300,), // Border for data table
+                        color: Colors.grey.shade300,
+                      ), // Border for data table
                       children: results.map((result) {
                         return TableRow(
                           children: [
