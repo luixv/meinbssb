@@ -91,6 +91,29 @@ class PostgrestService {
     }
   }
 
+  /// Get user by Person ID
+  Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> users = jsonDecode(response.body);
+        return users.isNotEmpty ? users[0] : null;
+      } else {
+        LoggerService.logError(
+          'Failed to get user registration. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting user registration: $e');
+      return null;
+    }
+  }
+
   /// Get user by pass number
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
@@ -202,21 +225,53 @@ class PostgrestService {
   /// Upload a new profile photo for a user (insert or update)
   Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
     try {
-      final response = await _client.patch(
-        Uri.parse('${_baseUrl}users?id=eq.$userId'),
-        headers: _headers,
-        body: jsonEncode({
-          'profile_photo': base64Encode(photoBytes),
-        }),
-      );
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('Profile photo uploaded successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to upload profile photo. Status: \\${response.statusCode}, Body: \\${response.body}',
+      // First, check if the user exists
+      final existingUser = await getUserByPersonId(userId);
+
+      if (existingUser != null) {
+        // User exists, do a PATCH update
+        final response = await _client.patch(
+          Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
+          headers: _headers,
+          body: jsonEncode({
+            'profile_photo':
+                '\\x${photoBytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
+          }),
         );
-        return false;
+        if (response.statusCode == 200) {
+          LoggerService.logInfo(
+            'Profile photo updated successfully for existing user',
+          );
+          return true;
+        } else {
+          LoggerService.logError(
+            'Failed to update profile photo. Status: ${response.statusCode}, Body: ${response.body}',
+          );
+          return false;
+        }
+      } else {
+        // User doesn't exist, do an INSERT
+        final response = await _client.post(
+          Uri.parse('${_baseUrl}users'),
+          headers: _headers,
+          body: jsonEncode({
+            'person_id': userId,
+            'profile_photo':
+                '\\x${photoBytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
+            'created_at': DateTime.now().toIso8601String(),
+          }),
+        );
+        if (response.statusCode == 201) {
+          LoggerService.logInfo(
+            'Profile photo uploaded successfully for new user',
+          );
+          return true;
+        } else {
+          LoggerService.logError(
+            'Failed to insert profile photo. Status: ${response.statusCode}, Body: ${response.body}',
+          );
+          return false;
+        }
       }
     } catch (e) {
       LoggerService.logError('Error uploading profile photo: $e');
@@ -228,7 +283,7 @@ class PostgrestService {
   Future<bool> deleteProfilePhoto(String userId) async {
     try {
       final response = await _client.patch(
-        Uri.parse('${_baseUrl}users?id=eq.$userId'),
+        Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
         headers: _headers,
         body: jsonEncode({
           'profile_photo': null,
@@ -249,41 +304,46 @@ class PostgrestService {
     }
   }
 
-  /// Fake method to fetch a profile picture URL for a given user ID.
-  /// Returns a placeholder image URL or null if no picture is available.
-  /// Fake method to fetch a profile picture as Uint8List for a given user ID.
-  /// Returns dummy image data or null if no picture is available.
-  Future<Uint8List?> fetchProfilPicture(String userId) async {
-    await Future.delayed(
-      const Duration(milliseconds: 500),
-    ); // Simulate network delay
-    if (userId == 'user123') {
-      // Return a very small, simple dummy image (e.g., a 1x1 transparent PNG)
-      // In a real application, you would fetch actual image bytes from a server.
-      // This is a base64 encoded 1x1 transparent PNG.
-      const String base64Image =
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-      return Uint8List.fromList(
-        List.from(base64Decode(base64Image)),
-      ); // Decode base64 to Uint8List
-    }
-    return null; // No picture available for other users
-  }
-}
+  /// Fetch the profile photo for a user
+  Future<Uint8List?> getProfilePhoto(String userId) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('${_baseUrl}users?person_id=eq.$userId&select=profile_photo'),
+        headers: _headers,
+      );
 
-// Helper function to decode base64 string (not part of Flutter, usually in dart:convert)
-Uint8List base64Decode(String source) {
-  // This is a simplified example. In a real Flutter app, you'd use dart:convert:
-  // import 'dart:convert';
-  // return base64Decode(source);
-  // For this isolated example, we'll just return a dummy list.
-  // This part needs to be replaced with actual base64 decoding if running outside a full Flutter env.
-  // For demonstration purposes, we'll just return an empty list if dart:convert is not available.
-  try {
-    return Uint8List.fromList(
-      List.from(source.codeUnits),
-    ); // Placeholder for actual base64 decoding
-  } catch (e) {
-    return Uint8List(0); // Return empty list on error
+      if (response.statusCode == 200) {
+        final List<dynamic> users = jsonDecode(response.body);
+        if (users.isNotEmpty && users[0]['profile_photo'] != null) {
+          final String hexData = users[0]['profile_photo'];
+          LoggerService.logInfo(
+            'Profile photo fetched successfully for user $userId',
+          );
+          // Convert hexadecimal string to bytes
+          String cleanHex = hexData;
+          if (cleanHex.startsWith('\\x')) {
+            cleanHex = cleanHex.substring(2);
+          }
+          // Convert hex string to bytes
+          final bytes = <int>[];
+          for (int i = 0; i < cleanHex.length; i += 2) {
+            final hexByte = cleanHex.substring(i, i + 2);
+            bytes.add(int.parse(hexByte, radix: 16));
+          }
+          return Uint8List.fromList(bytes);
+        } else {
+          LoggerService.logInfo('No profile photo found for user $userId');
+          return null;
+        }
+      } else {
+        LoggerService.logError(
+          'Failed to fetch profile photo. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching profile photo: $e');
+      return null;
+    }
   }
 }

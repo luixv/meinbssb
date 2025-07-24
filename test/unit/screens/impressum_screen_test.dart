@@ -11,6 +11,8 @@ class MockConfigService implements ConfigService {
   String? getString(String key, [String? section]) => null;
   @override
   int? getInt(String key, [String? section]) => null;
+  @override
+  List<String>? getList(String key, [String? section]) => null;
 }
 
 void main() {

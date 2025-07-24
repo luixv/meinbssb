@@ -43,6 +43,13 @@ class StartScreenState extends State<StartScreen> {
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Fetch profile picture every time the screen is loaded/refreshed
+    _fetchProfilePicture();
+  }
+
   Future<void> _fetchProfilePicture() async {
     if (widget.userData?.personId == null) {
       return;
@@ -51,15 +58,22 @@ class StartScreenState extends State<StartScreen> {
       final apiService = Provider.of<ApiService>(context, listen: false);
       // Call the updated fetchProfilPicture method that returns Uint8List
       String personId = widget.userData!.personId.toString();
-      final bytes = await apiService.fetchProfilPicture(personId);
-      setState(() {
-        _profilePictureBytes = bytes;
-      });
+      LoggerService.logInfo('Fetching profile picture for personId: $personId');
+      final bytes = await apiService.getProfilePhoto(personId);
+      
+      if (mounted) {
+        setState(() {
+          _profilePictureBytes = bytes;
+        });
+        LoggerService.logInfo('Profile picture updated: ${bytes != null ? '${bytes.length} bytes' : 'null'}');
+      }
     } catch (e) {
-      print('Error fetching profile picture: $e');
-      setState(() {
-        _profilePictureBytes = null; // Ensure it's null on error
-      });
+      LoggerService.logError('Error fetching profile picture: $e');
+      if (mounted) {
+        setState(() {
+          _profilePictureBytes = null; // Ensure it's null on error
+        });
+      }
     }
   }
 
@@ -284,6 +298,7 @@ class StartScreenState extends State<StartScreen> {
                           height: UIConstants.profilePictureSize,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
+                            LoggerService.logError('Error displaying profile picture: $error');
                             return const Icon(
                               Icons.person,
                               size: UIConstants.profilePictureSize,

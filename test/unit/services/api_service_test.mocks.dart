@@ -1380,10 +1380,10 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
       ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i12.Uint8List?> fetchProfilPicture(String? userId) =>
+  _i3.Future<_i12.Uint8List?> getProfilePhoto(String? userId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchProfilPicture,
+          #getProfilePhoto,
           [userId],
         ),
         returnValue: _i3.Future<_i12.Uint8List?>.value(),

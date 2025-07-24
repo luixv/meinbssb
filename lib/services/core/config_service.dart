@@ -77,6 +77,25 @@ class ConfigService {
     return null;
   }
 
+  List<String>? getList(String key, [String? section]) {
+    if (_config == null) return null;
+
+    dynamic value;
+    if (section != null &&
+        section.isNotEmpty &&
+        _config!.containsKey(section) &&
+        _config![section] is Map) {
+      value = _config![section][key];
+    } else {
+      value = _config![key];
+    }
+
+    if (value is List) {
+      return value.cast<String>();
+    }
+    return null;
+  }
+
   /// Builds a base URL for any server defined in config.json by name prefix.
   /// Example: name = 'api1Base' will use keys 'api1BaseServer', 'api1Port', 'api1BasePath'.
   static String buildBaseUrlForServer(

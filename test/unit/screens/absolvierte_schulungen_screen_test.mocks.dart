@@ -708,6 +708,16 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as _i4.Future<bool>);
 
   @override
+  _i4.Future<_i10.Uint8List?> getProfilePhoto(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getProfilePhoto,
+          [userId],
+        ),
+        returnValue: _i4.Future<_i10.Uint8List?>.value(),
+      ) as _i4.Future<_i10.Uint8List?>);
+
+  @override
   _i4.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
@@ -774,16 +784,6 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
-
-  @override
-  _i4.Future<_i10.Uint8List?> fetchProfilPicture(String? userId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchProfilPicture,
-          [userId],
-        ),
-        returnValue: _i4.Future<_i10.Uint8List?>.value(),
-      ) as _i4.Future<_i10.Uint8List?>);
 }
 
 /// A class which mocks [NetworkService].

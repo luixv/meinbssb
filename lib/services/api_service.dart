@@ -385,6 +385,10 @@ class ApiService {
     return _postgrestService.getUserByEmail(email);
   }
 
+  Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
+    return _postgrestService.getUserByPersonId(personId);
+  }
+
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     return _postgrestService.getUserByPassNumber(passNumber);
   }
@@ -407,6 +411,12 @@ class ApiService {
 
   Future<bool> deleteProfilePhoto(String userId) async {
     return _postgrestService.deleteProfilePhoto(userId);
+  }
+
+  /// Fetch a profile picture for a given user ID.
+  /// Returns the profile photo as bytes or null if no picture is available.
+  Future<Uint8List?> getProfilePhoto(String userId) async {
+    return _postgrestService.getProfilePhoto(userId);
   }
 
   // --- EmailService methods ---
@@ -445,9 +455,5 @@ class ApiService {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
 
-  /// Fake method to fetch a profile picture URL for a given user ID.
-  /// Returns a placeholder image URL or null if no picture is available.
-  Future<Uint8List?> fetchProfilPicture(String userId) async {
-    return _postgrestService.fetchProfilPicture(userId);
-  }
+ 
 }
