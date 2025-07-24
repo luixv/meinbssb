@@ -16,15 +16,14 @@ import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
-import 'schulungen/schulungen_search_screen.dart';
-import '/screens/oktoberfest_results_screen.dart';
+import '/screens/schulungen/schulungen_search_screen.dart';
+import '/screens/oktoberfest_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
 import '/services/core/email_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import '/services/core/config_service.dart';
 
 class AppMenu extends StatelessWidget {
   const AppMenu({
@@ -204,11 +203,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OktoberfestResultsScreen(
-                      // passnummer: userData?.passnummer ?? '',
-                      passnummer: '40100709',
-                      configService:
-                          Provider.of<ConfigService>(context, listen: false),
+                    builder: (context) => OktoberfestScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

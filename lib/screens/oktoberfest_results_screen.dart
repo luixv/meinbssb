@@ -9,6 +9,7 @@ import '/models/user_data.dart';
 import '/constants/ui_constants.dart';
 import 'base_screen_layout.dart';
 import '/widgets/scaled_text.dart'; // Assuming ScaledText is available
+import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
 
 class OktoberfestResultsScreen extends StatefulWidget {
   const OktoberfestResultsScreen({
@@ -50,6 +51,8 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Oktoberfest Ergebnisse',
       userData: widget.userData,
@@ -65,23 +68,36 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Keine Ergebnisse gefunden.'));
           } else {
-            final results = snapshot.data!;
+            // Filter out results where platz is 0
+            final results =
+                snapshot.data!.where((result) => result.platz != 0).toList();
+
+            if (results.isEmpty) {
+              return const Center(
+                child: Text('Keine Ergebnisse gefunden nach Filterung.'),
+              );
+            }
 
             // Define column widths using FractionColumnWidth for responsiveness
             const Map<int, TableColumnWidth> columnWidths = {
-              0: FractionColumnWidth(0.5), // Wettbewerb (50%)
-              1: FractionColumnWidth(0.16), // Rang (approx 16%)
-              2: FractionColumnWidth(0.34), // Ergebnis (approx 34%)
+              0: FractionColumnWidth(0.7), // Wettbewerb (70%)
+              1: FractionColumnWidth(0.15), // Rang (approx 15%)
+              2: FractionColumnWidth(0.15), // Ergebnis (approx 15%)
             };
 
             return Column(
+              // Center the entire column horizontally
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Fixed header using a Table
                 Table(
                   columnWidths: columnWidths,
-                  border: TableBorder.all(
-                    color: Colors.transparent,
-                  ), // No border for header table
+                  border: const TableBorder(
+                    bottom: BorderSide(
+                      color: Colors.white,
+                      width: 1.0,
+                    ), // Add a subtle border below header
+                  ),
                   children: [
                     TableRow(
                       decoration: BoxDecoration(
@@ -98,6 +114,11 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                                 .copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .fontSize! *
+                                      fontSizeProvider.scaleFactor,
                                 ),
                           ),
                         ),
@@ -111,6 +132,11 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                                 .copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .fontSize! *
+                                      fontSizeProvider.scaleFactor,
                                 ),
                           ),
                         ),
@@ -124,6 +150,11 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                                 .copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .fontSize! *
+                                      fontSizeProvider.scaleFactor,
                                 ),
                           ),
                         ),
@@ -131,8 +162,8 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                     ),
                   ],
                 ),
-                // Center the table horizontally
-                Center(
+                // Scrollable table content using a ListView of TableRows
+                Expanded(
                   child: SingleChildScrollView(
                     child: Table(
                       columnWidths:
@@ -146,17 +177,47 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                             Padding(
                               padding:
                                   const EdgeInsets.all(UIConstants.spacingS),
-                              child: ScaledText(result.wettbewerb),
+                              child: ScaledText(
+                                result.wettbewerb,
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.fontSize ??
+                                          14.0) *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                              ),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.all(UIConstants.spacingS),
-                              child: ScaledText('${result.platz}'),
+                              child: ScaledText(
+                                '${result.platz}',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.fontSize ??
+                                          14.0) *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                              ),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.all(UIConstants.spacingS),
-                              child: ScaledText('${result.gesamt}'),
+                              child: ScaledText(
+                                '${result.gesamt}',
+                                style: TextStyle(
+                                  fontSize: (Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.fontSize ??
+                                          14.0) *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                              ),
                             ),
                           ],
                         );
