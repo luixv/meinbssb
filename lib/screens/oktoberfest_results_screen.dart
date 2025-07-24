@@ -27,11 +27,11 @@ class OktoberfestResultsScreen extends StatefulWidget {
   final VoidCallback onLogout;
 
   @override
-  _OktoberfestResultsScreenState createState() =>
-      _OktoberfestResultsScreenState();
+  OktoberfestResultsScreenState createState() =>
+      OktoberfestResultsScreenState();
 }
 
-class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
+class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
   late Future<List<Result>> _resultsFuture;
 
   @override
