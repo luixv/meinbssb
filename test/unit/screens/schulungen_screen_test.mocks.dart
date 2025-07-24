@@ -715,6 +715,16 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i3.Future<bool>);
 
   @override
+  _i3.Future<_i10.Uint8List?> getProfilePhoto(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getProfilePhoto,
+          [userId],
+        ),
+        returnValue: _i3.Future<_i10.Uint8List?>.value(),
+      ) as _i3.Future<_i10.Uint8List?>);
+
+  @override
   _i3.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
