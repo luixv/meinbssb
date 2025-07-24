@@ -169,13 +169,6 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'refreshResults',
-        onPressed: _fetchResults, // Call the new _fetchResults method
-        tooltip: 'Ergebnisse aktualisieren',
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.refresh, color: Colors.white),
-      ),
     );
   }
 }
