@@ -153,6 +153,11 @@ class AppInitializer {
 
     // Initialize EmailService before AuthService since AuthService depends on it
     final emailSender = MailerEmailSender();
+
+    final oktoberfestService = OktoberfestService(
+      httpClient: httpClient,
+    );
+
     final emailService = EmailService(
       emailSender: emailSender,
       configService: configService,
@@ -201,6 +206,7 @@ class AppInitializer {
       vereinService: vereinService,
       postgrestService: postgrestService,
       emailService: emailService,
+      oktoberfestService: oktoberfestService,
       calendarService: calendarService,
     );
 

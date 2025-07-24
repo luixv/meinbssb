@@ -12,6 +12,8 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
+import 'package:meinbssb/services/api/oktoberfest_service.dart';
+
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
@@ -34,6 +36,7 @@ import 'login_service_test.mocks.dart';
   VereinService,
   PostgrestService,
   EmailService,
+  OktoberfestService,
   CalendarService,
 ])
 void main() {
@@ -53,6 +56,7 @@ void main() {
   late MockVereinService mockVereinService;
   late MockPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
+  late MockOktoberfestService mockOktoberfestService;
   late MockCalendarService mockCalendarService;
 
   const int testWebLoginId = 27;
@@ -72,6 +76,8 @@ void main() {
     mockVereinService = MockVereinService();
     mockPostgrestService = MockPostgrestService();
     mockEmailService = MockEmailService();
+    mockOktoberfestService = MockOktoberfestService();
+
     mockCalendarService = MockCalendarService();
 
     apiService = ApiService(
@@ -87,6 +93,7 @@ void main() {
       vereinService: mockVereinService,
       postgrestService: mockPostgrestService,
       emailService: mockEmailService,
+      oktoberfestService: mockOktoberfestService,
       calendarService: mockCalendarService,
     );
   });

@@ -10,10 +10,12 @@ import 'package:meinbssb/models/bank_data.dart' as _i17;
 import 'package:meinbssb/models/contact.dart' as _i12;
 import 'package:meinbssb/models/disziplin.dart' as _i16;
 import 'package:meinbssb/models/fremde_verband.dart' as _i19;
+import 'package:meinbssb/models/gewinn.dart' as _i23;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i9;
 import 'package:meinbssb/models/person.dart' as _i20;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i3;
+import 'package:meinbssb/models/result.dart' as _i21;
 import 'package:meinbssb/models/schulung.dart' as _i11;
 import 'package:meinbssb/models/schulungsart.dart' as _i14;
 import 'package:meinbssb/models/schulungstermin.dart' as _i15;
@@ -22,7 +24,8 @@ import 'package:meinbssb/models/verein.dart' as _i18;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i10;
 import 'package:meinbssb/services/api/auth_service.dart' as _i4;
 import 'package:meinbssb/services/api_service.dart' as _i7;
-import 'package:meinbssb/services/core/email_service.dart' as _i21;
+import 'package:meinbssb/services/core/config_service.dart' as _i22;
+import 'package:meinbssb/services/core/email_service.dart' as _i24;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
@@ -964,12 +967,46 @@ class MockApiService extends _i1.Mock implements _i7.ApiService {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<List<_i21.Result>> fetchResults(
+    String? passnummer,
+    _i22.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchResults,
+          [
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i5.Future<List<_i21.Result>>.value(<_i21.Result>[]),
+      ) as _i5.Future<List<_i21.Result>>);
+
+  @override
+  _i5.Future<List<_i23.Gewinn>> fetchGewinne(
+    int? jahr,
+    String? passnummer,
+    _i22.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchGewinne,
+          [
+            jahr,
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i5.Future<List<_i23.Gewinn>>.value(<_i23.Gewinn>[]),
+      ) as _i5.Future<List<_i23.Gewinn>>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i21.EmailService {
+class MockEmailService extends _i1.Mock implements _i24.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }

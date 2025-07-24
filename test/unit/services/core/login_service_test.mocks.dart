@@ -13,10 +13,12 @@ import 'package:meinbssb/models/bank_data.dart' as _i22;
 import 'package:meinbssb/models/contact.dart' as _i26;
 import 'package:meinbssb/models/disziplin.dart' as _i20;
 import 'package:meinbssb/models/fremde_verband.dart' as _i31;
+import 'package:meinbssb/models/gewinn.dart' as _i35;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i25;
 import 'package:meinbssb/models/person.dart' as _i27;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i5;
+import 'package:meinbssb/models/result.dart' as _i34;
 import 'package:meinbssb/models/schulung.dart' as _i19;
 import 'package:meinbssb/models/schulungsart.dart' as _i18;
 import 'package:meinbssb/models/schulungstermin.dart' as _i17;
@@ -25,11 +27,12 @@ import 'package:meinbssb/models/verein.dart' as _i30;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i24;
 import 'package:meinbssb/services/api/auth_service.dart' as _i15;
 import 'package:meinbssb/services/api/bank_service.dart' as _i28;
+import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i33;
 import 'package:meinbssb/services/api/training_service.dart' as _i16;
 import 'package:meinbssb/services/api/user_service.dart' as _i23;
 import 'package:meinbssb/services/api/verein_service.dart' as _i29;
 import 'package:meinbssb/services/core/cache_service.dart' as _i12;
-import 'package:meinbssb/services/core/calendar_service.dart' as _i33;
+import 'package:meinbssb/services/core/calendar_service.dart' as _i36;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
 import 'package:meinbssb/services/core/email_service.dart' as _i32;
 import 'package:meinbssb/services/core/http_client.dart' as _i8;
@@ -1912,10 +1915,77 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
       ) as _i2.Future<void>);
 }
 
+/// A class which mocks [OktoberfestService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockOktoberfestService extends _i1.Mock
+    implements _i33.OktoberfestService {
+  MockOktoberfestService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<List<_i34.Result>> fetchResults({
+    required String? passnummer,
+    required _i6.ConfigService? configService,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchResults,
+          [],
+          {
+            #passnummer: passnummer,
+            #configService: configService,
+          },
+        ),
+        returnValue: _i2.Future<List<_i34.Result>>.value(<_i34.Result>[]),
+      ) as _i2.Future<List<_i34.Result>>);
+
+  @override
+  _i2.Future<List<_i35.Gewinn>> fetchGewinne({
+    required int? jahr,
+    required String? passnummer,
+    required _i6.ConfigService? configService,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchGewinne,
+          [],
+          {
+            #jahr: jahr,
+            #passnummer: passnummer,
+            #configService: configService,
+          },
+        ),
+        returnValue: _i2.Future<List<_i35.Gewinn>>.value(<_i35.Gewinn>[]),
+      ) as _i2.Future<List<_i35.Gewinn>>);
+
+  @override
+  _i2.Future<bool> gewinneAbrufen({
+    required List<int>? gewinnIDs,
+    required String? iban,
+    required String? passnummer,
+    required _i6.ConfigService? configService,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #gewinneAbrufen,
+          [],
+          {
+            #gewinnIDs: gewinnIDs,
+            #iban: iban,
+            #passnummer: passnummer,
+            #configService: configService,
+          },
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+}
+
 /// A class which mocks [CalendarService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCalendarService extends _i1.Mock implements _i33.CalendarService {
+class MockCalendarService extends _i1.Mock implements _i36.CalendarService {
   MockCalendarService() {
     _i1.throwOnMissingStub(this);
   }

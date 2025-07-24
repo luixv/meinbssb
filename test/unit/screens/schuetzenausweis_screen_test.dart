@@ -15,6 +15,8 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
+import 'package:meinbssb/services/api/oktoberfest_service.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
@@ -327,7 +329,10 @@ class DummyEmailService extends EmailService {
   }
 }
 
-@GenerateMocks([EmailSender], customMocks: [MockSpec<EmailSender>(as: #TestEmailSender)])
+@GenerateMocks(
+  [EmailSender],
+  customMocks: [MockSpec<EmailSender>(as: #TestEmailSender)],
+)
 class DummyAuthService extends AuthService {
   DummyAuthService()
       : super(
@@ -336,7 +341,8 @@ class DummyAuthService extends AuthService {
           networkService: DummyNetworkService(),
           configService: ConfigService.instance,
           secureStorage: null,
-          postgrestService: PostgrestService(configService: ConfigService.instance),
+          postgrestService:
+              PostgrestService(configService: ConfigService.instance),
           emailService: DummyEmailService(),
         );
 }
@@ -347,6 +353,10 @@ class DummyBankService extends BankService {
 
 class DummyVereinService extends VereinService {
   DummyVereinService() : super(httpClient: DummyHttpClient());
+}
+
+class DummyOktoberfestService extends OktoberfestService {
+  DummyOktoberfestService() : super(httpClient: DummyHttpClient());
 }
 
 class DummyCalendarService extends CalendarService {}
@@ -364,8 +374,10 @@ class MockApiService extends ApiService {
           authService: DummyAuthService(),
           bankService: DummyBankService(),
           vereinService: DummyVereinService(),
-          postgrestService: PostgrestService(configService: ConfigService.instance),
+          postgrestService:
+              PostgrestService(configService: ConfigService.instance),
           emailService: DummyEmailService(),
+          oktoberfestService: DummyOktoberfestService(),
           calendarService: DummyCalendarService(),
         );
   final Uint8List? fetchResult;

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/models/gewinn.dart';
+import 'package:meinbssb/models/result.dart';
+
 import 'package:meinbssb/services/core/config_service.dart';
 
 class OktoberfestService {
@@ -10,6 +12,36 @@ class OktoberfestService {
   }) : _httpClient = httpClient;
 
   final HttpClient _httpClient;
+
+  Future<List<Result>> fetchResults({
+    required String passnummer,
+    required ConfigService configService,
+  }) async {
+    try {
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        configService,
+        name: 'oktoberFestBase',
+      );
+      final endpoint = 'results/$passnummer';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List) {
+        return response
+            .map((json) => Result.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else if (response is Map<String, dynamic>) {
+        return [Result.fromJson(response)];
+      } else {
+        LoggerService.logWarning(
+          'Unexpected response type for fetchResults: \\${response.runtimeType}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching Results: $e');
+      return [];
+    }
+  }
 
   Future<List<Gewinn>> fetchGewinne({
     required int jahr,
