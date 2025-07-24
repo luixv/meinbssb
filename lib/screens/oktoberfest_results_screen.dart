@@ -51,7 +51,7 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Oktoberfest Results',
+      title: 'Oktoberfest Ergebnisse',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
