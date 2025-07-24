@@ -1381,6 +1381,16 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<_i12.Uint8List?> getProfilePhoto(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getProfilePhoto,
+          [userId],
+        ),
+        returnValue: _i3.Future<_i12.Uint8List?>.value(),
+      ) as _i3.Future<_i12.Uint8List?>);
 }
 
 /// A class which mocks [EmailService].

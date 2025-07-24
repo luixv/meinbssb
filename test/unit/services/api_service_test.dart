@@ -985,5 +985,180 @@ void main() {
         expect(result.first.namen, 'Rizoudis');
       });
     });
+
+    group('PostgrestService Tests', () {
+      test('uploadProfilePhoto delegates to postgrest service', () async {
+        final photoBytes = [1, 2, 3, 4, 5];
+        when(mockPostgrestService.uploadProfilePhoto('123', photoBytes))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.uploadProfilePhoto('123', photoBytes);
+        expect(result, isTrue);
+        verify(mockPostgrestService.uploadProfilePhoto('123', photoBytes))
+            .called(1);
+      });
+
+      test('uploadProfilePhoto returns false on failure', () async {
+        final photoBytes = [1, 2, 3, 4, 5];
+        when(mockPostgrestService.uploadProfilePhoto('456', photoBytes))
+            .thenAnswer((_) async => false);
+
+        final result = await apiService.uploadProfilePhoto('456', photoBytes);
+        expect(result, isFalse);
+        verify(mockPostgrestService.uploadProfilePhoto('456', photoBytes))
+            .called(1);
+      });
+
+      test('deleteProfilePhoto delegates to postgrest service', () async {
+        when(mockPostgrestService.deleteProfilePhoto('123'))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.deleteProfilePhoto('123');
+        expect(result, isTrue);
+        verify(mockPostgrestService.deleteProfilePhoto('123')).called(1);
+      });
+
+      test('deleteProfilePhoto returns false on failure', () async {
+        when(mockPostgrestService.deleteProfilePhoto('456'))
+            .thenAnswer((_) async => false);
+
+        final result = await apiService.deleteProfilePhoto('456');
+        expect(result, isFalse);
+        verify(mockPostgrestService.deleteProfilePhoto('456')).called(1);
+      });
+
+      test('getProfilePhoto returns photo bytes on successful call', () async {
+        final expectedPhotoBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+        when(mockPostgrestService.getProfilePhoto('123'))
+            .thenAnswer((_) async => expectedPhotoBytes);
+
+        final result = await apiService.getProfilePhoto('123');
+        expect(result, equals(expectedPhotoBytes));
+        expect(result, isA<Uint8List>());
+        verify(mockPostgrestService.getProfilePhoto('123')).called(1);
+      });
+
+      test('getProfilePhoto returns null when no photo exists', () async {
+        when(mockPostgrestService.getProfilePhoto('456'))
+            .thenAnswer((_) async => null);
+
+        final result = await apiService.getProfilePhoto('456');
+        expect(result, isNull);
+        verify(mockPostgrestService.getProfilePhoto('456')).called(1);
+      });
+
+      test('getProfilePhoto throws exception on API error', () async {
+        when(mockPostgrestService.getProfilePhoto('789'))
+            .thenThrow(Exception('Database error'));
+
+        expect(() => apiService.getProfilePhoto('789'), throwsException);
+        verify(mockPostgrestService.getProfilePhoto('789')).called(1);
+      });
+
+      test('getProfilePhoto handles different user IDs correctly', () async {
+        final photoBytes1 = Uint8List.fromList([1, 2, 3]);
+        final photoBytes2 = Uint8List.fromList([4, 5, 6]);
+        
+        when(mockPostgrestService.getProfilePhoto('user1'))
+            .thenAnswer((_) async => photoBytes1);
+        when(mockPostgrestService.getProfilePhoto('user2'))
+            .thenAnswer((_) async => photoBytes2);
+
+        final result1 = await apiService.getProfilePhoto('user1');
+        final result2 = await apiService.getProfilePhoto('user2');
+
+        expect(result1, equals(photoBytes1));
+        expect(result2, equals(photoBytes2));
+        verify(mockPostgrestService.getProfilePhoto('user1')).called(1);
+        verify(mockPostgrestService.getProfilePhoto('user2')).called(1);
+      });
+
+      test('createUser delegates to postgrest service', () async {
+        final expectedUser = {
+          'id': 1,
+          'firstname': 'John',
+          'lastname': 'Doe',
+          'email': 'john@example.com',
+        };
+        when(mockPostgrestService.createUser(
+          firstName: anyNamed('firstName'),
+          lastName: anyNamed('lastName'),
+          email: anyNamed('email'),
+          passNumber: anyNamed('passNumber'),
+          personId: anyNamed('personId'),
+          verificationToken: anyNamed('verificationToken'),
+        ),).thenAnswer((_) async => expectedUser);
+
+        final result = await apiService.createUser(
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          passNumber: '12345678',
+          personId: '123',
+          verificationToken: 'token123',
+        );
+
+        expect(result, equals(expectedUser));
+        verify(mockPostgrestService.createUser(
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          passNumber: '12345678',
+          personId: '123',
+          verificationToken: 'token123',
+        ),).called(1);
+      });
+
+      test('getUserByEmail delegates to postgrest service', () async {
+        final expectedUser = {'id': 1, 'email': 'test@example.com'};
+        when(mockPostgrestService.getUserByEmail('test@example.com'))
+            .thenAnswer((_) async => expectedUser);
+
+        final result = await apiService.getUserByEmail('test@example.com');
+        expect(result, equals(expectedUser));
+        verify(mockPostgrestService.getUserByEmail('test@example.com'))
+            .called(1);
+      });
+
+      test('getUserByPassNumber delegates to postgrest service', () async {
+        final expectedUser = {'id': 1, 'pass_number': '12345678'};
+        when(mockPostgrestService.getUserByPassNumber('12345678'))
+            .thenAnswer((_) async => expectedUser);
+
+        final result = await apiService.getUserByPassNumber('12345678');
+        expect(result, equals(expectedUser));
+        verify(mockPostgrestService.getUserByPassNumber('12345678')).called(1);
+      });
+
+      test('verifyUser delegates to postgrest service', () async {
+        when(mockPostgrestService.verifyUser('token123'))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.verifyUser('token123');
+        expect(result, isTrue);
+        verify(mockPostgrestService.verifyUser('token123')).called(1);
+      });
+
+      test('deleteUserRegistration delegates to postgrest service', () async {
+        when(mockPostgrestService.deleteUserRegistration(123))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.deleteUserRegistration(123);
+        expect(result, isTrue);
+        verify(mockPostgrestService.deleteUserRegistration(123)).called(1);
+      });
+
+      test('getUserByVerificationToken delegates to postgrest service',
+          () async {
+        final expectedUser = {'id': 1, 'verification_token': 'token123'};
+        when(mockPostgrestService.getUserByVerificationToken('token123'))
+            .thenAnswer((_) async => expectedUser);
+
+        final result = await apiService.getUserByVerificationToken('token123');
+        expect(result, equals(expectedUser));
+        verify(mockPostgrestService.getUserByVerificationToken('token123'))
+            .called(1);
+      });
+    });
   });
 }

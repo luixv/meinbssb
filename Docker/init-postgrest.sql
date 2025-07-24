@@ -4,12 +4,12 @@ CREATE ROLE web_anon NOLOGIN;
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    pass_number VARCHAR(50) NOT NULL UNIQUE,
-    person_id VARCHAR(50) NOT NULL UNIQUE,
-    verification_token VARCHAR(255) NOT NULL UNIQUE,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
+    email VARCHAR(255)UNIQUE,
+    pass_number VARCHAR(50)UNIQUE,
+    person_id VARCHAR(50) UNIQUE,
+    verification_token VARCHAR(255)UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     verified_at TIMESTAMP WITH TIME ZONE,
     is_verified BOOLEAN DEFAULT FALSE,

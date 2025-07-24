@@ -83,11 +83,11 @@ For building the project:
     flutter build web                                  
     flutter run
 
-    flutter pub run build_runner build --delete-conflicting-outputs
 
 For generating mocks and testing:
-    flutter pub run build_runner build
-    flutter test .\test\unit\screens .\test\unit\services\
+    flutter pub run build_runner build --delete-conflicting-outputs
+
+    flutter test .\test\unit
 
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart

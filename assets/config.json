@@ -54,5 +54,9 @@
     "registrationSubject": "Bestätigung der E-Mail Adresse",
     "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
     "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
+  },
+  "profilePhoto": {
+    "maxSizeMB": 2,
+    "allowedFormats": ["jpg", "jpeg", "png", "gif", "bmp", "webp"]
   }
 }
