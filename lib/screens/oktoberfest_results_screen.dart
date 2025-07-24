@@ -68,49 +68,38 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                     children: [
                       Expanded(
                         flex: 3,
-                        child: Text(
-                          'Wettbewerb',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Text('Wettbewerb',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,),),
                       ),
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          'Rang',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Text('Rang',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,),),
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text(
-                          'Ergebnis',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Text('Ergebnis',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,),),
                       ),
                     ],
                   ),
                 ),
-                // Scrollable data table
+                // Scrollable table with "dummy" column headers
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: DataTable(
                       columnSpacing: UIConstants.spacingM,
                       columns: const [
-                        // No header row here
-                        // Just the DataColumn headers for the table content
-                        DataColumn(label: Text('Wettbewerb')),
-                        DataColumn(label: Text('Rang')),
-                        DataColumn(label: Text('Ergebnis')),
+                        DataColumn(label: SizedBox()), // Empty headers
+                        DataColumn(label: SizedBox()),
+                        DataColumn(label: SizedBox()),
                       ],
                       rows: results
                           .map(
