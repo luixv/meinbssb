@@ -461,4 +461,26 @@ class ApiService {
   ) async {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
+
+  Future<List<Result>> fetchResults(
+    String passnummer,
+    ConfigService configService,
+  ) async {
+    return _oktoberfestService.fetchResults(
+      passnummer: passnummer,
+      configService: configService,
+    );
+  }
+
+  Future<List<Gewinn>> fetchGewinne(
+    int jahr,
+    String passnummer,
+    ConfigService configService,
+  ) async {
+    return _oktoberfestService.fetchGewinne(
+      jahr: jahr,
+      passnummer: passnummer,
+      configService: configService,
+    );
+  }
 }
