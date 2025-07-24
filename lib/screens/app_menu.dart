@@ -17,7 +17,7 @@ import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/styles_screen.dart';
 import 'schulungen/schulungen_search_screen.dart';
-import 'oktoberfest_year_pick_screen.dart';
+import '/screens/oktoberfest_results_screen.dart';
 
 // Services
 import '/services/api/auth_service.dart';
@@ -204,8 +204,9 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OktoberfestYearPickScreen(
-                      passnummer: userData?.passnummer ?? '',
+                    builder: (context) => OktoberfestResultsScreen(
+                      // passnummer: userData?.passnummer ?? '',
+                      passnummer: '40100709',
                       configService:
                           Provider.of<ConfigService>(context, listen: false),
                       userData: userData,

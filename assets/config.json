@@ -11,18 +11,23 @@
   "postgrestPort": "8081",
   "postgrestPath": "",
   "webProtocol": "http",
+  
   "webServer": "localhost",
   "webPort": "8080",
   "webPath": "",
+  
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "rest/zmi/api7",
-  "oktoberFestBasePort": "50211",
+  "oktoberFestBasePort": "56400",
+
   "apiBaseServer": "webintern.bssb.bayern",
   "apiBasePath": "rest/zmi/api",
   "apiBasePort": "56400",
+  
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
+  
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
