@@ -6,7 +6,6 @@ import '/services/core/config_service.dart';
 import '/models/result.dart';
 import '/models/user_data.dart';
 
-import '/constants/ui_styles.dart';
 import '/constants/ui_constants.dart';
 import 'base_screen_layout.dart';
 
@@ -59,44 +58,75 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
             return const Center(child: Text('Keine Ergebnisse gefunden.'));
           } else {
             final results = snapshot.data!;
-            return ListView.separated(
-              padding: const EdgeInsets.all(UIConstants.spacingL),
-              itemCount: results.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final result = results[index];
-                return Card(
-                  elevation: UIConstants.appBarElevation,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: UIConstants.spacingS,
-                    horizontal: UIConstants.spacingL,
+            return Column(
+              children: [
+                // Fixed header
+                Container(
+                  color: Theme.of(context).colorScheme.primary,
+                  padding: const EdgeInsets.all(UIConstants.spacingS),
+                  child: const Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          'Wettbewerb',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Rang',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Ergebnis',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: UIConstants.spacingM,
-                      horizontal: UIConstants.spacingL,
-                    ),
-                    title: Text(
-                      result.wettbewerb,
-                      style: UIStyles.listItemTitleStyle,
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Platz: ${result.platz}',
-                          style: UIStyles.listItemSubtitleStyle,
-                        ),
-                        Text(
-                          'Gesamt: ${result.gesamt}',
-                          style: UIStyles.listItemSubtitleStyle,
-                        ),
-                        // Add more details if needed
+                ),
+                // Scrollable data table
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columnSpacing: UIConstants.spacingM,
+                      columns: const [
+                        // No header row here
+                        // Just the DataColumn headers for the table content
+                        DataColumn(label: Text('Wettbewerb')),
+                        DataColumn(label: Text('Rang')),
+                        DataColumn(label: Text('Ergebnis')),
                       ],
+                      rows: results
+                          .map(
+                            (result) => DataRow(
+                              cells: [
+                                DataCell(Text(result.wettbewerb)),
+                                DataCell(Text('${result.platz}')),
+                                DataCell(Text('${result.gesamt}')),
+                              ],
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
-                );
-              },
+                ),
+              ],
             );
           }
         },
@@ -106,30 +136,21 @@ class _OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
         child: SizedBox(
           height: UIConstants.fabSize,
           width: UIConstants.fabSize,
-          child: Stack(
-            children: [
-              // Refresh (Year pick / fetch results) FAB
-              Visibility(
-                visible: true,
-                maintainState: true,
-                child: FloatingActionButton(
-                  heroTag: 'fetchResults',
-                  onPressed: () async {
-                    setState(() {
-                      _resultsFuture =
-                          Provider.of<ApiService>(context, listen: false)
-                              .fetchResults(
-                        widget.passnummer,
-                        widget.configService,
-                      );
-                    });
-                  },
-                  tooltip: 'Ergebnisse aktualisieren',
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.refresh, color: Colors.white),
-                ),
-              ),
-            ],
+          child: FloatingActionButton(
+            heroTag: 'refreshResults',
+            onPressed: () {
+              setState(() {
+                final apiService =
+                    Provider.of<ApiService>(context, listen: false);
+                _resultsFuture = apiService.fetchResults(
+                  widget.passnummer,
+                  widget.configService,
+                );
+              });
+            },
+            tooltip: 'Ergebnisse aktualisieren',
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.refresh, color: Colors.white),
           ),
         ),
       ),
