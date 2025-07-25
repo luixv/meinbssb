@@ -65,16 +65,14 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         heroTag: 'personalPictUploadSuccessFab',
         onPressed: () {
-          // Navigate back to the profile screen or a suitable home screen
-          // Adjust '/profile' to your actual profile or home route if different.
           Navigator.of(context).pushReplacementNamed(
-            '/profile', // Assuming a '/profile' route exists
+            '/home',
             arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.arrow_forward, // Changed icon to indicate moving forward
+          Icons.home,
           color: UIConstants.whiteColor,
         ),
       ),
