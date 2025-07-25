@@ -133,7 +133,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'Gewinne für das letzte Jahr anzeigen',
+                'Meine Gewinne für das letzte Jahr',
                 style: TextStyle(fontSize: UIConstants.titleFontSize),
               ),
               const SizedBox(height: UIConstants.spacingL),

@@ -54,7 +54,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
     return BaseScreenLayout(
-      title: 'Oktoberfest Ergebnisse',
+      title: 'Meine Ergebnisse',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
