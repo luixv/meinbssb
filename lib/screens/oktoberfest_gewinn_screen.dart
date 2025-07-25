@@ -148,10 +148,6 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
               ],
               if (_gewinne.isNotEmpty) ...[
                 const SizedBox(height: UIConstants.spacingXL),
-                const Text(
-                  'Gefundene Gewinne:',
-                  style: TextStyle(fontSize: UIConstants.subtitleFontSize),
-                ),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
