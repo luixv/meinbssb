@@ -177,6 +177,9 @@ This project uses Docker Compose to orchestrate a local development environment 
 4. Stop all running containers + delete data:
    docker-compose down -v1
 
+5. Just in case, the DB is not initialized
+   docker exec -it local_postgres psql -U devuser -d devdb
+
 ## How to Access Services
 
 | Service      | URL                              |
