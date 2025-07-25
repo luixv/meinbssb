@@ -349,4 +349,17 @@ class MockConfigService extends _i1.Mock implements _i4.ConfigService {
           section,
         ],
       )) as String?);
+
+  @override
+  List<String>? getList(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getList,
+        [
+          key,
+          section,
+        ],
+      )) as List<String>?);
 }

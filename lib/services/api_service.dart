@@ -3,12 +3,15 @@ import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
 
 import 'package:flutter/foundation.dart';
+import 'package:meinbssb/models/gewinn.dart';
 import 'package:meinbssb/services/api_service.dart' as network_ex;
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
+import 'package:meinbssb/services/api/oktoberfest_service.dart';
+
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
@@ -22,6 +25,7 @@ import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/schulungsart.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
 import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/result.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -54,6 +58,7 @@ class ApiService {
     required VereinService vereinService,
     required PostgrestService postgrestService,
     required EmailService emailService,
+    required OktoberfestService oktoberfestService,
     required CalendarService calendarService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
@@ -64,7 +69,8 @@ class ApiService {
         _bankService = bankService,
         _vereinService = vereinService,
         _postgrestService = postgrestService,
-        _emailService = emailService;
+        _emailService = emailService,
+        _oktoberfestService = oktoberfestService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -76,6 +82,7 @@ class ApiService {
   final VereinService _vereinService;
   final PostgrestService _postgrestService;
   final EmailService _emailService;
+  final OktoberfestService _oktoberfestService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -455,5 +462,25 @@ class ApiService {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
 
- 
+  Future<List<Result>> fetchResults(
+    String passnummer,
+    ConfigService configService,
+  ) async {
+    return _oktoberfestService.fetchResults(
+      passnummer: passnummer,
+      configService: configService,
+    );
+  }
+
+  Future<List<Gewinn>> fetchGewinne(
+    int jahr,
+    String passnummer,
+    ConfigService configService,
+  ) async {
+    return _oktoberfestService.fetchGewinne(
+      jahr: jahr,
+      passnummer: passnummer,
+      configService: configService,
+    );
+  }
 }

@@ -6,17 +6,19 @@
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i16;
 
-import 'package:flutter/foundation.dart' as _i28;
+import 'package:flutter/foundation.dart' as _i30;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i5;
 import 'package:http/http.dart' as _i7;
 import 'package:meinbssb/models/bank_data.dart' as _i20;
 import 'package:meinbssb/models/contact.dart' as _i15;
 import 'package:meinbssb/models/disziplin.dart' as _i19;
 import 'package:meinbssb/models/fremde_verband.dart' as _i22;
+import 'package:meinbssb/models/gewinn.dart' as _i25;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i12;
 import 'package:meinbssb/models/person.dart' as _i23;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i3;
+import 'package:meinbssb/models/result.dart' as _i24;
 import 'package:meinbssb/models/schulung.dart' as _i14;
 import 'package:meinbssb/models/schulungsart.dart' as _i17;
 import 'package:meinbssb/models/schulungstermin.dart' as _i18;
@@ -25,11 +27,11 @@ import 'package:meinbssb/models/verein.dart' as _i21;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i13;
 import 'package:meinbssb/services/api/auth_service.dart' as _i8;
 import 'package:meinbssb/services/api_service.dart' as _i10;
-import 'package:meinbssb/services/core/cache_service.dart' as _i25;
+import 'package:meinbssb/services/core/cache_service.dart' as _i27;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
-import 'package:meinbssb/services/core/email_service.dart' as _i24;
-import 'package:meinbssb/services/core/http_client.dart' as _i27;
-import 'package:meinbssb/services/core/network_service.dart' as _i26;
+import 'package:meinbssb/services/core/email_service.dart' as _i26;
+import 'package:meinbssb/services/core/http_client.dart' as _i29;
+import 'package:meinbssb/services/core/network_service.dart' as _i28;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
@@ -934,6 +936,16 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
       ) as _i4.Future<Map<String, dynamic>?>);
 
   @override
+  _i4.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPersonId,
+          [personId],
+        ),
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
+
+  @override
   _i4.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1073,6 +1085,40 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i24.Result>> fetchResults(
+    String? passnummer,
+    _i6.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchResults,
+          [
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i4.Future<List<_i24.Result>>.value(<_i24.Result>[]),
+      ) as _i4.Future<List<_i24.Result>>);
+
+  @override
+  _i4.Future<List<_i25.Gewinn>> fetchGewinne(
+    int? jahr,
+    String? passnummer,
+    _i6.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchGewinne,
+          [
+            jahr,
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i4.Future<List<_i25.Gewinn>>.value(<_i25.Gewinn>[]),
+      ) as _i4.Future<List<_i25.Gewinn>>);
 }
 
 /// A class which mocks [ConfigService].
@@ -1108,12 +1154,25 @@ class MockConfigService extends _i1.Mock implements _i6.ConfigService {
           section,
         ],
       )) as String?);
+
+  @override
+  List<String>? getList(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getList,
+        [
+          key,
+          section,
+        ],
+      )) as List<String>?);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i24.EmailService {
+class MockEmailService extends _i1.Mock implements _i26.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1341,7 +1400,7 @@ class MockEmailService extends _i1.Mock implements _i24.EmailService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i25.CacheService {
+class MockCacheService extends _i1.Mock implements _i27.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1596,7 +1655,7 @@ class MockCacheService extends _i1.Mock implements _i25.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i26.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i28.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1629,7 +1688,7 @@ class MockNetworkService extends _i1.Mock implements _i26.NetworkService {
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i27.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i29.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -1793,7 +1852,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void registerListener({
     required String? key,
-    required _i28.ValueChanged<String?>? listener,
+    required _i30.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1810,7 +1869,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void unregisterListener({
     required String? key,
-    required _i28.ValueChanged<String?>? listener,
+    required _i30.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2066,6 +2125,16 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
         Invocation.method(
           #getUserByEmail,
           [email],
+        ),
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
+
+  @override
+  _i4.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPersonId,
+          [personId],
         ),
         returnValue: _i4.Future<Map<String, dynamic>?>.value(),
       ) as _i4.Future<Map<String, dynamic>?>);

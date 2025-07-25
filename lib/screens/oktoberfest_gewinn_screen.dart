@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '/services/api/oktoberfest_service.dart';
+import '/services/api_service.dart';
 import '/services/core/config_service.dart';
+
 import '/models/gewinn.dart';
 import '/constants/ui_styles.dart';
 import 'base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/services/api_service.dart';
 import '/models/bank_data.dart';
 import '/constants/ui_constants.dart';
+
 import 'agb_screen.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
 
-class OktoberfestYearPickScreen extends StatefulWidget {
-  const OktoberfestYearPickScreen({
+class OktoberfestGewinnScreen extends StatefulWidget {
+  const OktoberfestGewinnScreen({
     super.key,
     required this.passnummer,
     required this.configService,
@@ -29,15 +32,31 @@ class OktoberfestYearPickScreen extends StatefulWidget {
   final VoidCallback onLogout;
 
   @override
-  State<OktoberfestYearPickScreen> createState() =>
-      _OktoberfestYearPickScreenState();
+  State<OktoberfestGewinnScreen> createState() =>
+      _OktoberfestGewinnScreenState();
 }
 
-class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
-  int _selectedYear = DateTime.now().year < 2024 ? 2024 : DateTime.now().year;
+class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
+  late int _selectedYear;
   bool _loading = false;
+  bool _hasFetchedData = false; // Guard to fetch data only once
   final List<Gewinn> _gewinne = [];
   _BankDataResult? _bankDataResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedYear = DateTime.now().year - 1;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasFetchedData) {
+      _hasFetchedData = true;
+      _fetchGewinne();
+    }
+  }
 
   Future<void> _openBankDataDialog() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
@@ -50,11 +69,8 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
       }
     }
     final result = await showDialog<_BankDataResult>(
-      // ignore: use_build_context_synchronously
       context: context,
-      builder: (dialogContext) => BankDataDialog(
-        initialBankData: bankData,
-      ),
+      builder: (dialogContext) => BankDataDialog(initialBankData: bankData),
     );
     if (!mounted) return;
     if (result != null) {
@@ -106,7 +122,6 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentYear = DateTime.now().year;
     return BaseScreenLayout(
       title: 'Oktoberfestlandesschießen',
       userData: widget.userData,
@@ -118,30 +133,14 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'Bitte Jahr wählen:',
+                'Meine Gewinne für das letzte Jahr',
                 style: TextStyle(fontSize: UIConstants.titleFontSize),
               ),
               const SizedBox(height: UIConstants.spacingL),
-              DropdownButton<int>(
-                value: _selectedYear,
-                items: List.generate(
-                  (currentYear < 2024 ? 1 : currentYear - 2024 + 1),
-                  (index) => 2024 + index,
-                )
-                    .map(
-                      (year) => DropdownMenuItem(
-                        value: year,
-                        child: Text(year.toString()),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedYear = value;
-                    });
-                  }
-                },
+              // Already fixed: just show last year's value
+              Text(
+                'Jahr: $_selectedYear',
+                style: const TextStyle(fontSize: UIConstants.subtitleFontSize),
               ),
               if (_loading) ...[
                 const SizedBox(height: UIConstants.spacingXL),
@@ -149,10 +148,6 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
               ],
               if (_gewinne.isNotEmpty) ...[
                 const SizedBox(height: UIConstants.spacingXL),
-                const Text(
-                  'Gefundene Gewinne:',
-                  style: TextStyle(fontSize: UIConstants.subtitleFontSize),
-                ),
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -210,7 +205,7 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
           width: UIConstants.fabSize,
           child: Stack(
             children: [
-              // Year pick FAB
+              // FAB to fetch the last year's data
               Visibility(
                 visible: _gewinne.isEmpty && !_loading,
                 maintainState: true,
@@ -224,7 +219,7 @@ class _OktoberfestYearPickScreenState extends State<OktoberfestYearPickScreen> {
                   child: const Icon(Icons.search, color: Colors.white),
                 ),
               ),
-              // Gewinne abrufen FAB
+              // FAB to perform the Gewinn fetch/abfrage
               Visibility(
                 visible: _gewinne.isNotEmpty,
                 maintainState: true,
@@ -334,6 +329,8 @@ class BankDataDialog extends StatefulWidget {
   @override
   State<BankDataDialog> createState() => _BankDataDialogState();
 }
+
+// Your existing BankDataDialog code remains unchanged...
 
 class _BankDataDialogState extends State<BankDataDialog> {
   final _formKey = GlobalKey<FormState>();
@@ -569,6 +566,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
   }
 }
 
+// Dummy placeholder for your existing `OktoberfestAbrufResultScreen`
 class OktoberfestAbrufResultScreen extends StatelessWidget {
   const OktoberfestAbrufResultScreen({
     super.key,

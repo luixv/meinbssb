@@ -1,4 +1,4 @@
-import 'dart:io';
+// Keep for non-web platforms, though not directly used in Image.file anymore
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,12 +32,16 @@ class PersonalPictUploadScreen extends StatefulWidget {
 }
 
 class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
-  XFile? _selectedImage;
-  Uint8List? _existingProfilePhoto; // New state for existing profile photo
+  XFile? _selectedImage; // Holds the XFile for processing (e.g., upload)
+  Uint8List? _existingProfilePhoto; // Holds bytes of the photo fetched from API
+  Uint8List?
+      _currentDisplayImageBytes; // Holds bytes of the image currently shown
   bool _isUploading = false; // State variable for upload process
   bool _isDeleting = false; // New state variable for delete process
-  bool _isImageUploadedToServer = false; // New state to track successful upload to server
-  bool _isLoadingExistingPhoto = true; // New state to track loading of existing photo
+  bool _isImageUploadedToServer =
+      false; // New state to track successful upload to server
+  bool _isLoadingExistingPhoto =
+      true; // New state to track loading of existing photo
 
   @override
   void initState() {
@@ -49,6 +53,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
     if (widget.userData == null || widget.userData!.personId == 0) {
       setState(() {
         _isLoadingExistingPhoto = false;
+        _currentDisplayImageBytes = null; // Ensure no image is displayed
       });
       return;
     }
@@ -56,17 +61,21 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final String userId = widget.userData!.personId.toString();
-      
-      LoggerService.logInfo('Loading existing profile photo for userId: $userId');
+
+      LoggerService.logInfo(
+          'Loading existing profile photo for userId: $userId',);
       final Uint8List? existingPhoto = await apiService.getProfilePhoto(userId);
-      
+
       if (mounted) {
         setState(() {
           _existingProfilePhoto = existingPhoto;
-          _isImageUploadedToServer = existingPhoto != null; // If photo exists, it's uploaded to server
+          _currentDisplayImageBytes = existingPhoto; // Set for display
+          _isImageUploadedToServer =
+              existingPhoto != null; // If photo exists, it's uploaded to server
           _isLoadingExistingPhoto = false;
+          _selectedImage = null; // Clear selected image when existing is loaded
         });
-        
+
         if (existingPhoto != null) {
           LoggerService.logInfo('Existing profile photo loaded successfully');
         } else {
@@ -78,6 +87,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       if (mounted) {
         setState(() {
           _isLoadingExistingPhoto = false;
+          _currentDisplayImageBytes =
+              null; // Ensure no image is displayed on error
         });
       }
     }
@@ -109,12 +120,20 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
           return; // Don't set the invalid image
         }
 
-        setState(() {
-          _selectedImage = image;
-          _existingProfilePhoto = null; // Clear existing photo when new image is selected
-          _isImageUploadedToServer = false; // Reset this when a new image is selected
-        });
-        LoggerService.logInfo('Image selected and validated: ${image.path}');
+        // Read bytes for display
+        final imageBytes = await image.readAsBytes();
+
+        if (mounted) {
+          setState(() {
+            _selectedImage = image;
+            _currentDisplayImageBytes = imageBytes; // Set for display
+            _existingProfilePhoto =
+                null; // Clear existing photo when new image is selected
+            _isImageUploadedToServer =
+                false; // Reset this when a new image is selected
+          });
+          LoggerService.logInfo('Image selected and validated: ${image.path}');
+        }
       } else {
         LoggerService.logInfo('Image selection cancelled.');
       }
@@ -141,37 +160,43 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   Future<Map<String, dynamic>> _validateImage(XFile image) async {
     final configService = Provider.of<ConfigService>(context, listen: false);
     final maxSizeMB = configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
-    final allowedFormats = configService.getList('allowedFormats', 'profilePhoto') ?? 
-        ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-    
-    LoggerService.logInfo('Validating image: ${image.name}, maxSize: ${maxSizeMB}MB, allowedFormats: $allowedFormats');
-    
+    final allowedFormats =
+        configService.getList('allowedFormats', 'profilePhoto') ??
+            ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+    LoggerService.logInfo(
+        'Validating image: ${image.name}, maxSize: ${maxSizeMB}MB, allowedFormats: $allowedFormats',);
+
     // Check file format
     final fileName = image.name.toLowerCase();
     final fileExtension = fileName.split('.').last;
-    
+
     if (!allowedFormats.contains(fileExtension)) {
-      LoggerService.logWarning('Invalid file format: $fileExtension, allowed: $allowedFormats');
+      LoggerService.logWarning(
+          'Invalid file format: $fileExtension, allowed: $allowedFormats',);
       return {
         'isValid': false,
-        'error': 'Nicht unterstütztes Dateiformat. Erlaubte Formate: ${allowedFormats.join(', ')}',
+        'error':
+            'Nicht unterstütztes Dateiformat. Erlaubte Formate: ${allowedFormats.join(', ')}',
       };
     }
-    
+
     // Check file size
     final fileSize = await image.length();
     final maxSizeBytes = maxSizeMB * 1024 * 1024; // Convert MB to bytes
-    
-    LoggerService.logInfo('File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB, max: ${maxSizeMB}MB');
-    
+
+    LoggerService.logInfo(
+        'File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB, max: ${maxSizeMB}MB',);
+
     if (fileSize > maxSizeBytes) {
-      LoggerService.logWarning('File too large: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB > ${maxSizeMB}MB');
+      LoggerService.logWarning(
+          'File too large: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB > ${maxSizeMB}MB',);
       return {
         'isValid': false,
         'error': 'Datei ist zu groß. Maximale Größe: ${maxSizeMB}MB',
       };
     }
-    
+
     LoggerService.logInfo('Image validation passed');
     return {'isValid': true};
   }
@@ -222,7 +247,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
     });
 
     try {
-      // Validate image before upload
+      // Validate image before upload (re-validate just in case)
       final validationResult = await _validateImage(_selectedImage!);
       if (!validationResult['isValid']) {
         if (mounted) {
@@ -236,7 +261,6 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                           .scaleFactor,
                 ),
               ),
-              backgroundColor: Colors.red,
             ),
           );
         }
@@ -245,8 +269,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
       final apiService = Provider.of<ApiService>(context, listen: false);
       final imageBytes = await _selectedImage!.readAsBytes();
-      final String userId = widget.userData!.personId
-          .toString(); // Assuming personId is the userId
+      final String userId = widget.userData!.personId.toString();
 
       LoggerService.logInfo('Attempting to upload image for userId: $userId');
       final bool success =
@@ -269,7 +292,11 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
           );
           setState(() {
             _isImageUploadedToServer = true; // Set to true on successful upload
+            _selectedImage =
+                null; // Clear selected image as it's now "existing"
           });
+          // Reload the existing photo to ensure the display is updated from the server
+          await _loadExistingProfilePhoto(); // Important: Await this call
           // Navigate to the success screen
           Navigator.pushReplacement(
             context,
@@ -282,7 +309,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             ),
           );
           LoggerService.logInfo(
-            'Navigating to PersonalPictUploadSuccessScreen (placeholder).',
+            'Navigating to PersonalPictUploadSuccessScreen.',
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -353,8 +380,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final String userId = widget.userData!.personId
-          .toString(); // Assuming personId is the userId
+      final String userId = widget.userData!.personId.toString();
 
       LoggerService.logInfo('Attempting to delete image for userId: $userId');
       final bool success = await apiService.deleteProfilePhoto(userId);
@@ -375,9 +401,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             ),
           );
           setState(() {
-            _selectedImage = null; // Clear the displayed image after successful deletion
-            _existingProfilePhoto = null; // Clear the existing photo after successful deletion
-            _isImageUploadedToServer = false; // Reset this when image is deleted
+            _selectedImage =
+                null; // Clear the displayed image after successful deletion
+            _existingProfilePhoto =
+                null; // Clear the existing photo after successful deletion
+            _currentDisplayImageBytes = null; // Clear the display bytes
+            _isImageUploadedToServer =
+                false; // Reset this when image is deleted
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -422,50 +452,64 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   }
 
   Widget _buildProfileImageWidget() {
+    // Determine the size for the image/icon container
+    const double imageContainerSize = UIConstants.defaultImageHeight + 60;
+
     // Show loading indicator while loading existing photo
     if (_isLoadingExistingPhoto) {
       return Container(
-        width: UIConstants.defaultImageHeight + 60,
-        height: UIConstants.defaultImageHeight + 60,
+        width: imageContainerSize,
+        height: imageContainerSize,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(
-            (UIConstants.defaultImageHeight + 60) / 2,
-          ),
+          borderRadius: BorderRadius.circular(imageContainerSize / 2),
           border: Border.all(
             color: UIConstants.mydarkGreyColor,
             width: UIConstants.defaultStrokeWidth,
           ),
         ),
-        child: const CircularProgressIndicator(
-          color: UIConstants.mydarkGreyColor,
+        child: const Center(
+          // Center the CircularProgressIndicator
+          child: CircularProgressIndicator(
+            color: UIConstants.mydarkGreyColor,
+          ),
         ),
       );
     }
 
-    // Show selected image if available
-    if (_selectedImage != null) {
-      return ClipOval(
-        child: Image.file(
-          File(_selectedImage!.path),
-          width: UIConstants.defaultImageHeight + 60,
-          height: UIConstants.defaultImageHeight + 60,
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-
-    // Show existing profile photo if available
-    if (_existingProfilePhoto != null) {
+    // Display the current image (either selected or existing)
+    if (_currentDisplayImageBytes != null &&
+        _currentDisplayImageBytes!.isNotEmpty) {
       return Stack(
         alignment: Alignment.center,
         children: [
           ClipOval(
             child: Image.memory(
-              _existingProfilePhoto!,
-              width: UIConstants.defaultImageHeight + 60,
-              height: UIConstants.defaultImageHeight + 60,
+              _currentDisplayImageBytes!,
+              width: imageContainerSize,
+              height: imageContainerSize,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                LoggerService.logError('Error loading Image.memory: $error');
+                return Container(
+                  // Fallback to a default icon container on error
+                  width: imageContainerSize,
+                  height: imageContainerSize,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(imageContainerSize / 2),
+                    border: Border.all(
+                      color: UIConstants.mydarkGreyColor,
+                      width: UIConstants.defaultStrokeWidth,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.person,
+                    size: UIConstants.defaultImageHeight,
+                    color: UIConstants.mydarkGreyColor,
+                  ),
+                );
+              },
             ),
           ),
           Positioned(
@@ -501,13 +545,11 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       alignment: Alignment.center,
       children: [
         Container(
-          width: UIConstants.defaultImageHeight + 60,
-          height: UIConstants.defaultImageHeight + 60,
+          width: imageContainerSize,
+          height: imageContainerSize,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(
-              (UIConstants.defaultImageHeight + 60) / 2,
-            ),
+            borderRadius: BorderRadius.circular(imageContainerSize / 2),
             border: Border.all(
               color: UIConstants.mydarkGreyColor,
               width: UIConstants.defaultStrokeWidth,
@@ -625,10 +667,12 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             // Show validation requirements
             Consumer<ConfigService>(
               builder: (context, configService, child) {
-                final maxSizeMB = configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
-                final allowedFormats = configService.getList('allowedFormats', 'profilePhoto') ?? 
-                    ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-                
+                final maxSizeMB =
+                    configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
+                final allowedFormats =
+                    configService.getList('allowedFormats', 'profilePhoto') ??
+                        ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
                 return Center(
                   child: Column(
                     children: [
@@ -669,7 +713,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
         mainAxisAlignment: MainAxisAlignment.end, // Aligns FABs to the bottom
         children: [
           // Delete FAB (visible only if an image is selected AND successfully uploaded to server, or if there's an existing photo)
-          if ((_selectedImage != null && _isImageUploadedToServer) || _existingProfilePhoto != null)
+          if ((_selectedImage != null && _isImageUploadedToServer) ||
+              _existingProfilePhoto != null)
             FloatingActionButton(
               heroTag: 'deleteFab', // Unique tag for delete FAB
               onPressed: _isDeleting ? null : _deleteImage,
@@ -681,14 +726,16 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                     )
                   : const Icon(Icons.delete, color: Colors.white),
             ),
-          if ((_selectedImage != null && _isImageUploadedToServer) || _existingProfilePhoto != null)
+          if ((_selectedImage != null && _isImageUploadedToServer) ||
+              _existingProfilePhoto != null)
             const SizedBox(
               height: UIConstants.spacingM,
             ), // Spacing between buttons
           // Save FAB (enabled when there's a selected image to upload)
           FloatingActionButton(
             heroTag: 'saveFab', // Unique tag for save FAB
-            onPressed: (_isUploading || _selectedImage == null) ? null : _uploadImage,
+            onPressed:
+                (_isUploading || _selectedImage == null) ? null : _uploadImage,
             backgroundColor: UIConstants.defaultAppColor,
             child: _isUploading
                 ? const CircularProgressIndicator(

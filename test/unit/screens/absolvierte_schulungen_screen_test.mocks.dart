@@ -5,16 +5,18 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i10;
-import 'dart:ui' as _i21;
+import 'dart:ui' as _i24;
 
 import 'package:meinbssb/models/bank_data.dart' as _i14;
 import 'package:meinbssb/models/contact.dart' as _i9;
 import 'package:meinbssb/models/disziplin.dart' as _i13;
 import 'package:meinbssb/models/fremde_verband.dart' as _i16;
+import 'package:meinbssb/models/gewinn.dart' as _i20;
 import 'package:meinbssb/models/pass_data_zve.dart' as _i6;
 import 'package:meinbssb/models/person.dart' as _i17;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i2;
+import 'package:meinbssb/models/result.dart' as _i18;
 import 'package:meinbssb/models/schulung.dart' as _i8;
 import 'package:meinbssb/models/schulungsart.dart' as _i11;
 import 'package:meinbssb/models/schulungstermin.dart' as _i12;
@@ -22,11 +24,11 @@ import 'package:meinbssb/models/user_data.dart' as _i5;
 import 'package:meinbssb/models/verein.dart' as _i15;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
 import 'package:meinbssb/services/api_service.dart' as _i3;
-import 'package:meinbssb/services/core/config_service.dart' as _i22;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i19;
-import 'package:meinbssb/services/core/network_service.dart' as _i18;
+import 'package:meinbssb/services/core/config_service.dart' as _i19;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i22;
+import 'package:meinbssb/services/core/network_service.dart' as _i21;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i20;
+import 'package:mockito/src/dummies.dart' as _i23;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -645,6 +647,16 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as _i4.Future<Map<String, dynamic>?>);
 
   @override
+  _i4.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPersonId,
+          [personId],
+        ),
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
+
+  @override
   _i4.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -784,12 +796,46 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i18.Result>> fetchResults(
+    String? passnummer,
+    _i19.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchResults,
+          [
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i4.Future<List<_i18.Result>>.value(<_i18.Result>[]),
+      ) as _i4.Future<List<_i18.Result>>);
+
+  @override
+  _i4.Future<List<_i20.Gewinn>> fetchGewinne(
+    int? jahr,
+    String? passnummer,
+    _i19.ConfigService? configService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchGewinne,
+          [
+            jahr,
+            passnummer,
+            configService,
+          ],
+        ),
+        returnValue: _i4.Future<List<_i20.Gewinn>>.value(<_i20.Gewinn>[]),
+      ) as _i4.Future<List<_i20.Gewinn>>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i18.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i21.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -822,7 +868,7 @@ class MockNetworkService extends _i1.Mock implements _i18.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i19.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -881,7 +927,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i19.FontSizeProvider {
           #getScalePercentage,
           [],
         ),
-        returnValue: _i20.dummyValue<String>(
+        returnValue: _i23.dummyValue<String>(
           this,
           Invocation.method(
             #getScalePercentage,
@@ -891,7 +937,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i19.FontSizeProvider {
       ) as String);
 
   @override
-  void addListener(_i21.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i24.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -900,7 +946,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i19.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i21.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i24.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -930,7 +976,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i19.FontSizeProvider {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i22.ConfigService {
+class MockConfigService extends _i1.Mock implements _i19.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }
@@ -960,4 +1006,17 @@ class MockConfigService extends _i1.Mock implements _i22.ConfigService {
           section,
         ],
       )) as String?);
+
+  @override
+  List<String>? getList(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getList,
+        [
+          key,
+          section,
+        ],
+      )) as List<String>?);
 }
