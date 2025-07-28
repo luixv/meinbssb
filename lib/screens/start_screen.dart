@@ -7,6 +7,8 @@ import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
+import '/screens/personal_pict_upload.dart';
+
 import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -60,12 +62,14 @@ class StartScreenState extends State<StartScreen> {
       String personId = widget.userData!.personId.toString();
       LoggerService.logInfo('Fetching profile picture for personId: $personId');
       final bytes = await apiService.getProfilePhoto(personId);
-      
+
       if (mounted) {
         setState(() {
           _profilePictureBytes = bytes;
         });
-        LoggerService.logInfo('Profile picture updated: ${bytes != null ? '${bytes.length} bytes' : 'null'}');
+        LoggerService.logInfo(
+          'Profile picture updated: ${bytes != null ? '${bytes.length} bytes' : 'null'}',
+        );
       }
     } catch (e) {
       LoggerService.logError('Error fetching profile picture: $e');
@@ -290,28 +294,60 @@ class StartScreenState extends State<StartScreen> {
               children: [
                 const LogoWidget(),
                 // Display profile picture or default icon
-                _profilePictureBytes != null && _profilePictureBytes!.isNotEmpty
-                    ? ClipOval(
-                        child: Image.memory(
-                          _profilePictureBytes!,
-                          width: UIConstants.profilePictureSize,
-                          height: UIConstants.profilePictureSize,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            LoggerService.logError('Error displaying profile picture: $error');
-                            return const Icon(
-                              Icons.person,
-                              size: UIConstants.profilePictureSize,
-                              color: UIConstants.defaultAppColor,
+
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: _profilePictureBytes != null &&
+                          _profilePictureBytes!.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PersonalPictUploadScreen(
+                                  userData: userData,
+                                  isLoggedIn: widget.isLoggedIn,
+                                  onLogout: widget.onLogout,
+                                ),
+                              ),
                             );
                           },
+                          child: ClipOval(
+                            child: Image.memory(
+                              _profilePictureBytes!,
+                              width: UIConstants.profilePictureSize,
+                              height: UIConstants.profilePictureSize,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                LoggerService.logError(
+                                    'Error displaying profile picture: $error',);
+                                return const Icon(
+                                  Icons.person,
+                                  size: UIConstants.profilePictureSize,
+                                  color: UIConstants.defaultAppColor,
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PersonalPictUploadScreen(
+                                  userData: userData,
+                                  isLoggedIn: widget.isLoggedIn,
+                                  onLogout: widget.onLogout,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.person,
+                            size: UIConstants.profilePictureSize,
+                            color: UIConstants.defaultAppColor,
+                          ),
                         ),
-                      )
-                    : const Icon(
-                        Icons.person,
-                        size: UIConstants.profilePictureSize,
-                        color: UIConstants.defaultAppColor,
-                      ),
+                ),
               ],
             ),
             const SizedBox(height: UIConstants.spacingM),
