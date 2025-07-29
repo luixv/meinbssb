@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io' as io;
 
 class ImageService {
-
   ImageService({
     this.getCachedSchuetzenausweisFn,
     this.cacheSchuetzenausweisFn,
@@ -104,6 +103,19 @@ class ImageService {
       if (fallback != null) return fallback;
       throw Exception('Failed to fetch and no cache available');
     }
+  }
+
+  /// Returns the cached date of the Schuetzenausweis image for the given personId in format DD.MM.YYYY,
+  /// or null if not available.
+  Future<String?> getSchuetzenausweisCacheDate(int personId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final ts = prefs.getInt('schuetzenausweis_${personId}_timestamp');
+    if (ts == null) return null;
+    final date = DateTime.fromMillisecondsSinceEpoch(ts);
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final year = date.year.toString();
+    return '$day.$month.$year';
   }
 
 //=== Web Implementation ===//

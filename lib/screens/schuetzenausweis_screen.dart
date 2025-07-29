@@ -78,11 +78,39 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                   );
                 }
                 if (snapshot.hasData && snapshot.data != null) {
-                  return Center(
-                    child: SizedBox(
-                      key: const ValueKey<String>('schuetzenausweis'),
-                      child: Image.memory(snapshot.data!),
-                    ),
+                  return Column(
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          key: const ValueKey<String>('schuetzenausweis'),
+                          child: Image.memory(snapshot.data!),
+                        ),
+                      ),
+                      FutureBuilder<String?>(
+                        future: Provider.of<ApiService>(context, listen: false)
+                            .imageService
+                            .getSchuetzenausweisCacheDate(widget.personId),
+                        builder: (context, dateSnapshot) {
+                          if (dateSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox.shrink();
+                          }
+                          if (dateSnapshot.hasData &&
+                              dateSnapshot.data != null) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: UIConstants.spacingS,
+                              ),
+                              child: Text(
+                                'Stand: ${dateSnapshot.data}',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ],
                   );
                 }
                 return const Center(

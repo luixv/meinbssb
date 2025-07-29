@@ -30,7 +30,7 @@ import 'package:meinbssb/models/result.dart';
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
-import 'core/image_service.dart';
+import 'core/image_service.dart'; // Make sure this import exists
 import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
@@ -85,6 +85,8 @@ class ApiService {
   final OktoberfestService _oktoberfestService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
+
+  ImageService get imageService => _imageService;
 
   Duration getCacheExpirationDuration() =>
       _networkService.getCacheExpirationDuration();
