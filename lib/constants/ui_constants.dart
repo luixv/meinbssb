@@ -105,6 +105,7 @@ class UIConstants {
   static const double titleFontSize = 20.0;
   static const double subtitleFontSize = 16.0;
   static const double buttonFontSize = 16.0;
+  static const double defaultFontSize = 16.0;
 
   // Spacing constants
   static const double spacingXS = 4.0;
@@ -439,4 +440,7 @@ class UIConstants {
   static const double menuTitleFontSize = 24.0;
   static const double menuItemFontSize = 18.0;
   static const double stylesPreviewWidth = 200.0;
+
+  static const double borderWidth = 1.0;
+  static const double headerFontScale = 1.3;
 }
