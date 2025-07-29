@@ -265,7 +265,7 @@ class LoginScreenState extends State<LoginScreen> {
                 UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
           ),
           decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'passwort',
+            labelText: 'Passwort',
             labelStyle: UIStyles.formLabelStyle.copyWith(
               fontSize: UIStyles.formLabelStyle.fontSize! *
                   fontSizeProvider.scaleFactor,
