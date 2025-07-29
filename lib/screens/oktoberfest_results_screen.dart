@@ -80,9 +80,10 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
 
             // Define column widths using FractionColumnWidth for responsiveness
             const Map<int, TableColumnWidth> columnWidths = {
-              0: FractionColumnWidth(0.7), // Wettbewerb (70%)
-              1: FractionColumnWidth(0.15), // Rang (approx 15%)
-              2: FractionColumnWidth(0.15), // Ergebnis (approx 15%)
+              0: FractionColumnWidth(0.05), // Empty column (5%)
+              1: FractionColumnWidth(0.65), // Wettbewerb (70%)
+              2: FractionColumnWidth(0.15), // Rang (15%)
+              3: FractionColumnWidth(0.15), // Ergebnis (15%)
             };
 
             return Column(
@@ -104,6 +105,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       children: [
+                        const SizedBox(), // Empty header cell
                         Padding(
                           padding: const EdgeInsets.all(UIConstants.spacingS),
                           child: ScaledText(
@@ -174,6 +176,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                       children: results.map((result) {
                         return TableRow(
                           children: [
+                            const SizedBox(), // Empty cell
                             Padding(
                               padding:
                                   const EdgeInsets.all(UIConstants.spacingS),
@@ -184,7 +187,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                                               .textTheme
                                               .bodyMedium
                                               ?.fontSize ??
-                                          14.0) *
+                                          16.0) *
                                       fontSizeProvider.scaleFactor,
                                 ),
                               ),
