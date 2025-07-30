@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -457,7 +458,7 @@ Ergebnis der Abfrage:
   }
 
   /// Generates a QR code image as Uint8List for the given personId.
-  Future<Uint8List?> getQRCode(
+  Future<Uint8List?> getEncryptedQRCode(
     int personId,
     DateTime geburtsdatum,
     String vorname,
@@ -468,25 +469,35 @@ Ergebnis der Abfrage:
     String land,
     String passnummer,
   ) async {
-    // 1. Create the JSON payload
-    final payload = jsonEncode(
-      {
-        'personId': personId,
-        'geburtsdatum':
-            '${geburtsdatum.day.toString().padLeft(2, '0')}.${geburtsdatum.month.toString().padLeft(2, '0')}.${geburtsdatum.year}',
-        'vorname': vorname,
-        'namen': namen,
-        'strasse': strasse,
-        'plz': plz,
-        'ort': ort,
-        'land': land,
-        'passnummer': passnummer,
-      },
-    );
+    // 1. Create JSON payload
+    final payload = jsonEncode({
+      'personId': personId,
+      'geburtsdatum':
+          '${geburtsdatum.day.toString().padLeft(2, '0')}.${geburtsdatum.month.toString().padLeft(2, '0')}.${geburtsdatum.year}',
+      'vorname': vorname,
+      'namen': namen,
+      'strasse': strasse,
+      'plz': plz,
+      'ort': ort,
+      'land': land,
+      'passnummer': passnummer,
+    });
 
-    // 2. Create a QR code widget
+    final String? keyString =
+        _configService.getString('keyString'); // must be 32 bytes
+    final encrypt.Key key = encrypt.Key.fromUtf8(keyString!);
+    final encrypt.IV iv = encrypt.IV.fromLength(16);
+
+    // 2. Encrypt the payload
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypted = encrypter.encrypt(payload, iv: iv);
+
+    // 3. Encode encrypted data as base64
+    final encryptedData = encrypted.base64;
+
+    // Now, generate the QR code with the encrypted data
     final qrValidationResult = QrValidator.validate(
-      data: payload,
+      data: encryptedData,
       version: QrVersions.auto,
       errorCorrectionLevel: QrErrorCorrectLevel.M,
     );
@@ -503,8 +514,35 @@ Ergebnis der Abfrage:
       gapless: true,
     );
 
-    // 3. Convert the QR code to an image (Uint8List)
-    final picData = await painter.toImageData(300); // 300x300 px
+    final picData = await painter.toImageData(300);
     return picData?.buffer.asUint8List();
+  }
+
+  Future<Map<String, dynamic>?> decryptQRCodeData(
+    String encryptedBase64,
+  ) async {
+    try {
+      final String? keyString =
+          _configService.getString('keyString'); // same key as encryption
+      final encrypt.Key key = encrypt.Key.fromUtf8(keyString!);
+      final encrypt.IV iv =
+          encrypt.IV.fromLength(16); // same IV used during encryption
+
+      // Create encrypted object from base64 string
+      final encrypted = encrypt.Encrypted.fromBase64(encryptedBase64);
+
+      // Initialize encrypter
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+      // Decrypt to string
+      final String decryptedString = encrypter.decrypt(encrypted, iv: iv);
+
+      // Parse JSON string to Map
+      final Map<String, dynamic> payload = jsonDecode(decryptedString);
+      return payload;
+    } catch (e) {
+      //print('Decryption failed: $e');
+      return null;
+    }
   }
 }

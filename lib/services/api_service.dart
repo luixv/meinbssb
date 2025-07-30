@@ -141,7 +141,7 @@ class ApiService {
     return _authService.changePassword(personId, newPassword);
   }
 
-  Future<Uint8List?> getQRCode(
+  Future<Uint8List?> getEncryptedQRCode(
     int personId,
     DateTime geburtsdatum,
     String vorname,
@@ -152,7 +152,7 @@ class ApiService {
     String land,
     String passnummer,
   ) async {
-    return _authService.getQRCode(
+    return _authService.getEncryptedQRCode(
       personId,
       geburtsdatum,
       vorname,

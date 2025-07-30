@@ -93,7 +93,7 @@ class OktoberfestScreen extends StatelessWidget {
                 final apiService =
                     Provider.of<ApiService>(context, listen: false);
 
-                final qrBytes = await apiService.getQRCode(
+                final qrBytes = await apiService.getEncryptedQRCode(
                   userData?.personId ?? 0,
                   userData?.geburtsdatum ?? DateTime.now(),
                   userData?.vorname ?? '',
