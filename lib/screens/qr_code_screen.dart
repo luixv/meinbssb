@@ -28,7 +28,7 @@ class QRCodeScreen extends StatelessWidget {
       onLogout: onLogout,
       automaticallyImplyLeading: true,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -44,16 +44,17 @@ class QRCodeScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: UIConstants.defaultAppColor,
-                          width: 2,
+                          width: UIConstants.defaultQRCodeBorder,
                         ),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius:
+                            BorderRadius.circular(UIConstants.cornerRadius),
                         color: Colors.white,
                       ),
                       padding: const EdgeInsets.all(UIConstants.spacingM),
                       child: Image.memory(
                         qrCodeBytes,
-                        width: 300,
-                        height: 300,
+                        width: UIConstants.defaultQRCodeSize,
+                        height: UIConstants.defaultQRCodeSize,
                         fit: BoxFit.contain,
                       ),
                     )

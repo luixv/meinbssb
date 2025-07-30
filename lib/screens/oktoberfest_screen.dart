@@ -34,7 +34,7 @@ class OktoberfestScreen extends StatelessWidget {
       onLogout: onLogout,
       automaticallyImplyLeading: true,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

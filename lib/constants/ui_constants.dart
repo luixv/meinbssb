@@ -171,6 +171,8 @@ class UIConstants {
   static const double defaultButtonHeight = 36.0;
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
+  static const double defaultQRCodeSize = 300;
+  static const double defaultQRCodeBorder = 2.0;
 
   static const double iconSizeXL = 64.0;
   static const double iconSizeL = 32.0;
