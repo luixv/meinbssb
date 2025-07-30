@@ -457,9 +457,32 @@ Ergebnis der Abfrage:
   }
 
   /// Generates a QR code image as Uint8List for the given personId.
-  Future<Uint8List?> getQRCode(int personId) async {
+  Future<Uint8List?> getQRCode(
+    int personId,
+    DateTime geburtsdatum,
+    String vorname,
+    String namen,
+    String strasse,
+    String plz,
+    String ort,
+    String land,
+    String passnummer,
+  ) async {
     // 1. Create the JSON payload
-    final payload = jsonEncode({'personId': personId});
+    final payload = jsonEncode(
+      {
+        'personId': personId,
+        'geburtsdatum':
+            '${geburtsdatum.day.toString().padLeft(2, '0')}.${geburtsdatum.month.toString().padLeft(2, '0')}.${geburtsdatum.year}',
+        'vorname': vorname,
+        'namen': namen,
+        'strasse': strasse,
+        'plz': plz,
+        'ort': ort,
+        'land': land,
+        'passnummer': passnummer,
+      },
+    );
 
     // 2. Create a QR code widget
     final qrValidationResult = QrValidator.validate(

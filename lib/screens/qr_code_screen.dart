@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import '/screens/logo_widget.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 
 class QRCodeScreen extends StatelessWidget {
-
   const QRCodeScreen({
     super.key,
     required this.qrCodeBytes,
@@ -34,7 +32,6 @@ class QRCodeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
             const ScaledText(
               'QR Code',

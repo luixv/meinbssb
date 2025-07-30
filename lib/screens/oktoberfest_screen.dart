@@ -92,8 +92,18 @@ class OktoberfestScreen extends StatelessWidget {
               () async {
                 final apiService =
                     Provider.of<ApiService>(context, listen: false);
-                final qrBytes =
-                    await apiService.getQRCode(userData?.personId ?? 0);
+
+                final qrBytes = await apiService.getQRCode(
+                  userData?.personId ?? 0,
+                  userData?.geburtsdatum ?? DateTime.now(),
+                  userData?.vorname ?? '',
+                  userData?.namen ?? '',
+                  userData?.strasse ?? '',
+                  userData?.plz ?? '',
+                  userData?.ort ?? '',
+                  userData?.land ?? '',
+                  userData?.passnummer ?? '',
+                );
                 if (qrBytes != null) {
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).push(
