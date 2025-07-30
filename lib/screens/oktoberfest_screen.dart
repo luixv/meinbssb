@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meinbssb/screens/qr_code_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -81,6 +83,35 @@ class OktoberfestScreen extends StatelessWidget {
                     ),
                   ),
                 );
+              },
+            ),
+            _buildMenuItem(
+              context,
+              'QR Code',
+              Icons.qr_code,
+              () async {
+                final apiService =
+                    Provider.of<ApiService>(context, listen: false);
+                final qrBytes =
+                    await apiService.getQRCode(userData?.personId ?? 0);
+                if (qrBytes != null) {
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => QRCodeScreen(
+                        qrCodeBytes: qrBytes,
+                        onLogout: () {},
+                      ),
+                    ),
+                  );
+                } else {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('QR-Code konnte nicht generiert werden.'),
+                    ),
+                  );
+                }
               },
             ),
           ],
