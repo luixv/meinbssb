@@ -141,6 +141,10 @@ class ApiService {
     return _authService.changePassword(personId, newPassword);
   }
 
+  Future<Uint8List?> getQRCode(int personId) async {
+    return _authService.getQRCode(personId);
+  }
+
   // User Service
   Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);

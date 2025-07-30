@@ -5,9 +5,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/constants/messages.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
@@ -451,5 +454,34 @@ Ergebnis der Abfrage:
       LoggerService.logError('Find Person ID error: $e');
       rethrow;
     }
+  }
+
+  /// Generates a QR code image as Uint8List for the given personId.
+  Future<Uint8List?> getQRCode(int personId) async {
+    // 1. Create the JSON payload
+    final payload = jsonEncode({'personId': personId});
+
+    // 2. Create a QR code widget
+    final qrValidationResult = QrValidator.validate(
+      data: payload,
+      version: QrVersions.auto,
+      errorCorrectionLevel: QrErrorCorrectLevel.M,
+    );
+
+    if (qrValidationResult.status != QrValidationStatus.valid) {
+      return null;
+    }
+
+    final qrCode = qrValidationResult.qrCode;
+    final painter = QrPainter.withQr(
+      qr: qrCode!,
+      color: Colors.black,
+      emptyColor: Colors.white,
+      gapless: true,
+    );
+
+    // 3. Convert the QR code to an image (Uint8List)
+    final picData = await painter.toImageData(300); // 300x300 px
+    return picData?.buffer.asUint8List();
   }
 }

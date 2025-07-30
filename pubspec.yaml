@@ -61,6 +61,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  qr_flutter: ^4.1.0
   #webview_flutter: ^4.0.1
 
 dev_dependencies:
