@@ -59,10 +59,13 @@ class EmailService {
     try {
       final smtpHost = _configService.getString('host', 'smtpSettings');
       final smtpPort = _configService.getString('port', 'smtpSettings');
-      final username = _configService.getString('username', 'smtpSettings');
-      final password = _configService.getString('password', 'smtpSettings');
+      final ssl = _configService.getString('ssl', 'smtpSettings');
+      final allowInsecure =
+          _configService.getString('allowInsecure', 'smtpSettings');
+      final ignoreBadCertificate =
+          _configService.getString('ignoreBadCertificate', 'smtpSettings');
 
-      if (smtpHost == null || username == null || password == null) {
+      if (smtpHost == null) {
         LoggerService.logWarning(
           'SMTP settings are not fully configured in config.json.',
         );
@@ -74,12 +77,10 @@ class EmailService {
 
       final smtpServer = smtp.SmtpServer(
         smtpHost,
-        username: username,
-        password: password,
         port: int.parse(smtpPort!),
-        ssl: false,
-        allowInsecure: true,
-        ignoreBadCertificate: true,
+        ssl: bool.parse(ssl!),
+        allowInsecure: bool.parse(allowInsecure!),
+        ignoreBadCertificate: bool.parse(ignoreBadCertificate!),
       );
 
       final message = mailer.Message()
@@ -293,7 +294,8 @@ class EmailService {
 
       LoggerService.logInfo('Sent training unregistration notification emails');
     } catch (e) {
-      LoggerService.logError('Error sending training unregistration notifications: $e');
+      LoggerService.logError(
+          'Error sending training unregistration notifications: $e');
     }
   }
 
@@ -331,7 +333,8 @@ class EmailService {
             eventTitle: schulungName,
             eventDate: eventDateTime,
             location: location ?? 'BSSB Schulung',
-            description: 'Schulung: $schulungName\nTeilnehmer: $firstName $lastName\nPassnummer: $passnumber',
+            description:
+                'Schulung: $schulungName\nTeilnehmer: $firstName $lastName\nPassnummer: $passnumber',
             organizerEmail: fromEmail,
           );
         } catch (e) {
@@ -371,7 +374,8 @@ class EmailService {
 
       LoggerService.logInfo('Sent training registration notification email');
     } catch (e) {
-      LoggerService.logError('Error sending training registration notification: $e');
+      LoggerService.logError(
+          'Error sending training registration notification: $e');
     }
   }
 }
