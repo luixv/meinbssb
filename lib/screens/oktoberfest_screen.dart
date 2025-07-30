@@ -110,7 +110,8 @@ class OktoberfestScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => QRCodeScreen(
                         qrCodeBytes: qrBytes,
-                        onLogout: () {},
+                        isLoggedIn: isLoggedIn,
+                        onLogout: onLogout,
                       ),
                     ),
                   );
