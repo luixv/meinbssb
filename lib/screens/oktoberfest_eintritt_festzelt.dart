@@ -47,11 +47,10 @@ class OktoberfestEintrittFestzelt extends StatelessWidget {
               // Center widget to center all content
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment:
-                    CrossAxisAlignment.center, // center horizontally
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Optional top spacing
-                  const SizedBox(height: 50),
+                  // More space on top
+                  const SizedBox(height: 150),
                   _buildInfoText('Datum:', date, context),
                   const SizedBox(height: 10),
                   _buildInfoText('Passnummer:', passnummer, context),
