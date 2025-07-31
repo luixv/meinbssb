@@ -46,7 +46,7 @@ class OktoberfestScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             _buildMenuItem(
               context,
-              'Oktoberfest: Meine Ergebnisse',
+              'Meine Ergebnisse',
               Icons.bar_chart,
               () {
                 Navigator.push(
@@ -66,7 +66,7 @@ class OktoberfestScreen extends StatelessWidget {
             ),
             _buildMenuItem(
               context,
-              'Oktoberfest: Meine Gewinne',
+              'Meine Gewinne',
               Icons.emoji_events,
               () {
                 Navigator.push(
