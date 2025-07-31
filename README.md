@@ -100,6 +100,8 @@ For the web version go to project root and at a shell run the following:
 
 $ python.exe -m http.server 8080 --directory build/web
 
+(Or use Docker, see intructions below)
+
 Previously you have to generate the web page(s) running:
 $ flutter build web
 

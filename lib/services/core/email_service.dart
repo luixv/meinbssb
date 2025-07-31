@@ -295,7 +295,8 @@ class EmailService {
       LoggerService.logInfo('Sent training unregistration notification emails');
     } catch (e) {
       LoggerService.logError(
-          'Error sending training unregistration notifications: $e',);
+        'Error sending training unregistration notifications: $e',
+      );
     }
   }
 
@@ -375,7 +376,8 @@ class EmailService {
       LoggerService.logInfo('Sent training registration notification email');
     } catch (e) {
       LoggerService.logError(
-          'Error sending training registration notification: $e',);
+        'Error sending training registration notification: $e',
+      );
     }
   }
 }
