@@ -9,6 +9,7 @@ import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 import '/screens/oktoberfest_results_screen.dart';
 import '/screens/oktoberfest_gewinn_screen.dart';
+import '/screens/oktoberfest_eintritt_festzelt.dart';
 
 import '/services/core/config_service.dart';
 
@@ -32,7 +33,7 @@ class OktoberfestScreen extends StatelessWidget {
       onLogout: onLogout,
       automaticallyImplyLeading: true,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,6 +79,32 @@ class OktoberfestScreen extends StatelessWidget {
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildMenuItem(
+              context,
+              'Eintritt Festzelt',
+              Icons.festival,
+              () {
+                final now = DateTime.now();
+                final formattedDate =
+                    '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} '
+                    '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OktoberfestEintrittFestzelt(
+                      date: formattedDate,
+                      passnummer: userData?.passnummer ?? '',
+                      vorname: userData?.vorname ?? '',
+                      nachname: userData?.namen ?? '',
+                      geburtsdatum: userData?.geburtsdatum != null
+                          ? '${userData!.geburtsdatum!.day.toString().padLeft(2, '0')}.${userData!.geburtsdatum!.month.toString().padLeft(2, '0')}.${userData!.geburtsdatum!.year}'
+                          : 'Nicht verfügbar',
                     ),
                   ),
                 );
