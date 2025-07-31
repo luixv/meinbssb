@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '/screens/base_screen_layout.dart';
+import '/constants/ui_constants.dart';
 
 class OktoberfestEintrittFestzelt extends StatelessWidget {
   const OktoberfestEintrittFestzelt({
@@ -17,38 +19,42 @@ class OktoberfestEintrittFestzelt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Eintritt Festzelt'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return BaseScreenLayout(
+      title: 'Eintritt Festzelt',
+      userData: null, // or pass userData if needed
+      isLoggedIn: true, // or false depending on your app logic
+      onLogout: () {}, // pass a function if required
+      body: SingleChildScrollView(
+        padding: UIConstants.defaultPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Datum: $date', style: Theme.of(context).textTheme.bodyMedium),
+            _buildInfoText('Datum:', date, context),
             const SizedBox(height: 10),
-            Text(
-              'Passnummer: $passnummer',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            _buildInfoText('Passnummer:', passnummer, context),
             const SizedBox(height: 10),
-            Text(
-              'Vorname: $vorname',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            _buildInfoText('Vorname:', vorname, context),
             const SizedBox(height: 10),
-            Text(
-              'Nachname: $nachname',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            _buildInfoText('Nachname:', nachname, context),
             const SizedBox(height: 10),
-            Text(
-              'Geburtsdatum: $geburtsdatum',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            _buildInfoText('Geburtsdatum:', geburtsdatum, context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoText(String label, String value, BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.bodyMedium,
+        children: [
+          TextSpan(
+            text: '$label ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: value),
+        ],
       ),
     );
   }
