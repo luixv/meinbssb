@@ -19,35 +19,64 @@ class OktoberfestEintrittFestzelt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return BaseScreenLayout(
       title: 'Eintritt Festzelt',
-      userData: null, // or pass userData if needed
-      isLoggedIn: true, // or false depending on your app logic
-      onLogout: () {}, // pass a function if required
-      body: SingleChildScrollView(
-        padding: UIConstants.defaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoText('Datum:', date, context),
-            const SizedBox(height: 10),
-            _buildInfoText('Passnummer:', passnummer, context),
-            const SizedBox(height: 10),
-            _buildInfoText('Vorname:', vorname, context),
-            const SizedBox(height: 10),
-            _buildInfoText('Nachname:', nachname, context),
-            const SizedBox(height: 10),
-            _buildInfoText('Geburtsdatum:', geburtsdatum, context),
-          ],
-        ),
+      userData: null,
+      isLoggedIn: true,
+      onLogout: () {},
+      body: Stack(
+        children: [
+          // Background image covering full height
+          Container(
+            width: size.width,
+            height: size.height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/BSSB_Wappen.png'),
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+          ),
+          // Centered info
+          SingleChildScrollView(
+            padding: UIConstants.defaultPadding,
+            child: Center(
+              // Center widget to center all content
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // center horizontally
+                children: [
+                  // Optional top spacing
+                  const SizedBox(height: 50),
+                  _buildInfoText('Datum:', date, context),
+                  const SizedBox(height: 10),
+                  _buildInfoText('Passnummer:', passnummer, context),
+                  const SizedBox(height: 10),
+                  _buildInfoText('Vorname:', vorname, context),
+                  const SizedBox(height: 10),
+                  _buildInfoText('Nachname:', nachname, context),
+                  const SizedBox(height: 10),
+                  _buildInfoText('Geburtsdatum:', geburtsdatum, context),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildInfoText(String label, String value, BuildContext context) {
     return RichText(
+      textAlign: TextAlign.center,
       text: TextSpan(
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.black,
+            ),
         children: [
           TextSpan(
             text: '$label ',
