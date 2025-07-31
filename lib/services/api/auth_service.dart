@@ -483,9 +483,9 @@ Ergebnis der Abfrage:
       'passnummer': passnummer,
     });
 
-    final String? keyString =
-        _configService.getString('keyString'); // must be 32 bytes
-    final encrypt.Key key = encrypt.Key.fromUtf8(keyString!);
+    final String? qrCodeKey =
+        _configService.getString('qrCodeKey'); // must be 32 bytes
+    final encrypt.Key key = encrypt.Key.fromUtf8(qrCodeKey!);
     final encrypt.IV iv = encrypt.IV.fromLength(16);
 
     // 2. Encrypt the payload
@@ -522,9 +522,9 @@ Ergebnis der Abfrage:
     String encryptedBase64,
   ) async {
     try {
-      final String? keyString =
-          _configService.getString('keyString'); // same key as encryption
-      final encrypt.Key key = encrypt.Key.fromUtf8(keyString!);
+      final String? qrCodeKey =
+          _configService.getString('qrCodeKey'); // same key as encryption
+      final encrypt.Key key = encrypt.Key.fromUtf8(qrCodeKey!);
       final encrypt.IV iv =
           encrypt.IV.fromLength(16); // same IV used during encryption
 

@@ -60,6 +60,6 @@
     "allowedFormats": ["jpg", "jpeg", "png", "gif", "bmp", "webp"]
   },
 
-"keyString": "your-32-byte-secret-key-here...."
+"qrCodeKey": "your-32-byte-secret-key-here...."
 
 }
