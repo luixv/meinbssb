@@ -13,6 +13,7 @@ import '/services/core/logger_service.dart';
 import '/services/core/font_size_provider.dart';
 import '/services/core/config_service.dart';
 import '/screens/personal_pict_upload_success.dart';
+import '/screens/connectivity_icon.dart';
 
 class PersonalPictUploadScreen extends StatefulWidget {
   const PersonalPictUploadScreen({
@@ -63,7 +64,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       final String userId = widget.userData!.personId.toString();
 
       LoggerService.logInfo(
-          'Loading existing profile photo for userId: $userId',);
+        'Loading existing profile photo for userId: $userId',
+      );
       final Uint8List? existingPhoto = await apiService.getProfilePhoto(userId);
 
       if (mounted) {
@@ -165,7 +167,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
     LoggerService.logInfo(
-        'Validating image: ${image.name}, maxSize: ${maxSizeMB}MB, allowedFormats: $allowedFormats',);
+      'Validating image: ${image.name}, maxSize: ${maxSizeMB}MB, allowedFormats: $allowedFormats',
+    );
 
     // Check file format
     final fileName = image.name.toLowerCase();
@@ -173,7 +176,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
     if (!allowedFormats.contains(fileExtension)) {
       LoggerService.logWarning(
-          'Invalid file format: $fileExtension, allowed: $allowedFormats',);
+        'Invalid file format: $fileExtension, allowed: $allowedFormats',
+      );
       return {
         'isValid': false,
         'error':
@@ -186,11 +190,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
     final maxSizeBytes = maxSizeMB * 1024 * 1024; // Convert MB to bytes
 
     LoggerService.logInfo(
-        'File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB, max: ${maxSizeMB}MB',);
+      'File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB, max: ${maxSizeMB}MB',
+    );
 
     if (fileSize > maxSizeBytes) {
       LoggerService.logWarning(
-          'File too large: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB > ${maxSizeMB}MB',);
+        'File too large: ${(fileSize / 1024 / 1024).toStringAsFixed(2)}MB > ${maxSizeMB}MB',
+      );
       return {
         'isValid': false,
         'error': 'Datei ist zu groß. Maximale Größe: ${maxSizeMB}MB',
@@ -606,6 +612,10 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
           ),
         ),
         actions: [
+          const Padding(
+            padding: UIConstants.appBarRightPadding,
+            child: ConnectivityIcon(),
+          ),
           AppMenu(
             context: context,
             userData: widget.userData,

@@ -9,7 +9,7 @@ import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
-import '/screens/personal_pict_upload.dart';
+import 'personal_pict_upload_screen.dart';
 import '/screens/absolvierte_schulungen_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
