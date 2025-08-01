@@ -455,90 +455,108 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Cancel Button
                           Expanded(
-                            child: ElevatedButton(
-                              onPressed: _isAdding
-                                  ? null
-                                  : () => Navigator.of(dialogContext).pop(),
-                              style: UIStyles.dialogCancelButtonStyle,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.close,
-                                    color: UIConstants.closeIcon,
-                                    size: UIConstants.iconSizeL *
-                                        fontSizeProvider.scaleFactor,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingS),
-                                  ScaledText(
-                                    'Abbrechen',
-                                    style:
-                                        UIStyles.dialogButtonTextStyle.copyWith(
-                                      color: UIConstants.cancelButtonText,
-                                      fontSize: UIStyles
-                                              .dialogButtonTextStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minHeight:
+                                    40, // Match your delete dialog button height
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _isAdding
+                                    ? null
+                                    : () => Navigator.of(dialogContext).pop(),
+                                style:
+                                    UIStyles.dialogCancelButtonStyle.copyWith(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(
+                                      horizontal: UIConstants.spacingM,
                                     ),
                                   ),
-                                ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.close,
+                                      color: UIConstants.closeIcon,
+                                      size: UIConstants.defaultIconSize,
+                                    ),
+                                    const SizedBox(width: UIConstants.spacingS),
+                                    Text(
+                                      'Abbrechen',
+                                      style: UIStyles.dialogButtonTextStyle
+                                          .copyWith(
+                                        color: UIConstants.cancelButtonText,
+                                        fontSize: UIConstants.buttonFontSize,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: UIConstants.spacingM),
+                          // Add Button
                           Expanded(
-                            child: ElevatedButton(
-                              onPressed: _isAdding
-                                  ? null
-                                  : () async {
-                                      setStateDialog(() {
-                                        _isAdding = true;
-                                      });
-                                      await _onAddContact(dialogContext);
-                                    },
-                              style: UIStyles.dialogAcceptButtonStyle,
-                              child: _isAdding
-                                  ? SizedBox(
-                                      width: UIConstants.iconSizeL *
-                                          fontSizeProvider.scaleFactor,
-                                      height: UIConstants.iconSizeL *
-                                          fontSizeProvider.scaleFactor,
-                                      child: const CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          UIConstants.circularProgressIndicator,
-                                        ),
-                                        strokeWidth:
-                                            UIConstants.defaultStrokeWidth,
-                                      ),
-                                    )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.check,
-                                          color: UIConstants.checkIcon,
-                                          size: (UIConstants.bodyFontSize +
-                                                  UIConstants.spacingS) *
-                                              fontSizeProvider.scaleFactor,
-                                        ),
-                                        const SizedBox(
-                                          width: UIConstants.spacingS,
-                                        ),
-                                        ScaledText(
-                                          'Hinzufügen',
-                                          style: UIStyles.dialogButtonTextStyle
-                                              .copyWith(
-                                            color: UIConstants.submitButtonText,
-                                            fontSize: UIStyles
-                                                    .dialogButtonTextStyle
-                                                    .fontSize! *
-                                                fontSizeProvider.scaleFactor,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minHeight: UIConstants
+                                    .defaultButtonHeight, // Same as cancel button
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _isAdding
+                                    ? null
+                                    : () async {
+                                        setStateDialog(() => _isAdding = true);
+                                        await _onAddContact(dialogContext);
+                                      },
+                                style:
+                                    UIStyles.dialogAcceptButtonStyle.copyWith(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(
+                                      vertical: UIConstants.spacingS,
+                                    ),
+                                  ),
+                                ),
+                                child: _isAdding
+                                    ? const SizedBox(
+                                        width: UIConstants.defaultIconSize,
+                                        height: UIConstants.defaultIconSize,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            UIConstants
+                                                .circularProgressIndicator,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.check,
+                                            color: UIConstants.checkIcon,
+                                            size:
+                                                20, // Same as cancel button icon
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Hinzufügen',
+                                            style: UIStyles
+                                                .dialogButtonTextStyle
+                                                .copyWith(
+                                              color:
+                                                  UIConstants.submitButtonText,
+                                              fontSize:
+                                                  14, // Same as cancel button
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ),
                           ),
                         ],
