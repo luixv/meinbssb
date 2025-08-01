@@ -138,6 +138,10 @@ class EmailService {
     return _configService.getString('fromEmail', 'smtpSettings');
   }
 
+  Future<String?> getEmaiProtocol() async {
+    return _configService.getString('emailProtocol', 'smtpSettings');
+  }
+
   Future<String?> getAccountCreatedSubject() async {
     return _configService.getString('accountCreatedSubject', 'emailContent');
   }

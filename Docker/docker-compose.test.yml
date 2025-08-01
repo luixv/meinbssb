@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-postgrest-test.sql:/docker-entrypoint-initdb.d/init-postgrest.sql
+
+  postgrest:
+    image: postgrest/postgrest
+    container_name: postgrest
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PGRST_DB_ANON_ROLE: web_anon
+      PGRST_DB_SCHEMA: public
+      PGRST_SERVER_CORS: "true"
+      PGRST_SERVER_PROXY_URI: http://localhost:3000
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost:3000
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    ports:
+      - "80:80" #Flutter Web HTTP
+      - "443:443" #Flutter Web HTTPS
+      - "8081:8081" #Postgrest API
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ../build/web:/web
+    depends_on:
+      - postgrest
+
+volumes:
+  pgdata:

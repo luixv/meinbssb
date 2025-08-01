@@ -2,9 +2,9 @@
   "usernameWebUser": "webUser",
   "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
   "apiProtocol": "https",
-  "emailProtocol": "http",
-  "emailServer": "localhost",
-  "emailPort": "8081",
+  "emailProtocol": "",
+  "emailServer": "relay-cluster-eu01.hornetsecurity.com",
+  "emailPort": "25",
   "emailPath": "",
   "postgrestProtocol": "http",
   "postgrestServer": "localhost",
@@ -27,6 +27,7 @@
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
   "smtpSettings": {
+    "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",
     "port": "25",
     "fromEmail": "webportal@bssb.bayern",
@@ -36,13 +37,6 @@
   },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
-  },
-  "database": {
-    "dbHost": "localhost",
-    "dbPort": 5432,
-    "dbName": "devdb",
-    "dbUsername": "devuser",
-    "dbPassword": "devpass"
   },
   "emailContent": {
     "schulungAnmeldungSubject": "Schulung Anmeldung",
