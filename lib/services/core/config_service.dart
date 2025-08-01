@@ -103,10 +103,21 @@ class ConfigService {
     required String name,
     String protocolKey = 'apiProtocol',
   }) {
-    final protocol = config.getString(protocolKey);
-    final server = config.getString('${name}Server');
-    final port = config.getString('${name}Port');
-    final path = config.getString('${name}Path');
+    String? server;
+    String? port;
+    String? path;
+    String? protocol;
+
+    if (name == 'email') {
+      server = config.getString('host', 'smtpSettings');
+      port = config.getString('port', 'smtpSettings');
+      path = '';
+    } else {
+      protocol = config.getString(protocolKey);
+      server = config.getString('${name}Server');
+      port = config.getString('${name}Port');
+      path = config.getString('${name}Path');
+    }
 
     if (protocol == null || protocol.isEmpty) {
       throw StateError(

@@ -74,6 +74,7 @@ class AuthService {
       );
 
       // Send registration email
+      final emailProtocol = await _emailService.getEmaiProtocol();
       final fromEmail = await _emailService.getFromEmail();
       final subject = await _emailService.getRegistrationSubject();
       final emailContent = await _emailService.getRegistrationContent();
@@ -81,7 +82,7 @@ class AuthService {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
-        protocolKey: 'emailProtocol',
+        protocolKey: emailProtocol!,
       );
       final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
         _configService,
