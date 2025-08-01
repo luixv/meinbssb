@@ -151,43 +151,43 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     if (!mounted || confirmDelete != true) return;
 
-    // Store the navigator context before async operations
+    // Store the navigator context
     final navigator = Navigator.of(context);
 
-    try {
-      // Show processing dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            backgroundColor: UIConstants.backgroundColor,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    UIConstants.circularProgressIndicator,
-                  ),
+    // Show loading dialog and store its reference
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  UIConstants.circularProgressIndicator,
                 ),
-                SizedBox(height: UIConstants.spacingM),
-                Text(
-                  'Kontakt wird gelöscht...',
-                  style: UIStyles.dialogContentStyle,
-                ),
-              ],
-            ),
-          );
-        },
-      );
+              ),
+              SizedBox(height: UIConstants.spacingM),
+              Text(
+                'Kontakt wird gelöscht...',
+                style: UIStyles.dialogContentStyle,
+              ),
+            ],
+          ),
+        );
+      },
+    );
 
+    try {
       // Check network status
       final networkService =
           Provider.of<NetworkService>(context, listen: false);
       final isOffline = !(await networkService.hasInternet());
       if (!mounted) return;
       if (isOffline) {
-        navigator.pop(); // Close processing dialog
+        navigator.pop(); // Close loading dialog
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Kontaktdaten können offline nicht gelöscht werden'),
@@ -209,7 +209,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       final bool success = await apiService.deleteKontakt(contact);
 
       if (!mounted) return;
-      navigator.pop(); // Close processing dialog
+      navigator.pop(); // Close loading dialog
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -230,7 +230,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       }
     } catch (e) {
       if (mounted) {
-        navigator.pop(); // Close processing dialog
+        navigator.pop(); // Close loading dialog
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
