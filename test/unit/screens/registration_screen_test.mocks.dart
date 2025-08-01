@@ -303,6 +303,15 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
       ) as _i4.Future<String?>);
 
   @override
+  _i4.Future<String?> getEmaiProtocol() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmaiProtocol,
+          [],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
+
+  @override
   _i4.Future<String?> getAccountCreatedSubject() => (super.noSuchMethod(
         Invocation.method(
           #getAccountCreatedSubject,

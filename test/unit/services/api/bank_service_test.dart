@@ -12,12 +12,10 @@ import 'bank_service_test.mocks.dart';
 void main() {
   late BankService bankService;
   late MockHttpClient mockHttpClient;
-  late MockCacheService mockCacheService;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    mockCacheService = MockCacheService();
-    bankService = BankService(mockHttpClient, mockCacheService);
+    bankService = BankService(mockHttpClient);
   });
 
   group('BankService', () {
@@ -136,15 +134,12 @@ void main() {
       test('removes bank data from cache on successful deletion', () async {
         when(mockHttpClient.delete('BankdatenMyBSSB/13901', body: {}))
             .thenAnswer((_) async => {'result': true});
-        when(mockCacheService.remove('bankdata_13901'))
-            .thenAnswer((_) async => true);
 
         final result = await bankService.deleteBankData(testBankData);
 
         expect(result, isTrue);
         verify(mockHttpClient.delete('BankdatenMyBSSB/13901', body: {}))
             .called(1);
-        verify(mockCacheService.remove('bankdata_13901')).called(1);
       });
 
       test('returns false when API response indicates failure', () async {

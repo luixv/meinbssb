@@ -3,32 +3,33 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:typed_data' as _i10;
-import 'dart:ui' as _i24;
+import 'dart:async' as _i5;
+import 'dart:typed_data' as _i11;
+import 'dart:ui' as _i25;
 
-import 'package:meinbssb/models/bank_data.dart' as _i14;
-import 'package:meinbssb/models/contact.dart' as _i9;
-import 'package:meinbssb/models/disziplin.dart' as _i13;
-import 'package:meinbssb/models/fremde_verband.dart' as _i16;
-import 'package:meinbssb/models/gewinn.dart' as _i20;
-import 'package:meinbssb/models/pass_data_zve.dart' as _i6;
-import 'package:meinbssb/models/person.dart' as _i17;
+import 'package:meinbssb/models/bank_data.dart' as _i15;
+import 'package:meinbssb/models/contact.dart' as _i10;
+import 'package:meinbssb/models/disziplin.dart' as _i14;
+import 'package:meinbssb/models/fremde_verband.dart' as _i17;
+import 'package:meinbssb/models/gewinn.dart' as _i21;
+import 'package:meinbssb/models/pass_data_zve.dart' as _i7;
+import 'package:meinbssb/models/person.dart' as _i18;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
-    as _i2;
-import 'package:meinbssb/models/result.dart' as _i18;
-import 'package:meinbssb/models/schulung.dart' as _i8;
-import 'package:meinbssb/models/schulungsart.dart' as _i11;
-import 'package:meinbssb/models/schulungstermin.dart' as _i12;
-import 'package:meinbssb/models/user_data.dart' as _i5;
-import 'package:meinbssb/models/verein.dart' as _i15;
-import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i7;
-import 'package:meinbssb/services/api_service.dart' as _i3;
-import 'package:meinbssb/services/core/config_service.dart' as _i19;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i22;
-import 'package:meinbssb/services/core/network_service.dart' as _i21;
+    as _i3;
+import 'package:meinbssb/models/result.dart' as _i19;
+import 'package:meinbssb/models/schulung.dart' as _i9;
+import 'package:meinbssb/models/schulungsart.dart' as _i12;
+import 'package:meinbssb/models/schulungstermin.dart' as _i13;
+import 'package:meinbssb/models/user_data.dart' as _i6;
+import 'package:meinbssb/models/verein.dart' as _i16;
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i8;
+import 'package:meinbssb/services/api_service.dart' as _i4;
+import 'package:meinbssb/services/core/config_service.dart' as _i20;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i23;
+import 'package:meinbssb/services/core/image_service.dart' as _i2;
+import 'package:meinbssb/services/core/network_service.dart' as _i22;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i23;
+import 'package:mockito/src/dummies.dart' as _i24;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -44,8 +45,8 @@ import 'package:mockito/src/dummies.dart' as _i23;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDuration_0 extends _i1.SmartFake implements Duration {
-  _FakeDuration_0(
+class _FakeImageService_0 extends _i1.SmartFake implements _i2.ImageService {
+  _FakeImageService_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -54,9 +55,19 @@ class _FakeDuration_0 extends _i1.SmartFake implements Duration {
         );
 }
 
-class _FakeRegisterSchulungenTeilnehmerResponse_1 extends _i1.SmartFake
-    implements _i2.RegisterSchulungenTeilnehmerResponse {
-  _FakeRegisterSchulungenTeilnehmerResponse_1(
+class _FakeDuration_1 extends _i1.SmartFake implements Duration {
+  _FakeDuration_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeRegisterSchulungenTeilnehmerResponse_2 extends _i1.SmartFake
+    implements _i3.RegisterSchulungenTeilnehmerResponse {
+  _FakeRegisterSchulungenTeilnehmerResponse_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -68,19 +79,28 @@ class _FakeRegisterSchulungenTeilnehmerResponse_1 extends _i1.SmartFake
 /// A class which mocks [ApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i3.ApiService {
+class MockApiService extends _i1.Mock implements _i4.ApiService {
   MockApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
+  _i2.ImageService get imageService => (super.noSuchMethod(
+        Invocation.getter(#imageService),
+        returnValue: _FakeImageService_0(
+          this,
+          Invocation.getter(#imageService),
+        ),
+      ) as _i2.ImageService);
+
+  @override
+  _i5.Future<bool> hasInternet() => (super.noSuchMethod(
         Invocation.method(
           #hasInternet,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() => (super.noSuchMethod(
@@ -88,7 +108,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           #getCacheExpirationDuration,
           [],
         ),
-        returnValue: _FakeDuration_0(
+        returnValue: _FakeDuration_1(
           this,
           Invocation.method(
             #getCacheExpirationDuration,
@@ -98,7 +118,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as Duration);
 
   @override
-  _i4.Future<Map<String, dynamic>> register({
+  _i5.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
     required String? passNumber,
@@ -122,11 +142,11 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           },
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> login(
+  _i5.Future<Map<String, dynamic>> login(
     String? username,
     String? password,
   ) =>
@@ -139,22 +159,22 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           ],
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
+  _i5.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #passwordReset,
           [passNumber],
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> changePassword(
+  _i5.Future<Map<String, dynamic>> changePassword(
     int? personId,
     String? newPassword,
   ) =>
@@ -167,21 +187,21 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           ],
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<_i5.UserData?> fetchPassdaten(int? personId) =>
+  _i5.Future<_i6.UserData?> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchPassdaten,
           [personId],
         ),
-        returnValue: _i4.Future<_i5.UserData?>.value(),
-      ) as _i4.Future<_i5.UserData?>);
+        returnValue: _i5.Future<_i6.UserData?>.value(),
+      ) as _i5.Future<_i6.UserData?>);
 
   @override
-  _i4.Future<List<_i6.PassDataZVE>> fetchPassdatenZVE(
+  _i5.Future<List<_i7.PassDataZVE>> fetchPassdatenZVE(
     int? passdatenId,
     int? personId,
   ) =>
@@ -194,93 +214,93 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           ],
         ),
         returnValue:
-            _i4.Future<List<_i6.PassDataZVE>>.value(<_i6.PassDataZVE>[]),
-      ) as _i4.Future<List<_i6.PassDataZVE>>);
+            _i5.Future<List<_i7.PassDataZVE>>.value(<_i7.PassDataZVE>[]),
+      ) as _i5.Future<List<_i7.PassDataZVE>>);
 
   @override
-  _i4.Future<bool> updateKritischeFelderUndAdresse(_i5.UserData? userData) =>
+  _i5.Future<bool> updateKritischeFelderUndAdresse(_i6.UserData? userData) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateKritischeFelderUndAdresse,
           [userData],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<List<_i7.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+  _i5.Future<List<_i8.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchZweitmitgliedschaften,
           [personId],
         ),
-        returnValue: _i4.Future<List<_i7.ZweitmitgliedschaftData>>.value(
-            <_i7.ZweitmitgliedschaftData>[]),
-      ) as _i4.Future<List<_i7.ZweitmitgliedschaftData>>);
+        returnValue: _i5.Future<List<_i8.ZweitmitgliedschaftData>>.value(
+            <_i8.ZweitmitgliedschaftData>[]),
+      ) as _i5.Future<List<_i8.ZweitmitgliedschaftData>>);
 
   @override
-  _i4.Future<List<_i8.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i5.Future<List<_i9.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i4.Future<List<_i8.Schulung>>.value(<_i8.Schulung>[]),
-      ) as _i4.Future<List<_i8.Schulung>>);
+        returnValue: _i5.Future<List<_i9.Schulung>>.value(<_i9.Schulung>[]),
+      ) as _i5.Future<List<_i9.Schulung>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
+  _i5.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchKontakte,
           [personId],
         ),
-        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
-      ) as _i4.Future<List<Map<String, dynamic>>>);
+      ) as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<bool> addKontakt(_i9.Contact? contact) => (super.noSuchMethod(
+  _i5.Future<bool> addKontakt(_i10.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
           [contact],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteKontakt(_i9.Contact? contact) => (super.noSuchMethod(
+  _i5.Future<bool> deleteKontakt(_i10.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
           [contact],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<_i10.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i5.Future<_i11.Uint8List> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchuetzenausweis,
           [personId],
         ),
-        returnValue: _i4.Future<_i10.Uint8List>.value(_i10.Uint8List(0)),
-      ) as _i4.Future<_i10.Uint8List>);
+        returnValue: _i5.Future<_i11.Uint8List>.value(_i11.Uint8List(0)),
+      ) as _i5.Future<_i11.Uint8List>);
 
   @override
-  _i4.Future<List<_i11.Schulungsart>> fetchSchulungsarten() =>
+  _i5.Future<List<_i12.Schulungsart>> fetchSchulungsarten() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungsarten,
           [],
         ),
         returnValue:
-            _i4.Future<List<_i11.Schulungsart>>.value(<_i11.Schulungsart>[]),
-      ) as _i4.Future<List<_i11.Schulungsart>>);
+            _i5.Future<List<_i12.Schulungsart>>.value(<_i12.Schulungsart>[]),
+      ) as _i5.Future<List<_i12.Schulungsart>>);
 
   @override
-  _i4.Future<List<_i12.Schulungstermin>> fetchAngemeldeteSchulungen(
+  _i5.Future<List<_i13.Schulungstermin>> fetchAngemeldeteSchulungen(
     int? personId,
     String? abDatum,
   ) =>
@@ -292,12 +312,12 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             abDatum,
           ],
         ),
-        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
-            <_i12.Schulungstermin>[]),
-      ) as _i4.Future<List<_i12.Schulungstermin>>);
+        returnValue: _i5.Future<List<_i13.Schulungstermin>>.value(
+            <_i13.Schulungstermin>[]),
+      ) as _i5.Future<List<_i13.Schulungstermin>>);
 
   @override
-  _i4.Future<List<_i12.Schulungstermin>> fetchSchulungstermine(
+  _i5.Future<List<_i13.Schulungstermin>> fetchSchulungstermine(
     String? abDatum,
     String? webGruppe,
     String? bezirk,
@@ -313,33 +333,33 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             fuerVerlaengerung,
           ],
         ),
-        returnValue: _i4.Future<List<_i12.Schulungstermin>>.value(
-            <_i12.Schulungstermin>[]),
-      ) as _i4.Future<List<_i12.Schulungstermin>>);
+        returnValue: _i5.Future<List<_i13.Schulungstermin>>.value(
+            <_i13.Schulungstermin>[]),
+      ) as _i5.Future<List<_i13.Schulungstermin>>);
 
   @override
-  _i4.Future<_i12.Schulungstermin?> fetchSchulungstermin(
+  _i5.Future<_i13.Schulungstermin?> fetchSchulungstermin(
           String? schulungenTerminID) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermin,
           [schulungenTerminID],
         ),
-        returnValue: _i4.Future<_i12.Schulungstermin?>.value(),
-      ) as _i4.Future<_i12.Schulungstermin?>);
+        returnValue: _i5.Future<_i13.Schulungstermin?>.value(),
+      ) as _i5.Future<_i13.Schulungstermin?>);
 
   @override
-  _i4.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
+  _i5.Future<bool> unregisterFromSchulung(int? schulungenTeilnehmerID) =>
       (super.noSuchMethod(
         Invocation.method(
           #unregisterFromSchulung,
           [schulungenTeilnehmerID],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> registerFromSchulung(
+  _i5.Future<bool> registerFromSchulung(
     int? personId,
     int? schulungId,
   ) =>
@@ -351,86 +371,86 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             schulungId,
           ],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<List<_i13.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
+  _i5.Future<List<_i14.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
         Invocation.method(
           #fetchDisziplinen,
           [],
         ),
-        returnValue: _i4.Future<List<_i13.Disziplin>>.value(<_i13.Disziplin>[]),
-      ) as _i4.Future<List<_i13.Disziplin>>);
+        returnValue: _i5.Future<List<_i14.Disziplin>>.value(<_i14.Disziplin>[]),
+      ) as _i5.Future<List<_i14.Disziplin>>);
 
   @override
-  _i4.Future<List<_i14.BankData>> fetchBankData(int? webloginId) =>
+  _i5.Future<List<_i15.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankData,
           [webloginId],
         ),
-        returnValue: _i4.Future<List<_i14.BankData>>.value(<_i14.BankData>[]),
-      ) as _i4.Future<List<_i14.BankData>>);
+        returnValue: _i5.Future<List<_i15.BankData>>.value(<_i15.BankData>[]),
+      ) as _i5.Future<List<_i15.BankData>>);
 
   @override
-  _i4.Future<bool> registerBankData(_i14.BankData? bankData) =>
+  _i5.Future<bool> registerBankData(_i15.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #registerBankData,
           [bankData],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteBankData(_i14.BankData? bankData) =>
+  _i5.Future<bool> deleteBankData(_i15.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteBankData,
           [bankData],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<List<_i15.Verein>> fetchVereine() => (super.noSuchMethod(
+  _i5.Future<List<_i16.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
-      ) as _i4.Future<List<_i15.Verein>>);
+        returnValue: _i5.Future<List<_i16.Verein>>.value(<_i16.Verein>[]),
+      ) as _i5.Future<List<_i16.Verein>>);
 
   @override
-  _i4.Future<List<_i15.Verein>> fetchVerein(int? vereinsNr) =>
+  _i5.Future<List<_i16.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i4.Future<List<_i15.Verein>>.value(<_i15.Verein>[]),
-      ) as _i4.Future<List<_i15.Verein>>);
+        returnValue: _i5.Future<List<_i16.Verein>>.value(<_i16.Verein>[]),
+      ) as _i5.Future<List<_i16.Verein>>);
 
   @override
-  _i4.Future<List<_i16.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
+  _i5.Future<List<_i17.FremdeVerband>> fetchFremdeVerbaende(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchFremdeVerbaende,
           [vereinsNr],
         ),
         returnValue:
-            _i4.Future<List<_i16.FremdeVerband>>.value(<_i16.FremdeVerband>[]),
-      ) as _i4.Future<List<_i16.FremdeVerband>>);
+            _i5.Future<List<_i17.FremdeVerband>>.value(<_i17.FremdeVerband>[]),
+      ) as _i5.Future<List<_i17.FremdeVerband>>);
 
   @override
-  _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>
+  _i5.Future<_i3.RegisterSchulungenTeilnehmerResponse>
       registerSchulungenTeilnehmer({
     required int? schulungTerminId,
-    required _i5.UserData? user,
+    required _i6.UserData? user,
     required String? email,
     required String? telefon,
-    required _i14.BankData? bankData,
+    required _i15.BankData? bankData,
     required List<Map<String, dynamic>>? felderArray,
   }) =>
           (super.noSuchMethod(
@@ -447,8 +467,8 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
               },
             ),
             returnValue:
-                _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>.value(
-                    _FakeRegisterSchulungenTeilnehmerResponse_1(
+                _i5.Future<_i3.RegisterSchulungenTeilnehmerResponse>.value(
+                    _FakeRegisterSchulungenTeilnehmerResponse_2(
               this,
               Invocation.method(
                 #registerSchulungenTeilnehmer,
@@ -463,10 +483,10 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
                 },
               ),
             )),
-          ) as _i4.Future<_i2.RegisterSchulungenTeilnehmerResponse>);
+          ) as _i5.Future<_i3.RegisterSchulungenTeilnehmerResponse>);
 
   @override
-  _i4.Future<int> findePersonID2(
+  _i5.Future<int> findePersonID2(
     String? nachname,
     String? passnummer,
   ) =>
@@ -478,41 +498,41 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             passnummer,
           ],
         ),
-        returnValue: _i4.Future<int>.value(0),
-      ) as _i4.Future<int>);
+        returnValue: _i5.Future<int>.value(0),
+      ) as _i5.Future<int>);
 
   @override
-  _i4.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
+  _i5.Future<void> clearSchulungenCache(int? personId) => (super.noSuchMethod(
         Invocation.method(
           #clearSchulungenCache,
           [personId],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
+  _i5.Future<void> clearAllSchulungenCache() => (super.noSuchMethod(
         Invocation.method(
           #clearAllSchulungenCache,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
+  _i5.Future<void> clearPassdatenCache(int? personId) => (super.noSuchMethod(
         Invocation.method(
           #clearPassdatenCache,
           [personId],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> sendSchulungAbmeldungEmail({
+  _i5.Future<void> sendSchulungAbmeldungEmail({
     required String? personId,
     required String? schulungName,
     required String? schulungDate,
@@ -531,12 +551,12 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             #lastName: lastName,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> sendSchulungAnmeldungEmail({
+  _i5.Future<void> sendSchulungAnmeldungEmail({
     required String? personId,
     required String? schulungName,
     required String? schulungDate,
@@ -567,39 +587,39 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             #eventDateTime: eventDateTime,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
+  _i5.Future<void> clearAllPassdatenCache() => (super.noSuchMethod(
         Invocation.method(
           #clearAllPassdatenCache,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
+  _i5.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
         Invocation.method(
           #clearDisziplinenCache,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<List<_i17.Person>> fetchAdresseVonPersonID(int? personId) =>
+  _i5.Future<List<_i18.Person>> fetchAdresseVonPersonID(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAdresseVonPersonID,
           [personId],
         ),
-        returnValue: _i4.Future<List<_i17.Person>>.value(<_i17.Person>[]),
-      ) as _i4.Future<List<_i17.Person>>);
+        returnValue: _i5.Future<List<_i18.Person>>.value(<_i18.Person>[]),
+      ) as _i5.Future<List<_i18.Person>>);
 
   @override
   bool validateIBAN(String? iban) => (super.noSuchMethod(
@@ -611,7 +631,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
       ) as bool);
 
   @override
-  _i4.Future<Map<String, dynamic>> createUser({
+  _i5.Future<Map<String, dynamic>> createUser({
     required String? firstName,
     required String? lastName,
     required String? email,
@@ -633,69 +653,69 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           },
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>?> getUserByEmail(String? email) =>
+  _i5.Future<Map<String, dynamic>?> getUserByEmail(String? email) =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserByEmail,
           [email],
         ),
-        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
-      ) as _i4.Future<Map<String, dynamic>?>);
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
-  _i4.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
+  _i5.Future<Map<String, dynamic>?> getUserByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserByPersonId,
           [personId],
         ),
-        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
-      ) as _i4.Future<Map<String, dynamic>?>);
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
-  _i4.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
+  _i5.Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserByPassNumber,
           [passNumber],
         ),
-        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
-      ) as _i4.Future<Map<String, dynamic>?>);
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
-  _i4.Future<bool> verifyUser(String? verificationToken) => (super.noSuchMethod(
+  _i5.Future<bool> verifyUser(String? verificationToken) => (super.noSuchMethod(
         Invocation.method(
           #verifyUser,
           [verificationToken],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteUserRegistration(int? id) => (super.noSuchMethod(
+  _i5.Future<bool> deleteUserRegistration(int? id) => (super.noSuchMethod(
         Invocation.method(
           #deleteUserRegistration,
           [id],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<Map<String, dynamic>?> getUserByVerificationToken(String? token) =>
+  _i5.Future<Map<String, dynamic>?> getUserByVerificationToken(String? token) =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserByVerificationToken,
           [token],
         ),
-        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
-      ) as _i4.Future<Map<String, dynamic>?>);
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
-  _i4.Future<bool> uploadProfilePhoto(
+  _i5.Future<bool> uploadProfilePhoto(
     String? userId,
     List<int>? photoBytes,
   ) =>
@@ -707,57 +727,57 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             photoBytes,
           ],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteProfilePhoto(String? userId) => (super.noSuchMethod(
+  _i5.Future<bool> deleteProfilePhoto(String? userId) => (super.noSuchMethod(
         Invocation.method(
           #deleteProfilePhoto,
           [userId],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<_i10.Uint8List?> getProfilePhoto(String? userId) =>
+  _i5.Future<_i11.Uint8List?> getProfilePhoto(String? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getProfilePhoto,
           [userId],
         ),
-        returnValue: _i4.Future<_i10.Uint8List?>.value(),
-      ) as _i4.Future<_i10.Uint8List?>);
+        returnValue: _i5.Future<_i11.Uint8List?>.value(),
+      ) as _i5.Future<_i11.Uint8List?>);
 
   @override
-  _i4.Future<String?> getFromEmail() => (super.noSuchMethod(
+  _i5.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
           [],
         ),
-        returnValue: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 
   @override
-  _i4.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
+  _i5.Future<String?> getRegistrationSubject() => (super.noSuchMethod(
         Invocation.method(
           #getRegistrationSubject,
           [],
         ),
-        returnValue: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 
   @override
-  _i4.Future<String?> getRegistrationContent() => (super.noSuchMethod(
+  _i5.Future<String?> getRegistrationContent() => (super.noSuchMethod(
         Invocation.method(
           #getRegistrationContent,
           [],
         ),
-        returnValue: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 
   @override
-  _i4.Future<Map<String, dynamic>> sendEmail({
+  _i5.Future<Map<String, dynamic>> sendEmail({
     required String? from,
     required String? recipient,
     required String? subject,
@@ -777,11 +797,11 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           },
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<void> sendAccountCreationNotifications(
+  _i5.Future<void> sendAccountCreationNotifications(
     String? personId,
     String? email,
   ) =>
@@ -793,14 +813,14 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             email,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<List<_i18.Result>> fetchResults(
+  _i5.Future<List<_i19.Result>> fetchResults(
     String? passnummer,
-    _i19.ConfigService? configService,
+    _i20.ConfigService? configService,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -810,14 +830,14 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             configService,
           ],
         ),
-        returnValue: _i4.Future<List<_i18.Result>>.value(<_i18.Result>[]),
-      ) as _i4.Future<List<_i18.Result>>);
+        returnValue: _i5.Future<List<_i19.Result>>.value(<_i19.Result>[]),
+      ) as _i5.Future<List<_i19.Result>>);
 
   @override
-  _i4.Future<List<_i20.Gewinn>> fetchGewinne(
+  _i5.Future<List<_i21.Gewinn>> fetchGewinne(
     int? jahr,
     String? passnummer,
-    _i19.ConfigService? configService,
+    _i20.ConfigService? configService,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -828,26 +848,26 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             configService,
           ],
         ),
-        returnValue: _i4.Future<List<_i20.Gewinn>>.value(<_i20.Gewinn>[]),
-      ) as _i4.Future<List<_i20.Gewinn>>);
+        returnValue: _i5.Future<List<_i21.Gewinn>>.value(<_i21.Gewinn>[]),
+      ) as _i5.Future<List<_i21.Gewinn>>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i21.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i22.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<bool> hasInternet() => (super.noSuchMethod(
+  _i5.Future<bool> hasInternet() => (super.noSuchMethod(
         Invocation.method(
           #hasInternet,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
   Duration getCacheExpirationDuration() => (super.noSuchMethod(
@@ -855,7 +875,7 @@ class MockNetworkService extends _i1.Mock implements _i21.NetworkService {
           #getCacheExpirationDuration,
           [],
         ),
-        returnValue: _FakeDuration_0(
+        returnValue: _FakeDuration_1(
           this,
           Invocation.method(
             #getCacheExpirationDuration,
@@ -868,7 +888,7 @@ class MockNetworkService extends _i1.Mock implements _i21.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i23.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -927,7 +947,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
           #getScalePercentage,
           [],
         ),
-        returnValue: _i23.dummyValue<String>(
+        returnValue: _i24.dummyValue<String>(
           this,
           Invocation.method(
             #getScalePercentage,
@@ -937,7 +957,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
       ) as String);
 
   @override
-  void addListener(_i24.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i25.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -946,7 +966,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i24.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i25.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -976,7 +996,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i22.FontSizeProvider {
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i19.ConfigService {
+class MockConfigService extends _i1.Mock implements _i20.ConfigService {
   MockConfigService() {
     _i1.throwOnMissingStub(this);
   }

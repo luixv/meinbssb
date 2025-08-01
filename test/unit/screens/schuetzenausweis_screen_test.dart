@@ -348,7 +348,7 @@ class DummyAuthService extends AuthService {
 }
 
 class DummyBankService extends BankService {
-  DummyBankService() : super(DummyHttpClient(), DummyCacheService());
+  DummyBankService() : super(DummyHttpClient());
 }
 
 class DummyVereinService extends VereinService {
