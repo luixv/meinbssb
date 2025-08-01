@@ -85,19 +85,20 @@ class OktoberfestEintrittFestzeltState
             child: SingleChildScrollView(
               padding: UIConstants.defaultPadding,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 150),
                   _buildDatumWithTime(),
                   const SizedBox(height: 20),
-                  _buildInfoRow('Passnummer:', widget.passnummer),
+                  // Each info line with white background and black border only for values
+                  _buildLabeledValue('Passnummer', widget.passnummer),
                   const SizedBox(height: 10),
-                  _buildInfoRow('Vorname:', widget.vorname),
+                  _buildLabeledValue('Vorname', widget.vorname),
                   const SizedBox(height: 10),
-                  _buildInfoRow('Nachname:', widget.nachname),
+                  _buildLabeledValue('Nachname', widget.nachname),
                   const SizedBox(height: 10),
-                  _buildInfoRow('Geburtsdatum:', widget.geburtsdatum),
+                  _buildLabeledValue('Geburtsdatum', widget.geburtsdatum),
                 ],
               ),
             ),
@@ -108,7 +109,7 @@ class OktoberfestEintrittFestzeltState
   }
 
   Widget _buildDatumWithTime() {
-    // Shows date and real-time clock with same font size, centered
+    // Shows date and clock with same font size centered
     return Column(
       children: [
         Text(
@@ -132,19 +133,30 @@ class OktoberfestEintrittFestzeltState
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    // Simply show label and value, centered
+  Widget _buildLabeledValue(String label, String value) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        // Label (plain text)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            '$label:',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
-        const SizedBox(width: 8),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 16),
+        // Value with white background and black border
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.black), // black border
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 16, color: Colors.black),
+          ),
         ),
       ],
     );
