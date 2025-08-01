@@ -33,7 +33,6 @@ class ContactDataScreen extends StatefulWidget {
 
 class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
-  bool _isDeleting = false;
   bool _isAdding = false;
   final ScrollController _scrollController = ScrollController();
 
@@ -596,7 +595,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               categorizedContactData,
               widget.userData?.personId ?? 0,
               _onDeleteContact,
-              _isDeleting,
+              false,
             );
           } else {
             return const Center(
@@ -621,7 +620,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     required String displayLabel,
     required Function(int kontaktId, int kontaktTyp, String value, String label)
         onDelete,
-    required bool isDeleting,
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
@@ -715,7 +713,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                           displayValue: displayValue,
                           displayLabel: displayLabel,
                           onDelete: onDelete,
-                          isDeleting: isDeleting,
                         );
                       }),
                     ],
