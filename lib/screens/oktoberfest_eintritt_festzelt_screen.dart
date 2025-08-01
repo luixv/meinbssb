@@ -88,7 +88,7 @@ class OktoberfestEintrittFestzeltState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: UIConstants.spacingXL),
+                  const SizedBox(height: UIConstants.spacingS),
                   _buildDatumWithTime(),
                   const SizedBox(height: UIConstants.spacingS),
                   _buildInfoTable(),
