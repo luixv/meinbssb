@@ -88,17 +88,10 @@ class OktoberfestEintrittFestzeltState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: UIConstants.spacingXXL),
+                  const SizedBox(height: UIConstants.spacingXL),
                   _buildDatumWithTime(),
                   const SizedBox(height: UIConstants.spacingS),
-                  // Each info line with white background and black border only for values
-                  _buildLabeledValue('Passnummer', widget.passnummer),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildLabeledValue('Vorname', widget.vorname),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildLabeledValue('Nachname', widget.nachname),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildLabeledValue('Geburtsdatum', widget.geburtsdatum),
+                  _buildInfoTable(),
                 ],
               ),
             ),
@@ -109,21 +102,17 @@ class OktoberfestEintrittFestzeltState
   }
 
   Widget _buildDatumWithTime() {
-    // Shows date and clock with same font size centered
     return Column(
       children: [
         Text(
           widget.date,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize:
-                    UIConstants.titleFontSize, // Use constant for font size
+                fontSize: UIConstants.titleFontSize,
                 color: Colors.black,
               ),
         ),
-        const SizedBox(
-          height: UIConstants.spacingS,
-        ), // Use constant for spacing
+        const SizedBox(height: UIConstants.spacingS),
         Text(
           _currentTime,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -136,37 +125,69 @@ class OktoberfestEintrittFestzeltState
     );
   }
 
-  Widget _buildLabeledValue(String label, String value) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+  Widget _buildInfoTable() {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      columnWidths: const {
+        0: IntrinsicColumnWidth(),
+        1: IntrinsicColumnWidth(),
+      },
       children: [
-        // Label (plain text)
+        _buildTableRow('Passnummer', widget.passnummer),
+        _buildTableRow('Vorname', widget.vorname),
+        _buildTableRow('Nachname', widget.nachname),
+        _buildTableRow('Geburtsdatum', widget.geburtsdatum),
+      ],
+    );
+  }
+
+  TableRow _buildTableRow(String label, String value) {
+    return TableRow(
+      children: [
+        // Label aligned right
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: UIConstants.spacingS),
-          child: Text(
-            '$label:',
-            style: const TextStyle(
-              fontSize: UIConstants.bodyFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        // Value with white background and black border
-        Container(
           padding: const EdgeInsets.symmetric(
             horizontal: UIConstants.spacingS,
             vertical: UIConstants.spacingXS,
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black), // black border
-            borderRadius: BorderRadius.circular(UIConstants.borderWidth),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                fontSize: UIConstants.bodyFontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-          child: Text(
-            value,
-            style: const TextStyle(
-              fontSize: UIConstants.bodyFontSize,
-              color: Colors.black,
+        ),
+        // Value with intrinsic width
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingS,
+            vertical: UIConstants.spacingXS,
+          ),
+          child: IntrinsicWidth(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(UIConstants.borderWidth),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingS,
+                vertical: UIConstants.spacingXS,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: UIConstants.bodyFontSize,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
