@@ -86,17 +86,40 @@ class OktoberfestEintrittFestzeltState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // More space on top
                   const SizedBox(height: 150),
                   _buildDatumWithTime(),
                   const SizedBox(height: 10),
-                  _buildInfoText('Passnummer:', widget.passnummer, context),
+                  // Wrap each info field with a white background container
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.white,
+                    child: _buildInfoText(
+                        'Passnummer:', widget.passnummer, context,),
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoText('Vorname:', widget.vorname, context),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.white,
+                    child: _buildInfoText('Vorname:', widget.vorname, context),
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoText('Nachname:', widget.nachname, context),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.white,
+                    child:
+                        _buildInfoText('Nachname:', widget.nachname, context),
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoText('Geburtsdatum:', widget.geburtsdatum, context),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.white,
+                    child: _buildInfoText(
+                        'Geburtsdatum:', widget.geburtsdatum, context,),
+                  ),
                 ],
               ),
             ),
