@@ -7,7 +7,7 @@ import '/screens/logo_widget.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
-import '/screens/personal_pict_upload.dart';
+import 'personal_pict_upload_screen.dart';
 
 import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
