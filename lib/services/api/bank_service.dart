@@ -3,15 +3,13 @@
 import '/models/bank_data.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
-import '/services/core/cache_service.dart';
 
 /// Service for handling bank data operations.
 class BankService {
   /// Creates a new instance of [BankService].
-  const BankService(this._httpClient, [this._cacheService]);
+  const BankService(this._httpClient);
 
   final HttpClient _httpClient;
-  final CacheService? _cacheService;
 
   /// Fetches bank data for a given weblogin ID.
   Future<List<BankData>> fetchBankData(int webloginId) async {
@@ -64,7 +62,7 @@ class BankService {
     }
   }
 
-  /// Deletes bank data.
+  /// Delete bank data.
   Future<bool> deleteBankData(BankData bankData) async {
     try {
       final Map<String, dynamic> response = await _httpClient.delete(
@@ -76,10 +74,7 @@ class BankService {
         LoggerService.logInfo(
           'Bank data deleted successfully for webloginId: ${bankData.webloginId}',
         );
-        // Remove cached bank data
-        if (_cacheService != null) {
-          await _cacheService.remove('bankdata_${bankData.webloginId}');
-        }
+      
         return true;
       } else {
         LoggerService.logWarning(

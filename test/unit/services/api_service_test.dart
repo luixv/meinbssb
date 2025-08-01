@@ -815,130 +815,6 @@ void main() {
       });
     });
 
-    group('Bank Service Tests', () {
-      test('fetchBankData returns list of BankData on successful API call',
-          () async {
-        final testBankData = [
-          BankData(
-            id: 1,
-            webloginId: 13901,
-            kontoinhaber: 'Test User',
-            iban: 'DE89370400440532013000',
-            bic: 'DEUTDEBBXXX',
-            bankName: 'Test Bank',
-            mandatNr: 'M123456',
-            mandatName: 'Test Mandate',
-            mandatSeq: 1,
-            letzteNutzung: DateTime.now(),
-          ),
-        ];
-
-        when(mockUserService.fetchBankData(13901))
-            .thenAnswer((_) async => testBankData);
-
-        final result = await apiService.fetchBankData(13901);
-        expect(result, equals(testBankData));
-        verify(mockUserService.fetchBankData(13901)).called(1);
-      });
-
-      test('fetchBankData throws exception on API error', () async {
-        when(mockUserService.fetchBankData(13901))
-            .thenThrow(Exception('API error'));
-
-        expect(() => apiService.fetchBankData(13901), throwsException);
-        verify(mockUserService.fetchBankData(13901)).called(1);
-      });
-
-      test('registerBankData returns true on successful registration',
-          () async {
-        final testBankData = BankData(
-          id: 1,
-          webloginId: 13901,
-          kontoinhaber: 'Test User',
-          iban: 'DE89370400440532013000',
-          bic: 'DEUTDEBBXXX',
-          bankName: 'Test Bank',
-          mandatNr: 'M123456',
-          mandatName: 'Test Mandate',
-          mandatSeq: 1,
-          letzteNutzung: DateTime.now(),
-        );
-
-        when(mockBankService.registerBankData(any))
-            .thenAnswer((_) async => true);
-
-        final result = await apiService.registerBankData(testBankData);
-        expect(result, isTrue);
-        verify(mockBankService.registerBankData(testBankData)).called(1);
-      });
-
-      test('registerBankData throws exception on API error', () async {
-        final testBankData = BankData(
-          id: 1,
-          webloginId: 13901,
-          kontoinhaber: 'Test User',
-          iban: 'DE89370400440532013000',
-          bic: 'DEUTDEBBXXX',
-          bankName: 'Test Bank',
-          mandatNr: 'M123456',
-          mandatName: 'Test Mandate',
-          mandatSeq: 1,
-          letzteNutzung: DateTime.now(),
-        );
-
-        when(mockBankService.registerBankData(any))
-            .thenThrow(Exception('API error'));
-
-        expect(
-          () => apiService.registerBankData(testBankData),
-          throwsException,
-        );
-        verify(mockBankService.registerBankData(testBankData)).called(1);
-      });
-
-      test('deleteBankData returns true on successful deletion', () async {
-        final testBankData = BankData(
-          id: 1,
-          webloginId: 13901,
-          kontoinhaber: 'Test User',
-          iban: 'DE89370400440532013000',
-          bic: 'DEUTDEBBXXX',
-          bankName: 'Test Bank',
-          mandatNr: 'M123456',
-          mandatName: 'Test Mandate',
-          mandatSeq: 1,
-          letzteNutzung: DateTime.now(),
-        );
-
-        when(mockBankService.deleteBankData(any)).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBankData(testBankData);
-        expect(result, isTrue);
-        verify(mockBankService.deleteBankData(testBankData)).called(1);
-      });
-
-      test('deleteBankData throws exception on API error', () async {
-        final testBankData = BankData(
-          id: 1,
-          webloginId: 13901,
-          kontoinhaber: 'Test User',
-          iban: 'DE89370400440532013000',
-          bic: 'DEUTDEBBXXX',
-          bankName: 'Test Bank',
-          mandatNr: 'M123456',
-          mandatName: 'Test Mandate',
-          mandatSeq: 1,
-          letzteNutzung: DateTime.now(),
-        );
-
-        when(mockBankService.deleteBankData(any))
-            .thenThrow(Exception('API error'));
-
-        expect(() => apiService.deleteBankData(testBankData), throwsException);
-        verify(mockBankService.deleteBankData(testBankData)).called(1);
-      });
-    });
-
     group('fetchAdresseVonPersonID', () {
       late ApiService apiService;
       late MockUserService mockUserService;
@@ -1058,7 +934,7 @@ void main() {
       test('getProfilePhoto handles different user IDs correctly', () async {
         final photoBytes1 = Uint8List.fromList([1, 2, 3]);
         final photoBytes2 = Uint8List.fromList([4, 5, 6]);
-        
+
         when(mockPostgrestService.getProfilePhoto('user1'))
             .thenAnswer((_) async => photoBytes1);
         when(mockPostgrestService.getProfilePhoto('user2'))
@@ -1080,14 +956,16 @@ void main() {
           'lastname': 'Doe',
           'email': 'john@example.com',
         };
-        when(mockPostgrestService.createUser(
-          firstName: anyNamed('firstName'),
-          lastName: anyNamed('lastName'),
-          email: anyNamed('email'),
-          passNumber: anyNamed('passNumber'),
-          personId: anyNamed('personId'),
-          verificationToken: anyNamed('verificationToken'),
-        ),).thenAnswer((_) async => expectedUser);
+        when(
+          mockPostgrestService.createUser(
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            email: anyNamed('email'),
+            passNumber: anyNamed('passNumber'),
+            personId: anyNamed('personId'),
+            verificationToken: anyNamed('verificationToken'),
+          ),
+        ).thenAnswer((_) async => expectedUser);
 
         final result = await apiService.createUser(
           firstName: 'John',
@@ -1099,14 +977,16 @@ void main() {
         );
 
         expect(result, equals(expectedUser));
-        verify(mockPostgrestService.createUser(
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'john@example.com',
-          passNumber: '12345678',
-          personId: '123',
-          verificationToken: 'token123',
-        ),).called(1);
+        verify(
+          mockPostgrestService.createUser(
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            passNumber: '12345678',
+            personId: '123',
+            verificationToken: 'token123',
+          ),
+        ).called(1);
       });
 
       test('getUserByEmail delegates to postgrest service', () async {

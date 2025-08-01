@@ -350,6 +350,16 @@ class MockImageService extends _i1.Mock implements _i11.ImageService {
         ),
         returnValue: _i2.Future<_i10.Uint8List>.value(_i10.Uint8List(0)),
       ) as _i2.Future<_i10.Uint8List>);
+
+  @override
+  _i2.Future<String?> getSchuetzenausweisCacheDate(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSchuetzenausweisCacheDate,
+          [personId],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
 }
 
 /// A class which mocks [CacheService].
@@ -1460,16 +1470,6 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<List<_i22.BankData>> fetchBankData(int? webloginId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchBankData,
-          [webloginId],
-        ),
-        returnValue: _i2.Future<List<_i22.BankData>>.value(<_i22.BankData>[]),
-      ) as _i2.Future<List<_i22.BankData>>);
-
-  @override
   _i2.Future<List<_i27.Person>> fetchAdresseVonPersonID(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1801,6 +1801,15 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
   _i2.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getEmaiProtocol() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmaiProtocol,
           [],
         ),
         returnValue: _i2.Future<String?>.value(),
