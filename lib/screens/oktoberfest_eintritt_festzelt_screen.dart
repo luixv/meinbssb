@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '/screens/base_screen_layout.dart';
 import '/constants/ui_constants.dart';
 
-class OktoberfestEintrittFestzelt extends StatelessWidget {
+class OktoberfestEintrittFestzelt extends StatefulWidget {
   const OktoberfestEintrittFestzelt({
     super.key,
     required this.date,
@@ -16,6 +17,43 @@ class OktoberfestEintrittFestzelt extends StatelessWidget {
   final String vorname;
   final String nachname;
   final String geburtsdatum;
+
+  @override
+  OktoberfestEintrittFestzeltState createState() =>
+      OktoberfestEintrittFestzeltState();
+}
+
+class OktoberfestEintrittFestzeltState
+    extends State<OktoberfestEintrittFestzelt> {
+  late String _currentTime;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTime = _getCurrentTime();
+    _startClock();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startClock() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _currentTime = _getCurrentTime();
+      });
+    });
+  }
+
+  String _getCurrentTime() {
+    final now = DateTime.now();
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return '${twoDigits(now.hour)}:${twoDigits(now.minute)}:${twoDigits(now.second)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,28 +82,53 @@ class OktoberfestEintrittFestzelt extends StatelessWidget {
           SingleChildScrollView(
             padding: UIConstants.defaultPadding,
             child: Center(
-              // Center widget to center all content
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // More space on top
                   const SizedBox(height: 150),
-                  _buildInfoText('Datum:', date, context),
+                  _buildDatumWithTime(),
                   const SizedBox(height: 10),
-                  _buildInfoText('Passnummer:', passnummer, context),
+                  _buildInfoText('Passnummer:', widget.passnummer, context),
                   const SizedBox(height: 10),
-                  _buildInfoText('Vorname:', vorname, context),
+                  _buildInfoText('Vorname:', widget.vorname, context),
                   const SizedBox(height: 10),
-                  _buildInfoText('Nachname:', nachname, context),
+                  _buildInfoText('Nachname:', widget.nachname, context),
                   const SizedBox(height: 10),
-                  _buildInfoText('Geburtsdatum:', geburtsdatum, context),
+                  _buildInfoText('Geburtsdatum:', widget.geburtsdatum, context),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDatumWithTime() {
+    return Column(
+      children: [
+        // Display the date
+        Text(
+          widget.date,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black,
+              ),
+        ),
+        const SizedBox(height: 8),
+        // Display the current time
+        Text(
+          _currentTime,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+        ),
+      ],
     );
   }
 
