@@ -37,7 +37,7 @@ services:
       - "443:443" #Flutter Web HTTPS
       - "8081:8081" #Postgrest API
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web
     depends_on:
       - postgrest
