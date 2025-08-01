@@ -518,6 +518,8 @@ class BankDataScreenState extends State<BankDataScreen> {
           padding: const EdgeInsets.all(UIConstants.spacingM),
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode
+                .onUserInteraction, // Enable real-time validation
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -551,7 +553,24 @@ class BankDataScreenState extends State<BankDataScreen> {
                     label: 'BIC',
                     controller: _bicController,
                     isReadOnly: !_isEditing,
-                    validator: BankService.validateBIC,
+                    validator: (value) {
+                      String ibanText = _ibanController.text.trim();
+
+                      // For German IBAN, BIC optional
+                      if (ibanText.startsWith('DE')) {
+                        // BIC optional; validate only if provided
+                        if (value == null || value.isEmpty) {
+                          return null;
+                        }
+                        return BankService.validateBIC(value);
+                      } else {
+                        // For non-German IBAN, BIC required
+                        if (value == null || value.isEmpty) {
+                          return 'Bitte geben Sie die BIC ein';
+                        }
+                        return BankService.validateBIC(value);
+                      }
+                    },
                   ),
                 ],
               ),
