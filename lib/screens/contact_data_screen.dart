@@ -79,7 +79,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     String contactValue,
     String contactLabel,
   ) async {
-    final bool? confirmDelete = await showDialog<bool>(
+    bool? confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -95,9 +95,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             text: TextSpan(
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(
-                  text: UIConstants.contactDataDeleteQuestion,
-                ),
+                const TextSpan(text: UIConstants.contactDataDeleteQuestion),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -116,21 +114,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(false);
-                      },
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
                       style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                            ),
-                          ),
+                          const Text('Abbrechen'),
                         ],
                       ),
                     ),
@@ -138,21 +129,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   UIConstants.horizontalSpacingM,
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(true);
-                      },
+                      onPressed: () => Navigator.of(dialogContext).pop(true),
                       style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
-                          Text(
-                            'Löschen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
-                            ),
-                          ),
+                          const Text('Löschen'),
                         ],
                       ),
                     ),
@@ -165,41 +149,56 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       },
     );
 
-    if (!mounted) return;
+    if (!mounted || confirmDelete != true) return;
 
-    if (confirmDelete == null || !confirmDelete) {
-      LoggerService.logInfo('Contact deletion cancelled by user.');
-      if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
-      }
-      return;
-    }
-
-    final networkService = Provider.of<NetworkService>(context, listen: false);
-    final isOffline = !(await networkService.hasInternet());
-    if (!mounted) return;
-    if (isOffline) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Kontaktdaten können offline nicht gelöscht werden'),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-      setState(() {
-        _isDeleting = false;
-      });
-      return;
-    }
-
-    setState(() {
-      _isDeleting = true;
-    });
-    if (!mounted) return;
+    // Store the navigator context before async operations
+    final navigator = Navigator.of(context);
 
     try {
+      // Show processing dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            backgroundColor: UIConstants.backgroundColor,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    UIConstants.circularProgressIndicator,
+                  ),
+                ),
+                SizedBox(height: UIConstants.spacingM),
+                Text(
+                  'Kontakt wird gelöscht...',
+                  style: UIStyles.dialogContentStyle,
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Check network status
+      final networkService =
+          Provider.of<NetworkService>(context, listen: false);
+      final isOffline = !(await networkService.hasInternet());
+      if (!mounted) return;
+      if (isOffline) {
+        navigator.pop(); // Close processing dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kontaktdaten können offline nicht gelöscht werden'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+        return;
+      }
+
+      // Perform deletion
       final apiService = Provider.of<ApiService>(context, listen: false);
       final contact = Contact(
         id: kontaktId,
@@ -208,7 +207,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         value: '',
       );
       final bool success = await apiService.deleteKontakt(contact);
+
       if (!mounted) return;
+      navigator.pop(); // Close processing dialog
+
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -227,8 +229,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         );
       }
     } catch (e) {
-      LoggerService.logError('Exception during contact deletion: $e');
       if (mounted) {
+        navigator.pop(); // Close processing dialog
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
@@ -236,12 +238,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             backgroundColor: UIConstants.errorColor,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isDeleting = false;
-        });
       }
     }
   }
@@ -529,7 +525,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                               fontSizeProvider.scaleFactor,
                                         ),
                                         const SizedBox(
-                                            width: UIConstants.spacingS,),
+                                          width: UIConstants.spacingS,
+                                        ),
                                         ScaledText(
                                           'Hinzufügen',
                                           style: UIStyles.dialogButtonTextStyle
@@ -628,55 +625,29 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        final displayValueFormatted =
-            displayValue.isNotEmpty ? displayValue : '-';
-        final displayLabelFormatted =
-            displayLabel.isNotEmpty ? displayLabel : 'Unbekannt';
-
         return Padding(
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
           child: TextFormField(
-            initialValue: displayValueFormatted,
+            initialValue: displayValue.isNotEmpty ? displayValue : '-',
             readOnly: true,
             style: UIStyles.formValueBoldStyle.copyWith(
               fontSize: UIStyles.formValueBoldStyle.fontSize! *
                   fontSizeProvider.scaleFactor,
             ),
             decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: displayLabelFormatted,
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle:
-                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
-                        fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: isDeleting ? null : displayLabelFormatted,
-              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              fillColor:
-                  isDeleting ? UIConstants.disabledBackgroundColor : null,
-              filled: isDeleting ? false : null,
+              labelText: displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.delete_outline,
                   size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
                 ),
                 color: UIConstants.deleteIcon,
-                onPressed: isDeleting
-                    ? null
-                    : () => onDelete(
-                          kontaktId,
-                          rawKontaktTyp,
-                          displayValue,
-                          displayLabel,
-                        ),
+                onPressed: () => onDelete(
+                  kontaktId,
+                  rawKontaktTyp,
+                  displayValue,
+                  displayLabel,
+                ),
               ),
             ),
           ),
