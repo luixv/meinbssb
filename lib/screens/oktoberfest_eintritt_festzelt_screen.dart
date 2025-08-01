@@ -109,7 +109,6 @@ class OktoberfestEintrittFestzeltState
   Widget _buildDatumWithTime() {
     return Column(
       children: [
-        // Display the date
         Text(
           widget.date,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -119,11 +118,10 @@ class OktoberfestEintrittFestzeltState
               ),
         ),
         const SizedBox(height: 8),
-        // Display the current time
         Text(
           _currentTime,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
