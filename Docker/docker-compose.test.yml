@@ -26,8 +26,8 @@ services:
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_DB_SCHEMA: public
       PGRST_SERVER_CORS: "true"
-      PGRST_SERVER_PROXY_URI: http://localhost:3000
-      PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost:3000
+      PGRST_SERVER_PROXY_URI: http://193.158.228.222:8081
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://193.158.228.222:8081
 
   caddy:
     image: caddy:2
