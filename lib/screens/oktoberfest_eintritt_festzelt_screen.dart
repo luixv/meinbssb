@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '/screens/base_screen_layout.dart';
 import '/constants/ui_constants.dart';
 
@@ -66,7 +68,7 @@ class OktoberfestEintrittFestzeltState
       onLogout: () {},
       body: Stack(
         children: [
-          // Background image covering full height
+          // Background image
           Container(
             width: size.width,
             height: size.height,
@@ -78,48 +80,24 @@ class OktoberfestEintrittFestzeltState
               ),
             ),
           ),
-          // Centered info
-          SingleChildScrollView(
-            padding: UIConstants.defaultPadding,
-            child: Center(
+          // Center all info vertically and horizontally
+          Center(
+            child: SingleChildScrollView(
+              padding: UIConstants.defaultPadding,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 150),
+                  const SizedBox(height: 50),
                   _buildDatumWithTime(),
+                  const SizedBox(height: 20),
+                  _buildInfoRow('Passnummer:', widget.passnummer),
                   const SizedBox(height: 10),
-                  // Wrap each info field with a white background container
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.white,
-                    child: _buildInfoText(
-                        'Passnummer:', widget.passnummer, context,),
-                  ),
+                  _buildInfoRow('Vorname:', widget.vorname),
                   const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.white,
-                    child: _buildInfoText('Vorname:', widget.vorname, context),
-                  ),
+                  _buildInfoRow('Nachname:', widget.nachname),
                   const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.white,
-                    child:
-                        _buildInfoText('Nachname:', widget.nachname, context),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.white,
-                    child: _buildInfoText(
-                        'Geburtsdatum:', widget.geburtsdatum, context,),
-                  ),
+                  _buildInfoRow('Geburtsdatum:', widget.geburtsdatum),
                 ],
               ),
             ),
@@ -130,6 +108,7 @@ class OktoberfestEintrittFestzeltState
   }
 
   Widget _buildDatumWithTime() {
+    // Shows date and real-time clock with same font size, centered
     return Column(
       children: [
         Text(
@@ -153,21 +132,21 @@ class OktoberfestEintrittFestzeltState
     );
   }
 
-  Widget _buildInfoText(String label, String value, BuildContext context) {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.black,
-            ),
-        children: [
-          TextSpan(
-            text: '$label ',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          TextSpan(text: value),
-        ],
-      ),
+  Widget _buildInfoRow(String label, String value) {
+    // Simply show label and value, centered
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 16),
+        ),
+      ],
     );
   }
 }
