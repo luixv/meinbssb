@@ -88,7 +88,7 @@ class OktoberfestEintrittFestzeltState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 150),
+                  const SizedBox(height: 50),
                   _buildDatumWithTime(),
                   const SizedBox(height: 20),
                   // Each info line with white background and black border only for values
@@ -116,15 +116,18 @@ class OktoberfestEintrittFestzeltState
           widget.date,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize:
+                    UIConstants.titleFontSize, // Use constant for font size
                 color: Colors.black,
               ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(
+          height: UIConstants.spacingS,
+        ), // Use constant for spacing
         Text(
           _currentTime,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 20,
+                fontSize: UIConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -139,23 +142,32 @@ class OktoberfestEintrittFestzeltState
       children: [
         // Label (plain text)
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: UIConstants.spacingS),
           child: Text(
             '$label:',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: UIConstants.bodyFontSize,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         // Value with white background and black border
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingS,
+            vertical: UIConstants.spacingXS,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.black), // black border
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(UIConstants.borderWidth),
           ),
           child: Text(
             value,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
+            style: const TextStyle(
+              fontSize: UIConstants.bodyFontSize,
+              color: Colors.black,
+            ),
           ),
         ),
       ],
