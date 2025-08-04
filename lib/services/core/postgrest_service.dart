@@ -55,7 +55,7 @@ class PostgrestService {
         LoggerService.logInfo(
           'User registration created successfully in PostgreSQL',
         );
-        return jsonDecode(response.body)[0]; // PostgREST returns an array
+        return {}; // PostgREST returns an array
       } else {
         LoggerService.logError(
           'Failed to create user registration. Status: ${response.statusCode}, Body: ${response.body}',
