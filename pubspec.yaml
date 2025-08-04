@@ -103,5 +103,6 @@ flutter:
   assets:
     - assets/images/myBSSB-logo.png
     - assets/images/BSSB_Wappen.png
+    - assets/images/BSSB_Wappen_dimmed.png
     - assets/config.json
 

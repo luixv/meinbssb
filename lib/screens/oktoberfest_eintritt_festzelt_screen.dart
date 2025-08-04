@@ -74,7 +74,7 @@ class OktoberfestEintrittFestzeltState
             height: size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/BSSB_Wappen.png'),
+                image: AssetImage('assets/images/BSSB_Wappen_dimmed.png'),
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
               ),
