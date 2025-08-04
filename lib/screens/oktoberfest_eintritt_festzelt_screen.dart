@@ -155,7 +155,8 @@ class OktoberfestEintrittFestzeltState
             child: Text(
               '$label:',
               style: const TextStyle(
-                fontSize: UIConstants.bodyFontSize,
+                fontSize:
+                    UIConstants.titleFontSize, // Increased font size for label
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -183,7 +184,7 @@ class OktoberfestEintrittFestzeltState
                 child: Text(
                   value,
                   style: const TextStyle(
-                    fontSize: UIConstants.bodyFontSize,
+                    fontSize: UIConstants.titleFontSize, // Increased font size
                     color: Colors.black,
                   ),
                 ),
