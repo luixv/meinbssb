@@ -40,12 +40,12 @@ class PostgrestService {
         Uri.parse('${_baseUrl}users'),
         headers: _headers,
         body: jsonEncode({
-          'firstname': firstName,
-          'lastname': lastName,
-          'email': email,
-          'pass_number': passNumber,
-          'person_id': personId,
-          'verification_token': verificationToken,
+          'firstname': firstName ?? '',
+          'lastname': lastName ?? '',
+          'email': email ?? '',
+          'pass_number': passNumber ?? '',
+          'person_id': personId ?? '',
+          'verification_token': verificationToken ?? '',
           'created_at': DateTime.now().toIso8601String(),
           'is_verified': false,
         }),
@@ -55,7 +55,7 @@ class PostgrestService {
         LoggerService.logInfo(
           'User registration created successfully in PostgreSQL',
         );
-        return jsonDecode(response.body)[0]; // PostgREST returns an array
+        return {}; // PostgREST returns an array
       } else {
         LoggerService.logError(
           'Failed to create user registration. Status: ${response.statusCode}, Body: ${response.body}',

@@ -74,7 +74,6 @@ class AuthService {
       );
 
       // Send registration email
-      final emailProtocol = await _emailService.getEmaiProtocol();
       final fromEmail = await _emailService.getFromEmail();
       final subject = await _emailService.getRegistrationSubject();
       final emailContent = await _emailService.getRegistrationContent();
@@ -82,7 +81,6 @@ class AuthService {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
-        protocolKey: emailProtocol!,
       );
       final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
         _configService,
@@ -95,6 +93,9 @@ class AuthService {
           baseUrl.isNotEmpty) {
         final verificationLink =
             '${baseUrlWebApp}set-password?token=$verificationToken';
+        LoggerService.logInfo(
+          'Verification link: $verificationLink',
+        );
         final emailBody = emailContent
             .replaceAll('{firstName}', firstName)
             .replaceAll('{lastName}', lastName)
@@ -108,7 +109,7 @@ class AuthService {
       }
 
       // Store registration data for later use
-      final registrationData = {
+      /*final registrationData = {
         'personId': personId,
         'firstName': firstName,
         'lastName': lastName,
@@ -123,7 +124,7 @@ class AuthService {
       await _cacheService.setString(
         'registration_$email',
         jsonEncode(registrationData),
-      );
+      ); */
 
       return {
         'ResultType': 1,
