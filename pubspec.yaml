@@ -105,4 +105,11 @@ flutter:
     - assets/images/BSSB_Wappen.png
     - assets/images/BSSB_Wappen_dimmed.png
     - assets/config.json
+    - assets/html/accountCreatedEmail.html
+    - assets/html/passwordReset.html
+    - assets/html/registrationEmail.html
+    - assets/html/schulungAbmeldungEmail.html
+    - assets/html/schulungAnmeldungEmail.html
+    
+
 

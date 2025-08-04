@@ -72,25 +72,27 @@ class AuthService {
         personId: personId,
         verificationToken: verificationToken, // pass as verificationToken
       );
-
+      LoggerService.logInfo(
+        'User created...',
+      );
       // Send registration email
       final fromEmail = await _emailService.getFromEmail();
       final subject = await _emailService.getRegistrationSubject();
       final emailContent = await _emailService.getRegistrationContent();
+      LoggerService.logInfo(
+        'From email: $fromEmail subject: $subject',
+      );
       // Use the app's frontend URL for the verification link
-      final baseUrl = ConfigService.buildBaseUrlForServer(
+      /*final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
-      );
+      );*/
       final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'web',
         protocolKey: 'webProtocol',
       );
-      if (fromEmail != null &&
-          subject != null &&
-          emailContent != null &&
-          baseUrl.isNotEmpty) {
+      if (fromEmail != null && subject != null && emailContent != null) {
         final verificationLink =
             '${baseUrlWebApp}set-password?token=$verificationToken';
         LoggerService.logInfo(

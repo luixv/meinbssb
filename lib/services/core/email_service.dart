@@ -3,6 +3,7 @@
 // Author: Luis Mandel / NTT DATA
 
 import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
 import 'config_service.dart';
@@ -115,9 +116,9 @@ class EmailService {
 
   Future<String?> getRegistrationContent() async {
     try {
-      return File('lib/html/registrationEmail.html').readAsString();
+      return await rootBundle.loadString('assets/html/registrationEmail.html');
     } catch (e) {
-      LoggerService.logError('Error reading accountCreatedEmail.html: $e');
+      LoggerService.logError('Error reading registrationEmail.html: $e');
       return null;
     }
   }
@@ -148,7 +149,8 @@ class EmailService {
 
   Future<String?> getAccountCreatedContent() async {
     try {
-      return File('lib/html/accountCreatedEmail.html').readAsString();
+      return await rootBundle
+          .loadString('assets/html/accountCreatedEmail.html');
     } catch (e) {
       LoggerService.logError('Error reading accountCreatedEmail.html: $e');
       return null;
@@ -161,7 +163,8 @@ class EmailService {
 
   Future<String?> getSchulungAbmeldungContent() async {
     try {
-      return File('lib/html/schulungAbmeldungEmail.html').readAsString();
+      return await rootBundle
+          .loadString('assets/html/schulungAbmeldungEmail.html');
     } catch (e) {
       LoggerService.logError('Error reading schulungAbmeldungEmail.html: $e');
       return null;
@@ -174,7 +177,8 @@ class EmailService {
 
   Future<String?> getSchulungAnmeldungContent() async {
     try {
-      return File('lib/html/schulungAnmeldungEmail.html').readAsString();
+      return await rootBundle
+          .loadString('assets/html/schulungAnmeldungEmail.html');
     } catch (e) {
       LoggerService.logError('Error reading schulungAnmeldungEmail.html: $e');
       return null;
