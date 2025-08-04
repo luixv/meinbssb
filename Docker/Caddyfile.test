@@ -24,9 +24,9 @@ http://193.158.228.222:8081 {
     header Access-Control-Allow-Credentials "false"
   }
 
+  # Handle all actual API calls with CORS headers
   handle {
     reverse_proxy postgrest:3000
-    header Access-Control-Allow-Origin "*"
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
     header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
     header Access-Control-Allow-Credentials "false"

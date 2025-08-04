@@ -112,16 +112,16 @@ class ConfigService {
       server = config.getString('host', 'smtpSettings');
       port = config.getString('port', 'smtpSettings');
       path = '';
-    } else {
-      protocol = config.getString(protocolKey);
-      server = config.getString('${name}Server');
-      port = config.getString('${name}Port');
-      path = config.getString('${name}Path');
+      return '$server:$port/$path';
     }
+    protocol = config.getString(protocolKey);
+    server = config.getString('${name}Server');
+    port = config.getString('${name}Port');
+    path = config.getString('${name}Path');
 
     if (protocol == null || protocol.isEmpty) {
       throw StateError(
-        'ConfigService: protocol for $name is missing or empty.',
+        'ConfigService: protocol for $name is missing or empty. Protocol is $protocol',
       );
     }
     if (server == null || server.isEmpty) {
