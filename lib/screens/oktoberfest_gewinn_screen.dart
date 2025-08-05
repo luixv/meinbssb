@@ -343,6 +343,12 @@ class _BankDataDialogState extends State<BankDataDialog> {
     return !iban.toUpperCase().startsWith('DE');
   }
 
+  bool _isBicValid(String bic) {
+    // BIC must be 8 or 11 characters, alphanumeric, and uppercase
+    final bicRegExp = RegExp(r'^[A-Z0-9]{8}([A-Z0-9]{3})? ?$');
+    return bicRegExp.hasMatch(bic);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -454,10 +460,19 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                       final iban = _ibanController.text
                                           .trim()
                                           .toUpperCase();
-                                      if (!iban.startsWith('DE') &&
-                                          (value == null ||
-                                              value.trim().isEmpty)) {
-                                        return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                      final bic = value?.trim() ?? '';
+                                      if (_isBicRequired(iban)) {
+                                        if (bic.isEmpty) {
+                                          return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                        }
+                                        if (!_isBicValid(bic)) {
+                                          return 'BIC ist ungültig.';
+                                        }
+                                      } else {
+                                        if (bic.isNotEmpty &&
+                                            !_isBicValid(bic)) {
+                                          return 'BIC ist ungültig.';
+                                        }
                                       }
                                       return null;
                                     },
@@ -536,13 +551,17 @@ class _BankDataDialogState extends State<BankDataDialog> {
                   backgroundColor: (_agbChecked &&
                           _kontoinhaberController.text.trim().isNotEmpty &&
                           _ibanController.text.trim().isNotEmpty &&
-                          _bicController.text.trim().isNotEmpty)
+                          (_isBicRequired(_ibanController.text.trim())
+                              ? _bicController.text.trim().isNotEmpty
+                              : true))
                       ? UIConstants.defaultAppColor
                       : UIConstants.cancelButtonBackground,
                   onPressed: (_agbChecked &&
                           _kontoinhaberController.text.trim().isNotEmpty &&
                           _ibanController.text.trim().isNotEmpty &&
-                          _bicController.text.trim().isNotEmpty)
+                          (_isBicRequired(_ibanController.text.trim())
+                              ? _bicController.text.trim().isNotEmpty
+                              : true))
                       ? () {
                           if (_formKey.currentState?.validate() ?? false) {
                             Navigator.of(context).pop(
