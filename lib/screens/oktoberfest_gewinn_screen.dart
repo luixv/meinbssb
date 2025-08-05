@@ -58,7 +58,12 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
     }
   }
 
+  bool _bankDialogLoading = false;
+
   Future<void> _openBankDataDialog() async {
+    setState(() {
+      _bankDialogLoading = true;
+    });
     final apiService = Provider.of<ApiService>(context, listen: false);
     final userData = widget.userData;
     BankData? bankData;
@@ -68,6 +73,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
         bankData = bankList.first;
       }
     }
+    setState(() {
+      _bankDialogLoading = false;
+    });
     final result = await showDialog<_BankDataResult>(
       context: context,
       builder: (dialogContext) => BankDataDialog(initialBankData: bankData),
@@ -122,197 +130,212 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Oktoberfestlandesschießen',
-      userData: widget.userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: widget.onLogout,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Meine Gewinne für das letzte Jahr',
-                style: TextStyle(fontSize: UIConstants.titleFontSize),
-              ),
-              const SizedBox(height: UIConstants.spacingL),
-              // Already fixed: just show last year's value
-              Text(
-                'Jahr: $_selectedYear',
-                style: const TextStyle(fontSize: UIConstants.subtitleFontSize),
-              ),
-              if (_loading) ...[
-                const SizedBox(height: UIConstants.spacingXL),
-                const CircularProgressIndicator(),
-              ],
-              if (_gewinne.isNotEmpty) ...[
-                const SizedBox(height: UIConstants.spacingXL),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _gewinne.length,
-                  separatorBuilder: (context, index) =>
-                      const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    final gewinn = _gewinne[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: UIConstants.spacingS,
-                        horizontal: UIConstants.spacingL,
-                      ),
-                      elevation: UIConstants.appBarElevation,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: UIConstants.spacingM,
-                          horizontal: UIConstants.spacingL,
-                        ),
-                        title: Text(
-                          gewinn.wettbewerb,
-                          style: UIStyles.listItemTitleStyle,
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Platz: ${gewinn.platz}',
-                              style: UIStyles.listItemSubtitleStyle,
+    return Stack(
+      children: [
+        BaseScreenLayout(
+          title: 'Oktoberfestlandesschießen',
+          userData: widget.userData,
+          isLoggedIn: widget.isLoggedIn,
+          onLogout: widget.onLogout,
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Meine Gewinne für das letzte Jahr',
+                    style: TextStyle(fontSize: UIConstants.titleFontSize),
+                  ),
+                  const SizedBox(height: UIConstants.spacingL),
+                  // Already fixed: just show last year's value
+                  Text(
+                    'Jahr: $_selectedYear',
+                    style:
+                        const TextStyle(fontSize: UIConstants.subtitleFontSize),
+                  ),
+                  if (_loading) ...[
+                    const SizedBox(height: UIConstants.spacingXL),
+                    const CircularProgressIndicator(),
+                  ],
+                  if (_gewinne.isNotEmpty) ...[
+                    const SizedBox(height: UIConstants.spacingXL),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _gewinne.length,
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final gewinn = _gewinne[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: UIConstants.spacingS,
+                            horizontal: UIConstants.spacingL,
+                          ),
+                          elevation: UIConstants.appBarElevation,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: UIConstants.spacingM,
+                              horizontal: UIConstants.spacingL,
                             ),
-                            Text(
-                              'Geldpreis: ${gewinn.geldpreis}',
-                              style: UIStyles.listItemSubtitleStyle,
+                            title: Text(
+                              gewinn.wettbewerb,
+                              style: UIStyles.listItemTitleStyle,
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                ElevatedButton(
-                  onPressed: _openBankDataDialog,
-                  child: const Text('Bankdaten'),
-                ),
-              ],
-            ],
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Platz: ${gewinn.platz}',
+                                  style: UIStyles.listItemSubtitleStyle,
+                                ),
+                                Text(
+                                  'Geldpreis: ${gewinn.geldpreis}',
+                                  style: UIStyles.listItemSubtitleStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ElevatedButton(
+                      onPressed:
+                          _bankDialogLoading ? null : _openBankDataDialog,
+                      child: _bankDialogLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Bankdaten'),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomRight,
-        child: SizedBox(
-          height: UIConstants.fabSize,
-          width: UIConstants.fabSize,
-          child: Stack(
-            children: [
-              // FAB to fetch the last year's data
-              Visibility(
-                visible: _gewinne.isEmpty && !_loading,
-                maintainState: true,
-                child: FloatingActionButton(
-                  heroTag: 'pickYear',
-                  onPressed: _loading ? null : _fetchGewinne,
-                  tooltip: 'Gewinne für Jahr abrufen',
-                  backgroundColor: _loading
-                      ? UIConstants.cancelButtonBackground
-                      : UIConstants.defaultAppColor,
-                  child: const Icon(Icons.search, color: Colors.white),
-                ),
-              ),
-              // FAB to perform the Gewinn fetch/abfrage
-              Visibility(
-                visible: _gewinne.isNotEmpty,
-                maintainState: true,
-                child: FloatingActionButton(
-                  heroTag: 'abrufen',
-                  onPressed: (_bankDataResult != null &&
-                          _bankDataResult!.kontoinhaber.isNotEmpty &&
-                          _bankDataResult!.iban.isNotEmpty &&
-                          (_bankDataResult!.iban
-                                  .toUpperCase()
-                                  .startsWith('DE') ||
-                              _bankDataResult!.bic.isNotEmpty))
-                      ? () async {
-                          final oktoberfestService =
-                              Provider.of<OktoberfestService>(
-                            context,
-                            listen: false,
-                          );
-                          setState(() {
-                            _loading = true;
-                          });
-                          final scaffoldMessenger =
-                              ScaffoldMessenger.of(context);
-                          final navigator = Navigator.of(context);
-                          try {
-                            final result =
-                                await oktoberfestService.gewinneAbrufen(
-                              gewinnIDs:
-                                  _gewinne.map((g) => g.gewinnId).toList(),
-                              iban: _bankDataResult!.iban,
-                              passnummer: widget.passnummer,
-                              configService: widget.configService,
-                            );
-                            if (!mounted) return;
-                            if (result) {
-                              navigator.push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const OktoberfestAbrufResultScreen(
-                                    success: true,
-                                  ),
-                                ),
+          floatingActionButton: Align(
+            alignment: Alignment.bottomRight,
+            child: SizedBox(
+              height: UIConstants.fabSize,
+              width: UIConstants.fabSize,
+              child: Stack(
+                children: [
+                  // FAB to fetch the last year's data
+                  Visibility(
+                    visible: _gewinne.isEmpty && !_loading,
+                    maintainState: true,
+                    child: FloatingActionButton(
+                      heroTag: 'pickYear',
+                      onPressed: _loading ? null : _fetchGewinne,
+                      tooltip: 'Gewinne für Jahr abrufen',
+                      backgroundColor: _loading
+                          ? UIConstants.cancelButtonBackground
+                          : UIConstants.defaultAppColor,
+                      child: const Icon(Icons.search, color: Colors.white),
+                    ),
+                  ),
+                  // FAB to perform the Gewinn fetch/abfrage
+                  Visibility(
+                    visible: _gewinne.isNotEmpty,
+                    maintainState: true,
+                    child: FloatingActionButton(
+                      heroTag: 'abrufen',
+                      onPressed: (_bankDataResult != null &&
+                              _bankDataResult!.kontoinhaber.isNotEmpty &&
+                              _bankDataResult!.iban.isNotEmpty &&
+                              (_bankDataResult!.iban
+                                      .toUpperCase()
+                                      .startsWith('DE') ||
+                                  _bankDataResult!.bic.isNotEmpty))
+                          ? () async {
+                              final oktoberfestService =
+                                  Provider.of<OktoberfestService>(
+                                context,
+                                listen: false,
                               );
-                            } else {
-                              if (!mounted) return;
-                              scaffoldMessenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Fehler beim Abrufen der Gewinne.',
-                                  ),
-                                  duration: UIConstants.snackbarDuration,
-                                  backgroundColor: UIConstants.errorColor,
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            debugPrint('Fehler beim Abrufen der Gewinne: $e');
-                            if (!mounted) return;
-                            scaffoldMessenger.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Fehler beim Abrufen der Gewinne: $e',
-                                ),
-                                duration: UIConstants.snackbarDuration,
-                                backgroundColor: UIConstants.errorColor,
-                              ),
-                            );
-                          } finally {
-                            if (mounted) {
                               setState(() {
-                                _loading = false;
+                                _loading = true;
                               });
+                              final scaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
+                              final navigator = Navigator.of(context);
+                              try {
+                                final result =
+                                    await oktoberfestService.gewinneAbrufen(
+                                  gewinnIDs:
+                                      _gewinne.map((g) => g.gewinnId).toList(),
+                                  iban: _bankDataResult!.iban,
+                                  passnummer: widget.passnummer,
+                                  configService: widget.configService,
+                                );
+                                if (!mounted) return;
+                                if (result) {
+                                  navigator.push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OktoberfestAbrufResultScreen(
+                                        success: true,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  if (!mounted) return;
+                                  scaffoldMessenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Fehler beim Abrufen der Gewinne.',
+                                      ),
+                                      duration: UIConstants.snackbarDuration,
+                                      backgroundColor: UIConstants.errorColor,
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint(
+                                  'Fehler beim Abrufen der Gewinne: $e',
+                                );
+                                if (!mounted) return;
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Fehler beim Abrufen der Gewinne: $e',
+                                    ),
+                                    duration: UIConstants.snackbarDuration,
+                                    backgroundColor: UIConstants.errorColor,
+                                  ),
+                                );
+                              } finally {
+                                if (mounted) {
+                                  setState(() {
+                                    _loading = false;
+                                  });
+                                }
+                              }
                             }
-                          }
-                        }
-                      : null,
-                  tooltip: 'Gewinne abrufen',
-                  backgroundColor: (_bankDataResult != null &&
-                          _bankDataResult!.kontoinhaber.isNotEmpty &&
-                          _bankDataResult!.iban.isNotEmpty &&
-                          (_bankDataResult!.iban
-                                  .toUpperCase()
-                                  .startsWith('DE') ||
-                              _bankDataResult!.bic.isNotEmpty))
-                      ? UIConstants.defaultAppColor
-                      : UIConstants.cancelButtonBackground,
-                  child: const Icon(Icons.check, color: Colors.white),
-                ),
+                          : null,
+                      tooltip: 'Gewinne abrufen',
+                      backgroundColor: (_bankDataResult != null &&
+                              _bankDataResult!.kontoinhaber.isNotEmpty &&
+                              _bankDataResult!.iban.isNotEmpty &&
+                              (_bankDataResult!.iban
+                                      .toUpperCase()
+                                      .startsWith('DE') ||
+                                  _bankDataResult!.bic.isNotEmpty))
+                          ? UIConstants.defaultAppColor
+                          : UIConstants.cancelButtonBackground,
+                      child: const Icon(Icons.check, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+        // Removed full-page overlay spinner for bank dialog loading
+      ],
     );
   }
 }
