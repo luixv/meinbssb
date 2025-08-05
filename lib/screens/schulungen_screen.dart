@@ -725,6 +725,25 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       automaticallyImplyLeading: widget.showMenu,
       showMenu: widget.showMenu,
       showConnectivityIcon: widget.showConnectivityIcon,
+      leading: !widget.showMenu
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SchulungenSearchScreen(
+                      widget.userData,
+                      isLoggedIn: widget.isLoggedIn,
+                      onLogout: widget.onLogout,
+                      showMenu: widget.showMenu,
+                      showConnectivityIcon: widget.showConnectivityIcon,
+                    ),
+                  ),
+                );
+              },
+            )
+          : null,
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
         child: _isLoading
