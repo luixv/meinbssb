@@ -45,7 +45,8 @@ void main() async {
   final fragment = Uri.base.fragment;
   final path = Uri.base.path;
   
-  final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+  final bool isDirectSchulungenSearch = 
+      fragment == '/schulungen_search' ||
       fragment == 'schulungen_search' ||
       path == '/schulungen_search' ||
       path == 'schulungen_search';
