@@ -296,7 +296,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Verfügbare Schulungen'), findsOneWidget);
+      expect(find.text('Verfügbare Aus- und Weiterbildungen'), findsOneWidget);
       expect(find.text('Test Schulung'), findsOneWidget);
       expect(find.text('Jugend Schulung'), findsOneWidget);
       expect(find.text('Sport Schulung'), findsOneWidget);
@@ -414,7 +414,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Verfügbare Schulungen'), findsOneWidget);
+      expect(find.text('Verfügbare Aus- und Weiterbildungen'), findsOneWidget);
       expect(find.text('Keine Schulungen gefunden.'), findsOneWidget);
       expect(find.text('Test Schulung'), findsNothing);
       expect(find.text('Jugend Schulung'), findsNothing);
@@ -534,17 +534,23 @@ void main() {
 
       // Verify the dialog opens and shows the correct content
       expect(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is Text &&
               widget.data == 'Jugend Schulung' &&
-              widget.style?.fontSize == 20.0,),
-          findsOneWidget,);
+              widget.style?.fontSize == 20.0,
+        ),
+        findsOneWidget,
+      );
       expect(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is Text &&
               widget.data == 'Jugend' &&
-              widget.style?.fontSize == 14.0,),
-          findsOneWidget,);
+              widget.style?.fontSize == 14.0,
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows correct content priority in dialog',
@@ -562,17 +568,23 @@ void main() {
 
       // Verify the dialog opens and shows the correct content
       expect(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is Text &&
               widget.data == 'Sport Schulung' &&
-              widget.style?.fontSize == 20.0,),
-          findsOneWidget,);
+              widget.style?.fontSize == 20.0,
+        ),
+        findsOneWidget,
+      );
       expect(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is Text &&
               widget.data == 'Sport' &&
-              widget.style?.fontSize == 14.0,),
-          findsOneWidget,);
+              widget.style?.fontSize == 14.0,
+        ),
+        findsOneWidget,
+      );
 
       // Check if the fallback text is present
       expect(find.text('Keine Beschreibung verfügbar.'), findsOneWidget);

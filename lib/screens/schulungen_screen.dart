@@ -739,7 +739,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ScaledText(
-                    'Verfügbare Schulungen',
+                    'Verfügbare Aus- und Weiterbildungen',
                     style: UIStyles.headerStyle,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
