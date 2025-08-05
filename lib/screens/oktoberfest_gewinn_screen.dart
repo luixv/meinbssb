@@ -228,7 +228,10 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                   onPressed: (_bankDataResult != null &&
                           _bankDataResult!.kontoinhaber.isNotEmpty &&
                           _bankDataResult!.iban.isNotEmpty &&
-                          _bankDataResult!.bic.isNotEmpty)
+                          (_bankDataResult!.iban
+                                  .toUpperCase()
+                                  .startsWith('DE') ||
+                              _bankDataResult!.bic.isNotEmpty))
                       ? () async {
                           final oktoberfestService =
                               Provider.of<OktoberfestService>(
@@ -297,7 +300,10 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                   backgroundColor: (_bankDataResult != null &&
                           _bankDataResult!.kontoinhaber.isNotEmpty &&
                           _bankDataResult!.iban.isNotEmpty &&
-                          _bankDataResult!.bic.isNotEmpty)
+                          (_bankDataResult!.iban
+                                  .toUpperCase()
+                                  .startsWith('DE') ||
+                              _bankDataResult!.bic.isNotEmpty))
                       ? UIConstants.defaultAppColor
                       : UIConstants.cancelButtonBackground,
                   child: const Icon(Icons.check, color: Colors.white),
