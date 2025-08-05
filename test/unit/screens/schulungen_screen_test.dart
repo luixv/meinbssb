@@ -64,7 +64,7 @@ void main() {
       abmeldeStopp: '2024-06-12',
       geloescht: false,
       stornoGrund: '',
-      webGruppe: 1, // Wettbewerbe
+      webGruppe: 1, // Jugend
       veranstaltungsBezirk: 1,
       fuerVerlaengerungen: false,
       anmeldeErlaubt: 1,
@@ -325,9 +325,9 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Wettbewerbe'), findsOneWidget);
-      expect(find.text('Jugend'), findsOneWidget);
       expect(find.text('Sport'), findsOneWidget);
+      expect(find.text('Jugend'), findsOneWidget);
+      expect(find.text('Überfachlich'), findsOneWidget);
     });
 
     testWidgets('filters by webGruppe when provided',
@@ -515,7 +515,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify dialog is shown - look for dialog-specific content
-      expect(find.text('Wettbewerbe'), findsWidgets);
+      expect(find.text('Sport'), findsWidgets);
     });
 
     testWidgets(
@@ -604,7 +604,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show HTML content - verify dialog is open
-      expect(find.text('Wettbewerbe'), findsWidgets);
+      expect(find.text('Sport'), findsWidgets);
     });
 
     testWidgets('shows text content when only lehrgangsinhalt is available',
@@ -644,7 +644,7 @@ void main() {
         abmeldeStopp: '2024-08-27',
         geloescht: false,
         stornoGrund: '',
-        webGruppe: 4, // Überfachlich
+        webGruppe: 3, // Überfachlich
         veranstaltungsBezirk: 4,
         fuerVerlaengerungen: false,
         anmeldeErlaubt: 1,
@@ -705,7 +705,7 @@ void main() {
         abmeldeStopp: '2024-09-27',
         geloescht: false,
         stornoGrund: '',
-        webGruppe: 5, // Verbandsintern
+        webGruppe: 2, // Verbandsintern
         veranstaltungsBezirk: 5,
         fuerVerlaengerungen: false,
         anmeldeErlaubt: 1,
@@ -726,7 +726,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show bemerkung content - verify dialog is open
-      expect(find.text('Verbandsintern'), findsWidgets);
+      expect(find.text('Sport'), findsWidgets);
     });
 
     testWidgets('handles case insensitive filtering',

@@ -207,10 +207,8 @@ class Schulungstermin {
 
   static const Map<int, String> webGruppeMap = {
     0: 'Alle',
-    1: 'Wettbewerbe',
-    2: 'Jugend',
-    3: 'Sport',
-    4: 'Überfachlich',
-    5: 'Verbandsintern',
+    1: 'Jugend',
+    2: 'Sport',
+    3: 'Überfachlich',
   };
 }
