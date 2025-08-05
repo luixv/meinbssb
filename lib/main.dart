@@ -21,7 +21,6 @@ import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
 import 'services/core/calendar_service.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
-import 'screens/login_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
 import 'package:flutter/foundation.dart';
