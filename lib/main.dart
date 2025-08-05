@@ -20,7 +20,9 @@ import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
 import 'services/core/calendar_service.dart';
-import 'screens/schulungen/schulungen_search_screen.dart';
+// import 'screens/schulungen/schulungen_search_screen.dart';
+// import 'screens/login_screen.dart';
+
 import 'services/api/oktoberfest_service.dart';
 import 'package:flutter/foundation.dart';
 import 'services/core/postgrest_service.dart';
@@ -39,18 +41,21 @@ void main() async {
     }
   };
   await AppInitializer.init();
-
+/*
   final fragment = Uri.base.fragment;
   final path = Uri.base.path;
-  final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+  
+  final bool isDirectSchulungenSearch = 
+      fragment == '/schulungen_search' ||
       fragment == 'schulungen_search' ||
       path == '/schulungen_search' ||
       path == 'schulungen_search';
-
+*/
   final oktoberfestService =
       OktoberfestService(httpClient: AppInitializer.httpClient);
 
   runZonedGuarded(() {
+    /*
     if (isDirectSchulungenSearch) {
       runApp(
         MyAppWrapper(
@@ -64,27 +69,30 @@ void main() async {
         ),
       );
     } else {
-      runApp(
-        MultiProvider(
-          providers: [
-            AppInitializer.configServiceProvider,
-            AppInitializer.emailSenderProvider,
-            AppInitializer.emailServiceProvider,
-            AppInitializer.authServiceProvider,
-            AppInitializer.apiServiceProvider,
-            AppInitializer.networkServiceProvider,
-            AppInitializer.cacheServiceProvider,
-            AppInitializer.trainingServiceProvider,
-            AppInitializer.userServiceProvider,
-            AppInitializer.tokenServiceProvider,
-            AppInitializer.fontSizeProvider,
-            Provider<OktoberfestService>.value(value: oktoberfestService),
-          ],
-          child: const MyAppWrapper(),
-        ),
-      );
-    }
-  }, (error, stack) {
+    */
+    runApp(
+      MultiProvider(
+        providers: [
+          AppInitializer.configServiceProvider,
+          AppInitializer.emailSenderProvider,
+          AppInitializer.emailServiceProvider,
+          AppInitializer.authServiceProvider,
+          AppInitializer.apiServiceProvider,
+          AppInitializer.networkServiceProvider,
+          AppInitializer.cacheServiceProvider,
+          AppInitializer.trainingServiceProvider,
+          AppInitializer.userServiceProvider,
+          AppInitializer.tokenServiceProvider,
+          AppInitializer.fontSizeProvider,
+          Provider<OktoberfestService>.value(value: oktoberfestService),
+        ],
+        child: const MyAppWrapper(),
+      ),
+    );
+  }
+      /* } */
+
+      , (error, stack) {
     debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
     debugPrint('STACK TRACE: \n$stack');
   });

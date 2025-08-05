@@ -21,9 +21,9 @@ import 'screens/profile_screen.dart';
 import 'screens/set_password_screen.dart';
 import 'utils/cookie_consent.dart';
 import 'main.dart';
-import 'screens/schulungen/schulungen_search_screen.dart';
+// import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
-import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
+// import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -195,58 +195,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final fragment = Uri.base.fragment;
-    final path = Uri.base.path;
+    // Always use splash as the initial route, regardless of platform or URL
+    const String initialRoute = '/splash';
 
-    // Determine initial route based on fragment and remembered route
-    String initialRoute;
-    if (kIsWeb) {
-      // Robust logic for web: handle Schulungen-only and login systems
-      bool isSchulungenUrl = fragment.startsWith('schulungen_search') ||
-          path.startsWith('/schulungen_search');
-      bool isSetPasswordUrl = fragment.startsWith('set-password') ||
-          path.startsWith('/set-password');
-      String? rememberedRoute = WebStorage.getItem('intendedRoute');
-      if (isSetPasswordUrl) {
-        // If on set-password URL, route directly to set-password
-        initialRoute = '/set-password';
-      } else if (isSchulungenUrl) {
-        // If on Schulungen-only URL, clear any login-related remembered route
-        if (rememberedRoute != null &&
-            !rememberedRoute.startsWith('schulungen_search')) {
-          WebStorage.removeItem('intendedRoute');
-        }
-        initialRoute = '/schulungen_search';
-      } else if (fragment.isEmpty && rememberedRoute != null) {
-        // If fragment is empty but we remember a route, use it
-        if (rememberedRoute.startsWith('schulungen_search')) {
-          initialRoute = '/schulungen_search';
-        } else {
-          // If remembered route is login system, but URL is for Schulungen, clear it and use Schulungen
-          if (Uri.base.toString().contains('schulungen_search')) {
-            WebStorage.removeItem('intendedRoute');
-            initialRoute = '/schulungen_search';
-          } else {
-            initialRoute = rememberedRoute;
-          }
-        }
-      } else if (fragment.isEmpty) {
-        // Empty fragment - default to Schulungen-only system
-        initialRoute = '/schulungen_search';
-      } else {
-        // Any other route (like /home, /help, etc.) - use normal login system
-        initialRoute = '/splash';
-      }
-      // Store the current route for future reloads
-      if (fragment.isNotEmpty) {
-        WebStorage.setItem('intendedRoute', fragment);
-      }
-    } else {
-      // Non-web platforms: always start with splash
-      initialRoute = '/splash';
-    }
-    // Skip splash if Schulungen-only mode
-    if (_loading && initialRoute != '/schulungen_search') {
+    if (_loading) {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
@@ -254,6 +206,7 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
+
     // Only now build the MaterialApp with all routes
     return Consumer2<FontSizeProvider, ThemeProvider>(
       builder: (context, fontSizeProvider, themeProvider, child) {
@@ -313,22 +266,7 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Allow anonymous access to SchulungenSearchScreen and all its subroutes
-            if (settings.name != null &&
-                settings.name!.startsWith('/schulungen_search')) {
-              return MaterialPageRoute(
-                builder: (_) => SchulungenSearchScreen(
-                  _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                  showMenu: false,
-                  showConnectivityIcon:
-                      false, // Hide connectivity icon for Schulungen-only system
-                ),
-                settings: settings,
-              );
-            }
-            // Only redirect to login for other routes
+            // Only redirect to login for other routes if not logged in
             if (!_isLoggedIn || _userData == null) {
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
