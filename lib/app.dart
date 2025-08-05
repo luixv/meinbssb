@@ -207,6 +207,7 @@ class _MyAppState extends State<MyApp> {
       bool isSetPasswordUrl = fragment.startsWith('set-password') ||
           path.startsWith('/set-password');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
+      
       if (isSetPasswordUrl) {
         // If on set-password URL, route directly to set-password
         initialRoute = '/set-password';
@@ -217,6 +218,15 @@ class _MyAppState extends State<MyApp> {
           WebStorage.removeItem('intendedRoute');
         }
         initialRoute = '/schulungen_search';
+      } else if (fragment.isEmpty && path.isEmpty) {
+        // Root URL case - check if user is logged in
+        if (_isLoggedIn && _userData != null) {
+          // If logged in, go to home
+          initialRoute = '/home';
+        } else {
+          // If not logged in, go to login page
+          initialRoute = '/login';
+        }
       } else if (fragment.isEmpty && rememberedRoute != null) {
         // If fragment is empty but we remember a route, use it
         if (rememberedRoute.startsWith('schulungen_search')) {
@@ -231,7 +241,7 @@ class _MyAppState extends State<MyApp> {
           }
         }
       } else if (fragment.isEmpty) {
-        // Empty fragment - default to Schulungen-only system
+        // Empty fragment but not root - default to Schulungen-only system
         initialRoute = '/schulungen_search';
       } else {
         // Any other route (like /home, /help, etc.) - use normal login system
@@ -328,7 +338,14 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Only redirect to login for other routes
+            // Handle login route specifically
+            if (settings.name == '/login') {
+              return MaterialPageRoute(
+                builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
+                settings: settings,
+              );
+            }
+            // Only redirect to login for other routes if not logged in
             if (!_isLoggedIn || _userData == null) {
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
