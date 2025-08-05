@@ -18,6 +18,7 @@ class BaseScreenLayout extends StatelessWidget {
     required this.body,
     this.actions = const [],
     this.automaticallyImplyLeading = true,
+    this.leading,
     this.floatingActionButton,
     this.showMenu = true,
     this.showConnectivityIcon = true,
@@ -30,6 +31,7 @@ class BaseScreenLayout extends StatelessWidget {
   final Widget body;
   final List<Widget> actions;
   final bool automaticallyImplyLeading;
+  final Widget? leading;
   final Widget? floatingActionButton;
   final bool showMenu;
   final bool showConnectivityIcon;
@@ -39,9 +41,10 @@ class BaseScreenLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: UIConstants.backgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: automaticallyImplyLeading,
+        automaticallyImplyLeading: automaticallyImplyLeading && leading == null,
         backgroundColor: UIConstants.backgroundColor,
         iconTheme: const IconThemeData(color: UIConstants.textColor),
+        leading: leading,
         title: ScaledText(
           title,
           style: UIStyles.appBarTitleStyle,
