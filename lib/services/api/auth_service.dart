@@ -154,7 +154,7 @@ Ergebnis der Abfrage:
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
       final response = await _httpClient.post(
-        'LoginMyBSSB',
+        'LoginMyBSSBApp',
         {
           'Email': email,
           'Passwort': password,
