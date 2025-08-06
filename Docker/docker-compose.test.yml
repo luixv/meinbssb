@@ -26,18 +26,11 @@ services:
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_DB_SCHEMA: public
 
-  mailrise:
-    image: yoryan/mailrise:latest
-    container_name: mailrise
-    restart: always
-    volumes:
-      - ./mailrise.conf:/etc/mailrise.conf:ro
-    environment:
-      # Apprise SMTP settings, if needed
-      APPRISE_EMAIL_SMTP_HOST: postfix-relay
-      APPRISE_EMAIL_SMTP_PORT: 25
-      APPRISE_EMAIL_FROM: webportal@bssb.bayern
-      # Add more Apprise SMTP options as needed
+  email-service:
+    build: ./email.service
+    container_name: email-service
+    depends_on:
+      - postfix-relay
 
   postfix-relay:
     image: boky/postfix

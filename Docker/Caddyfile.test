@@ -36,9 +36,10 @@ https://meintest.bssb.de {
 }
 :8080 {
     tls internal
-
-    reverse_proxy mailrise:8025
-    header Access-Control-Allow-Origin "*"
-    header Access-Control-Allow-Methods "POST, OPTIONS"
-    header Access-Control-Allow-Headers "Authorization, Content-Type"
+    reverse_proxy mail-api:3001
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "POST, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
 }

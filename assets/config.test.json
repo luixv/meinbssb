@@ -4,7 +4,7 @@
   "apiProtocol": "https",
   "emailServer": "meintest.bssb.de",
   "emailPort": "8080",
-  "emailPath": "notify/mail",
+  "emailPath": "send-email",
   "postgrestProtocol": "https",
   "postgrestServer": "meintest.bssb.de",
   "postgrestPort": "8081",
