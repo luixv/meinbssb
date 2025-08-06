@@ -34,8 +34,6 @@ services:
       SMTP_HOST: postfix-relay
       SMTP_PORT: 25
       SMTP_TLS: "false"
-    networks:
-      - internal
 
   postfix-relay:
     image: boky/postfix
@@ -43,10 +41,8 @@ services:
     restart: always
     environment:
       - RELAYHOST=relay-cluster-eu01.hornetsecurity.com
-      - RELAYHOST_PORT=25           # 25 for TLS/STARTTLS (recommended)
+      - RELAYHOST_PORT=25 # 25 for TLS/STARTTLS (recommended)
       - SMTP_TLS_SECURITY_LEVEL=may # Enforces STARTTLS if server supports it
-    networks:
-      - internal
 
   caddy:
     image: caddy:2
