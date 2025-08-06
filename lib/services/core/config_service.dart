@@ -108,12 +108,6 @@ class ConfigService {
     String? path;
     String? protocol;
 
-    if (name == 'email') {
-      server = config.getString('host', 'smtpSettings');
-      port = config.getString('port', 'smtpSettings');
-      path = '';
-      return '$server:$port/$path';
-    }
     protocol = config.getString(protocolKey);
     server = config.getString('${name}Server');
     port = config.getString('${name}Port');

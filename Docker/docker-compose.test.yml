@@ -26,6 +26,28 @@ services:
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_DB_SCHEMA: public
 
+  mailrise:
+    image: soxoj/mailrise
+    container_name: mailrise
+    restart: always
+    environment:
+      SMTP_HOST: postfix-relay
+      SMTP_PORT: 25
+      SMTP_TLS: "false"
+    networks:
+      - internal
+
+  postfix-relay:
+    image: boky/postfix
+    container_name: postfix-relay
+    restart: always
+    environment:
+      - RELAYHOST=relay-cluster-eu01.hornetsecurity.com
+      - RELAYHOST_PORT=25           # 25 for TLS/STARTTLS (recommended)
+      - SMTP_TLS_SECURITY_LEVEL=may # Enforces STARTTLS if server supports it
+    networks:
+      - internal
+
   caddy:
     image: caddy:2
     container_name: caddy
@@ -33,6 +55,7 @@ services:
       - "80:80" #Flutter Web HTTP
       - "443:443" #Flutter Web HTTPS
       - "8081:8081" #Postgrest API
+      - "8080:8080" #Email API
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web

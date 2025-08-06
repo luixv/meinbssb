@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/constants/messages.dart';
 
 import '../../helpers/test_mocks.mocks.dart';
 
@@ -34,9 +35,9 @@ void main() {
       cacheService: mockCacheService,
       networkService: mockNetworkService,
       configService: mockConfigService,
-      secureStorage: mockSecureStorage,
       postgrestService: mockPostgrestService,
       emailService: mockEmailService,
+      secureStorage: mockSecureStorage,
     );
 
     when(mockSecureStorage.read(key: anyNamed('key')))
@@ -106,6 +107,18 @@ void main() {
     when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
 
     // Default behavior for EmailService
+    when(mockEmailService.getFromEmail()).thenAnswer((_) async => 'noreply@bssb.bayern');
+    when(mockEmailService.getRegistrationSubject()).thenAnswer((_) async => 'Registration');
+    when(mockEmailService.getRegistrationContent()).thenAnswer((_) async => 'Registration content');
+    when(mockEmailService.sendEmail(
+      sender: anyNamed('sender'),
+      recipient: anyNamed('recipient'),
+      subject: anyNamed('subject'),
+      htmlBody: anyNamed('htmlBody'),
+    ),).thenAnswer((_) async => <String, dynamic>{
+      'ResultType': 1,
+      'ResultMessage': 'Email sent successfully',
+    },);
     when(mockEmailService.sendAccountCreationNotifications(any, any))
         .thenAnswer((_) async => <String, dynamic>{});
   });
@@ -150,28 +163,11 @@ void main() {
           },
         );
 
-        // Mock email service methods
-        when(mockEmailService.getFromEmail())
-            .thenAnswer((_) async => 'noreply@bssb.bayern');
-        when(mockEmailService.getRegistrationSubject())
-            .thenAnswer((_) async => 'Registration');
-        when(mockConfigService.getString('frontendBaseUrl'))
-            .thenReturn('https://meinbssb.de');
-
-        // Mock sendEmail to succeed
-        when(
-          mockEmailService.sendEmail(
-            from: anyNamed('from'),
-            recipient: anyNamed('recipient'),
-            subject: anyNamed('subject'),
-            htmlBody: anyNamed('htmlBody'),
-          ),
-        ).thenAnswer(
-          (_) async => <String, dynamic>{
-            'ResultType': 1,
-            'ResultMessage': 'Email sent successfully',
-          },
-        );
+            // Mock config service for email base URL
+    when(mockConfigService.getString('emailProtocol', any)).thenReturn('https');
+    when(mockConfigService.getString('emailServer', any)).thenReturn('meintest.bssb.de');
+    when(mockConfigService.getString('emailPort', any)).thenReturn('8080');
+    when(mockConfigService.getString('emailPath', any)).thenReturn('notify');
 
         final result = await authService.register(
           firstName: firstName,
@@ -183,8 +179,9 @@ void main() {
           personId: personId,
         );
 
-        // The register method now returns a success message, not the old registration response
-        expect(result, isA<Map<String, dynamic>>());
+        // The register method returns a success message
+        expect(result['ResultType'], 1);
+        expect(result['ResultMessage'], Messages.registrationDataStored);
 
         // Verify the PostgreSQL user was created
         verify(
@@ -241,7 +238,7 @@ void main() {
 
         // The register method catches exceptions and returns error response
         expect(result['ResultType'], 0);
-        expect(result['ResultMessage'], isA<String>());
+        expect(result['ResultMessage'], Messages.registrationDataStoreFailed);
       });
 
       test('should handle existing verified user', () async {
@@ -286,7 +283,7 @@ void main() {
 
         // The register method catches exceptions and returns error response
         expect(result['ResultType'], 0);
-        expect(result['ResultMessage'], isA<String>());
+        expect(result['ResultMessage'], Messages.registrationDataStoreFailed);
       });
     });
 
@@ -681,7 +678,7 @@ void main() {
             .thenReturn('https');
         when(mockConfigService.getString('api1BaseServer', any))
             .thenReturn('webintern.bssb.bayern');
-        when(mockConfigService.getString('api1Port', any)).thenReturn('56400');
+        when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
         when(mockConfigService.getString('api1BasePath', any))
             .thenReturn('rest/zmi/api1');
       });
