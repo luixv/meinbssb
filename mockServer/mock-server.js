@@ -33,7 +33,7 @@ const oktoberfestlandesschiessenRoutes = require('./routes/oktoberfestlandesschi
 const gewinneAbrufenRoutes = require('./routes/gewinneAbrufen');
 
 // Use route handlers
-app.use('/LoginMyBSSB', loginRoutes);
+app.use('/LoginMyBSSBApp', loginRoutes);
 app.use('/Passdaten', passdatenRoutes);
 app.use('/AngemeldeteSchulungen', angemeldeteSchulungenRoutes);
 app.use('/RegisterMyBSSB', registerMyBSSBRoutes);
