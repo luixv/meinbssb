@@ -37,4 +37,5 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO bssbuser;
 
 -- Grant anonymous read access (PostgREST anon role)
 GRANT USAGE ON SCHEMA public TO web_anon;
-GRANT SELECT ON users TO web_anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO web_anon;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO web_anon;
