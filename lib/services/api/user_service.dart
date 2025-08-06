@@ -23,7 +23,7 @@ class UserService {
         _networkService = networkService,
         _configService = configService;
 
-  /// Fetches the accepted or active pass data for a given personId (String).
+  /// Fetches the accepted or active pass data for a given personId (int).
   Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
     int personId,
   ) async {

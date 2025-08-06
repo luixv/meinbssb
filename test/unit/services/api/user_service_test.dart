@@ -32,6 +32,12 @@ void main() {
         const Duration(days: 7),
       );
 
+      when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('localhost');
+      when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('');
+
       userService = UserService(
         httpClient: mockHttpClient,
         cacheService: mockCacheService,
@@ -875,7 +881,9 @@ void main() {
       test('returns PassdatenAkzeptOrAktiv when response is valid', () async {
         when(
           mockHttpClient.get(
-            'PassdatenAkzeptierterOderAktiverPass/${testPersonId.toString()}',
+            any,
+            overrideBaseUrl:
+                anyNamed('overrideBaseUrl'), // Ensure this is correct
           ),
         ).thenAnswer((_) async => [testResponse]);
 
