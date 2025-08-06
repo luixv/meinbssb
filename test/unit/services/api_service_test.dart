@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -378,6 +379,36 @@ void main() {
         final result = await apiService.deleteKontakt(contact);
         expect(result, isTrue);
         verify(mockUserService.deleteKontakt(contact)).called(1);
+      });
+
+      test(
+          'fetchPassdatenAkzeptierterOderAktiverPass delegates to user service and returns correct data',
+          () async {
+        const testPersonId = 123;
+        final expectedData = PassdatenAkzeptOrAktiv(
+          passdatenId: 1,
+          passStatus: 2,
+          passStatusText: 'Aktiv',
+          digitalerPass: 1,
+          personId: testPersonId,
+          erstVereinId: 10,
+          evVereinNr: 20,
+          evVereinName: 'Testverein',
+          passNummer: '987654',
+          erstelltAm: DateTime.parse('2023-01-01T00:00:00.000Z'),
+          erstelltVon: 'admin',
+          zves: const [],
+        );
+        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(any))
+            .thenAnswer((_) async => expectedData);
+
+        final result = await apiService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, equals(expectedData));
+        verify(
+          mockUserService
+              .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId),
+        ).called(1);
       });
     });
 
