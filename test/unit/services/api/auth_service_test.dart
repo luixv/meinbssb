@@ -305,7 +305,7 @@ void main() {
         // Stub the successful online login - AuthService uses POST, not GET
         when(
           mockHttpClient.post(
-            'LoginMyBSSB',
+            'LoginMeinBSSBApp',
             any,
             overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
@@ -325,7 +325,7 @@ void main() {
             .called(1);
         verify(
           mockHttpClient.post(
-            'LoginMyBSSB',
+            'LoginMeinBSSBApp',
             any,
             overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
@@ -343,7 +343,7 @@ void main() {
         // AuthService uses POST, not GET
         when(
           mockHttpClient.post(
-            'LoginMyBSSB',
+            'LoginMeinBSSBApp',
             any,
             overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),
@@ -354,7 +354,7 @@ void main() {
         expect(result, expectedResponse);
         verify(
           mockHttpClient.post(
-            'LoginMyBSSB',
+            'LoginMeinBSSBApp',
             any,
             overrideBaseUrl: anyNamed('overrideBaseUrl'),
           ),

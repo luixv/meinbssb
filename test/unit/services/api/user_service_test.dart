@@ -5,24 +5,28 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 
 import 'user_service_test.mocks.dart';
 
-@GenerateMocks([HttpClient, CacheService, NetworkService])
+@GenerateMocks([HttpClient, CacheService, NetworkService, ConfigService])
 void main() {
   group('UserService', () {
     late UserService userService;
     late MockHttpClient mockHttpClient;
     late MockCacheService mockCacheService;
     late MockNetworkService mockNetworkService;
+    late MockConfigService mockConfigService;
 
     setUp(() {
       mockHttpClient = MockHttpClient();
       mockCacheService = MockCacheService();
       mockNetworkService = MockNetworkService();
+      mockConfigService = MockConfigService();
 
       when(mockNetworkService.getCacheExpirationDuration()).thenReturn(
         const Duration(days: 7),
@@ -32,6 +36,7 @@ void main() {
         httpClient: mockHttpClient,
         cacheService: mockCacheService,
         networkService: mockNetworkService,
+        configService: mockConfigService,
       );
     });
 
@@ -847,6 +852,73 @@ void main() {
             .thenAnswer((_) async => true);
         await userService.clearAllPassdatenCache();
         verify(mockCacheService.clearPattern('passdaten_')).called(1);
+      });
+    });
+
+    group('fetchPassdatenAkzeptierterOderAktiverPass', () {
+      const testPersonId = 123;
+      final testResponse = {
+        'PASSDATENID': 1,
+        'PASSSTATUS': 2,
+        'PASSSTATUSTEXT': 'Aktiv',
+        'DIGITALERPASS': 1,
+        'PERSONID': testPersonId,
+        'ERSTVEREINID': 10,
+        'EVVEREINNR': 20,
+        'EVVEREINNAME': 'Testverein',
+        'PASSNUMMER': '987654',
+        'ERSTELLTAM': '2023-01-01T00:00:00.000Z',
+        'ERSTELLTVON': 'admin',
+        'ZVEs': [],
+      };
+
+      test('returns PassdatenAkzeptOrAktiv when response is valid', () async {
+        when(
+          mockHttpClient.get(
+            'PassdatenAkzeptierterOderAktiverPass/${testPersonId.toString()}',
+          ),
+        ).thenAnswer((_) async => [testResponse]);
+
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isA<PassdatenAkzeptOrAktiv>());
+        expect(result!.passdatenId, 1);
+        expect(result.passStatus, 2);
+        expect(result.passStatusText, 'Aktiv');
+        expect(result.digitalerPass, 1);
+        expect(result.personId, testPersonId);
+        expect(result.evVereinName, 'Testverein');
+        expect(result.passNummer, '987654');
+      });
+
+      test('returns null when response is null', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => null);
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
+      });
+
+      test('returns null when response is empty map', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => <String, dynamic>{});
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
+      });
+
+      test('returns null when response is list but empty', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => <dynamic>[]);
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
       });
     });
   });

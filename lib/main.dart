@@ -178,6 +178,7 @@ class AppInitializer {
       httpClient: httpClient,
       cacheService: cacheService,
       networkService: networkService,
+      configService: configService,
     );
 
     authService = AuthService(
