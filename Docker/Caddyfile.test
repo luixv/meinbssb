@@ -5,13 +5,14 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
+  tls internal
   root * /web
   file_server
   try_files {path} /index.html
 }
 
 # Serve PostgREST API (HTTP) on subdomain
-http://193.158.228.222:8081 {
+https://193.158.228.222:8081 {
   @cors_preflight {
     method OPTIONS
   }

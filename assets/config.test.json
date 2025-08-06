@@ -6,7 +6,7 @@
   "emailServer": "relay-cluster-eu01.hornetsecurity.com",
   "emailPort": "25",
   "emailPath": "",
-  "postgrestProtocol": "http",
+  "postgrestProtocol": "https",
   "postgrestServer": "193.158.228.222",
   "postgrestPort": "8081",
   "postgrestPath": "",
