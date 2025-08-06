@@ -40,6 +40,7 @@ services:
       - RELAYHOST=relay-cluster-eu01.hornetsecurity.com
       - RELAYHOST_PORT=25 # 25 for TLS/STARTTLS (recommended)
       - SMTP_TLS_SECURITY_LEVEL=may # Enforces STARTTLS if server supports it
+      - ALLOW_EMPTY_SENDER_DOMAINS=true
 
   caddy:
     image: caddy:2
