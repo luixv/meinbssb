@@ -36,7 +36,7 @@ https://meintest.bssb.de {
 }
 :8080 {
     tls internal
-    reverse_proxy mail-api:3001
+    reverse_proxy email-service:3001
     header {
         Access-Control-Allow-Origin *
         Access-Control-Allow-Methods "POST, OPTIONS"
