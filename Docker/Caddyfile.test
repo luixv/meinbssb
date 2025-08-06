@@ -5,13 +5,16 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
+  tls internal
   root * /web
   file_server
   try_files {path} /index.html
 }
 
-# Serve PostgREST API (HTTP) on subdomain
-http://193.158.228.222:8081 {
+# Serve PostgREST API (HTTPS) on port 8081 for any host
+:8081 {
+  tls internal
+
   @cors_preflight {
     method OPTIONS
   }
@@ -24,7 +27,6 @@ http://193.158.228.222:8081 {
     header Access-Control-Allow-Credentials "false"
   }
 
-  # Handle all actual API calls with CORS headers
   handle {
     reverse_proxy postgrest:3000
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
