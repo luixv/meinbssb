@@ -4,7 +4,7 @@
   "apiProtocol": "https",
   "emailServer": "meintest.bssb.de",
   "emailPort": "8080",
-  "emailPath": "notify",
+  "emailPath": "notify/mail",
   "postgrestProtocol": "https",
   "postgrestServer": "meintest.bssb.de",
   "postgrestPort": "8081",
@@ -25,6 +25,15 @@
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   "serverTimeout": 15,
   "cacheExpirationHours": "24",
+  "smtpSettings": {
+    "emailProtocol": "",
+    "host": "relay-cluster-eu01.hornetsecurity.com",
+    "port": "25",
+    "fromEmail": "webportal@bssb.bayern",
+    "ssl": "false",
+    "allowInsecure": "true",
+    "ignoreBadCertificate": "true"
+  },
   "appTheme": {
     "logoName": "assets/images/myBSSB-logo.png"
   },

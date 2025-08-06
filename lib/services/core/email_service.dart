@@ -70,7 +70,6 @@ class EmailService {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'from': sender,
           'to': recipient,
           'subject': subject,
           'html': htmlBody,
