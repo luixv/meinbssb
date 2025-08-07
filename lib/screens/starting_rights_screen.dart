@@ -825,7 +825,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           );
                                         },
                                         onSelected: (Disziplin selection) {
-                                          if (_selectedZveId != null) {
+                                          final selectedZveId = _selectedZveId;
+                                          if (selectedZveId != null) {
                                             setState(() {
                                               // Build the combined key as in the rest of the code
                                               final disziplinNr =
@@ -852,18 +853,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                               }
                                               if (combined.isNotEmpty) {
                                                 // Get the second column for the selected ZVE
-                                                final zveSecondColumn = secondColumns[_selectedZveId] ?? {};
+                                                final zveSecondColumn = secondColumns[selectedZveId] ?? {};
                                                 if (!zveSecondColumn.containsKey(combined)) {
                                                   // Add to the selected ZVE's second column
-                                                  secondColumns[_selectedZveId] = {
+                                                  secondColumns[selectedZveId] = {
                                                     ...zveSecondColumn,
                                                     combined: selection.disziplinId,
                                                   };
                                                   // Update pivotDisziplins for this ZVE
-                                                  final zveFirstColumn = firstColumns[_selectedZveId] ?? {};
-                                                  pivotDisziplins[_selectedZveId] = {
+                                                  final zveFirstColumn = firstColumns[selectedZveId] ?? {};
+                                                  pivotDisziplins[selectedZveId] = {
                                                     ...zveFirstColumn,
-                                                    ...secondColumns[_selectedZveId]!,
+                                                    ...secondColumns[selectedZveId]!,
                                                   };
                                                 }
                                               }
