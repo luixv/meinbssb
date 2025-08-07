@@ -460,14 +460,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     (selectedDisziplin) =>
                                                         Consumer<
                                                             FontSizeProvider>(
-                                                      builder: (context,
-                                                          fontSizeProvider,
-                                                          child,) {
+                                                      builder: (
+                                                        context,
+                                                        fontSizeProvider,
+                                                        child,
+                                                      ) {
                                                         return Padding(
-                                                          padding: const EdgeInsets
-                                                              .only(
-                                                              bottom: UIConstants
-                                                                  .spacingXXS,),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            bottom: UIConstants
+                                                                .spacingXXS,
+                                                          ),
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
