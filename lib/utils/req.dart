@@ -10,7 +10,7 @@ void main() async {
     print('${rec.level.name}: ${rec.time}: ${rec.message}');
   });
   const String url =
-      'https://webintern.bssb.bayern:56400/rest/zmi/api/LoginMyBSSBApp';
+      'https://webintern.bssb.bayern:56400/rest/zmi/api/LoginMeinBSSBApp';
 
   final Map<String, String> body = {
     'Email': 'kostas@rizoudis1.de',
