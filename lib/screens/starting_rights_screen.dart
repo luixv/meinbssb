@@ -55,16 +55,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   Map<int, Map<String, int?>> firstColumns = {}; // ZVE ID -> first column data
   Map<int, Map<String, int?>> secondColumns = {}; // ZVE ID -> second column data
   Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
-  // Helper method to get unique ZVEs
-  List<PassDataZVE> _getUniqueZves() {
-    return _zveData
-        .fold<Map<int, PassDataZVE>>({}, (map, zve) {
-          map[zve.zvVereinId] = zve;
-          return map;
-        })
-        .values
-        .toList();
-  }
 
   @override
   void initState() {
