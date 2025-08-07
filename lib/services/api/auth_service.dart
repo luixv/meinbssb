@@ -75,6 +75,7 @@ class AuthService {
       LoggerService.logInfo(
         'User created...',
       );
+
       // Send registration email
       final fromEmail = await _emailService.getFromEmail();
       final subject = await _emailService.getRegistrationSubject();
@@ -82,13 +83,13 @@ class AuthService {
       LoggerService.logInfo(
         'From email: $fromEmail subject: $subject',
       );
-      final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
+      final tokenUrl = ConfigService.buildBaseUrlForServer(
         _configService,
-        name: 'email',
+        name: 'web',
       );
       if (fromEmail != null && subject != null && emailContent != null) {
         final verificationLink =
-            '${baseUrlWebApp}set-password?token=$verificationToken';
+            '${tokenUrl}set-password?token=$verificationToken';
         LoggerService.logInfo(
           'Verification link: $verificationLink',
         );
@@ -103,25 +104,6 @@ class AuthService {
           htmlBody: emailBody,
         );
       }
-
-      // Store registration data for later use
-      /*final registrationData = {
-        'personId': personId,
-        'firstName': firstName,
-        'lastName': lastName,
-        'passNumber': passNumber,
-        'email': email,
-        'birthDate': birthDate,
-        'zipCode': zipCode,
-        'verificationToken':
-            verificationToken, // keep as verificationToken in Dart
-      };
-
-      await _cacheService.setString(
-        'registration_$email',
-        jsonEncode(registrationData),
-      ); */
-
       return {
         'ResultType': 1,
         'ResultMessage': Messages.registrationDataStored,
@@ -134,13 +116,6 @@ class AuthService {
       };
     }
   }
-
-/*
-/FindePersonID/{Namen}/{Vorname}/{Geburtsdatum}/{Passnummer}/{PLZ}
-/FindePersonID/rizoudis/konstantinos/30.12.1968/40101205/86574
-Ergebnis der Abfrage:
-[{"PERSONID":439287}]
-*/
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -435,6 +410,27 @@ Ergebnis der Abfrage:
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
       final endpoint = 'PersonID/$passNumber';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        final personId = response[0]['PERSONID'];
+        if (personId != null && personId != 0) {
+          return personId.toString();
+        }
+      }
+      LoggerService.logError('Person ID not found.');
+      return '0';
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
+    }
+  }
+
+   Future<String> findePersonID(String lastName, String firstName, String birthDate, String passNumber, String zipCode) async {
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
+      final endpoint = 'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List && response.isNotEmpty) {

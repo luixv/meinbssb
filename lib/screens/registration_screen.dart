@@ -16,7 +16,6 @@ import 'package:meinbssb/screens/registration_success_screen.dart';
 import 'package:meinbssb/screens/registration_fail_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
-import 'package:meinbssb/services/core/error_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -255,9 +254,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     try {
-      // First get PersonID
+      // First find PersonID
       final personId = await widget.authService
-          .getPersonIDByPassnummer(_passNumberController.text);
+          .findePersonID(_lastNameController.text, _firstNameController.text, _selectedDate!.toString(), _passNumberController.text, _zipCodeController.text);
 
       if (personId == '0') {
         setState(() {
@@ -326,8 +325,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
             .deleteUserRegistration(existingUser['id']);
       }
 
-      // Store the registration data temporarily
-      await widget.authService.register(
+      // Complete the registration
+      final result = await widget.authService.register(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,
@@ -336,18 +335,34 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         zipCode: _zipCodeController.text,
         personId: personId,
       );
+      
       setState(() {
         _isRegistering = false;
       });
+      
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => const RegistrationSuccessScreen(
-            message: Messages.registrationSuccess,
-            userData: null,
+      
+      // Check if registration was successful
+      if (result['ResultType'] == 1) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const RegistrationSuccessScreen(
+              message: Messages.registrationSuccess,
+              userData: null,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        // Registration failed, show error message
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => RegistrationFailScreen(
+              message: result['ResultMessage'] ?? Messages.generalError,
+              userData: null,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       setState(() {
         _isRegistering = false;
@@ -355,11 +370,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => RegistrationFailScreen(
-            message: ErrorService.handleValidationError(
-              'Registration',
-              Messages.generalError,
-            ),
+          builder: (_) => const RegistrationFailScreen(
+            message: Messages.generalError,
             userData: null,
           ),
         ),

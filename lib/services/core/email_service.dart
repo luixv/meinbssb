@@ -51,19 +51,12 @@ class EmailService {
     String? htmlBody,
     int? emailId,
   }) async {
-    LoggerService.logInfo('sendEmail called with emailId: $emailId');
-    LoggerService.logInfo('sendEmail called with from: $sender');
-    LoggerService.logInfo('sendEmail called with recipient: $recipient');
-    LoggerService.logInfo('sendEmail called with subject: $subject');
-    LoggerService.logInfo('sendEmail called with htmlBody: $htmlBody');
-
     try {
       final emailUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
         protocolKey: 'webProtocol',
       );
-      LoggerService.logInfo('Sending email via $emailUrl');
       final response = await http.post(
         Uri.parse(emailUrl),
         headers: {
@@ -88,7 +81,6 @@ class EmailService {
         errorMessage =
             'Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})';
       }
-
       LoggerService.logInfo('Email sending failed: $errorMessage');
       return {'ResultType': 0, 'ResultMessage': errorMessage};
     }

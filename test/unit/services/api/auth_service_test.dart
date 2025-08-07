@@ -90,6 +90,12 @@ void main() {
     when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
     when(mockConfigService.getString('api1BasePath', any))
         .thenReturn('rest/zmi/api1');
+    
+    // Mock web server config for registration
+    when(mockConfigService.getString('webServer', any))
+        .thenReturn('meintest.bssb.de');
+    when(mockConfigService.getString('webPort', any)).thenReturn('443');
+    when(mockConfigService.getString('webPath', any)).thenReturn('');
 
     // Default behavior for PostgrestService
     when(mockPostgrestService.getUserByPassNumber(any))
@@ -107,18 +113,25 @@ void main() {
     when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
 
     // Default behavior for EmailService
-    when(mockEmailService.getFromEmail()).thenAnswer((_) async => 'noreply@bssb.bayern');
-    when(mockEmailService.getRegistrationSubject()).thenAnswer((_) async => 'Registration');
-    when(mockEmailService.getRegistrationContent()).thenAnswer((_) async => 'Registration content');
-    when(mockEmailService.sendEmail(
-      sender: anyNamed('sender'),
-      recipient: anyNamed('recipient'),
-      subject: anyNamed('subject'),
-      htmlBody: anyNamed('htmlBody'),
-    ),).thenAnswer((_) async => <String, dynamic>{
-      'ResultType': 1,
-      'ResultMessage': 'Email sent successfully',
-    },);
+    when(mockEmailService.getFromEmail())
+        .thenAnswer((_) async => 'noreply@bssb.bayern');
+    when(mockEmailService.getRegistrationSubject())
+        .thenAnswer((_) async => 'Registration');
+    when(mockEmailService.getRegistrationContent())
+        .thenAnswer((_) async => 'Registration content');
+    when(
+      mockEmailService.sendEmail(
+        sender: anyNamed('sender'),
+        recipient: anyNamed('recipient'),
+        subject: anyNamed('subject'),
+        htmlBody: anyNamed('htmlBody'),
+      ),
+    ).thenAnswer(
+      (_) async => <String, dynamic>{
+        'ResultType': 1,
+        'ResultMessage': 'Email sent successfully',
+      },
+    );
     when(mockEmailService.sendAccountCreationNotifications(any, any))
         .thenAnswer((_) async => <String, dynamic>{});
   });
@@ -163,11 +176,7 @@ void main() {
           },
         );
 
-            // Mock config service for email base URL
-    when(mockConfigService.getString('emailProtocol', any)).thenReturn('https');
-    when(mockConfigService.getString('emailServer', any)).thenReturn('meintest.bssb.de');
-    when(mockConfigService.getString('emailPort', any)).thenReturn('8080');
-    when(mockConfigService.getString('emailPath', any)).thenReturn('notify');
+
 
         final result = await authService.register(
           firstName: firstName,
@@ -678,7 +687,8 @@ void main() {
             .thenReturn('https');
         when(mockConfigService.getString('api1BaseServer', any))
             .thenReturn('webintern.bssb.bayern');
-        when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
+        when(mockConfigService.getString('api1BasePort', any))
+            .thenReturn('56400');
         when(mockConfigService.getString('api1BasePath', any))
             .thenReturn('rest/zmi/api1');
       });
