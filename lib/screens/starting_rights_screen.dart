@@ -44,10 +44,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   late TextEditingController _autocompleteTextController;
   final TextEditingController _searchController = TextEditingController();
 
-  String? disziplin_1_1 = '';
-  String? disziplin_1_2 = '';
-  String? disziplin_2_2 = '';
-
   Map<String, int?> firstColumn = {};
   Map<String, int?> secondColumn = {};
   Map<String, int?> pivotDisziplins = {};
@@ -131,16 +127,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           String? disziplin = zveData.disziplin;
           int? disziplinId = zveData.disziplinId;
           String combined = '';
-          if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
-              (disziplin != null && disziplin.isNotEmpty)) {
+          if (disziplin != null && disziplin.isNotEmpty) {
             combined = ((disziplinNr ?? '') +
                     (disziplinNr != null &&
                             disziplinNr.isNotEmpty &&
-                            disziplin != null &&
                             disziplin.isNotEmpty
                         ? ' - '
                         : '') +
-                    (disziplin ?? ''))
+                    disziplin)
                 .trim();
           }
           if (combined.isNotEmpty) {
@@ -159,16 +153,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           String? disziplin = zve.disziplin;
           int? disziplinId = zve.disziplinId;
           String combined = '';
-          if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
-              (disziplin != null && disziplin.isNotEmpty)) {
+          if (disziplin != null && disziplin.isNotEmpty) {
             combined = ((disziplinNr ?? '') +
                     (disziplinNr != null &&
                             disziplinNr.isNotEmpty &&
-                            disziplin != null &&
                             disziplin.isNotEmpty
                         ? ' - '
                         : '') +
-                    (disziplin ?? ''))
+                    disziplin)
                 .trim();
           }
           if (combined.isNotEmpty) {
@@ -603,7 +595,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   child: Center(
                                                     child:
                                                         firstColumn.containsKey(
-                                                                entry.key)
+                                                      entry.key,
+                                                    )
                                                             ? const Icon(
                                                                 Icons.check,
                                                                 color: UIConstants
@@ -619,7 +612,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   child: Center(
                                                     child: secondColumn
                                                             .containsKey(
-                                                                entry.key)
+                                                      entry.key,
+                                                    )
                                                         ? const Icon(
                                                             Icons.check,
                                                             color: UIConstants
@@ -644,7 +638,15 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         .defaultAppColor,
                                                   ),
                                                   onPressed: () {
-                                                    // TODO: Implement delete logic for this disziplin using entry.value (disziplinId)
+                                                    setState(() {
+                                                      secondColumn
+                                                          .remove(entry.key);
+                                                      // Also update pivotDisziplins to reflect the change
+                                                      pivotDisziplins = {
+                                                        ...firstColumn,
+                                                        ...secondColumn,
+                                                      };
+                                                    });
                                                   },
                                                 ),
                                               ],
@@ -743,36 +745,39 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         },
                                         onSelected: (Disziplin selection) {
                                           setState(() {
-                                            if (_zveData.isNotEmpty) {
-                                              final updatedZveData =
-                                                  List<PassDataZVE>.from(
-                                                _zveData,
-                                              );
-                                              final firstZve =
-                                                  updatedZveData[0];
-                                              // Convert disziplin string to list
-                                              List<String> currentDisciplines =
-                                                  firstZve.disziplin
-                                                          ?.split(',')
-                                                          .map((e) => e.trim())
-                                                          .where(
-                                                            (e) => e.isNotEmpty,
-                                                          )
-                                                          .toList() ??
-                                                      [];
-                                              final newDisziplin =
-                                                  selection.disziplin ?? '';
-                                              if (!currentDisciplines
-                                                  .contains(newDisziplin)) {
-                                                currentDisciplines
-                                                    .add(newDisziplin);
-                                                updatedZveData[0] =
-                                                    firstZve.copyWith(
-                                                  disziplin: currentDisciplines
-                                                      .join(', '),
-                                                );
-                                                _zveData = updatedZveData;
-                                              }
+                                            // Build the combined key as in the rest of the code
+                                            final disziplinNr =
+                                                selection.disziplinNr;
+                                            final disziplin =
+                                                selection.disziplin;
+                                            String combined = '';
+                                            if ((disziplinNr != null &&
+                                                    disziplinNr.isNotEmpty) ||
+                                                (disziplin != null &&
+                                                    disziplin.isNotEmpty)) {
+                                              combined = ((disziplinNr ?? '') +
+                                                      (disziplinNr != null &&
+                                                              disziplinNr
+                                                                  .isNotEmpty &&
+                                                              disziplin !=
+                                                                  null &&
+                                                              disziplin
+                                                                  .isNotEmpty
+                                                          ? ' - '
+                                                          : '') +
+                                                      (disziplin ?? ''))
+                                                  .trim();
+                                            }
+                                            if (combined.isNotEmpty &&
+                                                !secondColumn
+                                                    .containsKey(combined)) {
+                                              secondColumn[combined] =
+                                                  selection.disziplinId;
+                                              // Also update pivotDisziplins to reflect the change
+                                              pivotDisziplins = {
+                                                ...firstColumn,
+                                                ...secondColumn,
+                                              };
                                             }
                                           });
                                           _autocompleteTextController.clear();
