@@ -809,7 +809,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             const Divider(),
                                           ],
                                         );
-                                      }).toList(),
+                                      }),
                                       const SizedBox(height: 16),
                                       // ZVE Selector
                                       if (_getUniqueZves().length > 1)
