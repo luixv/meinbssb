@@ -426,11 +426,14 @@ class AuthService {
     }
   }
 
-   Future<String> findePersonID(String lastName, String firstName, String birthDate, String passNumber, String zipCode) async {
+  Future<String> findePersonID(String lastName, String firstName,
+      String birthDate, String passNumber, String zipCode) async {
     try {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
-      final endpoint = 'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode';
+      final endpoint =
+          'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode';
+      LoggerService.logInfo('Searching for person: {$baseUrl}{$endpoint}');
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List && response.isNotEmpty) {
