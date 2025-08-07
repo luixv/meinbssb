@@ -158,8 +158,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const RegistrationSuccessScreen(
-            message: 'Passwort gesetzt! Sie können sich jetzt anmelden.',
+          builder: (_) => RegistrationSuccessScreen(
+            message: result['RESULTMESSAGE'],
             userData: null,
           ),
         ),

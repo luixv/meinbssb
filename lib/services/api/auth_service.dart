@@ -325,12 +325,12 @@ class AuthService {
         final result = response[0];
         LoggerService.logInfo('We got this response: $result');
         LoggerService.logInfo("Result type is: ${result['RESULTTYPE']}");
-        //     if (result['RESULTTYPE'] == 1) {
-        // Mark user as verified in PostgreSQL
-        await _postgrestService.verifyUser(token);
-        // Send notification emails to all associated email addresses
-        await _emailService.sendAccountCreationNotifications(personId, email);
-        //    }
+        if (result['RESULTTYPE'] == 1) {
+          // Mark user as verified in PostgreSQL
+          await _postgrestService.verifyUser(token);
+          // Send notification emails to all associated email addresses
+          await _emailService.sendAccountCreationNotifications(personId, email);
+        }
       }
       return response;
     } catch (e) {

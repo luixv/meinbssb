@@ -161,7 +161,18 @@ class EmailService {
     try {
       final response = await _httpClient.get('FindeMailadressen/$personId');
       if (response is List) {
-        return response.map((e) => e.toString()).toList();
+        // Parse the response to extract MAILADRESSEN from each object
+        final List<String> emailAddresses = [];
+        for (final item in response) {
+          if (item is Map<String, dynamic> && item['MAILADRESSEN'] != null) {
+            final email = item['MAILADRESSEN'].toString();
+            if (email.isNotEmpty && email != 'null') {
+              emailAddresses.add(email);
+            }
+          }
+        }
+        LoggerService.logInfo('Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses');
+        return emailAddresses;
       }
       return [];
     } catch (e) {
@@ -177,7 +188,9 @@ class EmailService {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
+      
       LoggerService.logInfo('Got these email addresses: $emailAddresses');
+      
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
@@ -189,6 +202,8 @@ class EmailService {
         );
         return;
       }
+      
+      // Send email to the newly registered email
       final emailBody = emailContent.replaceAll('{email}', registeredEmail);
       LoggerService.logInfo('Sending email to $registeredEmail');
       LoggerService.logInfo(emailBody);
@@ -198,9 +213,10 @@ class EmailService {
         subject: subject,
         htmlBody: emailBody,
       );
+      
       // Send notification to each email address
       for (final email in emailAddresses) {
-        if (email.isNotEmpty && email != 'null') {
+        if (email.isNotEmpty && email != 'null' && email != registeredEmail) {
           final emailBody = emailContent.replaceAll('{email}', email);
           LoggerService.logInfo('Sending email to $email');
           LoggerService.logInfo(emailBody);
