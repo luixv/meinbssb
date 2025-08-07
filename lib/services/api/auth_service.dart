@@ -427,12 +427,22 @@ class AuthService {
   }
 
   Future<String> findePersonID(String lastName, String firstName,
-      String birthDate, String passNumber, String zipCode) async {
+      String birthDate, String passNumber, String zipCode,) async {
     try {
+      // Convert birthdate from YYYY-MM-DD to DD.MM.YYYY format
+      String formattedBirthDate;
+      try {
+        final date = DateTime.parse(birthDate);
+        formattedBirthDate = '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+      } catch (e) {
+        // If parsing fails, assume it's already in the correct format
+        formattedBirthDate = birthDate;
+      }
+      
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
       final endpoint =
-          'FindePersonID/$lastName/$firstName/$birthDate/$passNumber/$zipCode';
+          'FindePersonID/$lastName/$firstName/$formattedBirthDate/$passNumber/$zipCode';
       LoggerService.logInfo('Searching for person: {$baseUrl}{$endpoint}');
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
