@@ -55,8 +55,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   Map<int, Map<String, int?>> firstColumns = {}; // ZVE ID -> first column data
   Map<int, Map<String, int?>> secondColumns = {}; // ZVE ID -> second column data
   Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
-  int? _selectedZveId; // Currently selected ZVE for adding disziplins
-
   // Helper method to get unique ZVEs
   List<PassDataZVE> _getUniqueZves() {
     return _zveData
@@ -217,7 +215,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           firstColumns = localFirstColumns;
           secondColumns = localSecondColumns;
           pivotDisziplins = localPivotDisziplins;
-          // Set the first unique ZVE as selected by default
+          // Initialize data structures for each ZVE
           if (fetchedZveData.isNotEmpty) {
             final uniqueZves = fetchedZveData
                 .fold<Map<int, PassDataZVE>>({}, (map, zve) {
@@ -226,9 +224,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                 })
                 .values
                 .toList();
-            if (uniqueZves.isNotEmpty) {
-              _selectedZveId = uniqueZves.first.zvVereinId;
-            }
+            // No need to set selected ZVE since each ZVE has its own dropdown
           }
         });
       }
@@ -707,16 +703,29 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         ),
                                                         onPressed: () {
                                                           setState(() {
-                                                            // Remove from the selected ZVE's second column
-                                                            final updatedSecond = Map<String, int?>.from(zveSecondColumn);
-                                                            updatedSecond.remove(entry.key);
-                                                            secondColumns[zveId] = updatedSecond;
+                                                            // Create a new map to ensure state update
+                                                            final currentSecondColumns = Map<int, Map<String, int?>>.from(secondColumns);
+                                                            final currentPivotDisziplins = Map<int, Map<String, int?>>.from(pivotDisziplins);
+                                                            
+                                                            // Get the second column for this ZVE
+                                                            final zveSecondColumn = Map<String, int?>.from(currentSecondColumns[zveId] ?? {});
+                                                            zveSecondColumn.remove(entry.key);
+                                                            currentSecondColumns[zveId] = zveSecondColumn;
+                                                            
                                                             // Update pivotDisziplins for this ZVE
-                                                            final updatedFirst = firstColumns[zveId] ?? {};
-                                                            pivotDisziplins[zveId] = {
-                                                              ...updatedFirst,
-                                                              ...updatedSecond,
+                                                            final zveFirstColumn = firstColumns[zveId] ?? {};
+                                                            currentPivotDisziplins[zveId] = {
+                                                              ...zveFirstColumn,
+                                                              ...zveSecondColumn,
                                                             };
+                                                            
+                                                            // Update the state
+                                                            secondColumns = currentSecondColumns;
+                                                            pivotDisziplins = currentPivotDisziplins;
+                                                            
+                                                            // Debug print
+                                                            print('Removed disziplin "${entry.key}" from ZVE $zveId');
+                                                            print('Second columns for ZVE $zveId: $zveSecondColumn');
                                                           });
                                                         },
                                                       ),
@@ -789,16 +798,31 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                           .trim();
                                                     }
                                                     if (combined.isNotEmpty) {
-                                                      final updatedSecond = Map<String, int?>.from(secondColumns[zveId] ?? {});
-                                                      if (!updatedSecond.containsKey(combined)) {
-                                                        updatedSecond[combined] = selection.disziplinId;
-                                                        secondColumns[zveId] = updatedSecond;
+                                                      // Create a new map to ensure state update
+                                                      final currentSecondColumns = Map<int, Map<String, int?>>.from(secondColumns);
+                                                      final currentPivotDisziplins = Map<int, Map<String, int?>>.from(pivotDisziplins);
+                                                      
+                                                      // Get or create the second column for this ZVE
+                                                      final zveSecondColumn = Map<String, int?>.from(currentSecondColumns[zveId] ?? {});
+                                                      
+                                                      if (!zveSecondColumn.containsKey(combined)) {
+                                                        zveSecondColumn[combined] = selection.disziplinId;
+                                                        currentSecondColumns[zveId] = zveSecondColumn;
+                                                        
                                                         // Update pivotDisziplins for this ZVE
-                                                        final updatedFirst = firstColumns[zveId] ?? {};
-                                                        pivotDisziplins[zveId] = {
-                                                          ...updatedFirst,
-                                                          ...updatedSecond,
+                                                        final zveFirstColumn = firstColumns[zveId] ?? {};
+                                                        currentPivotDisziplins[zveId] = {
+                                                          ...zveFirstColumn,
+                                                          ...zveSecondColumn,
                                                         };
+                                                        
+                                                        // Update the state
+                                                        secondColumns = currentSecondColumns;
+                                                        pivotDisziplins = currentPivotDisziplins;
+                                                        
+                                                        // Debug print
+                                                        print('Added disziplin "$combined" to ZVE $zveId');
+                                                        print('Second columns for ZVE $zveId: $zveSecondColumn');
                                                       }
                                                     }
                                                   });
@@ -810,32 +834,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           ],
                                         );
                                       }),
-                                      const SizedBox(height: 16),
-                                      // ZVE Selector
-                                      if (_getUniqueZves().length > 1)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: UIConstants.spacingM,
-                                          ),
-                                          child: DropdownButtonFormField<int>(
-                                            value: _selectedZveId,
-                                            decoration: UIStyles.formInputDecoration.copyWith(
-                                              labelText: 'ZVE auswählen',
-                                            ),
-                                            items: _getUniqueZves()
-                                                .map((zve) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: zve.zvVereinId,
-                                                    child: Text('${zve.vVereinNr} - ${zve.vereinName ?? 'Unbekannt'}'),
-                                                  );
-                                                }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _selectedZveId = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
                                     ],
                                   );
                                 },
