@@ -177,7 +177,7 @@ class EmailService {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
-
+      LoggerService.logInfo('Got these email addresses: $emailAddresses');
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
@@ -190,6 +190,8 @@ class EmailService {
         return;
       }
       final emailBody = emailContent.replaceAll('{email}', registeredEmail);
+      LoggerService.logInfo('Sending email to $registeredEmail');
+      LoggerService.logInfo(emailBody);
       await sendEmail(
         sender: fromEmail,
         recipient: registeredEmail,
@@ -199,8 +201,9 @@ class EmailService {
       // Send notification to each email address
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null') {
-          final emailBody = emailContent.replaceAll('{email}', registeredEmail);
-
+          final emailBody = emailContent.replaceAll('{email}', email);
+          LoggerService.logInfo('Sending email to $email');
+          LoggerService.logInfo(emailBody);
           await sendEmail(
             sender: fromEmail,
             recipient: email,

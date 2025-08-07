@@ -320,9 +320,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           );
           return;
         }
-        // Delete the old registration if it's older than 24 hours
-        await widget.authService.postgrestService
-            .deleteUserRegistration(existingUser['id']);
       }
 
       // Complete the registration
@@ -343,7 +340,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       if (!mounted) return;
       
       // Check if registration was successful
-      if (result['ResultType'] == 1) {
+      if (result['RESULTTYPE'] == 1) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => const RegistrationSuccessScreen(

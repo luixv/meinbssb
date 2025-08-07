@@ -318,21 +318,19 @@ class AuthService {
         {
           'PersonID': int.tryParse(personId),
           'Email': email,
-          'Passwort': jsonEncode(password),
+          'Passwort': password,
         },
       );
       if (response is List && response.isNotEmpty) {
         final result = response[0];
-        if (result['ResultType'] == 1) {
-          // Mark user as verified in PostgreSQL
-          await _postgrestService.verifyUser(token);
-
-          // Send notification emails to all associated email addresses
-          await _emailService.sendAccountCreationNotifications(personId, email);
-
-          // Clear stored registration data after successful account creation
-          await _cacheService.remove('registration_$email');
-        }
+        LoggerService.logInfo('We got this response: $result');
+        LoggerService.logInfo("Result type is: $result['RESULTTYPE']");
+        //     if (result['RESULTTYPE'] == 1) {
+        // Mark user as verified in PostgreSQL
+        await _postgrestService.verifyUser(token);
+        // Send notification emails to all associated email addresses
+        await _emailService.sendAccountCreationNotifications(personId, email);
+        //    }
       }
       return response;
     } catch (e) {
@@ -426,19 +424,25 @@ class AuthService {
     }
   }
 
-  Future<String> findePersonID(String lastName, String firstName,
-      String birthDate, String passNumber, String zipCode,) async {
+  Future<String> findePersonID(
+    String lastName,
+    String firstName,
+    String birthDate,
+    String passNumber,
+    String zipCode,
+  ) async {
     try {
       // Convert birthdate from YYYY-MM-DD to DD.MM.YYYY format
       String formattedBirthDate;
       try {
         final date = DateTime.parse(birthDate);
-        formattedBirthDate = '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+        formattedBirthDate =
+            '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
       } catch (e) {
         // If parsing fails, assume it's already in the correct format
         formattedBirthDate = birthDate;
       }
-      
+
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
       final endpoint =
