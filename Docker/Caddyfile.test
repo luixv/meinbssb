@@ -34,3 +34,12 @@ https://meintest.bssb.de {
     header Access-Control-Allow-Credentials "false"
   }
 }
+:8080 {
+    tls internal
+    reverse_proxy email-service:3001
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+}

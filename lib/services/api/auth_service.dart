@@ -82,15 +82,9 @@ class AuthService {
       LoggerService.logInfo(
         'From email: $fromEmail subject: $subject',
       );
-      // Use the app's frontend URL for the verification link
-      /*final baseUrl = ConfigService.buildBaseUrlForServer(
-        _configService,
-        name: 'email',
-      );*/
       final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
         _configService,
-        name: 'web',
-        protocolKey: 'webProtocol',
+        name: 'email',
       );
       if (fromEmail != null && subject != null && emailContent != null) {
         final verificationLink =
@@ -103,7 +97,7 @@ class AuthService {
             .replaceAll('{lastName}', lastName)
             .replaceAll('{verificationLink}', verificationLink);
         await _emailService.sendEmail(
-          from: fromEmail,
+          sender: fromEmail,
           recipient: email,
           subject: subject,
           htmlBody: emailBody,

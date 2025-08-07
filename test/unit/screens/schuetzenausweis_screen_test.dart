@@ -319,7 +319,7 @@ class DummyEmailService extends EmailService {
 
   @override
   Future<Map<String, dynamic>> sendEmail({
-    required String from,
+    required String sender,
     required String recipient,
     required String subject,
     String? htmlBody,
