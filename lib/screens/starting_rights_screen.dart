@@ -50,9 +50,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   late TextEditingController _autocompleteTextController;
   final TextEditingController _searchController = TextEditingController();
 
-  Map<String, int?> firstColumn = {};
-  Map<String, int?> secondColumn = {};
-  Map<String, int?> pivotDisziplins = {};
+  // Data structures for each ZVE
+  // Data structures for each ZVE
+  Map<int, Map<String, int?>> firstColumns = {}; // ZVE ID -> first column data
+  Map<int, Map<String, int?>> secondColumns = {}; // ZVE ID -> second column data
+  Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
+  int? _selectedZveId; // Currently selected ZVE for adding disziplins
 
   @override
   void initState() {
@@ -125,10 +128,20 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         personId,
       );
 
-      // For the first column
-      Map<String, int?> localFirstColumn = {};
+      // Initialize data structures for each ZVE
+      Map<int, Map<String, int?>> localFirstColumns = {};
+      Map<int, Map<String, int?>> localSecondColumns = {};
+      Map<int, Map<String, int?>> localPivotDisziplins = {};
+      
       if (fetchedZveData.isNotEmpty) {
         for (final zveData in fetchedZveData) {
+          final zveId = zveData.zvVereinId;
+          
+          // Initialize maps for this ZVE if they don't exist
+          localFirstColumns[zveId] ??= {};
+          localSecondColumns[zveId] ??= {};
+          localPivotDisziplins[zveId] ??= {};
+          
           String? disziplinNr = zveData.disziplinNr;
           String? disziplin = zveData.disziplin;
           int? disziplinId = zveData.disziplinId;
@@ -144,8 +157,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                 .trim();
           }
           if (combined.isNotEmpty) {
-            localFirstColumn[combined] = disziplinId;
+            localFirstColumns[zveId]![combined] = disziplinId;
           }
+        }
+        
+        // Initialize pivotDisziplins for each ZVE
+        for (final zveId in localFirstColumns.keys) {
+          localPivotDisziplins[zveId] = {
+            ...localFirstColumns[zveId]!,
+            ...localSecondColumns[zveId]!,
+          };
         }
       }
 
@@ -175,12 +196,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         }
       }
 
-      // Create a map of all unique elements from firstColumn and secondColumn
-      final Map<String, int?> localPivotDisziplins = {
-        ...localFirstColumn,
-        ...localSecondColumn,
-      };
-
       // final fremdeVerbande = await apiService.fetchFremdeVerbaende(vereinNr);
 
       if (mounted) {
@@ -188,9 +203,13 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           _passData = fetchedPassData;
           _zveData = fetchedZveData;
           _disciplines = fetchedDisciplines;
-          firstColumn = localFirstColumn;
-          secondColumn = localSecondColumn;
+          firstColumns = localFirstColumns;
+          secondColumns = localSecondColumns;
           pivotDisziplins = localPivotDisziplins;
+          // Set the first ZVE as selected by default
+          if (fetchedZveData.isNotEmpty) {
+            _selectedZveId = fetchedZveData.first.zvVereinId;
+          }
         });
       }
     } catch (e) {
@@ -541,127 +560,183 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // PivotDisziplins Table
-                                      Table(
-                                        columnWidths: const <int,
-                                            TableColumnWidth>{
-                                          0: IntrinsicColumnWidth(),
-                                          1: IntrinsicColumnWidth(),
-                                          2: FlexColumnWidth(),
-                                          3: IntrinsicColumnWidth(),
-                                        },
-                                        border: TableBorder.all(
-                                          color: Colors.transparent,
-                                        ),
-                                        children: [
-                                          TableRow(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  '1. Spalte',
-                                                  style: UIStyles.bodyStyle
-                                                      .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                      // Display tables for each ZVE
+                                      ..._zveData.map((zve) {
+                                        final zveId = zve.zvVereinId;
+                                        final zveFirstColumn = firstColumns[zveId] ?? {};
+                                        final zveSecondColumn = secondColumns[zveId] ?? {};
+                                        final zvePivotDisziplins = pivotDisziplins[zveId] ?? {};
+                                        
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // ZVE Header
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: UIConstants.spacingM,
+                                                bottom: UIConstants.spacingS,
+                                              ),
+                                              child: ScaledText(
+                                                'ZVE: ${zve.vVereinNr} - ${zve.vereinName ?? 'Unbekannt'}',
+                                                style: UIStyles.headerStyle.copyWith(
+                                                  color: UIConstants.defaultAppColor,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  '2. Spalte',
-                                                  style: UIStyles.bodyStyle
-                                                      .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
+                                            ),
+                                            // PivotDisziplins Table for this ZVE
+                                            Table(
+                                              columnWidths: const <int,
+                                                  TableColumnWidth>{
+                                                0: IntrinsicColumnWidth(),
+                                                1: IntrinsicColumnWidth(),
+                                                2: FlexColumnWidth(),
+                                                3: IntrinsicColumnWidth(),
+                                              },
+                                              border: TableBorder.all(
+                                                color: Colors.transparent,
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  'Disziplin',
-                                                  style: UIStyles.bodyStyle
-                                                      .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 24),
-                                            ],
-                                          ),
-                                          ...pivotDisziplins.entries.map(
-                                            (entry) => TableRow(
                                               children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Center(
-                                                    child:
-                                                        firstColumn.containsKey(
-                                                      entry.key,
-                                                    )
-                                                            ? const Icon(
-                                                                Icons.check,
-                                                                color: UIConstants
-                                                                    .defaultAppColor,
-                                                              )
-                                                            : const SizedBox
-                                                                .shrink(),
-                                                  ),
+                                                TableRow(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(8.0),
+                                                      child: ScaledText(
+                                                        '1. Spalte',
+                                                        style: UIStyles.bodyStyle
+                                                            .copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(8.0),
+                                                      child: ScaledText(
+                                                        '2. Spalte',
+                                                        style: UIStyles.bodyStyle
+                                                            .copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(8.0),
+                                                      child: ScaledText(
+                                                        'Disziplin',
+                                                        style: UIStyles.bodyStyle
+                                                            .copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 24),
+                                                  ],
                                                 ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Center(
-                                                    child: secondColumn
-                                                            .containsKey(
-                                                      entry.key,
-                                                    )
-                                                        ? const Icon(
-                                                            Icons.check,
-                                                            color: UIConstants
-                                                                .defaultAppColor,
+                                                ...zvePivotDisziplins.entries.map(
+                                                  (entry) => TableRow(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: Center(
+                                                          child:
+                                                              zveFirstColumn.containsKey(
+                                                            entry.key,
                                                           )
-                                                        : const SizedBox
-                                                            .shrink(),
+                                                                  ? const Icon(
+                                                                      Icons.check,
+                                                                      color: UIConstants
+                                                                          .defaultAppColor,
+                                                                    )
+                                                                  : const SizedBox
+                                                                      .shrink(),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: Center(
+                                                          child: zveSecondColumn
+                                                                  .containsKey(
+                                                            entry.key,
+                                                          )
+                                                              ? const Icon(
+                                                                  Icons.check,
+                                                                  color: UIConstants
+                                                                      .defaultAppColor,
+                                                                )
+                                                              : const SizedBox
+                                                                  .shrink(),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: ScaledText(
+                                                          entry.key,
+                                                          style: UIStyles.bodyStyle,
+                                                        ),
+                                                      ),
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                          Icons.delete,
+                                                          color: UIConstants
+                                                              .defaultAppColor,
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            // Remove from the selected ZVE's second column
+                                                            final zveSecondColumn = secondColumns[zveId] ?? {};
+                                                            zveSecondColumn.remove(entry.key);
+                                                            secondColumns[zveId] = zveSecondColumn;
+                                                            // Update pivotDisziplins for this ZVE
+                                                            final zveFirstColumn = firstColumns[zveId] ?? {};
+                                                            pivotDisziplins[zveId] = {
+                                                              ...zveFirstColumn,
+                                                              ...zveSecondColumn,
+                                                            };
+                                                          });
+                                                        },
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: ScaledText(
-                                                    entry.key,
-                                                    style: UIStyles.bodyStyle,
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  icon: const Icon(
-                                                    Icons.delete,
-                                                    color: UIConstants
-                                                        .defaultAppColor,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      secondColumn
-                                                          .remove(entry.key);
-                                                      // Also update pivotDisziplins to reflect the change
-                                                      pivotDisziplins = {
-                                                        ...firstColumn,
-                                                        ...secondColumn,
-                                                      };
-                                                    });
-                                                  },
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                            const SizedBox(height: UIConstants.spacingM),
+                                          ],
+                                        );
+                                      }).toList(),
                                       const SizedBox(height: 16),
-                                      Autocomplete<Disziplin>(
+                                      // ZVE Selector
+                                      if (_zveData.length > 1)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: UIConstants.spacingM,
+                                          ),
+                                          child: DropdownButtonFormField<int>(
+                                            value: _selectedZveId,
+                                            decoration: UIStyles.formInputDecoration.copyWith(
+                                              labelText: 'ZVE auswählen',
+                                            ),
+                                            items: _zveData.map((zve) {
+                                              return DropdownMenuItem<int>(
+                                                value: zve.zvVereinId,
+                                                child: Text('${zve.vVereinNr} - ${zve.vereinName ?? 'Unbekannt'}'),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _selectedZveId = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      // Disziplin Autocomplete
+                                      if (_selectedZveId != null)
+                                        Autocomplete<Disziplin>(
                                         optionsBuilder: (
                                           TextEditingValue textEditingValue,
                                         ) {
@@ -750,42 +825,50 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           );
                                         },
                                         onSelected: (Disziplin selection) {
-                                          setState(() {
-                                            // Build the combined key as in the rest of the code
-                                            final disziplinNr =
-                                                selection.disziplinNr;
-                                            final disziplin =
-                                                selection.disziplin;
-                                            String combined = '';
-                                            if ((disziplinNr != null &&
-                                                    disziplinNr.isNotEmpty) ||
-                                                (disziplin != null &&
-                                                    disziplin.isNotEmpty)) {
-                                              combined = ((disziplinNr ?? '') +
-                                                      (disziplinNr != null &&
-                                                              disziplinNr
-                                                                  .isNotEmpty &&
-                                                              disziplin !=
-                                                                  null &&
-                                                              disziplin
-                                                                  .isNotEmpty
-                                                          ? ' - '
-                                                          : '') +
-                                                      (disziplin ?? ''))
-                                                  .trim();
-                                            }
-                                            if (combined.isNotEmpty &&
-                                                !secondColumn
-                                                    .containsKey(combined)) {
-                                              secondColumn[combined] =
-                                                  selection.disziplinId;
-                                              // Also update pivotDisziplins to reflect the change
-                                              pivotDisziplins = {
-                                                ...firstColumn,
-                                                ...secondColumn,
-                                              };
-                                            }
-                                          });
+                                          if (_selectedZveId != null) {
+                                            setState(() {
+                                              // Build the combined key as in the rest of the code
+                                              final disziplinNr =
+                                                  selection.disziplinNr;
+                                              final disziplin =
+                                                  selection.disziplin;
+                                              String combined = '';
+                                              if ((disziplinNr != null &&
+                                                      disziplinNr.isNotEmpty) ||
+                                                  (disziplin != null &&
+                                                      disziplin.isNotEmpty)) {
+                                                combined = ((disziplinNr ?? '') +
+                                                        (disziplinNr != null &&
+                                                                disziplinNr
+                                                                    .isNotEmpty &&
+                                                                disziplin !=
+                                                                    null &&
+                                                                disziplin
+                                                                    .isNotEmpty
+                                                            ? ' - '
+                                                            : '') +
+                                                        (disziplin ?? ''))
+                                                    .trim();
+                                              }
+                                              if (combined.isNotEmpty) {
+                                                // Get the second column for the selected ZVE
+                                                final zveSecondColumn = secondColumns[_selectedZveId] ?? {};
+                                                if (!zveSecondColumn.containsKey(combined)) {
+                                                  // Add to the selected ZVE's second column
+                                                  secondColumns[_selectedZveId] = {
+                                                    ...zveSecondColumn,
+                                                    combined: selection.disziplinId,
+                                                  };
+                                                  // Update pivotDisziplins for this ZVE
+                                                  final zveFirstColumn = firstColumns[_selectedZveId] ?? {};
+                                                  pivotDisziplins[_selectedZveId] = {
+                                                    ...zveFirstColumn,
+                                                    ...secondColumns[_selectedZveId]!,
+                                                  };
+                                                }
+                                              }
+                                            });
+                                          }
                                           _autocompleteTextController.clear();
                                         },
                                       ),
