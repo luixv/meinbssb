@@ -33,11 +33,17 @@ class StartingRightsScreen extends StatefulWidget {
 }
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
+  void _onSave() {
+    // TODO: Implement save logic for starting rights
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Änderungen gespeichert.')),
+    );
+  }
+
   UserData? _passData;
   List<PassDataZVE> _zveData = [];
   List<Disziplin> _disciplines = [];
   List<FremdeVerband> _fremdeVerbaende = [];
-  //PassdatenAkzeptOrAktiv passdatenAkzeptierterOderAktiverPass = null;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -210,16 +216,17 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'saveFab',
+        onPressed: _onSave,
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(Icons.save, color: Colors.white),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              top: 16.0,
-              bottom: 4.0,
-            ),
+            padding: UIConstants.screenPadding,
             child: ScaledText(
               'Schützenausweis',
               style: UIStyles.headerStyle.copyWith(
@@ -228,8 +235,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            padding: UIConstants.defaultHorizontalPadding,
             child: ScaledText(
               'Startrechte ändern für das Sportjahr\n XX/YY',
               style: UIStyles.bodyStyle.copyWith(
