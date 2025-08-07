@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart'; // For listEquals
-import 'package:meinbssb/models/disziplin.dart'; // Import Disziplin model
+// For listEquals
+// Import Disziplin model
 
 class PassDataZVE {
   factory PassDataZVE.fromJson(Map<String, dynamic> json) {
@@ -14,11 +14,7 @@ class PassDataZVE {
       ersaetzendurchId: json['ERSAETZENDURCHID'] as int,
       zvMitgliedschaftId: json['ZVMITGLIEDSCHAFTID'] as int,
       vereinName: json['VEREINNAME'] as String?,
-      disziplin: (json['DISZIPLIN'] is List)
-          ? (json['DISZIPLIN'] as List)
-              .map((e) => Disziplin.fromJson(e as Map<String, dynamic>))
-              .toList()
-          : [],
+      disziplin: json['DISZIPLIN'] as String?,
       disziplinId: json['DISZIPLINID'] as int,
     );
   }
@@ -33,7 +29,7 @@ class PassDataZVE {
     required this.ersaetzendurchId,
     required this.zvMitgliedschaftId,
     this.vereinName,
-    this.disziplin = const [],
+    this.disziplin,
     required this.disziplinId,
   });
 
@@ -47,7 +43,7 @@ class PassDataZVE {
   final int ersaetzendurchId;
   final int zvMitgliedschaftId;
   final String? vereinName;
-  final List<Disziplin> disziplin;
+  final String? disziplin;
   final int disziplinId;
 
   Map<String, dynamic> toJson() {
@@ -62,7 +58,7 @@ class PassDataZVE {
       'ERSAETZENDURCHID': ersaetzendurchId,
       'ZVMITGLIEDSCHAFTID': zvMitgliedschaftId,
       'VEREINNAME': vereinName,
-      'DISZIPLIN': disziplin.map((e) => e.toJson()).toList(),
+      'DISZIPLIN': disziplin,
       'DISZIPLINID': disziplinId,
     };
   }
@@ -78,7 +74,7 @@ class PassDataZVE {
     int? ersaetzendurchId,
     int? zvMitgliedschaftId,
     String? vereinName,
-    List<Disziplin>? disziplin,
+    String? disziplin,
     int? disziplinId,
   }) {
     return PassDataZVE(
@@ -99,8 +95,7 @@ class PassDataZVE {
 
   @override
   String toString() {
-    final disciplinesString = disziplin.map((d) => d.toString()).join(', ');
-    return 'PassDataZVE(passdatenZvId: $passdatenZvId, zvVereinId: $zvVereinId, vVereinNr: $vVereinNr, disziplinNr: $disziplinNr, gauId: $gauId, bezirkId: $bezirkId, disziAusblenden: $disziAusblenden, ersaetzendurchId: $ersaetzendurchId, zvMitgliedschaftId: $zvMitgliedschaftId, vereinName: $vereinName, disziplin: [$disciplinesString], disziplinId: $disziplinId)';
+    return 'PassDataZVE(passdatenZvId: $passdatenZvId, zvVereinId: $zvVereinId, vVereinNr: $vVereinNr, disziplinNr: $disziplinNr, gauId: $gauId, bezirkId: $bezirkId, disziAusblenden: $disziAusblenden, ersaetzendurchId: $ersaetzendurchId, zvMitgliedschaftId: $zvMitgliedschaftId, vereinName: $vereinName, disziplin: $disziplin, disziplinId: $disziplinId)';
   }
 
   @override
@@ -117,7 +112,7 @@ class PassDataZVE {
         other.ersaetzendurchId == ersaetzendurchId &&
         other.zvMitgliedschaftId == zvMitgliedschaftId &&
         other.vereinName == vereinName &&
-        listEquals(other.disziplin, disziplin) &&
+        other.disziplin == disziplin &&
         other.disziplinId == disziplinId;
   }
 
@@ -133,7 +128,7 @@ class PassDataZVE {
         ersaetzendurchId.hashCode ^
         zvMitgliedschaftId.hashCode ^
         vereinName.hashCode ^
-        Object.hashAll(disziplin) ^
+        disziplin.hashCode ^
         disziplinId.hashCode;
   }
 }

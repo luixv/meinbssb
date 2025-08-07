@@ -299,13 +299,7 @@ void main() {
             'ERSAETZENDURCHID': 0,
             'ZVMITGLIEDSCHAFTID': 510039,
             'VEREINNAME': 'SV Alpenrose Grimolzhausen',
-            'DISZIPLIN': [
-              {
-                'DISZIPLINID': 94,
-                'DISZIPLINNR': 'R.1',
-                'DISZIPLIN': 'RWK Luftpistole',
-              }
-            ],
+            'DISZIPLIN': 'RWK Luftpistole',
             'DISZIPLINID': 94,
           }
         ];
@@ -346,9 +340,7 @@ void main() {
         expect(result[0].ersaetzendurchId, 0);
         expect(result[0].zvMitgliedschaftId, 510039);
         expect(result[0].vereinName, 'SV Alpenrose Grimolzhausen');
-        expect(result[0].disziplin.length, 1);
-        expect(result[0].disziplin[0].disziplin, 'RWK Luftpistole');
-        expect(result[0].disziplin[0].disziplinNr, 'R.1');
+        expect(result[0].disziplin, 'RWK Luftpistole');
         expect(result[0].disziplinId, 94);
       });
 
