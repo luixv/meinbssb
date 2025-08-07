@@ -215,17 +215,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           firstColumns = localFirstColumns;
           secondColumns = localSecondColumns;
           pivotDisziplins = localPivotDisziplins;
-          // Initialize data structures for each ZVE
-          if (fetchedZveData.isNotEmpty) {
-            final uniqueZves = fetchedZveData
-                .fold<Map<int, PassDataZVE>>({}, (map, zve) {
-                  map[zve.zvVereinId] = zve;
-                  return map;
-                })
-                .values
-                .toList();
-            // No need to set selected ZVE since each ZVE has its own dropdown
-          }
+          // Data structures are already initialized in the loop above
         });
       }
     } catch (e) {
