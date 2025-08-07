@@ -48,9 +48,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   String? disziplin_1_2 = '';
   String? disziplin_2_2 = '';
 
-  Set<String> firstColumn = {};
-  Set<String> secondColumn = {};
-  Set<String> pivotDisziplins = {};
+  Map<String, int?> firstColumn = {};
+  Map<String, int?> secondColumn = {};
+  Map<String, int?> pivotDisziplins = {};
 
   @override
   void initState() {
@@ -124,11 +124,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       );
 
       // For the first column
-      Set<String> localFirstColumn = {};
+      Map<String, int?> localFirstColumn = {};
       if (fetchedZveData.isNotEmpty) {
         for (final zveData in fetchedZveData) {
           String? disziplinNr = zveData.disziplinNr;
           String? disziplin = zveData.disziplin;
+          int? disziplinId = zveData.disziplinId;
           String combined = '';
           if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
               (disziplin != null && disziplin.isNotEmpty)) {
@@ -142,18 +143,21 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                     (disziplin ?? ''))
                 .trim();
           }
-          localFirstColumn.add(combined);
+          if (combined.isNotEmpty) {
+            localFirstColumn[combined] = disziplinId;
+          }
         }
       }
 
       // For the second column
       List<ZVE> zvesData = [];
-      Set<String> localSecondColumn = {};
+      Map<String, int?> localSecondColumn = {};
       if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
         zvesData = fetchedPassdatenAkzeptierterOderAktiverPassData.zves;
         for (final zve in zvesData) {
           String? disziplinNr = zve.disziplinNr;
           String? disziplin = zve.disziplin;
+          int? disziplinId = zve.disziplinId;
           String combined = '';
           if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
               (disziplin != null && disziplin.isNotEmpty)) {
@@ -167,12 +171,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                     (disziplin ?? ''))
                 .trim();
           }
-          localSecondColumn.add(combined);
+          if (combined.isNotEmpty) {
+            localSecondColumn[combined] = disziplinId;
+          }
         }
       }
 
-      // Create a set of all unique elements from firstColumn and secondColumn
-      final Set<String> localPivotDisziplins = {
+      // Create a map of all unique elements from firstColumn and secondColumn
+      final Map<String, int?> localPivotDisziplins = {
         ...localFirstColumn,
         ...localSecondColumn,
       };
@@ -588,22 +594,23 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                               const SizedBox(width: 24),
                                             ],
                                           ),
-                                          ...pivotDisziplins.map(
-                                            (element) => TableRow(
+                                          ...pivotDisziplins.entries.map(
+                                            (entry) => TableRow(
                                               children: [
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.all(8.0),
                                                   child: Center(
-                                                    child: firstColumn
-                                                            .contains(element)
-                                                        ? const Icon(
-                                                            Icons.check,
-                                                            color: UIConstants
-                                                                .defaultAppColor,
-                                                          )
-                                                        : const SizedBox
-                                                            .shrink(),
+                                                    child:
+                                                        firstColumn.containsKey(
+                                                                entry.key)
+                                                            ? const Icon(
+                                                                Icons.check,
+                                                                color: UIConstants
+                                                                    .defaultAppColor,
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
                                                   ),
                                                 ),
                                                 Padding(
@@ -611,7 +618,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                       const EdgeInsets.all(8.0),
                                                   child: Center(
                                                     child: secondColumn
-                                                            .contains(element)
+                                                            .containsKey(
+                                                                entry.key)
                                                         ? const Icon(
                                                             Icons.check,
                                                             color: UIConstants
@@ -622,11 +630,10 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    8.0,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: ScaledText(
-                                                    element,
+                                                    entry.key,
                                                     style: UIStyles.bodyStyle,
                                                   ),
                                                 ),
@@ -637,7 +644,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         .defaultAppColor,
                                                   ),
                                                   onPressed: () {
-                                                    // TODO: Implement delete logic for this disziplin
+                                                    // TODO: Implement delete logic for this disziplin using entry.value (disziplinId)
                                                   },
                                                 ),
                                               ],
