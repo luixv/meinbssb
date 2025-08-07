@@ -396,153 +396,125 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             ),
                             const SizedBox(height: UIConstants.spacingS),
                             if (_zveData.isNotEmpty)
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _zveData.length,
-                                itemBuilder: (context, index) {
-                                  final zve = _zveData[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: UIConstants.spacingS,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Consumer<FontSizeProvider>(
-                                                builder: (
-                                                  context,
-                                                  fontSizeProvider,
-                                                  child,
-                                                ) {
-                                                  return RichText(
-                                                    text: TextSpan(
-                                                      style: UIStyles.bodyStyle
-                                                          .copyWith(
-                                                        fontSize: UIStyles
-                                                                .bodyStyle
-                                                                .fontSize! *
-                                                            fontSizeProvider
-                                                                .scaleFactor,
-                                                      ),
-                                                      children: <TextSpan>[
-                                                        TextSpan(
-                                                          text: zve.vVereinNr
-                                                              .toString(),
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: UIStyles
-                                                                    .bodyStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: ' - ',
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                            fontSize: UIStyles
-                                                                    .bodyStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: zve.vereinName,
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: UIStyles
-                                                                    .bodyStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Consumer<FontSizeProvider>(
+                                    builder:
+                                        (context, fontSizeProvider, child) {
+                                      final zve = _zveData[0];
+                                      return RichText(
+                                        text: TextSpan(
+                                          style: UIStyles.bodyStyle.copyWith(
+                                            fontSize: UIStyles
+                                                    .bodyStyle.fontSize! *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: zve.vVereinNr.toString(),
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: ' - ',
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: zve.vereinName,
+                                              style:
+                                                  UIStyles.bodyStyle.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: UIStyles
+                                                        .bodyStyle.fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        if (zve.disziplin != null &&
-                                            zve.disziplin!.isNotEmpty) ...[
-                                          const SizedBox(
-                                            height: UIConstants.spacingS,
-                                          ),
-                                          ...?zve.disziplin
-                                              ?.split(',')
-                                              .map((selectedDisziplin) {
-                                            return Consumer<FontSizeProvider>(
-                                              builder: (
-                                                context,
-                                                fontSizeProvider,
-                                                child,
-                                              ) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    bottom:
-                                                        UIConstants.spacingXXS,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      ScaledText(
-                                                        '• ',
-                                                        style: UIStyles
-                                                            .bodyStyle
-                                                            .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: UIStyles
-                                                                  .bodyStyle
-                                                                  .fontSize! *
-                                                              fontSizeProvider
-                                                                  .scaleFactor,
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: ScaledText(
-                                                          selectedDisziplin,
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                            fontSize: UIStyles
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: UIConstants.spacingS),
+                                  ..._zveData.map(
+                                    (zve) => zve.disziplin != null &&
+                                            zve.disziplin!.isNotEmpty
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ...zve.disziplin!.split(',').map(
+                                                    (selectedDisziplin) =>
+                                                        Consumer<
+                                                            FontSizeProvider>(
+                                                      builder: (context,
+                                                          fontSizeProvider,
+                                                          child,) {
+                                                        return Padding(
+                                                          padding: const EdgeInsets
+                                                              .only(
+                                                              bottom: UIConstants
+                                                                  .spacingXXS,),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              ScaledText(
+                                                                '• ',
+                                                                style: UIStyles
                                                                     .bodyStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
+                                                                    .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: UIStyles
+                                                                          .bodyStyle
+                                                                          .fontSize! *
+                                                                      fontSizeProvider
+                                                                          .scaleFactor,
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child:
+                                                                    ScaledText(
+                                                                  selectedDisziplin
+                                                                      .trim(),
+                                                                  style: UIStyles
+                                                                      .bodyStyle
+                                                                      .copyWith(
+                                                                    fontSize: UIStyles
+                                                                            .bodyStyle
+                                                                            .fontSize! *
+                                                                        fontSizeProvider
+                                                                            .scaleFactor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ),
-                                                      ),
-                                                      // Remove button logic can be adapted if needed for string
-                                                    ],
+                                                        );
+                                                      },
+                                                    ),
                                                   ),
-                                                );
-                                              },
-                                            );
-                                          }),
-                                        ],
-                                      ],
-                                    ),
-                                  );
-                                },
+                                            ],
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ),
+                                ],
                               )
                             else
                               Consumer<FontSizeProvider>(
@@ -693,37 +665,69 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         },
                                       ),
                                       const SizedBox(height: 16),
-                                      ScaledText(
-                                        'Disziplin 1.1:',
-                                        style: UIStyles.bodyStyle.copyWith(
-                                          fontWeight: FontWeight.bold,
+                                      Table(
+                                        columnWidths: const <int,
+                                            TableColumnWidth>{
+                                          0: FlexColumnWidth(),
+                                          1: FlexColumnWidth(),
+                                          2: IntrinsicColumnWidth(),
+                                        },
+                                        border: TableBorder.all(
+                                          color: Colors.transparent,
                                         ),
-                                      ),
-                                      ScaledText(
-                                        disziplin_1_1 ?? '',
-                                        style: UIStyles.bodyStyle,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      ScaledText(
-                                        'Disziplin 1.2:',
-                                        style: UIStyles.bodyStyle.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      ScaledText(
-                                        disziplin_1_2 ?? '',
-                                        style: UIStyles.bodyStyle,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      ScaledText(
-                                        'Disziplin 2.2:',
-                                        style: UIStyles.bodyStyle.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      ScaledText(
-                                        disziplin_2_2 ?? '',
-                                        style: UIStyles.bodyStyle,
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  disziplin_1_1 ?? '',
+                                                  style: UIStyles.bodyStyle,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  disziplin_1_2 ?? '',
+                                                  style: UIStyles.bodyStyle,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  // TODO: Implement delete logic for row 1
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            children: [
+                                              const SizedBox.shrink(),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  disziplin_2_2 ?? '',
+                                                  style: UIStyles.bodyStyle,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  // TODO: Implement delete logic for row 2
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   );
