@@ -57,6 +57,17 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
   int? _selectedZveId; // Currently selected ZVE for adding disziplins
 
+  // Helper method to get unique ZVEs
+  List<PassDataZVE> _getUniqueZves() {
+    return _zveData
+        .fold<Map<int, PassDataZVE>>({}, (map, zve) {
+          map[zve.zvVereinId] = zve;
+          return map;
+        })
+        .values
+        .toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -206,9 +217,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           firstColumns = localFirstColumns;
           secondColumns = localSecondColumns;
           pivotDisziplins = localPivotDisziplins;
-          // Set the first ZVE as selected by default
+          // Set the first unique ZVE as selected by default
           if (fetchedZveData.isNotEmpty) {
-            _selectedZveId = fetchedZveData.first.zvVereinId;
+            final uniqueZves = fetchedZveData
+                .fold<Map<int, PassDataZVE>>({}, (map, zve) {
+                  map[zve.zvVereinId] = zve;
+                  return map;
+                })
+                .values
+                .toList();
+            if (uniqueZves.isNotEmpty) {
+              _selectedZveId = uniqueZves.first.zvVereinId;
+            }
           }
         });
       }
@@ -711,7 +731,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       }).toList(),
                                       const SizedBox(height: 16),
                                       // ZVE Selector
-                                      if (_zveData.length > 1)
+                                      if (_getUniqueZves().length > 1)
                                         Padding(
                                           padding: const EdgeInsets.only(
                                             bottom: UIConstants.spacingM,
@@ -721,12 +741,13 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             decoration: UIStyles.formInputDecoration.copyWith(
                                               labelText: 'ZVE auswählen',
                                             ),
-                                            items: _zveData.map((zve) {
-                                              return DropdownMenuItem<int>(
-                                                value: zve.zvVereinId,
-                                                child: Text('${zve.vVereinNr} - ${zve.vereinName ?? 'Unbekannt'}'),
-                                              );
-                                            }).toList(),
+                                            items: _getUniqueZves()
+                                                .map((zve) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: zve.zvVereinId,
+                                                    child: Text('${zve.vVereinNr} - ${zve.vereinName ?? 'Unbekannt'}'),
+                                                  );
+                                                }).toList(),
                                             onChanged: (value) {
                                               setState(() {
                                                 _selectedZveId = value;
