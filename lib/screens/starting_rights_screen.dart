@@ -10,7 +10,7 @@ import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/models/disziplin.dart';
 import 'package:meinbssb/models/zve.dart';
-import 'package:meinbssb/models/fremde_verband.dart';
+//import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -43,7 +43,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   UserData? _passData;
   List<PassDataZVE> _zveData = [];
   List<Disziplin> _disciplines = [];
-  List<FremdeVerband> _fremdeVerbaende = [];
+  //List<FremdeVerband> _fremdeVerbaende = [];
 
   bool _isLoading = false;
   String? _errorMessage;
