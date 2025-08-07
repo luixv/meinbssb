@@ -48,6 +48,10 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   String? disziplin_1_2 = '';
   String? disziplin_2_2 = '';
 
+  Set<String> firstColumn = {};
+  Set<String> secondColumn = {};
+  Set<String> pivotDisziplins = {};
+
   @override
   void initState() {
     super.initState();
@@ -113,75 +117,65 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         passdatenId,
         personId,
       );
-
-      // For the first column
-      PassDataZVE zveData;
-      String? tempDisziplin_1_1 = '';
-      if (fetchedZveData.isNotEmpty) {
-        zveData = fetchedZveData.first;
-        String? disziplinNr = zveData.disziplinNr;
-        String? disziplin = zveData.disziplin;
-
-        String combined = '';
-        if (disziplin != null && disziplin.isNotEmpty) {
-          combined = ((disziplinNr ?? '') +
-                  (disziplinNr != null &&
-                          disziplinNr.isNotEmpty &&
-                          disziplin.isNotEmpty
-                      ? ' - '
-                      : '') +
-                  disziplin)
-              .trim();
-        }
-        disziplin_1_1 = combined;
-        tempDisziplin_1_1 = combined;
-      }
-
-      // For the second column
       final PassdatenAkzeptOrAktiv?
           fetchedPassdatenAkzeptierterOderAktiverPassData =
           await apiService.fetchPassdatenAkzeptierterOderAktiverPass(
         personId,
       );
 
-      List<ZVE> zvesData = [];
-      String? tempDisziplin_1_2;
-      String? tempDisziplin_2_2;
-      if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
-        zvesData = fetchedPassdatenAkzeptierterOderAktiverPassData.zves;
-        if (zvesData.isNotEmpty) {
-          String? disziplinNr1 = zvesData[0].disziplinNr;
-          String? disziplin1 = zvesData[0].disziplin;
-          String combined1 = '';
-          if (disziplin1 != null && disziplin1.isNotEmpty) {
-            combined1 = ((disziplinNr1 ?? '') +
-                    (disziplinNr1 != null &&
-                            disziplinNr1.isNotEmpty &&
-                            disziplin1.isNotEmpty
+      // For the first column
+      Set<String> localFirstColumn = {};
+      if (fetchedZveData.isNotEmpty) {
+        for (final zveData in fetchedZveData) {
+          String? disziplinNr = zveData.disziplinNr;
+          String? disziplin = zveData.disziplin;
+          String combined = '';
+          if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
+              (disziplin != null && disziplin.isNotEmpty)) {
+            combined = ((disziplinNr ?? '') +
+                    (disziplinNr != null &&
+                            disziplinNr.isNotEmpty &&
+                            disziplin != null &&
+                            disziplin.isNotEmpty
                         ? ' - '
                         : '') +
-                    disziplin1)
+                    (disziplin ?? ''))
                 .trim();
           }
-          tempDisziplin_1_2 = combined1;
-        }
-        if (zvesData.length > 1) {
-          String? disziplinNr2 = zvesData[1].disziplinNr;
-          String? disziplin2 = zvesData[1].disziplin;
-          String combined2 = '';
-          if (disziplin2 != null && disziplin2.isNotEmpty) {
-            combined2 = ((disziplinNr2 ?? '') +
-                    (disziplinNr2 != null &&
-                            disziplinNr2.isNotEmpty &&
-                            disziplin2.isNotEmpty
-                        ? ' - '
-                        : '') +
-                    disziplin2)
-                .trim();
-          }
-          tempDisziplin_2_2 = combined2;
+          localFirstColumn.add(combined);
         }
       }
+
+      // For the second column
+      List<ZVE> zvesData = [];
+      Set<String> localSecondColumn = {};
+      if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
+        zvesData = fetchedPassdatenAkzeptierterOderAktiverPassData.zves;
+        for (final zve in zvesData) {
+          String? disziplinNr = zve.disziplinNr;
+          String? disziplin = zve.disziplin;
+          String combined = '';
+          if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
+              (disziplin != null && disziplin.isNotEmpty)) {
+            combined = ((disziplinNr ?? '') +
+                    (disziplinNr != null &&
+                            disziplinNr.isNotEmpty &&
+                            disziplin != null &&
+                            disziplin.isNotEmpty
+                        ? ' - '
+                        : '') +
+                    (disziplin ?? ''))
+                .trim();
+          }
+          localSecondColumn.add(combined);
+        }
+      }
+
+      // Create a set of all unique elements from firstColumn and secondColumn
+      final Set<String> localPivotDisziplins = {
+        ...localFirstColumn,
+        ...localSecondColumn,
+      };
 
       // final fremdeVerbande = await apiService.fetchFremdeVerbaende(vereinNr);
 
@@ -190,9 +184,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           _passData = fetchedPassData;
           _zveData = fetchedZveData;
           _disciplines = fetchedDisciplines;
-          disziplin_1_1 = tempDisziplin_1_1;
-          disziplin_1_2 = tempDisziplin_1_2;
-          disziplin_2_2 = tempDisziplin_2_2;
+          firstColumn = localFirstColumn;
+          secondColumn = localSecondColumn;
+          pivotDisziplins = localPivotDisziplins;
         });
       }
     } catch (e) {
@@ -543,6 +537,115 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      // PivotDisziplins Table
+                                      Table(
+                                        columnWidths: const <int,
+                                            TableColumnWidth>{
+                                          0: IntrinsicColumnWidth(),
+                                          1: IntrinsicColumnWidth(),
+                                          2: FlexColumnWidth(),
+                                          3: IntrinsicColumnWidth(),
+                                        },
+                                        border: TableBorder.all(
+                                          color: Colors.transparent,
+                                        ),
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  '1. Spalte',
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  '2. Spalte',
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ScaledText(
+                                                  'Disziplin',
+                                                  style: UIStyles.bodyStyle
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 24),
+                                            ],
+                                          ),
+                                          ...pivotDisziplins.map(
+                                            (element) => TableRow(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Center(
+                                                    child: firstColumn
+                                                            .contains(element)
+                                                        ? const Icon(
+                                                            Icons.check,
+                                                            color: UIConstants
+                                                                .defaultAppColor,
+                                                          )
+                                                        : const SizedBox
+                                                            .shrink(),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Center(
+                                                    child: secondColumn
+                                                            .contains(element)
+                                                        ? const Icon(
+                                                            Icons.check,
+                                                            color: UIConstants
+                                                                .defaultAppColor,
+                                                          )
+                                                        : const SizedBox
+                                                            .shrink(),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: ScaledText(
+                                                    element,
+                                                    style: UIStyles.bodyStyle,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons.delete,
+                                                    color: UIConstants
+                                                        .defaultAppColor,
+                                                  ),
+                                                  onPressed: () {
+                                                    // TODO: Implement delete logic for this disziplin
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
                                       Autocomplete<Disziplin>(
                                         optionsBuilder: (
                                           TextEditingValue textEditingValue,
@@ -667,71 +770,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           });
                                           _autocompleteTextController.clear();
                                         },
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Table(
-                                        columnWidths: const <int,
-                                            TableColumnWidth>{
-                                          0: FlexColumnWidth(),
-                                          1: FlexColumnWidth(),
-                                          2: IntrinsicColumnWidth(),
-                                        },
-                                        border: TableBorder.all(
-                                          color: Colors.transparent,
-                                        ),
-                                        children: [
-                                          TableRow(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  disziplin_1_1 ?? '',
-                                                  style: UIStyles.bodyStyle,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  disziplin_1_2 ?? '',
-                                                  style: UIStyles.bodyStyle,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () {
-                                                  // TODO: Implement delete logic for row 1
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            children: [
-                                              const SizedBox.shrink(),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: ScaledText(
-                                                  disziplin_2_2 ?? '',
-                                                  style: UIStyles.bodyStyle,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () {
-                                                  // TODO: Implement delete logic for row 2
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ],
                                       ),
                                     ],
                                   );
