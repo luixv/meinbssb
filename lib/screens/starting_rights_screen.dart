@@ -708,14 +708,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         onPressed: () {
                                                           setState(() {
                                                             // Remove from the selected ZVE's second column
-                                                            final zveSecondColumn = secondColumns[zveId] ?? {};
-                                                            zveSecondColumn.remove(entry.key);
-                                                            secondColumns[zveId] = zveSecondColumn;
+                                                            final updatedSecond = Map<String, int?>.from(zveSecondColumn);
+                                                            updatedSecond.remove(entry.key);
+                                                            secondColumns[zveId] = updatedSecond;
                                                             // Update pivotDisziplins for this ZVE
-                                                            final zveFirstColumn = firstColumns[zveId] ?? {};
+                                                            final updatedFirst = firstColumns[zveId] ?? {};
                                                             pivotDisziplins[zveId] = {
-                                                              ...zveFirstColumn,
-                                                              ...zveSecondColumn,
+                                                              ...updatedFirst,
+                                                              ...updatedSecond,
                                                             };
                                                           });
                                                         },
@@ -725,7 +725,88 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: UIConstants.spacingM),
+                                            // Per-ZVE Disziplin Autocomplete
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+                                              child: Autocomplete<Disziplin>(
+                                                optionsBuilder: (TextEditingValue textEditingValue) {
+                                                  if (textEditingValue.text.isEmpty) {
+                                                    return const Iterable<Disziplin>.empty();
+                                                  }
+                                                  return _disciplines.where((Disziplin option) {
+                                                    return (option.disziplin?.toLowerCase() ?? '').contains(textEditingValue.text.toLowerCase()) ||
+                                                        (option.disziplinNr?.toLowerCase() ?? '').contains(textEditingValue.text.toLowerCase());
+                                                  }).take(UIConstants.maxFilteredDisziplinen);
+                                                },
+                                                displayStringForOption: (Disziplin option) =>
+                                                    '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
+                                                fieldViewBuilder: (
+                                                  BuildContext context,
+                                                  TextEditingController textEditingController,
+                                                  FocusNode focusNode,
+                                                  VoidCallback onFieldSubmitted,
+                                                ) {
+                                                  _autocompleteTextController = textEditingController;
+                                                  return TextField(
+                                                    controller: textEditingController,
+                                                    focusNode: focusNode,
+                                                    style: UIStyles.bodyStyle.copyWith(
+                                                      fontSize: UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                                    ),
+                                                    decoration: UIStyles.formInputDecoration.copyWith(
+                                                      labelText: 'Disziplin hinzufügen',
+                                                      labelStyle: UIStyles.formLabelStyle.copyWith(
+                                                        fontSize: UIStyles.formLabelStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                                      ),
+                                                      floatingLabelStyle: UIStyles.formLabelStyle.copyWith(
+                                                        fontSize: UIStyles.formLabelStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                                      ),
+                                                      hintStyle: UIStyles.formLabelStyle.copyWith(
+                                                        fontSize: UIStyles.formLabelStyle.fontSize! * fontSizeProvider.scaleFactor,
+                                                      ),
+                                                      prefixIcon: Icon(
+                                                        Icons.search,
+                                                        size: 24 * fontSizeProvider.scaleFactor,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                onSelected: (Disziplin selection) {
+                                                  setState(() {
+                                                    final disziplinNr = selection.disziplinNr;
+                                                    final disziplin = selection.disziplin;
+                                                    String combined = '';
+                                                    if ((disziplinNr != null && disziplinNr.isNotEmpty) ||
+                                                        (disziplin != null && disziplin.isNotEmpty)) {
+                                                      combined = ((disziplinNr ?? '') +
+                                                              (disziplinNr != null &&
+                                                                      disziplinNr.isNotEmpty &&
+                                                                      disziplin != null &&
+                                                                      disziplin.isNotEmpty
+                                                                  ? ' - '
+                                                                  : '') +
+                                                              (disziplin ?? ''))
+                                                          .trim();
+                                                    }
+                                                    if (combined.isNotEmpty) {
+                                                      final updatedSecond = Map<String, int?>.from(secondColumns[zveId] ?? {});
+                                                      if (!updatedSecond.containsKey(combined)) {
+                                                        updatedSecond[combined] = selection.disziplinId;
+                                                        secondColumns[zveId] = updatedSecond;
+                                                        // Update pivotDisziplins for this ZVE
+                                                        final updatedFirst = firstColumns[zveId] ?? {};
+                                                        pivotDisziplins[zveId] = {
+                                                          ...updatedFirst,
+                                                          ...updatedSecond,
+                                                        };
+                                                      }
+                                                    }
+                                                  });
+                                                  _autocompleteTextController.clear();
+                                                },
+                                              ),
+                                            ),
+                                            const Divider(),
                                           ],
                                         );
                                       }).toList(),
@@ -755,145 +836,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             },
                                           ),
                                         ),
-                                      // Disziplin Autocomplete
-                                      if (_selectedZveId != null)
-                                        Autocomplete<Disziplin>(
-                                        optionsBuilder: (
-                                          TextEditingValue textEditingValue,
-                                        ) {
-                                          if (textEditingValue.text.isEmpty) {
-                                            return const Iterable<
-                                                Disziplin>.empty();
-                                          }
-                                          return _disciplines
-                                              .where((Disziplin option) {
-                                            return (option.disziplin
-                                                            ?.toLowerCase() ??
-                                                        '')
-                                                    .contains(
-                                                  textEditingValue.text
-                                                      .toLowerCase(),
-                                                ) ||
-                                                (option.disziplinNr
-                                                            ?.toLowerCase() ??
-                                                        '')
-                                                    .contains(
-                                                  textEditingValue.text
-                                                      .toLowerCase(),
-                                                );
-                                          }).take(
-                                            UIConstants.maxFilteredDisziplinen,
-                                          );
-                                        },
-                                        displayStringForOption: (
-                                          Disziplin option,
-                                        ) =>
-                                            '${option.disziplinNr ?? 'N/A'} - ${option.disziplin ?? 'N/A'}',
-                                        fieldViewBuilder: (
-                                          BuildContext context,
-                                          TextEditingController
-                                              textEditingController,
-                                          FocusNode focusNode,
-                                          VoidCallback onFieldSubmitted,
-                                        ) {
-                                          _autocompleteTextController =
-                                              textEditingController;
-                                          return TextField(
-                                            controller: textEditingController,
-                                            focusNode: focusNode,
-                                            style: UIStyles.bodyStyle.copyWith(
-                                              fontSize: UIStyles
-                                                      .bodyStyle.fontSize! *
-                                                  fontSizeProvider.scaleFactor,
-                                            ),
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(
-                                              labelText: 'Disziplin hinzufügen',
-                                              labelStyle: UIStyles
-                                                  .formLabelStyle
-                                                  .copyWith(
-                                                fontSize: UIStyles
-                                                        .formLabelStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                              floatingLabelStyle: UIStyles
-                                                  .formLabelStyle
-                                                  .copyWith(
-                                                fontSize: UIStyles
-                                                        .formLabelStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                              hintStyle: UIStyles.formLabelStyle
-                                                  .copyWith(
-                                                fontSize: UIStyles
-                                                        .formLabelStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                              prefixIcon: Icon(
-                                                Icons.search,
-                                                size: 24 *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        onSelected: (Disziplin selection) {
-                                          final selectedZveId = _selectedZveId;
-                                          if (selectedZveId != null) {
-                                            setState(() {
-                                              // Build the combined key as in the rest of the code
-                                              final disziplinNr =
-                                                  selection.disziplinNr;
-                                              final disziplin =
-                                                  selection.disziplin;
-                                              String combined = '';
-                                              if ((disziplinNr != null &&
-                                                      disziplinNr.isNotEmpty) ||
-                                                  (disziplin != null &&
-                                                      disziplin.isNotEmpty)) {
-                                                combined = ((disziplinNr ?? '') +
-                                                        (disziplinNr != null &&
-                                                                disziplinNr
-                                                                    .isNotEmpty &&
-                                                                disziplin !=
-                                                                    null &&
-                                                                disziplin
-                                                                    .isNotEmpty
-                                                            ? ' - '
-                                                            : '') +
-                                                        (disziplin ?? ''))
-                                                    .trim();
-                                              }
-                                              if (combined.isNotEmpty) {
-                                                // Get the second column for the selected ZVE
-                                                final zveSecondColumn = secondColumns[selectedZveId] ?? {};
-                                                if (!zveSecondColumn.containsKey(combined)) {
-                                                  // Add to the selected ZVE's second column
-                                                  secondColumns[selectedZveId] = {
-                                                    ...zveSecondColumn,
-                                                    combined: selection.disziplinId,
-                                                  };
-                                                  // Update pivotDisziplins for this ZVE
-                                                  final zveFirstColumn = firstColumns[selectedZveId] ?? {};
-                                                  pivotDisziplins[selectedZveId] = {
-                                                    ...zveFirstColumn,
-                                                    ...secondColumns[selectedZveId]!,
-                                                  };
-                                                }
-                                              }
-                                            });
-                                          }
-                                          _autocompleteTextController.clear();
-                                        },
-                                      ),
                                     ],
                                   );
                                 },
