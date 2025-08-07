@@ -47,8 +47,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   bool _isLoading = false;
   String? _errorMessage;
-  late TextEditingController _autocompleteTextController;
   final TextEditingController _searchController = TextEditingController();
+  // Map of text controllers for each ZVE's autocomplete
+  final Map<int, TextEditingController> _zveTextControllers = {};
 
   // Data structures for each ZVE
   // Data structures for each ZVE
@@ -59,7 +60,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   void initState() {
     super.initState();
-    _autocompleteTextController = TextEditingController();
     _isLoading = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchData();
@@ -69,7 +69,10 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    // Do NOT dispose _autocompleteTextController, as it's managed by Autocomplete
+    // Dispose all ZVE text controllers
+    for (final controller in _zveTextControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -205,7 +208,20 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           firstColumns = localFirstColumns;
           secondColumns = localSecondColumns;
           pivotDisziplins = localPivotDisziplins;
-          // Data structures are already initialized in the loop above
+          
+          // Create text controllers for each unique ZVE
+          final uniqueZveIds = fetchedZveData
+              .fold<Map<int, PassDataZVE>>({}, (map, zve) {
+                map[zve.zvVereinId] = zve;
+                return map;
+              })
+              .keys;
+          
+          for (final zveId in uniqueZveIds) {
+            if (!_zveTextControllers.containsKey(zveId)) {
+              _zveTextControllers[zveId] = TextEditingController();
+            }
+          }
         });
       }
     } catch (e) {
@@ -735,7 +751,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   FocusNode focusNode,
                                                   VoidCallback onFieldSubmitted,
                                                 ) {
-                                                  _autocompleteTextController = textEditingController;
                                                   return TextField(
                                                     controller: textEditingController,
                                                     focusNode: focusNode,
@@ -806,7 +821,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                       }
                                                     }
                                                   });
-                                                  _autocompleteTextController.clear();
+                                                  // Clear the specific controller for this ZVE
+                                                  _zveTextControllers[zveId]?.clear();
                                                 },
                                               ),
                                             ),
