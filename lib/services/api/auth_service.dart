@@ -324,7 +324,7 @@ class AuthService {
       if (response is List && response.isNotEmpty) {
         final result = response[0];
         LoggerService.logInfo('We got this response: $result');
-        LoggerService.logInfo("Result type is: $result['RESULTTYPE']");
+        LoggerService.logInfo("Result type is: ${result['RESULTTYPE']}");
         //     if (result['RESULTTYPE'] == 1) {
         // Mark user as verified in PostgreSQL
         await _postgrestService.verifyUser(token);

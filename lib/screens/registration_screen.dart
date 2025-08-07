@@ -255,8 +255,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     try {
       // First find PersonID
-      final personId = await widget.authService
-          .findePersonID(_lastNameController.text, _firstNameController.text, _selectedDate!.toString(), _passNumberController.text, _zipCodeController.text);
+      final personId = await widget.authService.findePersonID(
+          _lastNameController.text,
+          _firstNameController.text,
+          _selectedDate!.toString(),
+          _passNumberController.text,
+          _zipCodeController.text);
 
       if (personId == '0') {
         setState(() {
@@ -332,15 +336,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         zipCode: _zipCodeController.text,
         personId: personId,
       );
-      
+
       setState(() {
         _isRegistering = false;
       });
-      
+
       if (!mounted) return;
-      
+
       // Check if registration was successful
-      if (result['RESULTTYPE'] == 1) {
+      if (result['ResultType'] == 1) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => const RegistrationSuccessScreen(
