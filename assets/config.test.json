@@ -11,7 +11,7 @@
   "postgrestPath": "",
   "webProtocol": "https",
   "webServer": "meintest.bssb.de",
-  "webPort": "",
+  "webPort": "443",
   "webPath": "",
   "oktoberFestBaseServer": "webintern.bssb.bayern",
   "oktoberFestBasePath": "rest/zmi/api7",

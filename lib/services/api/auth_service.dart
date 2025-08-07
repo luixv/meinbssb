@@ -449,6 +449,7 @@ class AuthService {
       if (response is List && response.isNotEmpty) {
         final personId = response[0]['PERSONID'];
         if (personId != null && personId != 0) {
+          LoggerService.logInfo('Found person id: $personId');
           return personId.toString();
         }
       }
