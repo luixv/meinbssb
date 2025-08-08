@@ -404,8 +404,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             if (_zweitmitgliedschaften.isNotEmpty) ...[
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: UIConstants.spacingM,
-                                    bottom: UIConstants.spacingS,),
+                                  top: UIConstants.spacingM,
+                                  bottom: UIConstants.spacingS,
+                                ),
                                 child: ScaledText(
                                   'Zweitvereine',
                                   style: UIStyles.headerStyle.copyWith(
@@ -417,7 +418,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 final vereinId = fzm.vereinId;
                                 final vereinName = fzm.vereinName;
                                 final pivot = pivotDisziplins[vereinId] ?? {};
-
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -575,6 +575,94 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                    // Autocomplete dropdown for adding new discipline
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Autocomplete<Disziplin>(
+                                        optionsBuilder: (TextEditingValue
+                                            textEditingValue,) {
+                                          if (textEditingValue.text == '') {
+                                            return const Iterable<
+                                                Disziplin>.empty();
+                                          }
+                                          return _disciplines
+                                              .where((Disziplin d) {
+                                            return (d.disziplin
+                                                            ?.toLowerCase() ??
+                                                        '')
+                                                    .contains(textEditingValue
+                                                        .text
+                                                        .toLowerCase(),) ||
+                                                (d.disziplinNr?.toLowerCase() ??
+                                                        '')
+                                                    .contains(textEditingValue
+                                                        .text
+                                                        .toLowerCase(),);
+                                          });
+                                        },
+                                        displayStringForOption: (Disziplin d) =>
+                                            ((d.disziplinNr != null &&
+                                                    d.disziplinNr!.isNotEmpty)
+                                                ? '${d.disziplinNr} - '
+                                                : '') +
+                                            (d.disziplin ?? ''),
+                                        fieldViewBuilder: (context, controller,
+                                            focusNode, onFieldSubmitted,) {
+                                          return TextField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Disziplin hinzufügen',
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          );
+                                        },
+                                        onSelected: (Disziplin selected) {
+                                          final combined = ((selected.disziplinNr ??
+                                                      '') +
+                                                  (selected.disziplinNr !=
+                                                              null &&
+                                                          selected.disziplinNr!
+                                                              .isNotEmpty &&
+                                                          (selected.disziplin
+                                                                  ?.isNotEmpty ??
+                                                              false)
+                                                      ? ' - '
+                                                      : '') +
+                                                  (selected.disziplin ?? ''))
+                                              .trim();
+                                          setState(() {
+                                            // Add to secondColumns for this vereinId
+                                            final updatedSecondColumns = Map<
+                                                    int,
+                                                    Map<String, int?>>.from(
+                                                secondColumns,);
+                                            final updatedPivotDisziplins = Map<
+                                                    int,
+                                                    Map<String, int?>>.from(
+                                                pivotDisziplins,);
+                                            final currentSecond =
+                                                Map<String, int?>.from(
+                                                    updatedSecondColumns[
+                                                            vereinId] ??
+                                                        {},);
+                                            currentSecond[combined] =
+                                                selected.disziplinId;
+                                            updatedSecondColumns[vereinId] =
+                                                currentSecond;
+                                            // Rebuild pivotDisziplins for this vereinId
+                                            updatedPivotDisziplins[vereinId] = {
+                                              ...firstColumns,
+                                              ...currentSecond,
+                                            };
+                                            secondColumns =
+                                                updatedSecondColumns;
+                                            pivotDisziplins =
+                                                updatedPivotDisziplins;
+                                          });
+                                        },
+                                      ),
                                     ),
                                   ],
                                 );
