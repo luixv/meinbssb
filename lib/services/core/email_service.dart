@@ -51,19 +51,12 @@ class EmailService {
     String? htmlBody,
     int? emailId,
   }) async {
-    LoggerService.logInfo('sendEmail called with emailId: $emailId');
-    LoggerService.logInfo('sendEmail called with from: $sender');
-    LoggerService.logInfo('sendEmail called with recipient: $recipient');
-    LoggerService.logInfo('sendEmail called with subject: $subject');
-    LoggerService.logInfo('sendEmail called with htmlBody: $htmlBody');
-
     try {
       final emailUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
         protocolKey: 'webProtocol',
       );
-      LoggerService.logInfo('Sending email via $emailUrl');
       final response = await http.post(
         Uri.parse(emailUrl),
         headers: {
@@ -88,7 +81,6 @@ class EmailService {
         errorMessage =
             'Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})';
       }
-
       LoggerService.logInfo('Email sending failed: $errorMessage');
       return {'ResultType': 0, 'ResultMessage': errorMessage};
     }
@@ -169,7 +161,18 @@ class EmailService {
     try {
       final response = await _httpClient.get('FindeMailadressen/$personId');
       if (response is List) {
-        return response.map((e) => e.toString()).toList();
+        // Parse the response to extract MAILADRESSEN from each object
+        final List<String> emailAddresses = [];
+        for (final item in response) {
+          if (item is Map<String, dynamic> && item['MAILADRESSEN'] != null) {
+            final email = item['MAILADRESSEN'].toString();
+            if (email.isNotEmpty && email != 'null') {
+              emailAddresses.add(email);
+            }
+          }
+        }
+        LoggerService.logInfo('Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses');
+        return emailAddresses;
       }
       return [];
     } catch (e) {
@@ -185,7 +188,9 @@ class EmailService {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
-
+      
+      LoggerService.logInfo('Got these email addresses: $emailAddresses');
+      
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
@@ -197,18 +202,24 @@ class EmailService {
         );
         return;
       }
+      
+      // Send email to the newly registered email
       final emailBody = emailContent.replaceAll('{email}', registeredEmail);
+      LoggerService.logInfo('Sending email to $registeredEmail');
+      LoggerService.logInfo(emailBody);
       await sendEmail(
         sender: fromEmail,
         recipient: registeredEmail,
         subject: subject,
         htmlBody: emailBody,
       );
+      
       // Send notification to each email address
       for (final email in emailAddresses) {
-        if (email.isNotEmpty && email != 'null') {
-          final emailBody = emailContent.replaceAll('{email}', registeredEmail);
-
+        if (email.isNotEmpty && email != 'null' && email != registeredEmail) {
+          final emailBody = emailContent.replaceAll('{email}', email);
+          LoggerService.logInfo('Sending email to $email');
+          LoggerService.logInfo(emailBody);
           await sendEmail(
             sender: fromEmail,
             recipient: email,

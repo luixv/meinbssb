@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -146,8 +147,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         passNumber: personId,
       );
       final result = response[0];
-      if (result['ResultType'] != 1) {
-        _failAndExit(result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
+      if (result['RESULTTYPE'] != 1) {
+        _failAndExit(
+            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
         return;
       }
       setState(() {
@@ -156,8 +158,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const RegistrationSuccessScreen(
-            message: 'Passwort gesetzt! Sie können sich jetzt anmelden.',
+          builder: (_) => RegistrationSuccessScreen(
+            message: result['RESULTMESSAGE'],
             userData: null,
           ),
         ),
@@ -174,7 +176,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     }
     if (!_tokenValid) {
       return Center(
-          child: Text(_error ?? 'Ungültiger Link', style: UIStyles.errorStyle),);
+        child: Text(_error ?? 'Ungültiger Link', style: UIStyles.errorStyle),
+      );
     }
 
     return BaseScreenLayout(
@@ -218,9 +221,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Neues Passwort',
                   suffixIcon: IconButton(
-                    icon: Icon(_showPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,),
+                    icon: Icon(
+                      _showPassword ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () =>
                         setState(() => _showPassword = !_showPassword),
                   ),
@@ -245,7 +248,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       minHeight: 6,
                       backgroundColor: UIConstants.greySubtitleTextColor,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          _strengthColor(_strength),),
+                        _strengthColor(_strength),
+                      ),
                     ),
                   ),
                   const SizedBox(width: UIConstants.spacingS),
@@ -264,7 +268,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   labelText: 'Passwort wiederholen',
                   suffixIcon: IconButton(
                     icon: Icon(
-                        _showConfirm ? Icons.visibility_off : Icons.visibility,),
+                      _showConfirm ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () =>
                         setState(() => _showConfirm = !_showConfirm),
                   ),

@@ -139,6 +139,7 @@ class PostgrestService {
 
   /// Update user verification status
   Future<bool> verifyUser(String? verificationToken) async {
+    LoggerService.logInfo('Verifying user');
     try {
       final response = await _client.patch(
         Uri.parse(
