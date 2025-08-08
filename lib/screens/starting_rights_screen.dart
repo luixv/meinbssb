@@ -117,8 +117,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         }
         return;
       }
-      final fetchedDisciplines = await apiService.fetchDisziplinen();
 
+      final fetchedDisciplines = await apiService.fetchDisziplinen();
       final fetchedPassData = await apiService.fetchPassdaten(personId);
       final fetchedZveData = await apiService.fetchPassdatenZVE(
         passdatenId,
