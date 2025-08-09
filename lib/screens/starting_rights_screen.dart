@@ -31,8 +31,13 @@ class StartingRightsScreen extends StatefulWidget {
 }
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
+  bool _hasUnsavedChanges = false;
+
   void _onSave() {
     // TODO: Implement save logic for starting rights
+    setState(() {
+      _hasUnsavedChanges = false;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Änderungen gespeichert.')),
     );
@@ -235,8 +240,10 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       onLogout: widget.onLogout,
       floatingActionButton: FloatingActionButton(
         heroTag: 'saveFab',
-        onPressed: _onSave,
-        backgroundColor: UIConstants.defaultAppColor,
+        onPressed: _hasUnsavedChanges ? _onSave : null,
+        backgroundColor: _hasUnsavedChanges
+            ? UIConstants.defaultAppColor
+            : UIConstants.disabledBackgroundColor,
         child: const Icon(Icons.save, color: Colors.white),
       ),
       body: Column(
@@ -542,24 +549,21 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     // Remove from secondColumns for this vereinId
                                                     final updatedSecondColumns =
                                                         Map<
-                                                            int,
-                                                            Map<String,
-                                                                int?>>.from(
-                                                      secondColumns,
-                                                    );
+                                                                int,
+                                                                Map<String,
+                                                                    int?>>.from(
+                                                            secondColumns,);
                                                     final updatedPivotDisziplins =
                                                         Map<
-                                                            int,
-                                                            Map<String,
-                                                                int?>>.from(
-                                                      pivotDisziplins,
-                                                    );
-                                                    final currentSecond =
-                                                        Map<String, int?>.from(
-                                                      updatedSecondColumns[
-                                                              vereinId] ??
-                                                          {},
-                                                    );
+                                                                int,
+                                                                Map<String,
+                                                                    int?>>.from(
+                                                            pivotDisziplins,);
+                                                    final currentSecond = Map<
+                                                            String, int?>.from(
+                                                        updatedSecondColumns[
+                                                                vereinId] ??
+                                                            {},);
                                                     currentSecond
                                                         .remove(entry.key);
                                                     updatedSecondColumns[
@@ -577,6 +581,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                         updatedSecondColumns;
                                                     pivotDisziplins =
                                                         updatedPivotDisziplins;
+                                                    _hasUnsavedChanges = true;
                                                   });
                                                 },
                                               ),
@@ -651,18 +656,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           setState(() {
                                             // Add to secondColumns for this vereinId
                                             final updatedSecondColumns = Map<
-                                                int, Map<String, int?>>.from(
-                                              secondColumns,
-                                            );
+                                                    int,
+                                                    Map<String, int?>>.from(
+                                                secondColumns,);
                                             final updatedPivotDisziplins = Map<
-                                                int, Map<String, int?>>.from(
-                                              pivotDisziplins,
-                                            );
+                                                    int,
+                                                    Map<String, int?>>.from(
+                                                pivotDisziplins,);
                                             final currentSecond =
                                                 Map<String, int?>.from(
-                                              updatedSecondColumns[vereinId] ??
-                                                  {},
-                                            );
+                                                    updatedSecondColumns[
+                                                            vereinId] ??
+                                                        {},);
                                             currentSecond[combined] =
                                                 selected.disziplinId;
                                             updatedSecondColumns[vereinId] =
@@ -676,6 +681,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 updatedSecondColumns;
                                             pivotDisziplins =
                                                 updatedPivotDisziplins;
+                                            _hasUnsavedChanges = true;
                                           });
                                         },
                                       ),
