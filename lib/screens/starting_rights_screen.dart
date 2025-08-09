@@ -117,10 +117,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    // Dispose all ZVE text controllers
+    // Dispose all ZVE text controllers and clear the map
     for (final controller in _zveTextControllers.values) {
       controller.dispose();
     }
+    _zveTextControllers.clear();
     super.dispose();
   }
 
@@ -713,7 +714,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     // Autocomplete dropdown for adding new discipline
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          top: UIConstants.spacingS,),
+                                        top: UIConstants.spacingS,
+                                      ),
                                       child: Autocomplete<Disziplin>(
                                         optionsBuilder: (
                                           TextEditingValue textEditingValue,
@@ -832,8 +834,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                               }),
                             ],
                             const SizedBox(
-                                height: UIConstants
-                                    .spacingXXXL,), // Add big space at the bottom
+                              height: UIConstants.spacingXXXL,
+                            ), // Add big space at the bottom
                             // ...bottom part with dropdown menus removed...
                           ],
                         ),
