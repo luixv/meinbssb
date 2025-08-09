@@ -33,8 +33,9 @@ class StartingRightsScreen extends StatefulWidget {
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
   bool _hasUnsavedChanges = false;
 
-  void _onSave() {
+  Future<void> _onSave() async {
     setState(() {
+      _isLoading = true;
       _hasUnsavedChanges = false;
     });
 
@@ -67,9 +68,22 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     };
 
     LoggerService.logInfo('Full JSON: $fullJson');
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final bool success = await apiService.postBSSBAppPassantrag(fullJson);
+
+    setState(() {
+      _isLoading = false;
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Änderungen sind noch nicht gespeichert.')),
+      SnackBar(
+        content: Text(
+          success
+              ? 'Änderungen wurden erfolgreich gespeichert.'
+              : 'Fehler beim Speichern der Änderungen.',
+        ),
+        backgroundColor: success ? Colors.green : Colors.red,
+      ),
     );
   }
 
@@ -153,7 +167,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       }
 
       final fetchedDisciplines = await apiService.fetchDisziplinen();
-
       final fetchedZveData = await apiService.fetchPassdatenZVE(
         passdatenId,
         personId,
@@ -273,7 +286,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         backgroundColor: _hasUnsavedChanges
             ? UIConstants.defaultAppColor
             : UIConstants.disabledBackgroundColor,
-        child: const Icon(Icons.save, color: Colors.white),
+        child: _isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 3,
+                ),
+              )
+            : const Icon(Icons.save, color: Colors.white),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,6 +828,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 );
                               }),
                             ],
+                            const SizedBox(
+                                height: 120,), // Add big space at the bottom
                             // ...bottom part with dropdown menus removed...
                           ],
                         ),

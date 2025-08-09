@@ -921,5 +921,61 @@ void main() {
         expect(result, isNull);
       });
     });
+
+    group('postBSSBAppPassantrag', () {
+      test(
+          'postBSSBAppPassantrag returns true when API responds with result true',
+          () async {
+        final Map<String, dynamic> testJson = {'foo': 'bar'};
+        when(mockHttpClient.post(
+          'BSSBAppPassantrag',
+          testJson,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),).thenAnswer((_) async => {'result': true});
+
+        final result = await userService.postBSSBAppPassantrag(testJson);
+        expect(result, isTrue);
+      });
+
+      test(
+          'postBSSBAppPassantrag returns false when API responds with result false',
+          () async {
+        final Map<String, dynamic> testJson = {'foo': 'bar'};
+        when(mockHttpClient.post(
+          'BSSBAppPassantrag',
+          testJson,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),).thenAnswer((_) async => {'result': false});
+
+        final result = await userService.postBSSBAppPassantrag(testJson);
+        expect(result, isFalse);
+      });
+
+      test('postBSSBAppPassantrag returns false when API response is not a Map',
+          () async {
+        final Map<String, dynamic> testJson = {'foo': 'bar'};
+        when(mockHttpClient.post(
+          'BSSBAppPassantrag',
+          testJson,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),).thenAnswer((_) async => 'unexpected');
+
+        final result = await userService.postBSSBAppPassantrag(testJson);
+        expect(result, isFalse);
+      });
+
+      test('postBSSBAppPassantrag returns false and logs error on exception',
+          () async {
+        final Map<String, dynamic> testJson = {'foo': 'bar'};
+        when(mockHttpClient.post(
+          'BSSBAppPassantrag',
+          testJson,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),).thenThrow(Exception('API error'));
+
+        final result = await userService.postBSSBAppPassantrag(testJson);
+        expect(result, isFalse);
+      });
+    });
   });
 }

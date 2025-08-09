@@ -147,8 +147,13 @@ class ApiService {
     return _userService.fetchPassdaten(personId);
   }
 
-   Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(int personId) async {
+  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+      int personId,) async {
     return _userService.fetchPassdatenAkzeptierterOderAktiverPass(personId);
+  }
+
+  Future<bool> postBSSBAppPassantrag(Map<String, dynamic> fullJson) async {
+    return _userService.postBSSBAppPassantrag(fullJson);
   }
 
   Future<List<PassDataZVE>> fetchPassdatenZVE(
