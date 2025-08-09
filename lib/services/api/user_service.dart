@@ -447,21 +447,17 @@ class UserService {
     }
   }
 
-  Future<bool> postBSSBAppPassantrag(Contact contact) async {
+  Future<bool> postBSSBAppPassantrag(Map<String, dynamic> fullJson) async {
     try {
       LoggerService.logInfo(
-        'Adding BSSBAppPassantrag for person ID: ${contact.personId}',
+        'Adding BSSBAppPassantrag : $fullJson',
       );
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
       final response = await _httpClient.post(
         'BSSBAppPassantrag',
-        {
-          'PersonID': contact.personId,
-          'KontaktTyp': contact.type,
-          'Kontakt': contact.value,
-        },
+        fullJson,
         overrideBaseUrl: baseUrl,
       );
 

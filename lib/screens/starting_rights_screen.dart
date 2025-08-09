@@ -34,12 +34,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   bool _hasUnsavedChanges = false;
 
   void _onSave() {
-    // TODO: Implement save logic for starting rights
     setState(() {
       _hasUnsavedChanges = false;
     });
-
-    // SAVE CHANGES LOGIC HERE
 
     final List<Map<String, dynamic>> zveList = [];
     secondColumns.forEach((vereinId, secondColumn) {
@@ -156,7 +153,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       }
 
       final fetchedDisciplines = await apiService.fetchDisziplinen();
-      final fetchedPassData = await apiService.fetchPassdaten(personId);
 
       final fetchedZveData = await apiService.fetchPassdatenZVE(
         passdatenId,
@@ -240,7 +236,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
       if (mounted) {
         setState(() {
-          _passData = fetchedPassData;
           _disciplines = fetchedDisciplines;
           _zweitmitgliedschaften = fetchedZweitmitgliedschaften;
           firstColumns = Map<int, Map<String, int?>>.from(localFirstColumns);
