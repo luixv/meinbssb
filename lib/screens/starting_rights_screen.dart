@@ -50,7 +50,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   final Map<int, TextEditingController> _zveTextControllers = {};
 
   // Data structures for each ZVE
-  Map<String, int?> firstColumns = {}; // combined value -> disziplinId
+  Map<int, Map<String, int?>> firstColumns =
+      {}; // combined value -> disziplinId
   Map<int, Map<String, int?>> secondColumns =
       {}; // ZVE ID -> second column data
   Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
@@ -134,11 +135,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       );
 
       // Initialize data structures for each ZVE
-      Map<String, int?> localFirstColumns = {};
+      Map<int, Map<String, int?>> localFirstColumns = {};
 
       // Fill the first column for each ZVE
       if (fetchedZveData.isNotEmpty) {
         for (final zveData in fetchedZveData) {
+          int zvVereinId = zveData.zvVereinId;
           String? disziplinNr = zveData.disziplinNr;
           String? disziplin = zveData.disziplin;
           int? disziplinId = zveData.disziplinId;
@@ -155,7 +157,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                 .trim();
           }
           if (combined.isNotEmpty) {
-            localFirstColumns[combined] = disziplinId;
+            localFirstColumns[zvVereinId] ??= {};
+            localFirstColumns[zvVereinId]![combined] = disziplinId;
           }
         }
       }
@@ -187,7 +190,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
             localSecondColumns[vereinId]![combined] = disziplinId;
             // Calculate localPivotDisziplins as the set union of localFirstColumns and localSecondColumns[vereinId]
             localPivotDisziplins[vereinId] = {
-              ...localFirstColumns,
+              ...localFirstColumns[vereinId] ?? {},
               ...localSecondColumns[vereinId]!,
             };
           }
@@ -201,7 +204,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           _passData = fetchedPassData;
           _disciplines = fetchedDisciplines;
           _zweitmitgliedschaften = fetchedZweitmitgliedschaften;
-          firstColumns = Map<String, int?>.from(localFirstColumns);
+          firstColumns = Map<int, Map<String, int?>>.from(localFirstColumns);
           secondColumns = Map<int, Map<String, int?>>.from(localSecondColumns);
           pivotDisziplins =
               Map<int, Map<String, int?>>.from(localPivotDisziplins);
@@ -490,10 +493,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 padding:
                                                     const EdgeInsets.all(8.0),
                                                 child: Center(
-                                                  child: firstColumns
-                                                          .containsKey(
-                                                    entry.key,
-                                                  )
+                                                  child: firstColumns[vereinId]
+                                                              ?.containsKey(
+                                                            entry.key,
+                                                          ) ==
+                                                          true
                                                       ? const Icon(
                                                           Icons.check,
                                                           color: UIConstants
@@ -538,21 +542,24 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     // Remove from secondColumns for this vereinId
                                                     final updatedSecondColumns =
                                                         Map<
-                                                                int,
-                                                                Map<String,
-                                                                    int?>>.from(
-                                                            secondColumns,);
+                                                            int,
+                                                            Map<String,
+                                                                int?>>.from(
+                                                      secondColumns,
+                                                    );
                                                     final updatedPivotDisziplins =
                                                         Map<
-                                                                int,
-                                                                Map<String,
-                                                                    int?>>.from(
-                                                            pivotDisziplins,);
-                                                    final currentSecond = Map<
-                                                            String, int?>.from(
-                                                        updatedSecondColumns[
-                                                                vereinId] ??
-                                                            {},);
+                                                            int,
+                                                            Map<String,
+                                                                int?>>.from(
+                                                      pivotDisziplins,
+                                                    );
+                                                    final currentSecond =
+                                                        Map<String, int?>.from(
+                                                      updatedSecondColumns[
+                                                              vereinId] ??
+                                                          {},
+                                                    );
                                                     currentSecond
                                                         .remove(entry.key);
                                                     updatedSecondColumns[
@@ -561,7 +568,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     // Rebuild pivotDisziplins for this vereinId
                                                     updatedPivotDisziplins[
                                                         vereinId] = {
-                                                      ...firstColumns,
+                                                      ...firstColumns[
+                                                              vereinId] ??
+                                                          {},
                                                       ...currentSecond,
                                                     };
                                                     secondColumns =
@@ -580,8 +589,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Autocomplete<Disziplin>(
-                                        optionsBuilder: (TextEditingValue
-                                            textEditingValue,) {
+                                        optionsBuilder: (
+                                          TextEditingValue textEditingValue,
+                                        ) {
                                           if (textEditingValue.text == '') {
                                             return const Iterable<
                                                 Disziplin>.empty();
@@ -591,14 +601,16 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                             return (d.disziplin
                                                             ?.toLowerCase() ??
                                                         '')
-                                                    .contains(textEditingValue
-                                                        .text
-                                                        .toLowerCase(),) ||
+                                                    .contains(
+                                                  textEditingValue.text
+                                                      .toLowerCase(),
+                                                ) ||
                                                 (d.disziplinNr?.toLowerCase() ??
                                                         '')
-                                                    .contains(textEditingValue
-                                                        .text
-                                                        .toLowerCase(),);
+                                                    .contains(
+                                                  textEditingValue.text
+                                                      .toLowerCase(),
+                                                );
                                           });
                                         },
                                         displayStringForOption: (Disziplin d) =>
@@ -607,8 +619,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 ? '${d.disziplinNr} - '
                                                 : '') +
                                             (d.disziplin ?? ''),
-                                        fieldViewBuilder: (context, controller,
-                                            focusNode, onFieldSubmitted,) {
+                                        fieldViewBuilder: (
+                                          context,
+                                          controller,
+                                          focusNode,
+                                          onFieldSubmitted,
+                                        ) {
                                           return TextField(
                                             controller: controller,
                                             focusNode: focusNode,
@@ -635,25 +651,25 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           setState(() {
                                             // Add to secondColumns for this vereinId
                                             final updatedSecondColumns = Map<
-                                                    int,
-                                                    Map<String, int?>>.from(
-                                                secondColumns,);
+                                                int, Map<String, int?>>.from(
+                                              secondColumns,
+                                            );
                                             final updatedPivotDisziplins = Map<
-                                                    int,
-                                                    Map<String, int?>>.from(
-                                                pivotDisziplins,);
+                                                int, Map<String, int?>>.from(
+                                              pivotDisziplins,
+                                            );
                                             final currentSecond =
                                                 Map<String, int?>.from(
-                                                    updatedSecondColumns[
-                                                            vereinId] ??
-                                                        {},);
+                                              updatedSecondColumns[vereinId] ??
+                                                  {},
+                                            );
                                             currentSecond[combined] =
                                                 selected.disziplinId;
                                             updatedSecondColumns[vereinId] =
                                                 currentSecond;
                                             // Rebuild pivotDisziplins for this vereinId
                                             updatedPivotDisziplins[vereinId] = {
-                                              ...firstColumns,
+                                              ...firstColumns[vereinId] ?? {},
                                               ...currentSecond,
                                             };
                                             secondColumns =
