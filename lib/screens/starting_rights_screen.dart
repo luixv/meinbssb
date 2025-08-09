@@ -712,7 +712,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     ),
                                     // Autocomplete dropdown for adding new discipline
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
+                                      padding: const EdgeInsets.only(
+                                          top: UIConstants.spacingS,),
                                       child: Autocomplete<Disziplin>(
                                         optionsBuilder: (
                                           TextEditingValue textEditingValue,
@@ -819,8 +820,10 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         _zweitmitgliedschaften.length - 1)
                                       const Padding(
                                         padding: EdgeInsets.only(
-                                          top: 24.0, // more space above
-                                          bottom: 4.0, // less space below
+                                          top: UIConstants
+                                              .spacingL, // more space above
+                                          bottom: UIConstants
+                                              .spacingXS, // less space below
                                         ),
                                         child: Divider(),
                                       ),
@@ -829,7 +832,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                               }),
                             ],
                             const SizedBox(
-                                height: 120,), // Add big space at the bottom
+                                height: UIConstants
+                                    .spacingXXXL,), // Add big space at the bottom
                             // ...bottom part with dropdown menus removed...
                           ],
                         ),
