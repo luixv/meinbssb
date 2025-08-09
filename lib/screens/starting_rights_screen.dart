@@ -41,8 +41,38 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
     // SAVE CHANGES LOGIC HERE
 
+    final List<Map<String, dynamic>> zveList = [];
+    secondColumns.forEach((vereinId, secondColumn) {
+      secondColumn.forEach((key, value) {
+        LoggerService.logInfo(
+          'Saving ZVE: Verein ID: $vereinId, Key: $key, Value: $value',
+        );
+        if (value != null) {
+          zveList.add({
+            'VEREINID': vereinId,
+            'DISZIPLINID': value,
+          });
+        }
+      });
+    });
+
+    // Compose the full JSON object
+    final int? passdatenId = widget.userData?.passdatenId;
+    final int? personId = widget.userData?.personId;
+    final int? erstvereinId = widget.userData?.erstVereinId;
+    final Map<String, dynamic> fullJson = {
+      'PASSDATENID': passdatenId,
+      'ANTRAGSTYP': 3,
+      'PERSONID': personId,
+      'ERSTVEREINID': erstvereinId,
+      'DIGITALERPASS': 1,
+      'ZVEs': zveList,
+    };
+
+    LoggerService.logInfo('Full JSON: $fullJson');
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Änderungen gespeichert.')),
+      const SnackBar(content: Text('Änderungen sind noch nicht gespeichert.')),
     );
   }
 
@@ -127,6 +157,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
       final fetchedDisciplines = await apiService.fetchDisziplinen();
       final fetchedPassData = await apiService.fetchPassdaten(personId);
+
       final fetchedZveData = await apiService.fetchPassdatenZVE(
         passdatenId,
         personId,
@@ -380,6 +411,20 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   ),
                                                   */
                                                   TextSpan(
+                                                    text: '• ',
+                                                    style: UIStyles
+                                                        .subtitleStyle
+                                                        .copyWith(
+                                                      fontSize: (UIStyles
+                                                              .subtitleStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor *
+                                                          1.5),
+                                                      height: 1.0,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
                                                     text: _passData!.vereinName,
                                                     style: UIStyles
                                                         .subtitleStyle
@@ -451,15 +496,45 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 fontSizeProvider,
                                                 child,
                                               ) {
-                                                return ScaledText(
-                                                  vereinName,
-                                                  style: UIStyles.subtitleStyle
-                                                      .copyWith(
-                                                    fontSize: UIStyles
+                                                return RichText(
+                                                  text: TextSpan(
+                                                    style: UIStyles
+                                                        .subtitleStyle
+                                                        .copyWith(
+                                                      fontSize: UIStyles
+                                                              .subtitleStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                    children: [
+                                                      TextSpan(
+                                                        text: '• ',
+                                                        style: UIStyles
                                                             .subtitleStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
+                                                            .copyWith(
+                                                          fontSize: (UIStyles
+                                                                  .subtitleStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor *
+                                                              1.5),
+                                                          height: 1.0,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: vereinName,
+                                                        style: UIStyles
+                                                            .subtitleStyle
+                                                            .copyWith(
+                                                          fontSize: UIStyles
+                                                                  .subtitleStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 );
                                               },
@@ -658,6 +733,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           focusNode,
                                           onFieldSubmitted,
                                         ) {
+                                          // Store the controller for this vereinId
+                                          _zveTextControllers[vereinId] =
+                                              controller;
                                           return TextField(
                                             controller: controller,
                                             focusNode: focusNode,
@@ -711,6 +789,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                 updatedPivotDisziplins;
                                             _hasUnsavedChanges = true;
                                           });
+                                          // Clear the field after selection
+                                          if (_zveTextControllers[vereinId] !=
+                                              null) {
+                                            _zveTextControllers[vereinId]!
+                                                .clear();
+                                          }
                                         },
                                       ),
                                     ),
