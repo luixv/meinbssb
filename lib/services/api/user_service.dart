@@ -231,6 +231,7 @@ class UserService {
       'STRASSE': dataToProcess['STRASSE']?.toString() ?? '',
       'PLZ': dataToProcess['PLZ']?.toString() ?? '',
       'ORT': dataToProcess['ORT']?.toString() ?? '',
+      'ERSTVEREINID': dataToProcess['ERSTVEREINID'] ?? 0,
       'ONLINE': dataToProcess['ONLINE'] as bool? ?? false,
     };
   }
