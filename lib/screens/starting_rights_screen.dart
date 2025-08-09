@@ -38,6 +38,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     setState(() {
       _hasUnsavedChanges = false;
     });
+
+    // SAVE CHANGES LOGIC HERE
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Änderungen gespeichert.')),
     );
@@ -250,7 +253,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: UIConstants.screenPadding,
+            padding:
+                UIConstants.screenPadding.copyWith(top: UIConstants.spacingS),
             child: ScaledText(
               'Schützenausweis',
               style: UIStyles.headerStyle.copyWith(
@@ -319,7 +323,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // ...existing code...
                             ScaledText(
                               UIConstants.clubLabel,
                               style: UIStyles.headerStyle.copyWith(
@@ -342,22 +345,23 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           ) {
                                             return RichText(
                                               text: TextSpan(
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
+                                                style: UIStyles.subtitleStyle
+                                                    .copyWith(
                                                   fontSize: UIStyles
-                                                          .bodyStyle.fontSize! *
+                                                          .subtitleStyle
+                                                          .fontSize! *
                                                       fontSizeProvider
                                                           .scaleFactor,
                                                 ),
                                                 children: <TextSpan>[
+                                                  /*
                                                   TextSpan(
                                                     text: _passData!.passnummer,
-                                                    style: UIStyles.bodyStyle
+                                                    style: UIStyles
+                                                        .subtitleStyle
                                                         .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
                                                       fontSize: UIStyles
-                                                              .bodyStyle
+                                                              .subtitleStyle
                                                               .fontSize! *
                                                           fontSizeProvider
                                                               .scaleFactor,
@@ -365,23 +369,25 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                   ),
                                                   TextSpan(
                                                     text: ' - ',
-                                                    style: UIStyles.bodyStyle
+                                                    style: UIStyles.titleStyle
                                                         .copyWith(
                                                       fontSize: UIStyles
-                                                              .bodyStyle
+                                                              .subtitleStyle
                                                               .fontSize! *
                                                           fontSizeProvider
                                                               .scaleFactor,
                                                     ),
                                                   ),
+                                                  */
                                                   TextSpan(
                                                     text: _passData!.vereinName,
-                                                    style: UIStyles.bodyStyle
+                                                    style: UIStyles
+                                                        .subtitleStyle
                                                         .copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: UIStyles
-                                                              .bodyStyle
+                                                              .subtitleStyle
                                                               .fontSize! *
                                                           fontSizeProvider
                                                               .scaleFactor,
@@ -424,7 +430,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   ),
                                 ),
                               ),
-                              ..._zweitmitgliedschaften.map((fzm) {
+                              ...List.generate(_zweitmitgliedschaften.length,
+                                  (index) {
+                                final fzm = _zweitmitgliedschaften[index];
                                 final vereinId = fzm.vereinId;
                                 final vereinName = fzm.vereinName;
                                 final pivot = pivotDisziplins[vereinId] ?? {};
@@ -436,11 +444,30 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         top: UIConstants.spacingM,
                                         bottom: UIConstants.spacingS,
                                       ),
-                                      child: ScaledText(
-                                        vereinName,
-                                        style: UIStyles.headerStyle.copyWith(
-                                          color: UIConstants.defaultAppColor,
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Consumer<FontSizeProvider>(
+                                              builder: (
+                                                context,
+                                                fontSizeProvider,
+                                                child,
+                                              ) {
+                                                return ScaledText(
+                                                  vereinName,
+                                                  style: UIStyles.subtitleStyle
+                                                      .copyWith(
+                                                    fontSize: UIStyles
+                                                            .subtitleStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Table(
@@ -549,21 +576,24 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     // Remove from secondColumns for this vereinId
                                                     final updatedSecondColumns =
                                                         Map<
-                                                                int,
-                                                                Map<String,
-                                                                    int?>>.from(
-                                                            secondColumns,);
+                                                            int,
+                                                            Map<String,
+                                                                int?>>.from(
+                                                      secondColumns,
+                                                    );
                                                     final updatedPivotDisziplins =
                                                         Map<
-                                                                int,
-                                                                Map<String,
-                                                                    int?>>.from(
-                                                            pivotDisziplins,);
-                                                    final currentSecond = Map<
-                                                            String, int?>.from(
-                                                        updatedSecondColumns[
-                                                                vereinId] ??
-                                                            {},);
+                                                            int,
+                                                            Map<String,
+                                                                int?>>.from(
+                                                      pivotDisziplins,
+                                                    );
+                                                    final currentSecond =
+                                                        Map<String, int?>.from(
+                                                      updatedSecondColumns[
+                                                              vereinId] ??
+                                                          {},
+                                                    );
                                                     currentSecond
                                                         .remove(entry.key);
                                                     updatedSecondColumns[
@@ -656,18 +686,18 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           setState(() {
                                             // Add to secondColumns for this vereinId
                                             final updatedSecondColumns = Map<
-                                                    int,
-                                                    Map<String, int?>>.from(
-                                                secondColumns,);
+                                                int, Map<String, int?>>.from(
+                                              secondColumns,
+                                            );
                                             final updatedPivotDisziplins = Map<
-                                                    int,
-                                                    Map<String, int?>>.from(
-                                                pivotDisziplins,);
+                                                int, Map<String, int?>>.from(
+                                              pivotDisziplins,
+                                            );
                                             final currentSecond =
                                                 Map<String, int?>.from(
-                                                    updatedSecondColumns[
-                                                            vereinId] ??
-                                                        {},);
+                                              updatedSecondColumns[vereinId] ??
+                                                  {},
+                                            );
                                             currentSecond[combined] =
                                                 selected.disziplinId;
                                             updatedSecondColumns[vereinId] =
@@ -686,6 +716,15 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                         },
                                       ),
                                     ),
+                                    if (index <
+                                        _zweitmitgliedschaften.length - 1)
+                                      const Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 24.0, // more space above
+                                          bottom: 4.0, // less space below
+                                        ),
+                                        child: Divider(),
+                                      ),
                                   ],
                                 );
                               }),

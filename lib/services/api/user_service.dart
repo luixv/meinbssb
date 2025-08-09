@@ -446,6 +446,39 @@ class UserService {
     }
   }
 
+  Future<bool> postBSSBAppPassantrag(Contact contact) async {
+    try {
+      LoggerService.logInfo(
+        'Adding BSSBAppPassantrag for person ID: ${contact.personId}',
+      );
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final response = await _httpClient.post(
+        'BSSBAppPassantrag',
+        {
+          'PersonID': contact.personId,
+          'KontaktTyp': contact.type,
+          'Kontakt': contact.value,
+        },
+        overrideBaseUrl: baseUrl,
+      );
+
+      // Check if response is a Map and has a 'result' field
+      if (response is Map<String, dynamic> && response['result'] == true) {
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'addKontakt: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error adding contact: $e');
+      return false;
+    }
+  }
+
   Future<bool> deleteKontakt(Contact contact) async {
     try {
       final response = await _httpClient.put(

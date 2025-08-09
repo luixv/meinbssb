@@ -13,6 +13,8 @@ import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
+import '/screens/styles_screen.dart';
+
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
@@ -233,7 +235,6 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
-            /*
             ListTile(
               leading: const Icon(Icons.style, color: UIStyles.menuIconColor),
               title: const ScaledText(
@@ -254,7 +255,6 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
-            */
             ListTile(
               leading:
                   const Icon(Icons.settings, color: UIStyles.menuIconColor),
