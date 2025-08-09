@@ -384,8 +384,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                     style: UIStyles
                                                         .subtitleStyle
                                                         .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
                                                       fontSize: UIStyles
                                                               .subtitleStyle
                                                               .fontSize! *
