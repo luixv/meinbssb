@@ -447,14 +447,43 @@ class UserService {
     }
   }
 
-  Future<bool> postBSSBAppPassantrag(Map<String, dynamic> fullJson) async {
+  Future<bool> postBSSBAppPassantrag(
+    Map<int, Map<String, int?>> secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+  ) async {
     try {
-      LoggerService.logInfo(
-        'Adding BSSBAppPassantrag : $fullJson',
-      );
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
+      final List<Map<String, dynamic>> zveList = [];
+      secondColumns.forEach((vereinId, secondColumn) {
+        secondColumn.forEach((key, value) {
+          LoggerService.logInfo(
+            'Saving ZVE: Verein ID: $vereinId, Key: $key, Value: $value',
+          );
+          if (value != null) {
+            zveList.add({
+              'VEREINID': vereinId,
+              'DISZIPLINID': value,
+            });
+          }
+        });
+      });
+
+      final Map<String, dynamic> fullJson = {
+        'PASSDATENID': passdatenId,
+        'ANTRAGSTYP': 3,
+        'PERSONID': personId,
+        'ERSTVEREINID': erstVereinId,
+        'DIGITALERPASS': 1,
+        'ZVEs': zveList,
+      };
+
+      LoggerService.logInfo(
+        'Adding BSSBAppPassantrag : $fullJson',
+      );
       final response = await _httpClient.post(
         'BSSBAppPassantrag',
         fullJson,

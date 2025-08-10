@@ -923,57 +923,111 @@ void main() {
     });
 
     group('postBSSBAppPassantrag', () {
-      test(
-          'postBSSBAppPassantrag returns true when API responds with result true',
-          () async {
-        final Map<String, dynamic> testJson = {'foo': 'bar'};
-        when(mockHttpClient.post(
-          'BSSBAppPassantrag',
-          testJson,
-          overrideBaseUrl: anyNamed('overrideBaseUrl'),
-        ),).thenAnswer((_) async => {'result': true});
+      test('returns true when API responds with result true', () async {
+        final secondColumns = {
+          1: {'Disziplin A': 101},
+          2: {'Disziplin B': 202},
+        };
+        const passdatenId = 123;
+        const personId = 456;
+        const erstVereinId = 789;
+        final expectedJson = {
+          'PASSDATENID': passdatenId,
+          'ANTRAGSTYP': 3,
+          'PERSONID': personId,
+          'ERSTVEREINID': erstVereinId,
+          'DIGITALERPASS': 1,
+          'ZVEs': [
+            {'VEREINID': 1, 'DISZIPLINID': 101},
+            {'VEREINID': 2, 'DISZIPLINID': 202},
+          ],
+        };
+        when(
+          mockHttpClient.post(
+            'BSSBAppPassantrag',
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => {'result': true});
 
-        final result = await userService.postBSSBAppPassantrag(testJson);
+        final result = await userService.postBSSBAppPassantrag(
+          secondColumns,
+          passdatenId,
+          personId,
+          erstVereinId,
+        );
+
         expect(result, isTrue);
+        verify(
+          mockHttpClient.post(
+            'BSSBAppPassantrag',
+            argThat(
+              predicate((json) {
+                if (json is! Map<String, dynamic>) return false;
+                return json['PASSDATENID'] == expectedJson['PASSDATENID'] &&
+                    json['PERSONID'] == expectedJson['PERSONID'] &&
+                    json['ERSTVEREINID'] == expectedJson['ERSTVEREINID'] &&
+                    json['DIGITALERPASS'] == 1 &&
+                    (json['ZVEs'] is List &&
+                        (json['ZVEs'] as List).length == 2);
+              }),
+            ),
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).called(1);
       });
 
-      test(
-          'postBSSBAppPassantrag returns false when API responds with result false',
-          () async {
-        final Map<String, dynamic> testJson = {'foo': 'bar'};
-        when(mockHttpClient.post(
-          'BSSBAppPassantrag',
-          testJson,
-          overrideBaseUrl: anyNamed('overrideBaseUrl'),
-        ),).thenAnswer((_) async => {'result': false});
+      test('returns false when API responds with result false', () async {
+        when(
+          mockHttpClient.post(
+            'BSSBAppPassantrag',
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => {'result': false});
 
-        final result = await userService.postBSSBAppPassantrag(testJson);
+        final result = await userService.postBSSBAppPassantrag(
+          {},
+          1,
+          2,
+          3,
+        );
         expect(result, isFalse);
       });
 
-      test('postBSSBAppPassantrag returns false when API response is not a Map',
-          () async {
-        final Map<String, dynamic> testJson = {'foo': 'bar'};
-        when(mockHttpClient.post(
-          'BSSBAppPassantrag',
-          testJson,
-          overrideBaseUrl: anyNamed('overrideBaseUrl'),
-        ),).thenAnswer((_) async => 'unexpected');
+      test('returns false when API response is not a Map', () async {
+        when(
+          mockHttpClient.post(
+            'BSSBAppPassantrag',
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => 'unexpected');
 
-        final result = await userService.postBSSBAppPassantrag(testJson);
+        final result = await userService.postBSSBAppPassantrag(
+          {},
+          1,
+          2,
+          3,
+        );
         expect(result, isFalse);
       });
 
-      test('postBSSBAppPassantrag returns false and logs error on exception',
-          () async {
-        final Map<String, dynamic> testJson = {'foo': 'bar'};
-        when(mockHttpClient.post(
-          'BSSBAppPassantrag',
-          testJson,
-          overrideBaseUrl: anyNamed('overrideBaseUrl'),
-        ),).thenThrow(Exception('API error'));
+      test('returns false on exception', () async {
+        when(
+          mockHttpClient.post(
+            'BSSBAppPassantrag',
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(Exception('API error'));
 
-        final result = await userService.postBSSBAppPassantrag(testJson);
+        final result = await userService.postBSSBAppPassantrag(
+          {},
+          1,
+          2,
+          3,
+        );
         expect(result, isFalse);
       });
     });

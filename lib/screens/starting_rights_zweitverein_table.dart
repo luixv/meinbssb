@@ -98,7 +98,7 @@ class ZweitvereinTable extends StatelessWidget {
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(Icons.check,
-                              color: UIConstants.defaultAppColor)
+                              color: UIConstants.defaultAppColor,)
                           : const SizedBox.shrink(),
                     ),
                   ),
@@ -107,7 +107,7 @@ class ZweitvereinTable extends StatelessWidget {
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(Icons.check,
-                              color: UIConstants.defaultAppColor)
+                              color: UIConstants.defaultAppColor,)
                           : const SizedBox.shrink(),
                     ),
                   ),
@@ -120,7 +120,7 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete,
-                        color: UIConstants.defaultAppColor),
+                        color: UIConstants.defaultAppColor,),
                     onPressed: () => onDelete(entry.key),
                   ),
                 ],
