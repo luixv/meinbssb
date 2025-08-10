@@ -97,7 +97,8 @@ class ZweitvereinTable extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
-                          ? const Icon(Icons.check, color: UIConstants.defaultAppColor)
+                          ? const Icon(Icons.check,
+                              color: UIConstants.defaultAppColor)
                           : const SizedBox.shrink(),
                     ),
                   ),
@@ -105,7 +106,8 @@ class ZweitvereinTable extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
-                          ? const Icon(Icons.check, color: UIConstants.defaultAppColor)
+                          ? const Icon(Icons.check,
+                              color: UIConstants.defaultAppColor)
                           : const SizedBox.shrink(),
                     ),
                   ),
@@ -117,7 +119,8 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete, color: UIConstants.defaultAppColor),
+                    icon: const Icon(Icons.delete,
+                        color: UIConstants.defaultAppColor),
                     onPressed: () => onDelete(entry.key),
                   ),
                 ],
@@ -127,29 +130,44 @@ class ZweitvereinTable extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: UIConstants.spacingS),
-          child: Autocomplete<Disziplin>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              if (textEditingValue.text == '') {
-                return const Iterable<Disziplin>.empty();
-              }
-              return disciplines.where((Disziplin d) {
-                return (d.disziplin?.toLowerCase() ?? '').contains(textEditingValue.text.toLowerCase()) ||
-                    (d.disziplinNr?.toLowerCase() ?? '').contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            displayStringForOption: (Disziplin d) =>
-                ((d.disziplinNr != null && d.disziplinNr!.isNotEmpty) ? '${d.disziplinNr} - ' : '') + (d.disziplin ?? ''),
-            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-              return TextField(
-                controller: controller,
-                focusNode: focusNode,
-                decoration: const InputDecoration(
-                  labelText: 'Disziplin hinzufügen',
-                  border: OutlineInputBorder(),
-                ),
-              );
-            },
-            onSelected: onAdd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Autocomplete<Disziplin>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<Disziplin>.empty();
+                  }
+                  return disciplines.where((Disziplin d) {
+                    return (d.disziplin?.toLowerCase() ?? '')
+                            .contains(textEditingValue.text.toLowerCase()) ||
+                        (d.disziplinNr?.toLowerCase() ?? '')
+                            .contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                displayStringForOption: (Disziplin d) =>
+                    ((d.disziplinNr != null && d.disziplinNr!.isNotEmpty)
+                        ? '${d.disziplinNr} - '
+                        : '') +
+                    (d.disziplin ?? ''),
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                  return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(
+                      labelText: 'Disziplin hinzufügen',
+                      border: OutlineInputBorder(),
+                    ),
+                  );
+                },
+                onSelected: (selected) {
+                  onAdd(selected);
+                  controller.clear();
+                },
+              ),
+              const SizedBox(height: UIConstants.spacingL),
+            ],
           ),
         ),
       ],
