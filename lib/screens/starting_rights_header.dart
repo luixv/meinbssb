@@ -4,8 +4,8 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class StartingRightsHeader extends StatelessWidget {
-  final String seasonString;
   const StartingRightsHeader({super.key, required this.seasonString});
+  final String seasonString;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,8 @@ class StartingRightsHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: UIConstants.screenPadding.copyWith(top: UIConstants.spacingS),
+          padding:
+              UIConstants.screenPadding.copyWith(top: UIConstants.spacingS),
           child: ScaledText(
             'Schützenausweis',
             style: UIStyles.headerStyle.copyWith(
