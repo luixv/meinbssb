@@ -29,7 +29,7 @@ class StartingRightsHeader extends StatelessWidget {
             children: [
               ScaledText(
                 'Startrechte ändern für das Sportjahr ',
-                style: UIStyles.bodyStyle.copyWith(
+                style: UIStyles.subtitleStyle.copyWith(
                   color: UIConstants.greySubtitleTextColor,
                 ),
               ),
