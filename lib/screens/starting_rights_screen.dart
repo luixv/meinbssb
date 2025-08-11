@@ -47,12 +47,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   String get _seasonString {
     final now = DateTime.now();
     int xx, yy;
-    if (now.month < 10) {
+    // Use September 16 as the deadline
+    final deadline = DateTime(now.year, 9, 16);
+    if (now.isBefore(deadline)) {
       xx = now.year;
       yy = now.year + 1;
     } else {
-      xx = now.year;
-      yy = now.year + 1;
+      xx = now.year + 1;
+      yy = now.year + 2;
     }
     return ' $xx/$yy';
   }
@@ -643,7 +645,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       ScaledText(
                                         'zusätzlicher physikalischer Ausweis',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w500,),
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                       SizedBox(width: 6),
                                       Tooltip(

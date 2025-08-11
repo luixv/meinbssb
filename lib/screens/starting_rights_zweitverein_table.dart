@@ -67,7 +67,7 @@ class ZweitvereinTable extends StatelessWidget {
                     horizontal: UIConstants.spacingXS,
                   ),
                   child: ScaledText(
-                    '$xx',
+                    '${(xx - 1) % 100}/${xx % 100}',
                     style: UIStyles.bodyStyle.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -79,7 +79,7 @@ class ZweitvereinTable extends StatelessWidget {
                     horizontal: UIConstants.spacingXS,
                   ),
                   child: ScaledText(
-                    '$yy',
+                    '${xx % 100}/${yy % 100}',
                     style: UIStyles.bodyStyle.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
