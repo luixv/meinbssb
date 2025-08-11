@@ -147,7 +147,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       );
       final result = response[0];
       if (result['ResultType'] != 1) {
-        _failAndExit(result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
+        _failAndExit(
+            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
         return;
       }
       setState(() {
@@ -174,7 +175,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     }
     if (!_tokenValid) {
       return Center(
-          child: Text(_error ?? 'Ungültiger Link', style: UIStyles.errorStyle),);
+        child: Text(_error ?? 'Ungültiger Link', style: UIStyles.errorStyle),
+      );
     }
 
     return BaseScreenLayout(
@@ -183,7 +185,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       isLoggedIn: false,
       onLogout: () {},
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        padding: UIConstants.screenPadding,
         child: Form(
           key: _formKey,
           child: Column(
@@ -218,9 +220,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Neues Passwort',
                   suffixIcon: IconButton(
-                    icon: Icon(_showPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,),
+                    icon: Icon(
+                      _showPassword ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () =>
                         setState(() => _showPassword = !_showPassword),
                   ),
@@ -230,8 +232,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 onChanged: _checkStrength,
               ),
               const Padding(
-                padding:
-                    EdgeInsets.only(top: 4.0, bottom: UIConstants.spacingS),
+                padding: EdgeInsets.only(
+                    top: UIConstants.spacingXS, bottom: UIConstants.spacingS),
                 child: ScaledText(
                   'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
                   style: UIStyles.formLabelStyle,
@@ -245,7 +247,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       minHeight: 6,
                       backgroundColor: UIConstants.greySubtitleTextColor,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          _strengthColor(_strength),),
+                        _strengthColor(_strength),
+                      ),
                     ),
                   ),
                   const SizedBox(width: UIConstants.spacingS),
@@ -264,7 +267,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   labelText: 'Passwort wiederholen',
                   suffixIcon: IconButton(
                     icon: Icon(
-                        _showConfirm ? Icons.visibility_off : Icons.visibility,),
+                      _showConfirm ? Icons.visibility_off : Icons.visibility,
+                    ),
                     onPressed: () =>
                         setState(() => _showConfirm = !_showConfirm),
                   ),

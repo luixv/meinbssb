@@ -187,7 +187,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
                                               .textTheme
                                               .bodyMedium
                                               ?.fontSize ??
-                                          16.0) *
+                                          UIConstants.spacingM) *
                                       fontSizeProvider.scaleFactor,
                                 ),
                               ),

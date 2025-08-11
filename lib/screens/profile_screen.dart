@@ -32,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
       onLogout: onLogout,
       automaticallyImplyLeading: true,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+        padding: UIConstants.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
