@@ -293,11 +293,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
               backgroundColor: UIConstants.defaultAppColor,
               child: _isLoading
                   ? const SizedBox(
-                      width: 24,
-                      height: 24,
+                      width: UIConstants.fabIconSize,
+                      height: UIConstants.fabIconSize,
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        strokeWidth: 3,
+                        strokeWidth: UIConstants.defaultStrokeWidth,
                       ),
                     )
                   : const Icon(Icons.save, color: Colors.white),
@@ -567,7 +567,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             const SizedBox(
                               height: UIConstants.spacingXXXL,
                             ), // Add big space at the bottom
-                            // ...bottom part with dropdown menus removed...
                           ],
                         ),
                       ),
