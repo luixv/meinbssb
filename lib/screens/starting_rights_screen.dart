@@ -109,11 +109,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   final Map<int, TextEditingController> _zveTextControllers = {};
 
   // Data structures for each ZVE
-  Map<int, Map<String, int?>> firstColumns =
-      {}; // combined value -> disziplinId
-  Map<int, Map<String, int?>> secondColumns =
-      {}; // ZVE ID -> second column data
-  Map<int, Map<String, int?>> pivotDisziplins = {}; // ZVE ID -> combined data
+  // combined value -> disziplinId
+  Map<int, Map<String, int?>> firstColumns = {};
+  // ZVE ID -> second column data
+  Map<int, Map<String, int?>> secondColumns = {};
+  // ZVE ID -> combined data
+  Map<int, Map<String, int?>> pivotDisziplins = {}; 
 
   @override
   void initState() {
