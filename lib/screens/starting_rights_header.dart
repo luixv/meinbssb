@@ -40,6 +40,15 @@ class StartingRightsHeader extends StatelessWidget {
                   color: UIConstants.greySubtitleTextColor,
                 ),
               ),
+              UIConstants.horizontalSpacingXS,
+              const Tooltip(
+                message: 'Hallo world',
+                child: Icon(
+                  Icons.info_outline,
+                  color: UIConstants.defaultAppColor,
+                  size: UIConstants.defaultIconSize,
+                ),
+              ),
             ],
           ),
         ),
