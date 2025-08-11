@@ -5,7 +5,6 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
-  tls internal
   root * /web
   file_server
   try_files {path} /index.html
@@ -13,8 +12,6 @@ https://meintest.bssb.de {
 
 # Serve PostgREST API (HTTPS) on port 8081 for any host
 :8081 {
-  tls internal
-
   @cors_preflight {
     method OPTIONS
   }
@@ -35,7 +32,6 @@ https://meintest.bssb.de {
   }
 }
 :8080 {
-    tls internal
     reverse_proxy email-service:3001
     header {
       Access-Control-Allow-Origin "*"
