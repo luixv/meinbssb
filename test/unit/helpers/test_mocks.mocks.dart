@@ -364,6 +364,40 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
           ),
         )),
       ) as _i5.Future<String>);
+
+  @override
+  _i5.Future<String> findePersonID(
+    String? lastName,
+    String? firstName,
+    String? birthDate,
+    String? passNumber,
+    String? zipCode,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #findePersonID,
+          [
+            lastName,
+            firstName,
+            birthDate,
+            passNumber,
+            zipCode,
+          ],
+        ),
+        returnValue: _i5.Future<String>.value(_i10.dummyValue<String>(
+          this,
+          Invocation.method(
+            #findePersonID,
+            [
+              lastName,
+              firstName,
+              birthDate,
+              passNumber,
+              zipCode,
+            ],
+          ),
+        )),
+      ) as _i5.Future<String>);
 }
 
 /// A class which mocks [ApiService].
