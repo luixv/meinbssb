@@ -52,9 +52,11 @@ class ZweitvereinTable extends StatelessWidget {
             0: IntrinsicColumnWidth(),
             1: IntrinsicColumnWidth(),
             2: FlexColumnWidth(),
+            3: FixedColumnWidth(32),
           },
           border: TableBorder.all(
             color: UIConstants.cookiesDialogColor,
+            width: 4.0,
           ),
           children: [
             TableRow(
@@ -139,12 +141,15 @@ class ZweitvereinTable extends StatelessWidget {
                       style: UIStyles.bodyStyle,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: UIConstants.defaultAppColor,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: UIConstants.defaultAppColor,
+                      ),
+                      onPressed: () => onDelete(entry.key),
                     ),
-                    onPressed: () => onDelete(entry.key),
                   ),
                 ],
               ),
@@ -182,8 +187,8 @@ class ZweitvereinTable extends StatelessWidget {
                       autocompleteController = controller;
                       return LayoutBuilder(
                         builder: (context, constraints) {
-                          // Reserve space for the delete icon (approx 48px)
-                          const deleteIconWidth = 48.0;
+                          // Reserve space for the delete icon (approx 12px)
+                          const deleteIconWidth = 12.0;
                           return SizedBox(
                             height: 32,
                             width: constraints.maxWidth - deleteIconWidth,
