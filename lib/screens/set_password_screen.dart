@@ -148,7 +148,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       final result = response[0];
       if (result['ResultType'] != 1) {
         _failAndExit(
-            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
+            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos',);
         return;
       }
       setState(() {
@@ -233,7 +233,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               ),
               const Padding(
                 padding: EdgeInsets.only(
-                    top: UIConstants.spacingXS, bottom: UIConstants.spacingS),
+                    top: UIConstants.spacingXS, bottom: UIConstants.spacingS,),
                 child: ScaledText(
                   'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
                   style: UIStyles.formLabelStyle,
