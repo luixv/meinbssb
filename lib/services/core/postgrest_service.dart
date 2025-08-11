@@ -291,10 +291,10 @@ class PostgrestService {
 
   /// Get the latest password reset entry for a person_id
   Future<Map<String, dynamic>?> getLatestPasswordResetForPerson(
-      String personId) async {
+      String personId,) async {
     try {
       final uri = Uri.parse(
-          '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1');
+          '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',);
       final response = await _client.get(uri, headers: _headers);
       if (response.statusCode == 200) {
         final List<dynamic> entries = jsonDecode(response.body);
@@ -307,7 +307,7 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError(
-          'Error getting latest password reset by person: $e');
+          'Error getting latest password reset by person: $e',);
       return null;
     }
   }
