@@ -88,7 +88,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
               ? 'Änderungen wurden erfolgreich gespeichert.'
               : 'Fehler beim Speichern der Änderungen.',
         ),
-        backgroundColor: success ? Colors.green : Colors.red,
+        backgroundColor:
+            success ? UIConstants.successColor : UIConstants.errorColor,
       ),
     );
   }
@@ -296,11 +297,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       width: UIConstants.fabIconSize,
                       height: UIConstants.fabIconSize,
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.whiteColor,),
                         strokeWidth: UIConstants.defaultStrokeWidth,
                       ),
                     )
-                  : const Icon(Icons.save, color: Colors.white),
+                  : const Icon(Icons.save, color: UIConstants.whiteColor),
             )
           : null,
       body: Column(

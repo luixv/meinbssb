@@ -53,7 +53,7 @@ class ZweitvereinTable extends StatelessWidget {
             2: FlexColumnWidth(),
           },
           border: TableBorder.all(
-            color: Colors.transparent,
+            color: UIConstants.cookiesDialogColor,
           ),
           children: [
             TableRow(
