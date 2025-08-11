@@ -349,7 +349,7 @@ class AppDrawer extends StatelessWidget {
               leading:
                   const Icon(Icons.lock_reset, color: UIStyles.menuIconColor),
               title: const ScaledText(
-                'Passwort zurücksetzen NEW',
+                'Passwort zurücksetzen',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {
