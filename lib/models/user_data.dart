@@ -27,6 +27,7 @@ class UserData {
       webLoginId: (json['WEBLOGINID'] is int) ? json['WEBLOGINID'] as int : 0,
       isOnline: json['ONLINE'] as bool? ?? false,
       disziplin: json['DISZIPLIN']?.toString(),
+      erstVereinId: json['ERSTVEREINID'] as int? ?? 0,
     );
   }
 

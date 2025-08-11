@@ -390,7 +390,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+            padding: UIConstants.screenPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -5,33 +5,44 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 
 import 'user_service_test.mocks.dart';
 
-@GenerateMocks([HttpClient, CacheService, NetworkService])
+@GenerateMocks([HttpClient, CacheService, NetworkService, ConfigService])
 void main() {
   group('UserService', () {
     late UserService userService;
     late MockHttpClient mockHttpClient;
     late MockCacheService mockCacheService;
     late MockNetworkService mockNetworkService;
+    late MockConfigService mockConfigService;
 
     setUp(() {
       mockHttpClient = MockHttpClient();
       mockCacheService = MockCacheService();
       mockNetworkService = MockNetworkService();
+      mockConfigService = MockConfigService();
 
       when(mockNetworkService.getCacheExpirationDuration()).thenReturn(
         const Duration(days: 7),
       );
 
+      when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('localhost');
+      when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('');
+
       userService = UserService(
         httpClient: mockHttpClient,
         cacheService: mockCacheService,
         networkService: mockNetworkService,
+        configService: mockConfigService,
       );
     });
 
@@ -288,13 +299,7 @@ void main() {
             'ERSAETZENDURCHID': 0,
             'ZVMITGLIEDSCHAFTID': 510039,
             'VEREINNAME': 'SV Alpenrose Grimolzhausen',
-            'DISZIPLIN': [
-              {
-                'DISZIPLINID': 94,
-                'DISZIPLINNR': 'R.1',
-                'DISZIPLIN': 'RWK Luftpistole',
-              }
-            ],
+            'DISZIPLIN': 'RWK Luftpistole',
             'DISZIPLINID': 94,
           }
         ];
@@ -335,9 +340,7 @@ void main() {
         expect(result[0].ersaetzendurchId, 0);
         expect(result[0].zvMitgliedschaftId, 510039);
         expect(result[0].vereinName, 'SV Alpenrose Grimolzhausen');
-        expect(result[0].disziplin.length, 1);
-        expect(result[0].disziplin[0].disziplin, 'RWK Luftpistole');
-        expect(result[0].disziplin[0].disziplinNr, 'R.1');
+        expect(result[0].disziplin, 'RWK Luftpistole');
         expect(result[0].disziplinId, 94);
       });
 
@@ -848,6 +851,164 @@ void main() {
         await userService.clearAllPassdatenCache();
         verify(mockCacheService.clearPattern('passdaten_')).called(1);
       });
+    });
+
+    group('fetchPassdatenAkzeptierterOderAktiverPass', () {
+      const testPersonId = 123;
+      final testResponse = {
+        'PASSDATENID': 1,
+        'PASSSTATUS': 2,
+        'PASSSTATUSTEXT': 'Aktiv',
+        'DIGITALERPASS': 1,
+        'PERSONID': testPersonId,
+        'ERSTVEREINID': 10,
+        'EVVEREINNR': 20,
+        'EVVEREINNAME': 'Testverein',
+        'PASSNUMMER': '987654',
+        'ERSTELLTAM': '2023-01-01T00:00:00.000Z',
+        'ERSTELLTVON': 'admin',
+        'ZVEs': [],
+      };
+
+      test('returns PassdatenAkzeptOrAktiv when response is valid', () async {
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl:
+                anyNamed('overrideBaseUrl'), // Ensure this is correct
+          ),
+        ).thenAnswer((_) async => [testResponse]);
+
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isA<PassdatenAkzeptOrAktiv>());
+        expect(result!.passdatenId, 1);
+        expect(result.passStatus, 2);
+        expect(result.passStatusText, 'Aktiv');
+        expect(result.digitalerPass, 1);
+        expect(result.personId, testPersonId);
+        expect(result.evVereinName, 'Testverein');
+        expect(result.passNummer, '987654');
+      });
+
+      test('returns null when response is null', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => null);
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
+      });
+
+      test('returns null when response is empty map', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => <String, dynamic>{});
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
+      });
+
+      test('returns null when response is list but empty', () async {
+        when(
+          mockHttpClient
+              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+        ).thenAnswer((_) async => <dynamic>[]);
+        final result = await userService
+            .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
+        expect(result, isNull);
+      });
+    });
+  });
+
+  group('UserService.postBSSBAppPassantrag', () {
+    late UserService userService;
+    late MockHttpClient mockHttpClient;
+    late MockCacheService mockCacheService;
+    late MockNetworkService mockNetworkService;
+    late MockConfigService mockConfigService;
+
+    setUp(() {
+      mockHttpClient = MockHttpClient();
+      mockCacheService = MockCacheService();
+      mockNetworkService = MockNetworkService();
+      mockConfigService = MockConfigService();
+      userService = UserService(
+        httpClient: mockHttpClient,
+        cacheService: mockCacheService,
+        networkService: mockNetworkService,
+        configService: mockConfigService,
+      );
+    });
+
+    test('returns true when API responds with result true', () async {
+      when(mockConfigService.getString(any)).thenReturn('test');
+      when(mockHttpClient.post(any, any,
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
+          .thenAnswer((_) async => {'result': true});
+
+      final result = await userService.postBSSBAppPassantrag(
+        {
+          1: {'Disziplin 1': 10},
+        },
+        123,
+        456,
+        789,
+        1,
+      );
+      expect(result, isTrue);
+    });
+
+    test('returns false when API responds with result false', () async {
+      when(mockConfigService.getString(any)).thenReturn('test');
+      when(mockHttpClient.post(any, any,
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
+          .thenAnswer((_) async => {'result': false});
+
+      final result = await userService.postBSSBAppPassantrag(
+        {
+          1: {'Disziplin 1': 10},
+        },
+        123,
+        456,
+        789,
+        0,
+      );
+      expect(result, isFalse);
+    });
+
+    test('returns false when API returns unexpected response', () async {
+      when(mockConfigService.getString(any)).thenReturn('test');
+      when(mockHttpClient.post(any, any,
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
+          .thenAnswer((_) async => {'unexpected': true});
+
+      final result = await userService.postBSSBAppPassantrag(
+        {},
+        null,
+        null,
+        null,
+        1,
+      );
+      expect(result, isFalse);
+    });
+
+    test('returns false when exception is thrown', () async {
+      when(mockConfigService.getString(any)).thenReturn('test');
+      when(mockHttpClient.post(any, any,
+              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
+          .thenThrow(Exception('API error'));
+
+      final result = await userService.postBSSBAppPassantrag(
+        {},
+        null,
+        null,
+        null,
+        1,
+      );
+      expect(result, isFalse);
     });
   });
 }

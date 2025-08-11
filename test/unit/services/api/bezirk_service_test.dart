@@ -26,15 +26,23 @@ void main() {
     );
     when(mockNetworkService.getCacheExpirationDuration())
         .thenReturn(const Duration(hours: 24));
-    when(mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
-      any,
-      any,
-      any,
-      any,
-    ),).thenAnswer((invocation) async {
-      final fetchData = invocation.positionalArguments[2]
-          as Future<List<Map<String, dynamic>>> Function();
-      return await fetchData();
+    when(
+      mockCacheService.cacheAndRetrieveData<dynamic>(
+        any,
+        any,
+        any,
+        any,
+      ),
+    ).thenAnswer((invocation) async {
+      final fetchData =
+          invocation.positionalArguments[2] as Future<dynamic> Function();
+      final result = await fetchData();
+      if (result is List) {
+        return result
+            .map((item) => Map<String, dynamic>.from(item)..['ONLINE'] = true)
+            .toList();
+      }
+      return <Map<String, dynamic>>[];
     });
   });
 

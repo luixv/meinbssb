@@ -21,8 +21,15 @@ class BezirkService {
   /// Fetches a list of Bezirke (districts/regions).
   /// This method retrieves data from the '/Bezirke' endpoint from the ZMI server.
   Future<List<Bezirk>> fetchBezirke() async {
+    const cacheKey = 'bezirke_all';
+    final cacheDuration = _networkService.getCacheExpirationDuration();
     try {
-      final response = await _httpClient.get('Bezirke');
+      final response = await _cacheService.cacheAndRetrieveData(
+        cacheKey,
+        cacheDuration,
+        () async => await _httpClient.get('Bezirke'),
+        (rawResponse) => rawResponse,
+      );
       final mappedResponse = _mapBezirkeResponse(response);
       return mappedResponse;
     } catch (e) {
@@ -41,7 +48,7 @@ class BezirkService {
                 return Bezirk.fromJson(item);
               }
               LoggerService.logWarning(
-                'Bezirk item is not a Map: ${item.runtimeType}',
+                'Bezirk item is not a Map: ${item.runtimeType}',
               );
               return null;
             } catch (e) {
@@ -118,11 +125,13 @@ class BezirkService {
             // Only keep the fields needed for BezirkSearchTriple
             return response
                 .whereType<Map<String, dynamic>>()
-                .map((item) => {
-                      'BEZIRKID': item['BEZIRKID'],
-                      'BEZIRKNR': item['BEZIRKNR'],
-                      'BEZIRKNAME': item['BEZIRKNAME'],
-                    },)
+                .map(
+                  (item) => {
+                    'BEZIRKID': item['BEZIRKID'],
+                    'BEZIRKNR': item['BEZIRKNR'],
+                    'BEZIRKNAME': item['BEZIRKNAME'],
+                  },
+                )
                 .toList();
           }
           return <Map<String, dynamic>>[];
@@ -131,11 +140,13 @@ class BezirkService {
           if (rawResponse is List) {
             return rawResponse
                 .whereType<Map<String, dynamic>>()
-                .map((item) => {
-                      'BEZIRKID': item['BEZIRKID'],
-                      'BEZIRKNR': item['BEZIRKNR'],
-                      'BEZIRKNAME': item['BEZIRKNAME'],
-                    },)
+                .map(
+                  (item) => {
+                    'BEZIRKID': item['BEZIRKID'],
+                    'BEZIRKNR': item['BEZIRKNR'],
+                    'BEZIRKNAME': item['BEZIRKNAME'],
+                  },
+                )
                 .toList();
           }
           return <Map<String, dynamic>>[];
@@ -147,7 +158,8 @@ class BezirkService {
               return BezirkSearchTriple.fromJson(item);
             } catch (e) {
               LoggerService.logWarning(
-                  'Failed to parse BezirkSearchTriple: $e. Item: $item',);
+                'Failed to parse BezirkSearchTriple: $e. Item: $item',
+              );
               return null;
             }
           })

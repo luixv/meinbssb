@@ -4,6 +4,8 @@ import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/network_service.dart';
 import '/services/core/logger_service.dart';
+import '/services/core/config_service.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
@@ -15,13 +17,49 @@ class UserService {
     required HttpClient httpClient,
     required CacheService cacheService,
     required NetworkService networkService,
+    required ConfigService configService,
   })  : _httpClient = httpClient,
         _cacheService = cacheService,
-        _networkService = networkService;
+        _networkService = networkService,
+        _configService = configService;
+
+  /// Fetches the accepted or active pass data for a given personId (int).
+  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+    int personId,
+  ) async {
+    try {
+      String personIdStr = personId.toString();
+
+      String endpoint = 'PassdatenAkzeptierterOderAktiverPass/$personIdStr';
+
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+
+      if (response == null || (response is Map && response.isEmpty)) {
+        return null;
+      }
+      // If response is a list, take the first element
+      final data =
+          response is List && response.isNotEmpty ? response.first : response;
+      if (data is Map<String, dynamic>) {
+        return PassdatenAkzeptOrAktiv.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logError(
+        'Error fetching PassdatenAkzeptierterOderAktiverPass: $e',
+      );
+      return null;
+    }
+  }
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
   final NetworkService _networkService;
+  final ConfigService _configService;
 
   // In-memory cache to prevent multiple simultaneous calls
   final Map<int, Future<UserData?>> _pendingRequests = {};
@@ -193,6 +231,7 @@ class UserService {
       'STRASSE': dataToProcess['STRASSE']?.toString() ?? '',
       'PLZ': dataToProcess['PLZ']?.toString() ?? '',
       'ORT': dataToProcess['ORT']?.toString() ?? '',
+      'ERSTVEREINID': dataToProcess['ERSTVEREINID'] ?? 0,
       'ONLINE': dataToProcess['ONLINE'] as bool? ?? false,
     };
   }
@@ -392,6 +431,67 @@ class UserService {
       );
 
       LoggerService.logInfo('addKontakt API response: $response');
+
+      // Check if response is a Map and has a 'result' field
+      if (response is Map<String, dynamic> && response['result'] == true) {
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'addKontakt: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error adding contact: $e');
+      return false;
+    }
+  }
+
+  Future<bool> postBSSBAppPassantrag(
+    Map<int, Map<String, int?>> secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int digitalerPass,
+  ) async {
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final List<Map<String, dynamic>> zveList = [];
+      secondColumns.forEach((vereinId, secondColumn) {
+        secondColumn.forEach((key, value) {
+          LoggerService.logInfo(
+            'Saving ZVE: Verein ID: $vereinId, Key: $key, Value: $value',
+          );
+          if (value != null) {
+            zveList.add({
+              'VEREINID': vereinId,
+              'DISZIPLINID': value,
+            });
+          }
+        });
+      });
+
+// Digitalerpass 1/0.
+
+      final Map<String, dynamic> fullJson = {
+        'PASSDATENID': passdatenId,
+        'ANTRAGSTYP': 3,
+        'PERSONID': personId,
+        'ERSTVEREINID': erstVereinId,
+        'DIGITALERPASS': digitalerPass,
+        'ZVEs': zveList,
+      };
+
+      LoggerService.logInfo(
+        'Adding BSSBAppPassantrag : $fullJson',
+      );
+      final response = await _httpClient.post(
+        'BSSBAppPassantrag',
+        fullJson,
+        overrideBaseUrl: baseUrl,
+      );
 
       // Check if response is a Map and has a 'result' field
       if (response is Map<String, dynamic> && response['result'] == true) {

@@ -299,6 +299,7 @@ class DummyUserService extends UserService {
           httpClient: DummyHttpClient(),
           cacheService: DummyCacheService(),
           networkService: DummyNetworkService(),
+          configService: ConfigService.instance,
         );
 }
 

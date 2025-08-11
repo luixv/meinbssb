@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
-import 'package:meinbssb/models/disziplin.dart';
 
 void main() {
   group('PassDataZVE', () {
@@ -16,13 +15,7 @@ void main() {
         'ERSAETZENDURCHID': 0,
         'ZVMITGLIEDSCHAFTID': 510039,
         'VEREINNAME': 'SV Alpenrose Grimolzhausen',
-        'DISZIPLIN': [
-          {
-            'DISZIPLINID': 94,
-            'DISZIPLINNR': 'R.1',
-            'DISZIPLIN': 'RWK Luftpistole',
-          }
-        ],
+        'DISZIPLIN': 'RWK Luftpistole',
         'DISZIPLINID': 94,
       };
 
@@ -39,10 +32,7 @@ void main() {
       expect(passDataZVE.zvMitgliedschaftId, equals(510039));
       expect(passDataZVE.vereinName, equals('SV Alpenrose Grimolzhausen'));
       expect(passDataZVE.disziplinId, equals(94));
-      expect(passDataZVE.disziplin.length, equals(1));
-      expect(passDataZVE.disziplin[0].disziplinId, equals(94));
-      expect(passDataZVE.disziplin[0].disziplinNr, equals('R.1'));
-      expect(passDataZVE.disziplin[0].disziplin, equals('RWK Luftpistole'));
+      expect(passDataZVE.disziplin, equals('RWK Luftpistole'));
     });
 
     test('converts PassDataZVE to JSON', () {
@@ -57,13 +47,7 @@ void main() {
         ersaetzendurchId: 0,
         zvMitgliedschaftId: 510039,
         vereinName: 'SV Alpenrose Grimolzhausen',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 94,
-            disziplinNr: 'R.1',
-            disziplin: 'RWK Luftpistole',
-          ),
-        ],
+        disziplin: 'RWK Luftpistole',
         disziplinId: 94,
       );
 
@@ -80,10 +64,7 @@ void main() {
       expect(json['ZVMITGLIEDSCHAFTID'], equals(510039));
       expect(json['VEREINNAME'], equals('SV Alpenrose Grimolzhausen'));
       expect(json['DISZIPLINID'], equals(94));
-      expect(json['DISZIPLIN'].length, equals(1));
-      expect(json['DISZIPLIN'][0]['DISZIPLINID'], equals(94));
-      expect(json['DISZIPLIN'][0]['DISZIPLINNR'], equals('R.1'));
-      expect(json['DISZIPLIN'][0]['DISZIPLIN'], equals('RWK Luftpistole'));
+      expect(json['DISZIPLIN'], equals('RWK Luftpistole'));
     });
 
     test('equality operator works correctly', () {
@@ -98,14 +79,8 @@ void main() {
         ersaetzendurchId: 0,
         zvMitgliedschaftId: 510039,
         vereinName: 'SV Alpenrose Grimolzhausen',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 94,
-            disziplinNr: 'R.1',
-            disziplin: 'RWK Luftpistole',
-          ),
-        ],
         disziplinId: 94,
+        disziplin: 'RWK Luftpistole',
       );
 
       final passDataZVE2 = PassDataZVE(
@@ -119,13 +94,7 @@ void main() {
         ersaetzendurchId: 0,
         zvMitgliedschaftId: 510039,
         vereinName: 'SV Alpenrose Grimolzhausen',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 94,
-            disziplinNr: 'R.1',
-            disziplin: 'RWK Luftpistole',
-          ),
-        ],
+        disziplin: 'RWK Luftpistole',
         disziplinId: 94,
       );
 
@@ -140,13 +109,7 @@ void main() {
         ersaetzendurchId: 1,
         zvMitgliedschaftId: 510040,
         vereinName: 'Different Club',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 95,
-            disziplinNr: 'R.2',
-            disziplin: 'Different Discipline',
-          ),
-        ],
+        disziplin: 'Different Discipline',
         disziplinId: 95,
       );
 
@@ -166,13 +129,7 @@ void main() {
         ersaetzendurchId: 0,
         zvMitgliedschaftId: 510039,
         vereinName: 'SV Alpenrose Grimolzhausen',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 94,
-            disziplinNr: 'R.1',
-            disziplin: 'RWK Luftpistole',
-          ),
-        ],
+        disziplin: 'RWK Luftpistole',
         disziplinId: 94,
       );
 
@@ -187,13 +144,7 @@ void main() {
         ersaetzendurchId: 0,
         zvMitgliedschaftId: 510039,
         vereinName: 'SV Alpenrose Grimolzhausen',
-        disziplin: [
-          const Disziplin(
-            disziplinId: 94,
-            disziplinNr: 'R.1',
-            disziplin: 'RWK Luftpistole',
-          ),
-        ],
+        disziplin: 'RWK Luftpistole',
         disziplinId: 94,
       );
 
@@ -212,14 +163,14 @@ void main() {
         'ERSAETZENDURCHID': 0,
         'ZVMITGLIEDSCHAFTID': 510039,
         'VEREINNAME': null,
-        'DISZIPLIN': [],
+        'DISZIPLIN': null,
         'DISZIPLINID': 94,
       };
 
       final passDataZVE = PassDataZVE.fromJson(json);
 
       expect(passDataZVE.vereinName, isNull);
-      expect(passDataZVE.disziplin, isEmpty);
+      expect(passDataZVE.disziplin, isNull);
     });
   });
 }

@@ -16,6 +16,7 @@ import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
 import 'package:meinbssb/models/pass_data_zve.dart';
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
 import 'package:meinbssb/models/contact.dart';
@@ -144,6 +145,28 @@ class ApiService {
   // User Service
   Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
+  }
+
+  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+    int personId,
+  ) async {
+    return _userService.fetchPassdatenAkzeptierterOderAktiverPass(personId);
+  }
+
+  Future<bool> postBSSBAppPassantrag(
+    Map<int, Map<String, int?>> secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int digitalerPass,
+  ) async {
+    return _userService.postBSSBAppPassantrag(
+      secondColumns,
+      passdatenId,
+      personId,
+      erstVereinId,
+      digitalerPass,
+    );
   }
 
   Future<List<PassDataZVE>> fetchPassdatenZVE(
