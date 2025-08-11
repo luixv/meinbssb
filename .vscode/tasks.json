@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Delete redundant test file",
+			"type": "shell",
+			"command": "del \"c:\\projekte\\BSSB\\meinbssb\\test\\unit\\services\\api\\user_service_postBSSBAppPassantrag_test.dart\""
+		},
+		{
+			"label": "Delete redundant test file",
+			"type": "shell",
+			"command": "del \"C:\\projekte\\BSSB\\meinbssb\\test\\unit\\services\\api\\user_service_postBSSBAppPassantrag_test.dart\""
+		}
+	]
+}
