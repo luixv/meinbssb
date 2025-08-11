@@ -881,7 +881,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal: 24.0,
+                                                          horizontal:
+                                                              UIConstants
+                                                                  .spacingL,
                                                         ),
                                                         child: Text(
                                                           (t.bezeichnung
@@ -1389,7 +1391,7 @@ class _LoginDialogState extends State<LoginDialog> {
       ),
       content: Padding(
         padding: UIConstants.dialogPadding
-            .copyWith(bottom: 8.0), // Reduced bottom padding
+            .copyWith(bottom: UIConstants.spacingS), // Reduced bottom padding
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

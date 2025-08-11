@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -149,7 +148,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       final result = response[0];
       if (result['RESULTTYPE'] != 1) {
         _failAndExit(
-            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
+            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos',);
         return;
       }
       setState(() {
