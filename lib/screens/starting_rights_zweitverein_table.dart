@@ -60,7 +60,7 @@ class ZweitvereinTable extends StatelessWidget {
             TableRow(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(UIConstants.spacingS),
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                   child: ScaledText(
                     '$xx',
                     style: UIStyles.bodyStyle.copyWith(
@@ -69,7 +69,7 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(UIConstants.spacingS),
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                   child: ScaledText(
                     '$yy',
                     style: UIStyles.bodyStyle.copyWith(
@@ -78,7 +78,7 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(UIConstants.spacingS),
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                   child: ScaledText(
                     'Disziplin',
                     style: UIStyles.bodyStyle.copyWith(
@@ -93,7 +93,7 @@ class ZweitvereinTable extends StatelessWidget {
               (entry) => TableRow(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(UIConstants.spacingS),
+                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
@@ -104,7 +104,7 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(UIConstants.spacingS),
+                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
@@ -115,7 +115,7 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(UIConstants.spacingS),
+                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
                     child: ScaledText(
                       entry.key,
                       style: UIStyles.bodyStyle,
