@@ -59,7 +59,7 @@ class ZweitvereinTable extends StatelessWidget {
             TableRow(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(UIConstants.spacingS),
                   child: ScaledText(
                     '$xx',
                     style: UIStyles.bodyStyle.copyWith(
@@ -68,7 +68,7 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(UIConstants.spacingS),
                   child: ScaledText(
                     '$yy',
                     style: UIStyles.bodyStyle.copyWith(
@@ -77,7 +77,7 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(UIConstants.spacingS),
                   child: ScaledText(
                     'Disziplin',
                     style: UIStyles.bodyStyle.copyWith(
@@ -92,7 +92,7 @@ class ZweitvereinTable extends StatelessWidget {
               (entry) => TableRow(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(UIConstants.spacingS),
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
@@ -103,7 +103,7 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(UIConstants.spacingS),
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
@@ -114,7 +114,7 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(UIConstants.spacingS),
                     child: ScaledText(
                       entry.key,
                       style: UIStyles.bodyStyle,
@@ -147,7 +147,8 @@ class ZweitvereinTable extends StatelessWidget {
                       }
                       return disciplines.where((Disziplin d) {
                         return (d.disziplin?.toLowerCase() ?? '').contains(
-                                textEditingValue.text.toLowerCase(),) ||
+                              textEditingValue.text.toLowerCase(),
+                            ) ||
                             (d.disziplinNr?.toLowerCase() ?? '')
                                 .contains(textEditingValue.text.toLowerCase());
                       });
