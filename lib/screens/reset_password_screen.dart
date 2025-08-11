@@ -4,11 +4,11 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/registration_fail_screen.dart';
-import 'package:meinbssb/screens/registration_success_screen.dart';
+import 'package:meinbssb/screens/password_reset_fail_screen.dart';
+import 'package:meinbssb/screens/password_reset_success_screen.dart';
 
-class SetPasswordScreen extends StatefulWidget {
-  const SetPasswordScreen({
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({
     required this.authService,
     required this.token,
     super.key,
@@ -17,10 +17,10 @@ class SetPasswordScreen extends StatefulWidget {
   final String token;
   final AuthService authService;
   @override
-  State<SetPasswordScreen> createState() => _SetPasswordScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _SetPasswordScreenState extends State<SetPasswordScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
@@ -42,7 +42,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => RegistrationFailScreen(
+        builder: (_) => PasswordResetFailScreen(
           message: message,
           userData: null,
         ),
@@ -51,18 +51,18 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   }
 
   Future<void> _checkToken() async {
-    final user = await widget.authService.postgrestService
-        .getUserByVerificationToken(widget.token);
-    if (user != null) {
+    final entry = await widget.authService.postgrestService
+        .getUserByPasswordResetVerificationToken(widget.token);
+    if (entry != null) {
       // Check if already verified
-      if (user['is_verified'] == true) {
-        _failAndExit('Dieser Link wurde bereits verwendet.');
+      if (entry['is_used'] == true) {
+        _failAndExit('Dieser Link wurde bereits verwendet. Bitte versuchen Sie erneut.');
         return;
       }
       // Check if verified_at is older than 24 hours
-      if (user['created_at'] != null &&
-          user['created_at'].toString().isNotEmpty) {
-        final verifiedAt = DateTime.tryParse(user['created_at']);
+      if (entry['created_at'] != null &&
+          entry['created_at'].toString().isNotEmpty) {
+        final verifiedAt = DateTime.tryParse(entry['created_at']);
         if (verifiedAt != null &&
             DateTime.now().difference(verifiedAt).inHours > 24) {
           _failAndExit('Der Link ist abgelaufen.');
@@ -120,52 +120,34 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     }
     setState(() => _loading = true);
 
-    // Get user data from database
-    final user = await widget.authService.postgrestService
-        .getUserByVerificationToken(widget.token);
-    if (user == null) {
-      _failAndExit('Benutzer nicht gefunden.');
-      return;
-    }
-
-    // Create MyBSSB account
-    final personId = user['person_id'];
-    final email = user['email'];
-
-    if (personId == null || email == null) {
-      _failAndExit('Ungültige Benutzerdaten.');
-      return;
-    }
-
     try {
-      final response = await widget.authService.finalizeRegistration(
-        email: email,
-        password: _passwordController.text,
-        token: widget.token,
-        personId: personId,
-        passNumber: personId,
+      // Call the password reset method from AuthService
+      final result = await widget.authService.resetPasswordStep2(
+        widget.token,
+        _passwordController.text,
       );
-      final result = response[0];
-      if (result['RESULTTYPE'] != 1) {
-        _failAndExit(
-          result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos',
-        );
-        return;
-      }
-      setState(() {
-        _loading = false;
-      });
+
+      setState(() => _loading = false);
+
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => RegistrationSuccessScreen(
-            message: result['RESULTMESSAGE'],
-            userData: null,
+
+      if (result['success'] == true) {
+        // Success case
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const PasswordResetSuccessScreen(
+              message: 'Passwort wurde erfolgreich zurückgesetzt.',
+              userData: null,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        // Failure case
+        _failAndExit('Fehler beim Zurücksetzen des Passworts.');
+      }
     } catch (e) {
-      _failAndExit('Fehler beim Erstellen des Kontos: $e');
+      setState(() => _loading = false);
+      _failAndExit('Fehler beim Zurücksetzen des Passworts: $e');
     }
   }
 
@@ -181,7 +163,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     }
 
     return BaseScreenLayout(
-      title: 'Passwort setzen',
+      title: 'Passwort zurücksetzen',
       userData: null,
       isLoggedIn: false,
       onLogout: () {},
@@ -211,7 +193,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   ),
                 ),
               const ScaledText(
-                'Bitte vergeben Sie ein sicheres Passwort:',
+                'Bitte vergeben Sie ein neues sicheres Passwort:',
                 style: UIStyles.bodyStyle,
               ),
               const SizedBox(height: UIConstants.spacingS),
@@ -288,10 +270,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.lock_open, color: Colors.white),
+                      Icon(Icons.lock_reset, color: Colors.white),
                       SizedBox(width: UIConstants.spacingS),
                       ScaledText(
-                        'Passwort setzen',
+                        'Passwort zurücksetzen',
                         style: UIStyles.buttonStyle,
                       ),
                     ],

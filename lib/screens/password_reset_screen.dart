@@ -14,6 +14,8 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/screens/password_reset_success_screen.dart';
+import 'package:meinbssb/screens/password_reset_fail_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
@@ -63,25 +65,43 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
     try {
       final response =
-          await widget.authService.passwordReset(_passNumberController.text);
-
-      if (response['ResultType'] == 1) {
-        setState(() {
-          _successMessage = response['ResultMessage'];
-        });
-      } else {
-        setState(() {
-          _errorMessage = response['ResultMessage'];
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = ErrorService.handleNetworkError(e);
-      });
-    } finally {
+          await widget.authService.resetPasswordStep1(_passNumberController.text);
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
+      if (response['ResultType'] == 1) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => PasswordResetSuccessScreen(
+              message: (response['ResultMessage'] ?? '').toString(),
+              userData: widget.userData,
+            ),
+          ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => PasswordResetFailScreen(
+              message: (response['ResultMessage'] ?? '').toString(),
+              userData: widget.userData,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => PasswordResetFailScreen(
+            message: ErrorService.handleNetworkError(e),
+            userData: widget.userData,
+          ),
+        ),
+      );
     }
   }
 
@@ -208,7 +228,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                                       Icon(
                                         Icons.lock_reset,
                                         color: Colors.white,
-                                        size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
+                                        size: UIConstants.iconSizeL *
+                                            fontSizeProvider.scaleFactor,
                                       ),
                                       const SizedBox(
                                         width: UIConstants.spacingS,

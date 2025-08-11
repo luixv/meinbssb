@@ -131,7 +131,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> passwordReset(String passNumber) async {
-    return _authService.passwordReset(passNumber);
+    return _authService.resetPasswordStep1(passNumber);
   }
 
   Future<Map<String, dynamic>> changePassword(

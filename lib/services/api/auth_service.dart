@@ -48,6 +48,13 @@ class AuthService {
 
   TokenService? _tokenService;
 
+  /// Generates a secure verification token for email verification
+  String generateVerificationToken() {
+    final secureRandom = Random.secure();
+    final bytes = List<int>.generate(32, (_) => secureRandom.nextInt(256));
+    return base64Url.encode(bytes);
+  }
+
   Future<Map<String, dynamic>> register({
     required String firstName,
     required String lastName,
@@ -59,9 +66,7 @@ class AuthService {
   }) async {
     try {
       // Generate a secure verification token
-      final secureRandom = Random.secure();
-      final bytes = List<int>.generate(32, (_) => secureRandom.nextInt(256));
-      final verificationToken = base64Url.encode(bytes);
+      final verificationToken = generateVerificationToken();
 
       // Create user in PostgreSQL
       await _postgrestService.createUser(
@@ -75,35 +80,22 @@ class AuthService {
       LoggerService.logInfo(
         'User created...',
       );
-
-      // Send registration email
-      final fromEmail = await _emailService.getFromEmail();
-      final subject = await _emailService.getRegistrationSubject();
-      final emailContent = await _emailService.getRegistrationContent();
-      LoggerService.logInfo(
-        'From email: $fromEmail subject: $subject',
-      );
       final tokenUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'web',
       );
-      if (fromEmail != null && subject != null && emailContent != null) {
-        final verificationLink =
-            '${tokenUrl}set-password?token=$verificationToken';
-        LoggerService.logInfo(
-          'Verification link: $verificationLink',
-        );
-        final emailBody = emailContent
-            .replaceAll('{firstName}', firstName)
-            .replaceAll('{lastName}', lastName)
-            .replaceAll('{verificationLink}', verificationLink);
-        await _emailService.sendEmail(
-          sender: fromEmail,
-          recipient: email,
-          subject: subject,
-          htmlBody: emailBody,
-        );
-      }
+      final verificationLink =
+          '${tokenUrl}set-password?token=$verificationToken';
+      LoggerService.logInfo(
+        'Verification link: $verificationLink',
+      );
+      // Send registration email
+      await _emailService.sendRegistrationEmail(
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        verificationLink: verificationLink,
+      );
       return {
         'ResultType': 1,
         'ResultMessage': Messages.registrationDataStored,
@@ -245,50 +237,6 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> passwordReset(
-    String passNumber,
-  ) async {
-    try {
-      String email = await fetchLoginEmail(passNumber);
-
-      if (email.isEmpty) {
-        // Propagate error: no email found for passNumber
-        return {
-          'ResultType': 99,
-          'ResultMessage': 'Keine Login-Email für diese Passnummer gefunden.',
-          'PersonID': 0,
-          'EmailListe': '',
-          'PasswortNeu': '',
-        };
-      }
-
-      final response =
-          await _httpClient.get('MyBSSBPasswortReset/$passNumber/$email');
-
-      // Propagate all responses, let the screen check ResultType
-      if (response is Map<String, dynamic>) {
-        return response;
-      } else {
-        return {
-          'ResultType': 98,
-          'ResultMessage': 'Ungültige Serverantwort.',
-          'PersonID': 0,
-          'EmailListe': '',
-          'PasswortNeu': '',
-        };
-      }
-    } catch (e) {
-      LoggerService.logError('Password reset error: $e');
-      return {
-        'ResultType': 97,
-        'ResultMessage': 'Fehler beim Zurücksetzen des Passworts: $e',
-        'PersonID': 0,
-        'EmailListe': '',
-        'PasswortNeu': '',
-      };
-    }
-  }
-
   Future<Map<String, dynamic>> changePassword(
     int personId,
     String newPassword,
@@ -424,6 +372,24 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>> getPassDatenByPersonId(String personId) async {
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
+      final endpoint = 'Passdaten/$personId';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        return response[0];
+      }
+      LoggerService.logError('Person ID not found.');
+      return {};
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
+    }
+  }
+
   Future<String> findePersonID(
     String lastName,
     String firstName,
@@ -462,6 +428,179 @@ class AuthService {
     } catch (e) {
       LoggerService.logError('Find Person ID error: $e');
       rethrow;
+    }
+  }
+
+  /// Parses personId from a token string
+  String? _parsePersonIdFromToken(String token) {
+    try {
+      // Look for personId parameter in the token
+      final uri = Uri.parse(token);
+      final personId = uri.queryParameters['personId'];
+      if (personId != null) {
+        return personId;
+      }
+
+      // If not found in query parameters, try to extract from the end after &
+      final parts = token.split('&');
+      if (parts.length > 1) {
+        final lastPart = parts.last;
+        if (lastPart.startsWith('personId=')) {
+          return lastPart.substring('personId='.length);
+        }
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Step 1: Send password reset link to user
+  Future<Map<String, dynamic>> resetPasswordStep1(
+    String passNumber,
+  ) async {
+    try {
+      String personId = await getPersonIDByPassnummer(passNumber);
+      final emailAddresses =
+          await _emailService.getEmailAddressesByPersonId(personId);
+
+      if (emailAddresses.isEmpty) {
+        // Propagate error: no email found for passNumber
+        return {
+          'ResultType': 99,
+          'ResultMessage': 'Keine Emails für diese Passnummer gefunden.',
+          'PersonID': 0,
+          'EmailListe': '',
+          'PasswortNeu': '',
+        };
+      }
+      final passData = await getPassDatenByPersonId(personId);
+
+      // Check latest password reset for this person
+      final latestReset =
+          await _postgrestService.getLatestPasswordResetForPerson(personId);
+      if (latestReset != null && latestReset['created_at'] != null) {
+        final createdAt =
+            DateTime.tryParse(latestReset['created_at'].toString());
+        if (createdAt != null &&
+            DateTime.now().difference(createdAt).inHours < 24) {
+          return {
+            'ResultType': 98,
+            'ResultMessage':
+                'Passwort-Link wurde bereits an Ihre E-Mail gesendet. Bitte prüfen Sie Ihr Postfach.',
+          };
+        }
+      }
+      final verificationToken = generateVerificationToken();
+      final tokenUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'web',
+      );
+      final verificationLink =
+          '${tokenUrl}reset-password?token=$verificationToken&personId=$personId';
+      LoggerService.logInfo(
+        'Verification link: $verificationLink',
+      );
+      await _emailService.sendPasswordResetNotifications(
+        passData,
+        emailAddresses,
+        verificationLink,
+      );
+      LoggerService.logInfo('Verification link is: $verificationLink');
+      // Store password reset entry in PostgREST
+      await _postgrestService.createPasswordResetEntry(
+        personId: personId,
+        verificationToken: verificationToken,
+      );
+      return {
+        'ResultType': 1,
+        'ResultMessage': 'Passwort-Reset-Link wurde gesendet.',
+      };
+    } catch (e) {
+      LoggerService.logError('Password reset error: $e');
+      return {
+        'ResultType': 97,
+        'ResultMessage': 'Fehler beim Zurücksetzen des Passworts: $e',
+        'PersonID': 0,
+        'EmailListe': '',
+        'PasswortNeu': '',
+      };
+    }
+  }
+
+  /// Resets password using the provided token and new password
+  Future<Map<String, dynamic>> resetPasswordStep2(
+    String token,
+    String newPassword,
+  ) async {
+    try {
+      // Step 1: Parse personId and verificationToken from token
+      final personId = _parsePersonIdFromToken(token);
+      final verificationToken = _parseVerificationTokenFromToken(token);
+      if (personId == null) {
+        return {
+          'success': false,
+          'message': 'Ungültiger Token: PersonID nicht gefunden.',
+        };
+      }
+
+      // Step 2: Call the API endpoint
+      final response = await _httpClient.put(
+        'MyBSSBPasswortAendern',
+        {
+          'PersonID': personId,
+          'PasswortNeu': newPassword,
+        },
+      );
+
+      // Step 3: Check response
+      if (response is Map<String, dynamic> &&
+          response.containsKey('result') &&
+          response['result'] == true) {
+        // Success case
+        if (verificationToken != null && verificationToken.isNotEmpty) {
+          await _postgrestService.markPasswordResetEntryUsed(
+            verificationToken: verificationToken,
+          );
+        }
+        return {
+          'success': true,
+          'message': 'Ihr Passwort wurde erfolgreich zurückgesetzt.',
+        };
+      } else {
+        // Empty response or unexpected format
+        return {
+          'success': false,
+          'message':
+              'Fehler beim Zurücksetzen des Passworts: Ungültige Server-Antwort.',
+        };
+      }
+    } catch (e) {
+      LoggerService.logError('Password reset error: $e');
+      return {
+        'success': false,
+        'message': 'Fehler beim Zurücksetzen des Passworts: $e',
+      };
+    }
+  }
+
+  String? _parseVerificationTokenFromToken(String token) {
+    try {
+      final uri = Uri.parse(token);
+      final vt = uri.queryParameters['token'];
+      if (vt != null && vt.isNotEmpty) return vt;
+      if (token.contains('token=')) {
+        final parts = token.split('&');
+        for (final part in parts) {
+          if (part.startsWith('token=')) {
+            return part.substring('token='.length);
+          }
+        }
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 }

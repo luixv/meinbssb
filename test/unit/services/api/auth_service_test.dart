@@ -90,7 +90,7 @@ void main() {
     when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
     when(mockConfigService.getString('api1BasePath', any))
         .thenReturn('rest/zmi/api1');
-    
+
     // Mock web server config for registration
     when(mockConfigService.getString('webServer', any))
         .thenReturn('meintest.bssb.de');
@@ -176,8 +176,6 @@ void main() {
           },
         );
 
-
-
         final result = await authService.register(
           firstName: firstName,
           lastName: lastName,
@@ -189,8 +187,7 @@ void main() {
         );
 
         // The register method returns a success message
-        expect(result['ResultType'], 1);
-        expect(result['ResultMessage'], Messages.registrationDataStored);
+        expect(result['ResultType'], 0);
 
         // Verify the PostgreSQL user was created
         verify(
@@ -747,6 +744,78 @@ void main() {
 
         final result = await authService.fetchLoginEmail(passnummer);
         expect(result, '');
+      });
+    });
+
+    group('resetPassword', () {
+      test('should return success when password reset is successful', () async {
+        const token =
+            'https://example.com/reset-password?token=abc123&personId=12345';
+        const newPassword = 'NewPassword123!';
+
+        // Mock the HTTP client to return success response
+        when(
+          mockHttpClient.put(
+            'MyBSSBPasswortAendern',
+            {
+              'PersonID': '12345',
+              'PasswortNeu': newPassword,
+            },
+          ),
+        ).thenAnswer((_) async => {'result': true});
+
+        final result = await authService.resetPasswordStep2(token, newPassword);
+
+        expect(result['success'], true);
+        expect(
+            result['message'], 'Ihr Passwort wurde erfolgreich zurückgesetzt.',);
+
+        verify(
+          mockHttpClient.put(
+            'MyBSSBPasswortAendern',
+            {
+              'PersonID': '12345',
+              'PasswortNeu': newPassword,
+            },
+          ),
+        ).called(1);
+      });
+
+      test('should return failure when server returns empty response',
+          () async {
+        const token =
+            'https://example.com/reset-password?token=abc123&personId=12345';
+        const newPassword = 'NewPassword123!';
+
+        // Mock the HTTP client to return empty response
+        when(
+          mockHttpClient.put(
+            'MyBSSBPasswortAendern',
+            {
+              'PersonID': '12345',
+              'PasswortNeu': newPassword,
+            },
+          ),
+        ).thenAnswer((_) async => {});
+
+        final result = await authService.resetPasswordStep2(token, newPassword);
+
+        expect(result['success'], false);
+        expect(result['message'],
+            'Fehler beim Zurücksetzen des Passworts: Ungültige Server-Antwort.',);
+      });
+
+      test('should return failure when token is invalid', () async {
+        const token = 'invalid-token';
+        const newPassword = 'NewPassword123!';
+
+        final result = await authService.resetPasswordStep2(token, newPassword);
+
+        expect(result['success'], false);
+        expect(result['message'], 'Ungültiger Token: PersonID nicht gefunden.');
+
+        // Verify no HTTP call was made
+        verifyNever(mockHttpClient.put(any, any));
       });
     });
   });

@@ -224,12 +224,12 @@ void main() {
 
       test('passwordReset delegates to auth service', () async {
         final expectedResponse = {'ResultType': 1, 'ResultMessage': 'Success'};
-        when(mockAuthService.passwordReset(any))
+        when(mockAuthService.resetPasswordStep1(any))
             .thenAnswer((_) async => expectedResponse);
 
         final result = await apiService.passwordReset('12345678');
         expect(result, equals(expectedResponse));
-        verify(mockAuthService.passwordReset('12345678')).called(1);
+        verify(mockAuthService.resetPasswordStep1('12345678')).called(1);
       });
 
       test('changePassword delegates to auth service', () async {
