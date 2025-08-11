@@ -180,6 +180,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         passdatenId,
         personId,
       );
+
       final PassdatenAkzeptOrAktiv?
           fetchedPassdatenAkzeptierterOderAktiverPassData =
           await apiService.fetchPassdatenAkzeptierterOderAktiverPass(
@@ -231,6 +232,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           final String? disziplinNr = zve.disziplinNr;
           final String? disziplin = zve.disziplin;
           final int disziplinId = zve.disziplinId;
+
+          // Remove disciplines from fetchedDisciplines that are already in fetchedZveData by ID
+          fetchedDisciplines
+              .removeWhere((d) => d.disziplinId == zve.disziplinId);
+
           String combined = '';
           if (disziplin != null && disziplin.isNotEmpty) {
             combined = ((disziplinNr ?? '') +
@@ -519,6 +525,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                           Map<String, int?>.from(
                                         updatedSecondColumns[vereinId] ?? {},
                                       );
+                                      // Find the DisziplinId for the deleted key
+                                      final deletedDisziplinId =
+                                          currentSecond[key] ??
+                                              firstColumns[vereinId]?[key];
+                                      // Remove from table
                                       currentSecond.remove(key);
                                       updatedSecondColumns[vereinId] =
                                           currentSecond;
@@ -528,6 +539,34 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       };
                                       secondColumns = updatedSecondColumns;
                                       pivotDisziplins = updatedPivotDisziplins;
+                                      // Reconstruct Disziplin from key and id, add if not present
+                                      if (deletedDisziplinId != null) {
+                                        // Try to parse disziplinNr and disziplin from key
+                                        String? disziplinNr;
+                                        String? disziplin;
+                                        final parts = key.split(' - ');
+                                        if (parts.length == 2) {
+                                          disziplinNr = parts[0];
+                                          disziplin = parts[1];
+                                        } else if (parts.length == 1) {
+                                          disziplinNr = null;
+                                          disziplin = parts[0];
+                                        }
+                                        final reconstructed = Disziplin(
+                                          disziplinId: deletedDisziplinId,
+                                          disziplinNr: disziplinNr,
+                                          disziplin: disziplin,
+                                        );
+                                        if (!_disciplines.any(
+                                          (d) =>
+                                              d.disziplinId ==
+                                              deletedDisziplinId,
+                                        )) {
+                                          _disciplines =
+                                              List<Disziplin>.from(_disciplines)
+                                                ..add(reconstructed);
+                                        }
+                                      }
                                       _hasUnsavedChanges = true;
                                     });
                                   },
@@ -567,6 +606,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       };
                                       secondColumns = updatedSecondColumns;
                                       pivotDisziplins = updatedPivotDisziplins;
+                                      // Remove from _disciplines if present
+                                      _disciplines =
+                                          List<Disziplin>.from(_disciplines)
+                                            ..removeWhere(
+                                              (d) =>
+                                                  d.disziplinId ==
+                                                  selected.disziplinId,
+                                            );
                                       _hasUnsavedChanges = true;
                                     });
                                     if (_zveTextControllers[vereinId] != null) {
