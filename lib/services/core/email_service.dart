@@ -2,8 +2,10 @@
 // Filename: email_service.dart
 // Author: Luis Mandel / NTT DATA
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
 import 'config_service.dart';
@@ -34,69 +36,44 @@ class EmailService {
     required ConfigService configService,
     required HttpClient httpClient,
     CalendarService? calendarService,
-  })  : _emailSender = emailSender,
-        _configService = configService,
+  })  : _configService = configService,
         _httpClient = httpClient,
         _calendarService = calendarService;
 
-  final EmailSender _emailSender;
   final ConfigService _configService; // Inject ConfigService
   final HttpClient _httpClient;
   final CalendarService? _calendarService;
 
   Future<Map<String, dynamic>> sendEmail({
-    required String from,
+    required String sender,
     required String recipient,
     required String subject,
     String? htmlBody,
     int? emailId,
   }) async {
-    LoggerService.logInfo('sendEmail called with emailId: $emailId');
-    LoggerService.logInfo('sendEmail called with from: $from');
-    LoggerService.logInfo('sendEmail called with recipient: $recipient');
-    LoggerService.logInfo('sendEmail called with subject: $subject');
-    LoggerService.logInfo('sendEmail called with htmlBody: $htmlBody');
-
     try {
-      final smtpHost = _configService.getString('host', 'smtpSettings');
-      final smtpPort = _configService.getString('port', 'smtpSettings');
-      final ssl = _configService.getString('ssl', 'smtpSettings');
-      final allowInsecure =
-          _configService.getString('allowInsecure', 'smtpSettings');
-      final ignoreBadCertificate =
-          _configService.getString('ignoreBadCertificate', 'smtpSettings');
-
-      if (smtpHost == null) {
-        LoggerService.logWarning(
-          'SMTP settings are not fully configured in config.json.',
-        );
-        return {
-          'ResultType': 0,
-          'ResultMessage': 'SMTP settings are not fully configured.',
-        };
-      }
-
-      final smtpServer = smtp.SmtpServer(
-        smtpHost,
-        port: int.parse(smtpPort!),
-        ssl: bool.parse(ssl!),
-        allowInsecure: bool.parse(allowInsecure!),
-        ignoreBadCertificate: bool.parse(ignoreBadCertificate!),
+      final emailUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'email',
+        protocolKey: 'webProtocol',
+      );
+      final response = await http.post(
+        Uri.parse(emailUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'to': recipient,
+          'subject': subject,
+          'html': htmlBody,
+        }),
       );
 
-      final message = mailer.Message()
-        ..from = mailer.Address(from)
-        ..recipients.add(recipient)
-        ..subject = subject
-        ..html = htmlBody
-        ..headers = {
-          'Content-Type': 'text/html; charset=utf-8',
-          'content-transfer-encoding': 'quoted-printable',
-        };
-
-      final sendReport = await _emailSender.send(message, smtpServer);
-      LoggerService.logInfo('Message sent: ${sendReport.toString()}');
-
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        LoggerService.logInfo('Email sent successfully!');
+      } else {
+        LoggerService.logInfo('Failed to send email: ${response.statusCode}');
+      }
       return {'ResultType': 1, 'ResultMessage': 'Email sent successfully'};
     } catch (e) {
       String errorMessage = 'Error sending email: $e';
@@ -104,7 +81,6 @@ class EmailService {
         errorMessage =
             'Error sending email: ${e.message} (OS Error: ${e.osError}, errno = ${e.osError?.errorCode})';
       }
-
       LoggerService.logInfo('Email sending failed: $errorMessage');
       return {'ResultType': 0, 'ResultMessage': errorMessage};
     }
@@ -137,10 +113,6 @@ class EmailService {
 
   Future<String?> getFromEmail() async {
     return _configService.getString('fromEmail', 'smtpSettings');
-  }
-
-  Future<String?> getEmaiProtocol() async {
-    return _configService.getString('emailProtocol', 'smtpSettings');
   }
 
   Future<String?> getAccountCreatedSubject() async {
@@ -189,7 +161,18 @@ class EmailService {
     try {
       final response = await _httpClient.get('FindeMailadressen/$personId');
       if (response is List) {
-        return response.map((e) => e.toString()).toList();
+        // Parse the response to extract MAILADRESSEN from each object
+        final List<String> emailAddresses = [];
+        for (final item in response) {
+          if (item is Map<String, dynamic> && item['MAILADRESSEN'] != null) {
+            final email = item['MAILADRESSEN'].toString();
+            if (email.isNotEmpty && email != 'null') {
+              emailAddresses.add(email);
+            }
+          }
+        }
+        LoggerService.logInfo('Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses');
+        return emailAddresses;
       }
       return [];
     } catch (e) {
@@ -205,7 +188,9 @@ class EmailService {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
-
+      
+      LoggerService.logInfo('Got these email addresses: $emailAddresses');
+      
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
@@ -217,20 +202,26 @@ class EmailService {
         );
         return;
       }
+      
+      // Send email to the newly registered email
       final emailBody = emailContent.replaceAll('{email}', registeredEmail);
+      LoggerService.logInfo('Sending email to $registeredEmail');
+      LoggerService.logInfo(emailBody);
       await sendEmail(
-        from: fromEmail,
+        sender: fromEmail,
         recipient: registeredEmail,
         subject: subject,
         htmlBody: emailBody,
       );
+      
       // Send notification to each email address
       for (final email in emailAddresses) {
-        if (email.isNotEmpty && email != 'null') {
-          final emailBody = emailContent.replaceAll('{email}', registeredEmail);
-
+        if (email.isNotEmpty && email != 'null' && email != registeredEmail) {
+          final emailBody = emailContent.replaceAll('{email}', email);
+          LoggerService.logInfo('Sending email to $email');
+          LoggerService.logInfo(emailBody);
           await sendEmail(
-            from: fromEmail,
+            sender: fromEmail,
             recipient: email,
             subject: subject,
             htmlBody: emailBody,
@@ -285,7 +276,7 @@ class EmailService {
       for (final emailAddress in emailAddresses) {
         try {
           await sendEmail(
-            from: fromEmail,
+            sender: fromEmail,
             recipient: emailAddress,
             subject: subject,
             htmlBody: personalizedContent,
@@ -367,7 +358,7 @@ class EmailService {
       // Send email to the provided email address
       try {
         await sendEmail(
-          from: fromEmail,
+          sender: fromEmail,
           recipient: email,
           subject: subject,
           htmlBody: personalizedContent,

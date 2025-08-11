@@ -75,6 +75,7 @@ class AuthService {
       LoggerService.logInfo(
         'User created...',
       );
+
       // Send registration email
       final fromEmail = await _emailService.getFromEmail();
       final subject = await _emailService.getRegistrationSubject();
@@ -82,19 +83,13 @@ class AuthService {
       LoggerService.logInfo(
         'From email: $fromEmail subject: $subject',
       );
-      // Use the app's frontend URL for the verification link
-      /*final baseUrl = ConfigService.buildBaseUrlForServer(
-        _configService,
-        name: 'email',
-      );*/
-      final baseUrlWebApp = ConfigService.buildBaseUrlForServer(
+      final tokenUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'web',
-        protocolKey: 'webProtocol',
       );
       if (fromEmail != null && subject != null && emailContent != null) {
         final verificationLink =
-            '${baseUrlWebApp}set-password?token=$verificationToken';
+            '${tokenUrl}set-password?token=$verificationToken';
         LoggerService.logInfo(
           'Verification link: $verificationLink',
         );
@@ -103,31 +98,12 @@ class AuthService {
             .replaceAll('{lastName}', lastName)
             .replaceAll('{verificationLink}', verificationLink);
         await _emailService.sendEmail(
-          from: fromEmail,
+          sender: fromEmail,
           recipient: email,
           subject: subject,
           htmlBody: emailBody,
         );
       }
-
-      // Store registration data for later use
-      /*final registrationData = {
-        'personId': personId,
-        'firstName': firstName,
-        'lastName': lastName,
-        'passNumber': passNumber,
-        'email': email,
-        'birthDate': birthDate,
-        'zipCode': zipCode,
-        'verificationToken':
-            verificationToken, // keep as verificationToken in Dart
-      };
-
-      await _cacheService.setString(
-        'registration_$email',
-        jsonEncode(registrationData),
-      ); */
-
       return {
         'ResultType': 1,
         'ResultMessage': Messages.registrationDataStored,
@@ -140,13 +116,6 @@ class AuthService {
       };
     }
   }
-
-/*
-/FindePersonID/{Namen}/{Vorname}/{Geburtsdatum}/{Passnummer}/{PLZ}
-/FindePersonID/rizoudis/konstantinos/30.12.1968/40101205/86574
-Ergebnis der Abfrage:
-[{"PERSONID":439287}]
-*/
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -349,20 +318,18 @@ Ergebnis der Abfrage:
         {
           'PersonID': int.tryParse(personId),
           'Email': email,
-          'Passwort': jsonEncode(password),
+          'Passwort': password,
         },
       );
       if (response is List && response.isNotEmpty) {
         final result = response[0];
-        if (result['ResultType'] == 1) {
+        LoggerService.logInfo('We got this response: $result');
+        LoggerService.logInfo("Result type is: ${result['RESULTTYPE']}");
+        if (result['RESULTTYPE'] == 1) {
           // Mark user as verified in PostgreSQL
           await _postgrestService.verifyUser(token);
-
           // Send notification emails to all associated email addresses
           await _emailService.sendAccountCreationNotifications(personId, email);
-
-          // Clear stored registration data after successful account creation
-          await _cacheService.remove('registration_$email');
         }
       }
       return response;
@@ -446,6 +413,47 @@ Ergebnis der Abfrage:
       if (response is List && response.isNotEmpty) {
         final personId = response[0]['PERSONID'];
         if (personId != null && personId != 0) {
+          return personId.toString();
+        }
+      }
+      LoggerService.logError('Person ID not found.');
+      return '0';
+    } catch (e) {
+      LoggerService.logError('Find Person ID error: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> findePersonID(
+    String lastName,
+    String firstName,
+    String birthDate,
+    String passNumber,
+    String zipCode,
+  ) async {
+    try {
+      // Convert birthdate from YYYY-MM-DD to DD.MM.YYYY format
+      String formattedBirthDate;
+      try {
+        final date = DateTime.parse(birthDate);
+        formattedBirthDate =
+            '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+      } catch (e) {
+        // If parsing fails, assume it's already in the correct format
+        formattedBirthDate = birthDate;
+      }
+
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
+      final endpoint =
+          'FindePersonID/$lastName/$firstName/$formattedBirthDate/$passNumber/$zipCode';
+      LoggerService.logInfo('Searching for person: {$baseUrl}{$endpoint}');
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List && response.isNotEmpty) {
+        final personId = response[0]['PERSONID'];
+        if (personId != null && personId != 0) {
+          LoggerService.logInfo('Found person id: $personId');
           return personId.toString();
         }
       }

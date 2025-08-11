@@ -1087,7 +1087,7 @@ class MockEmailService extends _i1.Mock implements _i26.EmailService {
 
   @override
   _i6.Future<Map<String, dynamic>> sendEmail({
-    required String? from,
+    required String? sender,
     required String? recipient,
     required String? subject,
     String? htmlBody,
@@ -1098,7 +1098,7 @@ class MockEmailService extends _i1.Mock implements _i26.EmailService {
           #sendEmail,
           [],
           {
-            #from: from,
+            #sender: sender,
             #recipient: recipient,
             #subject: subject,
             #htmlBody: htmlBody,
@@ -1158,15 +1158,6 @@ class MockEmailService extends _i1.Mock implements _i26.EmailService {
   _i6.Future<String?> getFromEmail() => (super.noSuchMethod(
         Invocation.method(
           #getFromEmail,
-          [],
-        ),
-        returnValue: _i6.Future<String?>.value(),
-      ) as _i6.Future<String?>);
-
-  @override
-  _i6.Future<String?> getEmaiProtocol() => (super.noSuchMethod(
-        Invocation.method(
-          #getEmaiProtocol,
           [],
         ),
         returnValue: _i6.Future<String?>.value(),

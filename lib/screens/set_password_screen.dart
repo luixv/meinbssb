@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -146,9 +147,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         passNumber: personId,
       );
       final result = response[0];
-      if (result['ResultType'] != 1) {
+      if (result['RESULTTYPE'] != 1) {
         _failAndExit(
-            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos',);
+            result['RESULTMESSAGE'] ?? 'Fehler beim Erstellen des Kontos');
         return;
       }
       setState(() {
@@ -157,8 +158,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const RegistrationSuccessScreen(
-            message: 'Passwort gesetzt! Sie können sich jetzt anmelden.',
+          builder: (_) => RegistrationSuccessScreen(
+            message: result['RESULTMESSAGE'],
             userData: null,
           ),
         ),
@@ -185,7 +186,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       isLoggedIn: false,
       onLogout: () {},
       body: Padding(
-        padding: UIConstants.screenPadding,
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -232,8 +233,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 onChanged: _checkStrength,
               ),
               const Padding(
-                padding: EdgeInsets.only(
-                    top: UIConstants.spacingXS, bottom: UIConstants.spacingS,),
+                padding:
+                    EdgeInsets.only(top: 4.0, bottom: UIConstants.spacingS),
                 child: ScaledText(
                   'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
                   style: UIStyles.formLabelStyle,

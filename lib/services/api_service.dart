@@ -472,7 +472,7 @@ class ApiService {
     int? emailId,
   }) async {
     return _emailService.sendEmail(
-      from: from,
+      sender: from,
       recipient: recipient,
       subject: subject,
       htmlBody: htmlBody,
