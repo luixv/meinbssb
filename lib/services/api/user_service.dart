@@ -452,6 +452,7 @@ class UserService {
     int? passdatenId,
     int? personId,
     int? erstVereinId,
+    int digitalerPass,
   ) async {
     try {
       final baseUrl =
@@ -472,12 +473,14 @@ class UserService {
         });
       });
 
+// Digitalerpass 1/0.
+
       final Map<String, dynamic> fullJson = {
         'PASSDATENID': passdatenId,
         'ANTRAGSTYP': 3,
         'PERSONID': personId,
         'ERSTVEREINID': erstVereinId,
-        'DIGITALERPASS': 1,
+        'DIGITALERPASS': digitalerPass,
         'ZVEs': zveList,
       };
 

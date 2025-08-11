@@ -158,12 +158,14 @@ class ApiService {
     int? passdatenId,
     int? personId,
     int? erstVereinId,
+    int digitalerPass,
   ) async {
     return _userService.postBSSBAppPassantrag(
       secondColumns,
       passdatenId,
       personId,
       erstVereinId,
+      digitalerPass,
     );
   }
 

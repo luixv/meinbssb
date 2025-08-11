@@ -75,6 +75,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       passdatenId,
       personId,
       erstVereinId,
+      1, // TODO  digitalerPass, // Assuming digitalerPass is always 1 for now
     );
 
     setState(() {
@@ -243,13 +244,20 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           if (combined.isNotEmpty) {
             localSecondColumns[vereinId] ??= {};
             localSecondColumns[vereinId]![combined] = disziplinId;
-            // Calculate localPivotDisziplins as the set union of localFirstColumns and localSecondColumns[vereinId]
-            localPivotDisziplins[vereinId] = {
-              ...localFirstColumns[vereinId] ?? {},
-              ...localSecondColumns[vereinId]!,
-            };
           }
         }
+      }
+
+      // Ensure every club in localFirstColumns gets a pivot entry
+      final allVereinIds = <int>{
+        ...localFirstColumns.keys,
+        ...localSecondColumns.keys
+      };
+      for (final vereinId in allVereinIds) {
+        localPivotDisziplins[vereinId] = {
+          ...localFirstColumns[vereinId] ?? {},
+          ...localSecondColumns[vereinId] ?? {},
+        };
       }
 
       // final fremdeVerbande = await apiService.fetchFremdeVerbaende(vereinNr);
@@ -298,7 +306,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                       height: UIConstants.fabIconSize,
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.whiteColor,),
+                          UIConstants.whiteColor,
+                        ),
                         strokeWidth: UIConstants.defaultStrokeWidth,
                       ),
                     )

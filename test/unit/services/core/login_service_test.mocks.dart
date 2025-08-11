@@ -1464,6 +1464,28 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<bool>);
 
   @override
+  _i2.Future<bool> postBSSBAppPassantrag(
+    Map<int, Map<String, int?>>? secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int? digitalerPass,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #postBSSBAppPassantrag,
+          [
+            secondColumns,
+            passdatenId,
+            personId,
+            erstVereinId,
+            digitalerPass,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
   _i2.Future<bool> deleteKontakt(_i27.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,

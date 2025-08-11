@@ -221,6 +221,28 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
           ) as _i4.Future<_i7.PassdatenAkzeptOrAktiv?>);
 
   @override
+  _i4.Future<bool> postBSSBAppPassantrag(
+    Map<int, Map<String, int?>>? secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int? digitalerPass,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #postBSSBAppPassantrag,
+          [
+            secondColumns,
+            passdatenId,
+            personId,
+            erstVereinId,
+            digitalerPass,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
   _i4.Future<List<_i8.PassDataZVE>> fetchPassdatenZVE(
     int? passdatenId,
     int? personId,
