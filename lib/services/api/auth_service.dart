@@ -431,22 +431,6 @@ class AuthService {
     }
   }
 
-  /// Parses personId from a token string
-  String? _parsePersonIdFromToken(String token) {
-    // Find the last occurrence of "personId=" and return everything after it
-    const key = 'personId=';
-    final start = token.lastIndexOf(key);
-    if (start == -1) return null;
-    final valueStart = start + key.length;
-    // Read until next '&' or end of string
-    final nextAmp = token.indexOf('&', valueStart);
-    final raw = nextAmp == -1
-        ? token.substring(valueStart)
-        : token.substring(valueStart, nextAmp);
-    final trimmed = raw.trim();
-    return trimmed.isEmpty ? null : trimmed;
-  }
-
   /// Step 1: Send password reset link to user
   Future<Map<String, dynamic>> resetPasswordStep1(
     String passNumber,
@@ -523,26 +507,19 @@ class AuthService {
   /// Resets password using the provided token and new password
   Future<Map<String, dynamic>> resetPasswordStep2(
     String token,
+    String personId,
     String newPassword,
   ) async {
     try {
       // Step 1: Parse personId and verificationToken from token
-      final personId = _parsePersonIdFromToken(token);
+      LoggerService.logInfo('Got token: $token');
       LoggerService.logInfo('Got personId: $personId');
-      final verificationToken = _parseVerificationTokenFromToken(token);
-      LoggerService.logInfo('Got verificationToken: $verificationToken');
-      if (personId == null) {
-        return {
-          'success': false,
-          'message': 'Ungültiger Token: PersonID nicht gefunden.',
-        };
-      }
       LoggerService.logInfo('Calling MyBSSBPasswortAendern...');
       // Step 2: Call the API endpoint
       final response = await _httpClient.put(
         'MyBSSBPasswortAendern',
         {
-          'PersonID': personId,
+          'PersonID': int.parse(personId),
           'PasswortNeu': newPassword,
         },
       );
@@ -552,11 +529,9 @@ class AuthService {
           response.containsKey('result') &&
           response['result'] == true) {
         // Success case
-        if (verificationToken != null && verificationToken.isNotEmpty) {
-          await _postgrestService.markPasswordResetEntryUsed(
-            verificationToken: verificationToken,
-          );
-        }
+        await _postgrestService.markPasswordResetEntryUsed(
+          verificationToken: token,
+        );
         return {
           'success': true,
           'message': 'Ihr Passwort wurde erfolgreich zurückgesetzt.',
@@ -576,17 +551,5 @@ class AuthService {
         'message': 'Fehler beim Zurücksetzen des Passworts: $e',
       };
     }
-  }
-
-  String? _parseVerificationTokenFromToken(String token) {
-    // Capture strictly between 'token=' and the next '&'
-    const key = 'token=';
-    final start = token.indexOf(key);
-    if (start == -1) return null;
-    final valueStart = start + key.length;
-    final end = token.indexOf('&', valueStart);
-    if (end == -1) return null; // require '&' as terminator per spec
-    final value = token.substring(valueStart, end).trim();
-    return value.isEmpty ? null : value;
   }
 }

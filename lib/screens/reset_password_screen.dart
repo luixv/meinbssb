@@ -11,10 +11,12 @@ class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({
     required this.authService,
     required this.token,
+    required this.personId,
     super.key,
   });
 
   final String token;
+  final String personId;
   final AuthService authService;
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -54,6 +56,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final entry = await widget.authService.postgrestService
         .getUserByPasswordResetVerificationToken(widget.token);
     if (entry != null) {
+      // Check if personId matches
+      final dynamic entryPersonId = entry['person_id'];
+      if (entryPersonId == null || entryPersonId.toString() != widget.personId) {
+        _failAndExit('Ungültiger Link: PersonID stimmt nicht überein.');
+        return;
+      }
+      
       // Check if already verified
       if (entry['is_used'] == true) {
         _failAndExit(
@@ -126,6 +135,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       // Call the password reset method from AuthService
       final result = await widget.authService.resetPasswordStep2(
         widget.token,
+        widget.personId,
         _passwordController.text,
       );
 

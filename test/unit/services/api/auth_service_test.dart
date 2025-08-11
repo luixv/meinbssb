@@ -861,7 +861,11 @@ void main() {
           ),
         ).thenAnswer((_) async => {'result': true});
 
-        final result = await authService.resetPasswordStep2(token, newPassword);
+        final result = await authService.resetPasswordStep2(
+          token,
+          '12345',
+          newPassword,
+        );
 
         expect(result['success'], true);
         expect(
@@ -895,7 +899,11 @@ void main() {
           ),
         ).thenAnswer((_) async => {});
 
-        final result = await authService.resetPasswordStep2(token, newPassword);
+        final result = await authService.resetPasswordStep2(
+          token,
+          '12345',
+          newPassword,
+        );
 
         expect(result['success'], false);
         expect(result['message'],
@@ -906,7 +914,11 @@ void main() {
         const token = 'invalid-token';
         const newPassword = 'NewPassword123!';
 
-        final result = await authService.resetPasswordStep2(token, newPassword);
+        final result = await authService.resetPasswordStep2(
+          token,
+          '',
+          newPassword,
+        );
 
         expect(result['success'], false);
         expect(result['message'], 'Ungültiger Token: PersonID nicht gefunden.');

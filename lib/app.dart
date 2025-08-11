@@ -332,9 +332,11 @@ class _MyAppState extends State<MyApp> {
             if (settings.name!.startsWith('/reset-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
+              final personId = uri.queryParameters['personId'] ?? '';
               return MaterialPageRoute(
                 builder: (context) => ResetPasswordScreen(
                   token: token,
+                  personId: personId,
                   authService: Provider.of<AuthService>(context, listen: false),
                 ),
                 settings: settings,
