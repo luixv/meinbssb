@@ -638,10 +638,23 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 const Expanded(
-                                  child: ScaledText(
-                                    'zusätzlicher physikalischer Ausweis',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w500),
+                                  child: Row(
+                                    children: [
+                                      ScaledText(
+                                        'zusätzlicher physikalischer Ausweis',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,),
+                                      ),
+                                      SizedBox(width: 6),
+                                      Tooltip(
+                                        message: 'Kostenpflichtig',
+                                        child: Icon(
+                                          Icons.info_outline,
+                                          color: UIConstants.defaultAppColor,
+                                          size: UIConstants.defaultIconSize,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
