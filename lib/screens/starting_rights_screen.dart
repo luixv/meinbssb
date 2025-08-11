@@ -251,7 +251,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       // Ensure every club in localFirstColumns gets a pivot entry
       final allVereinIds = <int>{
         ...localFirstColumns.keys,
-        ...localSecondColumns.keys
+        ...localSecondColumns.keys,
       };
       for (final vereinId in allVereinIds) {
         localPivotDisziplins[vereinId] = {
