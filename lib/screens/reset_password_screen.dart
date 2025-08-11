@@ -56,7 +56,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (entry != null) {
       // Check if already verified
       if (entry['is_used'] == true) {
-        _failAndExit('Dieser Link wurde bereits verwendet. Bitte versuchen Sie erneut.');
+        _failAndExit(
+            // ignore: require_trailing_commas
+            'Dieser Link wurde bereits verwendet. Bitte versuchen Sie erneut.');
         return;
       }
       // Check if verified_at is older than 24 hours

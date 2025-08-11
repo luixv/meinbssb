@@ -212,12 +212,15 @@ class PostgrestService {
   }
 
   Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
-      String token,) async {
+    String token,
+  ) async {
+    LoggerService.logInfo('Checking if verification_token $token is valid');
     try {
       final response = await _client.get(
         Uri.parse('${_baseUrl}password_reset?verification_token=eq.$token'),
         headers: _headers,
       );
+      LoggerService.logInfo('Got response: $response');
       if (response.statusCode == 200) {
         final List<dynamic> entries = jsonDecode(response.body);
         return entries.isNotEmpty ? entries[0] : null;
@@ -229,7 +232,8 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError(
-          'Error getting entry by verification token at password reset: $e',);
+        'Error getting entry by verification token at password reset: $e',
+      );
       return null;
     }
   }
@@ -269,7 +273,9 @@ class PostgrestService {
   }) async {
     try {
       final response = await _client.patch(
-        Uri.parse('${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
+        Uri.parse(
+            // ignore: require_trailing_commas
+            '${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
         headers: _headers,
         body: jsonEncode({
           'is_used': true,
@@ -291,10 +297,12 @@ class PostgrestService {
 
   /// Get the latest password reset entry for a person_id
   Future<Map<String, dynamic>?> getLatestPasswordResetForPerson(
-      String personId,) async {
+    String personId,
+  ) async {
     try {
       final uri = Uri.parse(
-          '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',);
+        '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',
+      );
       final response = await _client.get(uri, headers: _headers);
       if (response.statusCode == 200) {
         final List<dynamic> entries = jsonDecode(response.body);
@@ -307,7 +315,8 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError(
-          'Error getting latest password reset by person: $e',);
+        'Error getting latest password reset by person: $e',
+      );
       return null;
     }
   }

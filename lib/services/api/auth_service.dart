@@ -433,27 +433,18 @@ class AuthService {
 
   /// Parses personId from a token string
   String? _parsePersonIdFromToken(String token) {
-    try {
-      // Look for personId parameter in the token
-      final uri = Uri.parse(token);
-      final personId = uri.queryParameters['personId'];
-      if (personId != null) {
-        return personId;
-      }
-
-      // If not found in query parameters, try to extract from the end after &
-      final parts = token.split('&');
-      if (parts.length > 1) {
-        final lastPart = parts.last;
-        if (lastPart.startsWith('personId=')) {
-          return lastPart.substring('personId='.length);
-        }
-      }
-
-      return null;
-    } catch (e) {
-      return null;
-    }
+    // Find the last occurrence of "personId=" and return everything after it
+    const key = 'personId=';
+    final start = token.lastIndexOf(key);
+    if (start == -1) return null;
+    final valueStart = start + key.length;
+    // Read until next '&' or end of string
+    final nextAmp = token.indexOf('&', valueStart);
+    final raw = nextAmp == -1
+        ? token.substring(valueStart)
+        : token.substring(valueStart, nextAmp);
+    final trimmed = raw.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 
   /// Step 1: Send password reset link to user
@@ -537,14 +528,16 @@ class AuthService {
     try {
       // Step 1: Parse personId and verificationToken from token
       final personId = _parsePersonIdFromToken(token);
+      LoggerService.logInfo('Got personId: $personId');
       final verificationToken = _parseVerificationTokenFromToken(token);
+      LoggerService.logInfo('Got verificationToken: $verificationToken');
       if (personId == null) {
         return {
           'success': false,
           'message': 'Ungültiger Token: PersonID nicht gefunden.',
         };
       }
-
+      LoggerService.logInfo('Calling MyBSSBPasswortAendern...');
       // Step 2: Call the API endpoint
       final response = await _httpClient.put(
         'MyBSSBPasswortAendern',
@@ -553,7 +546,7 @@ class AuthService {
           'PasswortNeu': newPassword,
         },
       );
-
+      LoggerService.logInfo("Got response: $response['result']");
       // Step 3: Check response
       if (response is Map<String, dynamic> &&
           response.containsKey('result') &&
@@ -586,21 +579,14 @@ class AuthService {
   }
 
   String? _parseVerificationTokenFromToken(String token) {
-    try {
-      final uri = Uri.parse(token);
-      final vt = uri.queryParameters['token'];
-      if (vt != null && vt.isNotEmpty) return vt;
-      if (token.contains('token=')) {
-        final parts = token.split('&');
-        for (final part in parts) {
-          if (part.startsWith('token=')) {
-            return part.substring('token='.length);
-          }
-        }
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
+    // Capture strictly between 'token=' and the next '&'
+    const key = 'token=';
+    final start = token.indexOf(key);
+    if (start == -1) return null;
+    final valueStart = start + key.length;
+    final end = token.indexOf('&', valueStart);
+    if (end == -1) return null; // require '&' as terminator per spec
+    final value = token.substring(valueStart, end).trim();
+    return value.isEmpty ? null : value;
   }
 }

@@ -134,6 +134,10 @@ void main() {
     );
     when(mockEmailService.sendAccountCreationNotifications(any, any))
         .thenAnswer((_) async => <String, dynamic>{});
+
+    // Defaults for email service used in reset password flow
+    when(mockEmailService.getEmailAddressesByPersonId(any))
+        .thenAnswer((_) async => ['john.doe@example.com']);
   });
 
   group('AuthService', () {
@@ -744,6 +748,99 @@ void main() {
 
         final result = await authService.fetchLoginEmail(passnummer);
         expect(result, '');
+      });
+    });
+
+    group('resetPasswordStep1', () {
+      test('returns success and creates entry when no recent reset exists',
+          () async {
+        const passNumber = '40101205';
+        const personId = '12345';
+
+        // PersonID lookup
+        when(
+          mockHttpClient.get(
+            'PersonID/$passNumber',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => [
+              {'PERSONID': int.parse(personId)},
+            ],);
+
+        // Passdaten lookup
+        when(
+          mockHttpClient.get(
+            'Passdaten/$personId',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => [
+              {
+                'TITEL': 'Dr.',
+                'VORNAME': 'John',
+                'NAMEN': 'Doe',
+              }
+            ],);
+
+        final result = await authService.resetPasswordStep1(passNumber);
+
+        expect(result['ResultType'], 1);
+        expect(result['ResultMessage'], 'Passwort-Reset-Link wurde gesendet.');
+
+        // Basic flow succeeded
+      });
+
+      test('returns 98 when a reset was sent within last 24 hours', () async {
+        const passNumber = '40101205';
+        const personId = '12345';
+
+        // PersonID lookup
+        when(
+          mockHttpClient.get(
+            'PersonID/$passNumber',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => [
+              {'PERSONID': int.parse(personId)},
+            ],);
+
+        // Latest password reset within 24 hours
+        when(mockPostgrestService.getLatestPasswordResetForPerson(personId))
+            .thenAnswer((_) async => {
+                  'created_at': DateTime.now().toIso8601String(),
+                },);
+
+        final result = await authService.resetPasswordStep1(passNumber);
+
+        expect(result['ResultType'], 98);
+        expect(result['ResultMessage'],
+            'Passwort-Link wurde bereits an Ihre E-Mail gesendet. Bitte prüfen Sie Ihr Postfach.',);
+
+        // Confirmed early exit
+      });
+
+      test('returns 99 when no email addresses found', () async {
+        const passNumber = '40101205';
+        const personId = '12345';
+
+        // PersonID lookup
+        when(
+          mockHttpClient.get(
+            'PersonID/$passNumber',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => [
+              {'PERSONID': int.parse(personId)},
+            ],);
+
+        // No email addresses
+        when(mockEmailService.getEmailAddressesByPersonId(personId))
+            .thenAnswer((_) async => []);
+
+        final result = await authService.resetPasswordStep1(passNumber);
+
+        expect(result['ResultType'], 99);
+        expect(result['ResultMessage'],
+            'Keine Emails für diese Passnummer gefunden.',);
       });
     });
 
