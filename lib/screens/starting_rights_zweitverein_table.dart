@@ -60,7 +60,10 @@ class ZweitvereinTable extends StatelessWidget {
             TableRow(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: UIConstants.spacingXS,
+                  ),
                   child: ScaledText(
                     '$xx',
                     style: UIStyles.bodyStyle.copyWith(
@@ -69,7 +72,10 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: UIConstants.spacingXS,
+                  ),
                   child: ScaledText(
                     '$yy',
                     style: UIStyles.bodyStyle.copyWith(
@@ -78,7 +84,10 @@ class ZweitvereinTable extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: UIConstants.spacingXS,
+                  ),
                   child: ScaledText(
                     'Disziplin',
                     style: UIStyles.bodyStyle.copyWith(
@@ -93,7 +102,10 @@ class ZweitvereinTable extends StatelessWidget {
               (entry) => TableRow(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: UIConstants.spacingXS,
+                    ),
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
@@ -104,7 +116,10 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: UIConstants.spacingXS,
+                    ),
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
@@ -115,7 +130,10 @@ class ZweitvereinTable extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: UIConstants.spacingXS),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: UIConstants.spacingXS,
+                    ),
                     child: ScaledText(
                       entry.key,
                       style: UIStyles.bodyStyle,
@@ -162,12 +180,27 @@ class ZweitvereinTable extends StatelessWidget {
                     fieldViewBuilder:
                         (context, controller, focusNode, onFieldSubmitted) {
                       autocompleteController = controller;
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        decoration: const InputDecoration(
-                          labelText: 'Disziplin hinzufügen',
-                          border: OutlineInputBorder(),
+                      return SizedBox(
+                        height: 32,
+                        width: 160,
+                        child: TextField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 6,
+                              horizontal: 10,
+                            ),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                focusNode.requestFocus();
+                              },
+                            ),
+                          ),
                         ),
                       );
                     },
