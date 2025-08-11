@@ -180,28 +180,34 @@ class ZweitvereinTable extends StatelessWidget {
                     fieldViewBuilder:
                         (context, controller, focusNode, onFieldSubmitted) {
                       autocompleteController = controller;
-                      return SizedBox(
-                        height: 32,
-                        width: 160,
-                        child: TextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 6,
-                              horizontal: 10,
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Reserve space for the delete icon (approx 48px)
+                          const deleteIconWidth = 48.0;
+                          return SizedBox(
+                            height: 32,
+                            width: constraints.maxWidth - deleteIconWidth,
+                            child: TextField(
+                              controller: controller,
+                              focusNode: focusNode,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 6,
+                                  horizontal: 10,
+                                ),
+                                border: const OutlineInputBorder(),
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    focusNode.requestFocus();
+                                  },
+                                ),
+                              ),
                             ),
-                            border: const OutlineInputBorder(),
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: () {
-                                focusNode.requestFocus();
-                              },
-                            ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                     onSelected: (selected) {
