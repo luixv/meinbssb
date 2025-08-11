@@ -33,6 +33,7 @@ class StartingRightsScreen extends StatefulWidget {
 }
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
+  bool _digitalerPass = true;
   int get _xx {
     final now = DateTime.now();
     return now.year;
@@ -75,7 +76,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       passdatenId,
       personId,
       erstVereinId,
-      1, // TODO  digitalerPass, // Assuming digitalerPass is always 1 for now
+      _digitalerPass ? 1 : 0,
     );
 
     setState(() {
@@ -480,7 +481,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                             if (_zweitmitgliedschaften.isNotEmpty) ...[
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  top: UIConstants.spacingM,
+                                  top: UIConstants.spacingS,
                                   bottom: UIConstants.spacingS,
                                 ),
                                 child: ScaledText(
@@ -575,9 +576,29 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 );
                               }),
                             ],
-                            const SizedBox(
-                              height: UIConstants.spacingXXXL,
-                            ), // Add big space at the bottom
+                            const SizedBox(height: UIConstants.spacingXXXL),
+                            // Add checkbox for physikalischer Ausweis
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _digitalerPass,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _digitalerPass = val ?? false;
+                                      _hasUnsavedChanges = true;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: ScaledText(
+                                    'zusätzlicher physikalischer Ausweis',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
