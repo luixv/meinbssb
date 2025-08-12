@@ -194,40 +194,7 @@ class UIConstants {
   static const int maxFilteredDisziplinen = 5;
 
   // Strings
-  static const String loginButtonLabel = 'Anmelden';
-  static const String loginTitle = 'Anmeldung';
-  static const String forgotPasswordLabel = 'Passwort vergessen?';
-  static const String bankDataTitle = 'Bankdaten';
-  static const String bankDataSubtitle = 'Bitte geben Sie Ihre Bankdaten ein';
-  static const String ibanLabel = 'IBAN';
-  static const String ibanRequired = 'Bitte geben Sie Ihre IBAN ein';
-  static const String bicLabel = 'BIC';
-  static const String bicRequired = 'Bitte geben Sie Ihre BIC ein';
-  static const String kontoinhaberLabel = 'Kontoinhaber';
-  static const String kontoinhaberRequired =
-      'Bitte geben Sie den Kontoinhaber ein';
-  static const String personalDataTitle = 'Persönliche Daten';
-  static const String homeTitle = 'Home';
-  static const String welcomeMessage = 'Willkommen';
-  static const String checkPassNumberButtonLabel = 'Passnummer prüfen';
-  static const String passwordResetTitle = 'Passwort zurücksetzen';
-  static const String passwordResetSuccessTitle =
-      'Passwort erfolgreich zurückgesetzt';
-  static const String passwordResetSuccessMessage =
-      'Sie können sich jetzt mit Ihrem neuen Passwort anmelden.';
-  static const String backToLoginButtonLabel = 'Zurück zum Login';
-  static const String passNumberLabel = 'Schützenausweisnummer';
-  static const String resetPasswordButtonLabel = 'Passwort zurücksetzen';
-  static const String logoutLabel = 'Abmelden';
-  static const String registerButtonLabel = 'Registrieren';
-  static const String registrationTitle = 'Registrierung';
-  static const String cancelButtonLabel = 'Abbrechen';
-  static const String deleteBankDataConfirmation =
-      'Möchten Sie Ihre Bankdaten wirklich löschen?';
-  static const String deleteButtonLabel = 'Löschen';
-  static const String saveButtonLabel = 'Speichern';
-  static const String savingLabel = 'Wird gespeichert...';
-
+  
   // Help screen
   static const String helpTitle = 'FAQ';
 

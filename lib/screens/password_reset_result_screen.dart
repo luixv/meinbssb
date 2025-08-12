@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
@@ -44,13 +46,13 @@ class PasswordResetSuccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Text(
-              UIConstants.passwordResetSuccessTitle,
+              Messages.passwordResetSuccessTitle,
               style: UIStyles.titleStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: UIConstants.spacingM),
             const Text(
-              UIConstants.passwordResetSuccessMessage,
+              Messages.passwordResetSuccessMessage,
               style: UIStyles.bodyStyle,
               textAlign: TextAlign.center,
             ),
@@ -69,7 +71,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
               },
               style: UIStyles.defaultButtonStyle,
               child: const Text(
-                UIConstants.backToLoginButtonLabel,
+                Messages.backToLoginButtonLabel,
                 style: UIStyles.buttonStyle,
               ),
             ),

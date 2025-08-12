@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
@@ -308,7 +310,7 @@ class LoginScreenState extends State<LoginScreen> {
                       Icon(Icons.login, color: Colors.white),
                       SizedBox(width: UIConstants.spacingS),
                       ScaledText(
-                        UIConstants.loginButtonLabel,
+                        Messages.loginButtonLabel,
                         style: UIStyles.buttonStyle,
                       ),
                     ],
@@ -325,7 +327,7 @@ class LoginScreenState extends State<LoginScreen> {
       onPressed: _navigateToPasswordReset,
       style: UIStyles.textButtonStyle,
       child: const ScaledText(
-        UIConstants.forgotPasswordLabel,
+        Messages.forgotPasswordLabel,
         style: UIStyles.linkStyle,
       ),
     );
@@ -351,7 +353,7 @@ class LoginScreenState extends State<LoginScreen> {
       onPressed: _navigateToRegistrationPage,
       style: UIStyles.textButtonStyle,
       child: const ScaledText(
-        UIConstants.registerButtonLabel,
+        Messages.registerButtonLabel,
         style: UIStyles.linkStyle,
       ),
     );
@@ -400,7 +402,7 @@ class LoginScreenState extends State<LoginScreen> {
                   widget.logoWidget ?? const LogoWidget(),
                   const SizedBox(height: UIConstants.spacingS),
                   ScaledText(
-                    UIConstants.loginTitle,
+                    Messages.loginTitle,
                     style: UIStyles.headerStyle.copyWith(
                       color: _appColor,
                     ),

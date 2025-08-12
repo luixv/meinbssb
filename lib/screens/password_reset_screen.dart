@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
@@ -88,7 +90,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: UIConstants.passwordResetTitle,
+      title: Messages.passwordResetTitle,
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
@@ -143,7 +145,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                     const LogoWidget(),
                     const SizedBox(height: UIConstants.spacingS),
                     ScaledText(
-                      UIConstants.passwordResetTitle,
+                      Messages.passwordResetTitle,
                       key: const Key('passwordResetTitle'),
                       style: UIStyles.headerStyle.copyWith(
                         color: UIConstants.defaultAppColor,
@@ -175,7 +177,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                             fontSizeProvider.scaleFactor,
                       ),
                       decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: UIConstants.passNumberLabel,
+                        labelText: Messages.passNumberLabel,
                         labelStyle: UIStyles.formLabelStyle.copyWith(
                           fontSize: UIStyles.formLabelStyle.fontSize! *
                               fontSizeProvider.scaleFactor,
@@ -208,13 +210,14 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                                       Icon(
                                         Icons.lock_reset,
                                         color: Colors.white,
-                                        size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
+                                        size: UIConstants.iconSizeL *
+                                            fontSizeProvider.scaleFactor,
                                       ),
                                       const SizedBox(
                                         width: UIConstants.spacingS,
                                       ),
                                       ScaledText(
-                                        UIConstants.resetPasswordButtonLabel,
+                                        Messages.resetPasswordButtonLabel,
                                         style: UIStyles.buttonStyle.copyWith(
                                           fontSize:
                                               UIStyles.buttonStyle.fontSize! *
