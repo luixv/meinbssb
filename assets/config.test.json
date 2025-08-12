@@ -42,6 +42,7 @@
     "schulungContent": "Sie sind für einen Schulung angemeldet",
     "registrationSubject": "Bestätigung der E-Mail Adresse",
     "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
+    "passwordResetSubject": "Passwort zurücksetzen",
     "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
   },
   "profilePhoto": {

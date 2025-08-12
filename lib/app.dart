@@ -1,6 +1,8 @@
 // lib/app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:meinbssb/screens/reset_password_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -206,11 +208,16 @@ class _MyAppState extends State<MyApp> {
           path.startsWith('/schulungen_search');
       bool isSetPasswordUrl = fragment.startsWith('set-password') ||
           path.startsWith('/set-password');
+      bool isResetPasswordUrl = fragment.startsWith('reset-password') ||
+          path.startsWith('/reset-password');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
       
       if (isSetPasswordUrl) {
         // If on set-password URL, route directly to set-password
         initialRoute = '/set-password';
+      } else if (isResetPasswordUrl) {
+        // If on reset-password URL, route directly to reset-password
+        initialRoute = '/reset-password';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
@@ -319,6 +326,19 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => SetPasswordScreen(
                   token: token,
                   authService: Provider.of<AuthService>(context, listen: false),
+                ),
+                settings: settings,
+              );
+            }
+            if (settings.name!.startsWith('/reset-password')) {
+              final uri = Uri.base;
+              final token = uri.queryParameters['token'] ?? '';
+              final personId = uri.queryParameters['personId'] ?? '';
+              return MaterialPageRoute(
+                builder: (context) => ResetPasswordScreen(
+                  token: token,
+                  personId: personId,
+                  apiService: Provider.of<ApiService>(context, listen: false),
                 ),
                 settings: settings,
               );

@@ -24,10 +24,24 @@ CREATE TABLE IF NOT EXISTS users (
     profile_photo BYTEA
 );
 
+-- Create password_reset table
+CREATE TABLE IF NOT EXISTS password_reset (
+    id SERIAL PRIMARY KEY,
+    person_id VARCHAR(50),
+    verification_token VARCHAR(255) UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMPTZ,
+    is_used BOOLEAN DEFAULT FALSE
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
 CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_token);
+
+-- Create indexes for faster lookups (password_reset)
+CREATE INDEX IF NOT EXISTS idx_password_reset_person_id ON password_reset(person_id);
+CREATE INDEX IF NOT EXISTS idx_password_reset_verification_token ON password_reset(verification_token);
 
 -- Grant privileges to main app user (replace bssbuser with your POSTGRES_USER)
 GRANT CONNECT ON DATABASE bssbdb TO bssbuser;

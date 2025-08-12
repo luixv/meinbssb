@@ -4,6 +4,7 @@
 
 // Flutter/Dart core imports
 import 'package:flutter/material.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
@@ -354,13 +355,13 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                final authService =
-                    Provider.of<AuthService>(context, listen: false);
+                final apiService =
+                    Provider.of<ApiService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => PasswordResetScreen(
-                      authService: authService,
+                      apiService: apiService,
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

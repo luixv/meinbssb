@@ -129,6 +129,19 @@ class EmailService {
     }
   }
 
+  Future<String?> getPasswordResetSubject() async {
+    return _configService.getString('passwordResetSubject', 'emailContent');
+  }
+
+  Future<String?> getPasswordResetContent() async {
+    try {
+      return await rootBundle.loadString('assets/html/passwordReset.html');
+    } catch (e) {
+      LoggerService.logError('Error reading passwordReset.html: $e');
+      return null;
+    }
+  }
+
   Future<String?> getSchulungAbmeldungSubject() async {
     return _configService.getString('schulungAbmeldungSubject', 'emailContent');
   }
@@ -170,8 +183,16 @@ class EmailService {
               emailAddresses.add(email);
             }
           }
+          if (item is Map<String, dynamic> && item['LOGINMAIL'] != null) {
+            final email = item['LOGINMAIL'].toString();
+            if (email.isNotEmpty && email != 'null') {
+              emailAddresses.add(email);
+            }
+          }
         }
-        LoggerService.logInfo('Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses');
+        LoggerService.logInfo(
+          'Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses',
+        );
         return emailAddresses;
       }
       return [];
@@ -188,9 +209,9 @@ class EmailService {
     try {
       // Get all email addresses for this person
       final emailAddresses = await getEmailAddressesByPersonId(personId);
-      
+
       LoggerService.logInfo('Got these email addresses: $emailAddresses');
-      
+
       // Get email template and subject
       final fromEmail = await getFromEmail();
       final subject = await getAccountCreatedSubject();
@@ -202,7 +223,7 @@ class EmailService {
         );
         return;
       }
-      
+
       // Send email to the newly registered email
       final emailBody = emailContent.replaceAll('{email}', registeredEmail);
       LoggerService.logInfo('Sending email to $registeredEmail');
@@ -213,7 +234,7 @@ class EmailService {
         subject: subject,
         htmlBody: emailBody,
       );
-      
+
       // Send notification to each email address
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null' && email != registeredEmail) {
@@ -227,6 +248,50 @@ class EmailService {
             htmlBody: emailBody,
           );
         }
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error sending account creation notifications: $e',
+      );
+    }
+  }
+
+  Future<void> sendPasswordResetNotifications(
+    Map<String, dynamic> passData,
+    List<String> emailAddresses,
+    String verificationLink,
+  ) async {
+    try {
+      LoggerService.logInfo('Got these email addresses: $emailAddresses');
+
+      // Get email template and subject
+      final fromEmail = await getFromEmail();
+      final subject = await getPasswordResetSubject();
+      final emailContent = await getPasswordResetContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        LoggerService.logError(
+          'Email configuration missing for account creation notification',
+        );
+        return;
+      }
+
+      // Send notification to each email address
+      for (final email in emailAddresses) {
+        final emailBody = emailContent
+            .replaceAll('{email}', email)
+            .replaceAll('{title}', passData['TITEL'] ?? '')
+            .replaceAll('{firstName}', passData['VORNAME'] ?? '')
+            .replaceAll('{lastName}', passData['NAMEN'] ?? '')
+            .replaceAll('{verificationLink}', verificationLink);
+        LoggerService.logInfo('Sending email to $email');
+        LoggerService.logInfo(emailBody);
+        await sendEmail(
+          sender: fromEmail,
+          recipient: email,
+          subject: subject,
+          htmlBody: emailBody,
+        );
       }
     } catch (e) {
       LoggerService.logError(
@@ -296,6 +361,45 @@ class EmailService {
       LoggerService.logError(
         'Error sending training unregistration notifications: $e',
       );
+    }
+  }
+
+  Future<void> sendRegistrationEmail({
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String verificationLink,
+  }) async {
+    try {
+      // Get email template and subject
+      final fromEmail = await getFromEmail();
+      final subject = await getRegistrationSubject();
+      final emailContent = await getRegistrationContent();
+
+      if (fromEmail == null || subject == null || emailContent == null) {
+        LoggerService.logError(
+          'Email configuration missing for registration notification',
+        );
+        return;
+      }
+
+      // Replace placeholders in the email content
+      final emailBody = emailContent
+          .replaceAll('{firstName}', firstName)
+          .replaceAll('{lastName}', lastName)
+          .replaceAll('{verificationLink}', verificationLink);
+
+      // Send email
+      await sendEmail(
+        sender: fromEmail,
+        recipient: email,
+        subject: subject,
+        htmlBody: emailBody,
+      );
+
+      LoggerService.logInfo('Sent registration email to: $email');
+    } catch (e) {
+      LoggerService.logError('Error sending registration email: $e');
     }
   }
 
