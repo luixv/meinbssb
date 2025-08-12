@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 
 class CookieConsent extends StatefulWidget {
@@ -85,12 +86,12 @@ class _CookieConsentState extends State<CookieConsent> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          UIConstants.cookieConsentTitle,
+                          Messages.cookieConsentTitle,
                           style: UIStyles.dialogTitleStyle,
                         ),
                         const SizedBox(height: UIConstants.spacingL),
                         const Text(
-                          UIConstants.cookieConsentMessage,
+                          Messages.cookieConsentMessage,
                           textAlign: TextAlign.center,
                           style: UIStyles.dialogContentStyle,
                         ),

@@ -341,7 +341,7 @@ class LoginScreenState extends State<LoginScreen> {
       },
       style: UIStyles.textButtonStyle,
       child: const ScaledText(
-        UIConstants.helpTitle,
+        Messages.helpTitle,
         style: UIStyles.linkStyle,
       ),
     );

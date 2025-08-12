@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class StartingRightsHeader extends StatelessWidget {
@@ -42,7 +44,7 @@ class StartingRightsHeader extends StatelessWidget {
               ),
               UIConstants.horizontalSpacingXS,
               const Tooltip(
-                message: 'Hallo world',
+                message: Messages.startingRightsHeaderTooltip,
                 child: Icon(
                   Icons.info_outline,
                   color: UIConstants.defaultAppColor,

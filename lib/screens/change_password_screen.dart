@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/change_password_result_screen.dart';
@@ -59,13 +61,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final cacheService = Provider.of<CacheService>(context, listen: false);
 
       if (personId == null) {
-        throw Exception(UIConstants.personIdMissing);
+        throw Exception(Messages.personIdMissing);
       }
 
       // Get username from cache
       final username = await cacheService.getString('username');
       if (username == null) {
-        throw Exception(UIConstants.usernameNotFound);
+        throw Exception(Messages.usernameNotFound);
       }
 
       // First, validate the current password
@@ -103,7 +105,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   void _showPasswordIncorrectSnackbar() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text(UIConstants.currentPasswordIncorrect),
+        content: Text(Messages.currentPasswordIncorrect),
         backgroundColor: UIConstants.errorColor,
       ),
     );

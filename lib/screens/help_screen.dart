@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -30,7 +32,7 @@ class HelpScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const ScaledText(
-          UIConstants.helpTitle,
+          Messages.helpTitle,
           style: UIStyles.appBarTitleStyle,
         ),
         actions: [
@@ -61,8 +63,9 @@ class HelpScreen extends StatelessWidget {
               ScaledText(
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(
-                    fontSize: UIConstants.headerFontSize,
-                    fontWeight: FontWeight.bold,),
+                  fontSize: UIConstants.headerFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: UIConstants.helpSpacing),
               _AccordionSection(
