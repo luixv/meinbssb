@@ -89,7 +89,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
       locale: const Locale('de', 'DE'),
-      helpText: 'Datum wählen',
+      helpText: 'Aus-und Weiterbildungen ab Datum anzeigen',
       cancelText: 'Abbrechen',
       confirmText: 'Auswählen',
       fieldLabelText: 'Datum eingeben',
@@ -240,7 +240,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               onTap: _pickDate,
               child: InputDecorator(
                 decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Datum wählen',
+                  labelText: 'Aus-und Weiterbildungen ab Datum anzeigen',
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   suffixIcon: const Icon(Icons.calendar_today),
                 ),
@@ -256,7 +256,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
             DropdownButtonFormField<int>(
               value: _selectedWebGruppe,
               decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Gruppe',
+                labelText: 'Fachbereich',
               ),
               items: Schulungstermin.webGruppeMap.entries.map((entry) {
                 return DropdownMenuItem<int>(
@@ -276,7 +276,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 : DropdownButtonFormField<int>(
                     value: _selectedBezirkId,
                     decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Bezirk',
+                      labelText: 'Regierungsbezirk',
                     ),
                     items: _bezirke
                         .map(

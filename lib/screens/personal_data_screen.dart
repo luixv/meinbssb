@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/screens/personal_data_result_screen.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -374,7 +376,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         : _currentPassData == null && !_isLoading
             ? Center(
                 child: ScaledText(
-                  UIConstants.noPersonalDataAvailable,
+                  Messages.noPersonalDataAvailable,
                   style:
                       UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
                 ),

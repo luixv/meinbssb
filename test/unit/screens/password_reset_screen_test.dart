@@ -18,7 +18,7 @@ void main() {
   Widget createPasswordResetScreen() {
     return TestHelper.createTestApp(
       home: PasswordResetScreen(
-        authService: TestHelper.mockAuthService,
+        apiService: TestHelper.mockApiService,
         userData: null,
         isLoggedIn: false,
         onLogout: () {},

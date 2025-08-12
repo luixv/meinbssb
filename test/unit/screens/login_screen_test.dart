@@ -28,7 +28,7 @@ void main() {
         '/home': (context) => const Placeholder(),
         '/login': (context) => LoginScreen(onLoginSuccess: (_) {}),
         '/password-reset': (context) => PasswordResetScreen(
-              authService: TestHelper.mockAuthService,
+              apiService: TestHelper.mockApiService,
               userData: null,
               isLoggedIn: false,
               onLogout: () {},

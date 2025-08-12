@@ -194,49 +194,8 @@ class UIConstants {
   static const int maxFilteredDisziplinen = 5;
 
   // Strings
-  static const String loginButtonLabel = 'Anmelden';
-  static const String loginTitle = 'Anmeldung';
-  static const String forgotPasswordLabel = 'Passwort vergessen?';
-  static const String bankDataTitle = 'Bankdaten';
-  static const String bankDataSubtitle = 'Bitte geben Sie Ihre Bankdaten ein';
-  static const String ibanLabel = 'IBAN';
-  static const String ibanRequired = 'Bitte geben Sie Ihre IBAN ein';
-  static const String bicLabel = 'BIC';
-  static const String bicRequired = 'Bitte geben Sie Ihre BIC ein';
-  static const String kontoinhaberLabel = 'Kontoinhaber';
-  static const String kontoinhaberRequired =
-      'Bitte geben Sie den Kontoinhaber ein';
-  static const String personalDataTitle = 'Persönliche Daten';
-  static const String homeTitle = 'Home';
-  static const String welcomeMessage = 'Willkommen';
-  static const String checkPassNumberButtonLabel = 'Passnummer prüfen';
-  static const String passwordResetTitle = 'Passwort zurücksetzen';
-  static const String passwordResetSuccessTitle =
-      'Passwort erfolgreich zurückgesetzt';
-  static const String passwordResetSuccessMessage =
-      'Sie können sich jetzt mit Ihrem neuen Passwort anmelden.';
-  static const String backToLoginButtonLabel = 'Zurück zum Login';
-  static const String passNumberLabel = 'Schützenausweisnummer';
-  static const String resetPasswordButtonLabel = 'Passwort zurücksetzen';
-  static const String logoutLabel = 'Abmelden';
-  static const String registerButtonLabel = 'Registrieren';
-  static const String registrationTitle = 'Registrierung';
-  static const String cancelButtonLabel = 'Abbrechen';
-  static const String deleteBankDataConfirmation =
-      'Möchten Sie Ihre Bankdaten wirklich löschen?';
-  static const String deleteButtonLabel = 'Löschen';
-  static const String saveButtonLabel = 'Speichern';
-  static const String savingLabel = 'Wird gespeichert...';
-
-  // Help screen
-  static const String helpTitle = 'FAQ';
-
-  // Cookie Consent
-  static const String cookieConsentTitle = 'Wir verwenden Cookies';
-  static const String cookieConsentMessage =
-      'Um diese App offline nutzen zu können, verwenden wir Cookies.';
-  static const String cookieSettingsButtonLabel = 'Einstellungen';
-  static const String cookieAcceptAllButtonLabel = 'Alle akzeptieren';
+  
+  
 
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =
@@ -300,20 +259,7 @@ class UIConstants {
   // UI Icons
   static const IconData circleIcon = Icons.circle;
 
-  // Contact Data Screen
-  static const String telefonLabel = 'Telefon';
-  static const String telefonRequired =
-      'Bitte geben Sie Ihre Telefonnummer ein';
-  static const String mobilLabel = 'Mobil';
-  static const String mobilRequired = 'Bitte geben Sie Ihre Mobilnummer ein';
-  static const String emailLabel = 'E-Mail';
-  static const String emailRequired = 'Bitte geben Sie Ihre E-Mail-Adresse ein';
-  static const String emailInvalid =
-      'Bitte geben Sie eine gültige E-Mail-Adresse ein';
-  static const String contactTypeLabel = 'Kontakttyp';
-  static const String contactValueLabel = 'Kontaktwert';
-  static const String deleteContactDataConfirmation =
-      'Möchten Sie diese Kontaktdaten wirklich löschen?';
+  
   static const List<String> contactTypes = [
     'Telefon',
     'Mobil',
@@ -321,40 +267,7 @@ class UIConstants {
     'Fax',
   ];
 
-  // Password Change Messages
-  static const String passwordChangeSuccess = 'Passwort erfolgreich geändert';
-  static const String passwordChangeError =
-      'Fehler beim Ändern des Passworts: ';
-  static const String currentPasswordIncorrect =
-      'Das aktuelle Passwort ist nicht korrekt';
-  static const String usernameNotFound = 'Benutzername nicht gefunden';
-  static const String personIdMissing = 'Person ID is missing';
-
-  // Settings Screen
-  static const String settingsTitle = 'Einstellungen';
-  static const String fontSizeTitle = 'Textgröße';
-  static const String fontSizeDescription =
-      'Anpassung der Textgröße für bessere Lesbarkeit';
-
-  static const String firstNameLabel = 'Vorname';
-  static const String lastNameLabel = 'Nachname';
-  static const String clubLabel = 'Erstverein';
-  static const String noPersonalDataAvailable =
-      'Keine persönlichen Daten verfügbar.';
-  static const String noPrimaryClubDataAvailable =
-      'Keine Erstvereinsdaten verfügbar.';
-  static const String noSecondaryClubsAvailable =
-      'Keine Zweitvereine verfügbar.';
-  static const String registrationSuccessTitle = 'Registrierung erfolgreich';
-  static const String registrationSuccessMessage =
-      'Ihre Registrierung war erfolgreich.';
-  static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
-  static const String contactDataDeleteQuestion =
-      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
-  static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
-  static const String personalDataSaved =
-      'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
-
+  
   // Dialog
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;

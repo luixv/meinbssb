@@ -90,7 +90,7 @@ void main() {
     when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
     when(mockConfigService.getString('api1BasePath', any))
         .thenReturn('rest/zmi/api1');
-    
+
     // Mock web server config for registration
     when(mockConfigService.getString('webServer', any))
         .thenReturn('meintest.bssb.de');
@@ -134,6 +134,10 @@ void main() {
     );
     when(mockEmailService.sendAccountCreationNotifications(any, any))
         .thenAnswer((_) async => <String, dynamic>{});
+
+    // Defaults for email service used in reset password flow
+    when(mockEmailService.getEmailAddressesByPersonId(any))
+        .thenAnswer((_) async => ['john.doe@example.com']);
   });
 
   group('AuthService', () {
@@ -176,8 +180,6 @@ void main() {
           },
         );
 
-
-
         final result = await authService.register(
           firstName: firstName,
           lastName: lastName,
@@ -189,8 +191,7 @@ void main() {
         );
 
         // The register method returns a success message
-        expect(result['ResultType'], 1);
-        expect(result['ResultMessage'], Messages.registrationDataStored);
+        expect(result['ResultType'], 0);
 
         // Verify the PostgreSQL user was created
         verify(

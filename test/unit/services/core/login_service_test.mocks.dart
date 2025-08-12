@@ -1004,7 +1004,7 @@ class MockAuthService extends _i1.Mock implements _i15.AuthService {
       ) as _i2.Future<Map<String, dynamic>>);
 
   @override
-  _i2.Future<Map<String, dynamic>> passwordReset(String? passNumber) =>
+  _i2.Future<Map<String, dynamic>> resetPasswordStep1(String? passNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #passwordReset,

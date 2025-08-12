@@ -374,7 +374,8 @@ class _BankDataDialogState extends State<BankDataDialog> {
 
   bool _isBicValid(String bic) {
     // BIC must be 8 or 11 characters, alphanumeric, and uppercase
-    final bicRegExp = RegExp(r'^[A-Z0-9]{8}([A-Z0-9]{3})? ?$');
+    final bicRegExp = RegExp(r'^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$');
+
     return bicRegExp.hasMatch(bic);
   }
 

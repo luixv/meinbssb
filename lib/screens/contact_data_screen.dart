@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/models/contact.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
@@ -85,7 +87,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
             child: Text(
-              UIConstants.contactDataDeleteTitle,
+              Messages.contactDataDeleteTitle,
               style: UIStyles.dialogTitleStyle,
             ),
           ),
@@ -94,7 +96,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             text: TextSpan(
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(text: UIConstants.contactDataDeleteQuestion),
+                const TextSpan(text: Messages.contactDataDeleteQuestion),
                 TextSpan(
                   text: '$contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),

@@ -41,9 +41,12 @@ void main() {
 
       expect(find.text('Aus- und Weiterbildung'), findsOneWidget);
       expect(find.text('Suchen'), findsOneWidget);
-      expect(find.text('Datum wählen'), findsOneWidget);
-      expect(find.text('Gruppe'), findsOneWidget);
-      expect(find.text('Bezirk'), findsOneWidget);
+      expect(
+        find.text('Aus-und Weiterbildungen ab Datum anzeigen'),
+        findsOneWidget,
+      );
+      expect(find.text('Fachbereich'), findsOneWidget);
+      expect(find.text('Regierungsbezirk'), findsOneWidget);
       expect(find.text('Ort'), findsOneWidget);
       expect(find.text('Titel'), findsOneWidget);
       expect(find.text('Für Lizenzverlängerung'), findsOneWidget);
@@ -63,9 +66,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Suchen'), findsOneWidget);
-      expect(find.text('Datum wählen'), findsOneWidget);
-      expect(find.text('Gruppe'), findsOneWidget);
-      expect(find.text('Bezirk'), findsOneWidget);
+      expect(
+        find.text('Aus-und Weiterbildungen ab Datum anzeigen'),
+        findsOneWidget,
+      );
+      expect(find.text('Fachbereich'), findsOneWidget);
+      expect(find.text('Regierungsbezirk'), findsOneWidget);
       expect(find.text('Ort'), findsOneWidget);
       expect(find.text('Titel'), findsOneWidget);
       expect(find.text('Für Lizenzverlängerung'), findsOneWidget);

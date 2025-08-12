@@ -211,6 +211,116 @@ class PostgrestService {
     }
   }
 
+  Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+    String token,
+  ) async {
+    LoggerService.logInfo('Checking if verification_token $token is valid');
+    try {
+      final response = await _client.get(
+        Uri.parse('${_baseUrl}password_reset?verification_token=eq.$token'),
+        headers: _headers,
+      );
+      LoggerService.logInfo('Got response: $response');
+      if (response.statusCode == 200) {
+        final List<dynamic> entries = jsonDecode(response.body);
+        return entries.isNotEmpty ? entries[0] : null;
+      } else {
+        LoggerService.logError(
+          'Failed to get entry by verification token at password reset. Status: \\${response.statusCode}, Body: \\${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting entry by verification token at password reset: $e',
+      );
+      return null;
+    }
+  }
+
+  /// Create a password reset entry
+  /// Inserts a new row into password_reset with person_id, verification_token, created_at
+  Future<void> createPasswordResetEntry({
+    required String personId,
+    required String verificationToken,
+  }) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('${_baseUrl}password_reset'),
+        headers: _headers,
+        body: jsonEncode({
+          'person_id': personId,
+          'verification_token': verificationToken,
+          'created_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        LoggerService.logInfo('Password reset entry created successfully');
+      } else {
+        LoggerService.logError(
+          'Failed to create password reset entry. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating password reset entry: $e');
+    }
+  }
+
+  /// Mark password reset entry as used by verification token
+  Future<void> markPasswordResetEntryUsed({
+    required String verificationToken,
+  }) async {
+    try {
+      final response = await _client.patch(
+        Uri.parse(
+            // ignore: require_trailing_commas
+            '${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
+        headers: _headers,
+        body: jsonEncode({
+          'is_used': true,
+          'used_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('Password reset entry marked as used');
+      } else {
+        LoggerService.logError(
+          'Failed to mark password reset as used. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Error marking password reset as used: $e');
+    }
+  }
+
+  /// Get the latest password reset entry for a person_id
+  Future<Map<String, dynamic>?> getLatestPasswordResetForPerson(
+    String personId,
+  ) async {
+    try {
+      final uri = Uri.parse(
+        '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',
+      );
+      final response = await _client.get(uri, headers: _headers);
+      if (response.statusCode == 200) {
+        final List<dynamic> entries = jsonDecode(response.body);
+        return entries.isNotEmpty ? entries[0] as Map<String, dynamic> : null;
+      } else {
+        LoggerService.logError(
+          'Failed to get latest password reset by person. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting latest password reset by person: $e',
+      );
+      return null;
+    }
+  }
+
   Future<http.Response> updateUserByVerificationToken(
     String token,
     Map<String, dynamic> fields,
