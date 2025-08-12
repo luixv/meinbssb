@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 
@@ -38,8 +40,8 @@ class PersonalDataResultScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             Text(
               success
-                  ? UIConstants.personalDataSaved
-                  : UIConstants.errorOccurred,
+                  ? Messages.personalDataSaved
+                  : Messages.errorOccurred,
               style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),

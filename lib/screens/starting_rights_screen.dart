@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/constants/messages.dart';
+
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -114,7 +116,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
   // ZVE ID -> second column data
   Map<int, Map<String, int?>> secondColumns = {};
   // ZVE ID -> combined data
-  Map<int, Map<String, int?>> pivotDisziplins = {}; 
+  Map<int, Map<String, int?>> pivotDisziplins = {};
 
   @override
   void initState() {
@@ -381,7 +383,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ScaledText(
-                              UIConstants.clubLabel,
+                              Messages.clubLabel,
                               style: UIStyles.headerStyle.copyWith(
                                 color: UIConstants.defaultAppColor,
                               ),
@@ -477,7 +479,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                               Consumer<FontSizeProvider>(
                                 builder: (context, fontSizeProvider, child) {
                                   return ScaledText(
-                                    UIConstants.noPrimaryClubDataAvailable,
+                                    Messages.noPrimaryClubDataAvailable,
                                     style: UIStyles.bodyStyle.copyWith(
                                       fontSize: UIStyles.bodyStyle.fontSize! *
                                           fontSizeProvider.scaleFactor,

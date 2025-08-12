@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
+import '/constants/messages.dart';
+
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
@@ -22,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: UIConstants.settingsTitle,
+      title: Messages.settingsTitle,
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
@@ -119,7 +121,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 UIConstants.verticalSpacingS,
                 const ScaledText(
-                  UIConstants.fontSizeDescription,
+                  Messages.fontSizeDescription,
                   style: UIStyles.bodyStyle,
                 ),
               ],

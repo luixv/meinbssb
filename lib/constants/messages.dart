@@ -8,6 +8,7 @@ class Messages {
   static const String firstNameRequired = 'Vorname ist erforderlich.';
   static const String lastNameRequired = 'Nachname ist erforderlich.';
   static const String emailRequired = 'E-Mail ist erforderlich.';
+
   static const String invalidEmail =
       'Bitte geben Sie eine gültige E-Mail Adresse ein.';
   static const String passNumberRequired =
@@ -97,6 +98,64 @@ class Messages {
   static const String deleteButtonLabel = 'Löschen';
   static const String saveButtonLabel = 'Speichern';
   static const String savingLabel = 'Wird gespeichert...';
+
+// Help screen
+  static const String helpTitle = 'FAQ';
+
+// Contact Data Screen
+  static const String telefonLabel = 'Telefon';
+  static const String telefonRequired =
+      'Bitte geben Sie Ihre Telefonnummer ein';
+  static const String mobilLabel = 'Mobil';
+  static const String mobilRequired = 'Bitte geben Sie Ihre Mobilnummer ein';
+  static const String emailLabel = 'E-Mail';
+  static const String emailInvalid =
+      'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+  static const String contactTypeLabel = 'Kontakttyp';
+  static const String contactValueLabel = 'Kontaktwert';
+  static const String deleteContactDataConfirmation =
+      'Möchten Sie diese Kontaktdaten wirklich löschen?';
+
+// Password Change Messages
+  static const String passwordChangeSuccess = 'Passwort erfolgreich geändert';
+  static const String passwordChangeError =
+      'Fehler beim Ändern des Passworts: ';
+  static const String currentPasswordIncorrect =
+      'Das aktuelle Passwort ist nicht korrekt';
+  static const String usernameNotFound = 'Benutzername nicht gefunden';
+  static const String personIdMissing = 'Person ID is missing';
+
+  // Settings Screen
+  static const String settingsTitle = 'Einstellungen';
+  static const String fontSizeTitle = 'Textgröße';
+  static const String fontSizeDescription =
+      'Anpassung der Textgröße für bessere Lesbarkeit';
+
+  static const String firstNameLabel = 'Vorname';
+  static const String lastNameLabel = 'Nachname';
+  static const String clubLabel = 'Erstverein';
+  static const String noPersonalDataAvailable =
+      'Keine persönlichen Daten verfügbar.';
+  static const String noPrimaryClubDataAvailable =
+      'Keine Erstvereinsdaten verfügbar.';
+  static const String noSecondaryClubsAvailable =
+      'Keine Zweitvereine verfügbar.';
+  static const String registrationSuccessTitle = 'Registrierung erfolgreich';
+  static const String registrationSuccessMessage =
+      'Ihre Registrierung war erfolgreich.';
+  static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
+  static const String contactDataDeleteQuestion =
+      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
+  static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
+  static const String personalDataSaved =
+      'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
+
+  // Cookie Consent
+  static const String cookieConsentTitle = 'Wir verwenden Cookies';
+  static const String cookieConsentMessage =
+      'Um diese App offline nutzen zu können, verwenden wir Cookies.';
+  static const String cookieSettingsButtonLabel = 'Einstellungen';
+  static const String cookieAcceptAllButtonLabel = 'Alle akzeptieren';
 
   // API Error Messages
   static const String apiError = 'API-Fehler: ';
