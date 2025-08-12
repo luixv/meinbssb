@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/reset_password_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -337,7 +338,7 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => ResetPasswordScreen(
                   token: token,
                   personId: personId,
-                  authService: Provider.of<AuthService>(context, listen: false),
+                  apiService: Provider.of<ApiService>(context, listen: false),
                 ),
                 settings: settings,
               );

@@ -9,7 +9,7 @@ import 'package:meinbssb/constants/messages.dart';
 
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/error_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/services/core/network_service.dart';
@@ -21,13 +21,13 @@ import 'package:meinbssb/screens/password_reset_fail_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({
-    required this.authService,
+    required this.apiService,
     super.key,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
-  final AuthService authService;
+  final ApiService apiService;
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
@@ -67,7 +67,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
     try {
       final response =
-          await widget.authService.resetPasswordStep1(_passNumberController.text);
+          await widget.apiService.passwordReset(_passNumberController.text);
       setState(() {
         _isLoading = false;
       });

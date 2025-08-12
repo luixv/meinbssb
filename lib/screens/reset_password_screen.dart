@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -9,7 +9,7 @@ import 'package:meinbssb/screens/password_reset_success_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({
-    required this.authService,
+    required this.apiService,
     required this.token,
     required this.personId,
     super.key,
@@ -17,7 +17,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
   final String token;
   final String personId;
-  final AuthService authService;
+  final ApiService apiService;
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
@@ -53,7 +53,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Future<void> _checkToken() async {
-    final entry = await widget.authService.postgrestService
+    final entry = await widget.apiService
         .getUserByPasswordResetVerificationToken(widget.token);
     if (entry != null) {
       // Check if personId matches
@@ -133,7 +133,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     try {
       // Call the password reset method from AuthService
-      final result = await widget.authService.resetPasswordStep2(
+      final result = await widget.apiService.finalizeResetPassword(
         widget.token,
         widget.personId,
         _passwordController.text,

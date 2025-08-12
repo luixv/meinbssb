@@ -177,13 +177,13 @@ class LoginScreenState extends State<LoginScreen> {
 
   Future<void> _navigateToPasswordReset() async {
     if (!mounted) return;
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PasswordResetScreen(
-          authService: authService,
+          apiService: apiService,
           userData: _userData,
           isLoggedIn: _isLoggedIn,
           onLogout: _handleLogout,

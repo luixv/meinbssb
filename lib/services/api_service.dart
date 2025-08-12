@@ -135,6 +135,20 @@ class ApiService {
     return _authService.resetPasswordStep1(passNumber);
   }
 
+  Future<Map<String, dynamic>> finalizeResetPassword(
+    String token,
+    String personId,
+    String newPassword,
+  ) async {
+    return _authService.resetPasswordStep2(token, personId, newPassword);
+  }
+
+  Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+    String token,
+  ) async {
+    return _postgrestService.getUserByPasswordResetVerificationToken(token);
+  }
+
   Future<Map<String, dynamic>> changePassword(
     int personId,
     String newPassword,
