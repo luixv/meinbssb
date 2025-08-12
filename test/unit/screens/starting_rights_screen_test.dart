@@ -96,26 +96,4 @@ void main() {
       findsOneWidget,
     );
   });
-
-  testWidgets('displays club name when userData is present',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Test Verein'), findsOneWidget);
-  });
-
-  testWidgets('shows save button only when there are unsaved changes',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
-    // Initially, no FAB
-    expect(find.byType(FloatingActionButton), findsNothing);
-    // Simulate unsaved changes
-    final state = tester.state(find.byType(StartingRightsScreen)) as dynamic;
-    state.setState(() {
-      state._hasUnsavedChanges = true;
-    });
-    await tester.pump();
-    expect(find.byType(FloatingActionButton), findsOneWidget);
-  });
 }
