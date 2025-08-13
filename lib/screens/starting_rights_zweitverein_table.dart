@@ -40,19 +40,25 @@ class ZweitvereinTable extends StatelessWidget {
               height: 1.0,
             ),
           ),
-          ScaledText(
-            vereinName,
-            style: UIStyles.subtitleStyle,
+          // Fix: Wrap the vereinName with Expanded to prevent overflow
+          Expanded(
+            child: ScaledText(
+              vereinName,
+              style: UIStyles.subtitleStyle,
+              // softWrap is true by default for Text, allowing it to wrap.
+              // If you prefer truncation instead of wrapping, you can add:
+              // overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
       children: [
         Table(
           columnWidths: const <int, TableColumnWidth>{
-            0: IntrinsicColumnWidth(),
-            1: IntrinsicColumnWidth(),
-            2: FlexColumnWidth(),
-            3: FixedColumnWidth(32),
+            0: FlexColumnWidth(0.2),
+            1: FlexColumnWidth(0.2),
+            2: FlexColumnWidth(0.6),
+            3: FixedColumnWidth(56),
           },
           border: TableBorder.all(
             color: UIConstants.cookiesDialogColor,
@@ -187,11 +193,8 @@ class ZweitvereinTable extends StatelessWidget {
                       autocompleteController = controller;
                       return LayoutBuilder(
                         builder: (context, constraints) {
-                          // Reserve space for the delete icon (approx 12px)
-                          const deleteIconWidth = 12.0;
                           return SizedBox(
                             height: 32,
-                            width: constraints.maxWidth - deleteIconWidth,
                             child: TextField(
                               controller: controller,
                               focusNode: focusNode,
