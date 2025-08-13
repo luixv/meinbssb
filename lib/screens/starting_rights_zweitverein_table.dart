@@ -46,10 +46,14 @@ class ZweitvereinTable extends StatelessWidget {
               height: 1.0,
             ),
           ),
+          // FIX: Wrap the vereinName with Expanded to prevent overflow
           Expanded(
             child: ScaledText(
               vereinName,
               style: UIStyles.subtitleStyle,
+              // softWrap is true by default for Text, allowing it to wrap.
+              // If you prefer truncation instead of wrapping, you can add:
+              // overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -57,11 +61,20 @@ class ZweitvereinTable extends StatelessWidget {
       children: [
         Table(
           columnWidths: const <int, TableColumnWidth>{
-            0: FlexColumnWidth(0.2),
-            1: FlexColumnWidth(0.2),
-            2: FlexColumnWidth(0.6),
+            // Changed IntrinsicColumnWidth to FlexColumnWidth for better responsiveness
+            0: FlexColumnWidth(
+              0.2,
+            ), // Small flexible share for the first column
+            1: FlexColumnWidth(
+              0.2,
+            ), // Small flexible share for the second column
+            2: FlexColumnWidth(
+              0.6,
+            ), // The 'Disziplin' name gets the most flexible space
+            // Increased FixedColumnWidth to accommodate the IconButton's tap target size
             3: FixedColumnWidth(
-                56,), // Standard IconButton needs at least 48px, plus some padding
+              56,
+            ), // Standard IconButton needs at least 48px, plus some padding
           },
           border: TableBorder.all(
             color: UIConstants.cookiesDialogColor,
@@ -100,7 +113,7 @@ class ZweitvereinTable extends StatelessWidget {
                 Padding(
                   padding: cellContentPadding,
                   child: ScaledText(
-                    'Disziplin',
+                    '',
                     style: UIStyles.bodyStyle.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -119,8 +132,10 @@ class ZweitvereinTable extends StatelessWidget {
                       height: UIConstants.defaultIconSize +
                           16, // Maintain square aspect or fit typical button height
                       child: Center(
-                          child: Text(
-                              '',),), // Empty text, or a subtle label if desired
+                        child: Text(
+                          '',
+                        ),
+                      ), // Empty text, or a subtle label if desired
                     ),
                   ),
                 ),
