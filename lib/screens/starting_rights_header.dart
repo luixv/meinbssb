@@ -28,18 +28,33 @@ class StartingRightsHeader extends StatelessWidget {
           padding: UIConstants.defaultHorizontalPadding,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment
+                .start, // Added to align content at the start if text wraps
             children: [
-              ScaledText(
-                'Startrechte ändern für das Sportjahr ',
-                style: UIStyles.subtitleStyle.copyWith(
-                  color: UIConstants.greySubtitleTextColor,
-                ),
-              ),
-              ScaledText(
-                seasonString,
-                style: UIStyles.bodyStyle.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: UIConstants.greySubtitleTextColor,
+              // Wrap the two ScaledText widgets in an Expanded widget
+              // to allow them to take up available space and wrap.
+              Expanded(
+                child: Column(
+                  // Use a Column to ensure the two text widgets are stacked if wrapping
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ScaledText(
+                      'Startrechte ändern für das Sportjahr ',
+                      style: UIStyles.subtitleStyle.copyWith(
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      // softWrap is true by default for Text, allowing it to wrap.
+                      // No need for overflow: TextOverflow.ellipsis here, as we want it to wrap fully.
+                    ),
+                    ScaledText(
+                      seasonString,
+                      style: UIStyles.bodyStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: UIConstants.greySubtitleTextColor,
+                      ),
+                      // softWrap is true by default for Text, allowing it to wrap.
+                    ),
+                  ],
                 ),
               ),
               UIConstants.horizontalSpacingXS,
