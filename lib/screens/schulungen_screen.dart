@@ -473,7 +473,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         ),
                       ),
                     ),
-                    // Replace DialogFABs with a Positioned DialogFABs inside the Stack
                     Positioned(
                       bottom: UIConstants.dialogFabBottom,
                       right: UIConstants.dialogFabRight,
@@ -555,7 +554,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             child: const Icon(Icons.check, color: Colors.white),
                           ),
                         ],
-                        // Remove padding from DialogFABs, as Positioned handles placement
                       ),
                     ),
                   ],
@@ -1165,78 +1163,90 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                   'Keine Beschreibung verfügbar.',
                                                                 ),
                                                 ),
+                                                const SizedBox(
+                                                  height: UIConstants.spacingXL,
+                                                ),
                                               ],
                                             ),
                                           ),
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: UIConstants.dialogFabBottom +
-                                            UIConstants.dialogFabDeleteOffset,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogCloseFab$index',
-                                          mini: true,
-                                          tooltip: 'Schließen',
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () => Navigator.of(
-                                            context,
-                                          ).pop(),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: UIConstants.dialogFabBottom,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogBookFab$index',
-                                          mini: true,
-                                          tooltip: 'Buchen',
-                                          backgroundColor: t.anmeldungenGesperrt
-                                              ? UIConstants
-                                                  .cancelButtonBackground
-                                              : UIConstants.defaultAppColor,
-                                          onPressed: t.anmeldungenGesperrt
-                                              ? null
-                                              : () {
-                                                  final parentContext = context;
-                                                  Navigator.of(context).pop();
-                                                  if (!mounted) return;
-                                                  if (_userData == null) {
-                                                    showDialog(
-                                                      context: parentContext,
-                                                      barrierDismissible: false,
-                                                      builder:
-                                                          (dialogContext) =>
-                                                              LoginDialog(
-                                                        onLoginSuccess:
-                                                            (userData) {
-                                                          setState(() {
-                                                            _userData =
-                                                                userData;
-                                                          });
-                                                          _showBookingDialog(
-                                                            t,
-                                                            registeredPersons: [],
-                                                          );
-                                                        },
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    _showBookingDialog(
-                                                      t,
-                                                      registeredPersons: [],
-                                                    );
-                                                  }
-                                                },
-                                          child: const Icon(
-                                            Icons.event_available,
-                                            color: Colors.white,
-                                          ),
+                                        bottom: UIConstants.spacingL,
+                                        right: UIConstants.spacingL,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            FloatingActionButton(
+                                              heroTag:
+                                                  'descDialogCloseFab$index',
+                                              tooltip: 'Schließen',
+                                              backgroundColor:
+                                                  UIConstants.defaultAppColor,
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.spacingM,
+                                            ),
+                                            FloatingActionButton(
+                                              heroTag:
+                                                  'descDialogBookFab$index',
+                                              tooltip: 'Buchen',
+                                              backgroundColor: t
+                                                      .anmeldungenGesperrt
+                                                  ? UIConstants
+                                                      .cancelButtonBackground
+                                                  : UIConstants.defaultAppColor,
+                                              onPressed: t.anmeldungenGesperrt
+                                                  ? null
+                                                  : () {
+                                                      final parentContext =
+                                                          context;
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      if (!mounted) return;
+                                                      if (_userData == null) {
+                                                        showDialog(
+                                                          context:
+                                                              parentContext,
+                                                          barrierDismissible:
+                                                              false,
+                                                          builder:
+                                                              (dialogContext) =>
+                                                                  LoginDialog(
+                                                            onLoginSuccess:
+                                                                (userData) {
+                                                              setState(() {
+                                                                _userData =
+                                                                    userData;
+                                                              });
+                                                              _showBookingDialog(
+                                                                t,
+                                                                registeredPersons: [],
+                                                              );
+                                                            },
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        _showBookingDialog(
+                                                          t,
+                                                          registeredPersons: [],
+                                                        );
+                                                      }
+                                                    },
+                                              child: const Icon(
+                                                Icons.event_available,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
