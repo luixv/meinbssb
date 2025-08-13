@@ -286,15 +286,21 @@ Widget _contactRow({String? phone, String? email, String? web}) {
   return Row(
     children: [
       if (phone != null) ...[
-        const Icon(Icons.phone,
-            size: UIConstants.bodyFontSize, color: UIConstants.defaultAppColor,),
+        const Icon(
+          Icons.phone,
+          size: UIConstants.bodyFontSize,
+          color: UIConstants.defaultAppColor,
+        ),
         const SizedBox(width: UIConstants.spacingXS),
         _LinkText('Telefon', 'tel:$phone'),
         const SizedBox(width: UIConstants.spacingSM),
       ],
       if (email != null) ...[
-        const Icon(Icons.email,
-            size: UIConstants.bodyFontSize, color: UIConstants.defaultAppColor,),
+        const Icon(
+          Icons.email,
+          size: UIConstants.bodyFontSize,
+          color: UIConstants.defaultAppColor,
+        ),
         const SizedBox(width: UIConstants.spacingXS),
         _LinkText(email, 'mailto:$email'),
         const SizedBox(width: UIConstants.spacingSM),
