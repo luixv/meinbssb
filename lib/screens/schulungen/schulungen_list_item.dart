@@ -116,7 +116,7 @@ class SchulungenListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              // Center: title (centered horizontally)
+              // Center: title (wrapped horizontally)
               const SizedBox(width: UIConstants.spacingM),
               Expanded(
                 flex: 2,
@@ -129,7 +129,8 @@ class SchulungenListItem extends StatelessWidget {
                           fontSizeProvider.scaleFactor,
                     ),
                     textAlign: TextAlign.left,
-                    overflow: TextOverflow.ellipsis,
+                    // Removed: overflow: TextOverflow.ellipsis,
+                    // Removed: maxLines: 1,
                   ),
                 ),
               ),
