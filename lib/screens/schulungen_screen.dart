@@ -859,29 +859,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               children: [
                                                 // Header: white background, title, availability, and info table
                                                 Container(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: UIConstants
-                                                              .maxContentWidth,),
-                                                  margin: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical:
-                                                        UIConstants.spacingL,
-                                                    horizontal:
-                                                        UIConstants.spacingM,
-                                                  ),
+                                                  width: double
+                                                      .infinity, // Retain original width behavior
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                     vertical: 28,
                                                     horizontal: 0,
-                                                  ),
+                                                  ), // Original padding for the white container itself
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        UIConstants.whiteColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            UIConstants
-                                                                .cornerRadius,),
+                                                    color: UIConstants
+                                                        .whiteColor, // White background as per original
+                                                    borderRadius: BorderRadius
+                                                        .circular(UIConstants
+                                                            .cornerRadius,), // Rounded corners
                                                   ),
                                                   child: Column(
                                                     mainAxisSize:
@@ -891,9 +881,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal:
-                                                              UIConstants
-                                                                  .spacingL,
+                                                          horizontal: UIConstants
+                                                              .spacingL, // Original horizontal padding for the title
                                                         ),
                                                         child: Text(
                                                           t.bezeichnung
@@ -907,7 +896,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               TextAlign.center,
                                                         ),
                                                       ),
-                                                      const SizedBox(height: 4),
+                                                      const SizedBox(
+                                                          height:
+                                                              4,), // Small space below the title
                                                       Text(
                                                         'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
                                                         style: UIStyles
@@ -920,27 +911,29 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             TextAlign.center,
                                                       ),
                                                       const SizedBox(
-                                                          height: 24,),
+                                                          height:
+                                                              24,), // Enlarged space between availability and table
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal: 32,
+                                                          horizontal:
+                                                              32, // Tighter, equal left/right padding for the table
                                                           vertical: UIConstants
                                                               .spacingS,
                                                         ),
                                                         child: Table(
                                                           columnWidths: const {
-                                                            0: IntrinsicColumnWidth(), // Column for Date and Place
+                                                            0: IntrinsicColumnWidth(), // Column for Date and Place (content-driven width)
                                                             1: FixedColumnWidth(
                                                                 UIConstants
-                                                                    .spacingL,), // Spacer column between data columns
-                                                            2: IntrinsicColumnWidth(), // Column for Group and Price
+                                                                    .dialogColumnGap,), // Explicit fixed width for the spacer
+                                                            2: IntrinsicColumnWidth(), // Column for Group and Price (content-driven width)
                                                           },
                                                           children: [
                                                             TableRow(
                                                               children: [
-                                                                // First data column: Date and Place
+                                                                // First column: Date and Place
                                                                 Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
@@ -994,9 +987,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                // Spacer column
-                                                                const SizedBox(), // This SizedBox acts as the spacer column in the TableRow
-                                                                // Second data column: Group and Price
+                                                                // Spacer column - this SizedBox effectively provides the fixed width
+                                                                // defined in the `columnWidths` for index 1.
+                                                                const SizedBox(),
+                                                                // Second column: Group and Price
                                                                 Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
@@ -1054,18 +1048,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           ],
                                                         ),
                                                       ),
-                                                      // Space between table and "Lehrgangsleiter" section
                                                       const SizedBox(
                                                           height: UIConstants
-                                                              .spacingM,),
-                                                      // "Lehrgangsleiter" section (moved below the table)
+                                                              .spacingS,), // Small space between table and the next section
+                                                      // "Lehrgangsleiter" section (originally the right column, now moved below the table)
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal:
-                                                              UIConstants
-                                                                  .spacingL,
+                                                          horizontal: UIConstants
+                                                              .spacingL, // Padding to align with the main title
                                                         ),
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -1133,8 +1125,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                ), // ... rest of dialog content ...
-
+                                                ),
                                                 const Divider(
                                                   height: UIConstants
                                                       .defaultStrokeWidth,
