@@ -869,9 +869,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   decoration: BoxDecoration(
                                                     color: UIConstants
                                                         .whiteColor, // White background as per original
-                                                    borderRadius: BorderRadius
-                                                        .circular(UIConstants
-                                                            .cornerRadius,), // Rounded corners
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      UIConstants.cornerRadius,
+                                                    ), // Rounded corners
                                                   ),
                                                   child: Column(
                                                     mainAxisSize:
@@ -897,8 +898,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                          height:
-                                                              4,), // Small space below the title
+                                                        height: 4,
+                                                      ), // Small space below the title
                                                       Text(
                                                         'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
                                                         style: UIStyles
@@ -911,8 +912,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             TextAlign.center,
                                                       ),
                                                       const SizedBox(
-                                                          height:
-                                                              24,), // Enlarged space between availability and table
+                                                        height: 24,
+                                                      ), // Enlarged space between availability and table
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -924,11 +925,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         ),
                                                         child: Table(
                                                           columnWidths: const {
-                                                            0: IntrinsicColumnWidth(), // Column for Date and Place (content-driven width)
+                                                            0: IntrinsicColumnWidth(),
                                                             1: FixedColumnWidth(
-                                                                UIConstants
-                                                                    .dialogColumnGap,), // Explicit fixed width for the spacer
-                                                            2: IntrinsicColumnWidth(), // Column for Group and Price (content-driven width)
+                                                              UIConstants
+                                                                  .dialogColumnGap,
+                                                            ),
+                                                            2: IntrinsicColumnWidth(),
                                                           },
                                                           children: [
                                                             TableRow(
@@ -945,10 +947,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                            Icons
-                                                                                .calendar_today,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,),
+                                                                          Icons
+                                                                              .calendar_today,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
@@ -960,18 +963,20 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,),
+                                                                      height: UIConstants
+                                                                          .spacingXS,
+                                                                    ),
                                                                     Row(
                                                                       mainAxisSize:
                                                                           MainAxisSize
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                            Icons
-                                                                                .location_on,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,),
+                                                                          Icons
+                                                                              .location_on,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
@@ -987,8 +992,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                // Spacer column - this SizedBox effectively provides the fixed width
-                                                                // defined in the `columnWidths` for index 1.
                                                                 const SizedBox(),
                                                                 // Second column: Group and Price
                                                                 Column(
@@ -1002,10 +1005,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                            Icons
-                                                                                .group,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,),
+                                                                          Icons
+                                                                              .group,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
@@ -1020,18 +1024,20 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                        height:
-                                                                            UIConstants.spacingXS,),
+                                                                      height: UIConstants
+                                                                          .spacingXS,
+                                                                    ),
                                                                     Row(
                                                                       mainAxisSize:
                                                                           MainAxisSize
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                            Icons
-                                                                                .request_quote,
-                                                                            size:
-                                                                                UIConstants.defaultIconSize,),
+                                                                          Icons
+                                                                              .request_quote,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
@@ -1049,8 +1055,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                          height: UIConstants
-                                                              .spacingS,), // Small space between table and the next section
+                                                        height: UIConstants
+                                                            .spacingS,
+                                                      ), // Small space between table and the next section
                                                       // "Lehrgangsleiter" section (originally the right column, now moved below the table)
                                                       Padding(
                                                         padding:
@@ -1075,17 +1082,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               ),
                                                             ),
                                                             const SizedBox(
-                                                                height: UIConstants
-                                                                    .spacingXS,),
+                                                              height: UIConstants
+                                                                  .spacingXS,
+                                                            ),
                                                             Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .min,
                                                               children: [
                                                                 const Icon(
-                                                                    Icons.email,
-                                                                    size: UIConstants
-                                                                        .defaultIconSize,),
+                                                                  Icons.email,
+                                                                  size: UIConstants
+                                                                      .defaultIconSize,
+                                                                ),
                                                                 UIConstants
                                                                     .horizontalSpacingS,
                                                                 Text(
@@ -1100,17 +1109,19 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                                height: UIConstants
-                                                                    .spacingXXS,),
+                                                              height: UIConstants
+                                                                  .spacingXXS,
+                                                            ),
                                                             Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .min,
                                                               children: [
                                                                 const Icon(
-                                                                    Icons.phone,
-                                                                    size: UIConstants
-                                                                        .defaultIconSize,),
+                                                                  Icons.phone,
+                                                                  size: UIConstants
+                                                                      .defaultIconSize,
+                                                                ),
                                                                 UIConstants
                                                                     .horizontalSpacingS,
                                                                 Text(
