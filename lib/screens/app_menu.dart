@@ -197,7 +197,7 @@ class AppDrawer extends StatelessWidget {
                 color: UIStyles.menuIconColor,
               ),
               title: const ScaledText(
-                'Oktoberfestlandesschießen',
+                'Oktoberfest',
                 style: TextStyle(fontSize: _menuItemFontSize),
               ),
               onTap: () {

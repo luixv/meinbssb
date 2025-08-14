@@ -29,6 +29,12 @@ class ZweitvereinTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Define a consistent padding for all table cell content
+    const EdgeInsets cellContentPadding = EdgeInsets.symmetric(
+      vertical: 2,
+      horizontal: UIConstants.spacingXS,
+    );
+
     return ExpansionTile(
       initiallyExpanded: true,
       title: Row(
@@ -40,19 +46,35 @@ class ZweitvereinTable extends StatelessWidget {
               height: 1.0,
             ),
           ),
-          ScaledText(
-            vereinName,
-            style: UIStyles.subtitleStyle,
+          // FIX: Wrap the vereinName with Expanded to prevent overflow
+          Expanded(
+            child: ScaledText(
+              vereinName,
+              style: UIStyles.subtitleStyle,
+              // softWrap is true by default for Text, allowing it to wrap.
+              // If you prefer truncation instead of wrapping, you can add:
+              // overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
       children: [
         Table(
           columnWidths: const <int, TableColumnWidth>{
-            0: IntrinsicColumnWidth(),
-            1: IntrinsicColumnWidth(),
-            2: FlexColumnWidth(),
-            3: FixedColumnWidth(32),
+            // Changed IntrinsicColumnWidth to FlexColumnWidth for better responsiveness
+            0: FlexColumnWidth(
+              0.2,
+            ), // Small flexible share for the first column
+            1: FlexColumnWidth(
+              0.2,
+            ), // Small flexible share for the second column
+            2: FlexColumnWidth(
+              0.6,
+            ), // The 'Disziplin' name gets the most flexible space
+            // Increased FixedColumnWidth to accommodate the IconButton's tap target size
+            3: FixedColumnWidth(
+              56,
+            ), // Standard IconButton needs at least 48px, plus some padding
           },
           border: TableBorder.all(
             color: UIConstants.cookiesDialogColor,
@@ -61,53 +83,71 @@ class ZweitvereinTable extends StatelessWidget {
           children: [
             TableRow(
               children: [
+                // Header for first column: Centered text to align with centered icons below
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: UIConstants.spacingXS,
+                  padding: cellContentPadding,
+                  child: Center(
+                    // Added Center for alignment consistency
+                    child: ScaledText(
+                      '${(xx - 1) % 100}/${xx % 100}',
+                      style: UIStyles.bodyStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
+                ),
+                // Header for second column: Centered text to align with centered icons below
+                Padding(
+                  padding: cellContentPadding,
+                  child: Center(
+                    // Added Center for alignment consistency
+                    child: ScaledText(
+                      '${xx % 100}/${yy % 100}',
+                      style: UIStyles.bodyStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                // Header for Disziplin column: Simple padded text
+                Padding(
+                  padding: cellContentPadding,
                   child: ScaledText(
-                    '${(xx - 1) % 100}/${xx % 100}',
+                    '',
                     style: UIStyles.bodyStyle.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: UIConstants.spacingXS,
-                  ),
-                  child: ScaledText(
-                    '${xx % 100}/${yy % 100}',
-                    style: UIStyles.bodyStyle.copyWith(
-                      fontWeight: FontWeight.bold,
+                // Header for delete icon column: Placeholder that takes up space correctly
+                const Padding(
+                  padding: cellContentPadding,
+                  child: Align(
+                    // Use Align to match the content row's alignment
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      // A sized box to occupy the space of the icon button
+                      width: UIConstants.defaultIconSize +
+                          16, // Approx icon size + padding
+                      height: UIConstants.defaultIconSize +
+                          16, // Maintain square aspect or fit typical button height
+                      child: Center(
+                        child: Text(
+                          '',
+                        ),
+                      ), // Empty text, or a subtle label if desired
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: UIConstants.spacingXS,
-                  ),
-                  child: ScaledText(
-                    'Disziplin',
-                    style: UIStyles.bodyStyle.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox.shrink(),
               ],
             ),
+            // Map pivot entries to TableRows for content
             ...pivot.entries.map(
               (entry) => TableRow(
                 children: [
+                  // Content for first column: Centered checkmark
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: UIConstants.spacingXS,
-                    ),
+                    padding: cellContentPadding,
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
@@ -117,11 +157,9 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
+                  // Content for second column: Centered checkmark
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: UIConstants.spacingXS,
-                    ),
+                    padding: cellContentPadding,
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
@@ -131,16 +169,15 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
+                  // Content for Disziplin column: Scaled text
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: UIConstants.spacingXS,
-                    ),
+                    padding: cellContentPadding,
                     child: ScaledText(
                       entry.key,
                       style: UIStyles.bodyStyle,
                     ),
                   ),
+                  // Content for delete icon column: Aligned icon button
                   Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
@@ -156,6 +193,7 @@ class ZweitvereinTable extends StatelessWidget {
             ),
           ],
         ),
+        // Autocomplete and other widgets below the table
         Padding(
           padding: const EdgeInsets.only(top: UIConstants.spacingS),
           child: Column(
@@ -187,11 +225,8 @@ class ZweitvereinTable extends StatelessWidget {
                       autocompleteController = controller;
                       return LayoutBuilder(
                         builder: (context, constraints) {
-                          // Reserve space for the delete icon (approx 12px)
-                          const deleteIconWidth = 12.0;
                           return SizedBox(
                             height: 32,
-                            width: constraints.maxWidth - deleteIconWidth,
                             child: TextField(
                               controller: controller,
                               focusNode: focusNode,

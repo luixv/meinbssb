@@ -629,8 +629,14 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                               }),
                             ],
                             const SizedBox(height: UIConstants.spacingXXXL),
-                            // Add checkbox for physikalischer Ausweis
-                            Row(
+                            // FIX: Use Wrap for the checkbox line to handle wrapping gracefully
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment
+                                  .center, // Align items vertically
+                              spacing: UIConstants.spacingS /
+                                  2, // Small horizontal space between items
+                              runSpacing: UIConstants
+                                  .spacingS, // Vertical space between wrapped lines
                               children: [
                                 Checkbox(
                                   value: _digitalerPass,
@@ -641,27 +647,30 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     });
                                   },
                                 ),
-                                const SizedBox(width: 8),
-                                const Expanded(
-                                  child: Row(
-                                    children: [
-                                      ScaledText(
-                                        'zusätzlicher physikalischer Ausweis',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                // Use a Row with mainAxisSize.min to keep the text and tooltip together
+                                Row(
+                                  mainAxisSize: MainAxisSize
+                                      .min, // Essential for Row inside Wrap
+                                  children: [
+                                    ScaledText(
+                                      'zusätzlicher physikalischer Ausweis',
+                                      style: UIStyles.bodyStyle.copyWith(
+                                        // Consistent style
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      SizedBox(width: 6),
-                                      Tooltip(
-                                        message: 'Kostenpflichtig',
-                                        child: Icon(
-                                          Icons.info_outline,
-                                          color: UIConstants.defaultAppColor,
-                                          size: UIConstants.defaultIconSize,
-                                        ),
+                                    ),
+                                    // Small space between text and icon
+                                    const SizedBox(
+                                        width: UIConstants.spacingXS,),
+                                    const Tooltip(
+                                      message: 'Kostenpflichtig',
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: UIConstants.defaultAppColor,
+                                        size: UIConstants.defaultIconSize,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

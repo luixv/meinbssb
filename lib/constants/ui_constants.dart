@@ -164,6 +164,8 @@ class UIConstants {
   static const double fabHeight = 16.0;
   static const double fabSize = 56.0; // Standard FAB size (height and width)
   static const double fabIconSize = 24.0; // Standard FAB icon size
+  static const double fabLargeIconSize = 32;
+  static const double fabLargeTextSize = 18;
   static const double defaultStrokeWidth = 2.0;
   static const double defaultIconSize = 16.0;
   static const double defaultIconWidth = 60.0;
@@ -192,10 +194,7 @@ class UIConstants {
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
-
-  // Strings
-  
-  
+  static const double maxContentWidth = 600;
 
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =
@@ -259,7 +258,6 @@ class UIConstants {
   // UI Icons
   static const IconData circleIcon = Icons.circle;
 
-  
   static const List<String> contactTypes = [
     'Telefon',
     'Mobil',
@@ -267,7 +265,6 @@ class UIConstants {
     'Fax',
   ];
 
-  
   // Dialog
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
