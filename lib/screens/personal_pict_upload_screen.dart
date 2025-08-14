@@ -661,18 +661,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                         fontSizeProvider.scaleFactor,
                   ),
                 ),
-              )
-            else if (_existingProfilePhoto != null && _selectedImage == null)
-              Center(
-                child: ScaledText(
-                  'Profilbild bereits vorhanden',
-                  style: UIStyles.bodyStyle.copyWith(
-                    fontSize: UIStyles.bodyStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                    color: Colors.green,
-                  ),
-                ),
               ),
+
             const SizedBox(height: UIConstants.spacingM),
             // Show validation requirements
             Consumer<ConfigService>(
