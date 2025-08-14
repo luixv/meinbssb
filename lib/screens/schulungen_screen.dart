@@ -16,8 +16,8 @@ import '/widgets/dialog_fabs.dart';
 import 'schulungen/schulungen_search_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'schulungen/schulungen_register_person_dialog.dart';
-import '../services/core/config_service.dart';
-import '../services/core/email_service.dart';
+import '/services/core/config_service.dart';
+import '/services/core/email_service.dart';
 import 'schulungen/schulungen_list_item.dart';
 
 class SchulungenScreen extends StatefulWidget {
@@ -912,7 +912,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 ),
                                                               ),
                                                               const SizedBox(
-                                                                height: 4,
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
                                                               ), // Small space below the title
                                                               Text(
                                                                 'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
@@ -928,8 +930,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                         .center,
                                                               ),
                                                               const SizedBox(
-                                                                height: 24,
-                                                              ), // Enlarged space between availability and table
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ), 
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
@@ -1124,6 +1128,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             ],
                                                           ),
                                                         ),
+                                                        
                                                         const Divider(
                                                           height: UIConstants
                                                               .defaultStrokeWidth,
