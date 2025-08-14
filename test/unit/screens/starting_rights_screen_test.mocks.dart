@@ -172,6 +172,36 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
+  _i5.Future<Map<String, dynamic>> finalizeResetPassword(
+    String? token,
+    String? personId,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #finalizeResetPassword,
+          [
+            token,
+            personId,
+            newPassword,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+          String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPasswordResetVerificationToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
   _i5.Future<Map<String, dynamic>> changePassword(
     int? personId,
     String? newPassword,
