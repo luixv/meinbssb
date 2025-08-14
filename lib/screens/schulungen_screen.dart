@@ -1183,16 +1183,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 .defaultAppColor,
                                                         onPressed: () =>
                                                             Navigator.of(
-                                                                    context,)
-                                                                .pop(),
+                                                          context,
+                                                        ).pop(),
                                                         child: const Icon(
-                                                            Icons.close,
-                                                            color:
-                                                                Colors.white,),
+                                                          Icons.close,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
                                                       const SizedBox(
-                                                          height: UIConstants
-                                                              .spacingM,),
+                                                        height: UIConstants
+                                                            .spacingM,
+                                                      ),
                                                       // "Buchen" FAB below
                                                       FloatingActionButton(
                                                         heroTag:
@@ -1210,9 +1211,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 : () {
                                                                     final parentContext =
                                                                         context;
-                                                                    Navigator.of(
-                                                                            context,)
-                                                                        .pop();
+                                                                    Navigator
+                                                                        .of(
+                                                                      context,
+                                                                    ).pop();
                                                                     if (!mounted) {
                                                                       return;
                                                                     }
@@ -1231,22 +1233,24 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                             setState(() {
                                                                               _userData = userData;
                                                                             });
-                                                                            _showBookingDialog(t,
-                                                                                registeredPersons: [],);
+                                                                            _showBookingDialog(
+                                                                              t,
+                                                                              registeredPersons: [],
+                                                                            );
                                                                           },
                                                                         ),
                                                                       );
                                                                     } else {
                                                                       _showBookingDialog(
-                                                                          t,
-                                                                          registeredPersons: [],);
+                                                                        t,
+                                                                        registeredPersons: [],
+                                                                      );
                                                                     }
                                                                   },
                                                         child: const Icon(
-                                                            Icons
-                                                                .event_available,
-                                                            color:
-                                                                Colors.white,),
+                                                          Icons.event_available,
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
