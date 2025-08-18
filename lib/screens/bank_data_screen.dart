@@ -190,49 +190,70 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingM,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: UIConstants.spacingM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 40),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(false);
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
+                      onPressed: _isSaving
+                          ? null
+                          : () => Navigator.of(dialogContext).pop(false),
+                      style: UIStyles.dialogCancelButtonStyle.copyWith(
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: UIConstants.spacingM,),
+                        ),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
+                          const Icon(
+                            Icons.close,
+                            color: UIConstants.closeIcon,
+                            size: UIConstants.defaultIconSize,
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
+                              fontSize: UIConstants.buttonFontSize,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  UIConstants.horizontalSpacingM,
-                  Expanded(
+                  const SizedBox(height: 12),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 40),
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(true);
-                      },
-                      style: UIStyles.dialogAcceptButtonStyle,
+                      onPressed: _isSaving
+                          ? null
+                          : () => Navigator.of(dialogContext).pop(true),
+                      style: UIStyles.dialogAcceptButtonStyle.copyWith(
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: UIConstants.spacingS,),
+                        ),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
+                          const Icon(
+                            Icons.check,
+                            color: UIConstants.checkIcon,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
+                              fontSize: 14,
                             ),
                           ),
                         ],
