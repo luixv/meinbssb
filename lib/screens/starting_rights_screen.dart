@@ -36,10 +36,6 @@ class StartingRightsScreen extends StatefulWidget {
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
   bool _digitalerPass = true;
-  int get _xx {
-    final now = DateTime.now();
-    return now.year;
-  }
 
   int get _yy {
     final now = DateTime.now();
@@ -48,17 +44,15 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   String get _seasonString {
     final now = DateTime.now();
-    int xx, yy;
+    int yy;
     // Use September 16 as the deadline
     final deadline = DateTime(now.year, 9, 16);
     if (now.isBefore(deadline)) {
-      xx = now.year;
       yy = now.year + 1;
     } else {
-      xx = now.year + 1;
       yy = now.year + 2;
     }
-    return ' $xx/$yy';
+    return ' $yy';
   }
 
   bool _hasUnsavedChanges = false;
@@ -513,7 +507,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 final vereinName = fzm.vereinName;
                                 final pivot = pivotDisziplins[vereinId] ?? {};
                                 return ZweitvereinTable(
-                                  xx: _xx,
                                   yy: _yy,
                                   vereinName: vereinName,
                                   firstColumns: firstColumns[vereinId] ?? {},

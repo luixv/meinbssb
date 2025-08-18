@@ -7,7 +7,6 @@ import 'package:meinbssb/models/disziplin.dart';
 class ZweitvereinTable extends StatelessWidget {
   const ZweitvereinTable({
     super.key,
-    required this.xx,
     required this.yy,
     required this.vereinName,
     required this.firstColumns,
@@ -17,7 +16,6 @@ class ZweitvereinTable extends StatelessWidget {
     required this.onDelete,
     required this.onAdd,
   });
-  final int xx;
   final int yy;
   final String vereinName;
   final Map<String, int?> firstColumns;
@@ -85,7 +83,7 @@ class ZweitvereinTable extends StatelessWidget {
                   padding: cellContentPadding,
                   child: Center(
                     child: ScaledText(
-                      '${xx - 1}/$xx',
+                      '${yy - 1}',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: UIConstants.bodyFontSize,
@@ -99,7 +97,7 @@ class ZweitvereinTable extends StatelessWidget {
                   padding: cellContentPadding,
                   child: Center(
                     child: ScaledText(
-                      '$xx/$yy',
+                      '$yy',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: UIConstants.bodyFontSize,
