@@ -423,7 +423,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       const Icon(
                         Icons.error_outline,
                         color: Colors.red,
-                        size: UIConstants.iconSizeM,
+                        size: UIConstants.iconSizeL,
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       const ScaledText(
@@ -461,7 +461,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             const Icon(
                               Icons.error_outline,
                               color: Colors.red,
-                              size: UIConstants.iconSizeM,
+                              size: UIConstants.iconSizeL,
                             ),
                             const SizedBox(height: UIConstants.spacingM),
                             const ScaledText(

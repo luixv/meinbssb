@@ -166,7 +166,7 @@ class ZweitvereinTable extends StatelessWidget {
                         icon: const Icon(
                           Icons.delete,
                           color: UIConstants.defaultAppColor,
-                          size: UIConstants.iconSizeS,
+                          size: UIConstants.iconSizeXS,
                         ),
                         onPressed: () => onDelete(entry.key),
                       ),

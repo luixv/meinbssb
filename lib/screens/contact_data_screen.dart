@@ -98,7 +98,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               children: <TextSpan>[
                 const TextSpan(text: Messages.contactDataDeleteQuestion),
                 TextSpan(
-                  text: '$contactLabel: $contactValue',
+                  text: ' $contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
@@ -657,7 +657,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.delete_outline,
-                  size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
+                  size: UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
                 ),
                 color: UIConstants.deleteIcon,
                 onPressed: () => onDelete(

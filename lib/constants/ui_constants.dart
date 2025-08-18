@@ -175,11 +175,11 @@ class UIConstants {
   static const double defaultSeparatorHeight = 10.0;
 
   static const double iconSizeXL = 64.0;
-  static const double iconSizeL = 32.0;
-  static const double iconSizeM = 48.0;
-  static const double iconSizeS = 20.0;
-  static const double iconSizeXS = 12.0;
-  static const double iconSizeXXS = 6.0;
+  static const double iconSizeL = 48.0;
+  static const double iconSizeM = 32.0;
+
+  static const double iconSizeS = 24.0;
+  static const double iconSizeXS = 20.0;
 
   static const double dialogFontSize = 18.0;
   static const double largeFontSize = 24.0;
