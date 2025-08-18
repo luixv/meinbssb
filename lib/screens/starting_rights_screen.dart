@@ -192,9 +192,13 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         personId,
       );
 
+      // PassStatus darf 1=aktiv und 4=akzeptiert sein. Alle andere Stati werden nicht akzeptiert.
+      int passStatus = 4;
+
       final fetchedZweitmitgliedschaften =
-          await apiService.fetchZweitmitgliedschaften(
+          await apiService.fetchZweitmitgliedschaftenZVE(
         personId,
+        passStatus,
       );
 
       // Initialize data structures for each ZVE
@@ -661,7 +665,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     ),
                                     // Small space between text and icon
                                     const SizedBox(
-                                        width: UIConstants.spacingXS,),
+                                      width: UIConstants.spacingXS,
+                                    ),
                                     const Tooltip(
                                       message: 'Kostenpflichtig',
                                       child: Icon(

@@ -1494,6 +1494,23 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int? personId,
+    int? passStatus,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenZVE,
+          [
+            personId,
+            passStatus,
+          ],
+        ),
+        returnValue: _i2.Future<List<_i25.ZweitmitgliedschaftData>>.value(
+            <_i25.ZweitmitgliedschaftData>[]),
+      ) as _i2.Future<List<_i25.ZweitmitgliedschaftData>>);
+
+  @override
   _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
