@@ -300,6 +300,23 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i5.Future<List<_i9.ZweitmitgliedschaftData>>);
 
   @override
+  _i5.Future<List<_i9.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int? personId,
+    int? passStatus,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenZVE,
+          [
+            personId,
+            passStatus,
+          ],
+        ),
+        returnValue: _i5.Future<List<_i9.ZweitmitgliedschaftData>>.value(
+            <_i9.ZweitmitgliedschaftData>[]),
+      ) as _i5.Future<List<_i9.ZweitmitgliedschaftData>>);
+
+  @override
   _i5.Future<List<_i10.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(

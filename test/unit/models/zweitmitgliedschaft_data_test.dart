@@ -126,18 +126,26 @@ void main() {
       );
     });
 
-    test('handles null values in JSON', () {
+    test('handles EINTRITTVEREIN as null in JSON', () {
       final json = {
         'VEREINID': 123,
         'VEREINNR': 456,
-        'VEREINNAME': null,
-        'EINTRITTVEREIN': '2024-01-01T00:00:00.000Z',
+        'VEREINNAME': 'Test Club',
+        'EINTRITTVEREIN': null,
       };
+      final data = ZweitmitgliedschaftData.fromJson(json);
+      expect(data.eintrittVerein, isNull);
+    });
 
-      expect(
-        () => ZweitmitgliedschaftData.fromJson(json),
-        throwsA(isA<TypeError>()),
-      );
+    test('handles EINTRITTVEREIN as empty string in JSON', () {
+      final json = {
+        'VEREINID': 123,
+        'VEREINNR': 456,
+        'VEREINNAME': 'Test Club',
+        'EINTRITTVEREIN': '',
+      };
+      final data = ZweitmitgliedschaftData.fromJson(json);
+      expect(data.eintrittVerein, isNull);
     });
   });
 }

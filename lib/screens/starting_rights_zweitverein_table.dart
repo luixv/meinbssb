@@ -85,7 +85,7 @@ class ZweitvereinTable extends StatelessWidget {
                   padding: cellContentPadding,
                   child: Center(
                     child: ScaledText(
-                      '${(xx - 1) % 100}/${xx % 100}',
+                      '${xx - 1}/$xx',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: UIConstants.bodyFontSize,
@@ -99,7 +99,7 @@ class ZweitvereinTable extends StatelessWidget {
                   padding: cellContentPadding,
                   child: Center(
                     child: ScaledText(
-                      '${xx % 100}/${yy % 100}',
+                      '$xx/$yy',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: UIConstants.bodyFontSize,
