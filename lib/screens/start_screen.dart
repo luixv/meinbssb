@@ -597,7 +597,7 @@ class StartScreenState extends State<StartScreen> {
                                                             1: FixedColumnWidth(
                                                               UIConstants
                                                                   .dialogColumnGap,
-                                                            ),
+                                                            ), // Reduced gap for narrow screens
                                                             2: IntrinsicColumnWidth(),
                                                           },
                                                           children: [
@@ -623,7 +623,7 @@ class StartScreenState extends State<StartScreen> {
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
-                                                                          DateFormat('dd. MM. yyyy')
+                                                                          DateFormat('dd.MM.yyyy')
                                                                               .format(termin.datum),
                                                                           style:
                                                                               UIStyles.bodyStyle,
