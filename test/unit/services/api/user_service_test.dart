@@ -945,9 +945,13 @@ void main() {
 
     test('returns true when API responds with result true', () async {
       when(mockConfigService.getString(any)).thenReturn('test');
-      when(mockHttpClient.post(any, any,
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => {'result': true});
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'result': true});
 
       final result = await userService.postBSSBAppPassantrag(
         {
@@ -963,9 +967,13 @@ void main() {
 
     test('returns false when API responds with result false', () async {
       when(mockConfigService.getString(any)).thenReturn('test');
-      when(mockHttpClient.post(any, any,
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => {'result': false});
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'result': false});
 
       final result = await userService.postBSSBAppPassantrag(
         {
@@ -981,9 +989,13 @@ void main() {
 
     test('returns false when API returns unexpected response', () async {
       when(mockConfigService.getString(any)).thenReturn('test');
-      when(mockHttpClient.post(any, any,
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenAnswer((_) async => {'unexpected': true});
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'unexpected': true});
 
       final result = await userService.postBSSBAppPassantrag(
         {},
@@ -997,9 +1009,13 @@ void main() {
 
     test('returns false when exception is thrown', () async {
       when(mockConfigService.getString(any)).thenReturn('test');
-      when(mockHttpClient.post(any, any,
-              overrideBaseUrl: anyNamed('overrideBaseUrl'),),)
-          .thenThrow(Exception('API error'));
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenThrow(Exception('API error'));
 
       final result = await userService.postBSSBAppPassantrag(
         {},

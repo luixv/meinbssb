@@ -236,6 +236,34 @@ class UserService {
     };
   }
 
+  Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int personId,
+    int passStatus,
+  ) async {
+    // PassStatus darf 1=aktiv und 4=akzeptiert sein. Alle andere Stati werden nicht akzeptiert.
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+
+      final List<dynamic> result =
+          await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+        'zweitmitgliedschaftenzve_$personId',
+        _networkService.getCacheExpirationDuration(),
+        () async => await _httpClient.get(
+          'ZweitmitgliedschaftenZVE/$personId/$passStatus',
+          overrideBaseUrl: baseUrl,
+        ),
+        (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
+      );
+      return result
+          .map((json) => ZweitmitgliedschaftData.fromJson(json))
+          .toList();
+    } catch (e) {
+      LoggerService.logError('Error fetching ZweitmitgliedschaftenZVE: $e');
+      return []; // Return empty list on error
+    }
+  }
+
   Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
     int personId,
   ) async {

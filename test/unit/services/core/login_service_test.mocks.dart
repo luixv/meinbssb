@@ -959,6 +959,21 @@ class MockAuthService extends _i1.Mock implements _i15.AuthService {
       ) as _i4.PostgrestService);
 
   @override
+  String generateVerificationToken() => (super.noSuchMethod(
+        Invocation.method(
+          #generateVerificationToken,
+          [],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateVerificationToken,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
   _i2.Future<Map<String, dynamic>> register({
     required String? firstName,
     required String? lastName,
@@ -998,17 +1013,6 @@ class MockAuthService extends _i1.Mock implements _i15.AuthService {
             email,
             password,
           ],
-        ),
-        returnValue:
-            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i2.Future<Map<String, dynamic>>);
-
-  @override
-  _i2.Future<Map<String, dynamic>> resetPasswordStep1(String? passNumber) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #passwordReset,
-          [passNumber],
         ),
         returnValue:
             _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
@@ -1121,6 +1125,17 @@ class MockAuthService extends _i1.Mock implements _i15.AuthService {
       ) as _i2.Future<String>);
 
   @override
+  _i2.Future<Map<String, dynamic>> getPassDatenByPersonId(String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPassDatenByPersonId,
+          [personId],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
   _i2.Future<String> findePersonID(
     String? lastName,
     String? firstName,
@@ -1153,6 +1168,36 @@ class MockAuthService extends _i1.Mock implements _i15.AuthService {
           ),
         )),
       ) as _i2.Future<String>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> resetPasswordStep1(String? passNumber) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resetPasswordStep1,
+          [passNumber],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>> resetPasswordStep2(
+    String? token,
+    String? personId,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resetPasswordStep2,
+          [
+            token,
+            personId,
+            newPassword,
+          ],
+        ),
+        returnValue:
+            _i2.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i2.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [ConfigService].
@@ -1449,6 +1494,23 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int? personId,
+    int? passStatus,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenZVE,
+          [
+            personId,
+            passStatus,
+          ],
+        ),
+        returnValue: _i2.Future<List<_i25.ZweitmitgliedschaftData>>.value(
+            <_i25.ZweitmitgliedschaftData>[]),
+      ) as _i2.Future<List<_i25.ZweitmitgliedschaftData>>);
+
+  @override
   _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
@@ -1644,6 +1706,12 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
       ) as _i6.ConfigService);
 
   @override
+  Map<String, _i10.Uint8List> get profilePhotoCache => (super.noSuchMethod(
+        Invocation.getter(#profilePhotoCache),
+        returnValue: <String, _i10.Uint8List>{},
+      ) as Map<String, _i10.Uint8List>);
+
+  @override
   _i2.Future<Map<String, dynamic>> createUser({
     required String? firstName,
     required String? lastName,
@@ -1723,6 +1791,59 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
         Invocation.method(
           #getUserByVerificationToken,
           [token],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+          String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPasswordResetVerificationToken,
+          [token],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<void> createPasswordResetEntry({
+    required String? personId,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createPasswordResetEntry,
+          [],
+          {
+            #personId: personId,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> markPasswordResetEntryUsed(
+          {required String? verificationToken}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markPasswordResetEntryUsed,
+          [],
+          {#verificationToken: verificationToken},
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getLatestPasswordResetForPerson(
+          String? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getLatestPasswordResetForPerson,
+          [personId],
         ),
         returnValue: _i2.Future<Map<String, dynamic>?>.value(),
       ) as _i2.Future<Map<String, dynamic>?>);
@@ -1893,6 +2014,24 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
       ) as _i2.Future<String?>);
 
   @override
+  _i2.Future<String?> getPasswordResetSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getPasswordResetSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getPasswordResetContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getPasswordResetContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
   _i2.Future<String?> getSchulungAbmeldungSubject() => (super.noSuchMethod(
         Invocation.method(
           #getSchulungAbmeldungSubject,
@@ -1956,6 +2095,25 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
       ) as _i2.Future<void>);
 
   @override
+  _i2.Future<void> sendPasswordResetNotifications(
+    Map<String, dynamic>? passData,
+    List<String>? emailAddresses,
+    String? verificationLink,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendPasswordResetNotifications,
+          [
+            passData,
+            emailAddresses,
+            verificationLink,
+          ],
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
   _i2.Future<void> sendSchulungAbmeldungEmail({
     required String? personId,
     required String? schulungName,
@@ -1973,6 +2131,28 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
             #schulungDate: schulungDate,
             #firstName: firstName,
             #lastName: lastName,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendRegistrationEmail({
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? verificationLink,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendRegistrationEmail,
+          [],
+          {
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #verificationLink: verificationLink,
           },
         ),
         returnValue: _i2.Future<void>.value(),
@@ -2189,4 +2369,89 @@ class MockCalendarService extends _i1.Mock implements _i37.CalendarService {
           ),
         )),
       ) as _i2.Future<String>);
+
+  @override
+  String generateUID(
+    String? eventTitle,
+    DateTime? eventDate,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateUID,
+          [
+            eventTitle,
+            eventDate,
+          ],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateUID,
+            [
+              eventTitle,
+              eventDate,
+            ],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String formatDateTime(DateTime? dateTime) => (super.noSuchMethod(
+        Invocation.method(
+          #formatDateTime,
+          [dateTime],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatDateTime,
+            [dateTime],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String escapeText(String? text) => (super.noSuchMethod(
+        Invocation.method(
+          #escapeText,
+          [text],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #escapeText,
+            [text],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String sanitizeFileName(String? fileName) => (super.noSuchMethod(
+        Invocation.method(
+          #sanitizeFileName,
+          [fileName],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #sanitizeFileName,
+            [fileName],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String formatDateForFileName(DateTime? date) => (super.noSuchMethod(
+        Invocation.method(
+          #formatDateForFileName,
+          [date],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatDateForFileName,
+            [date],
+          ),
+        ),
+      ) as String);
 }

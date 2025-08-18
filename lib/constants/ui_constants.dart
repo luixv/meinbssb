@@ -108,6 +108,7 @@ class UIConstants {
   static const double defaultFontSize = 16.0;
 
   // Spacing constants
+  static const double spacingXXS = 1.0;
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
   static const double spacingSM = 12.0;
@@ -118,7 +119,6 @@ class UIConstants {
   static const double spacingXXXL = 64.0;
   static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
-  static const double spacingXXS = 1.0;
 
   /// Minimal horizontal spacing between columns in info tables/dialogs
   static const double infoTableColumnSpacing = 1.0;
@@ -164,6 +164,8 @@ class UIConstants {
   static const double fabHeight = 16.0;
   static const double fabSize = 56.0; // Standard FAB size (height and width)
   static const double fabIconSize = 24.0; // Standard FAB icon size
+  static const double fabLargeIconSize = 32;
+  static const double fabLargeTextSize = 18;
   static const double defaultStrokeWidth = 2.0;
   static const double defaultIconSize = 16.0;
   static const double defaultIconWidth = 60.0;
@@ -173,8 +175,11 @@ class UIConstants {
   static const double defaultSeparatorHeight = 10.0;
 
   static const double iconSizeXL = 64.0;
-  static const double iconSizeL = 32.0;
-  static const double iconSizeM = 48.0;
+  static const double iconSizeL = 48.0;
+  static const double iconSizeM = 32.0;
+
+  static const double iconSizeS = 24.0;
+  static const double iconSizeXS = 20.0;
 
   static const double dialogFontSize = 18.0;
   static const double largeFontSize = 24.0;
@@ -192,10 +197,7 @@ class UIConstants {
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
-
-  // Strings
-  
-  
+  static const double maxContentWidth = 600;
 
   // Alignment
   static const MainAxisAlignment spaceBetweenAlignment =
@@ -259,7 +261,6 @@ class UIConstants {
   // UI Icons
   static const IconData circleIcon = Icons.circle;
 
-  
   static const List<String> contactTypes = [
     'Telefon',
     'Mobil',
@@ -267,7 +268,6 @@ class UIConstants {
     'Fax',
   ];
 
-  
   // Dialog
   static const double dialogWidth = 500.0;
   static const double dialogHeight = 600.0;
@@ -335,7 +335,7 @@ class UIConstants {
   static const double dialogMaxHeight = 520.0;
   static const double dialogMinWidth = 300.0;
   static const double dialogNarrowWidth = 240.0;
-  static const double dialogColumnGap = 40.0;
+  static const double dialogColumnGap = 8.0;
 
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =

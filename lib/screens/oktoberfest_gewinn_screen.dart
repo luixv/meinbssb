@@ -195,22 +195,87 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                 ),
                               ],
                             ),
+                            // Add this trailing widget for the conditional value
+                            trailing: Builder(
+                              builder: (context) {
+                                final abgerufenAm = gewinn.abgerufenAm;
+                                DateTime? date;
+                                if (abgerufenAm.isNotEmpty) {
+                                  date = DateTime.tryParse(abgerufenAm);
+                                }
+                                if (date != null) {
+                                  final formatted =
+                                      '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+                                  return RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: 'Abgerufen am: ',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: formatted,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else if (abgerufenAm.isNotEmpty) {
+                                  // Fallback: show raw string if not a valid date
+                                  return RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: 'Abgerufen am: ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: abgerufenAm,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  return const Text(
+                                    'noch nicht abgerufen',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           ),
                         );
                       },
                     ),
                     const SizedBox(height: UIConstants.spacingM),
-                    ElevatedButton(
-                      onPressed:
-                          _bankDialogLoading ? null : _openBankDataDialog,
-                      child: _bankDialogLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Bankdaten'),
-                    ),
+                    if (_gewinne.any((g) => g.abgerufenAm.isEmpty))
+                      ElevatedButton(
+                        onPressed:
+                            _bankDialogLoading ? null : _openBankDataDialog,
+                        child: _bankDialogLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Text('Bankdaten'),
+                      ),
                   ],
                 ],
               ),
@@ -225,7 +290,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                 children: [
                   // FAB to fetch the last year's data
                   Visibility(
-                    visible: _gewinne.isEmpty && !_loading,
+                    visible: _gewinne.any(
+                      (g) => g.abgerufenAm.isEmpty,
+                    ),
                     maintainState: true,
                     child: FloatingActionButton(
                       heroTag: 'pickYear',
@@ -239,7 +306,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                   ),
                   // FAB to perform the Gewinn fetch/abfrage
                   Visibility(
-                    visible: _gewinne.isNotEmpty,
+                    visible: _gewinne.any(
+                      (g) => g.abgerufenAm.isEmpty,
+                    ),
                     maintainState: true,
                     child: FloatingActionButton(
                       heroTag: 'abrufen',
@@ -646,7 +715,7 @@ class OktoberfestAbrufResultScreen extends StatelessWidget {
                     const Icon(
                       Icons.error_outline,
                       color: UIConstants.errorColor,
-                      size: UIConstants.iconSizeL,
+                      size: UIConstants.iconSizeM,
                     ),
                     const SizedBox(height: UIConstants.spacingL),
                     ScaledText(

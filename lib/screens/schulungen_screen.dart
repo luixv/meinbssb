@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
+
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
-import 'package:intl/intl.dart';
+
 import '/services/core/cache_service.dart';
-import 'agb_screen.dart';
-import 'package:flutter_html/flutter_html.dart';
+import '/services/core/config_service.dart';
+import '/services/core/email_service.dart';
+
+import '/screens/agb_screen.dart';
+
 import '/widgets/dialog_fabs.dart';
 import 'schulungen/schulungen_search_screen.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
 import 'schulungen/schulungen_register_person_dialog.dart';
-import '../services/core/config_service.dart';
-import '../services/core/email_service.dart';
 import 'schulungen/schulungen_list_item.dart';
 
 class SchulungenScreen extends StatefulWidget {
@@ -473,7 +478,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         ),
                       ),
                     ),
-                    // Replace DialogFABs with a Positioned DialogFABs inside the Stack
                     Positioned(
                       bottom: UIConstants.dialogFabBottom,
                       right: UIConstants.dialogFabRight,
@@ -555,7 +559,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                             child: const Icon(Icons.check, color: Colors.white),
                           ),
                         ],
-                        // Remove padding from DialogFABs, as Positioned handles placement
                       ),
                     ),
                   ],
@@ -812,9 +815,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     ),
                                     actions: [
                                       TextButton(
-                                        onPressed: () => Navigator.of(
-                                          context,
-                                        ).pop(),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                         child: const Text('OK'),
                                       ),
                                     ],
@@ -831,382 +833,451 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                   (termin.lehrgangsleiterTel.isNotEmpty)
                                       ? termin.lehrgangsleiterTel
                                       : schulungsTermin.lehrgangsleiterTel;
+
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   final t = termin;
-                                  return Stack(
-                                    children: [
-                                      AlertDialog(
-                                        backgroundColor:
-                                            UIConstants.backgroundColor,
-                                        contentPadding: EdgeInsets.zero,
-                                        actions: null,
-                                        content: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            maxHeight: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.8,
-                                            minWidth:
-                                                UIConstants.dialogMinWidth,
-                                          ),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              mainAxisSize: MainAxisSize.min,
+                                  return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return Stack(
+                                        children: [
+                                          // Wrap dialog content in a Stack
+                                          AlertDialog(
+                                            backgroundColor:
+                                                UIConstants.backgroundColor,
+                                            contentPadding: EdgeInsets.zero,
+                                            actions: null,
+                                            content: Stack(
                                               children: [
-                                                // Header: white background, title, availability, and info table
-                                                Container(
-                                                  width: double.infinity,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 28,
-                                                    horizontal: 0,
-                                                  ), // enlarged vertical padding
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        UIConstants.whiteColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      UIConstants.cornerRadius,
-                                                    ), // rounded all corners
+                                                ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.8,
+                                                    minWidth: UIConstants
+                                                        .dialogMinWidth,
                                                   ),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .stretch,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        // Header: white background, title, availability, and info table
+                                                        Container(
+                                                          width: double
+                                                              .infinity, // Retain original width behavior
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            vertical:
+                                                                UIConstants
+                                                                    .spacingL,
+                                                            horizontal:
+                                                                UIConstants
+                                                                    .spacingXS,
+                                                          ), // Use UIConstants for padding
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: UIConstants
+                                                                .whiteColor, // White background as per original
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                              UIConstants
+                                                                  .cornerRadius,
+                                                            ), // Rounded corners
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                  horizontal:
+                                                                      UIConstants
+                                                                          .spacingL, // Original horizontal padding for the title
+                                                                ),
+                                                                child: Text(
+                                                                  t.bezeichnung
+                                                                          .isNotEmpty
+                                                                      ? t
+                                                                          .bezeichnung
+                                                                      : schulungsTermin
+                                                                          .bezeichnung,
+                                                                  style: UIStyles
+                                                                      .dialogTitleStyle,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ), // Small space below the title
+                                                              Text(
+                                                                'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
+                                                                style: UIStyles
+                                                                    .bodyStyle
+                                                                    .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingM,
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                  horizontal:
+                                                                      UIConstants
+                                                                          .spacingXL, // Use UIConstants for padding
+                                                                  vertical:
+                                                                      UIConstants
+                                                                          .spacingS,
+                                                                ),
+                                                                child: Table(
+                                                                  columnWidths: const {
+                                                                    0: IntrinsicColumnWidth(),
+                                                                    1: FixedColumnWidth(
+                                                                      UIConstants
+                                                                          .dialogColumnGap,
+                                                                    ),
+                                                                    2: IntrinsicColumnWidth(),
+                                                                  },
+                                                                  children: [
+                                                                    TableRow(
+                                                                      children: [
+                                                                        // First column: Date and Place
+                                                                        Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                const Icon(
+                                                                                  Icons.calendar_today,
+                                                                                  size: UIConstants.defaultIconSize,
+                                                                                ),
+                                                                                UIConstants.horizontalSpacingS,
+                                                                                Text(
+                                                                                  DateFormat('dd.MM.yyyy').format(t.datum),
+                                                                                  style: UIStyles.bodyStyle,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: UIConstants.spacingXS,
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                const Icon(
+                                                                                  Icons.location_on,
+                                                                                  size: UIConstants.defaultIconSize,
+                                                                                ),
+                                                                                UIConstants.horizontalSpacingS,
+                                                                                Text(
+                                                                                  t.ort,
+                                                                                  style: UIStyles.bodyStyle,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  maxLines: 1,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(),
+                                                                        // Second column: Group and Price
+                                                                        Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                const Icon(
+                                                                                  Icons.group,
+                                                                                  size: UIConstants.defaultIconSize,
+                                                                                ),
+                                                                                UIConstants.horizontalSpacingS,
+                                                                                Text(
+                                                                                  t.webGruppeLabel,
+                                                                                  style: UIStyles.bodyStyle,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  maxLines: 1,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: UIConstants.spacingXS,
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                const Icon(
+                                                                                  Icons.request_quote,
+                                                                                  size: UIConstants.defaultIconSize,
+                                                                                ),
+                                                                                UIConstants.horizontalSpacingS,
+                                                                                Text(
+                                                                                  '${t.kosten.toStringAsFixed(2)} €',
+                                                                                  style: UIStyles.bodyStyle,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height:
+                                                                    UIConstants
+                                                                        .spacingS,
+                                                              ), // Small space between table and the next section
+                                                              // "Lehrgangsleiter" section (originally the right column, now moved below the table)
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                  horizontal:
+                                                                      UIConstants
+                                                                          .spacingL, // Padding to align with the main title
+                                                                ),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Lehrgangsleiter:',
+                                                                      style: UIStyles
+                                                                          .bodyStyle
+                                                                          .copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingXS,
+                                                                    ),
+                                                                    Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        const Icon(
+                                                                          Icons
+                                                                              .email,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
+                                                                        UIConstants
+                                                                            .horizontalSpacingS,
+                                                                        Text(
+                                                                          lehrgangsleiterMail,
+                                                                          style:
+                                                                              UIStyles.bodyStyle,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: UIConstants
+                                                                          .spacingXXS,
+                                                                    ),
+                                                                    Row(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        const Icon(
+                                                                          Icons
+                                                                              .phone,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
+                                                                        ),
+                                                                        UIConstants
+                                                                            .horizontalSpacingS,
+                                                                        Text(
+                                                                          lehrgangsleiterTel,
+                                                                          style:
+                                                                              UIStyles.bodyStyle,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                        const Divider(
+                                                          height: UIConstants
+                                                              .defaultStrokeWidth,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(
+                                                            UIConstants
+                                                                .spacingM,
+                                                          ),
+                                                          child: t.lehrgangsinhaltHtml
+                                                                  .isNotEmpty
+                                                              ? Html(
+                                                                  data: t
+                                                                      .lehrgangsinhaltHtml,
+                                                                )
+                                                              : t.lehrgangsinhalt
+                                                                      .isNotEmpty
+                                                                  ? Text(
+                                                                      t.lehrgangsinhalt,
+                                                                    )
+                                                                  : t.bemerkung
+                                                                          .isNotEmpty
+                                                                      ? Text(
+                                                                          t.bemerkung,
+                                                                        )
+                                                                      : const Text(
+                                                                          'Keine Beschreibung verfügbar.',
+                                                                        ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: UIConstants
+                                                              .spacingXL,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                // FABs inside dialog, at bottom right
+                                                Positioned(
+                                                  bottom: UIConstants.spacingL,
+                                                  right: UIConstants.spacingL,
                                                   child: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal:
-                                                              UIConstants
-                                                                  .spacingL,
-                                                        ),
-                                                        child: Text(
-                                                          (t.bezeichnung
-                                                                  .isNotEmpty
-                                                              ? t.bezeichnung
-                                                              : schulungsTermin
-                                                                  .bezeichnung),
-                                                          style: UIStyles
-                                                              .dialogTitleStyle,
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                      // "Schließen" FAB on top
+                                                      FloatingActionButton(
+                                                        heroTag:
+                                                            'dialogCloseFab',
+                                                        tooltip: 'Schließen',
+                                                        backgroundColor:
+                                                            UIConstants
+                                                                .defaultAppColor,
+                                                        onPressed: () =>
+                                                            Navigator.of(
+                                                          context,
+                                                        ).pop(),
+                                                        child: const Icon(
+                                                          Icons.close,
+                                                          color: UIConstants
+                                                              .whiteColor,
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                        height: 4,
+                                                        height: UIConstants
+                                                            .spacingM,
                                                       ),
-                                                      Text(
-                                                        'Es sind noch ${t.maxTeilnehmer - t.angemeldeteTeilnehmer} von ${t.maxTeilnehmer} Plätzen frei',
-                                                        style: UIStyles
-                                                            .bodyStyle
-                                                            .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 24,
-                                                      ), // enlarged space between availability and table
-                                                      // Info table below availability (centered, compact, visually matching screenshot)
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal:
-                                                              32, // tighter, equal left/right padding
-                                                          vertical: UIConstants
-                                                              .spacingS,
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            // Left column (left-aligned)
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .calendar_today,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      _formatDate(
-                                                                        t.datum,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: UIConstants
-                                                                      .spacingXS,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .location_on,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      t.ort,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: UIConstants
-                                                                      .spacingXS,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .group,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      t.webGruppeLabel,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: UIConstants
-                                                                      .spacingXS,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .request_quote,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      '${t.kosten.toStringAsFixed(2)} €',
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              width: UIConstants
-                                                                  .dialogColumnGap,
-                                                            ), // reduced space between columns
-                                                            // Right column (right-aligned)
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  'Lehrgangsleiter:',
-                                                                  style: UIStyles
-                                                                      .bodyStyle
-                                                                      .copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: UIConstants
-                                                                      .spacingXS,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .email,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      lehrgangsleiterMail,
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: UIConstants
-                                                                      .spacingXS,
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .phone,
-                                                                      size: UIConstants
-                                                                          .defaultIconSize,
-                                                                    ),
-                                                                    UIConstants
-                                                                        .horizontalSpacingS,
-                                                                    Text(
-                                                                      lehrgangsleiterTel,
-                                                                      style: UIStyles
-                                                                          .bodyStyle,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                      // "Buchen" FAB below
+                                                      FloatingActionButton(
+                                                        heroTag:
+                                                            'dialogBookFab',
+                                                        tooltip: 'Buchen',
+                                                        backgroundColor: t
+                                                                .anmeldungenGesperrt
+                                                            ? UIConstants
+                                                                .cancelButtonBackground
+                                                            : UIConstants
+                                                                .defaultAppColor,
+                                                        onPressed:
+                                                            t.anmeldungenGesperrt
+                                                                ? null
+                                                                : () {
+                                                                    final parentContext =
+                                                                        context;
+                                                                    Navigator
+                                                                        .of(
+                                                                      context,
+                                                                    ).pop();
+                                                                    if (!mounted) {
+                                                                      return;
+                                                                    }
+                                                                    if (_userData ==
+                                                                        null) {
+                                                                      showDialog(
+                                                                        context:
+                                                                            parentContext,
+                                                                        barrierDismissible:
+                                                                            false,
+                                                                        builder:
+                                                                            (dialogContext) =>
+                                                                                LoginDialog(
+                                                                          onLoginSuccess:
+                                                                              (userData) {
+                                                                            setState(() {
+                                                                              _userData = userData;
+                                                                            });
+                                                                            _showBookingDialog(
+                                                                              t,
+                                                                              registeredPersons: [],
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      );
+                                                                    } else {
+                                                                      _showBookingDialog(
+                                                                        t,
+                                                                        registeredPersons: [],
+                                                                      );
+                                                                    }
+                                                                  },
+                                                        child: const Icon(
+                                                          Icons.event_available,
+                                                          color: UIConstants
+                                                              .whiteColor,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                // ... rest of dialog content ...
-                                                const Divider(
-                                                  height: UIConstants
-                                                      .defaultStrokeWidth,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    UIConstants.spacingM,
-                                                  ),
-                                                  child: t.lehrgangsinhaltHtml
-                                                          .isNotEmpty
-                                                      ? Html(
-                                                          data: t
-                                                              .lehrgangsinhaltHtml,
-                                                        )
-                                                      : t.lehrgangsinhalt
-                                                              .isNotEmpty
-                                                          ? Text(
-                                                              t.lehrgangsinhalt,
-                                                            )
-                                                          : t.bemerkung
-                                                                  .isNotEmpty
-                                                              ? Text(
-                                                                  t.bemerkung,
-                                                                )
-                                                              : const Text(
-                                                                  'Keine Beschreibung verfügbar.',
-                                                                ),
-                                                ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: UIConstants.dialogFabBottom +
-                                            UIConstants.dialogFabDeleteOffset,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogCloseFab$index',
-                                          mini: true,
-                                          tooltip: 'Schließen',
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () => Navigator.of(
-                                            context,
-                                          ).pop(),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: UIConstants.dialogFabBottom,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogBookFab$index',
-                                          mini: true,
-                                          tooltip: 'Buchen',
-                                          backgroundColor: t.anmeldungenGesperrt
-                                              ? UIConstants
-                                                  .cancelButtonBackground
-                                              : UIConstants.defaultAppColor,
-                                          onPressed: t.anmeldungenGesperrt
-                                              ? null
-                                              : () {
-                                                  final parentContext = context;
-                                                  Navigator.of(context).pop();
-                                                  if (!mounted) return;
-                                                  if (_userData == null) {
-                                                    showDialog(
-                                                      context: parentContext,
-                                                      barrierDismissible: false,
-                                                      builder:
-                                                          (dialogContext) =>
-                                                              LoginDialog(
-                                                        onLoginSuccess:
-                                                            (userData) {
-                                                          setState(() {
-                                                            _userData =
-                                                                userData;
-                                                          });
-                                                          _showBookingDialog(
-                                                            t,
-                                                            registeredPersons: [],
-                                                          );
-                                                        },
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    _showBookingDialog(
-                                                      t,
-                                                      registeredPersons: [],
-                                                    );
-                                                  }
-                                                },
-                                          child: const Icon(
-                                            Icons.event_available,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
                               );

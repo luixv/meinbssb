@@ -172,6 +172,36 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
+  _i5.Future<Map<String, dynamic>> finalizeResetPassword(
+    String? token,
+    String? personId,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #finalizeResetPassword,
+          [
+            token,
+            personId,
+            newPassword,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+          String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserByPasswordResetVerificationToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
   _i5.Future<Map<String, dynamic>> changePassword(
     int? personId,
     String? newPassword,
@@ -265,6 +295,23 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         Invocation.method(
           #fetchZweitmitgliedschaften,
           [personId],
+        ),
+        returnValue: _i5.Future<List<_i9.ZweitmitgliedschaftData>>.value(
+            <_i9.ZweitmitgliedschaftData>[]),
+      ) as _i5.Future<List<_i9.ZweitmitgliedschaftData>>);
+
+  @override
+  _i5.Future<List<_i9.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int? personId,
+    int? passStatus,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenZVE,
+          [
+            personId,
+            passStatus,
+          ],
         ),
         returnValue: _i5.Future<List<_i9.ZweitmitgliedschaftData>>.value(
             <_i9.ZweitmitgliedschaftData>[]),

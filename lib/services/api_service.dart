@@ -200,6 +200,13 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaften(personId);
   }
 
+  Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+    int personId,
+    int passStatus,
+  ) async {
+    return _userService.fetchZweitmitgliedschaftenZVE(personId, passStatus);
+  }
+
   Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
     return _trainingService.fetchAbsolvierteSchulungen(personId);
   }

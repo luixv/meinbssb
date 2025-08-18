@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
+
+// Assuming ScaledText is defined elsewhere and handles font scaling properly
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -28,6 +29,8 @@ class ImpressumScreen extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
+            constraints:
+                const BoxConstraints(maxWidth: UIConstants.maxContentWidth),
             margin: const EdgeInsets.symmetric(
               vertical: UIConstants.spacingL,
               horizontal: UIConstants.spacingM,
@@ -41,7 +44,6 @@ class ImpressumScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Main Title
                 const Text(
                   'Impressum',
                   style: UIStyles.headerStyle,
@@ -49,7 +51,6 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingM,
                 const Divider(),
                 UIConstants.verticalSpacingM,
-                // Gesamtverantwortung
                 const Text(
                   'Gesamtverantwortung',
                   style: UIStyles.sectionTitleStyle,
@@ -75,10 +76,9 @@ class ImpressumScreen extends StatelessWidget {
                 _contactRow(
                   phone: '0893169490',
                   email: 'gs@bssb.bayern',
-                  web: 'https://www.bssb.de',
+                  web: 'www.bssb.de',
                 ),
                 UIConstants.verticalSpacingM,
-                // Datenschutzbeauftragter
                 const Text(
                   'Datenschutzbeauftragter',
                   style: UIStyles.sectionTitleStyle,
@@ -105,7 +105,6 @@ class ImpressumScreen extends StatelessWidget {
                   style: UIStyles.bodyStyle,
                 ),
                 UIConstants.verticalSpacingM,
-                // Inhaltlich verantwortlich für die Teilbereiche
                 const Text(
                   'Inhaltlich verantwortlich für die Teilbereiche',
                   style: UIStyles.sectionTitleStyle,
@@ -202,15 +201,10 @@ class ImpressumScreen extends StatelessWidget {
                   '85748 Garching',
                 ]),
                 UIConstants.verticalSpacingXS,
-                Text(
-                  'Kommunikation',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
-                ),
                 _contactRow(
                   phone: '0893169490',
                   email: 'gs@bssb.bayern',
-                  web: 'https://www.bssb.de/',
+                  web: 'www.bssb.de/',
                 ),
                 UIConstants.verticalSpacingXS,
                 Text(
@@ -283,32 +277,69 @@ Widget _addressBlock(List<String> lines) {
 }
 
 Widget _contactRow({String? phone, String? email, String? web}) {
-  return Row(
-    children: [
-      if (phone != null) ...[
-        const Icon(Icons.phone,
-            size: UIConstants.bodyFontSize, color: UIConstants.defaultAppColor,),
-        const SizedBox(width: UIConstants.spacingXS),
-        _LinkText('Telefon', 'tel:$phone'),
-        const SizedBox(width: UIConstants.spacingSM),
+  return Padding(
+    padding: const EdgeInsets.only(bottom: UIConstants.spacingXS),
+    child: Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: UIConstants.spacingSM,
+      runSpacing: UIConstants.spacingXS,
+      children: [
+        if (phone != null)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.phone,
+                  size: UIConstants.bodyFontSize,
+                  color: UIConstants.defaultAppColor,),
+              const SizedBox(width: UIConstants.spacingXS),
+              Text(
+                // Removed Flexible
+                phone,
+                style: UIStyles.bodyStyle.copyWith(
+                  color: UIConstants.defaultAppColor,
+                ),
+              ),
+            ],
+          ),
+        if (email != null)
+          Row(
+            mainAxisSize: MainAxisSize
+                .min, // Corrected from MainAxisSize.inc to MainAxisSize.min
+            children: [
+              const Icon(Icons.email,
+                  size: UIConstants.bodyFontSize,
+                  color: UIConstants.defaultAppColor,),
+              const SizedBox(width: UIConstants.spacingXS),
+              Text(
+                // Removed Flexible
+                email,
+                style: UIStyles.bodyStyle.copyWith(
+                  color: UIConstants.defaultAppColor,
+                ),
+              ),
+            ],
+          ),
+        if (web != null)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.language,
+                size: UIConstants.bodyFontSize,
+                color: UIConstants.defaultAppColor,
+              ),
+              const SizedBox(width: UIConstants.spacingXS),
+              Text(
+                // Removed Flexible
+                web,
+                style: UIStyles.bodyStyle.copyWith(
+                  color: UIConstants.defaultAppColor,
+                ),
+              ),
+            ],
+          ),
       ],
-      if (email != null) ...[
-        const Icon(Icons.email,
-            size: UIConstants.bodyFontSize, color: UIConstants.defaultAppColor,),
-        const SizedBox(width: UIConstants.spacingXS),
-        _LinkText(email, 'mailto:$email'),
-        const SizedBox(width: UIConstants.spacingSM),
-      ],
-      if (web != null) ...[
-        const Icon(
-          Icons.language,
-          size: UIConstants.bodyFontSize,
-          color: UIConstants.defaultAppColor,
-        ),
-        const SizedBox(width: UIConstants.spacingXS),
-        _LinkText('Webseite', web),
-      ],
-    ],
+    ),
   );
 }
 
@@ -338,39 +369,19 @@ Widget _bulletList(List<String> items) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       for (final item in items)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
-            Expanded(child: Text(item, style: UIStyles.bodyStyle)),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingXXS),
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.start,
+            spacing: UIConstants.spacingXS,
+            children: [
+              const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(item,
+                  style: UIStyles
+                      .bodyStyle,), // Changed from Flexible to direct Text
+            ],
+          ),
         ),
     ],
   );
-}
-
-class _LinkText extends StatelessWidget {
-  const _LinkText(this.text, this.url);
-
-  final String text;
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: UIConstants.defaultAppColor,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    );
-  }
 }
