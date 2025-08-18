@@ -2316,6 +2316,12 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
       ) as _i7.ConfigService);
 
   @override
+  Map<String, _i18.Uint8List> get profilePhotoCache => (super.noSuchMethod(
+        Invocation.getter(#profilePhotoCache),
+        returnValue: <String, _i18.Uint8List>{},
+      ) as Map<String, _i18.Uint8List>);
+
+  @override
   _i5.Future<Map<String, dynamic>> createUser({
     required String? firstName,
     required String? lastName,

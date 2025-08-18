@@ -1689,6 +1689,12 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
       ) as _i6.ConfigService);
 
   @override
+  Map<String, _i10.Uint8List> get profilePhotoCache => (super.noSuchMethod(
+        Invocation.getter(#profilePhotoCache),
+        returnValue: <String, _i10.Uint8List>{},
+      ) as Map<String, _i10.Uint8List>);
+
+  @override
   _i2.Future<Map<String, dynamic>> createUser({
     required String? firstName,
     required String? lastName,
@@ -2346,4 +2352,89 @@ class MockCalendarService extends _i1.Mock implements _i37.CalendarService {
           ),
         )),
       ) as _i2.Future<String>);
+
+  @override
+  String generateUID(
+    String? eventTitle,
+    DateTime? eventDate,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateUID,
+          [
+            eventTitle,
+            eventDate,
+          ],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #generateUID,
+            [
+              eventTitle,
+              eventDate,
+            ],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String formatDateTime(DateTime? dateTime) => (super.noSuchMethod(
+        Invocation.method(
+          #formatDateTime,
+          [dateTime],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatDateTime,
+            [dateTime],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String escapeText(String? text) => (super.noSuchMethod(
+        Invocation.method(
+          #escapeText,
+          [text],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #escapeText,
+            [text],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String sanitizeFileName(String? fileName) => (super.noSuchMethod(
+        Invocation.method(
+          #sanitizeFileName,
+          [fileName],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #sanitizeFileName,
+            [fileName],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String formatDateForFileName(DateTime? date) => (super.noSuchMethod(
+        Invocation.method(
+          #formatDateForFileName,
+          [date],
+        ),
+        returnValue: _i9.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatDateForFileName,
+            [date],
+          ),
+        ),
+      ) as String);
 }
