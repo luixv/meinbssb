@@ -196,7 +196,9 @@ class BankDataScreenState extends State<BankDataScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 40),
+                    constraints: const BoxConstraints(
+                      minHeight: UIConstants.defaultButtonHeight,
+                    ),
                     child: ElevatedButton(
                       onPressed: _isSaving
                           ? null
@@ -204,7 +206,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                       style: UIStyles.dialogCancelButtonStyle.copyWith(
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
-                              horizontal: UIConstants.spacingM,),
+                            horizontal: UIConstants.spacingM,
+                          ),
                         ),
                       ),
                       child: Row(
@@ -227,9 +230,11 @@ class BankDataScreenState extends State<BankDataScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: UIConstants.spacingM),
                   ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 40),
+                    constraints: const BoxConstraints(
+                      minHeight: UIConstants.defaultButtonHeight,
+                    ),
                     child: ElevatedButton(
                       onPressed: _isSaving
                           ? null
@@ -237,7 +242,8 @@ class BankDataScreenState extends State<BankDataScreen> {
                       style: UIStyles.dialogAcceptButtonStyle.copyWith(
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
-                              vertical: UIConstants.spacingS,),
+                            vertical: UIConstants.spacingS,
+                          ),
                         ),
                       ),
                       child: Row(
@@ -246,14 +252,14 @@ class BankDataScreenState extends State<BankDataScreen> {
                           const Icon(
                             Icons.check,
                             color: UIConstants.checkIcon,
-                            size: 20,
+                            size: UIConstants.defaultIconSize,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: UIConstants.spacingS),
                           Text(
                             'Löschen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
-                              fontSize: 14,
+                              fontSize: UIConstants.buttonFontSize,
                             ),
                           ),
                         ],
