@@ -980,7 +980,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                                 ),
                                                                                 UIConstants.horizontalSpacingS,
                                                                                 Text(
-                                                                                  DateFormat('dd. MM. yyyy').format(t.datum),
+                                                                                  DateFormat('dd.MM.yyyy').format(t.datum),
                                                                                   style: UIStyles.bodyStyle,
                                                                                 ),
                                                                               ],
