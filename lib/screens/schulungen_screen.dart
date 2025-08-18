@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
+
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
-import 'package:intl/intl.dart';
+
 import '/services/core/cache_service.dart';
-import 'agb_screen.dart';
-import 'package:flutter_html/flutter_html.dart';
-import '/widgets/dialog_fabs.dart';
-import 'schulungen/schulungen_search_screen.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
-import 'schulungen/schulungen_register_person_dialog.dart';
 import '/services/core/config_service.dart';
 import '/services/core/email_service.dart';
+
+import '/screens/agb_screen.dart';
+
+import '/widgets/dialog_fabs.dart';
+import 'schulungen/schulungen_search_screen.dart';
+import 'schulungen/schulungen_register_person_dialog.dart';
 import 'schulungen/schulungen_list_item.dart';
 
 class SchulungenScreen extends StatefulWidget {
