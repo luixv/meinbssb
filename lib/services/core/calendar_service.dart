@@ -14,7 +14,8 @@ class CalendarService {
     required String organizerEmail,
   }) async {
     final startDateTime = eventDate;
-    final endDateTime = eventDate.add(const Duration(hours: 8)); // Default 8-hour duration
+    final endDateTime =
+        eventDate.add(const Duration(hours: 8)); // Default 8-hour duration
 
     final icsContent = '''BEGIN:VCALENDAR
 VERSION:2.0
@@ -22,12 +23,12 @@ PRODID:-//BSSB//Mein BSSB//DE
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:${_generateUID(eventTitle, eventDate)}
-DTSTART:${_formatDateTime(startDateTime)}
-DTEND:${_formatDateTime(endDateTime)}
-SUMMARY:${_escapeText(eventTitle)}
-DESCRIPTION:${_escapeText(description)}
-LOCATION:${_escapeText(location)}
+UID:${generateUID(eventTitle, eventDate)}
+DTSTART:${formatDateTime(startDateTime)}
+DTEND:${formatDateTime(endDateTime)}
+SUMMARY:${escapeText(eventTitle)}
+DESCRIPTION:${escapeText(description)}
+LOCATION:${escapeText(location)}
 ORGANIZER:MAILTO:$organizerEmail
 STATUS:CONFIRMED
 SEQUENCE:0
@@ -77,7 +78,8 @@ END:VCALENDAR''';
       organizerEmail: organizerEmail,
     );
 
-    final fileName = '${_sanitizeFileName(eventTitle)}_${_formatDateForFileName(eventDate)}.ics';
+    final fileName =
+        '${sanitizeFileName(eventTitle)}_${formatDateForFileName(eventDate)}.ics';
     return await saveIcsFile(
       icsContent: icsContent,
       fileName: fileName,
@@ -85,14 +87,14 @@ END:VCALENDAR''';
   }
 
   /// Generates a unique identifier for the event
-  String _generateUID(String eventTitle, DateTime eventDate) {
+  String generateUID(String eventTitle, DateTime eventDate) {
     final timestamp = eventDate.millisecondsSinceEpoch;
     final titleHash = eventTitle.hashCode;
     return '${timestamp}_$titleHash@bssb.de';
   }
 
   /// Formats DateTime to iCalendar format (YYYYMMDDTHHMMSSZ)
-  String _formatDateTime(DateTime dateTime) {
+  String formatDateTime(DateTime dateTime) {
     final utc = dateTime.toUtc();
     return '${utc.year.toString().padLeft(4, '0')}'
         '${utc.month.toString().padLeft(2, '0')}'
@@ -105,7 +107,7 @@ END:VCALENDAR''';
   }
 
   /// Escapes text for iCalendar format
-  String _escapeText(String text) {
+  String escapeText(String text) {
     return text
         .replaceAll('\\', '\\\\')
         .replaceAll(',', '\\,')
@@ -115,7 +117,7 @@ END:VCALENDAR''';
   }
 
   /// Sanitizes filename for file system compatibility
-  String _sanitizeFileName(String fileName) {
+  String sanitizeFileName(String fileName) {
     return fileName
         .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')
         .replaceAll(' ', '_')
@@ -123,7 +125,7 @@ END:VCALENDAR''';
   }
 
   /// Formats date for filename (YYYY-MM-DD)
-  String _formatDateForFileName(DateTime date) {
+  String formatDateForFileName(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
-} 
+}

@@ -9,6 +9,10 @@ class PostgrestService {
     required this.configService,
     http.Client? client,
   }) : _client = client ?? http.Client();
+  // Expose cache for testing
+  Map<String, Uint8List> get profilePhotoCache => _profilePhotoCache;
+  // Simple in-memory cache for profile photos
+  final Map<String, Uint8List> _profilePhotoCache = {};
 
   final ConfigService configService;
 
@@ -339,6 +343,7 @@ class PostgrestService {
       // First, check if the user exists
       final existingUser = await getUserByPersonId(userId);
 
+      bool success = false;
       if (existingUser != null) {
         // User exists, do a PATCH update
         final response = await _client.patch(
@@ -353,12 +358,11 @@ class PostgrestService {
           LoggerService.logInfo(
             'Profile photo updated successfully for existing user',
           );
-          return true;
+          success = true;
         } else {
           LoggerService.logError(
             'Failed to update profile photo. Status: ${response.statusCode}, Body: ${response.body}',
           );
-          return false;
         }
       } else {
         // User doesn't exist, do an INSERT
@@ -376,14 +380,18 @@ class PostgrestService {
           LoggerService.logInfo(
             'Profile photo uploaded successfully for new user',
           );
-          return true;
+          success = true;
         } else {
           LoggerService.logError(
             'Failed to insert profile photo. Status: ${response.statusCode}, Body: ${response.body}',
           );
-          return false;
         }
       }
+      // Refresh cache if upload was successful
+      if (success) {
+        _profilePhotoCache[userId] = Uint8List.fromList(photoBytes);
+      }
+      return success;
     } catch (e) {
       LoggerService.logError('Error uploading profile photo: $e');
       return false;
@@ -402,6 +410,8 @@ class PostgrestService {
       );
       if (response.statusCode == 200) {
         LoggerService.logInfo('Profile photo deleted successfully');
+        // Remove from cache
+        _profilePhotoCache.remove(userId);
         return true;
       } else {
         LoggerService.logError(
@@ -417,12 +427,16 @@ class PostgrestService {
 
   /// Fetch the profile photo for a user
   Future<Uint8List?> getProfilePhoto(String userId) async {
+    // Check cache first
+    if (_profilePhotoCache.containsKey(userId)) {
+      LoggerService.logInfo('Profile photo loaded from cache for user $userId');
+      return _profilePhotoCache[userId];
+    }
     try {
       final response = await _client.get(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId&select=profile_photo'),
         headers: _headers,
       );
-
       if (response.statusCode == 200) {
         final List<dynamic> users = jsonDecode(response.body);
         if (users.isNotEmpty && users[0]['profile_photo'] != null) {
@@ -430,18 +444,19 @@ class PostgrestService {
           LoggerService.logInfo(
             'Profile photo fetched successfully for user $userId',
           );
-          // Convert hexadecimal string to bytes
           String cleanHex = hexData;
           if (cleanHex.startsWith('\\x')) {
             cleanHex = cleanHex.substring(2);
           }
-          // Convert hex string to bytes
           final bytes = <int>[];
           for (int i = 0; i < cleanHex.length; i += 2) {
             final hexByte = cleanHex.substring(i, i + 2);
             bytes.add(int.parse(hexByte, radix: 16));
           }
-          return Uint8List.fromList(bytes);
+          final photoBytes = Uint8List.fromList(bytes);
+          // Save to cache
+          _profilePhotoCache[userId] = photoBytes;
+          return photoBytes;
         } else {
           LoggerService.logInfo('No profile photo found for user $userId');
           return null;
