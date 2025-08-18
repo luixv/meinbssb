@@ -31,7 +31,7 @@ class ZweitvereinTable extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define a consistent padding for all table cell content
     const EdgeInsets cellContentPadding = EdgeInsets.symmetric(
-      vertical: 2,
+      vertical: UIConstants.spacingXXS,
       horizontal: UIConstants.spacingXS,
     );
 
@@ -43,7 +43,7 @@ class ZweitvereinTable extends StatelessWidget {
             '• ',
             style: UIStyles.subtitleStyle.copyWith(
               fontSize: (UIStyles.subtitleStyle.fontSize! * 1.5),
-              height: 1.0,
+              height: UIConstants.spacingXXS,
             ),
           ),
           // FIX: Wrap the vereinName with Expanded to prevent overflow
@@ -195,7 +195,7 @@ class ZweitvereinTable extends StatelessWidget {
         ),
         // Autocomplete and other widgets below the table
         Padding(
-          padding: const EdgeInsets.only(top: UIConstants.spacingS),
+          padding: const EdgeInsets.only(top: UIConstants.spacingXS),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -261,7 +261,7 @@ class ZweitvereinTable extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: UIConstants.spacingL),
+              const SizedBox(height: UIConstants.spacingM),
             ],
           ),
         ),

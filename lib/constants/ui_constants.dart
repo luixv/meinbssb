@@ -108,6 +108,7 @@ class UIConstants {
   static const double defaultFontSize = 16.0;
 
   // Spacing constants
+  static const double spacingXXS = 1.0;
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
   static const double spacingSM = 12.0;
@@ -118,7 +119,6 @@ class UIConstants {
   static const double spacingXXXL = 64.0;
   static const double helpSpacing = 16.0;
   static const double listItemInterSpace = 3.0;
-  static const double spacingXXS = 1.0;
 
   /// Minimal horizontal spacing between columns in info tables/dialogs
   static const double infoTableColumnSpacing = 1.0;
