@@ -715,7 +715,7 @@ class OktoberfestAbrufResultScreen extends StatelessWidget {
                     const Icon(
                       Icons.error_outline,
                       color: UIConstants.errorColor,
-                      size: UIConstants.iconSizeL,
+                      size: UIConstants.iconSizeM,
                     ),
                     const SizedBox(height: UIConstants.spacingL),
                     ScaledText(

@@ -98,7 +98,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               children: <TextSpan>[
                 const TextSpan(text: Messages.contactDataDeleteQuestion),
                 TextSpan(
-                  text: '$contactLabel: $contactValue',
+                  text: ' $contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
@@ -107,18 +107,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingM,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: UIConstants.spacingM),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton(
                       onPressed: () => Navigator.of(dialogContext).pop(false),
                       style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.close, color: UIConstants.closeIcon),
                           UIConstants.horizontalSpacingS,
@@ -126,14 +126,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         ],
                       ),
                     ),
-                  ),
-                  UIConstants.horizontalSpacingM,
-                  Expanded(
-                    child: ElevatedButton(
+                    const SizedBox(width: UIConstants.spacingM),
+                    ElevatedButton(
                       onPressed: () => Navigator.of(dialogContext).pop(true),
                       style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.check, color: UIConstants.checkIcon),
                           UIConstants.horizontalSpacingS,
@@ -141,8 +140,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -657,7 +656,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               suffixIcon: IconButton(
                 icon: Icon(
                   Icons.delete_outline,
-                  size: UIConstants.iconSizeL * fontSizeProvider.scaleFactor,
+                  size: UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
                 ),
                 color: UIConstants.deleteIcon,
                 onPressed: () => onDelete(

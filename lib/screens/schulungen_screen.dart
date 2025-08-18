@@ -870,9 +870,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           padding:
                                                               const EdgeInsets
                                                                   .symmetric(
-                                                            vertical: 28,
-                                                            horizontal: 0,
-                                                          ), // Original padding for the white container itself
+                                                            vertical:
+                                                                UIConstants
+                                                                    .spacingL,
+                                                            horizontal:
+                                                                UIConstants
+                                                                    .spacingXS,
+                                                          ), // Use UIConstants for padding
                                                           decoration:
                                                               BoxDecoration(
                                                             color: UIConstants
@@ -933,13 +937,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 height:
                                                                     UIConstants
                                                                         .spacingM,
-                                                              ), 
+                                                              ),
                                                               Padding(
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .symmetric(
                                                                   horizontal:
-                                                                      32, // Tighter, equal left/right padding for the table
+                                                                      UIConstants
+                                                                          .spacingXL, // Use UIConstants for padding
                                                                   vertical:
                                                                       UIConstants
                                                                           .spacingS,
@@ -1128,7 +1133,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        
+
                                                         const Divider(
                                                           height: UIConstants
                                                               .defaultStrokeWidth,
@@ -1192,7 +1197,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         ).pop(),
                                                         child: const Icon(
                                                           Icons.close,
-                                                          color: Colors.white,
+                                                          color: UIConstants
+                                                              .whiteColor,
                                                         ),
                                                       ),
                                                       const SizedBox(
@@ -1254,7 +1260,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                   },
                                                         child: const Icon(
                                                           Icons.event_available,
-                                                          color: Colors.white,
+                                                          color: UIConstants
+                                                              .whiteColor,
                                                         ),
                                                       ),
                                                     ],

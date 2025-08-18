@@ -37,7 +37,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  static const double _menuIconSize = UIConstants.iconSizeL;
+  static const double _menuIconSize = UIConstants.iconSizeM;
   static const double _menuIconPadding = UIConstants.spacingS;
   static const double _menuIconSpacing = UIConstants.spacingM;
 

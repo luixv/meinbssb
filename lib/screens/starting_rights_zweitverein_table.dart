@@ -31,8 +31,8 @@ class ZweitvereinTable extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define a consistent padding for all table cell content
     const EdgeInsets cellContentPadding = EdgeInsets.symmetric(
-      vertical: 2,
-      horizontal: UIConstants.spacingXS,
+      vertical: UIConstants.spacingXXS,
+      horizontal: UIConstants.spacingXXS,
     );
 
     return ExpansionTile(
@@ -43,7 +43,7 @@ class ZweitvereinTable extends StatelessWidget {
             '• ',
             style: UIStyles.subtitleStyle.copyWith(
               fontSize: (UIStyles.subtitleStyle.fontSize! * 1.5),
-              height: 1.0,
+              height: UIConstants.spacingXXS,
             ),
           ),
           // FIX: Wrap the vereinName with Expanded to prevent overflow
@@ -76,10 +76,7 @@ class ZweitvereinTable extends StatelessWidget {
               56,
             ), // Standard IconButton needs at least 48px, plus some padding
           },
-          border: TableBorder.all(
-            color: UIConstants.cookiesDialogColor,
-            width: 4.0,
-          ),
+          // No border parameter, so no border will be shown
           children: [
             TableRow(
               children: [
@@ -87,11 +84,12 @@ class ZweitvereinTable extends StatelessWidget {
                 Padding(
                   padding: cellContentPadding,
                   child: Center(
-                    // Added Center for alignment consistency
                     child: ScaledText(
                       '${(xx - 1) % 100}/${xx % 100}',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
+                        fontSize: UIConstants.bodyFontSize,
+                        height: UIConstants.spacingXXS,
                       ),
                     ),
                   ),
@@ -100,54 +98,28 @@ class ZweitvereinTable extends StatelessWidget {
                 Padding(
                   padding: cellContentPadding,
                   child: Center(
-                    // Added Center for alignment consistency
                     child: ScaledText(
                       '${xx % 100}/${yy % 100}',
                       style: UIStyles.bodyStyle.copyWith(
                         fontWeight: FontWeight.bold,
+                        fontSize: UIConstants.bodyFontSize,
+                        height: UIConstants.spacingXXS,
                       ),
                     ),
                   ),
                 ),
                 // Header for Disziplin column: Simple padded text
-                Padding(
-                  padding: cellContentPadding,
-                  child: ScaledText(
-                    '',
-                    style: UIStyles.bodyStyle.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                // Header for delete icon column: Placeholder that takes up space correctly
-                const Padding(
-                  padding: cellContentPadding,
-                  child: Align(
-                    // Use Align to match the content row's alignment
-                    alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      // A sized box to occupy the space of the icon button
-                      width: UIConstants.defaultIconSize +
-                          16, // Approx icon size + padding
-                      height: UIConstants.defaultIconSize +
-                          16, // Maintain square aspect or fit typical button height
-                      child: Center(
-                        child: Text(
-                          '',
-                        ),
-                      ), // Empty text, or a subtle label if desired
-                    ),
-                  ),
-                ),
+                Container(),
+                // Header for delete icon column: Empty cell to match column count
+                Container(),
               ],
             ),
             // Map pivot entries to TableRows for content
             ...pivot.entries.map(
               (entry) => TableRow(
                 children: [
-                  // Content for first column: Centered checkmark
-                  Padding(
-                    padding: cellContentPadding,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
                     child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
@@ -157,9 +129,8 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
-                  // Content for second column: Centered checkmark
-                  Padding(
-                    padding: cellContentPadding,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
                     child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
@@ -169,23 +140,36 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
-                  // Content for Disziplin column: Scaled text
-                  Padding(
-                    padding: cellContentPadding,
-                    child: ScaledText(
-                      entry.key,
-                      style: UIStyles.bodyStyle,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: cellContentPadding,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: ScaledText(
+                          entry.key,
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontSize: UIConstants.bodyFontSize,
+                            height: UIConstants.spacingXXS,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  // Content for delete icon column: Aligned icon button
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: UIConstants.defaultAppColor,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(
+                      child: IconButton(
+                        constraints:
+                            const BoxConstraints(), //  removes min 48×48
+                        padding: EdgeInsets.zero, //  removes internal padding
+                        icon: const Icon(
+                          Icons.delete,
+                          color: UIConstants.defaultAppColor,
+                          size: UIConstants.iconSizeXS,
+                        ),
+                        onPressed: () => onDelete(entry.key),
                       ),
-                      onPressed: () => onDelete(entry.key),
                     ),
                   ),
                 ],
@@ -194,8 +178,9 @@ class ZweitvereinTable extends StatelessWidget {
           ],
         ),
         // Autocomplete and other widgets below the table
+
         Padding(
-          padding: const EdgeInsets.only(top: UIConstants.spacingS),
+          padding: const EdgeInsets.only(top: UIConstants.spacingXS),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -261,7 +246,7 @@ class ZweitvereinTable extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: UIConstants.spacingL),
+              const SizedBox(height: UIConstants.spacingM),
             ],
           ),
         ),

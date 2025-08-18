@@ -536,7 +536,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                 padding: EdgeInsets.all(UIConstants.spacingXS),
                 child: Icon(
                   Icons.add_a_photo_outlined,
-                  size: UIConstants.iconSizeL,
+                  size: UIConstants.iconSizeM,
                   color: UIConstants.mydarkGreyColor,
                 ),
               ),
@@ -585,7 +585,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               padding: EdgeInsets.all(UIConstants.spacingXS),
               child: Icon(
                 Icons.add_a_photo_outlined,
-                size: UIConstants.iconSizeL,
+                size: UIConstants.iconSizeM,
                 color: UIConstants.mydarkGreyColor,
               ),
             ),
