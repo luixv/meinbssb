@@ -118,10 +118,9 @@ class ZweitvereinTable extends StatelessWidget {
             ...pivot.entries.map(
               (entry) => TableRow(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.zero,
-                    child: Align(
-                      alignment: Alignment.center,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(
                       child: firstColumns.containsKey(entry.key)
                           ? const Icon(
                               Icons.check,
@@ -130,12 +129,9 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
-
-                  // Content for second column: Centered checkmark
-                  Padding(
-                    padding: EdgeInsets.zero,
-                    child: Align(
-                      alignment: Alignment.center,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(
                       child: secondColumns.containsKey(entry.key)
                           ? const Icon(
                               Icons.check,
@@ -144,29 +140,29 @@ class ZweitvereinTable extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
-
-                  // Content for Disziplin column: Aligned text with proper styling
-                  Padding(
-                    padding: cellContentPadding,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: ScaledText(
-                        entry.key,
-                        style: UIStyles.bodyStyle.copyWith(
-                          fontSize: UIConstants.bodyFontSize,
-                          height: UIConstants.spacingXXS,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: cellContentPadding,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: ScaledText(
+                          entry.key,
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontSize: UIConstants.bodyFontSize,
+                            height: UIConstants.spacingXXS,
+                          ),
                         ),
                       ),
                     ),
                   ),
-
-                  // Content for delete icon column: Aligned icon button in the same row
-                  /*
-                  Padding(
-                    padding: cellContentPadding,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(
                       child: IconButton(
+                        constraints:
+                            const BoxConstraints(), //  removes min 48×48
+                        padding: EdgeInsets.zero, //  removes internal padding
                         icon: const Icon(
                           Icons.delete,
                           color: UIConstants.defaultAppColor,
@@ -174,22 +170,6 @@ class ZweitvereinTable extends StatelessWidget {
                         ),
                         onPressed: () => onDelete(entry.key),
                       ),
-                    ),
-                  ),
-                  */
-
-                  Align(
-                    alignment: Alignment
-                        .center, // Center the icon button horizontally and vertically
-                    child: IconButton(
-                      // Set padding to zero to minimize space around the icon
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(
-                        Icons.delete,
-                        color: UIConstants.defaultAppColor,
-                        size: UIConstants.iconSizeS,
-                      ),
-                      onPressed: () => onDelete(entry.key),
                     ),
                   ),
                 ],
