@@ -145,7 +145,7 @@ class Messages {
       'Ihre Registrierung war erfolgreich.';
   static const String contactDataDeleteTitle = 'Kontaktdaten löschen';
   static const String contactDataDeleteQuestion =
-      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten?';
+      'Sind Sie sicher, dass Sie die Kontaktdaten löschen möchten? ';
   static const String errorOccurred = 'Es ist ein Fehler aufgetreten.';
   static const String personalDataSaved =
       'Ihre persönlichen Daten wurden erfolgreich gespeichert.';
