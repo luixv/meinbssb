@@ -98,7 +98,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               children: <TextSpan>[
                 const TextSpan(text: Messages.contactDataDeleteQuestion),
                 TextSpan(
-                  text: ' $contactLabel: $contactValue',
+                  text: '$contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(text: ' löschen möchten?'),
@@ -107,42 +107,38 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: UIConstants.spacingM),
-              child: Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: UIConstants.spacingM,
-                  runSpacing: UIConstants.spacingS,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
-                          const Text('Abbrechen'),
-                        ],
-                      ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingS,
+                        const Text('Abbrechen'),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          const Text('Löschen'),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        const Text('Löschen'),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -376,48 +372,42 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   content: SingleChildScrollView(
                     child: ListBody(
                       children: <Widget>[
-                        SizedBox(
-                          width: double.infinity,
-                          child: DropdownButtonFormField<int>(
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              isDense: true,
-                              labelText: 'Kontakttyp',
-                              labelStyle: UIStyles
-                                  .formInputDecoration.labelStyle
-                                  ?.copyWith(
-                                fontSize: UIStyles.formInputDecoration
-                                        .labelStyle!.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                              floatingLabelStyle: UIStyles
-                                  .formInputDecoration.floatingLabelStyle
-                                  ?.copyWith(
-                                fontSize: UIStyles.formInputDecoration
-                                        .floatingLabelStyle!.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                              floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        DropdownButtonFormField<int>(
+                          decoration: UIStyles.formInputDecoration.copyWith(
+                            labelText: 'Kontakttyp',
+                            labelStyle: UIStyles.formInputDecoration.labelStyle
+                                ?.copyWith(
+                              fontSize: UIStyles.formInputDecoration.labelStyle!
+                                      .fontSize! *
+                                  fontSizeProvider.scaleFactor,
                             ),
-                            value: _selectedKontaktTyp,
-                            items: _contactTypeLabels.entries.map((entry) {
-                              return DropdownMenuItem<int>(
-                                value: entry.key,
-                                child: ScaledText(
-                                  entry.value,
-                                  style: TextStyle(
-                                    fontSize: UIConstants.subtitleFontSize *
-                                        fontSizeProvider.scaleFactor,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                _selectedKontaktTyp = newValue;
-                              });
-                            },
-                            isExpanded: true,
+                            floatingLabelStyle: UIStyles
+                                .formInputDecoration.floatingLabelStyle
+                                ?.copyWith(
+                              fontSize: UIStyles.formInputDecoration
+                                      .floatingLabelStyle!.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
                           ),
+                          value: _selectedKontaktTyp,
+                          items: _contactTypeLabels.entries.map((entry) {
+                            return DropdownMenuItem<int>(
+                              value: entry.key,
+                              child: ScaledText(
+                                entry.value,
+                                style: TextStyle(
+                                  fontSize: UIConstants.subtitleFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _selectedKontaktTyp = newValue;
+                            });
+                          },
                         ),
                         const SizedBox(height: UIConstants.spacingM),
                         TextFormField(
@@ -460,14 +450,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                       padding: const EdgeInsets.symmetric(
                         horizontal: UIConstants.spacingM,
                       ),
-                      child: Center(
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: UIConstants.spacingM,
-                          runSpacing: UIConstants.spacingS,
-                          children: [
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(minHeight: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Cancel Button
+                          Expanded(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minHeight:
+                                    40, // Match your delete dialog button height
+                              ),
                               child: ElevatedButton(
                                 onPressed: _isAdding
                                     ? null
@@ -501,9 +493,14 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                 ),
                               ),
                             ),
-                            ConstrainedBox(
+                          ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          // Add Button
+                          Expanded(
+                            child: ConstrainedBox(
                               constraints: const BoxConstraints(
-                                minHeight: UIConstants.defaultButtonHeight,
+                                minHeight: UIConstants
+                                    .defaultButtonHeight, // Same as cancel button
                               ),
                               child: ElevatedButton(
                                 onPressed: _isAdding
@@ -540,7 +537,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                           const Icon(
                                             Icons.check,
                                             color: UIConstants.checkIcon,
-                                            size: 20,
+                                            size:
+                                                20, // Same as cancel button icon
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
@@ -550,15 +548,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                                 .copyWith(
                                               color:
                                                   UIConstants.submitButtonText,
-                                              fontSize: 14,
+                                              fontSize:
+                                                  14, // Same as cancel button
                                             ),
                                           ),
                                         ],
                                       ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

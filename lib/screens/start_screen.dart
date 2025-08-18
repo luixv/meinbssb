@@ -163,54 +163,50 @@ class StartScreenState extends State<StartScreen> {
           actions: <Widget>[
             Padding(
               padding: UIConstants.dialogPadding,
-              child: Row(
-                mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(false);
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: UIConstants.centerAlignment,
-                        children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingM,
-                          Flexible(
-                            child: ScaledText(
-                              'Abbrechen',
-                              style: UIStyles.dialogButtonTextStyle.copyWith(
-                                color: UIConstants.cancelButtonText,
-                              ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(false);
+                    },
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingM,
+                        Flexible(
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  UIConstants.horizontalSpacingM,
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop(true);
-                      },
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: UIConstants.centerAlignment,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          Flexible(
-                            child: ScaledText(
-                              'Löschen',
-                              style: UIStyles.dialogButtonTextStyle.copyWith(
-                                color: UIConstants.deleteButtonText,
-                              ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(true);
+                    },
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        Flexible(
+                          child: ScaledText(
+                            'Löschen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
