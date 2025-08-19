@@ -92,6 +92,7 @@ For generating mocks and testing:
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart
     (Use --debug just in case you want to debug it)
+    (For the time being this are not up-to-date)
 
 For installing at the phone do this: 
     adb install build/app/outputs/flutter-apk/app-release.apk
@@ -108,7 +109,6 @@ $ flutter build web
 Then with a web browser address the URL: localhost:8080 et voila!
 
 For a complete tree execute this command in a bash: find lib -print | sed -e 's;[^/]*/;│   ;g;s;│   \([^│]\);├── \1;'
-
 
 For testing you can use the following credentials
 
