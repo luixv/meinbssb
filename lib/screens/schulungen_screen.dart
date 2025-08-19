@@ -20,7 +20,6 @@ import '/services/core/email_service.dart';
 
 import '/screens/agb_screen.dart';
 
-import '/widgets/dialog_fabs.dart';
 import 'schulungen/schulungen_search_screen.dart';
 import 'schulungen/schulungen_register_person_dialog.dart';
 import 'schulungen/schulungen_list_item.dart';
@@ -504,85 +503,131 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       Positioned(
                         bottom: UIConstants.dialogFabBottom,
                         right: UIConstants.dialogFabRight,
-                        child: DialogFABs(
-                          alignment: MainAxisAlignment.end,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            FloatingActionButton(
-                              heroTag: 'bookingDialogCancelFab',
-                              mini: true,
-                              tooltip: 'Abbrechen',
-                              backgroundColor: UIConstants.defaultAppColor,
-                              onPressed: () => Navigator.of(context).pop(),
-                              child:
-                                  const Icon(Icons.close, color: Colors.white),
+                            Tooltip(
+                              message: 'Abbrechen',
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        UIConstants.defaultAppColor,
+                                    elevation: 4,
+                                    padding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadiusFAB,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: UIConstants.fabIconSize,
+                                  ),
+                                ),
+                              ),
                             ),
-                            FloatingActionButton(
-                              heroTag: 'bookingDialogOkFab',
-                              mini: true,
-                              tooltip: 'Buchen',
-                              backgroundColor: (agbChecked &&
-                                      lastschriftChecked &&
-                                      kontoinhaberController.text
-                                          .trim()
-                                          .isNotEmpty &&
-                                      ibanController.text.trim().isNotEmpty &&
-                                      (!_isBicRequired(
-                                            ibanController.text.trim(),
-                                          ) ||
-                                          bicController.text.trim().isNotEmpty))
-                                  ? UIConstants.defaultAppColor
-                                  : UIConstants.cancelButtonBackground,
-                              onPressed: (agbChecked &&
-                                      lastschriftChecked &&
-                                      kontoinhaberController.text
-                                          .trim()
-                                          .isNotEmpty &&
-                                      ibanController.text.trim().isNotEmpty &&
-                                      (!_isBicRequired(
-                                            ibanController.text.trim(),
-                                          ) ||
-                                          bicController.text.trim().isNotEmpty))
-                                  ? () async {
-                                      if (formKey.currentState != null &&
-                                          formKey.currentState!.validate()) {
-                                        Navigator.of(context).pop();
-                                        final cacheService =
-                                            Provider.of<CacheService>(
-                                          context,
-                                          listen: false,
-                                        );
-                                        final String email =
-                                            await cacheService.getString(
-                                                  'username',
-                                                ) ??
-                                                '';
-                                        final BankData safeBankData =
-                                            bankData ??
-                                                BankData(
-                                                  id: 0,
-                                                  webloginId: user.webLoginId,
-                                                  kontoinhaber: '',
-                                                  iban: '',
-                                                  bic: '',
-                                                  mandatSeq: 2,
-                                                  bankName: '',
-                                                  mandatNr: '',
-                                                  mandatName: '',
-                                                );
-                                        await registerPersonAndShowDialog(
-                                          schulungsTermin: schulungsTermin,
-                                          registeredPersons: registeredPersons,
-                                          bankData: safeBankData,
-                                          prefillUser: user.copyWith(
-                                            telefon: telefonController.text,
-                                          ),
-                                          prefillEmail: email,
-                                        );
-                                      }
-                                    }
-                                  : null,
-                              child:
-                                  const Icon(Icons.check, color: Colors.white),
+                            const SizedBox(height: UIConstants.spacingM),
+                            Tooltip(
+                              message: 'Buchen',
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: (agbChecked &&
+                                            lastschriftChecked &&
+                                            kontoinhaberController.text
+                                                .trim()
+                                                .isNotEmpty &&
+                                            ibanController.text
+                                                .trim()
+                                                .isNotEmpty &&
+                                            (!_isBicRequired(
+                                                  ibanController.text.trim(),
+                                                ) ||
+                                                bicController.text
+                                                    .trim()
+                                                    .isNotEmpty))
+                                        ? UIConstants.defaultAppColor
+                                        : UIConstants.cancelButtonBackground,
+                                    elevation: 4,
+                                    padding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadiusFAB,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: (agbChecked &&
+                                          lastschriftChecked &&
+                                          kontoinhaberController.text
+                                              .trim()
+                                              .isNotEmpty &&
+                                          ibanController.text
+                                              .trim()
+                                              .isNotEmpty &&
+                                          (!_isBicRequired(
+                                                ibanController.text.trim(),
+                                              ) ||
+                                              bicController.text
+                                                  .trim()
+                                                  .isNotEmpty))
+                                      ? () async {
+                                          if (formKey.currentState != null &&
+                                              formKey.currentState!
+                                                  .validate()) {
+                                            Navigator.of(context).pop();
+                                            final cacheService =
+                                                Provider.of<CacheService>(
+                                              context,
+                                              listen: false,
+                                            );
+                                            final String email =
+                                                await cacheService.getString(
+                                                      'username',
+                                                    ) ??
+                                                    '';
+                                            final BankData safeBankData =
+                                                bankData ??
+                                                    BankData(
+                                                      id: 0,
+                                                      webloginId:
+                                                          user.webLoginId,
+                                                      kontoinhaber: '',
+                                                      iban: '',
+                                                      bic: '',
+                                                      mandatSeq: 2,
+                                                      bankName: '',
+                                                      mandatNr: '',
+                                                      mandatName: '',
+                                                    );
+                                            await registerPersonAndShowDialog(
+                                              schulungsTermin: schulungsTermin,
+                                              registeredPersons:
+                                                  registeredPersons,
+                                              bankData: safeBankData,
+                                              prefillUser: user.copyWith(
+                                                telefon: telefonController.text,
+                                              ),
+                                              prefillEmail: email,
+                                            );
+                                          }
+                                        }
+                                      : null,
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: UIConstants.fabIconSize,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

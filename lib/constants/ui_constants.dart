@@ -161,6 +161,7 @@ class UIConstants {
   static const double drawerWidth = 309.0;
   static const double logoSize = 100.0;
   static const double cornerRadius = 8.0;
+  static const double cornerRadiusFAB = 12.0;
   static const double fabHeight = 16.0;
   static const double fabSize = 56.0; // Standard FAB size (height and width)
   static const double fabIconSize = 24.0; // Standard FAB icon size
