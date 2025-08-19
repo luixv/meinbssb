@@ -407,12 +407,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       ),
                                     ),
                                     const SizedBox(
-                                        height: UIConstants.spacingL,),
+                                      height: UIConstants.spacingL,
+                                    ),
                                     CheckboxListTile(
                                       value: agbChecked,
                                       onChanged: (val) {
                                         setState(
-                                            () => agbChecked = val ?? false,);
+                                          () => agbChecked = val ?? false,
+                                        );
                                       },
                                       title: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -1205,8 +1207,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 ),
                                                 // FABs inside dialog, at bottom right
                                                 Positioned(
-                                                  bottom: UIConstants.spacingL,
-                                                  right: UIConstants.spacingL,
+                                                  bottom: UIConstants.spacingM,
+                                                  right: UIConstants.spacingM,
                                                   child: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.min,

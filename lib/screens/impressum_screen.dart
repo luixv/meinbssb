@@ -288,9 +288,11 @@ Widget _contactRow({String? phone, String? email, String? web}) {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.phone,
-                  size: UIConstants.bodyFontSize,
-                  color: UIConstants.defaultAppColor,),
+              const Icon(
+                Icons.phone,
+                size: UIConstants.bodyFontSize,
+                color: UIConstants.defaultAppColor,
+              ),
               const SizedBox(width: UIConstants.spacingXS),
               Text(
                 // Removed Flexible
@@ -306,9 +308,11 @@ Widget _contactRow({String? phone, String? email, String? web}) {
             mainAxisSize: MainAxisSize
                 .min, // Corrected from MainAxisSize.inc to MainAxisSize.min
             children: [
-              const Icon(Icons.email,
-                  size: UIConstants.bodyFontSize,
-                  color: UIConstants.defaultAppColor,),
+              const Icon(
+                Icons.email,
+                size: UIConstants.bodyFontSize,
+                color: UIConstants.defaultAppColor,
+              ),
               const SizedBox(width: UIConstants.spacingXS),
               Text(
                 // Removed Flexible
@@ -376,9 +380,10 @@ Widget _bulletList(List<String> items) {
             spacing: UIConstants.spacingXS,
             children: [
               const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(item,
-                  style: UIStyles
-                      .bodyStyle,), // Changed from Flexible to direct Text
+              Text(
+                item,
+                style: UIStyles.bodyStyle,
+              ), // Changed from Flexible to direct Text
             ],
           ),
         ),
