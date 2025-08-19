@@ -499,41 +499,39 @@ class StartScreenState extends State<StartScreen> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return Stack(
-                                    children: [
-                                      AlertDialog(
-                                        backgroundColor:
-                                            UIConstants.backgroundColor,
-                                        contentPadding: EdgeInsets.zero,
-                                        content: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            maxHeight: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        UIConstants.backgroundColor,
+                                    contentPadding: EdgeInsets.zero,
+                                    content: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxHeight:
+                                            MediaQuery.of(context).size.height *
                                                 0.8,
-                                            minWidth: 300,
-                                          ),
-                                          child: SingleChildScrollView(
+                                        minWidth: 300,
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          SingleChildScrollView(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.stretch,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Container(
-                                                  width: double
-                                                      .infinity, // Retain original width behavior
+                                                  width: double.infinity,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                     vertical: 28,
                                                     horizontal: 0,
-                                                  ), // Original padding for the white container itself
+                                                  ),
                                                   decoration: BoxDecoration(
-                                                    color: UIConstants
-                                                        .whiteColor, // White background as per original
+                                                    color:
+                                                        UIConstants.whiteColor,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                       UIConstants.cornerRadius,
-                                                    ), // Rounded corners
+                                                    ),
                                                   ),
                                                   child: Column(
                                                     mainAxisSize:
@@ -543,8 +541,9 @@ class StartScreenState extends State<StartScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal: UIConstants
-                                                              .spacingL, // Original horizontal padding for the title
+                                                          horizontal:
+                                                              UIConstants
+                                                                  .spacingL,
                                                         ),
                                                         child: Text(
                                                           termin.bezeichnung
@@ -562,7 +561,7 @@ class StartScreenState extends State<StartScreen> {
                                                       const SizedBox(
                                                         height: UIConstants
                                                             .spacingM,
-                                                      ), // Small space below the title
+                                                      ),
                                                       Text(
                                                         'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
                                                         style: UIStyles
@@ -582,8 +581,7 @@ class StartScreenState extends State<StartScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal:
-                                                              32, // Tighter, equal left/right padding for the table
+                                                          horizontal: 32,
                                                           vertical: UIConstants
                                                               .spacingS,
                                                         ),
@@ -593,13 +591,12 @@ class StartScreenState extends State<StartScreen> {
                                                             1: FixedColumnWidth(
                                                               UIConstants
                                                                   .dialogColumnGap,
-                                                            ), // Reduced gap for narrow screens
+                                                            ),
                                                             2: IntrinsicColumnWidth(),
                                                           },
                                                           children: [
                                                             TableRow(
                                                               children: [
-                                                                // First column: Date and Place
                                                                 Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
@@ -620,7 +617,9 @@ class StartScreenState extends State<StartScreen> {
                                                                             .horizontalSpacingS,
                                                                         Text(
                                                                           DateFormat('dd.MM.yyyy')
-                                                                              .format(termin.datum),
+                                                                              .format(
+                                                                            termin.datum,
+                                                                          ),
                                                                           style:
                                                                               UIStyles.bodyStyle,
                                                                         ),
@@ -658,7 +657,6 @@ class StartScreenState extends State<StartScreen> {
                                                                   ],
                                                                 ),
                                                                 const SizedBox(),
-                                                                // Second column: Group and Price
                                                                 Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
@@ -723,14 +721,14 @@ class StartScreenState extends State<StartScreen> {
                                                       const SizedBox(
                                                         height: UIConstants
                                                             .spacingS,
-                                                      ), // Small space between table and the next section
-                                                      // "Lehrgangsleiter" section (originally the right column, now moved below the table)
+                                                      ),
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                          horizontal: UIConstants
-                                                              .spacingL, // Padding to align with the main title
+                                                          horizontal:
+                                                              UIConstants
+                                                                  .spacingL,
                                                         ),
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -839,50 +837,60 @@ class StartScreenState extends State<StartScreen> {
                                               ],
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: UIConstants.dialogFabBottom +
-                                            UIConstants.dialogFabDeleteOffset,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogDeleteFab$index',
-                                          mini: true,
-                                          tooltip: 'Löschen',
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            _handleDeleteSchulung(
-                                              schulung.schulungsTeilnehmerId,
-                                              index,
-                                              schulung.bezeichnung,
-                                            );
-                                          },
-                                          child: const Icon(
-                                            Icons.delete_outline_outlined,
-                                            color: Colors.white,
+                                          Positioned(
+                                            bottom: UIConstants.spacingM,
+                                            right: UIConstants.spacingM,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                FloatingActionButton(
+                                                  heroTag:
+                                                      'descDialogDeleteFab$index',
+                                                  mini: true,
+                                                  tooltip: 'Löschen',
+                                                  backgroundColor: UIConstants
+                                                      .defaultAppColor,
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                    _handleDeleteSchulung(
+                                                      schulung
+                                                          .schulungsTeilnehmerId,
+                                                      index,
+                                                      schulung.bezeichnung,
+                                                    );
+                                                  },
+                                                  child: const Icon(
+                                                    Icons
+                                                        .delete_outline_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: UIConstants.spacingM,
+                                                ),
+                                                FloatingActionButton(
+                                                  heroTag:
+                                                      'descDialogCloseFab$index',
+                                                  mini: true,
+                                                  tooltip: 'Schließen',
+                                                  backgroundColor: UIConstants
+                                                      .defaultAppColor,
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                      Positioned(
-                                        bottom: UIConstants.dialogFabBottom,
-                                        right: UIConstants.dialogFabRight,
-                                        child: FloatingActionButton(
-                                          heroTag: 'descDialogCloseFab$index',
-                                          mini: true,
-                                          tooltip: 'Schließen',
-                                          backgroundColor:
-                                              UIConstants.defaultAppColor,
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   );
                                 },
                               );

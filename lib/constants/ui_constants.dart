@@ -274,8 +274,8 @@ class UIConstants {
   static const double dialogHeaderHeight = 64.0;
 
   /// Standard margin for FABs in most dialogs
-  static const double dialogFabRight = 48.0;
-  static const double dialogFabBottom = 80.0;
+  static const double dialogFabRight = 16.0;
+  static const double dialogFabBottom = 48.0;
 
   static const double profilePictureSize = 90.0; // Size for the profile picture
 
@@ -331,7 +331,8 @@ class UIConstants {
       dialogFabOverlapOffset + 3 * 56.0;
 
   // Dialog sizing and spacing
-  static const double dialogMaxWidth = 500.0;
+  static const double dialogMaxWidth = 420.0;
+  static const double dialogMaxWidthWide = 640.0;
   static const double dialogMaxHeight = 520.0;
   static const double dialogMinWidth = 300.0;
   static const double dialogNarrowWidth = 240.0;

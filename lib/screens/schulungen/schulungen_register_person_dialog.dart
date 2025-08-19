@@ -145,8 +145,9 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
         msg == 'Teilnehmer bereits erfasst' ||
         msg == 'Teilnehmer erfolgreich aktualisiert') {
       // Send email notification
-      final formattedDate = '${widget.schulungsTermin.datum.day.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.month.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.year}';
-      
+      final formattedDate =
+          '${widget.schulungsTermin.datum.day.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.month.toString().padLeft(2, '0')}.${widget.schulungsTermin.datum.year}';
+
       await widget.apiService.sendSchulungAnmeldungEmail(
         personId: personId.toString(),
         schulungName: widget.schulungsTermin.bezeichnung,
@@ -160,7 +161,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
         location: widget.schulungsTermin.ort,
         eventDateTime: widget.schulungsTermin.datum,
       );
-      
+
       if (!mounted) return;
       setState(() => isLoading = false);
       if (!mounted) return;
@@ -341,7 +342,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       tooltip: 'Abbrechen',
                       backgroundColor: UIConstants.defaultAppColor,
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, color: Colors.white),
+                      child: const Icon(
+                        Icons.close,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                     FloatingActionButton(
                       heroTag: 'okRegisterAnotherFab',
@@ -349,7 +353,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       tooltip: 'OK',
                       backgroundColor: UIConstants.defaultAppColor,
                       onPressed: submit,
-                      child: const Icon(Icons.check, color: Colors.white),
+                      child: const Icon(
+                        Icons.check,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                   ],
                 ),

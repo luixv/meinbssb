@@ -47,13 +47,13 @@ class BankDataResultScreen extends StatelessWidget {
         heroTag: 'bankDataResultFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/home',
+            '/profile',
             arguments: {'userData': userData, 'isLoggedIn': true},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.home,
+          Icons.person,
           color: UIConstants.whiteColor,
         ),
       ),
