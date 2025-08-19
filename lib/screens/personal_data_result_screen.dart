@@ -39,9 +39,7 @@ class PersonalDataResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: UIConstants.spacingM),
             Text(
-              success
-                  ? Messages.personalDataSaved
-                  : Messages.errorOccurred,
+              success ? Messages.personalDataSaved : Messages.errorOccurred,
               style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
@@ -52,13 +50,13 @@ class PersonalDataResultScreen extends StatelessWidget {
         heroTag: 'personalDataResultFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/home',
+            '/profile',
             arguments: {'userData': userData, 'isLoggedIn': true},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.home,
+          Icons.person,
           color: UIConstants.whiteColor,
         ),
       ),

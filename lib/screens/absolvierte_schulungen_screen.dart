@@ -241,13 +241,13 @@ class AbsolvierteSchulungenScreenState
             heroTag: 'absolvierteSchulungenFab',
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(
-                '/home',
+                '/profile',
                 arguments: {'isLoggedIn': true},
               );
             },
             backgroundColor: UIConstants.defaultAppColor,
             child: const Icon(
-              Icons.home,
+              Icons.person,
               color: UIConstants.whiteColor,
             ),
           );
