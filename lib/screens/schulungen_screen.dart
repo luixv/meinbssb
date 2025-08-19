@@ -325,76 +325,65 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     const SizedBox(
                                       height: UIConstants.spacingM,
                                     ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: ibanController,
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(labelText: 'IBAN'),
-                                            validator: (value) {
-                                              final apiService =
-                                                  Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'IBAN ist erforderlich';
-                                              }
-                                              if (!apiService.validateIBAN(
-                                                value,
-                                              )) {
-                                                return 'Ungültige IBAN';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: UIConstants.spacingM,
-                                        ),
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: bicController,
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(
-                                              labelText: _isBicRequired(
-                                                ibanController.text.trim(),
-                                              )
-                                                  ? 'BIC *'
-                                                  : 'BIC (optional)',
-                                            ),
-                                            validator: (value) {
-                                              final apiService =
-                                                  Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
-                                              // BIC is required only if IBAN doesn't start with DE
-                                              final iban = ibanController.text
-                                                  .trim()
-                                                  .toUpperCase();
-                                              if (!iban.startsWith('DE') &&
-                                                  (value == null ||
-                                                      value.trim().isEmpty)) {
-                                                return 'BIC ist erforderlich für nicht-deutsche IBANs';
-                                              }
-                                              if (value != null &&
-                                                  value.trim().isNotEmpty) {
-                                                final bicError = apiService
-                                                    .validateBIC(value);
-                                                if (bicError != null) {
-                                                  return bicError;
-                                                }
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                      ],
+                                    TextFormField(
+                                      controller: ibanController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'IBAN'),
+                                      validator: (value) {
+                                        final apiService =
+                                            Provider.of<ApiService>(
+                                          context,
+                                          listen: false,
+                                        );
+                                        if (value == null || value.isEmpty) {
+                                          return 'IBAN ist erforderlich';
+                                        }
+                                        if (!apiService.validateIBAN(
+                                          value,
+                                        )) {
+                                          return 'Ungültige IBAN';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    TextFormField(
+                                      controller: bicController,
+                                      decoration:
+                                          UIStyles.formInputDecoration.copyWith(
+                                        labelText: _isBicRequired(
+                                          ibanController.text.trim(),
+                                        )
+                                            ? 'BIC *'
+                                            : 'BIC (optional)',
+                                      ),
+                                      validator: (value) {
+                                        final apiService =
+                                            Provider.of<ApiService>(
+                                          context,
+                                          listen: false,
+                                        );
+                                        // BIC is required only if IBAN doesn't start with DE
+                                        final iban = ibanController.text
+                                            .trim()
+                                            .toUpperCase();
+                                        if (!iban.startsWith('DE') &&
+                                            (value == null ||
+                                                value.trim().isEmpty)) {
+                                          return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                        }
+                                        if (value != null &&
+                                            value.trim().isNotEmpty) {
+                                          final bicError =
+                                              apiService.validateBIC(value);
+                                          if (bicError != null) {
+                                            return bicError;
+                                          }
+                                        }
+                                        return null;
+                                      },
                                     ),
                                   ],
                                 ),
