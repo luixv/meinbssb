@@ -98,10 +98,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               children: <TextSpan>[
                 const TextSpan(text: Messages.contactDataDeleteQuestion),
                 TextSpan(
-                  text: '$contactLabel: $contactValue',
+                  text: '\n\n$contactLabel: $contactValue',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const TextSpan(text: ' löschen möchten?'),
+                const TextSpan(text: '\n\nlöschen möchten?'),
               ],
             ),
           ),

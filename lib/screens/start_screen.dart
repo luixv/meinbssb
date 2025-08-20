@@ -202,7 +202,7 @@ class StartScreenState extends State<StartScreen> {
                         UIConstants.horizontalSpacingS,
                         Flexible(
                           child: ScaledText(
-                            'Löschen',
+                            'Abmelden',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
                             ),
