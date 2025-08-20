@@ -228,98 +228,100 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const ScaledText(
-              'Suchen',
-              style: UIStyles.headerStyle,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            InkWell(
-              onTap: _pickDate,
-              child: InputDecorator(
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Aus-und Weiterbildungen ab Datum anzeigen',
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: const Icon(Icons.calendar_today),
-                ),
-                child: ScaledText(
-                  _selectedDate == null
-                      ? 'Bitte wählen Sie ein Datum'
-                      : _formatDate(_selectedDate ?? DateTime.now()),
-                  style: UIStyles.bodyStyle,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const ScaledText(
+                'Suchen',
+                style: UIStyles.headerStyle,
               ),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            DropdownButtonFormField<int>(
-              value: _selectedWebGruppe,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Fachbereich',
-              ),
-              items: Schulungstermin.webGruppeMap.entries.map((entry) {
-                return DropdownMenuItem<int>(
-                  value: entry.key,
-                  child: Text(entry.value),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedWebGruppe = value;
-                });
-              },
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            _isLoadingBezirke
-                ? const CircularProgressIndicator()
-                : DropdownButtonFormField<int>(
-                    value: _selectedBezirkId,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Regierungsbezirk',
-                    ),
-                    items: _bezirke
-                        .map(
-                          (bezirk) => DropdownMenuItem<int>(
-                            value: bezirk.bezirkId,
-                            child: Text(bezirk.bezirkName),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedBezirkId = value;
-                      });
-                    },
+              const SizedBox(height: UIConstants.spacingM),
+              InkWell(
+                onTap: _pickDate,
+                child: InputDecorator(
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Aus-und Weiterbildungen ab Datum anzeigen',
+                    floatingLabelBehavior: FloatingLabelBehavior.auto,
+                    suffixIcon: const Icon(Icons.calendar_today),
                   ),
-            const SizedBox(height: UIConstants.spacingM),
-            TextFormField(
-              controller: _ortController,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Ort',
+                  child: ScaledText(
+                    _selectedDate == null
+                        ? 'Bitte wählen Sie ein Datum'
+                        : _formatDate(_selectedDate ?? DateTime.now()),
+                    style: UIStyles.bodyStyle,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            TextFormField(
-              controller: _titelController,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Titel',
+              const SizedBox(height: UIConstants.spacingM),
+              DropdownButtonFormField<int>(
+                value: _selectedWebGruppe,
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: 'Fachbereich',
+                ),
+                items: Schulungstermin.webGruppeMap.entries.map((entry) {
+                  return DropdownMenuItem<int>(
+                    value: entry.key,
+                    child: Text(entry.value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedWebGruppe = value;
+                  });
+                },
               ),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            CheckboxListTile(
-              title: const Text('Für Lizenzverlängerung'),
-              value: _fuerVerlaengerungen,
-              onChanged: (bool? value) {
-                setState(() {
-                  _fuerVerlaengerungen = value ?? false;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.zero,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-          ],
+              const SizedBox(height: UIConstants.spacingM),
+              _isLoadingBezirke
+                  ? const CircularProgressIndicator()
+                  : DropdownButtonFormField<int>(
+                      value: _selectedBezirkId,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Regierungsbezirk',
+                      ),
+                      items: _bezirke
+                          .map(
+                            (bezirk) => DropdownMenuItem<int>(
+                              value: bezirk.bezirkId,
+                              child: Text(bezirk.bezirkName),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedBezirkId = value;
+                        });
+                      },
+                    ),
+              const SizedBox(height: UIConstants.spacingM),
+              TextFormField(
+                controller: _ortController,
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: 'Ort',
+                ),
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              TextFormField(
+                controller: _titelController,
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText: 'Titel',
+                ),
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              CheckboxListTile(
+                title: const Text('Für Lizenzverlängerung'),
+                value: _fuerVerlaengerungen,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _fuerVerlaengerungen = value ?? false;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+            ],
+          ),
         ),
       ),
     );
