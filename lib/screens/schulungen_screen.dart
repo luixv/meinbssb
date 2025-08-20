@@ -451,7 +451,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               Icons.info_outline,
                                               color:
                                                   UIConstants.defaultAppColor,
-                                              size: UIConstants.defaultIconSize,
+                                              size: UIConstants.tooltipIconSize,
                                             ),
                                           ),
                                         ],
@@ -484,7 +484,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               Icons.info_outline,
                                               color:
                                                   UIConstants.defaultAppColor,
-                                              size: UIConstants.defaultIconSize,
+                                              size: UIConstants.tooltipIconSize,
                                             ),
                                           ),
                                         ],

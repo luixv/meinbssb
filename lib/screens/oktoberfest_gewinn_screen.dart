@@ -615,7 +615,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                               child: Icon(
                                 Icons.info_outline,
                                 color: UIConstants.defaultAppColor,
-                                size: UIConstants.defaultIconSize,
+                                size: UIConstants.tooltipIconSize,
                               ),
                             ),
                           ],

@@ -665,7 +665,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                       child: Icon(
                                         Icons.info_outline,
                                         color: UIConstants.defaultAppColor,
-                                        size: UIConstants.defaultIconSize,
+                                        size: UIConstants.tooltipIconSize,
                                       ),
                                     ),
                                   ],
