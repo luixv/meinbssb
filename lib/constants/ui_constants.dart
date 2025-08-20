@@ -175,6 +175,8 @@ class UIConstants {
   static const double defaultImageHeight = 100.0;
   static const double defaultSeparatorHeight = 10.0;
 
+  static const double tooltipIconSize = 24.0;
+
   static const double iconSizeXL = 64.0;
   static const double iconSizeL = 48.0;
   static const double iconSizeM = 32.0;

@@ -402,14 +402,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           controller: _geburtsdatumController,
                           isReadOnly: true,
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          suffixIcon: Tooltip(
+                          suffixIcon: const Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
                             preferBelow: false,
                             child: Icon(
                               Icons.info_outline,
-                              size: UIStyles.subtitleStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                              size: UIConstants.tooltipIconSize,
                             ),
                           ),
                         ),
