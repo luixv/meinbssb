@@ -704,7 +704,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             text: TextSpan(
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(text: 'Sie sind angemeldet für die Schulung\n'),
+                const TextSpan(
+                    text: 'Sie sind angemeldet für die Schulung\n\n',),
                 TextSpan(
                   text: schulungsTermin.bezeichnung,
                   style: const TextStyle(fontWeight: FontWeight.bold),

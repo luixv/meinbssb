@@ -253,7 +253,7 @@ class ImpressumScreen extends StatelessWidget {
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
           Icons.close,
-          color: Colors.white,
+          color: UIConstants.whiteColor,
         ),
       ),
     );

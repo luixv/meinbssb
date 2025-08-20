@@ -29,7 +29,8 @@ class ChangePasswordResultScreen extends StatelessWidget {
           children: [
             Icon(
               success ? Icons.check_circle : Icons.error,
-              color: success ? Colors.green : Colors.red,
+              color:
+                  success ? UIConstants.successColor : UIConstants.errorColor,
               size: UIConstants.iconSizeXL,
             ),
             const SizedBox(height: UIConstants.spacingM),

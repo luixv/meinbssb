@@ -212,14 +212,14 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                         const TextSpan(
                                           text: 'Abgerufen am: ',
                                           style: TextStyle(
-                                            color: Colors.black,
+                                            color: UIConstants.blackColor,
                                           ),
                                         ),
                                         TextSpan(
                                           text: formatted,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.red,
+                                            color: UIConstants.errorColor,
                                           ),
                                         ),
                                       ],
@@ -234,14 +234,14 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                           text: 'Abgerufen am: ',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black,
+                                            color: UIConstants.textColor,
                                           ),
                                         ),
                                         TextSpan(
                                           text: abgerufenAm,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.red,
+                                            color: UIConstants.errorColor,
                                           ),
                                         ),
                                       ],
@@ -252,7 +252,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                     'noch nicht abgerufen',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                                      color: UIConstants.successColor,
                                     ),
                                   );
                                 }
@@ -301,7 +301,8 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       backgroundColor: _loading
                           ? UIConstants.cancelButtonBackground
                           : UIConstants.defaultAppColor,
-                      child: const Icon(Icons.search, color: Colors.white),
+                      child: const Icon(Icons.search,
+                          color: UIConstants.whiteColor,),
                     ),
                   ),
                   // FAB to perform the Gewinn fetch/abfrage
@@ -395,7 +396,8 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                   _bankDataResult!.bic.isNotEmpty))
                           ? UIConstants.defaultAppColor
                           : UIConstants.cancelButtonBackground,
-                      child: const Icon(Icons.check, color: Colors.white),
+                      child: const Icon(Icons.check,
+                          color: UIConstants.whiteColor,),
                     ),
                   ),
                 ],
@@ -641,7 +643,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                   tooltip: 'Abbrechen',
                   backgroundColor: UIConstants.defaultAppColor,
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, color: Colors.white),
+                  child: const Icon(Icons.close, color: UIConstants.whiteColor),
                 ),
                 FloatingActionButton(
                   heroTag: 'bankDialogOkFab',
@@ -673,7 +675,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                           }
                         }
                       : null,
-                  child: const Icon(Icons.check, color: Colors.white),
+                  child: const Icon(Icons.check, color: UIConstants.whiteColor),
                 ),
               ],
             ),

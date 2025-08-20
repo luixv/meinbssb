@@ -77,11 +77,11 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
                 width: UIConstants.defaultIconSize,
                 height: UIConstants.defaultIconSize,
                 colorFilter: const ColorFilter.mode(
-                  Colors.green,
+                  UIConstants.wifiConnectedColor,
                   BlendMode.srcIn,
                 ),
               )
-            : const Icon(Icons.wifi, color: Colors.green);
+            : const Icon(Icons.wifi, color: UIConstants.wifiConnectedColor);
         tooltip = 'Connected to Wi-Fi';
         break;
       case ConnectivityResult.mobile:

@@ -17,6 +17,7 @@ class UIConstants {
   static const Color linkColor = primaryColor;
   static const Color mydarkGreyColor = Color.fromARGB(255, 46, 46, 46);
   static const Color whiteColor = Colors.white;
+  static const Color blackColor = Colors.black;
   static const Color greySubtitleTextColor = mydarkGreyColor;
   static const Color labelTextColor = Colors.grey;
 
@@ -50,6 +51,8 @@ class UIConstants {
   static const Color bluetoothConnected = Colors.grey;
   static const Color networkCheck = Colors.grey;
   static const Color circularProgressIndicator = defaultAppColor;
+
+  static const Color wifiConnectedColor = Colors.green;
 
   // Card Colors
   static const Color cardColor = Colors.white;

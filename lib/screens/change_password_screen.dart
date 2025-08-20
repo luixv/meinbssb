@@ -192,7 +192,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       return null;
                     },
                     fontSizeProvider: fontSizeProvider,
-                    eyeIconColor: Colors.black,
+                    eyeIconColor: UIConstants.textColor,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildPasswordField(
@@ -206,7 +206,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     },
                     validator: _validatePassword,
                     fontSizeProvider: fontSizeProvider,
-                    eyeIconColor: Colors.black,
+                    eyeIconColor: UIConstants.textColor,
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildPasswordField(
@@ -228,7 +228,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       return null;
                     },
                     fontSizeProvider: fontSizeProvider,
-                    eyeIconColor: Colors.black,
+                    eyeIconColor: UIConstants.textColor,
                   ),
                 ],
               ),
@@ -242,10 +242,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         backgroundColor: UIConstants.defaultAppColor,
         child: _isLoading
             ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(UIConstants.whiteColor),
                 strokeWidth: UIConstants.defaultStrokeWidth,
               )
-            : const Icon(Icons.save, color: Colors.white),
+            : const Icon(Icons.save, color: UIConstants.whiteColor),
       ),
     );
   }

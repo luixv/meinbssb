@@ -95,7 +95,7 @@ class AppDrawer extends StatelessWidget {
                   ScaledText(
                     'Mein BSSB',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: UIConstants.whiteColor,
                       fontSize: _menuTitleFontSize,
                       fontWeight: FontWeight.bold,
                     ),

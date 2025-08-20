@@ -163,7 +163,7 @@ Stand: 01.12.2022
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
           Icons.close,
-          color: Colors.white,
+          color: UIConstants.whiteColor,
         ),
       ),
     );

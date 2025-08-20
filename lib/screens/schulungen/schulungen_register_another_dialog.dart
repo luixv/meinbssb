@@ -69,7 +69,7 @@ Widget buildRegisterAnotherDialog(
                 style: UIStyles.dialogContentStyle,
                 children: <TextSpan>[
                   const TextSpan(
-                    text: 'Sie sind angemeldet für die Schulung\n',
+                    text: 'Sie sind angemeldet für die Schulung\n\n',
                   ),
                   TextSpan(
                     text: schulungsTermin.bezeichnung,

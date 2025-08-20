@@ -307,7 +307,7 @@ class LoginScreenState extends State<LoginScreen> {
                 : const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.login, color: Colors.white),
+                      Icon(Icons.login, color: UIConstants.whiteColor),
                       SizedBox(width: UIConstants.spacingS),
                       ScaledText(
                         Messages.loginButtonLabel,

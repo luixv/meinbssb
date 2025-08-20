@@ -109,7 +109,7 @@ class OktoberfestEintrittFestzeltState
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: UIConstants.titleFontSize,
-                color: Colors.black,
+                color: UIConstants.textColor,
               ),
         ),
         const SizedBox(height: UIConstants.spacingS),
@@ -118,7 +118,7 @@ class OktoberfestEintrittFestzeltState
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: UIConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: UIConstants.textColor,
               ),
         ),
       ],
@@ -171,8 +171,8 @@ class OktoberfestEintrittFestzeltState
           child: IntrinsicWidth(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.black),
+                color: UIConstants.whiteColor,
+                border: Border.all(color: UIConstants.blackColor),
                 borderRadius: BorderRadius.circular(UIConstants.borderWidth),
               ),
               padding: const EdgeInsets.symmetric(
@@ -185,7 +185,7 @@ class OktoberfestEintrittFestzeltState
                   value,
                   style: const TextStyle(
                     fontSize: UIConstants.titleFontSize, // Increased font size
-                    color: Colors.black,
+                    color: UIConstants.blackColor,
                   ),
                 ),
               ),

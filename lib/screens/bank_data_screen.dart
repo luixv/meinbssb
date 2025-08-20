@@ -373,7 +373,7 @@ class BankDataScreenState extends State<BankDataScreen> {
             backgroundColor: UIConstants.defaultAppColor,
             child: const Icon(
               Icons.close,
-              color: Colors.white,
+              color: UIConstants.whiteColor,
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
@@ -390,7 +390,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                   )
                 : const Icon(
                     Icons.save,
-                    color: Colors.white,
+                    color: UIConstants.whiteColor,
                   ),
           ),
         ],
@@ -405,12 +405,13 @@ class BankDataScreenState extends State<BankDataScreen> {
             backgroundColor: UIConstants.defaultAppColor,
             child: _isSaving
                 ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(UIConstants.whiteColor),
                     strokeWidth: UIConstants.defaultStrokeWidth,
                   )
                 : const Icon(
                     Icons.delete_outline,
-                    color: Colors.white,
+                    color: UIConstants.whiteColor,
                   ),
           ),
           const SizedBox(height: UIConstants.spacingM),
@@ -424,7 +425,7 @@ class BankDataScreenState extends State<BankDataScreen> {
             backgroundColor: UIConstants.defaultAppColor,
             child: const Icon(
               Icons.edit,
-              color: Colors.white,
+              color: UIConstants.whiteColor,
             ),
           ),
         ],
@@ -449,7 +450,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                     children: [
                       const Icon(
                         Icons.error_outline,
-                        color: Colors.red,
+                        color: UIConstants.errorColor,
                         size: UIConstants.iconSizeL,
                       ),
                       const SizedBox(height: UIConstants.spacingM),
@@ -487,7 +488,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: Colors.red,
+                              color: UIConstants.errorColor,
                               size: UIConstants.iconSizeL,
                             ),
                             const SizedBox(height: UIConstants.spacingM),
@@ -524,7 +525,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         if (_isSaving)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.3),
+              color: UIConstants.textColor.withOpacity(0.3),
               child: const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(

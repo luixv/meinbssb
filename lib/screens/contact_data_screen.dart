@@ -617,7 +617,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         heroTag: 'contactDataFab',
         onPressed: _showAddContactForm,
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: UIConstants.whiteColor),
       ),
     );
   }

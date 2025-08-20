@@ -164,7 +164,7 @@ class StartScreenState extends State<StartScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding: UIConstants.dialogPadding,
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -189,7 +189,7 @@ class StartScreenState extends State<StartScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: UIConstants.spacingM),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(dialogContext).pop(true);
@@ -862,7 +862,8 @@ class StartScreenState extends State<StartScreen> {
                                                     child: const Icon(
                                                       Icons
                                                           .delete_outline_outlined,
-                                                      color: Colors.white,
+                                                      color: UIConstants
+                                                          .whiteColor,
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -881,7 +882,8 @@ class StartScreenState extends State<StartScreen> {
                                                             .pop(),
                                                     child: const Icon(
                                                       Icons.close,
-                                                      color: Colors.white,
+                                                      color: UIConstants
+                                                          .whiteColor,
                                                     ),
                                                   ),
                                                 ],
