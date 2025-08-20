@@ -193,9 +193,17 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      automaticallyImplyLeading: widget.showMenu,
+      automaticallyImplyLeading: true,
       showMenu: widget.showMenu,
       showConnectivityIcon: widget.showConnectivityIcon,
+      leading: widget.showMenu
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
+              onPressed: () {
+                Navigator.of(context).maybePop();
+              },
+            )
+          : null,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
