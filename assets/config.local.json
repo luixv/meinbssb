@@ -1,0 +1,69 @@
+{
+  "usernameWebUser": "webUser",
+  "passwordWebUser": "8702973BCE08DB9DC590BF3CDBBA1873E8B7C7296CB641F7012E123041AE4CC3",
+
+  "apiProtocol": "https",
+  
+  "emailProtocol": "",
+  "emailServer": "relay-cluster-eu01.hornetsecurity.com",
+  "emailPort": "25",
+  "emailPath": "",
+  
+  "postgrestProtocol": "http",
+  "postgrestServer": "localhost",
+  "postgrestPort": "8081",
+  "postgrestPath": "",
+  
+  "webProtocol": "http",
+  "webServer": "localhost",
+  "webPort": "8080",
+  "webPath": "",
+  
+  "oktoberFestBaseServer": "webintern.bssb.bayern",
+  "oktoberFestBasePath": "rest/zmi/api7",
+  "oktoberFestBasePort": "56400",
+  
+  "apiBaseServer": "webintern.bssb.bayern",
+  "apiBasePath": "rest/zmi/api",
+  "apiBasePort": "56400",
+  
+  "api1BaseServer": "webintern.bssb.bayern",
+  "api1BasePath": "rest/zmi/api1",
+  "api1BasePort": "56400",
+  
+  "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
+  
+  "serverTimeout": 40,
+  "cacheExpirationHours": "24",
+  "smtpSettings": {
+    "emailProtocol": "",
+    "host": "relay-cluster-eu01.hornetsecurity.com",
+    "port": "25",
+    "fromEmail": "webportal@bssb.bayern",
+    "ssl": "false",
+    "allowInsecure": "true",
+    "ignoreBadCertificate": "true"
+  },
+  "appTheme": {
+    "logoName": "assets/images/myBSSB-logo.png"
+  },
+  "emailContent": {
+    "schulungAnmeldungSubject": "Schulung Anmeldung",
+    "schulungContent": "Sie sind für einen Schulung angemeldet",
+    "registrationSubject": "Bestätigung der E-Mail Adresse",
+    "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
+    "passwordResetSubject": "Passwort zurücksetzen",
+    "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
+  },
+  "profilePhoto": {
+    "maxSizeMB": 2,
+    "allowedFormats": [
+      "jpg",
+      "jpeg",
+      "png",
+      "gif",
+      "bmp",
+      "webp"
+    ]
+  }
+}
