@@ -35,6 +35,8 @@
   
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
+  "testEmails": false,
+  "testRecipient": "bssb@reile.net",
   "smtpSettings": {
     "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",

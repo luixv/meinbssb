@@ -44,6 +44,19 @@ class EmailService {
   final HttpClient _httpClient;
   final CalendarService? _calendarService;
 
+  /// Gets the appropriate recipient based on test email configuration
+  String _getAppropriateRecipient(String originalRecipient) {
+    final testEmails = _configService.getBool('testEmails');
+    if (testEmails == true) {
+      final testRecipient = _configService.getString('testRecipient');
+      if (testRecipient != null && testRecipient.isNotEmpty) {
+        LoggerService.logInfo('Test emails enabled: redirecting from $originalRecipient to $testRecipient');
+        return testRecipient;
+      }
+    }
+    return originalRecipient;
+  }
+
   Future<Map<String, dynamic>> sendEmail({
     required String sender,
     required String recipient,
@@ -52,6 +65,8 @@ class EmailService {
     int? emailId,
   }) async {
     try {
+      final appropriateRecipient = _getAppropriateRecipient(recipient);
+      
       final emailUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
@@ -63,7 +78,7 @@ class EmailService {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'to': recipient,
+          'to': appropriateRecipient,
           'subject': subject,
           'html': htmlBody,
         }),

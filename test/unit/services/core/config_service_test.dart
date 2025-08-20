@@ -22,6 +22,8 @@ void main() {
       "apiBasePort": "3001",
       "serverTimeout": 8,
       "cacheExpirationHours": "24",
+      "testEmails": true,
+      "testRecipient": "test@example.com",
       "smtpSettings": {
         "host": "smtp.dummyserver.com",
         "username": "mySmtpUsername",
@@ -96,6 +98,14 @@ void main() {
       // Verify nested data types
       expect(service.getString('host', 'smtpSettings'), isA<String>());
       expect(service.getString('logoName', 'appTheme'), isA<String>());
+    });
+
+    test('should correctly parse boolean values', () async {
+      final service = await ConfigService.load('assets/config.json');
+
+      // Test boolean values
+      expect(service.getBool('testEmails'), true);
+      expect(service.getString('testRecipient'), 'test@example.com');
     });
 
     test('should build base URL for apiBase', () async {
