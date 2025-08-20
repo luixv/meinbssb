@@ -626,87 +626,89 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       ),
       body: Padding(
         padding: UIConstants.defaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: UIConstants.spacingXL),
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: _buildProfileImageWidget(),
-              ),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.upload_file),
-                label: ScaledText(
-                  'Bild auswählen',
-                  style: UIStyles.buttonStyle.copyWith(
-                    fontSize: UIStyles.buttonStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-                ),
-                style: UIStyles.defaultButtonStyle,
-              ),
-            ),
-            const SizedBox(height: UIConstants.spacingL),
-            if (_selectedImage != null)
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: UIConstants.spacingXL),
               Center(
-                child: ScaledText(
-                  'Bild ausgewählt: ${_selectedImage!.name}',
-                  style: UIStyles.bodyStyle.copyWith(
-                    fontSize: UIStyles.bodyStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: _buildProfileImageWidget(),
                 ),
               ),
-
-            const SizedBox(height: UIConstants.spacingM),
-            // Show validation requirements
-            Consumer<ConfigService>(
-              builder: (context, configService, child) {
-                final maxSizeMB =
-                    configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
-                final allowedFormats =
-                    configService.getList('allowedFormats', 'profilePhoto') ??
-                        ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-
-                return Center(
-                  child: Column(
-                    children: [
-                      ScaledText(
-                        'Anforderungen:',
-                        style: UIStyles.bodyStyle.copyWith(
-                          fontSize: UIStyles.bodyStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingXS),
-                      ScaledText(
-                        'Maximale Größe: ${maxSizeMB}MB',
-                        style: UIStyles.bodyStyle.copyWith(
-                          fontSize: UIStyles.bodyStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                          color: UIConstants.greySubtitleTextColor,
-                        ),
-                      ),
-                      ScaledText(
-                        'Formate: ${allowedFormats.join(', ')}',
-                        style: UIStyles.bodyStyle.copyWith(
-                          fontSize: UIStyles.bodyStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                          color: UIConstants.greySubtitleTextColor,
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: UIConstants.spacingM),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.upload_file),
+                  label: ScaledText(
+                    'Bild auswählen',
+                    style: UIStyles.buttonStyle.copyWith(
+                      fontSize: UIStyles.buttonStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
                   ),
-                );
-              },
-            ),
-          ],
+                  style: UIStyles.defaultButtonStyle,
+                ),
+              ),
+              const SizedBox(height: UIConstants.spacingL),
+              if (_selectedImage != null)
+                Center(
+                  child: ScaledText(
+                    'Bild ausgewählt: ${_selectedImage!.name}',
+                    style: UIStyles.bodyStyle.copyWith(
+                      fontSize: UIStyles.bodyStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: UIConstants.spacingM),
+              // Show validation requirements
+              Consumer<ConfigService>(
+                builder: (context, configService, child) {
+                  final maxSizeMB =
+                      configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
+                  final allowedFormats =
+                      configService.getList('allowedFormats', 'profilePhoto') ??
+                          ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+                  return Center(
+                    child: Column(
+                      children: [
+                        ScaledText(
+                          'Anforderungen:',
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontSize: UIStyles.bodyStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingXS),
+                        ScaledText(
+                          'Maximale Größe: ${maxSizeMB}MB',
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontSize: UIStyles.bodyStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                            color: UIConstants.greySubtitleTextColor,
+                          ),
+                        ),
+                        ScaledText(
+                          'Formate: ${allowedFormats.join(', ')}',
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontSize: UIStyles.bodyStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                            color: UIConstants.greySubtitleTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Column(
