@@ -658,69 +658,76 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           style: UIStyles.dialogTitleStyle,
         ),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (registeredPersons.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...registeredPersons.map(
-                  (p) => Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: UIStyles.dialogContentStyle,
-                            children: [
-                              const TextSpan(
-                                text: '• ',
+      content: SizedBox(
+        width: double.maxFinite,
+        // Set a reasonable max height for the dialog content
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (registeredPersons.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ...registeredPersons.map(
+                      (p) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
                                 style: UIStyles.dialogContentStyle,
+                                children: [
+                                  const TextSpan(
+                                    text: '• ',
+                                    style: UIStyles.dialogContentStyle,
+                                  ),
+                                  TextSpan(
+                                    text: '${p.vorname} ${p.nachname}',
+                                    style: UIStyles.dialogContentStyle.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' (${p.passnummer})',
+                                    style: UIStyles.dialogContentStyle,
+                                  ),
+                                ],
                               ),
-                              TextSpan(
-                                text: '${p.vorname} ${p.nachname}',
-                                style: UIStyles.dialogContentStyle.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: ' (${p.passnummer})',
-                                style: UIStyles.dialogContentStyle,
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                  ],
                 ),
-                const SizedBox(height: UIConstants.spacingM),
-              ],
-            ),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: UIStyles.dialogContentStyle,
-              children: <TextSpan>[
-                const TextSpan(
-                    text: 'Sie sind angemeldet für die Schulung\n\n',),
-                TextSpan(
-                  text: schulungsTermin.bezeichnung,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: UIStyles.dialogContentStyle,
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'Sie sind angemeldet für die Schulung\n\n',
+                    ),
+                    TextSpan(
+                      text: schulungsTermin.bezeichnung,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
-                const TextSpan(text: '.'),
-              ],
-            ),
+              ),
+              const SizedBox(height: UIConstants.spacingL),
+              const Text(
+                'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
+                textAlign: TextAlign.center,
+                style: UIStyles.dialogContentStyle,
+              ),
+            ],
           ),
-          const SizedBox(height: UIConstants.spacingL),
-          const Text(
-            'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
-            textAlign: TextAlign.center,
-            style: UIStyles.dialogContentStyle,
-          ),
-        ],
+        ),
       ),
       actions: <Widget>[
         Padding(
