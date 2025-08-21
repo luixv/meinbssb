@@ -275,7 +275,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   child: Stack(
                     children: [
                       SizedBox(
-                        // 👇 force the AlertDialog to respect max width
+                        // force the AlertDialog to respect max width
                         width: MediaQuery.of(context)
                             .size
                             .width
@@ -471,20 +471,27 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       title: const Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Flexible(
-                                            child: Text(
-                                              'Bestätigung des Lastschrifteinzugs',
-                                            ),
-                                          ),
-                                          SizedBox(width: UIConstants.spacingS),
-                                          Tooltip(
-                                            message:
-                                                'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                            child: Icon(
-                                              Icons.info_outline,
-                                              color:
-                                                  UIConstants.defaultAppColor,
-                                              size: UIConstants.tooltipIconSize,
+                                          Expanded(
+                                            child: Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              spacing: UIConstants.spacingS,
+                                              children: [
+                                                Text(
+                                                  'Bestätigung des Lastschrifteinzugs',
+                                                ),
+                                                Tooltip(
+                                                  message:
+                                                      'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                  child: Icon(
+                                                    Icons.info_outline,
+                                                    color: UIConstants
+                                                        .defaultAppColor,
+                                                    size: UIConstants
+                                                        .tooltipIconSize,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
