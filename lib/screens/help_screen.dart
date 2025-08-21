@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 import '/screens/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
-import 'package:meinbssb/constants/messages.dart';
-
 import '/constants/ui_styles.dart';
+import '/constants/messages.dart';
+
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -55,20 +57,20 @@ class HelpScreen extends StatelessWidget {
       ),
       body: Container(
         color: UIConstants.backgroundColor,
-        child: const SingleChildScrollView(
+        child: SingleChildScrollView(
           padding: UIConstants.defaultPadding,
           child: Column(
             crossAxisAlignment: UIConstants.startCrossAlignment,
             children: [
-              ScaledText(
+              const ScaledText(
                 'Häufig gestellte Fragen (FAQ)',
                 style: TextStyle(
                   fontSize: UIConstants.headerFontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: UIConstants.helpSpacing),
-              _AccordionSection(
+              const SizedBox(height: UIConstants.helpSpacing),
+              const _AccordionSection(
                 title: 'Allgemein',
                 questions: [
                   _AccordionItem(
@@ -91,8 +93,8 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: UIConstants.helpSpacing),
-              _AccordionSection(
+              const SizedBox(height: UIConstants.helpSpacing),
+              const _AccordionSection(
                 title: 'Funktionen der App',
                 questions: [
                   _AccordionItem(
@@ -129,8 +131,8 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: UIConstants.helpSpacing),
-              _AccordionSection(
+              const SizedBox(height: UIConstants.helpSpacing),
+              const _AccordionSection(
                 title: 'Technische Fragen',
                 questions: [
                   _AccordionItem(
@@ -146,16 +148,10 @@ class HelpScreen extends StatelessWidget {
                       'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
                     ),
                   ),
-                  _AccordionItem(
-                    question: 'Unterstützt die App Benachrichtigungen?',
-                    answer: ScaledText(
-                      'Ja, die App kann Benachrichtigungen für wichtige Termine oder Neuigkeiten senden. Sie können die Benachrichtigungseinstellungen in Ihrem Profil anpassen.',
-                    ),
-                  ),
                 ],
               ),
-              SizedBox(height: UIConstants.helpSpacing),
-              _AccordionSection(
+              const SizedBox(height: UIConstants.helpSpacing),
+              const _AccordionSection(
                 title: 'Kontakt und Hilfe',
                 questions: [
                   _AccordionItem(
@@ -178,7 +174,26 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.helpSpacing),
+              // Add version number at the bottom
+              const SizedBox(height: 32),
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  final version = snapshot.hasData
+                      ? 'Version: ${snapshot.data!.version}+${snapshot.data!.buildNumber}'
+                      : 'Version: ...';
+                  return Center(
+                    child: Text(
+                      version,
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: UIConstants.textColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
