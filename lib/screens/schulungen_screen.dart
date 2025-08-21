@@ -490,7 +490,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         UIConstants.spacingS,
                                                     children: [
                                                       Text(
-                                                        'Bestätigung des Lastschrifteinzugs',
+                                                        'Bestätigung des\nLastschrifteinzugs',
                                                       ),
                                                       Tooltip(
                                                         message:
