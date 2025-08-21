@@ -13,6 +13,7 @@ import '/models/bank_data.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
+import '/widgets/dialog_fabs.dart';
 
 import '/services/core/cache_service.dart';
 import '/services/core/config_service.dart';
@@ -284,374 +285,371 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           backgroundColor: UIConstants.backgroundColor,
                           insetPadding:
                               EdgeInsets.zero, // remove default Flutter margins
+                          contentPadding: EdgeInsets.zero,
                           title: const Center(
                             child: ScaledText(
                               'Buchungsdaten Erfassen',
                               style: UIStyles.dialogTitleStyle,
                             ),
                           ),
-                          content: SizedBox(
-                            width: double
-                                .maxFinite, // 👈 stretch form inside dialog
-                            child: SingleChildScrollView(
-                              child: Form(
-                                key: formKey,
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: UIConstants.whiteColor,
-                                        border: Border.all(
-                                          color: UIConstants.mydarkGreyColor,
+                          content: Stack(
+                            children: [
+                              SizedBox(
+                                width: double
+                                    .maxFinite, // 👈 stretch form inside dialog
+                                child: SingleChildScrollView(
+                                  child: Form(
+                                    key: formKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: UIConstants.whiteColor,
+                                            border: Border.all(
+                                              color:
+                                                  UIConstants.mydarkGreyColor,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              UIConstants.cornerRadius,
+                                            ),
+                                          ),
+                                          padding: UIConstants.defaultPadding,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                'Bankdaten',
+                                                style: UIStyles.subtitleStyle,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingM,
+                                              ),
+                                              TextFormField(
+                                                controller:
+                                                    kontoinhaberController,
+                                                decoration: UIStyles
+                                                    .formInputDecoration
+                                                    .copyWith(
+                                                  labelText: 'Kontoinhaber',
+                                                ),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Kontoinhaber ist erforderlich';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingM,
+                                              ),
+                                              TextFormField(
+                                                controller: ibanController,
+                                                decoration: UIStyles
+                                                    .formInputDecoration
+                                                    .copyWith(
+                                                  labelText: 'IBAN',
+                                                ),
+                                                validator: (value) {
+                                                  final apiService =
+                                                      Provider.of<ApiService>(
+                                                    context,
+                                                    listen: false,
+                                                  );
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'IBAN ist erforderlich';
+                                                  }
+                                                  if (!apiService
+                                                      .validateIBAN(value)) {
+                                                    return 'Ungültige IBAN';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingM,
+                                              ),
+                                              TextFormField(
+                                                controller: bicController,
+                                                decoration: UIStyles
+                                                    .formInputDecoration
+                                                    .copyWith(
+                                                  labelText: _isBicRequired(
+                                                    ibanController.text.trim(),
+                                                  )
+                                                      ? 'BIC *'
+                                                      : 'BIC (optional)',
+                                                ),
+                                                validator: (value) {
+                                                  final apiService =
+                                                      Provider.of<ApiService>(
+                                                    context,
+                                                    listen: false,
+                                                  );
+                                                  final iban = ibanController
+                                                      .text
+                                                      .trim()
+                                                      .toUpperCase();
+                                                  if (!iban.startsWith('DE') &&
+                                                      (value == null ||
+                                                          value
+                                                              .trim()
+                                                              .isEmpty)) {
+                                                    return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                                  }
+                                                  if (value != null &&
+                                                      value.trim().isNotEmpty) {
+                                                    final bicError = apiService
+                                                        .validateBIC(value);
+                                                    if (bicError != null) {
+                                                      return bicError;
+                                                    }
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                          UIConstants.cornerRadius,
+                                        const SizedBox(
+                                          height: UIConstants.spacingL,
                                         ),
-                                      ),
-                                      padding: UIConstants.defaultPadding,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Bankdaten',
-                                            style: UIStyles.subtitleStyle,
+                                        ListTileTheme(
+                                          data: const ListTileThemeData(
+                                            horizontalTitleGap:
+                                                UIConstants.spacingXS,
+                                            minLeadingWidth: 0,
                                           ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingM,
-                                          ),
-                                          TextFormField(
-                                            controller: kontoinhaberController,
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(
-                                              labelText: 'Kontoinhaber',
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Kontoinhaber ist erforderlich';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingM,
-                                          ),
-                                          TextFormField(
-                                            controller: ibanController,
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(labelText: 'IBAN'),
-                                            validator: (value) {
-                                              final apiService =
-                                                  Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'IBAN ist erforderlich';
-                                              }
-                                              if (!apiService
-                                                  .validateIBAN(value)) {
-                                                return 'Ungültige IBAN';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingM,
-                                          ),
-                                          TextFormField(
-                                            controller: bicController,
-                                            decoration: UIStyles
-                                                .formInputDecoration
-                                                .copyWith(
-                                              labelText: _isBicRequired(
-                                                ibanController.text.trim(),
-                                              )
-                                                  ? 'BIC *'
-                                                  : 'BIC (optional)',
-                                            ),
-                                            validator: (value) {
-                                              final apiService =
-                                                  Provider.of<ApiService>(
-                                                context,
-                                                listen: false,
-                                              );
-                                              final iban = ibanController.text
-                                                  .trim()
-                                                  .toUpperCase();
-                                              if (!iban.startsWith('DE') &&
-                                                  (value == null ||
-                                                      value.trim().isEmpty)) {
-                                                return 'BIC ist erforderlich für nicht-deutsche IBANs';
-                                              }
-                                              if (value != null &&
-                                                  value.trim().isNotEmpty) {
-                                                final bicError = apiService
-                                                    .validateBIC(value);
-                                                if (bicError != null) {
-                                                  return bicError;
-                                                }
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingL,
-                                    ),
-                                    ListTileTheme(
-                                      data: const ListTileThemeData(
-                                        horizontalTitleGap:
-                                            UIConstants.spacingXS,
-                                        minLeadingWidth: 0,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          CheckboxListTile(
-                                            value: agbChecked,
-                                            onChanged: (val) {
-                                              setState(
-                                                () => agbChecked = val ?? false,
-                                              );
-                                            },
-                                            title: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (_) =>
-                                                            const AgbScreen(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Text(
-                                                    'AGB',
-                                                    style: UIStyles.linkStyle
-                                                        .copyWith(
-                                                      color:
-                                                          UIConstants.linkColor,
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: UIConstants.spacingS,
-                                                ),
-                                                const Text('akzeptieren'),
-                                                const SizedBox(
-                                                  width: UIConstants.spacingS,
-                                                ),
-                                                const Tooltip(
-                                                  message:
-                                                      'Ich bin mit den AGB einverstanden.',
-                                                  child: Icon(
-                                                    Icons.info_outline,
-                                                    color: UIConstants
-                                                        .defaultAppColor,
-                                                    size: UIConstants
-                                                        .tooltipIconSize,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                            contentPadding: EdgeInsets.zero,
-                                          ),
-                                          CheckboxListTile(
-                                            value: lastschriftChecked,
-                                            onChanged: (val) {
-                                              setState(
-                                                () => lastschriftChecked =
-                                                    val ?? false,
-                                              );
-                                            },
-                                            title: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Expanded(
-                                                  child: Wrap(
-                                                    crossAxisAlignment:
-                                                        WrapCrossAlignment
-                                                            .center,
-                                                    spacing:
-                                                        UIConstants.spacingS,
-                                                    children: [
-                                                      Text(
-                                                        'Bestätigung des\nLastschrifteinzugs',
-                                                      ),
-                                                      Tooltip(
-                                                        message:
-                                                            'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                                        child: Icon(
-                                                          Icons.info_outline,
+                                          child: Column(
+                                            children: [
+                                              CheckboxListTile(
+                                                value: agbChecked,
+                                                onChanged: (val) {
+                                                  setState(
+                                                    () => agbChecked =
+                                                        val ?? false,
+                                                  );
+                                                },
+                                                title: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                const AgbScreen(),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Text(
+                                                        'AGB',
+                                                        style: UIStyles
+                                                            .linkStyle
+                                                            .copyWith(
                                                           color: UIConstants
-                                                              .defaultAppColor,
-                                                          size: UIConstants
-                                                              .tooltipIconSize,
+                                                              .linkColor,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width:
+                                                          UIConstants.spacingS,
+                                                    ),
+                                                    const Text('akzeptieren'),
+                                                    const SizedBox(
+                                                      width:
+                                                          UIConstants.spacingS,
+                                                    ),
+                                                    const Tooltip(
+                                                      message:
+                                                          'Ich bin mit den AGB einverstanden.',
+                                                      child: Icon(
+                                                        Icons.info_outline,
+                                                        color: UIConstants
+                                                            .defaultAppColor,
+                                                        size: UIConstants
+                                                            .tooltipIconSize,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                            contentPadding: EdgeInsets.zero,
+                                                controlAffinity:
+                                                    ListTileControlAffinity
+                                                        .leading,
+                                                contentPadding: EdgeInsets.zero,
+                                              ),
+                                              CheckboxListTile(
+                                                value: lastschriftChecked,
+                                                onChanged: (val) {
+                                                  setState(
+                                                    () => lastschriftChecked =
+                                                        val ?? false,
+                                                  );
+                                                },
+                                                title: const Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Wrap(
+                                                        crossAxisAlignment:
+                                                            WrapCrossAlignment
+                                                                .center,
+                                                        spacing: UIConstants
+                                                            .spacingS,
+                                                        children: [
+                                                          Text(
+                                                            'Bestätigung des\nLastschrifteinzugs',
+                                                          ),
+                                                          Tooltip(
+                                                            message:
+                                                                'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                            child: Icon(
+                                                              Icons
+                                                                  .info_outline,
+                                                              color: UIConstants
+                                                                  .defaultAppColor,
+                                                              size: UIConstants
+                                                                  .tooltipIconSize,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                controlAffinity:
+                                                    ListTileControlAffinity
+                                                        .leading,
+                                                contentPadding: EdgeInsets.zero,
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: UIConstants.spacingM,
+                                right: UIConstants.spacingM,
+                                child: DialogFABs(
+                                  children: [
+                                    FloatingActionButton(
+                                      heroTag: 'cancelBookingFab',
+                                      mini: true,
+                                      tooltip: 'Abbrechen',
+                                      backgroundColor:
+                                          UIConstants.defaultAppColor,
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: UIConstants.whiteColor,
+                                      ),
+                                    ),
+                                    FloatingActionButton(
+                                      heroTag: 'submitBookingFab',
+                                      mini: true,
+                                      tooltip: 'Buchen',
+                                      backgroundColor: (agbChecked &&
+                                              lastschriftChecked &&
+                                              kontoinhaberController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              ibanController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              (!_isBicRequired(
+                                                    ibanController.text.trim(),
+                                                  ) ||
+                                                  bicController.text
+                                                      .trim()
+                                                      .isNotEmpty))
+                                          ? UIConstants.defaultAppColor
+                                          : UIConstants.cancelButtonBackground,
+                                      onPressed: (agbChecked &&
+                                              lastschriftChecked &&
+                                              kontoinhaberController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              ibanController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              (!_isBicRequired(
+                                                    ibanController.text.trim(),
+                                                  ) ||
+                                                  bicController.text
+                                                      .trim()
+                                                      .isNotEmpty))
+                                          ? () async {
+                                              if (formKey.currentState !=
+                                                      null &&
+                                                  formKey.currentState!
+                                                      .validate()) {
+                                                Navigator.of(context).pop();
+                                                final cacheService =
+                                                    Provider.of<CacheService>(
+                                                  context,
+                                                  listen: false,
+                                                );
+                                                final String email =
+                                                    await cacheService
+                                                            .getString(
+                                                          'username',
+                                                        ) ??
+                                                        '';
+                                                final BankData safeBankData =
+                                                    bankData ??
+                                                        BankData(
+                                                          id: 0,
+                                                          webloginId:
+                                                              user.webLoginId,
+                                                          kontoinhaber: '',
+                                                          iban: '',
+                                                          bic: '',
+                                                          mandatSeq: 2,
+                                                          bankName: '',
+                                                          mandatNr: '',
+                                                          mandatName: '',
+                                                        );
+                                                await registerPersonAndShowDialog(
+                                                  schulungsTermin:
+                                                      schulungsTermin,
+                                                  registeredPersons:
+                                                      registeredPersons,
+                                                  bankData: safeBankData,
+                                                  prefillUser: user.copyWith(
+                                                    telefon:
+                                                        telefonController.text,
+                                                  ),
+                                                  prefillEmail: email,
+                                                );
+                                              }
+                                            }
+                                          : null,
+                                      child: const Icon(
+                                        Icons.check,
+                                        color: UIConstants.whiteColor,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: UIConstants.dialogFabBottom,
-                        right: UIConstants.dialogFabRight,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Tooltip(
-                              message: 'Abbrechen',
-                              child: SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        UIConstants.defaultAppColor,
-                                    elevation: 4,
-                                    padding: EdgeInsets.zero,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        UIConstants.cornerRadiusFAB,
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: UIConstants.fabIconSize,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            Tooltip(
-                              message: 'Buchen',
-                              child: SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: (agbChecked &&
-                                            lastschriftChecked &&
-                                            kontoinhaberController.text
-                                                .trim()
-                                                .isNotEmpty &&
-                                            ibanController.text
-                                                .trim()
-                                                .isNotEmpty &&
-                                            (!_isBicRequired(
-                                                  ibanController.text.trim(),
-                                                ) ||
-                                                bicController.text
-                                                    .trim()
-                                                    .isNotEmpty))
-                                        ? UIConstants.defaultAppColor
-                                        : UIConstants.cancelButtonBackground,
-                                    elevation: 4,
-                                    padding: EdgeInsets.zero,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        UIConstants.cornerRadiusFAB,
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: (agbChecked &&
-                                          lastschriftChecked &&
-                                          kontoinhaberController.text
-                                              .trim()
-                                              .isNotEmpty &&
-                                          ibanController.text
-                                              .trim()
-                                              .isNotEmpty &&
-                                          (!_isBicRequired(
-                                                ibanController.text.trim(),
-                                              ) ||
-                                              bicController.text
-                                                  .trim()
-                                                  .isNotEmpty))
-                                      ? () async {
-                                          if (formKey.currentState != null &&
-                                              formKey.currentState!
-                                                  .validate()) {
-                                            Navigator.of(context).pop();
-                                            final cacheService =
-                                                Provider.of<CacheService>(
-                                              context,
-                                              listen: false,
-                                            );
-                                            final String email =
-                                                await cacheService.getString(
-                                                      'username',
-                                                    ) ??
-                                                    '';
-                                            final BankData safeBankData =
-                                                bankData ??
-                                                    BankData(
-                                                      id: 0,
-                                                      webloginId:
-                                                          user.webLoginId,
-                                                      kontoinhaber: '',
-                                                      iban: '',
-                                                      bic: '',
-                                                      mandatSeq: 2,
-                                                      bankName: '',
-                                                      mandatNr: '',
-                                                      mandatName: '',
-                                                    );
-                                            await registerPersonAndShowDialog(
-                                              schulungsTermin: schulungsTermin,
-                                              registeredPersons:
-                                                  registeredPersons,
-                                              bankData: safeBankData,
-                                              prefillUser: user.copyWith(
-                                                telefon: telefonController.text,
-                                              ),
-                                              prefillEmail: email,
-                                            );
-                                          }
-                                        }
-                                      : null,
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: UIConstants.fabIconSize,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ],
