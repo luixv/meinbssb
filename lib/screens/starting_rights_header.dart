@@ -56,6 +56,7 @@ class StartingRightsHeader extends StatelessWidget {
                   ),
                   const Tooltip(
                     message: Messages.startingRightsHeaderTooltip,
+                    triggerMode: TooltipTriggerMode.tap,
                     child: Icon(
                       Icons.info_outline,
                       color: UIConstants.defaultAppColor,

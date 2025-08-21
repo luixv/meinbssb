@@ -405,6 +405,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                           suffixIcon: const Tooltip(
                             message:
                                 'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                            triggerMode: TooltipTriggerMode.tap,
                             preferBelow: false,
                             child: Icon(
                               Icons.info_outline,

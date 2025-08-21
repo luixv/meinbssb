@@ -662,6 +662,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                     ),
                                     const Tooltip(
                                       message: 'Kostenpflichtig',
+                                      triggerMode: TooltipTriggerMode.tap,
                                       child: Icon(
                                         Icons.info_outline,
                                         color: UIConstants.defaultAppColor,
