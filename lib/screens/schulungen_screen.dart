@@ -408,81 +408,54 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     const SizedBox(
                                       height: UIConstants.spacingL,
                                     ),
-                                    CheckboxListTile(
-                                      value: agbChecked,
-                                      onChanged: (val) {
-                                        setState(
-                                          () => agbChecked = val ?? false,
-                                        );
-                                      },
-                                      title: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                                    ListTileTheme(
+                                      data: const ListTileThemeData(
+                                        horizontalTitleGap:
+                                            UIConstants.spacingXS,
+                                        minLeadingWidth: 0,
+                                      ),
+                                      child: Column(
                                         children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      const AgbScreen(),
-                                                ),
+                                          CheckboxListTile(
+                                            value: agbChecked,
+                                            onChanged: (val) {
+                                              setState(
+                                                () => agbChecked = val ?? false,
                                               );
                                             },
-                                            child: Text(
-                                              'AGB',
-                                              style:
-                                                  UIStyles.linkStyle.copyWith(
-                                                color: UIConstants.linkColor,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: UIConstants.spacingS,
-                                          ),
-                                          const Text('akzeptieren'),
-                                          const SizedBox(
-                                            width: UIConstants.spacingS,
-                                          ),
-                                          const Tooltip(
-                                            message:
-                                                'Ich bin mit den AGB einverstanden.',
-                                            child: Icon(
-                                              Icons.info_outline,
-                                              color:
-                                                  UIConstants.defaultAppColor,
-                                              size: UIConstants.tooltipIconSize,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    CheckboxListTile(
-                                      value: lastschriftChecked,
-                                      onChanged: (val) {
-                                        setState(
-                                          () =>
-                                              lastschriftChecked = val ?? false,
-                                        );
-                                      },
-                                      title: const Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Expanded(
-                                            child: Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.center,
-                                              spacing: UIConstants.spacingS,
+                                            title: Row(
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text(
-                                                  'Bestätigung des Lastschrifteinzugs',
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            const AgbScreen(),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    'AGB',
+                                                    style: UIStyles.linkStyle
+                                                        .copyWith(
+                                                      color:
+                                                          UIConstants.linkColor,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                  ),
                                                 ),
-                                                Tooltip(
+                                                const SizedBox(
+                                                  width: UIConstants.spacingS,
+                                                ),
+                                                const Text('akzeptieren'),
+                                                const SizedBox(
+                                                  width: UIConstants.spacingS,
+                                                ),
+                                                const Tooltip(
                                                   message:
-                                                      'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                      'Ich bin mit den AGB einverstanden.',
                                                   child: Icon(
                                                     Icons.info_outline,
                                                     color: UIConstants
@@ -493,12 +466,54 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 ),
                                               ],
                                             ),
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
+                                            contentPadding: EdgeInsets.zero,
+                                          ),
+                                          CheckboxListTile(
+                                            value: lastschriftChecked,
+                                            onChanged: (val) {
+                                              setState(
+                                                () => lastschriftChecked =
+                                                    val ?? false,
+                                              );
+                                            },
+                                            title: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Expanded(
+                                                  child: Wrap(
+                                                    crossAxisAlignment:
+                                                        WrapCrossAlignment
+                                                            .center,
+                                                    spacing:
+                                                        UIConstants.spacingS,
+                                                    children: [
+                                                      Text(
+                                                        'Bestätigung des Lastschrifteinzugs',
+                                                      ),
+                                                      Tooltip(
+                                                        message:
+                                                            'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                        child: Icon(
+                                                          Icons.info_outline,
+                                                          color: UIConstants
+                                                              .defaultAppColor,
+                                                          size: UIConstants
+                                                              .tooltipIconSize,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
+                                            contentPadding: EdgeInsets.zero,
                                           ),
                                         ],
                                       ),
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading,
-                                      contentPadding: EdgeInsets.zero,
                                     ),
                                   ],
                                 ),
