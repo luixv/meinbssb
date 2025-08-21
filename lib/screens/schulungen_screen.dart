@@ -418,7 +418,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                       final bicError =
                                                           apiService
                                                               .validateBIC(
-                                                                  value,);
+                                                        value,
+                                                      );
                                                       if (bicError != null) {
                                                         return bicError;
                                                       }
@@ -524,7 +525,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               .spacingS,
                                                           children: [
                                                             Text(
-                                                              'Bestätigung des\nLastschrifteinzugs',
+                                                              'Bestätigung des Lastschrifteinzugs',
                                                             ),
                                                             Tooltip(
                                                               message:
