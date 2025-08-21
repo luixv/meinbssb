@@ -431,7 +431,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             ),
                                           ),
                                           const SizedBox(
-                                            height: UIConstants.spacingL,
+                                            height: UIConstants.spacingS,
                                           ),
                                           ListTileTheme(
                                             data: const ListTileThemeData(
@@ -525,7 +525,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               .spacingS,
                                                           children: [
                                                             Text(
-                                                              'Bestätigung des Lastschrifteinzugs',
+                                                              'Bestätigung des\nLastschrifteinzugs',
                                                             ),
                                                             Tooltip(
                                                               message:
@@ -549,6 +549,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           .leading,
                                                   contentPadding:
                                                       EdgeInsets.zero,
+                                                ),
+                                                const SizedBox(
+                                                  height: UIConstants.spacingM,
                                                 ),
                                               ],
                                             ),
