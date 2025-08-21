@@ -413,7 +413,7 @@ class AuthService {
           ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
       final endpoint =
           'FindePersonID/$lastName/$firstName/$formattedBirthDate/$passNumber/$zipCode';
-      LoggerService.logInfo('Searching for person: {$baseUrl}{$endpoint}');
+      LoggerService.logInfo('Searching for person: $baseUrl$endpoint');
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List && response.isNotEmpty) {

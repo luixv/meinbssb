@@ -125,7 +125,9 @@ class PostgrestService {
         Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber'),
         headers: _headers,
       );
-
+      LoggerService.logInfo(
+        'Searching DB ${_baseUrl}users?pass_number=eq.$passNumber',
+      );
       if (response.statusCode == 200) {
         final List<dynamic> users = jsonDecode(response.body);
         return users.isNotEmpty ? users[0] : null;
