@@ -488,6 +488,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                       const Tooltip(
                                                         message:
                                                             'Ich bin mit den AGB einverstanden.',
+                                                        triggerMode:
+                                                            TooltipTriggerMode
+                                                                .tap,
                                                         child: Icon(
                                                           Icons.info_outline,
                                                           color: UIConstants
@@ -530,6 +533,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             Tooltip(
                                                               message:
                                                                   'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                              triggerMode:
+                                                                  TooltipTriggerMode
+                                                                      .tap,
                                                               child: Icon(
                                                                 Icons
                                                                     .info_outline,

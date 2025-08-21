@@ -301,8 +301,10 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       backgroundColor: _loading
                           ? UIConstants.cancelButtonBackground
                           : UIConstants.defaultAppColor,
-                      child: const Icon(Icons.search,
-                          color: UIConstants.whiteColor,),
+                      child: const Icon(
+                        Icons.search,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                   ),
                   // FAB to perform the Gewinn fetch/abfrage
@@ -396,8 +398,10 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                   _bankDataResult!.bic.isNotEmpty))
                           ? UIConstants.defaultAppColor
                           : UIConstants.cancelButtonBackground,
-                      child: const Icon(Icons.check,
-                          color: UIConstants.whiteColor,),
+                      child: const Icon(
+                        Icons.check,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                   ),
                 ],
@@ -614,6 +618,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                             const SizedBox(width: UIConstants.spacingS),
                             const Tooltip(
                               message: 'Ich bin mit den AGB einverstanden.',
+                              triggerMode: TooltipTriggerMode.tap,
                               child: Icon(
                                 Icons.info_outline,
                                 color: UIConstants.defaultAppColor,
