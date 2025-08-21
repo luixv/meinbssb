@@ -438,6 +438,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               horizontalTitleGap:
                                                   UIConstants.spacingXS,
                                               minLeadingWidth: 0,
+                                              dense: true,
+                                              visualDensity:
+                                                  VisualDensity.compact,
                                             ),
                                             child: Column(
                                               children: [
