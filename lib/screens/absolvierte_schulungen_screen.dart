@@ -224,6 +224,7 @@ class AbsolvierteSchulungenScreenState
                       },
                     ),
                   ),
+                const SizedBox(height: UIConstants.helpingSpace),
               ],
             ),
           );
