@@ -147,7 +147,6 @@ class SchulungenListItem extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: UIConstants.helpSpacing),
           ],
         );
       },
