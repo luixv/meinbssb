@@ -211,7 +211,7 @@ class _MyAppState extends State<MyApp> {
       bool isResetPasswordUrl = fragment.startsWith('reset-password') ||
           path.startsWith('/reset-password');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
-      
+
       if (isSetPasswordUrl) {
         // If on set-password URL, route directly to set-password
         initialRoute = '/set-password';
@@ -365,8 +365,18 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
               );
             }
-            // Only redirect to login for other routes if not logged in
+            // Allow anonymous access to /help
             if (!_isLoggedIn || _userData == null) {
+              if (settings.name == '/help') {
+                return MaterialPageRoute(
+                  builder: (_) => HelpScreen(
+                    userData: _userData,
+                    isLoggedIn: _isLoggedIn,
+                    onLogout: _handleLogout,
+                  ),
+                  settings: settings,
+                );
+              }
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
                 settings: settings,

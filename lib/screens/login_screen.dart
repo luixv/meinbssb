@@ -1,9 +1,3 @@
-// Project: Mein BSSB
-// Filename: login_screen.dart
-// Author: Luis Mandel / NTT DATA
-
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,10 +31,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  static const double _menuIconSize = UIConstants.iconSizeM;
-  static const double _menuIconPadding = UIConstants.spacingS;
-  static const double _menuIconSpacing = UIConstants.spacingM;
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
