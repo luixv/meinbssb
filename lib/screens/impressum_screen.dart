@@ -19,11 +19,50 @@ class ImpressumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return BaseScreenLayout(
       title: 'Impressum',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
+=======
+    return Scaffold(
+      backgroundColor: UIConstants.backgroundColor,
+      appBar: AppBar(
+        title: const Text('Impressum', style: UIStyles.appBarTitleStyle),
+        backgroundColor: UIConstants.backgroundColor,
+        elevation: UIConstants.appBarElevation,
+        iconTheme: const IconThemeData(color: UIConstants.textColor),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: UIConstants.defaultAppColor,
+              ),
+              child: Text('Mein BSSB', style: UIStyles.headerStyle),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed('/home');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Impressum'),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            // Add more menu items as needed
+          ],
+        ),
+      ),
+>>>>>>> Stashed changes
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -241,6 +280,7 @@ class ImpressumScreen extends StatelessWidget {
                       UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const Text('DE 129514004', style: UIStyles.bodyStyle),
+                const SizedBox(height: UIConstants.helpSpacing),
               ],
             ),
           ),
