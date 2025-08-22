@@ -183,14 +183,19 @@ class HelpScreen extends StatelessWidget {
                   final version = snapshot.hasData
                       ? 'Version: ${snapshot.data!.version}+${snapshot.data!.buildNumber}'
                       : 'Version: ...';
-                  return Center(
-                    child: Text(
-                      version,
-                      style: UIStyles.bodyStyle.copyWith(
-                        color: UIConstants.textColor,
-                        fontSize: 12,
+                  return Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          version,
+                          style: UIStyles.bodyStyle.copyWith(
+                            color: UIConstants.textColor,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: UIConstants.helpSpacing),
+                    ],
                   );
                 },
               ),
