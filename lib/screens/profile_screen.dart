@@ -146,6 +146,7 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: UIConstants.helpSpacing),
           ],
         ),
       ),

@@ -121,7 +121,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                 );
               },
             ),
-            const SizedBox(height: UIConstants.spacingS),
+            const SizedBox(height: UIConstants.helpSpacing),
           ],
         ),
       ),
