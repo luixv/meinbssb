@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
+import '/screens/base_screen_layout.dart';
 
 // Assuming ScaledText is defined elsewhere and handles font scaling properly
 
@@ -18,14 +19,11 @@ class ImpressumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        title: const Text('Impressum', style: UIStyles.appBarTitleStyle),
-        backgroundColor: UIConstants.backgroundColor,
-        elevation: UIConstants.appBarElevation,
-        iconTheme: const IconThemeData(color: UIConstants.textColor),
-      ),
+    return BaseScreenLayout(
+      title: 'Impressum',
+      userData: userData,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -246,14 +244,6 @@ class ImpressumScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pop(),
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.close,
-          color: UIConstants.whiteColor,
         ),
       ),
     );
