@@ -29,3 +29,8 @@ http://:8081 {
     header Access-Control-Allow-Credentials "false"
   }
 }
+
+# Serve ZMI Monitoring Dashboard
+http://:8082 {
+  reverse_proxy zmi-monitor:80
+}
