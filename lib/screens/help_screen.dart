@@ -69,7 +69,7 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.spacingM),
               const _AccordionSection(
                 title: 'Allgemein',
                 questions: [
@@ -93,7 +93,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.spacingM),
               const _AccordionSection(
                 title: 'Funktionen der App',
                 questions: [
@@ -131,7 +131,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.spacingM),
               const _AccordionSection(
                 title: 'Technische Fragen',
                 questions: [
@@ -150,7 +150,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.spacingM),
               const _AccordionSection(
                 title: 'Kontakt und Hilfe',
                 questions: [
@@ -174,7 +174,7 @@ class HelpScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: UIConstants.helpSpacing),
+              const SizedBox(height: UIConstants.spacingM),
               // Add version number at the bottom
               const SizedBox(height: 32),
               FutureBuilder<PackageInfo>(
@@ -229,7 +229,7 @@ class _AccordionSection extends StatelessWidget {
             color: UIConstants.defaultAppColor,
           ),
         ),
-        const SizedBox(height: UIConstants.helpSpacing),
+        const SizedBox(height: UIConstants.spacingM),
         ...questions,
       ],
     );
@@ -253,7 +253,7 @@ class _AccordionItemState extends State<_AccordionItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: UIConstants.helpSpacing),
+      margin: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: ExpansionTile(
         title: ScaledText(
           widget.question,
@@ -264,7 +264,7 @@ class _AccordionItemState extends State<_AccordionItem> {
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.all(UIConstants.helpSpacing),
+            padding: const EdgeInsets.all(UIConstants.spacingM),
             child: widget.answer,
           ),
         ],
