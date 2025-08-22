@@ -681,10 +681,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     ],
                   ),
                 ),
-              );
-            },
-          );
-        },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1020,7 +1021,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           ),
                                                           child: Column(
                                                             mainAxisSize:
-                                                                MainAxisSize.min,
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: [
                                                               Padding(
                                                                 padding:
@@ -1033,7 +1035,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 child: Text(
                                                                   t.bezeichnung
                                                                           .isNotEmpty
-                                                                      ? t.bezeichnung
+                                                                      ? t
+                                                                          .bezeichnung
                                                                       : schulungsTermin
                                                                           .bezeichnung,
                                                                   style: UIStyles
@@ -1054,7 +1057,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                     .bodyStyle
                                                                     .copyWith(
                                                                   fontWeight:
-                                                                      FontWeight.bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                                 textAlign:
                                                                     TextAlign
@@ -1212,10 +1216,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                          Icons.email,
-                                                                          size: UIConstants.defaultIconSize,
+                                                                          Icons
+                                                                              .email,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
                                                                         ),
-                                                                        UIConstants.horizontalSpacingS,
+                                                                        UIConstants
+                                                                            .horizontalSpacingS,
                                                                         Text(
                                                                           lehrgangsleiterMail,
                                                                           style:
@@ -1237,10 +1244,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                               .min,
                                                                       children: [
                                                                         const Icon(
-                                                                          Icons.phone,
-                                                                          size: UIConstants.defaultIconSize,
+                                                                          Icons
+                                                                              .phone,
+                                                                          size:
+                                                                              UIConstants.defaultIconSize,
                                                                         ),
-                                                                        UIConstants.horizontalSpacingS,
+                                                                        UIConstants
+                                                                            .horizontalSpacingS,
                                                                         Text(
                                                                           lehrgangsleiterTel,
                                                                           style:
@@ -1389,10 +1399,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   ),
                                                 ),
                                               ],
-                                            );
-                                          },
-                                        );
-                                      };
+                                            ),
+                                          ),
+                                        ],
+                                      );
                                     },
                                   );
                                 },
@@ -1401,12 +1411,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           );
                         },
                       ),
-                    )
-                    if (!_isLoading && _errorMessage == null && _results.isEmpty)
-                      const ScaledText(
-                        'Keine Schulungen gefunden.',
-                        style: UIStyles.bodyStyle,
-                      ),
+                    ),
+                  if (!_isLoading && _errorMessage == null && _results.isEmpty)
+                    const ScaledText(
+                      'Keine Schulungen gefunden.',
+                      style: UIStyles.bodyStyle,
+                    ),
                 ],
               ),
       ),
