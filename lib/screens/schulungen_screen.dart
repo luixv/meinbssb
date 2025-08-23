@@ -1417,6 +1417,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                       'Keine Schulungen gefunden.',
                       style: UIStyles.bodyStyle,
                     ),
+                  const SizedBox(height: UIConstants.helpSpacing),
                 ],
               ),
       ),
