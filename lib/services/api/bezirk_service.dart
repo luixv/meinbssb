@@ -1,7 +1,7 @@
 import 'dart:async';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
-import '/models/bezirk.dart';
+import '../../models/bezirk_data.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/network_service.dart';
 

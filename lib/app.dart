@@ -21,7 +21,7 @@ import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/set_password_screen.dart';
-import 'utils/cookie_consent.dart';
+import 'screens/cookie_consent_screen.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';

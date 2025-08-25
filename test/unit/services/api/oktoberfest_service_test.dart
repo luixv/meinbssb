@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/gewinn.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 

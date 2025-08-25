@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart'; // For listEquals
-import 'package:meinbssb/models/zve.dart'; // Import ZVE model
+import 'package:meinbssb/models/zve_data.dart'; // Import ZVE model
 
 class PassdatenAkzeptOrAktiv {
   factory PassdatenAkzeptOrAktiv.fromJson(Map<String, dynamic> json) {

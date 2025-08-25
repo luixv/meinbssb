@@ -5,12 +5,12 @@ import '/services/core/http_client.dart';
 import '/services/core/network_service.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/config_service.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
-import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
+import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/pass_data_zve_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
-import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/person_data.dart';
 
 class UserService {
   UserService({

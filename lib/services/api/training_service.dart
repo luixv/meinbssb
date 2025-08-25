@@ -1,14 +1,14 @@
 import 'dart:async';
-import '/models/schulung.dart';
-import '/models/disziplin.dart';
-import '/models/schulungsart.dart';
+import '../../models/schulung_data.dart';
+import '../../models/disziplin_data.dart';
+import '../../models/schulungsart_data.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/services/core/config_service.dart';
 
-import '/models/schulungstermin.dart';
+import '../../models/schulungstermin_data.dart';
 import '/models/register_schulungen_teilnehmer_response.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';

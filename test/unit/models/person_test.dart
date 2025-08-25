@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/person_data.dart';
 
 void main() {
   group('Person', () {

@@ -16,6 +16,7 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
+import 'package:meinbssb/services/api/bezirk_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -362,6 +363,15 @@ class DummyOktoberfestService extends OktoberfestService {
 
 class DummyCalendarService extends CalendarService {}
 
+class DummyBezirkService extends BezirkService {
+  DummyBezirkService()
+      : super(
+          httpClient: DummyHttpClient(),
+          cacheService: DummyCacheService(),
+          networkService: DummyNetworkService(),
+        );
+}
+
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
       : super(
@@ -380,6 +390,7 @@ class MockApiService extends ApiService {
           emailService: DummyEmailService(),
           oktoberfestService: DummyOktoberfestService(),
           calendarService: DummyCalendarService(),
+          bezirkService: DummyBezirkService(),
         );
   final Uint8List? fetchResult;
   final bool shouldThrow;

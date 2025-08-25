@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
 
 class ZweitvereinTable extends StatelessWidget {
   const ZweitvereinTable({
@@ -157,17 +157,18 @@ class ZweitvereinTable extends StatelessWidget {
                   TableCell(
                     verticalAlignment: TableCellVerticalAlignment.middle,
                     child: Center(
-                      child: IconButton(
-                        constraints:
-                            const BoxConstraints(), //  removes min 48×48
-                        padding: EdgeInsets.zero, //  removes internal padding
-                        icon: const Icon(
-                          Icons.delete,
-                          color: UIConstants.defaultAppColor,
-                          size: UIConstants.iconSizeXS,
-                        ),
-                        onPressed: () => onDelete(entry.key),
-                      ),
+                      child: secondColumns.containsKey(entry.key)
+                          ? IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.delete,
+                                color: UIConstants.defaultAppColor,
+                                size: UIConstants.iconSizeXS,
+                              ),
+                              onPressed: () => onDelete(entry.key),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ),
                 ],

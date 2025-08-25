@@ -1,21 +1,22 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
-import 'package:meinbssb/models/contact.dart';
-import 'package:meinbssb/models/schulung.dart';
-import 'package:meinbssb/models/schulungsart.dart';
-import 'package:meinbssb/models/schulungstermin.dart';
-import 'package:meinbssb/models/disziplin.dart';
-import 'package:meinbssb/models/verein.dart';
-import 'package:meinbssb/models/fremde_verband.dart';
-import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/contact_data.dart';
+import 'package:meinbssb/models/schulung_data.dart';
+import 'package:meinbssb/models/schulungsart_data.dart';
+import 'package:meinbssb/models/schulungstermin_data.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:meinbssb/models/verein_data.dart';
+import 'package:meinbssb/models/fremde_verband_data.dart';
+import 'package:meinbssb/models/pass_data_zve_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
+import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
@@ -26,6 +27,7 @@ import 'package:meinbssb/services/api/training_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
+import 'package:meinbssb/services/api/bezirk_service.dart';
 
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -33,7 +35,7 @@ import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
 
-import 'package:meinbssb/models/person.dart';
+import 'package:meinbssb/models/person_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -51,6 +53,7 @@ import 'package:meinbssb/models/person.dart';
   EmailService,
   OktoberfestService,
   CalendarService,
+  BezirkService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -69,8 +72,9 @@ void main() {
   late MockPostgrestService mockPostgrestService;
   late MockEmailService mockEmailService;
   late MockOktoberfestService mockOktoberfestService;
-
   late MockCalendarService mockCalendarService;
+  late MockBezirkService mockBezirkService;
+
   late HttpClient httpClient;
 
   setUp(() {
@@ -88,6 +92,7 @@ void main() {
     mockEmailService = MockEmailService();
     mockOktoberfestService = MockOktoberfestService();
     mockCalendarService = MockCalendarService();
+    mockBezirkService = MockBezirkService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -112,6 +117,7 @@ void main() {
       emailService: mockEmailService,
       oktoberfestService: mockOktoberfestService,
       calendarService: mockCalendarService,
+      bezirkService: mockBezirkService,
     );
   });
 
@@ -866,6 +872,7 @@ void main() {
           emailService: MockEmailService(),
           oktoberfestService: MockOktoberfestService(),
           calendarService: MockCalendarService(),
+          bezirkService: MockBezirkService(),
         );
       });
 
@@ -1069,6 +1076,45 @@ void main() {
         expect(result, equals(expectedUser));
         verify(mockPostgrestService.getUserByVerificationToken('token123'))
             .called(1);
+      });
+    });
+
+    group('Bezirk Service Tests', () {
+      test('fetchBezirkeforSearch delegates to bezirk service', () async {
+        final expectedData = [
+          const BezirkSearchTriple(
+              bezirkId: 1, bezirkNr: 1, bezirkName: 'TestBezirk',),
+        ];
+        when(mockBezirkService.fetchBezirkeforSearch())
+            .thenAnswer((_) async => expectedData);
+
+        final result = await apiService.fetchBezirkeforSearch();
+        expect(result, equals(expectedData));
+        verify(mockBezirkService.fetchBezirkeforSearch()).called(1);
+      });
+
+      test('fetchBezirk delegates to bezirk service', () async {
+        const expectedBezirk =
+            Bezirk(bezirkId: 2, bezirkNr: 2, bezirkName: 'Bezirk2');
+        when(mockBezirkService.fetchBezirk(any))
+            .thenAnswer((_) async => [expectedBezirk]);
+
+        final result = await apiService.fetchBezirk(2);
+        expect(result, equals([expectedBezirk]));
+        verify(mockBezirkService.fetchBezirk(2)).called(1);
+      });
+
+      test('fetchBezirke delegates to bezirk service', () async {
+        final expectedList = [
+          const Bezirk(bezirkId: 3, bezirkNr: 3, bezirkName: 'Bezirk3'),
+          const Bezirk(bezirkId: 4, bezirkNr: 4, bezirkName: 'Bezirk4'),
+        ];
+        when(mockBezirkService.fetchBezirke())
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchBezirke();
+        expect(result, equals(expectedList));
+        verify(mockBezirkService.fetchBezirke()).called(1);
       });
     });
   });

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '/services/api_service.dart';
 import '/services/core/config_service.dart';
-import '/models/result.dart';
+import '../models/result_data.dart';
 import '/models/user_data.dart';
 
 import '/constants/ui_constants.dart';

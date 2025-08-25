@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/gewinn.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
 
 void main() {
   group('Gewinn', () {

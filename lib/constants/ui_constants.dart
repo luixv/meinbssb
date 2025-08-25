@@ -123,6 +123,8 @@ class UIConstants {
   static const double helpSpacing = 32.0;
   static const double listItemInterSpace = 3.0;
 
+  static const double loadingIndicatorSize = 20;
+
   /// Minimal horizontal spacing between columns in info tables/dialogs
   static const double infoTableColumnSpacing = 1.0;
 

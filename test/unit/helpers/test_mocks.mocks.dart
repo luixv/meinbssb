@@ -6,34 +6,35 @@
 import 'dart:async' as _i5;
 import 'dart:typed_data' as _i18;
 
-import 'package:flutter/foundation.dart' as _i32;
+import 'package:flutter/foundation.dart' as _i33;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i6;
 import 'package:http/http.dart' as _i8;
 import 'package:meinbssb/models/bank_data.dart' as _i22;
-import 'package:meinbssb/models/contact.dart' as _i17;
-import 'package:meinbssb/models/disziplin.dart' as _i21;
-import 'package:meinbssb/models/fremde_verband.dart' as _i24;
-import 'package:meinbssb/models/gewinn.dart' as _i27;
-import 'package:meinbssb/models/pass_data_zve.dart' as _i14;
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart' as _i13;
-import 'package:meinbssb/models/person.dart' as _i25;
+import 'package:meinbssb/models/bezirk_data.dart' as _i28;
+import 'package:meinbssb/models/contact_data.dart' as _i17;
+import 'package:meinbssb/models/disziplin_data.dart' as _i21;
+import 'package:meinbssb/models/fremde_verband_data.dart' as _i24;
+import 'package:meinbssb/models/gewinn_data.dart' as _i27;
+import 'package:meinbssb/models/pass_data_zve_data.dart' as _i14;
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart' as _i13;
+import 'package:meinbssb/models/person_data.dart' as _i25;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
     as _i4;
-import 'package:meinbssb/models/result.dart' as _i26;
-import 'package:meinbssb/models/schulung.dart' as _i16;
-import 'package:meinbssb/models/schulungsart.dart' as _i19;
-import 'package:meinbssb/models/schulungstermin.dart' as _i20;
+import 'package:meinbssb/models/result_data.dart' as _i26;
+import 'package:meinbssb/models/schulung_data.dart' as _i16;
+import 'package:meinbssb/models/schulungsart_data.dart' as _i19;
+import 'package:meinbssb/models/schulungstermin_data.dart' as _i20;
 import 'package:meinbssb/models/user_data.dart' as _i12;
-import 'package:meinbssb/models/verein.dart' as _i23;
+import 'package:meinbssb/models/verein_data.dart' as _i23;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i15;
 import 'package:meinbssb/services/api/auth_service.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i11;
-import 'package:meinbssb/services/core/cache_service.dart' as _i29;
+import 'package:meinbssb/services/core/cache_service.dart' as _i30;
 import 'package:meinbssb/services/core/config_service.dart' as _i7;
-import 'package:meinbssb/services/core/email_service.dart' as _i28;
-import 'package:meinbssb/services/core/http_client.dart' as _i31;
+import 'package:meinbssb/services/core/email_service.dart' as _i29;
+import 'package:meinbssb/services/core/http_client.dart' as _i32;
 import 'package:meinbssb/services/core/image_service.dart' as _i3;
-import 'package:meinbssb/services/core/network_service.dart' as _i30;
+import 'package:meinbssb/services/core/network_service.dart' as _i31;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i10;
@@ -1299,6 +1300,36 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
         ),
         returnValue: _i5.Future<List<_i27.Gewinn>>.value(<_i27.Gewinn>[]),
       ) as _i5.Future<List<_i27.Gewinn>>);
+
+  @override
+  _i5.Future<List<_i28.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i28.Bezirk>>.value(<_i28.Bezirk>[]),
+      ) as _i5.Future<List<_i28.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i28.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i5.Future<List<_i28.Bezirk>>.value(<_i28.Bezirk>[]),
+      ) as _i5.Future<List<_i28.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i28.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i28.BezirkSearchTriple>>.value(
+            <_i28.BezirkSearchTriple>[]),
+      ) as _i5.Future<List<_i28.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [ConfigService].
@@ -1347,12 +1378,25 @@ class MockConfigService extends _i1.Mock implements _i7.ConfigService {
           section,
         ],
       )) as List<String>?);
+
+  @override
+  bool? getBool(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getBool,
+        [
+          key,
+          section,
+        ],
+      )) as bool?);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i28.EmailService {
+class MockEmailService extends _i1.Mock implements _i29.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1639,7 +1683,7 @@ class MockEmailService extends _i1.Mock implements _i28.EmailService {
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i29.CacheService {
+class MockCacheService extends _i1.Mock implements _i30.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1894,7 +1938,7 @@ class MockCacheService extends _i1.Mock implements _i29.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i30.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i31.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1927,7 +1971,7 @@ class MockNetworkService extends _i1.Mock implements _i30.NetworkService {
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i31.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i32.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -2091,7 +2135,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void registerListener({
     required String? key,
-    required _i32.ValueChanged<String?>? listener,
+    required _i33.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2108,7 +2152,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void unregisterListener({
     required String? key,
-    required _i32.ValueChanged<String?>? listener,
+    required _i33.ValueChanged<String?>? listener,
   }) =>
       super.noSuchMethod(
         Invocation.method(

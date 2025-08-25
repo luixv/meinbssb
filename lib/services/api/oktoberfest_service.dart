@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
-import 'package:meinbssb/models/gewinn.dart';
-import 'package:meinbssb/models/result.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
+import 'package:meinbssb/models/result_data.dart';
 
 import 'package:meinbssb/services/core/config_service.dart';
 

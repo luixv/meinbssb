@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/result.dart';
+import 'package:meinbssb/models/result_data.dart';
 
 void main() {
   group('Result', () {

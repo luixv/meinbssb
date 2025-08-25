@@ -6,7 +6,7 @@ import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
-import '/models/schulung.dart';
+import '../models/schulung_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 

@@ -246,6 +246,14 @@ class ImpressumScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: UIConstants.defaultAppColor,
+        child: const Icon(
+          Icons.close,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }
