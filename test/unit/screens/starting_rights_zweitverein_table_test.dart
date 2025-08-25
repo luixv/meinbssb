@@ -141,7 +141,7 @@ void main() {
       expect(find.text('$testYear'), findsOneWidget);
       
       // Verify discipline names are displayed
-      expect(find.text('Disziplin 1'), findsOneWidget);
+      expect(find.text('Disziplin 1'), findsNWidgets(2)); // Once in table, once in autocomplete
       expect(find.text('Disziplin 2'), findsOneWidget);
       expect(find.text('Disziplin 3'), findsOneWidget);
     });
@@ -151,7 +151,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show check icon for Disziplin 1 and 2 (they exist in firstColumns)
-      expect(find.byIcon(Icons.check), findsNWidgets(3)); // 2 from first column + 1 from second column
+      expect(find.byIcon(Icons.check), findsNWidgets(4)); // 2 from first column + 2 from second column
     });
 
     testWidgets('should show check icons for existing disciplines in second column', (WidgetTester tester) async {
@@ -159,7 +159,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show check icon for Disziplin 1 and 3 (they exist in secondColumns)
-      expect(find.byIcon(Icons.check), findsNWidgets(3));
+      expect(find.byIcon(Icons.check), findsNWidgets(4)); // Total check icons: 2 from first column + 2 from second column
     });
 
     testWidgets('should show delete buttons only for disciplines in second column', (WidgetTester tester) async {
