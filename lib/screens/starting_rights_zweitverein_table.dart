@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
 
 class ZweitvereinTable extends StatelessWidget {
   const ZweitvereinTable({

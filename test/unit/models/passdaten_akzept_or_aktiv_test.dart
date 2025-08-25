@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
-import 'package:meinbssb/models/zve.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
+import 'package:meinbssb/models/zve_data.dart';
 
 void main() {
   group('PassdatenAkzeptOrAktiv', () {

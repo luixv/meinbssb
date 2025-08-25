@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/schulungstermin.dart';
+import 'package:meinbssb/models/schulungstermin_data.dart';
 
 void main() {
   group('Schulungstermin', () {

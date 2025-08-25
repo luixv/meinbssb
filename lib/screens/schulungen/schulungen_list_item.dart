@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart'; // Import provider
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/schulungstermin.dart';
+import '../../models/schulungstermin_data.dart';
 import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
 
 class SchulungenListItem extends StatelessWidget {

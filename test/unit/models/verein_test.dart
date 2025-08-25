@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/verein.dart';
+import 'package:meinbssb/models/verein_data.dart';
 
 void main() {
   group('Verein', () {

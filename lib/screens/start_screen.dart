@@ -9,7 +9,7 @@ import '/services/core/logger_service.dart';
 import '/screens/base_screen_layout.dart';
 import 'personal_pict_upload_screen.dart';
 
-import '/models/schulungstermin.dart';
+import '../models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import 'package:flutter_html/flutter_html.dart';

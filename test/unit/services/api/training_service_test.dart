@@ -6,9 +6,9 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/schulung.dart'; // Import the Schulung model
-import 'package:meinbssb/models/disziplin.dart';
-import 'package:meinbssb/models/schulungstermin.dart';
+import 'package:meinbssb/models/schulung_data.dart'; // Import the Schulung model
+import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:meinbssb/models/schulungstermin_data.dart';
 // Import for date formatting
 import 'dart:async';
 import 'dart:io';

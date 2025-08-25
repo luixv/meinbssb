@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/contact_data.dart';
 
 void main() {
   group('Contact', () {

@@ -6,10 +6,10 @@ import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/contact.dart';
+import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/person.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
+import 'package:meinbssb/models/person_data.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
 import 'user_service_test.mocks.dart';
 

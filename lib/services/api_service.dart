@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
 
 import 'package:flutter/foundation.dart';
-import 'package:meinbssb/models/gewinn.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:meinbssb/services/api_service.dart' as network_ex;
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api/training_service.dart';
@@ -14,21 +14,21 @@ import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
-import 'package:meinbssb/models/schulung.dart';
+import 'package:meinbssb/models/schulung_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
-import 'package:meinbssb/models/disziplin.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
-import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
+import 'package:meinbssb/models/pass_data_zve_data.dart';
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
-import 'package:meinbssb/models/contact.dart';
-import 'package:meinbssb/models/verein.dart';
+import 'package:meinbssb/models/contact_data.dart';
+import 'package:meinbssb/models/verein_data.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/fremde_verband.dart';
-import 'package:meinbssb/models/schulungsart.dart';
-import 'package:meinbssb/models/schulungstermin.dart';
-import 'package:meinbssb/models/person.dart';
-import 'package:meinbssb/models/result.dart';
-import 'package:meinbssb/models/bezirk.dart';
+import 'package:meinbssb/models/fremde_verband_data.dart';
+import 'package:meinbssb/models/schulungsart_data.dart';
+import 'package:meinbssb/models/schulungstermin_data.dart';
+import 'package:meinbssb/models/person_data.dart';
+import 'package:meinbssb/models/result_data.dart';
+import 'package:meinbssb/models/bezirk_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';

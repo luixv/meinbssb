@@ -5,14 +5,14 @@ import '/models/user_data.dart';
 import '/screens/schulungen_screen.dart';
 import 'package:intl/intl.dart';
 import '/services/api/bezirk_service.dart';
-import '/models/bezirk.dart';
+import '../../models/bezirk_data.dart';
 import 'package:provider/provider.dart';
 import '/services/core/http_client.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/widgets/scaled_text.dart';
-import '/models/schulungstermin.dart';
+import '../../models/schulungstermin_data.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen(

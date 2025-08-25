@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/models/schulungstermin.dart';
+import '../../models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/services/api_service.dart';

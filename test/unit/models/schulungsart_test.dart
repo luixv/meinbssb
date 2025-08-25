@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/schulungsart.dart';
+import 'package:meinbssb/models/schulungsart_data.dart';
 
 void main() {
   group('Schulungsart', () {

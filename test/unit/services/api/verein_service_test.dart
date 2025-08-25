@@ -3,8 +3,8 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/core/http_client.dart';
-import 'package:meinbssb/models/verein.dart';
-import 'package:meinbssb/models/fremde_verband.dart';
+import 'package:meinbssb/models/verein_data.dart';
+import 'package:meinbssb/models/fremde_verband_data.dart';
 
 @GenerateMocks([
   HttpClient,

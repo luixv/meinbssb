@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/pass_data_zve.dart';
+import 'package:meinbssb/models/pass_data_zve_data.dart';
 
 void main() {
   group('PassDataZVE', () {

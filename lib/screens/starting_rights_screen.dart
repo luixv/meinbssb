@@ -9,9 +9,9 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
-import 'package:meinbssb/models/disziplin.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
 //import 'package:meinbssb/models/fremde_verband.dart';
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';

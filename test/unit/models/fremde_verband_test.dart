@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/fremde_verband.dart';
+import 'package:meinbssb/models/fremde_verband_data.dart';
 
 void main() {
   group('FremdeVerband', () {

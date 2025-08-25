@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/bezirk.dart';
+import 'package:meinbssb/models/bezirk_data.dart';
 
 void main() {
   group('Bezirk', () {
