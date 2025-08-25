@@ -46,72 +46,6 @@ void main() {
     });
   });
 
-  group('fetchAndCacheSchuetzenausweis', () {
-    test('returns cached image if available', () async {
-      final image = Uint8List.fromList([1, 2, 3]);
-      final service = ImageService(
-        getCachedSchuetzenausweisFn: (int _, Duration __) async => image,
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        1,
-        () async => Uint8List.fromList([9, 9, 9]),
-        const Duration(seconds: 1),
-      );
-      expect(result, image);
-    });
-
-    test('calls fetch and caches if no cache', () async {
-      final image = Uint8List.fromList([4, 5, 6]);
-      var fetchCalled = false;
-      final service = ImageService(
-        getCachedSchuetzenausweisFn: (int _, Duration __) async => null,
-        cacheSchuetzenausweisFn: (int _, Uint8List img, int __) async {
-          expect(img, image);
-          fetchCalled = true;
-        },
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        1,
-        () async => image,
-        const Duration(seconds: 1),
-      );
-      expect(result, image);
-      expect(fetchCalled, isTrue);
-    });
-
-    test('falls back to expired cache if fetch fails', () async {
-      final fallback = Uint8List.fromList([7, 8, 9]);
-      final service = ImageService(
-        getCachedSchuetzenausweisFn: (int _, Duration validity) async =>
-            validity.inDays < 1000 ? null : fallback,
-        cacheSchuetzenausweisFn: (int _, Uint8List __, int ___) async {
-          throw Exception('Should not be called');
-        },
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        1,
-        () async => throw Exception('fail'),
-        const Duration(seconds: 1),
-      );
-      expect(result, fallback);
-    });
-
-    test('throws if fetch fails and no cache', () async {
-      final service = ImageService(
-        getCachedSchuetzenausweisFn: (int _, Duration __) async => null,
-        cacheSchuetzenausweisFn: (int _, Uint8List __, int ___) async {},
-      );
-      expect(
-        () async => await service.fetchAndCacheSchuetzenausweis(
-          1,
-          () async => throw Exception('fail'),
-          const Duration(seconds: 1),
-        ),
-        throwsException,
-      );
-    });
-  });
-
   group('isDeviceOnline', () {
     test('returns true for wifi', () async {
       final fake = FakeConnectivity(() async => [ConnectivityResult.wifi]);
@@ -127,6 +61,114 @@ void main() {
       final fake = FakeConnectivity(() async => []);
       final service = ImageService(connectivity: fake);
       expect(await service.isDeviceOnline(), isFalse);
+    });
+  });
+
+  group('fetchAndCacheSchuetzenausweis', () {
+    late Uint8List testImage;
+    late bool fetchCalled;
+    late bool cacheCalled;
+
+    setUp(() {
+      testImage = Uint8List.fromList([1, 2, 3, 4]);
+      fetchCalled = false;
+      cacheCalled = false;
+    });
+
+    test('returns cached image if offline', () async {
+      imageService = ImageService(
+        getCachedSchuetzenausweisFn: (id, duration) async => testImage,
+        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
+        connectivity: FakeConnectivity(() async => []),
+      );
+
+      final result = await imageService.fetchAndCacheSchuetzenausweis(
+        1,
+        () async {
+          fetchCalled = true;
+          return testImage;
+        },
+        const Duration(days: 1),
+      );
+      expect(result, testImage);
+      expect(fetchCalled, false);
+      expect(cacheCalled, false);
+    });
+
+    test('downloads and caches new image if online', () async {
+      imageService = ImageService(
+        getCachedSchuetzenausweisFn: (id, duration) async => null,
+        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
+        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
+      );
+
+      final result = await imageService.fetchAndCacheSchuetzenausweis(
+        1,
+        () async {
+          fetchCalled = true;
+          return testImage;
+        },
+        const Duration(days: 1),
+      );
+      expect(result, testImage);
+      expect(fetchCalled, true);
+      expect(cacheCalled, true);
+    });
+
+    test('returns cached image if online but fetch fails', () async {
+      imageService = ImageService(
+        getCachedSchuetzenausweisFn: (id, duration) async => testImage,
+        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
+        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
+      );
+
+      final result = await imageService.fetchAndCacheSchuetzenausweis(
+        1,
+        () async {
+          fetchCalled = true;
+          throw Exception('Network error');
+        },
+        const Duration(days: 1),
+      );
+      expect(result, testImage);
+      expect(fetchCalled, true);
+      expect(cacheCalled, false);
+    });
+
+    test('throws if no cache and fetch fails', () async {
+      imageService = ImageService(
+        getCachedSchuetzenausweisFn: (id, duration) async => null,
+        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
+        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
+      );
+
+      expect(
+        () async => await imageService.fetchAndCacheSchuetzenausweis(
+          1,
+          () async {
+            throw Exception('Network error');
+          },
+          const Duration(days: 1),
+        ),
+        throwsException,
+      );
+    });
+
+    test('throws if offline and no cache', () async {
+      imageService = ImageService(
+        getCachedSchuetzenausweisFn: (id, duration) async => null,
+        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
+        connectivity: FakeConnectivity(() async => []),
+      );
+
+      expect(
+        () async => await imageService.fetchAndCacheSchuetzenausweis(
+          1,
+          () async => testImage,
+          const Duration(days: 1),
+        ),
+        throwsException,
+      );
     });
   });
 }

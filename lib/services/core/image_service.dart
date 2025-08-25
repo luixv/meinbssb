@@ -76,6 +76,7 @@ class ImageService {
         connectivityResult.contains(ConnectivityResult.mobile);
   }
 
+/*
   Future<Uint8List> fetchAndCacheSchuetzenausweis(
     int personId,
     Future<Uint8List> Function() fetchFunction, // Accepts a function
@@ -102,6 +103,79 @@ class ImageService {
       );
       if (fallback != null) return fallback;
       throw Exception('Failed to fetch and no cache available');
+    }
+  }
+
+  
+
+  Future<Uint8List> fetchAndCacheSchuetzenausweis(
+    int personId,
+    Future<Uint8List> Function() fetchFunction,
+    Duration validityDuration,
+  ) async {
+    final online = await isDeviceOnline();
+    if (online) {
+      try {
+        final fetchedImage = await fetchFunction();
+        await cacheSchuetzenausweis(
+          personId,
+          fetchedImage,
+          DateTime.now().millisecondsSinceEpoch,
+        );
+        return fetchedImage;
+      } catch (e) {
+        // Fallback to cache if available
+        final fallback = await getCachedSchuetzenausweis(
+          personId,
+          const Duration(days: 365 * 100), // ignore validity if offline
+        );
+        if (fallback != null) return fallback;
+        throw Exception('Failed to fetch and no cache available');
+      }
+    } else {
+      // Offline: use any cached image, regardless of age
+      final cachedImage = await getCachedSchuetzenausweis(
+        personId,
+        const Duration(days: 365 * 100), // ignore validity
+      );
+      if (cachedImage != null) return cachedImage;
+      throw Exception('Offline and no cache available');
+    }
+  }
+
+*/
+  Future<Uint8List> fetchAndCacheSchuetzenausweis(
+    int personId,
+    Future<Uint8List> Function() fetchFunction,
+    Duration validityDuration,
+  ) async {
+    final online = await isDeviceOnline();
+    if (online) {
+      try {
+        final fetchedImage = await fetchFunction();
+        await cacheSchuetzenausweis(
+          personId,
+          fetchedImage,
+          DateTime.now().millisecondsSinceEpoch,
+        );
+        return fetchedImage;
+      } catch (e) {
+        // If download fails, use any cached image (regardless of age)
+        final fallback = await getCachedSchuetzenausweis(
+          personId,
+          const Duration(days: 365 * 100),
+        );
+        if (fallback != null) return fallback;
+        throw Exception('Failed to fetch and no cache available');
+      }
+    } else {
+      // Offline: use any cached image, regardless of age
+      final cachedImage = await getCachedSchuetzenausweis(
+        personId,
+        const Duration(days: 365 * 100),
+      );
+      if (cachedImage != null) return cachedImage;
+      throw Exception('Offline and no cache available');
     }
   }
 

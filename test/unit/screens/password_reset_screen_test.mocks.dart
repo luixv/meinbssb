@@ -495,4 +495,17 @@ class MockConfigService extends _i1.Mock implements _i9.ConfigService {
           section,
         ],
       )) as List<String>?);
+
+  @override
+  bool? getBool(
+    String? key, [
+    String? section,
+  ]) =>
+      (super.noSuchMethod(Invocation.method(
+        #getBool,
+        [
+          key,
+          section,
+        ],
+      )) as bool?);
 }
