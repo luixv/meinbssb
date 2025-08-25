@@ -318,7 +318,7 @@ void main() {
 
     testWidgets('should display discipline with only name when number is null', (WidgetTester tester) async {
       // Create discipline without number
-      final disciplineWithoutNumber = const Disziplin(
+      const disciplineWithoutNumber = Disziplin(
         disziplinId: 4,
         disziplinNr: null,
         disziplin: 'Disziplin Without Number',
@@ -365,7 +365,7 @@ void main() {
             firstColumns: testFirstColumns,
             secondColumns: testSecondColumns,
             pivot: testPivot,
-            disciplines: [],
+            disciplines: const [],
             onDelete: mockDelete,
             onAdd: mockAdd,
           ),
@@ -390,7 +390,7 @@ void main() {
             vereinName: testVereinName,
             firstColumns: testFirstColumns,
             secondColumns: testSecondColumns,
-            pivot: {},
+            pivot: const {},
             disciplines: testDisciplines,
             onDelete: mockDelete,
             onAdd: mockAdd,
@@ -439,10 +439,10 @@ void main() {
     });
 
     testWidgets('should handle special characters in discipline names', (WidgetTester tester) async {
-      final disciplineWithSpecialChars = const Disziplin(
+      const disciplineWithSpecialChars =  Disziplin(
         disziplinId: 5,
         disziplinNr: 'D005',
-        disziplin: 'Disziplin with @#$%^&*()_+-=[]{}|;:,.<>?',
+        disziplin: 'Disziplin with @#%^&*()_+-=[]{}|;:,.<>?',
       );
 
       final testWidgetSpecialChars = MaterialApp(
@@ -454,7 +454,7 @@ void main() {
             firstColumns: testFirstColumns,
             secondColumns: testSecondColumns,
             pivot: testPivot,
-            disciplines: [...testDisciplines, disciplineWithSpecialChars],
+            disciplines: List<Disziplin>.from(testDisciplines)..add(disciplineWithSpecialChars),
             onDelete: mockDelete,
             onAdd: mockAdd,
           ),
@@ -473,7 +473,9 @@ void main() {
       await tester.pump();
 
       // Should show discipline with special characters
-      expect(find.text('D005 - Disziplin with @#$%^&*()_+-=[]{}|;:,.<>?'), findsOneWidget);
+      expect(find.text('D005 - Disziplin with @#%^&*()_+-=[]{}|;:,.<>?'), findsOneWidget);
     });
+ 
+ 
   });
 }
