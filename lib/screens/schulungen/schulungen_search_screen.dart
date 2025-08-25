@@ -4,15 +4,12 @@ import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/screens/schulungen_screen.dart';
 import 'package:intl/intl.dart';
-import '/services/api/bezirk_service.dart';
-import '../../models/bezirk_data.dart';
+import '/models/bezirk_data.dart';
 import 'package:provider/provider.dart';
-import '/services/core/http_client.dart';
-import '/services/core/cache_service.dart';
-import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/widgets/scaled_text.dart';
-import '../../models/schulungstermin_data.dart';
+import '/models/schulungstermin_data.dart';
+import 'package:meinbssb/services/api_service.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen(
@@ -50,15 +47,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   }
 
   Future<void> _fetchBezirke() async {
-    final httpClient = Provider.of<HttpClient>(context, listen: false);
-    final cacheService = Provider.of<CacheService>(context, listen: false);
-    final networkService = Provider.of<NetworkService>(context, listen: false);
-    final bezirkService = BezirkService(
-      httpClient: httpClient,
-      cacheService: cacheService,
-      networkService: networkService,
-    );
-    final bezirke = await bezirkService.fetchBezirkeforSearch();
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final bezirke = await apiService.fetchBezirkeforSearch();
 
     // Add "Alle" option
     _bezirke = [
