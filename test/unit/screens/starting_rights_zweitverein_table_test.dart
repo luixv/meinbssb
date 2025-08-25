@@ -85,8 +85,10 @@ void main() {
     });
 
     testWidget = MaterialApp(
-      home: ChangeNotifierProvider<FontSizeProvider>.value(
-        value: mockFontSizeProvider,
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+        ],
         child: ZweitvereinTable(
           yy: testYear,
           vereinName: testVereinName,
@@ -325,8 +327,10 @@ void main() {
       );
 
       final testWidgetWithNullNumber = MaterialApp(
-        home: ChangeNotifierProvider<FontSizeProvider>.value(
-          value: mockFontSizeProvider,
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: ZweitvereinTable(
             yy: testYear,
             vereinName: testVereinName,
@@ -357,8 +361,10 @@ void main() {
 
     testWidgets('should handle empty disciplines list', (WidgetTester tester) async {
       final testWidgetEmptyDisciplines = MaterialApp(
-        home: ChangeNotifierProvider<FontSizeProvider>.value(
-          value: mockFontSizeProvider,
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: ZweitvereinTable(
             yy: testYear,
             vereinName: testVereinName,
@@ -383,8 +389,10 @@ void main() {
 
     testWidgets('should handle empty pivot map', (WidgetTester tester) async {
       final testWidgetEmptyPivot = MaterialApp(
-        home: ChangeNotifierProvider<FontSizeProvider>.value(
-          value: mockFontSizeProvider,
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: ZweitvereinTable(
             yy: testYear,
             vereinName: testVereinName,
@@ -416,8 +424,10 @@ void main() {
       const longVereinName = 'This is a very long verein name that should be handled properly by the Expanded widget to prevent overflow issues in the UI';
 
       final testWidgetLongName = MaterialApp(
-        home: ChangeNotifierProvider<FontSizeProvider>.value(
-          value: mockFontSizeProvider,
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: ZweitvereinTable(
             yy: testYear,
             vereinName: longVereinName,
@@ -446,8 +456,10 @@ void main() {
       );
 
       final testWidgetSpecialChars = MaterialApp(
-        home: ChangeNotifierProvider<FontSizeProvider>.value(
-          value: mockFontSizeProvider,
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: ZweitvereinTable(
             yy: testYear,
             vereinName: testVereinName,
