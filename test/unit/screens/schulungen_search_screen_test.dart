@@ -53,6 +53,14 @@ void main() {
     // Setup default mock responses
     when(mockApiService.fetchBezirkeforSearch())
         .thenAnswer((_) async => sampleBezirke);
+    
+    // Setup FontSizeProvider mock
+    when(mockFontSizeProvider.scaleFactor).thenReturn(1.0);
+    when(mockFontSizeProvider.getScaledFontSize(any)).thenAnswer((invocation) {
+      final baseSize = invocation.positionalArguments[0] as double;
+      return baseSize * 1.0;
+    });
+    when(mockFontSizeProvider.getScalePercentage()).thenReturn('100%');
 
     testWidget = MaterialApp(
       home: MultiProvider(
