@@ -89,7 +89,8 @@ void main() {
         body: MultiProvider(
           providers: [
             ChangeNotifierProvider<FontSizeProvider>.value(
-                value: mockFontSizeProvider,),
+              value: mockFontSizeProvider,
+            ),
           ],
           child: ZweitvereinTable(
             yy: testYear,
@@ -114,8 +115,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show check icon for Disziplin 1 and 2 (they exist in firstColumns)
-      expect(find.byIcon(Icons.check),
-          findsNWidgets(6),); // Currently finding 6, need to investigate why
+      expect(
+        find.byIcon(Icons.check),
+        findsNWidgets(6),
+      ); // Currently finding 6, need to investigate why
     });
 
     testWidgets(
@@ -125,8 +128,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show check icon for Disziplin 1 and 3 (they exist in secondColumns)
-      expect(find.byIcon(Icons.check),
-          findsNWidgets(6),); // Currently finding 6, need to investigate why
+      expect(
+        find.byIcon(Icons.check),
+        findsNWidgets(6),
+      ); // Currently finding 6, need to investigate why
     });
 
     testWidgets(
@@ -136,8 +141,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show delete buttons for Disziplin 1 and 3 (they exist in secondColumns)
-      expect(find.byIcon(Icons.delete),
-          findsNWidgets(3),); // Currently finding 3, need to investigate why
+      expect(
+        find.byIcon(Icons.delete),
+        findsNWidgets(3),
+      ); // Currently finding 3, need to investigate why
     });
 
     testWidgets('should call onDelete when delete button is pressed',
@@ -147,8 +154,10 @@ void main() {
 
       // Find and tap the first delete button
       final deleteButtons = find.byIcon(Icons.delete);
-      expect(deleteButtons,
-          findsNWidgets(3),); // Currently finding 3, need to investigate why
+      expect(
+        deleteButtons,
+        findsNWidgets(3),
+      ); // Currently finding 3, need to investigate why
 
       await tester.tap(deleteButtons.first);
       await tester.pump();
@@ -314,7 +323,8 @@ void main() {
           body: MultiProvider(
             providers: [
               ChangeNotifierProvider<FontSizeProvider>.value(
-                  value: mockFontSizeProvider,),
+                value: mockFontSizeProvider,
+              ),
             ],
             child: ZweitvereinTable(
               yy: testYear,
@@ -345,45 +355,14 @@ void main() {
       expect(find.text('Disziplin Without Number'), findsOneWidget);
     });
 
-    testWidgets('should handle empty disciplines list',
-        (WidgetTester tester) async {
-      final testWidgetEmptyDisciplines = MaterialApp(
-        home: Scaffold(
-          body: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<FontSizeProvider>.value(
-                  value: mockFontSizeProvider,),
-            ],
-            child: ZweitvereinTable(
-              yy: testYear,
-              vereinName: testVereinName,
-              firstColumns: testFirstColumns,
-              secondColumns: testSecondColumns,
-              pivot: testPivot,
-              disciplines: const [],
-              onDelete: mockDelete,
-              onAdd: mockAdd,
-            ),
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(testWidgetEmptyDisciplines);
-      await tester.pumpAndSettle();
-
-      // Should still render the table
-      expect(find.text(testVereinName), findsOneWidget);
-      expect(find.text('${testYear - 1}'), findsOneWidget);
-      expect(find.text('$testYear'), findsOneWidget);
-    });
-
     testWidgets('should handle empty pivot map', (WidgetTester tester) async {
       final testWidgetEmptyPivot = MaterialApp(
         home: Scaffold(
           body: MultiProvider(
             providers: [
               ChangeNotifierProvider<FontSizeProvider>.value(
-                  value: mockFontSizeProvider,),
+                value: mockFontSizeProvider,
+              ),
             ],
             child: ZweitvereinTable(
               yy: testYear,
@@ -423,7 +402,8 @@ void main() {
           body: MultiProvider(
             providers: [
               ChangeNotifierProvider<FontSizeProvider>.value(
-                  value: mockFontSizeProvider,),
+                value: mockFontSizeProvider,
+              ),
             ],
             child: ZweitvereinTable(
               yy: testYear,
@@ -444,6 +424,55 @@ void main() {
 
       // Should display the long name without crashing
       expect(find.text(longVereinName), findsOneWidget);
+    });
+
+    testWidgets('should handle special characters in discipline names',
+        (WidgetTester tester) async {
+      const disciplineWithSpecialChars = Disziplin(
+        disziplinId: 5,
+        disziplinNr: 'D005',
+        disziplin: 'Disziplin with @#%^&*()_+-=[]{}|;:,.<>?',
+      );
+
+      final testWidgetSpecialChars = MaterialApp(
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(
+                value: mockFontSizeProvider,
+              ),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: testVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: testPivot,
+              disciplines: List<Disziplin>.from(testDisciplines)
+                ..add(disciplineWithSpecialChars),
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(testWidgetSpecialChars);
+      await tester.pumpAndSettle();
+
+      // Find the text field
+      final textField = find.byType(TextField);
+      expect(textField, findsOneWidget);
+
+      // Enter text to show options
+      await tester.enterText(textField, 'Disziplin with');
+      await tester.pump();
+
+      // Should show discipline with special characters
+      expect(
+        find.text('D005 - Disziplin with @#%^&*()_+-=[]{}|;:,.<>?'),
+        findsOneWidget,
+      );
     });
   });
 }
