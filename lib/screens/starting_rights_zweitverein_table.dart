@@ -157,17 +157,18 @@ class ZweitvereinTable extends StatelessWidget {
                   TableCell(
                     verticalAlignment: TableCellVerticalAlignment.middle,
                     child: Center(
-                      child: IconButton(
-                        constraints:
-                            const BoxConstraints(), //  removes min 48×48
-                        padding: EdgeInsets.zero, //  removes internal padding
-                        icon: const Icon(
-                          Icons.delete,
-                          color: UIConstants.defaultAppColor,
-                          size: UIConstants.iconSizeXS,
-                        ),
-                        onPressed: () => onDelete(entry.key),
-                      ),
+                      child: secondColumns.containsKey(entry.key)
+                          ? IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.delete,
+                                color: UIConstants.defaultAppColor,
+                                size: UIConstants.iconSizeXS,
+                              ),
+                              onPressed: () => onDelete(entry.key),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ),
                 ],

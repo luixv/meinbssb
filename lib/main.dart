@@ -194,6 +194,12 @@ class AppInitializer {
       emailService: emailService,
     );
 
+    bezirkService = BezirkService(
+      httpClient: httpClient,
+      cacheService: cacheService,
+      networkService: networkService,
+    );
+
     bankService = BankService(httpClient);
 
     vereinService = VereinService(

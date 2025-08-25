@@ -31,14 +31,14 @@ class SchulungenSearchScreen extends StatefulWidget {
 }
 
 class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
-  DateTime? _selectedDate = DateTime.now();
-  int? _selectedWebGruppe = 0;
-  int? _selectedBezirkId = 0;
+  DateTime? selectedDate = DateTime.now();
+  int? selectedWebGruppe = 0;
+  int? selectedBezirkId = 0;
   final TextEditingController _ortController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
-  bool _fuerVerlaengerungen = false;
+  bool fuerVerlaengerungen = false;
   List<BezirkSearchTriple> _bezirke = [];
-  bool _isLoadingBezirke = true;
+  bool isLoadingBezirke = true;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
     ];
 
     setState(() {
-      _isLoadingBezirke = false;
+      isLoadingBezirke = false;
     });
   }
 
@@ -75,7 +75,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
       locale: const Locale('de', 'DE'),
@@ -137,15 +137,15 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
         );
       },
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && picked != selectedDate) {
       setState(() {
-        _selectedDate = picked;
+        selectedDate = picked;
       });
     }
   }
 
   void _navigateToResults() {
-    if (_selectedDate == null) {
+    if (selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Bitte wählen Sie ein Datum.'),
@@ -154,7 +154,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       );
       return;
     }
-    final safeDate = _selectedDate ?? DateTime.now();
+    final safeDate = selectedDate ?? DateTime.now();
     final userData = widget.userData;
     Navigator.push(
       context,
@@ -164,11 +164,11 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
           searchDate: safeDate,
-          webGruppe: _selectedWebGruppe,
-          bezirkId: _selectedBezirkId,
+          webGruppe: selectedWebGruppe,
+          bezirkId: selectedBezirkId,
           ort: _ortController.text,
           titel: _titelController.text,
-          fuerVerlaengerungen: _fuerVerlaengerungen,
+          fuerVerlaengerungen: fuerVerlaengerungen,
           showMenu: widget.showMenu,
           showConnectivityIcon: widget.showConnectivityIcon,
         ),
@@ -202,12 +202,12 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
             heroTag: 'resetFab',
             onPressed: () {
               setState(() {
-                _selectedDate = DateTime.now();
-                _selectedWebGruppe = 0;
-                _selectedBezirkId = 0;
+                selectedDate = DateTime.now();
+                selectedWebGruppe = 0;
+                selectedBezirkId = 0;
                 _ortController.clear();
                 _titelController.clear();
-                _fuerVerlaengerungen = false;
+                fuerVerlaengerungen = false;
               });
             },
             backgroundColor: UIConstants.defaultAppColor,
@@ -244,16 +244,16 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     suffixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: ScaledText(
-                    _selectedDate == null
+                    selectedDate == null
                         ? 'Bitte wählen Sie ein Datum'
-                        : _formatDate(_selectedDate ?? DateTime.now()),
+                        : _formatDate(selectedDate ?? DateTime.now()),
                     style: UIStyles.bodyStyle,
                   ),
                 ),
               ),
               const SizedBox(height: UIConstants.spacingM),
               DropdownButtonFormField<int>(
-                value: _selectedWebGruppe,
+                value: selectedWebGruppe,
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Fachbereich',
                 ),
@@ -265,15 +265,15 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedWebGruppe = value;
+                    selectedWebGruppe = value;
                   });
                 },
               ),
               const SizedBox(height: UIConstants.spacingM),
-              _isLoadingBezirke
+              isLoadingBezirke
                   ? const CircularProgressIndicator()
                   : DropdownButtonFormField<int>(
-                      value: _selectedBezirkId,
+                      value: selectedBezirkId,
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Regierungsbezirk',
                       ),
@@ -287,7 +287,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                           .toList(),
                       onChanged: (value) {
                         setState(() {
-                          _selectedBezirkId = value;
+                          selectedBezirkId = value;
                         });
                       },
                     ),
@@ -308,10 +308,10 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               const SizedBox(height: UIConstants.spacingM),
               CheckboxListTile(
                 title: const Text('Für Lizenzverlängerung'),
-                value: _fuerVerlaengerungen,
+                value: fuerVerlaengerungen,
                 onChanged: (bool? value) {
                   setState(() {
-                    _fuerVerlaengerungen = value ?? false;
+                    fuerVerlaengerungen = value ?? false;
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
