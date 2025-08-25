@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/starting_rights_zweitverein_table.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -85,19 +86,21 @@ void main() {
     });
 
     testWidget = MaterialApp(
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-        ],
-        child: ZweitvereinTable(
-          yy: testYear,
-          vereinName: testVereinName,
-          firstColumns: testFirstColumns,
-          secondColumns: testSecondColumns,
-          pivot: testPivot,
-          disciplines: testDisciplines,
-          onDelete: mockDelete,
-          onAdd: mockAdd,
+      home: Scaffold(
+        body: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
+          child: ZweitvereinTable(
+            yy: testYear,
+            vereinName: testVereinName,
+            firstColumns: testFirstColumns,
+            secondColumns: testSecondColumns,
+            pivot: testPivot,
+            disciplines: testDisciplines,
+            onDelete: mockDelete,
+            onAdd: mockAdd,
+          ),
         ),
       ),
     );
@@ -130,18 +133,17 @@ void main() {
         await tester.pumpAndSettle();
       }
       
-      // For now, let's just check if the basic structure is there
-      // We'll debug the text rendering issue separately
-      expect(find.byType(ExpansionTile), findsOneWidget);
-      expect(find.byType(Table), findsOneWidget);
+      // Verify verein name is displayed
+      expect(find.text(testVereinName), findsOneWidget);
       
-      // Let's check if we can find any text at all
-      final allTexts = find.byType(Text).evaluate();
-      print('All Text widgets found: ${allTexts.length}');
-      for (final textWidget in allTexts) {
-        final text = textWidget.widget as Text;
-        print('Text widget: "${text.data}"');
-      }
+      // Verify year headers are displayed
+      expect(find.text('${testYear - 1}'), findsOneWidget);
+      expect(find.text('$testYear'), findsOneWidget);
+      
+      // Verify discipline names are displayed
+      expect(find.text('Disziplin 1'), findsOneWidget);
+      expect(find.text('Disziplin 2'), findsOneWidget);
+      expect(find.text('Disziplin 3'), findsOneWidget);
     });
 
     testWidgets('should show check icons for existing disciplines in first column', (WidgetTester tester) async {
@@ -350,19 +352,21 @@ void main() {
       );
 
       final testWidgetWithNullNumber = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-          ],
-          child: ZweitvereinTable(
-            yy: testYear,
-            vereinName: testVereinName,
-            firstColumns: testFirstColumns,
-            secondColumns: testSecondColumns,
-            pivot: testPivot,
-            disciplines: [...testDisciplines, disciplineWithoutNumber],
-            onDelete: mockDelete,
-            onAdd: mockAdd,
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: testVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: testPivot,
+              disciplines: [...testDisciplines, disciplineWithoutNumber],
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
           ),
         ),
       );
@@ -384,19 +388,21 @@ void main() {
 
     testWidgets('should handle empty disciplines list', (WidgetTester tester) async {
       final testWidgetEmptyDisciplines = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-          ],
-          child: ZweitvereinTable(
-            yy: testYear,
-            vereinName: testVereinName,
-            firstColumns: testFirstColumns,
-            secondColumns: testSecondColumns,
-            pivot: testPivot,
-            disciplines: const [],
-            onDelete: mockDelete,
-            onAdd: mockAdd,
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: testVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: testPivot,
+              disciplines: const [],
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
           ),
         ),
       );
@@ -412,19 +418,21 @@ void main() {
 
     testWidgets('should handle empty pivot map', (WidgetTester tester) async {
       final testWidgetEmptyPivot = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-          ],
-          child: ZweitvereinTable(
-            yy: testYear,
-            vereinName: testVereinName,
-            firstColumns: testFirstColumns,
-            secondColumns: testSecondColumns,
-            pivot: const {},
-            disciplines: testDisciplines,
-            onDelete: mockDelete,
-            onAdd: mockAdd,
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: testVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: const {},
+              disciplines: testDisciplines,
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
           ),
         ),
       );
@@ -447,19 +455,21 @@ void main() {
       const longVereinName = 'This is a very long verein name that should be handled properly by the Expanded widget to prevent overflow issues in the UI';
 
       final testWidgetLongName = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-          ],
-          child: ZweitvereinTable(
-            yy: testYear,
-            vereinName: longVereinName,
-            firstColumns: testFirstColumns,
-            secondColumns: testSecondColumns,
-            pivot: testPivot,
-            disciplines: testDisciplines,
-            onDelete: mockDelete,
-            onAdd: mockAdd,
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: longVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: testPivot,
+              disciplines: testDisciplines,
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
           ),
         ),
       );
@@ -479,19 +489,21 @@ void main() {
       );
 
       final testWidgetSpecialChars = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
-          ],
-          child: ZweitvereinTable(
-            yy: testYear,
-            vereinName: testVereinName,
-            firstColumns: testFirstColumns,
-            secondColumns: testSecondColumns,
-            pivot: testPivot,
-            disciplines: List<Disziplin>.from(testDisciplines)..add(disciplineWithSpecialChars),
-            onDelete: mockDelete,
-            onAdd: mockAdd,
+        home: Scaffold(
+          body: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<FontSizeProvider>.value(value: mockFontSizeProvider),
+            ],
+            child: ZweitvereinTable(
+              yy: testYear,
+              vereinName: testVereinName,
+              firstColumns: testFirstColumns,
+              secondColumns: testSecondColumns,
+              pivot: testPivot,
+              disciplines: List<Disziplin>.from(testDisciplines)..add(disciplineWithSpecialChars),
+              onDelete: mockDelete,
+              onAdd: mockAdd,
+            ),
           ),
         ),
       );
