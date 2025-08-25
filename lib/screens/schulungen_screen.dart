@@ -1577,6 +1577,7 @@ class _LoginDialogState extends State<LoginDialog> {
     }
   }
 
+// ...existing code...
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -1587,51 +1588,58 @@ class _LoginDialogState extends State<LoginDialog> {
           style: UIStyles.dialogTitleStyle,
         ),
       ),
-      content: Padding(
-        padding: UIConstants.dialogPadding
-            .copyWith(bottom: UIConstants.spacingS), // Reduced bottom padding
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (_errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-                child: ScaledText(_errorMessage, style: UIStyles.errorStyle),
-              ),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'E-Mail',
-              ),
-              enabled: !_isLoading,
-              style: UIStyles.dialogContentStyle,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            TextField(
-              controller: _passwordController,
-              obscureText: !_isPasswordVisible,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Passwort',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+      content: SizedBox(
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: UIConstants.dialogPadding
+                .copyWith(bottom: UIConstants.spacingS),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: UIConstants.spacingS),
+                    child:
+                        ScaledText(_errorMessage, style: UIStyles.errorStyle),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
+                TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'E-Mail',
+                  ),
+                  enabled: !_isLoading,
+                  style: UIStyles.dialogContentStyle,
                 ),
-              ),
-              enabled: !_isLoading,
-              style: UIStyles.dialogContentStyle,
-              onSubmitted: (_) => _handleLogin(),
+                const SizedBox(height: UIConstants.spacingM),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: !_isPasswordVisible,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Passwort',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  enabled: !_isLoading,
+                  style: UIStyles.dialogContentStyle,
+                  onSubmitted: (_) => _handleLogin(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       actions: [
@@ -1641,7 +1649,7 @@ class _LoginDialogState extends State<LoginDialog> {
             4,
             16,
             12,
-          ), // Reduced top and bottom padding
+          ),
           child: Row(
             mainAxisAlignment: UIConstants.spaceBetweenAlignment,
             children: [
@@ -1677,8 +1685,8 @@ class _LoginDialogState extends State<LoginDialog> {
                       const SizedBox(width: UIConstants.spacingS),
                       _isLoading
                           ? const SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: UIConstants.loadingIndicatorSize,
+                              height: UIConstants.loadingIndicatorSize,
                               child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   UIConstants.defaultAppColor,
@@ -1701,4 +1709,5 @@ class _LoginDialogState extends State<LoginDialog> {
       ],
     );
   }
+// ...existing code...
 }
