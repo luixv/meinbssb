@@ -293,6 +293,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     ),
               const SizedBox(height: UIConstants.spacingM),
               TextFormField(
+                key: const Key('Ort'),
                 controller: _ortController,
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Ort',
@@ -300,6 +301,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               ),
               const SizedBox(height: UIConstants.spacingM),
               TextFormField(
+                key: const Key('Titel'),
                 controller: _titelController,
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Titel',
