@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart' as _i14;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i7;
 import 'package:meinbssb/models/bank_data.dart' as _i22;
+import 'package:meinbssb/models/bezirk.dart' as _i39;
 import 'package:meinbssb/models/contact.dart' as _i27;
 import 'package:meinbssb/models/disziplin.dart' as _i20;
 import 'package:meinbssb/models/fremde_verband.dart' as _i32;
@@ -28,6 +29,7 @@ import 'package:meinbssb/models/verein.dart' as _i31;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i25;
 import 'package:meinbssb/services/api/auth_service.dart' as _i15;
 import 'package:meinbssb/services/api/bank_service.dart' as _i29;
+import 'package:meinbssb/services/api/bezirk_service.dart' as _i38;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i34;
 import 'package:meinbssb/services/api/training_service.dart' as _i16;
 import 'package:meinbssb/services/api/user_service.dart' as _i23;
@@ -2467,4 +2469,43 @@ class MockCalendarService extends _i1.Mock implements _i37.CalendarService {
           ),
         ),
       ) as String);
+}
+
+/// A class which mocks [BezirkService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockBezirkService extends _i1.Mock implements _i38.BezirkService {
+  MockBezirkService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<List<_i39.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i2.Future<List<_i39.Bezirk>>.value(<_i39.Bezirk>[]),
+      ) as _i2.Future<List<_i39.Bezirk>>);
+
+  @override
+  _i2.Future<List<_i39.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i2.Future<List<_i39.Bezirk>>.value(<_i39.Bezirk>[]),
+      ) as _i2.Future<List<_i39.Bezirk>>);
+
+  @override
+  _i2.Future<List<_i39.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i2.Future<List<_i39.BezirkSearchTriple>>.value(
+            <_i39.BezirkSearchTriple>[]),
+      ) as _i2.Future<List<_i39.BezirkSearchTriple>>);
 }

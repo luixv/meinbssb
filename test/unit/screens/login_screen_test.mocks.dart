@@ -7,6 +7,7 @@ import 'dart:async' as _i7;
 import 'dart:typed_data' as _i15;
 
 import 'package:meinbssb/models/bank_data.dart' as _i19;
+import 'package:meinbssb/models/bezirk.dart' as _i26;
 import 'package:meinbssb/models/contact.dart' as _i14;
 import 'package:meinbssb/models/disziplin.dart' as _i18;
 import 'package:meinbssb/models/fremde_verband.dart' as _i21;
@@ -26,7 +27,7 @@ import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i12;
 import 'package:meinbssb/services/api/auth_service.dart' as _i5;
 import 'package:meinbssb/services/api_service.dart' as _i8;
 import 'package:meinbssb/services/core/config_service.dart' as _i24;
-import 'package:meinbssb/services/core/email_service.dart' as _i26;
+import 'package:meinbssb/services/core/email_service.dart' as _i27;
 import 'package:meinbssb/services/core/image_service.dart' as _i3;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -1201,12 +1202,42 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
         ),
         returnValue: _i7.Future<List<_i25.Gewinn>>.value(<_i25.Gewinn>[]),
       ) as _i7.Future<List<_i25.Gewinn>>);
+
+  @override
+  _i7.Future<List<_i26.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i7.Future<List<_i26.Bezirk>>.value(<_i26.Bezirk>[]),
+      ) as _i7.Future<List<_i26.Bezirk>>);
+
+  @override
+  _i7.Future<List<_i26.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i7.Future<List<_i26.Bezirk>>.value(<_i26.Bezirk>[]),
+      ) as _i7.Future<List<_i26.Bezirk>>);
+
+  @override
+  _i7.Future<List<_i26.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i7.Future<List<_i26.BezirkSearchTriple>>.value(
+            <_i26.BezirkSearchTriple>[]),
+      ) as _i7.Future<List<_i26.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i26.EmailService {
+class MockEmailService extends _i1.Mock implements _i27.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }

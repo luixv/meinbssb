@@ -7,6 +7,7 @@ import 'dart:async' as _i5;
 import 'dart:typed_data' as _i12;
 
 import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/bezirk.dart' as _i23;
 import 'package:meinbssb/models/contact.dart' as _i11;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
 import 'package:meinbssb/models/fremde_verband.dart' as _i18;
@@ -26,7 +27,7 @@ import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i4;
 import 'package:meinbssb/services/core/config_service.dart' as _i21;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
-import 'package:meinbssb/services/core/network_service.dart' as _i23;
+import 'package:meinbssb/services/core/network_service.dart' as _i24;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -928,12 +929,42 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i5.Future<List<_i22.Gewinn>>.value(<_i22.Gewinn>[]),
       ) as _i5.Future<List<_i22.Gewinn>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.BezirkSearchTriple>>.value(
+            <_i23.BezirkSearchTriple>[]),
+      ) as _i5.Future<List<_i23.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i23.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i24.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }

@@ -11,6 +11,7 @@ import 'package:meinbssb/services/api/user_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
+import 'package:meinbssb/services/api/bezirk_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung.dart';
@@ -27,6 +28,7 @@ import 'package:meinbssb/models/schulungsart.dart';
 import 'package:meinbssb/models/schulungstermin.dart';
 import 'package:meinbssb/models/person.dart';
 import 'package:meinbssb/models/result.dart';
+import 'package:meinbssb/models/bezirk.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -61,6 +63,7 @@ class ApiService {
     required EmailService emailService,
     required OktoberfestService oktoberfestService,
     required CalendarService calendarService,
+    required BezirkService bezirkService,
   })  : _httpClient = httpClient,
         _imageService = imageService,
         _networkService = networkService,
@@ -71,7 +74,8 @@ class ApiService {
         _vereinService = vereinService,
         _postgrestService = postgrestService,
         _emailService = emailService,
-        _oktoberfestService = oktoberfestService;
+        _oktoberfestService = oktoberfestService,
+        _bezirkService = bezirkService;
 
   final HttpClient _httpClient;
   final ImageService _imageService;
@@ -84,6 +88,7 @@ class ApiService {
   final PostgrestService _postgrestService;
   final EmailService _emailService;
   final OktoberfestService _oktoberfestService;
+  final BezirkService _bezirkService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -528,5 +533,22 @@ class ApiService {
       passnummer: passnummer,
       configService: configService,
     );
+  }
+
+  // Bezirke Service
+  Future<List<Bezirk>> fetchBezirke() async {
+    return _bezirkService.fetchBezirke();
+  }
+
+  Future<List<Bezirk>> fetchBezirk(
+    int bezirkNr,
+  ) async {
+    return _bezirkService.fetchBezirk(
+      bezirkNr,
+    );
+  }
+
+  Future<List<BezirkSearchTriple>> fetchBezirkeforSearch() async {
+    return _bezirkService.fetchBezirkeforSearch();
   }
 }

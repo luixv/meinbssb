@@ -10,6 +10,8 @@ import 'services/api_service.dart';
 import 'services/api/training_service.dart';
 import 'services/api/bank_service.dart';
 import 'services/api/verein_service.dart';
+import 'services/api/bezirk_service.dart';
+
 import 'services/core/email_service.dart';
 import 'services/core/image_service.dart';
 import 'services/core/http_client.dart';
@@ -20,6 +22,7 @@ import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
 import 'services/core/font_size_provider.dart';
 import 'services/core/calendar_service.dart';
+
 import 'screens/schulungen/schulungen_search_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
@@ -107,6 +110,7 @@ class AppInitializer {
   static late TokenService tokenService;
   static late PostgrestService postgrestService;
   static late CalendarService calendarService;
+  static late BezirkService bezirkService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -211,6 +215,7 @@ class AppInitializer {
       emailService: emailService,
       oktoberfestService: oktoberfestService,
       calendarService: calendarService,
+      bezirkService: bezirkService,
     );
 
     _registerProviders();

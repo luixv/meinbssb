@@ -7,6 +7,7 @@ import 'dart:async' as _i4;
 import 'dart:typed_data' as _i12;
 
 import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/bezirk.dart' as _i23;
 import 'package:meinbssb/models/contact.dart' as _i11;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
 import 'package:meinbssb/models/fremde_verband.dart' as _i18;
@@ -24,11 +25,11 @@ import 'package:meinbssb/models/user_data.dart' as _i6;
 import 'package:meinbssb/models/verein.dart' as _i17;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i5;
-import 'package:meinbssb/services/core/cache_service.dart' as _i23;
+import 'package:meinbssb/services/core/cache_service.dart' as _i24;
 import 'package:meinbssb/services/core/config_service.dart' as _i21;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i24;
+import 'package:mockito/src/dummies.dart' as _i25;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -939,12 +940,42 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
         ),
         returnValue: _i4.Future<List<_i22.Gewinn>>.value(<_i22.Gewinn>[]),
       ) as _i4.Future<List<_i22.Gewinn>>);
+
+  @override
+  _i4.Future<List<_i23.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i4.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i4.Future<List<_i23.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i4.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i4.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i4.Future<List<_i23.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i23.BezirkSearchTriple>>.value(
+            <_i23.BezirkSearchTriple>[]),
+      ) as _i4.Future<List<_i23.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i23.CacheService {
+class MockCacheService extends _i1.Mock implements _i24.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1124,8 +1155,8 @@ class MockCacheService extends _i1.Mock implements _i23.CacheService {
             getCachedData,
           ],
         ),
-        returnValue: _i24.ifNotNull(
-              _i24.dummyValueOrNull<T>(
+        returnValue: _i25.ifNotNull(
+              _i25.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #getCachedData,
@@ -1166,8 +1197,8 @@ class MockCacheService extends _i1.Mock implements _i23.CacheService {
             processResponse,
           ],
         ),
-        returnValue: _i24.ifNotNull(
-              _i24.dummyValueOrNull<T>(
+        returnValue: _i25.ifNotNull(
+              _i25.dummyValueOrNull<T>(
                 this,
                 Invocation.method(
                   #cacheAndRetrieveData,

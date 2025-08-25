@@ -8,6 +8,7 @@ import 'dart:typed_data' as _i12;
 
 import 'package:http/http.dart' as _i6;
 import 'package:meinbssb/models/bank_data.dart' as _i25;
+import 'package:meinbssb/models/bezirk.dart' as _i38;
 import 'package:meinbssb/models/contact.dart' as _i18;
 import 'package:meinbssb/models/disziplin.dart' as _i24;
 import 'package:meinbssb/models/fremde_verband.dart' as _i29;
@@ -26,6 +27,7 @@ import 'package:meinbssb/models/verein.dart' as _i28;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i16;
 import 'package:meinbssb/services/api/auth_service.dart' as _i7;
 import 'package:meinbssb/services/api/bank_service.dart' as _i26;
+import 'package:meinbssb/services/api/bezirk_service.dart' as _i37;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i33;
 import 'package:meinbssb/services/api/training_service.dart' as _i20;
 import 'package:meinbssb/services/api/user_service.dart' as _i13;
@@ -2163,4 +2165,43 @@ class MockCalendarService extends _i1.Mock implements _i36.CalendarService {
           ),
         ),
       ) as String);
+}
+
+/// A class which mocks [BezirkService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockBezirkService extends _i1.Mock implements _i37.BezirkService {
+  MockBezirkService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<List<_i38.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i3.Future<List<_i38.Bezirk>>.value(<_i38.Bezirk>[]),
+      ) as _i3.Future<List<_i38.Bezirk>>);
+
+  @override
+  _i3.Future<List<_i38.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i3.Future<List<_i38.Bezirk>>.value(<_i38.Bezirk>[]),
+      ) as _i3.Future<List<_i38.Bezirk>>);
+
+  @override
+  _i3.Future<List<_i38.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i3.Future<List<_i38.BezirkSearchTriple>>.value(
+            <_i38.BezirkSearchTriple>[]),
+      ) as _i3.Future<List<_i38.BezirkSearchTriple>>);
 }

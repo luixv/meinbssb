@@ -7,6 +7,7 @@ import 'dart:async' as _i5;
 import 'dart:typed_data' as _i12;
 
 import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/bezirk.dart' as _i23;
 import 'package:meinbssb/models/contact.dart' as _i11;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
 import 'package:meinbssb/models/fremde_verband.dart' as _i18;
@@ -927,4 +928,34 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i5.Future<List<_i22.Gewinn>>.value(<_i22.Gewinn>[]),
       ) as _i5.Future<List<_i22.Gewinn>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.BezirkSearchTriple>>.value(
+            <_i23.BezirkSearchTriple>[]),
+      ) as _i5.Future<List<_i23.BezirkSearchTriple>>);
 }

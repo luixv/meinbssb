@@ -5,9 +5,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 import 'dart:typed_data' as _i12;
-import 'dart:ui' as _i26;
+import 'dart:ui' as _i27;
 
 import 'package:meinbssb/models/bank_data.dart' as _i16;
+import 'package:meinbssb/models/bezirk.dart' as _i23;
 import 'package:meinbssb/models/contact.dart' as _i11;
 import 'package:meinbssb/models/disziplin.dart' as _i15;
 import 'package:meinbssb/models/fremde_verband.dart' as _i18;
@@ -26,11 +27,11 @@ import 'package:meinbssb/models/verein.dart' as _i17;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i4;
 import 'package:meinbssb/services/core/config_service.dart' as _i21;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i24;
+import 'package:meinbssb/services/core/font_size_provider.dart' as _i25;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
-import 'package:meinbssb/services/core/network_service.dart' as _i23;
+import 'package:meinbssb/services/core/network_service.dart' as _i24;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i25;
+import 'package:mockito/src/dummies.dart' as _i26;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -931,12 +932,42 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
         ),
         returnValue: _i5.Future<List<_i22.Gewinn>>.value(<_i22.Gewinn>[]),
       ) as _i5.Future<List<_i22.Gewinn>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirke,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.Bezirk>> fetchBezirk(int? bezirkNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirk,
+          [bezirkNr],
+        ),
+        returnValue: _i5.Future<List<_i23.Bezirk>>.value(<_i23.Bezirk>[]),
+      ) as _i5.Future<List<_i23.Bezirk>>);
+
+  @override
+  _i5.Future<List<_i23.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchBezirkeforSearch,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i23.BezirkSearchTriple>>.value(
+            <_i23.BezirkSearchTriple>[]),
+      ) as _i5.Future<List<_i23.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i23.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i24.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -969,7 +1000,7 @@ class MockNetworkService extends _i1.Mock implements _i23.NetworkService {
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i24.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i25.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -1028,7 +1059,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i24.FontSizeProvider {
           #getScalePercentage,
           [],
         ),
-        returnValue: _i25.dummyValue<String>(
+        returnValue: _i26.dummyValue<String>(
           this,
           Invocation.method(
             #getScalePercentage,
@@ -1038,7 +1069,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i24.FontSizeProvider {
       ) as String);
 
   @override
-  void addListener(_i26.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i27.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -1047,7 +1078,7 @@ class MockFontSizeProvider extends _i1.Mock implements _i24.FontSizeProvider {
       );
 
   @override
-  void removeListener(_i26.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i27.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
