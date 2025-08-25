@@ -5,15 +5,17 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
 // Generate mocks
-@GenerateMocks([ApiService])
+@GenerateMocks([ApiService, FontSizeProvider])
 import 'schulungen_search_screen_test.mocks.dart';
 
 void main() {
   late MockApiService mockApiService;
+  late MockFontSizeProvider mockFontSizeProvider;
   late Widget testWidget;
 
   void mockLogout() {}
@@ -46,14 +48,18 @@ void main() {
 
   setUp(() {
     mockApiService = MockApiService();
+    mockFontSizeProvider = MockFontSizeProvider();
 
     // Setup default mock responses
     when(mockApiService.fetchBezirkeforSearch())
         .thenAnswer((_) async => sampleBezirke);
 
     testWidget = MaterialApp(
-      home: Provider<ApiService>.value(
-        value: mockApiService,
+      home: MultiProvider(
+        providers: [
+          Provider<ApiService>.value(value: mockApiService),
+          Provider<FontSizeProvider>.value(value: mockFontSizeProvider),
+        ],
         child: SchulungenSearchScreen(
           dummyUser,
           isLoggedIn: true,
@@ -258,8 +264,11 @@ void main() {
     testWidgets('should not show back button when showMenu is false',
         (WidgetTester tester) async {
       final testWidgetNoMenu = MaterialApp(
-        home: Provider<ApiService>.value(
-          value: mockApiService,
+        home: MultiProvider(
+          providers: [
+            Provider<ApiService>.value(value: mockApiService),
+            Provider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: SchulungenSearchScreen(
             dummyUser,
             isLoggedIn: true,
@@ -322,8 +331,11 @@ void main() {
     testWidgets('should handle null userData gracefully',
         (WidgetTester tester) async {
       final testWidgetNullUser = MaterialApp(
-        home: Provider<ApiService>.value(
-          value: mockApiService,
+        home: MultiProvider(
+          providers: [
+            Provider<ApiService>.value(value: mockApiService),
+            Provider<FontSizeProvider>.value(value: mockFontSizeProvider),
+          ],
           child: SchulungenSearchScreen(
             null,
             isLoggedIn: false,
