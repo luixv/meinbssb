@@ -67,13 +67,17 @@ class ImageService {
   }
 
   Future<bool> isDeviceOnline() async {
-    final conn = connectivity ?? Connectivity();
-    final connectivityResult = await conn.checkConnectivity();
-    if (connectivityResult.isEmpty) {
+    try {
+      final conn = connectivity ?? Connectivity();
+      final connectivityResult = await conn.checkConnectivity();
+      if (connectivityResult.isEmpty) {
+        return false;
+      }
+      return connectivityResult.contains(ConnectivityResult.wifi) ||
+          connectivityResult.contains(ConnectivityResult.mobile);
+    } catch (e) {
       return false;
     }
-    return connectivityResult.contains(ConnectivityResult.wifi) ||
-        connectivityResult.contains(ConnectivityResult.mobile);
   }
 
 /*

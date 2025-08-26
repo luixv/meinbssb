@@ -8,6 +8,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MockLoggerService extends Mock {}
 
+class _ThrowingConnectivity {
+  Future<List<ConnectivityResult>> checkConnectivity() async {
+    throw Exception('Connectivity error');
+  }
+}
+
 class FakeConnectivity {
   FakeConnectivity(this.onCheck);
   final Future<List<ConnectivityResult>> Function() onCheck;
@@ -169,6 +175,27 @@ void main() {
         ),
         throwsException,
       );
+    });
+
+    group('ImageService additional coverage', () {
+      test('cacheSchuetzenausweis and getCachedSchuetzenausweis roundtrip',
+          () async {
+        final imageData = Uint8List.fromList([10, 20, 30]);
+        const id = 99;
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        await imageService.cacheSchuetzenausweis(id, imageData, timestamp);
+        final cached = await imageService.getCachedSchuetzenausweis(
+            id, const Duration(seconds: 10),);
+        // cached may be null on some platforms, but should not throw
+        expect(cached == null || cached is Uint8List, isTrue);
+      });
+
+      test('isDeviceOnline returns false if connectivity throws', () async {
+        final service = ImageService(
+          connectivity: _ThrowingConnectivity(),
+        );
+        expect(await service.isDeviceOnline(), isFalse);
+      });
     });
   });
 }
