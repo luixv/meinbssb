@@ -1,7 +1,8 @@
 import 'dart:async';
+
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
-import '../../models/bezirk_data.dart';
+import '/models/bezirk_data.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/network_service.dart';
 
@@ -24,10 +25,11 @@ class BezirkService {
     const cacheKey = 'bezirke_all';
     final cacheDuration = _networkService.getCacheExpirationDuration();
     try {
+      const endpoint = 'Bezirke';
       final response = await _cacheService.cacheAndRetrieveData(
         cacheKey,
         cacheDuration,
-        () async => await _httpClient.get('Bezirke'),
+        () async => await _httpClient.get(endpoint),
         (rawResponse) => rawResponse,
       );
       final mappedResponse = _mapBezirkeResponse(response);
@@ -71,7 +73,8 @@ class BezirkService {
   /// This method retrieves data from the '/Bezirk/{bezirkNr}' endpoint.
   Future<List<Bezirk>> fetchBezirk(int bezirkNr) async {
     try {
-      final response = await _httpClient.get('Bezirk/$bezirkNr');
+      final endpoint = 'Bezirk/$bezirkNr';
+      final response = await _httpClient.get(endpoint);
       return _mapBezirkResponse(response);
     } catch (e) {
       LoggerService.logError(
@@ -120,7 +123,8 @@ class BezirkService {
         cacheKey,
         cacheDuration,
         () async {
-          final response = await _httpClient.get('Bezirke');
+          const endpoint = 'Bezirke';
+          final response = await _httpClient.get(endpoint);
           if (response is List) {
             // Only keep the fields needed for BezirkSearchTriple
             return response

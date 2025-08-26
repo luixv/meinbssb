@@ -16,7 +16,8 @@ class VereinService {
   /// This method retrieves data from the '/Vereine' endpoint.
   Future<List<Verein>> fetchVereine() async {
     try {
-      final response = await _httpClient.get('Vereine');
+      const endpoint = 'Vereine';
+      final response = await _httpClient.get(endpoint);
       return _mapVereineResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching Vereine: $e');
@@ -57,7 +58,8 @@ class VereinService {
   /// This method retrieves data from the '/Verein/{vereinsNr}' endpoint.
   Future<List<Verein>> fetchVerein(int vereinsNr) async {
     try {
-      final response = await _httpClient.get('Verein/$vereinsNr');
+      final endpoint = 'Verein/$vereinsNr';
+      final response = await _httpClient.get(endpoint);
       return _mapVereinResponse(response);
     } catch (e) {
       LoggerService.logError(
@@ -101,7 +103,8 @@ class VereinService {
   /// This method retrieves data from the '/FremdeVerbaende' endpoint.
   Future<List<FremdeVerband>> fetchFremdeVerbaende() async {
     try {
-      final response = await _httpClient.get('FremdeVerbaende');
+      const endpoint = 'FremdeVerbaende';
+      final response = await _httpClient.get(endpoint);
       return _mapFremdeVerbaendeResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching FremdeVerbaende: $e');

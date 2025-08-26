@@ -50,7 +50,8 @@ class EmailService {
     if (testEmails == true) {
       final testRecipient = _configService.getString('testRecipient');
       if (testRecipient != null && testRecipient.isNotEmpty) {
-        LoggerService.logInfo('Test emails enabled: redirecting from $originalRecipient to $testRecipient');
+        LoggerService.logInfo(
+            'Test emails enabled: redirecting from $originalRecipient to $testRecipient',);
         return testRecipient;
       }
     }
@@ -66,7 +67,7 @@ class EmailService {
   }) async {
     try {
       final appropriateRecipient = _getAppropriateRecipient(recipient);
-      
+
       final emailUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'email',
@@ -187,7 +188,8 @@ class EmailService {
 
   Future<List<String>> getEmailAddressesByPersonId(String personId) async {
     try {
-      final response = await _httpClient.get('FindeMailadressen/$personId');
+      final endpoint = 'FindeMailadressen/$personId';
+      final response = await _httpClient.get(endpoint);
       if (response is List) {
         // Parse the response to extract MAILADRESSEN from each object
         final List<String> emailAddresses = [];

@@ -120,8 +120,6 @@ class AppInitializer {
     final apiBaseUrl =
         ConfigService.buildBaseUrlForServer(configService, name: 'apiBase');
 
-    imageService = ImageService();
-
     final prefs = await SharedPreferences.getInstance();
 
     cacheService = CacheService(
@@ -154,6 +152,8 @@ class AppInitializer {
       cacheService: cacheService,
       client: baseHttpClient,
     );
+
+    imageService = ImageService(httpClient: httpClient);
 
     calendarService = CalendarService();
 

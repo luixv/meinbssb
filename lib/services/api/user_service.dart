@@ -91,7 +91,8 @@ class UserService {
         _networkService.getCacheExpirationDuration(),
         () async {
           // This is the fetchData function that CacheService will call if data is not in cache.
-          final response = await _httpClient.get('Passdaten/$personId');
+          final endpoint = 'Passdaten/$personId';
+          final response = await _httpClient.get(endpoint);
           return _mapPassdatenResponse(response);
         },
         (dynamic rawResponse) {
@@ -133,8 +134,9 @@ class UserService {
         'Attempting to update KritischeFelderUndAdresse with body: $body',
       );
 
+      const endpoint = 'KritischeFelderUndAdresse';
       final Map<String, dynamic> response = await _httpClient.put(
-        'KritischeFelderUndAdresse',
+        endpoint,
         body,
       );
 
@@ -245,12 +247,13 @@ class UserService {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
+      final endpoint = 'ZweitmitgliedschaftenZVE/$personId/$passStatus';
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         'zweitmitgliedschaftenzve_$personId',
         _networkService.getCacheExpirationDuration(),
         () async => await _httpClient.get(
-          'ZweitmitgliedschaftenZVE/$personId/$passStatus',
+          endpoint,
           overrideBaseUrl: baseUrl,
         ),
         (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
@@ -268,11 +271,12 @@ class UserService {
     int personId,
   ) async {
     try {
+      final endpoint = 'Zweitmitgliedschaften/$personId';
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         'zweitmitgliedschaften_$personId',
         _networkService.getCacheExpirationDuration(),
-        () async => await _httpClient.get('Zweitmitgliedschaften/$personId'),
+        () async => await _httpClient.get(endpoint),
         (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
       );
       return result
@@ -313,12 +317,12 @@ class UserService {
     int personId,
   ) async {
     try {
+      final endpoint = 'PassdatenZVE/$passdatenId/$personId';
       final List<dynamic> result =
           await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         'passdaten_zve_$passdatenId',
         _networkService.getCacheExpirationDuration(),
-        () async =>
-            await _httpClient.get('PassdatenZVE/$passdatenId/$personId'),
+        () async => await _httpClient.get(endpoint),
         (dynamic rawResponse) => _mapPassdatenZVEResponse(rawResponse),
       );
       return result.map((json) => PassDataZVE.fromJson(json)).toList();
@@ -362,7 +366,8 @@ class UserService {
 
   Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
     try {
-      final data = await _httpClient.get('Kontakte/$personId');
+      final endpoint = 'Kontakte/$personId';
+      final data = await _httpClient.get(endpoint);
 
       if (data is List) {
         // Convert to Contact objects and filter out empty values and invalid entries
@@ -449,8 +454,9 @@ class UserService {
         return false;
       }
 
+      const endpoint = 'KontaktHinzufuegen';
       final response = await _httpClient.post(
-        'KontaktHinzufuegen',
+        endpoint,
         {
           'PersonID': contact.personId,
           'KontaktTyp': contact.type,
@@ -515,8 +521,9 @@ class UserService {
       LoggerService.logInfo(
         'Adding BSSBAppPassantrag : $fullJson',
       );
+      const endpoint = 'BSSBAppPassantrag';
       final response = await _httpClient.post(
-        'BSSBAppPassantrag',
+        endpoint,
         fullJson,
         overrideBaseUrl: baseUrl,
       );
@@ -538,8 +545,9 @@ class UserService {
 
   Future<bool> deleteKontakt(Contact contact) async {
     try {
+      const endpoint = 'KontaktAendern';
       final response = await _httpClient.put(
-        'KontaktAendern',
+        endpoint,
         {
           'PersonID': contact.personId,
           'KontaktID': contact.id,
@@ -576,8 +584,9 @@ class UserService {
         return false;
       }
 
+      const endpoint = 'KontaktAendern';
       final response = await _httpClient.put(
-        'KontaktAendern',
+        endpoint,
         contact.toJson(),
       );
 
@@ -605,7 +614,8 @@ class UserService {
 
   Future<List<Person>> fetchAdresseVonPersonID(int personId) async {
     try {
-      final response = await _httpClient.get('AdresseVonPersonID/$personId');
+      final endpoint = 'AdresseVonPersonID/$personId';
+      final response = await _httpClient.get(endpoint);
       List<dynamic> dataList;
       if (response is List) {
         dataList = response;

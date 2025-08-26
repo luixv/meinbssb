@@ -64,8 +64,7 @@ class ApiService {
     required OktoberfestService oktoberfestService,
     required CalendarService calendarService,
     required BezirkService bezirkService,
-  })  : _httpClient = httpClient,
-        _imageService = imageService,
+  })  : _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
         _userService = userService,
@@ -77,7 +76,6 @@ class ApiService {
         _oktoberfestService = oktoberfestService,
         _bezirkService = bezirkService;
 
-  final HttpClient _httpClient;
   final ImageService _imageService;
   final NetworkService _networkService;
   final TrainingService _trainingService;
@@ -233,7 +231,6 @@ class ApiService {
   Future<Uint8List> fetchSchuetzenausweis(int personId) async {
     return _imageService.fetchAndCacheSchuetzenausweis(
       personId,
-      () => _httpClient.getBytes('Schuetzenausweis/JPG/$personId'), // Now valid
       getCacheExpirationDuration(),
     );
   }

@@ -15,9 +15,9 @@ class TokenService {
     http.Client? client, // Optional HTTP client for token requests
   })  : _configService = configService,
         _cacheService = cacheService,
-        _client = client ?? http.Client();
+        _httpClient = client ?? http.Client();
   // Add _client field to hold the injected HTTP client
-  final http.Client _client; // Initialize _client here
+  final http.Client _httpClient; // Initialize _client here
 
   final ConfigService _configService;
   final CacheService _cacheService;
@@ -51,7 +51,7 @@ class TokenService {
     try {
       // Use the injected _client to send the request
       final http.StreamedResponse streamedResponse =
-          await _client.send(request);
+          await _httpClient.send(request);
       final http.Response response =
           await http.Response.fromStream(streamedResponse);
 
