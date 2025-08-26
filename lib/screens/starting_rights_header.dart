@@ -18,7 +18,7 @@ class StartingRightsHeader extends StatelessWidget {
           padding:
               UIConstants.screenPadding.copyWith(top: UIConstants.spacingS),
           child: ScaledText(
-            'Schützenausweis',
+            'Startrechte ändern',
             style: UIStyles.headerStyle.copyWith(
               color: UIConstants.defaultAppColor,
             ),
@@ -39,7 +39,7 @@ class StartingRightsHeader extends StatelessWidget {
             children: [
               // The main descriptive text that might wrap independently
               ScaledText(
-                'Startrechte ändern für das Sportjahr ',
+                'Für das Sportjahr ',
                 style: UIStyles.subtitleStyle.copyWith(
                   color: UIConstants.greySubtitleTextColor,
                 ),
