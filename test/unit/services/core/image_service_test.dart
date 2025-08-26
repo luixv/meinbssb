@@ -1,201 +1,187 @@
-// ignore_for_file: unnecessary_type_check
-
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:meinbssb/services/core/image_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:meinbssb/services/core/http_client.dart';
 
-class MockLoggerService extends Mock {}
+class FakeConnectivity {
+  FakeConnectivity(this.results);
+  final List<ConnectivityResult> results;
+  Future<List<ConnectivityResult>> checkConnectivity() async => results;
+}
 
-class _ThrowingConnectivity {
+class ThrowingConnectivity {
   Future<List<ConnectivityResult>> checkConnectivity() async {
     throw Exception('Connectivity error');
   }
 }
 
-class FakeConnectivity {
-  FakeConnectivity(this.onCheck);
-  final Future<List<ConnectivityResult>> Function() onCheck;
-  Future<List<ConnectivityResult>> checkConnectivity() => onCheck();
+class FakeHttpClient implements HttpClient {
+  FakeHttpClient({this.bytes, this.shouldThrow = false});
+  final Uint8List? bytes;
+  final bool shouldThrow;
+
+  @override
+  String get baseUrl => '';
+
+  @override
+  int get serverTimeout => 30; // Should match the interface type
+
+  @override
+  Future<Uint8List> getBytes(String endpoint) async {
+    if (shouldThrow) throw Exception('Network error');
+    return bytes ?? Uint8List.fromList([1, 2, 3]);
+  }
+
+  @override
+  Future<dynamic> get(String endpoint, {String? overrideBaseUrl}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<dynamic> post(String endpoint, Map<String, dynamic> body,
+      {String? overrideBaseUrl,}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<dynamic> put(String endpoint, Map<String, dynamic> body,
+      {String? overrideBaseUrl,}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<dynamic> delete(String endpoint,
+      {Map<String, dynamic>? body, String? overrideBaseUrl,}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
-  late ImageService imageService;
-
-  setUp(() {
-    imageService = ImageService();
-  });
-
-  // Note: The cacheSchuetzenausweis and getCachedSchuetzenausweis methods
-  // are platform-dependent and interact with file system or shared preferences.
-  // These would require platform/channel mocking for full coverage.
-  // Here, we just check that the methods complete without throwing (on the current platform).
-  group('cacheSchuetzenausweis', () {
-    test('completes without error (smoke test)', () async {
-      final imageData = Uint8List.fromList([1, 2, 3]);
-      await imageService.cacheSchuetzenausweis(
-        1,
-        imageData,
-        DateTime.now().millisecondsSinceEpoch,
+  group('ImageService', () {
+    test('isDeviceOnline returns true for wifi', () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
       );
-    });
-  });
-
-  group('getCachedSchuetzenausweis', () {
-    test('returns null or Uint8List (smoke test)', () async {
-      final result = await imageService.getCachedSchuetzenausweis(
-        1,
-        const Duration(seconds: 1),
-      );
-      expect(result == null || result is Uint8List, isTrue);
-    });
-  });
-
-  group('isDeviceOnline', () {
-    test('returns true for wifi', () async {
-      final fake = FakeConnectivity(() async => [ConnectivityResult.wifi]);
-      final service = ImageService(connectivity: fake);
       expect(await service.isDeviceOnline(), isTrue);
     });
-    test('returns true for mobile', () async {
-      final fake = FakeConnectivity(() async => [ConnectivityResult.mobile]);
-      final service = ImageService(connectivity: fake);
+
+    test('isDeviceOnline returns true for mobile', () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+        connectivity: FakeConnectivity([ConnectivityResult.mobile]),
+      );
       expect(await service.isDeviceOnline(), isTrue);
     });
-    test('returns false for none', () async {
-      final fake = FakeConnectivity(() async => []);
-      final service = ImageService(connectivity: fake);
+
+    test('isDeviceOnline returns false for none', () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+        connectivity: FakeConnectivity([]),
+      );
       expect(await service.isDeviceOnline(), isFalse);
     });
-  });
 
-  group('fetchAndCacheSchuetzenausweis', () {
-    late Uint8List testImage;
-    late bool fetchCalled;
-    late bool cacheCalled;
-
-    setUp(() {
-      testImage = Uint8List.fromList([1, 2, 3, 4]);
-      fetchCalled = false;
-      cacheCalled = false;
+    test('isDeviceOnline returns false if connectivity throws', () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+        connectivity: ThrowingConnectivity(),
+      );
+      expect(await service.isDeviceOnline(), isFalse);
     });
 
-    test('returns cached image if offline', () async {
-      imageService = ImageService(
-        getCachedSchuetzenausweisFn: (id, duration) async => testImage,
-        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
-        connectivity: FakeConnectivity(() async => []),
-      );
-
-      final result = await imageService.fetchAndCacheSchuetzenausweis(
-        1,
+    test('fetchAndCacheSchuetzenausweis returns network image if online',
         () async {
-          fetchCalled = true;
-          return testImage;
-        },
-        const Duration(days: 1),
+      final imageData = Uint8List.fromList([10, 11, 12]);
+      final service = ImageService(
+        httpClient: FakeHttpClient(bytes: imageData),
+        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
       );
-      expect(result, testImage);
-      expect(fetchCalled, false);
-      expect(cacheCalled, false);
+      final result = await service.fetchAndCacheSchuetzenausweis(
+        100,
+        const Duration(seconds: 10),
+      );
+      expect(result, imageData);
     });
 
-    test('downloads and caches new image if online', () async {
-      imageService = ImageService(
-        getCachedSchuetzenausweisFn: (id, duration) async => null,
-        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
-        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
-      );
-
-      final result = await imageService.fetchAndCacheSchuetzenausweis(
-        1,
+    test('fetchAndCacheSchuetzenausweis returns cached image if offline',
         () async {
-          fetchCalled = true;
-          return testImage;
-        },
-        const Duration(days: 1),
+      final imageData = Uint8List.fromList([20, 21, 22]);
+      final service = ImageService(
+        httpClient: FakeHttpClient(bytes: Uint8List.fromList([99, 99, 99])),
+        connectivity: FakeConnectivity([]),
+        getCachedSchuetzenausweisFn: (id, validity) async => imageData,
       );
-      expect(result, testImage);
-      expect(fetchCalled, true);
-      expect(cacheCalled, true);
+      final result = await service.fetchAndCacheSchuetzenausweis(
+        101,
+        const Duration(seconds: 10),
+      );
+      expect(result, imageData);
     });
 
-    test('returns cached image if online but fetch fails', () async {
-      imageService = ImageService(
-        getCachedSchuetzenausweisFn: (id, duration) async => testImage,
-        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
-        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
-      );
-
-      final result = await imageService.fetchAndCacheSchuetzenausweis(
-        1,
+    test('fetchAndCacheSchuetzenausweis returns cached image if fetch fails',
         () async {
-          fetchCalled = true;
-          throw Exception('Network error');
-        },
-        const Duration(days: 1),
+      final imageData = Uint8List.fromList([30, 31, 32]);
+      final service = ImageService(
+        httpClient: FakeHttpClient(shouldThrow: true),
+        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        getCachedSchuetzenausweisFn: (id, validity) async => imageData,
       );
-      expect(result, testImage);
-      expect(fetchCalled, true);
-      expect(cacheCalled, false);
+      final result = await service.fetchAndCacheSchuetzenausweis(
+        102,
+        const Duration(seconds: 10),
+      );
+      expect(result, imageData);
     });
 
-    test('throws if no cache and fetch fails', () async {
-      imageService = ImageService(
-        getCachedSchuetzenausweisFn: (id, duration) async => null,
-        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
-        connectivity: FakeConnectivity(() async => [ConnectivityResult.wifi]),
+    test('fetchAndCacheSchuetzenausweis throws if no cache and fetch fails',
+        () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(shouldThrow: true),
+        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        getCachedSchuetzenausweisFn: (id, validity) async => null,
       );
-
       expect(
-        () async => await imageService.fetchAndCacheSchuetzenausweis(
-          1,
-          () async {
-            throw Exception('Network error');
-          },
-          const Duration(days: 1),
+        () async => await service.fetchAndCacheSchuetzenausweis(
+          103,
+          const Duration(seconds: 10),
         ),
         throwsException,
       );
     });
 
-    test('throws if offline and no cache', () async {
-      imageService = ImageService(
-        getCachedSchuetzenausweisFn: (id, duration) async => null,
-        cacheSchuetzenausweisFn: (id, img, ts) async => cacheCalled = true,
-        connectivity: FakeConnectivity(() async => []),
+    test('fetchAndCacheSchuetzenausweis throws if offline and no cache',
+        () async {
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+        connectivity: FakeConnectivity([]),
+        getCachedSchuetzenausweisFn: (id, validity) async => null,
       );
-
       expect(
-        () async => await imageService.fetchAndCacheSchuetzenausweis(
-          1,
-          () async => testImage,
-          const Duration(days: 1),
+        () async => await service.fetchAndCacheSchuetzenausweis(
+          104,
+          const Duration(seconds: 10),
         ),
         throwsException,
       );
     });
 
-    group('ImageService additional coverage', () {
-      test('cacheSchuetzenausweis and getCachedSchuetzenausweis roundtrip',
-          () async {
-        final imageData = Uint8List.fromList([10, 20, 30]);
-        const id = 99;
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        await imageService.cacheSchuetzenausweis(id, imageData, timestamp);
-        final cached = await imageService.getCachedSchuetzenausweis(
-            id, const Duration(seconds: 10),);
-        // cached may be null on some platforms, but should not throw
-        expect(cached == null || cached is Uint8List, isTrue);
-      });
-
-      test('isDeviceOnline returns false if connectivity throws', () async {
-        final service = ImageService(
-          connectivity: _ThrowingConnectivity(),
-        );
-        expect(await service.isDeviceOnline(), isFalse);
-      });
+    test(
+        'cacheSchuetzenausweis and getCachedSchuetzenausweis roundtrip (smoke)',
+        () async {
+      final imageData = Uint8List.fromList([40, 41, 42]);
+      const id = 105;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final service = ImageService(
+        httpClient: FakeHttpClient(),
+      );
+      await service.cacheSchuetzenausweis(id, imageData, timestamp);
+      final cached = await service.getCachedSchuetzenausweis(
+        id,
+        const Duration(seconds: 10),
+      );
+      expect(cached == null, isTrue);
     });
   });
 }

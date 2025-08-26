@@ -815,7 +815,6 @@ void main() {
           mockImageService.fetchAndCacheSchuetzenausweis(
             any,
             any,
-            any,
           ),
         ).thenAnswer((_) async => testData);
 
@@ -824,7 +823,6 @@ void main() {
         verify(
           mockImageService.fetchAndCacheSchuetzenausweis(
             439287,
-            any,
             any,
           ),
         ).called(1);
@@ -837,7 +835,6 @@ void main() {
           mockImageService.fetchAndCacheSchuetzenausweis(
             any,
             any,
-            any,
           ),
         ).thenThrow(Exception('API error'));
 
@@ -845,7 +842,6 @@ void main() {
         verify(
           mockImageService.fetchAndCacheSchuetzenausweis(
             439287,
-            any,
             any,
           ),
         ).called(1);

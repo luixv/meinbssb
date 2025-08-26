@@ -8,7 +8,7 @@ class PostgrestService {
   PostgrestService({
     required this.configService,
     http.Client? client,
-  }) : _client = client ?? http.Client();
+  }) : _httpClient = client ?? http.Client();
   // Expose cache for testing
   Map<String, Uint8List> get profilePhotoCache => _profilePhotoCache;
   // Simple in-memory cache for profile photos
@@ -16,13 +16,14 @@ class PostgrestService {
 
   final ConfigService configService;
 
-  final http.Client _client;
+  final http.Client _httpClient;
 
   String get _baseUrl => ConfigService.buildBaseUrlForServer(
         configService,
         name: 'postgrest',
         protocolKey: 'postgrestProtocol',
       );
+
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -40,7 +41,7 @@ class PostgrestService {
     required String? verificationToken,
   }) async {
     try {
-      final response = await _client.post(
+      final response = await _httpClient.post(
         Uri.parse('${_baseUrl}users'),
         headers: _headers,
         body: jsonEncode({
@@ -75,7 +76,7 @@ class PostgrestService {
   /// Get user by email
   Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?email=eq.$email'),
         headers: _headers,
       );
@@ -98,7 +99,7 @@ class PostgrestService {
   /// Get user by Person ID
   Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
         headers: _headers,
       );
@@ -121,7 +122,7 @@ class PostgrestService {
   /// Get user by pass number
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber'),
         headers: _headers,
       );
@@ -147,7 +148,7 @@ class PostgrestService {
   Future<bool> verifyUser(String? verificationToken) async {
     LoggerService.logInfo('Verifying user');
     try {
-      final response = await _client.patch(
+      final response = await _httpClient.patch(
         Uri.parse(
           '${_baseUrl}users?verification_token=eq.$verificationToken',
         ),
@@ -176,7 +177,7 @@ class PostgrestService {
   /// Delete a user registration by ID
   Future<bool> deleteUserRegistration(int id) async {
     try {
-      final response = await _client.delete(
+      final response = await _httpClient.delete(
         Uri.parse('${_baseUrl}users?id=eq.$id'),
         headers: _headers,
       );
@@ -198,7 +199,7 @@ class PostgrestService {
 
   Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
         headers: _headers,
       );
@@ -222,7 +223,7 @@ class PostgrestService {
   ) async {
     LoggerService.logInfo('Checking if verification_token $token is valid');
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}password_reset?verification_token=eq.$token'),
         headers: _headers,
       );
@@ -251,7 +252,7 @@ class PostgrestService {
     required String verificationToken,
   }) async {
     try {
-      final response = await _client.post(
+      final response = await _httpClient.post(
         Uri.parse('${_baseUrl}password_reset'),
         headers: _headers,
         body: jsonEncode({
@@ -278,7 +279,7 @@ class PostgrestService {
     required String verificationToken,
   }) async {
     try {
-      final response = await _client.patch(
+      final response = await _httpClient.patch(
         Uri.parse(
             // ignore: require_trailing_commas
             '${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
@@ -309,7 +310,7 @@ class PostgrestService {
       final uri = Uri.parse(
         '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',
       );
-      final response = await _client.get(uri, headers: _headers);
+      final response = await _httpClient.get(uri, headers: _headers);
       if (response.statusCode == 200) {
         final List<dynamic> entries = jsonDecode(response.body);
         return entries.isNotEmpty ? entries[0] as Map<String, dynamic> : null;
@@ -331,7 +332,7 @@ class PostgrestService {
     String token,
     Map<String, dynamic> fields,
   ) async {
-    final response = await _client.patch(
+    final response = await _httpClient.patch(
       Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
       headers: _headers,
       body: jsonEncode(fields),
@@ -348,7 +349,7 @@ class PostgrestService {
       bool success = false;
       if (existingUser != null) {
         // User exists, do a PATCH update
-        final response = await _client.patch(
+        final response = await _httpClient.patch(
           Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
           headers: _headers,
           body: jsonEncode({
@@ -368,7 +369,7 @@ class PostgrestService {
         }
       } else {
         // User doesn't exist, do an INSERT
-        final response = await _client.post(
+        final response = await _httpClient.post(
           Uri.parse('${_baseUrl}users'),
           headers: _headers,
           body: jsonEncode({
@@ -403,7 +404,7 @@ class PostgrestService {
   /// Delete the profile photo for a user (set to null)
   Future<bool> deleteProfilePhoto(String userId) async {
     try {
-      final response = await _client.patch(
+      final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
         headers: _headers,
         body: jsonEncode({
@@ -435,7 +436,7 @@ class PostgrestService {
       return _profilePhotoCache[userId];
     }
     try {
-      final response = await _client.get(
+      final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId&select=profile_photo'),
         headers: _headers,
       );

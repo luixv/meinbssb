@@ -6,15 +6,21 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'logger_service.dart';
+import '/services/core/http_client.dart';
+
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io' as io;
 
 class ImageService {
   ImageService({
+    required HttpClient httpClient,
     this.getCachedSchuetzenausweisFn,
     this.cacheSchuetzenausweisFn,
     this.connectivity,
-  });
+  }) : _httpClient = httpClient;
+
+  final HttpClient _httpClient;
+
   // Dependency injection for testability
   final Future<Uint8List?> Function(int, Duration)? getCachedSchuetzenausweisFn;
   final Future<void> Function(int, Uint8List, int)? cacheSchuetzenausweisFn;
@@ -150,13 +156,15 @@ class ImageService {
 */
   Future<Uint8List> fetchAndCacheSchuetzenausweis(
     int personId,
-    Future<Uint8List> Function() fetchFunction,
     Duration validityDuration,
   ) async {
+    final endpoint = 'Schuetzenausweis/JPG/$personId';
+
     final online = await isDeviceOnline();
     if (online) {
       try {
-        final fetchedImage = await fetchFunction();
+        final fetchedImage = await _httpClient.getBytes(endpoint);
+
         await cacheSchuetzenausweis(
           personId,
           fetchedImage,

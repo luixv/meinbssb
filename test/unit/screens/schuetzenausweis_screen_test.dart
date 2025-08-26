@@ -282,7 +282,12 @@ class DummyNetworkService extends NetworkService {
   DummyNetworkService() : super(configService: ConfigService.instance);
 }
 
-class DummyImageService extends ImageService {}
+class DummyImageService extends ImageService {
+  DummyImageService()
+      : super(
+          httpClient: DummyHttpClient(),
+        );
+}
 
 class DummyTrainingService extends TrainingService {
   DummyTrainingService()

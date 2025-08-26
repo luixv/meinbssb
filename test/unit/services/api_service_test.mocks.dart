@@ -783,7 +783,6 @@ class MockImageService extends _i1.Mock implements _i11.ImageService {
   @override
   _i3.Future<_i12.Uint8List> fetchAndCacheSchuetzenausweis(
     int? personId,
-    _i3.Future<_i12.Uint8List> Function()? fetchFunction,
     Duration? validityDuration,
   ) =>
       (super.noSuchMethod(
@@ -791,7 +790,6 @@ class MockImageService extends _i1.Mock implements _i11.ImageService {
           #fetchAndCacheSchuetzenausweis,
           [
             personId,
-            fetchFunction,
             validityDuration,
           ],
         ),

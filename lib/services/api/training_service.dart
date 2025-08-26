@@ -37,12 +37,13 @@ class TrainingService {
     final cacheDuration = _networkService.getCacheExpirationDuration();
 
     try {
+      final endpoint = 'AngemeldeteSchulungen/$personId/$abDatum';
       final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         cacheKey,
         cacheDuration,
         () async {
           final response = await _httpClient.get(
-            'AngemeldeteSchulungen/$personId/$abDatum',
+            endpoint,
           );
           final mapped = _mapAngemeldeteSchulungenResponse(response);
           // Only cache minimal fields
@@ -202,8 +203,9 @@ class TrainingService {
   }
 
   Future<List<Schulungsart>> fetchSchulungsarten() async {
+    const endpoint = 'Schulungsarten/false';
     try {
-      final response = await _httpClient.get('Schulungsarten/false');
+      final response = await _httpClient.get(endpoint);
       return _mapSchulungsartenResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching Schulungsarten: $e');
@@ -258,7 +260,8 @@ class TrainingService {
 
   Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
     try {
-      final response = await _httpClient.get('AbsolvierteSchulungen/$personId');
+      final endpoint = 'AbsolvierteSchulungen/$personId';
+      final response = await _httpClient.get(endpoint);
       return _mapAbsolvierteSchulungenResponse(response);
     } catch (e) {
       LoggerService.logError('Error fetching absolvierte Schulungen: $e');
@@ -323,7 +326,8 @@ class TrainingService {
 
   Future<bool> registerForSchulung(int personId, int schulungId) async {
     try {
-      final response = await _httpClient.post('RegisterForSchulung', {
+      const endpoint = 'RegisterForSchulung';
+      final response = await _httpClient.post(endpoint, {
         'personId': personId,
         'schulungId': schulungId,
       });
@@ -341,8 +345,10 @@ class TrainingService {
 
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerId) async {
     try {
+      final endpoint = 'SchulungenTeilnehmer/$schulungenTeilnehmerId';
+
       final response = await _httpClient.delete(
-        'SchulungenTeilnehmer/$schulungenTeilnehmerId',
+        endpoint,
         body: {},
       );
       final success = response['result'] == true;
@@ -385,11 +391,12 @@ class TrainingService {
     final cacheDuration = _networkService.getCacheExpirationDuration();
 
     try {
+      const endpoint = 'Disziplinen';
       final result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         cacheKey,
         cacheDuration,
         () async {
-          final response = await _httpClient.get('Disziplinen');
+          final response = await _httpClient.get(endpoint);
           if (response is! List) {
             return [];
           }
@@ -493,9 +500,12 @@ class TrainingService {
       'VereinID': user.vereinNr,
       'FelderArray': felderArray,
     };
+
+    const endpoint = 'SchulungenTeilnehmer';
+
     try {
       final response = await _httpClient.post(
-        'SchulungenTeilnehmer',
+        endpoint,
         body,
       );
       final result = RegisterSchulungenTeilnehmerResponse.fromJson(response);
@@ -521,8 +531,9 @@ class TrainingService {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
-      final response = await _httpClient
-          .get('Schulungstermin/$schulungenTerminID', overrideBaseUrl: baseUrl);
+      final endpoint = 'Schulungstermin/$schulungenTerminID';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
 
       Map<String, dynamic>? data;
       if (response is Map<String, dynamic>) {
