@@ -267,5 +267,68 @@ void main() {
       expect(modifiedUserData.passdatenId, 101); // unchanged
       expect(modifiedUserData.mitgliedschaftId, 102); // unchanged
     });
+
+    test('copyWith with no arguments returns identical object', () {
+      const userData = UserData(
+        personId: 123,
+        webLoginId: 456,
+        passnummer: '12345678',
+        vereinNr: 789,
+        namen: 'Mustermann',
+        vorname: 'Max',
+        vereinName: 'Test Verein',
+        passdatenId: 101,
+        mitgliedschaftId: 102,
+      );
+
+      final copy = userData.copyWith();
+
+      expect(copy, equals(userData));
+    });
+
+    test('equality and hashCode', () {
+      const user1 = UserData(
+        personId: 1,
+        webLoginId: 2,
+        passnummer: 'A',
+        vereinNr: 3,
+        namen: 'N',
+        vorname: 'V',
+        vereinName: 'VN',
+        passdatenId: 4,
+        mitgliedschaftId: 5,
+      );
+      const user2 = UserData(
+        personId: 1,
+        webLoginId: 2,
+        passnummer: 'A',
+        vereinNr: 3,
+        namen: 'N',
+        vorname: 'V',
+        vereinName: 'VN',
+        passdatenId: 4,
+        mitgliedschaftId: 5,
+      );
+      expect(user1, equals(user2));
+      expect(user1.hashCode, equals(user2.hashCode));
+    });
+
+    test('toString returns a string containing key fields', () {
+      const userData = UserData(
+        personId: 123,
+        webLoginId: 456,
+        passnummer: '12345678',
+        vereinNr: 789,
+        namen: 'Mustermann',
+        vorname: 'Max',
+        vereinName: 'Test Verein',
+        passdatenId: 101,
+        mitgliedschaftId: 102,
+      );
+      final str = userData.toString();
+      expect(str, contains('personId: 123'));
+      expect(str, contains('namen: Mustermann'));
+      expect(str, contains('vereinName: Test Verein'));
+    });
   });
 }

@@ -335,8 +335,10 @@ void main() {
         lehrgangsinhaltHtml: '',
       );
 
-      expect(schulung.toString(),
-          'Schulung(id: 1, bezeichnung: Test Training, datum: 2024-01-01, ausgestelltAm: 2023-12-01, teilnehmerId: 123, schulungsartId: 456, schulungsartBezeichnung: Basic Training, schulungsartKurzbezeichnung: BT, schulungsartBeschreibung: Basic training description, maxTeilnehmer: 20, anzahlTeilnehmer: 15, ort: Test Location, uhrzeit: 09:00, dauer: 2 hours, preis: 50€, zielgruppe: Beginners, voraussetzungen: None, inhalt: Training content, lehrgangsinhaltHtml: , abschluss: Certificate, anmerkungen: Additional notes, isOnline: true, link: https://test.com, status: Active, gueltigBis: 2024-12-31)',);
+      expect(
+        schulung.toString(),
+        'Schulung(id: 1, bezeichnung: Test Training, datum: 2024-01-01, ausgestelltAm: 2023-12-01, teilnehmerId: 123, schulungsartId: 456, schulungsartBezeichnung: Basic Training, schulungsartKurzbezeichnung: BT, schulungsartBeschreibung: Basic training description, maxTeilnehmer: 20, anzahlTeilnehmer: 15, ort: Test Location, uhrzeit: 09:00, dauer: 2 hours, preis: 50€, zielgruppe: Beginners, voraussetzungen: None, inhalt: Training content, lehrgangsinhaltHtml: , abschluss: Certificate, anmerkungen: Additional notes, isOnline: true, link: https://test.com, status: Active, gueltigBis: 2024-12-31)',
+      );
     });
 
     test('handles null values in JSON', () {
@@ -394,5 +396,65 @@ void main() {
       expect(schulung.status, isEmpty);
       expect(schulung.gueltigBis, isEmpty);
     });
+
+    test('toString contains all key fields', () {
+      const schulung = Schulung(
+        id: 1,
+        bezeichnung: 'Test Training',
+        datum: '2024-01-01',
+        ausgestelltAm: '2023-12-01',
+        teilnehmerId: 123,
+        schulungsartId: 456,
+        schulungsartBezeichnung: 'Basic Training',
+        schulungsartKurzbezeichnung: 'BT',
+        schulungsartBeschreibung: 'Basic training description',
+        maxTeilnehmer: 20,
+        anzahlTeilnehmer: 15,
+        ort: 'Test Location',
+        uhrzeit: '09:00',
+        dauer: '2 hours',
+        preis: '50€',
+        zielgruppe: 'Beginners',
+        voraussetzungen: 'None',
+        inhalt: 'Training content',
+        abschluss: 'Certificate',
+        anmerkungen: 'Additional notes',
+        isOnline: true,
+        link: 'https://test.com',
+        status: 'Active',
+        gueltigBis: '2024-12-31',
+        lehrgangsinhaltHtml: '',
+      );
+      final str = schulung.toString();
+      expect(str, contains('id: 1'));
+      expect(str, contains('bezeichnung: Test Training'));
+      expect(str, contains('datum: 2024-01-01'));
+      expect(str, contains('ausgestelltAm: 2023-12-01'));
+      expect(str, contains('teilnehmerId: 123'));
+      expect(str, contains('schulungsartId: 456'));
+      expect(str, contains('schulungsartBezeichnung: Basic Training'));
+      expect(str, contains('schulungsartKurzbezeichnung: BT'));
+      expect(
+        str,
+        contains('schulungsartBeschreibung: Basic training description'),
+      );
+      expect(str, contains('maxTeilnehmer: 20'));
+      expect(str, contains('anzahlTeilnehmer: 15'));
+      expect(str, contains('ort: Test Location'));
+      expect(str, contains('uhrzeit: 09:00'));
+      expect(str, contains('dauer: 2 hours'));
+      expect(str, contains('preis: 50€'));
+      expect(str, contains('zielgruppe: Beginners'));
+      expect(str, contains('voraussetzungen: None'));
+      expect(str, contains('inhalt: Training content'));
+      expect(str, contains('abschluss: Certificate'));
+      expect(str, contains('anmerkungen: Additional notes'));
+      expect(str, contains('isOnline: true'));
+      expect(str, contains('link: https://test.com'));
+      expect(str, contains('status: Active'));
+      expect(str, contains('gueltigBis: 2024-12-31'));
+    });
+
+    // ...existing tests...
   });
 }

@@ -172,5 +172,63 @@ void main() {
       expect(passDataZVE.vereinName, isNull);
       expect(passDataZVE.disziplin, isNull);
     });
+
+    test('copyWith creates a modified copy', () {
+      final original = PassDataZVE(
+        passdatenZvId: 34527,
+        zvVereinId: 2420,
+        vVereinNr: 421037,
+        disziplinNr: 'B.91',
+        gauId: 57,
+        bezirkId: 4,
+        disziAusblenden: 0,
+        ersaetzendurchId: 0,
+        zvMitgliedschaftId: 510039,
+        vereinName: 'SV Alpenrose Grimolzhausen',
+        disziplin: 'RWK Luftpistole',
+        disziplinId: 94,
+      );
+
+      final modified = original.copyWith(
+        vereinName: 'Neuer Verein',
+        disziplin: 'Neue Disziplin',
+        bezirkId: 99,
+      );
+
+      expect(modified.vereinName, equals('Neuer Verein'));
+      expect(modified.disziplin, equals('Neue Disziplin'));
+      expect(modified.bezirkId, equals(99));
+      // Other fields remain unchanged
+      expect(modified.passdatenZvId, equals(original.passdatenZvId));
+      expect(modified.zvVereinId, equals(original.zvVereinId));
+      expect(modified.vVereinNr, equals(original.vVereinNr));
+      expect(modified.disziplinNr, equals(original.disziplinNr));
+      expect(modified.gauId, equals(original.gauId));
+      expect(modified.disziAusblenden, equals(original.disziAusblenden));
+      expect(modified.ersaetzendurchId, equals(original.ersaetzendurchId));
+      expect(modified.zvMitgliedschaftId, equals(original.zvMitgliedschaftId));
+      expect(modified.disziplinId, equals(original.disziplinId));
+    });
+
+    test('copyWith with no arguments returns identical object', () {
+      final original = PassDataZVE(
+        passdatenZvId: 34527,
+        zvVereinId: 2420,
+        vVereinNr: 421037,
+        disziplinNr: 'B.91',
+        gauId: 57,
+        bezirkId: 4,
+        disziAusblenden: 0,
+        ersaetzendurchId: 0,
+        zvMitgliedschaftId: 510039,
+        vereinName: 'SV Alpenrose Grimolzhausen',
+        disziplin: 'RWK Luftpistole',
+        disziplinId: 94,
+      );
+
+      final copy = original.copyWith();
+
+      expect(copy, equals(original));
+    });
   });
 }
