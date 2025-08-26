@@ -17,7 +17,7 @@ import 'package:meinbssb/models/fremde_verband_data.dart';
 import 'package:meinbssb/models/pass_data_zve_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
-import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';

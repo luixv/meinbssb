@@ -15,7 +15,7 @@ import 'package:meinbssb/models/gewinn_data.dart' as _i25;
 import 'package:meinbssb/models/pass_data_zve_data.dart' as _i11;
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart' as _i10;
 import 'package:meinbssb/models/person_data.dart' as _i22;
-import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart'
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart'
     as _i4;
 import 'package:meinbssb/models/result_data.dart' as _i23;
 import 'package:meinbssb/models/schulung_data.dart' as _i13;

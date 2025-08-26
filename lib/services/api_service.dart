@@ -19,7 +19,7 @@ import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 import 'package:meinbssb/models/pass_data_zve_data.dart';
-import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart';
 import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/verein_data.dart';
 import 'package:meinbssb/models/user_data.dart';

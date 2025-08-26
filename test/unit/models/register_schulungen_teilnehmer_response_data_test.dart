@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/register_schulungen_teilnehmer_response.dart';
+import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart';
 
 void main() {
   group('RegisterSchulungenTeilnehmerResponse', () {
