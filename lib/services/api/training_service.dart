@@ -9,7 +9,7 @@ import '/services/core/network_service.dart';
 import '/services/core/config_service.dart';
 
 import '../../models/schulungstermin_data.dart';
-import '/models/register_schulungen_teilnehmer_response.dart';
+import '../../models/register_schulungen_teilnehmer_response_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 

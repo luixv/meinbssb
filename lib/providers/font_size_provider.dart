@@ -27,18 +27,27 @@ class FontSizeProvider extends ChangeNotifier {
     return baseSize * _scaleFactor;
   }
 
+// In FontSizeProvider
   void increaseFontSize() {
-    _scaleFactor = (_scaleFactor + UIConstants.fontScaleStep)
-        .clamp(UIConstants.minFontScale, UIConstants.maxFontScale);
-    _saveScale();
-    notifyListeners();
+    if (scaleFactor < UIConstants.maxFontScale) {
+      _scaleFactor += UIConstants.fontScaleStep;
+      if (scaleFactor > UIConstants.maxFontScale) {
+        _scaleFactor = UIConstants.maxFontScale;
+      }
+      _saveScale();
+      notifyListeners();
+    }
   }
 
   void decreaseFontSize() {
-    _scaleFactor = (_scaleFactor - UIConstants.fontScaleStep)
-        .clamp(UIConstants.minFontScale, UIConstants.maxFontScale);
-    _saveScale();
-    notifyListeners();
+    if (scaleFactor > UIConstants.minFontScale) {
+      _scaleFactor -= UIConstants.fontScaleStep;
+      if (scaleFactor < UIConstants.minFontScale) {
+        _scaleFactor = UIConstants.minFontScale;
+      }
+      _saveScale();
+      notifyListeners();
+    }
   }
 
   String getScalePercentage() {

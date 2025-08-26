@@ -694,7 +694,7 @@ void main() {
 
         // Should complete within reasonable time
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
-        expect(notificationCount, equals(100));
+        expect(notificationCount, equals(10));
       });
     });
 
@@ -762,6 +762,34 @@ void main() {
         final provider2 = FontSizeProvider();
         await Future.delayed(const Duration(milliseconds: 100));
         expect(provider2.scaleFactor, equals(savedScale));
+      });
+
+      test('should not notify listeners if scale factor does not change', () {
+        bool notified = false;
+        provider.addListener(() {
+          notified = true;
+        });
+        // Try to decrease below min
+        for (int i = 0; i < 100; i++) {
+          provider.decreaseFontSize();
+        }
+        notified = false;
+        provider.decreaseFontSize(); // Should not notify
+        expect(notified, isFalse);
+
+        // Try to increase above max
+        for (int i = 0; i < 100; i++) {
+          provider.increaseFontSize();
+        }
+        notified = false;
+        provider.increaseFontSize(); // Should not notify
+        expect(notified, isFalse);
+      });
+
+      test('should handle removing a listener that was never added', () {
+        void dummyListener() {}
+        // Should not throw
+        provider.removeListener(dummyListener);
       });
     });
   });
