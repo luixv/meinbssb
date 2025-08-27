@@ -307,57 +307,66 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     );
   }
 
-Widget _buildTitelDropdown(FontSizeProvider fontSizeProvider) {
-  final titelOptions = ['', 'Dr.', 'Dr. Dr.', 'Dr. hc.', 'Dr. Eh.'];
-  return Consumer<FontSizeProvider>(
-    builder: (context, fontSizeProvider, child) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-        child: DropdownButtonFormField<String>(
-          value: titelOptions.contains(_titelController.text)
-              ? _titelController.text
-              : '',
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Titel',
-            labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-              fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                  fontSizeProvider.scaleFactor,
+  Widget _buildTitelDropdown(FontSizeProvider fontSizeProvider) {
+    final titelOptions = ['', 'Dr.', 'Dr. Dr.', 'Dr. hc.', 'Dr. Eh.'];
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: DropdownButtonFormField<String>(
+            value: titelOptions.contains(_titelController.text)
+                ? _titelController.text
+                : '',
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: 'Titel',
+              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelStyle:
+                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+                fontSize:
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+                        fontSizeProvider.scaleFactor,
+              ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              filled: true,
             ),
-            floatingLabelStyle:
-                UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
-              fontSize:
-                  UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
-                      fontSizeProvider.scaleFactor,
-            ),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            filled: true,
-          ),
-          items: titelOptions
-              .map((titel) => DropdownMenuItem<String>(
-                    value: titel,
-                    child: Text(
-                      titel.isEmpty ? '(Kein Titel)' : titel,
-                      style: UIStyles.formValueStyle.copyWith(
-                        fontSize: UIStyles.formValueStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
+            items: titelOptions
+                .map((titel) => DropdownMenuItem<String>(
+                      value: titel,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0,), // Minimum space
+                        child: Text(
+                          titel.isEmpty ? '(Kein Titel)' : titel,
+                          style: _isEditing
+                              ? UIStyles.formValueStyle.copyWith(
+                                  fontSize: UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                )
+                              : UIStyles.formValueBoldStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.formValueBoldStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                ),
+                        ),
                       ),
-                    ),
-                  ),)
-              .toList(),
-          onChanged: _isEditing
-              ? (value) {
-                  setState(() {
-                    _titelController.text = value ?? '';
-                  });
-                }
-              : null,
-          validator: (value) => null,
-        ),
-      );
-    },
-  );
-}
-
+                    ),)
+                .toList(),
+            onChanged: _isEditing
+                ? (value) {
+                    setState(() {
+                      _titelController.text = value ?? '';
+                    });
+                  }
+                : null,
+            validator: (value) => null,
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildTextField({
     required String label,
