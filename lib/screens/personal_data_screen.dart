@@ -335,18 +335,22 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             items: titelOptions
                 .map((titel) => DropdownMenuItem<String>(
                       value: titel,
-                      child: Text(
-                        titel.isEmpty ? '(Kein Titel)' : titel,
-                        style: _isEditing
-                            ? UIStyles.formValueStyle.copyWith(
-                                fontSize: UIStyles.formValueStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              )
-                            : UIStyles.formValueBoldStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formValueBoldStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
-                              ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0,), // Minimum space
+                        child: Text(
+                          titel.isEmpty ? '(Kein Titel)' : titel,
+                          style: _isEditing
+                              ? UIStyles.formValueStyle.copyWith(
+                                  fontSize: UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                )
+                              : UIStyles.formValueBoldStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.formValueBoldStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                ),
+                        ),
                       ),
                     ),)
                 .toList(),
