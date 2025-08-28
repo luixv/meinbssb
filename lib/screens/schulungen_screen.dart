@@ -978,6 +978,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               children: [
                                                 ConstrainedBox(
                                                   constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        700, // Make dialog wider (adjust as needed)
                                                     maxHeight:
                                                         MediaQuery.of(context)
                                                                 .size
