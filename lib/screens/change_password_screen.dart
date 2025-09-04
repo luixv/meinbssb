@@ -38,6 +38,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  double _strength = 0;
 
   @override
   void dispose() {
@@ -125,25 +126,37 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Bitte geben Sie ein Passwort ein';
-    }
-    if (value.length < 8) {
-      return 'Das Passwort muss mindestens 8 Zeichen lang sein';
-    }
-    if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Das Passwort muss mindestens einen Großbuchstaben enthalten';
-    }
-    if (!RegExp(r'[a-z]').hasMatch(value)) {
-      return 'Das Passwort muss mindestens einen Kleinbuchstaben enthalten';
-    }
-    if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Das Passwort muss mindestens eine Zahl enthalten';
-    }
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      return 'Das Passwort muss mindestens ein Sonderzeichen enthalten';
+    if (value == null || value.isEmpty) return 'Bitte Passwort eingeben';
+    if (value.length < 8) return 'Mindestens 8 Zeichen';
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
+    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
+    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Mind. 1 Zahl';
+    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Mind. 1 Sonderzeichen';
     }
     return null;
+  }
+
+  void _checkStrength(String value) {
+    double strength = 0;
+    if (value.length >= 8) strength += 0.25;
+    if (RegExp(r'[A-Z]').hasMatch(value)) strength += 0.25;
+    if (RegExp(r'[a-z]').hasMatch(value)) strength += 0.15;
+    if (RegExp(r'[0-9]').hasMatch(value)) strength += 0.15;
+    if (RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) strength += 0.2;
+    setState(() => _strength = strength);
+  }
+
+  String _strengthLabel(double value) {
+    if (value < 0.4) return 'Schwach';
+    if (value < 0.7) return 'Mittel';
+    return 'Stark';
+  }
+
+  Color _strengthColor(double value) {
+    if (value < 0.4) return UIConstants.errorColor;
+    if (value < 0.7) return UIConstants.warningColor;
+    return UIConstants.successColor;
   }
 
   @override
@@ -207,6 +220,35 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     validator: _validatePassword,
                     fontSizeProvider: fontSizeProvider,
                     eyeIconColor: UIConstants.textColor,
+                    onChanged: _checkStrength,
+                  ),
+                  const Padding(
+                    padding:
+                        EdgeInsets.only(top: 4.0, bottom: UIConstants.spacingS),
+                    child: ScaledText(
+                      'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                      style: UIStyles.formLabelStyle,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: _strength,
+                          minHeight: 6,
+                          backgroundColor: UIConstants.greySubtitleTextColor,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _strengthColor(_strength),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: UIConstants.spacingS),
+                      ScaledText(
+                        _strengthLabel(_strength),
+                        style: UIStyles.bodyStyle
+                            .copyWith(color: _strengthColor(_strength)),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildPasswordField(
@@ -259,6 +301,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     required FontSizeProvider fontSizeProvider,
     String? Function(String?)? validator,
     Color eyeIconColor = UIConstants.defaultAppColor,
+    void Function(String)? onChanged,
   }) {
     return TextFormField(
       controller: controller,
@@ -292,6 +335,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ),
       validator: validator,
+      onChanged: onChanged,
     );
   }
 }
