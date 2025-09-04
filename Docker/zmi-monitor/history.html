@@ -257,6 +257,23 @@
 
         <div class="toggle-button-container">
             <button id="toggleTableBtn" class="toggle-button">Show Table</button>
+            <button id="refreshBtn" class="toggle-button" style="margin-left: 10px;">Refresh Now</button>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0; padding: 15px; background-color: var(--color-surface); border-radius: 8px; border: 1px solid var(--color-border);">
+            <div style="margin-bottom: 10px;">
+                <strong>Monitoring Status:</strong>
+                <span id="monitoringStatus" style="margin-left: 10px; color: var(--color-green);">Active</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>Last Monitoring Check:</strong>
+                <span id="lastCheckTime" style="margin-left: 10px;">-</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>Next Scheduled Check:</strong>
+                <span id="nextCheckTime" style="margin-left: 10px;">-</span>
+            </div>
+            
         </div>
 
         <div id="monitorTableContainer">
@@ -288,8 +305,18 @@
         // Function to create/update the Response Time Line Chart
         function updateResponseTimeChart(timestamps, responseTimes) {
             const ctx = document.getElementById('responseTimeChart').getContext('2d');
+            
+            // Format timestamps to German locale for better readability
+            const formattedTimestamps = timestamps.map(ts => {
+                const date = new Date(ts);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleString('de-DE');
+                }
+                return ts; // Fallback to raw timestamp if parsing fails
+            });
+            
             const data = {
-                labels: timestamps,
+                labels: formattedTimestamps,
                 datasets: [{
                     label: 'Response Time (s)',
                     data: responseTimes,
@@ -324,8 +351,14 @@
                             minRotation: 45,
                             maxTicksLimit: 10, // Limit the number of ticks
                             callback: function(val, index) {
-                                // Show only the time for better readability
-                                return this.getLabelForValue(val).split(' ')[1];
+                                // Show formatted German time for better readability
+                                const label = this.getLabelForValue(val);
+                                const date = new Date(label);
+                                if (!isNaN(date.getTime())) {
+                                    return date.toLocaleTimeString('de-DE');
+                                }
+                                // Fallback to original logic if parsing fails
+                                return label.split(' ')[1];
                             }
                         },
                         grid: {
@@ -571,6 +604,27 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status} - Could not load CSV.`);
                 }
+                
+                // Check if the monitoring script is actually running by looking at response headers
+                const lastModified = response.headers.get('last-modified');
+                if (lastModified) {
+                    const lastModDate = new Date(lastModified);
+                    const now = new Date();
+                    const timeDiff = now - lastModDate;
+                    
+                    // Store the last monitoring time for status display
+                    window.lastMonitoringData = lastModDate;
+                    
+                    // If the file hasn't been modified in the last 10 minutes, show a warning
+                    if (timeDiff > 10 * 60 * 1000) {
+                        document.getElementById('monitoringStatus').textContent = 'Warning: Data may be stale';
+                        document.getElementById('monitoringStatus').style.color = 'var(--color-orange)';
+                    } else {
+                        document.getElementById('monitoringStatus').textContent = 'Active';
+                        document.getElementById('monitoringStatus').style.color = 'var(--color-green)';
+                    }
+                }
+                
                 const csvText = await response.text();
                 parseAndDisplayData(csvText);
             } catch (e) {
@@ -578,6 +632,10 @@
                 document.getElementById('error').textContent = `Failed to load data: ${e.message}. Ensure '${CSV_FILE_PATH}' exists and is readable by the web server.`;
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('loading').style.display = 'none';
+                
+                // Show error status
+                document.getElementById('monitoringStatus').textContent = 'Error: Cannot load data';
+                document.getElementById('monitoringStatus').style.color = 'var(--color-red)';
             }
         }
 
@@ -589,14 +647,18 @@
 
             if (lines.length <= 1) { // Only header or empty file
                 tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data available yet.</td></tr>';
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
-                // Clear charts if no data
-                if (responseTimeChart) responseTimeChart.destroy();
-                if (statusDistributionChart) statusDistributionChart.destroy();
-                responseTimeChart = null;
-                statusDistributionChart = null;
-                return;
+                            document.getElementById('loading').style.display = 'none';
+            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            
+            // Update monitoring status immediately when we get new data
+            updateMonitoringStatus();
+            
+            // Clear charts if no data
+            if (responseTimeChart) responseTimeChart.destroy();
+            if (statusDistributionChart) statusDistributionChart.destroy();
+            responseTimeChart = null;
+            statusDistributionChart = null;
+            return;
             }
 
             const dataLines = lines.slice(1); // Skip header row
@@ -628,6 +690,16 @@
             // Update charts
             updateResponseTimeChart(timestamps, responseTimes);
             updateStatusDistributionChart(statusCounts);
+            
+            // Extract the actual last monitoring time from the most recent data
+            if (timestamps.length > 0) {
+                const lastTimestamp = timestamps[timestamps.length - 1];
+                // Parse the timestamp from the CSV data
+                const lastMonitoringTime = new Date(lastTimestamp);
+                if (!isNaN(lastMonitoringTime.getTime())) {
+                    window.lastMonitoringData = lastMonitoringTime;
+                }
+            }
 
             // Populate table (newest at top)
             // Need to reverse again for the table if charts consumed them in order
@@ -638,7 +710,13 @@
                 if (columns.length === 5) {
                     const row = tableBody.insertRow();
 
-                    row.insertCell(0).textContent = columns[0]; // Timestamp
+                    // Format timestamp to German locale
+                    const timestamp = new Date(columns[0]);
+                    if (!isNaN(timestamp.getTime())) {
+                        row.insertCell(0).textContent = timestamp.toLocaleString('de-DE');
+                    } else {
+                        row.insertCell(0).textContent = columns[0]; // Fallback to raw data if parsing fails
+                    }
                     row.insertCell(1).textContent = columns[1]; // Target URL
                     row.insertCell(2).textContent = columns[2]; // HTTP Code
                     row.insertCell(3).textContent = parseFloat(columns[3]).toFixed(3); // Response Time (formatted)
@@ -652,7 +730,10 @@
             });
 
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString()}`;
+            document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            
+            // Update monitoring status immediately when we get new data
+            updateMonitoringStatus();
             } catch (e) {
                 console.error("Error parsing data:", e);
                 document.getElementById('error').textContent = `Error parsing data: ${e.message}`;
@@ -677,9 +758,42 @@
             isTableVisible = !isTableVisible;
         });
 
+        // Refresh Button Logic
+        const refreshBtn = document.getElementById('refreshBtn');
+        refreshBtn.addEventListener('click', () => {
+            console.log('Manual refresh requested');
+            fetchData();
+        });
+
+        // Update monitoring status
+        function updateMonitoringStatus() {
+            const now = new Date();
+            const lastCheck = document.getElementById('lastCheckTime');
+            const nextCheck = document.getElementById('nextCheckTime');
+            
+            // Only update if we have actual monitoring data
+            if (window.lastMonitoringData) {
+                // Show the actual last monitoring check time
+                lastCheck.textContent = window.lastMonitoringData.toLocaleString('de-DE');
+                
+                // Calculate next scheduled check (every 5 minutes from last check)
+                const nextCheckTime = new Date(window.lastMonitoringData.getTime() + (5 * 60 * 1000));
+                nextCheck.textContent = nextCheckTime.toLocaleString('de-DE');
+            } else {
+                // Show static information until we have data
+                lastCheck.textContent = 'Waiting for first check...';
+                nextCheck.textContent = 'Calculating...';
+            }
+        }
+
+        // Update status every 10 seconds (less frequent updates)
+        setInterval(updateMonitoringStatus, 10000);
+
+
+
         // Initial fetch and periodic refresh
         fetchData();
-        setInterval(fetchData, 60000); // Refresh data every 60 seconds
+        setInterval(fetchData, 30000); // Refresh data every 30 seconds (changed from 60)
 
         // Global error handler to suppress non-critical browser extension errors
         window.addEventListener('error', function(e) {

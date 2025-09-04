@@ -31,6 +31,6 @@ http://:8081 {
 }
 
 # Serve ZMI Monitoring Dashboard
-http://:8082 {
+http://:8083 {
   reverse_proxy zmi-monitor:80
 }

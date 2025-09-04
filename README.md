@@ -158,10 +158,46 @@ This project uses Docker Compose to orchestrate a local development environment 
 - **Image:** `caddy:2`
 - **Port:** `8080` (Web App)
 - **Port:** `8081` (Postgrest)
-- **Depends on:** PostgREST
+- **Port:** `8083` (ZMI Monitor)
+- **Depends on:** PostgREST, ZMI Monitor
 - **Volumes:**
   - `./Caddyfile:/etc/caddy/Caddyfile`
   - `./build/web:/web`
+
+### 5. ZMI Monitor (`zmi-monitor`)
+- **Image:** Custom build from `./zmi-monitor/Dockerfile`
+- **Port:** `8083` (via Caddy)
+- **Environment:**
+  - Monitors BSSB ZMI server
+  - Runs monitoring checks every 5 minutes
+  - Provides web dashboard with charts and tables
+- **Volumes:**
+  - Persists monitoring data: `zmi_data:/var/www/html/data`
+- **How it works:**
+   - Monitoring Script: `monitor_zmi.sh` runs every 5 minutes via a background loop
+   - Data Storage: Results are stored in `/var/www/html/data/https_monitor.csv`
+   - Web Dashboard: HTML dashboard displays the data with charts and tables
+   - Auto-refresh: Dashboard refreshes every 30 seconds
+- **Troubleshoot:**
+```bash  
+# Check monitoring logs
+docker exec zmi_monitor cat /var/log/monitor.log
+
+# Check if monitoring process is running
+docker exec zmi_monitor ps aux | grep monitor_zmi
+
+# Check process status
+docker exec zmi_monitor ps aux
+```
+- **Logs:**
+```bash
+# View monitoring script execution logs
+docker exec zmi_monitor tail -f /var/log/monitor.log
+
+# Check if the CSV file is being updated
+docker exec zmi_monitor ls -la /var/www/html/data/
+docker exec zmi_monitor tail -5 /var/www/html/data/https_monitor.csv
+```
 
 ## How to Start
 
@@ -188,6 +224,7 @@ This project uses Docker Compose to orchestrate a local development environment 
 |--------------|----------------------------------|
 | Web App      | http://localhost:8080            |
 | PostgREST    | http://localhost:8081/api        |
+| ZMI Monitor  | http://localhost:8086            |
 | MailHog UI   | http://localhost:8025            |
 | Mail SMTP    | localhost:1025                   |
 | PostgreSQL   | localhost:5432 (external tools)  |
