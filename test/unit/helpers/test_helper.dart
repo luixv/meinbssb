@@ -42,6 +42,13 @@ class TestHelper {
         'WebLoginID': 13901,
       },
     );
+    when(mockApiService.login(any, any)).thenAnswer(
+      (_) async => {
+        'ResultType': 1,
+        'PersonID': 439287,
+        'WebLoginID': 13901,
+      },
+    );
     when(mockApiService.fetchPassdaten(any)).thenAnswer(
       (_) async => const UserData(
         personId: 439287,
@@ -61,6 +68,9 @@ class TestHelper {
     );
     when(mockApiService.fetchSchuetzenausweis(any))
         .thenAnswer((_) async => Uint8List(0));
+    when(mockApiService.changePassword(any, any)).thenAnswer(
+      (_) async => {'result': true},
+    );
     when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
     when(mockNetworkService.getCacheExpirationDuration())
         .thenReturn(const Duration(hours: 1));
