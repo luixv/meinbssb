@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/reset_password_screen.dart';
+import 'package:meinbssb/screens/email_verification_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -210,6 +211,8 @@ class _MyAppState extends State<MyApp> {
           path.startsWith('/set-password');
       bool isResetPasswordUrl = fragment.startsWith('reset-password') ||
           path.startsWith('/reset-password');
+      bool isVerifyEmailUrl = fragment.startsWith('verify-email') ||
+          path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
       if (isSetPasswordUrl) {
@@ -218,6 +221,9 @@ class _MyAppState extends State<MyApp> {
       } else if (isResetPasswordUrl) {
         // If on reset-password URL, route directly to reset-password
         initialRoute = '/reset-password';
+      } else if (isVerifyEmailUrl) {
+        // If on verify-email URL, route directly to verify-email
+        initialRoute = '/verify-email';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
@@ -342,6 +348,22 @@ class _MyAppState extends State<MyApp> {
                 ),
                 settings: settings,
               );
+            }
+            if (settings.name!.startsWith('/verify-email')) {
+              final uri = Uri.base;
+              final fragment = uri.fragment;
+              final parts = fragment.split('/');
+              if (parts.length >= 3) {
+                final token = parts[2];
+                final personId = parts[3];
+                return MaterialPageRoute(
+                  builder: (context) => EmailVerificationScreen(
+                    verificationToken: token,
+                    personId: personId,
+                  ),
+                  settings: settings,
+                );
+              }
             }
             // Allow anonymous access to SchulungenSearchScreen and all its subroutes
             if (settings.name != null &&

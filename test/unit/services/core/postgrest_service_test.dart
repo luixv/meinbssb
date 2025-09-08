@@ -69,6 +69,18 @@ void main() {
       test('verifyUser has correct method signature', () {
         expect(service.verifyUser, isA<Function>());
       });
+
+      test('createEmailValidationEntry has correct method signature', () {
+        expect(service.createEmailValidationEntry, isA<Function>());
+      });
+
+      test('getEmailValidationByToken has correct method signature', () {
+        expect(service.getEmailValidationByToken, isA<Function>());
+      });
+
+      test('markEmailValidationAsValidated has correct method signature', () {
+        expect(service.markEmailValidationAsValidated, isA<Function>());
+      });
     });
 
     group('Method Functionality', () {
@@ -81,6 +93,14 @@ void main() {
         expect(() => service.getProfilePhoto('123'), returnsNormally);
         expect(() => service.verifyUser('token123'), returnsNormally);
         expect(() => service.deleteProfilePhoto('123'), returnsNormally);
+        expect(() => service.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        ), returnsNormally,);
+        expect(() => service.getEmailValidationByToken('token123'), returnsNormally);
+        expect(() => service.markEmailValidationAsValidated('token123'), returnsNormally);
       });
     });
 

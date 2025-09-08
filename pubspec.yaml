@@ -112,6 +112,7 @@ flutter:
     - assets/html/registrationEmail.html
     - assets/html/schulungAbmeldungEmail.html
     - assets/html/schulungAnmeldungEmail.html
+    - assets/html/email-address-validation.html
     
 
 

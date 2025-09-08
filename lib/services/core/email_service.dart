@@ -186,6 +186,19 @@ class EmailService {
     }
   }
 
+  Future<String?> getEmailValidationSubject() async {
+    return 'E-Mail-Adresse bestätigen';
+  }
+
+  Future<String?> getEmailValidationContent() async {
+    try {
+      return await rootBundle.loadString('assets/html/email-address-validation.html');
+    } catch (e) {
+      LoggerService.logError('Error reading email-address-validation.html: $e');
+      return null;
+    }
+  }
+
   Future<List<String>> getEmailAddressesByPersonId(String personId) async {
     try {
       final endpoint = 'FindeMailadressen/$personId';
@@ -498,6 +511,48 @@ class EmailService {
       LoggerService.logError(
         'Error sending training registration notification: $e',
       );
+    }
+  }
+
+  Future<void> sendEmailValidationNotifications({
+    required String personId,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String title,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    try {
+      final from = await getFromEmail();
+      final subject = await getEmailValidationSubject();
+      final emailContent = await getEmailValidationContent();
+
+      if (from == null || subject == null || emailContent == null) {
+        LoggerService.logError('Missing email configuration for email validation');
+        return;
+      }
+
+      // Replace placeholders in email content
+      String personalizedContent = emailContent
+          .replaceAll('{firstName}', firstName)
+          .replaceAll('{lastName}', lastName)
+          .replaceAll('{title}', title)
+          .replaceAll('{email}', email)
+          .replaceAll('{emailType}', emailType == 'private' ? 'Privat' : 'Geschäftlich')
+          .replaceAll('{verificationLink}', 
+              '${_configService.getString('baseUrl', 'api')}/#/verify-email/$verificationToken/$personId',);
+
+      await sendEmail(
+        sender: from,
+        recipient: email,
+        subject: subject,
+        htmlBody: personalizedContent,
+      );
+
+      LoggerService.logInfo('Email validation email sent successfully to $email');
+    } catch (e) {
+      LoggerService.logError('Error sending email validation email: $e');
     }
   }
 }

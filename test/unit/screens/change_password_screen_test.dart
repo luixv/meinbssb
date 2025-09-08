@@ -119,7 +119,7 @@ void main() {
     });
 
     testWidgets('successfully changes password with valid data', (WidgetTester tester) async {
-      final userData = const UserData(
+      const userData = UserData(
         personId: 12345,
         webLoginId: 67890,
         passnummer: '123456',
@@ -155,7 +155,7 @@ void main() {
     });
 
     testWidgets('handles API error gracefully', (WidgetTester tester) async {
-      final userData = const UserData(
+      const userData = UserData(
         personId: 12345,
         webLoginId: 67890,
         passnummer: '123456',

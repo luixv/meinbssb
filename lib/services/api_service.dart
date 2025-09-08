@@ -548,4 +548,47 @@ class ApiService {
   Future<List<BezirkSearchTriple>> fetchBezirkeforSearch() async {
     return _bezirkService.fetchBezirkeforSearch();
   }
+
+  // Email validation methods
+  Future<void> createEmailValidationEntry({
+    required String personId,
+    required String email,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    return _postgrestService.createEmailValidationEntry(
+      personId: personId,
+      email: email,
+      emailType: emailType,
+      verificationToken: verificationToken,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getEmailValidationByToken(String token) async {
+    return _postgrestService.getEmailValidationByToken(token);
+  }
+
+  Future<bool> markEmailValidationAsValidated(String verificationToken) async {
+    return _postgrestService.markEmailValidationAsValidated(verificationToken);
+  }
+
+  Future<void> sendEmailValidationNotifications({
+    required String personId,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String title,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    return _emailService.sendEmailValidationNotifications(
+      personId: personId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      title: title,
+      emailType: emailType,
+      verificationToken: verificationToken,
+    );
+  }
 }

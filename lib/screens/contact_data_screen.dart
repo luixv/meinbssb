@@ -12,6 +12,7 @@ import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/services/core/font_size_provider.dart';
 import 'package:meinbssb/services/core/network_service.dart';
@@ -304,28 +305,35 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final bool success = await apiService.addKontakt(contact);
-
-      if (!mounted) return;
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kontaktdaten erfolgreich gespeichert.'),
-            duration: UIConstants.snackbarDuration,
-          ),
-        );
-        _kontaktController.clear();
-        _selectedKontaktTyp = null;
-        _fetchContacts();
-        Navigator.of(dialogContext).pop();
+      
+      // If it's an email contact, handle email validation flow
+      if (contact.isEmail) {
+        await _handleEmailValidation(contact, dialogContext);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler beim Speichern der Kontaktdaten.'),
-            duration: UIConstants.snackbarDuration,
-            backgroundColor: UIConstants.errorColor,
-          ),
-        );
+        // For non-email contacts, proceed with normal flow
+        final bool success = await apiService.addKontakt(contact);
+
+        if (!mounted) return;
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Kontaktdaten erfolgreich gespeichert.'),
+              duration: UIConstants.snackbarDuration,
+            ),
+          );
+          _kontaktController.clear();
+          _selectedKontaktTyp = null;
+          _fetchContacts();
+          Navigator.of(dialogContext).pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Speichern der Kontaktdaten.'),
+              duration: UIConstants.snackbarDuration,
+              backgroundColor: UIConstants.errorColor,
+            ),
+          );
+        }
       }
     } catch (e) {
       LoggerService.logError('Exception during contact addition: $e');
@@ -343,6 +351,65 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         setState(() {
           _isAdding = false;
         });
+      }
+    }
+  }
+
+  Future<void> _handleEmailValidation(Contact contact, BuildContext dialogContext) async {
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final authService = Provider.of<AuthService>(context, listen: false);
+      
+      // Generate verification token
+      final verificationToken = authService.generateVerificationToken();
+      
+      // Determine email type
+      final emailType = contact.type == 4 ? 'private' : 'business';
+      
+      // Create email validation entry in database
+      await apiService.createEmailValidationEntry(
+        personId: widget.userData!.personId.toString(),
+        email: contact.value,
+        emailType: emailType,
+        verificationToken: verificationToken,
+      );
+      
+      // Send validation email
+      await apiService.sendEmailValidationNotifications(
+        personId: widget.userData!.personId.toString(),
+        email: contact.value,
+        firstName: widget.userData!.vorname,
+        lastName: widget.userData!.namen,
+        title: widget.userData!.titel ?? '',
+        emailType: emailType,
+        verificationToken: verificationToken,
+      );
+
+      if (!mounted) return;
+      
+      // Show success message in German
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: Colors.orange,
+        ),
+      );
+      
+      _kontaktController.clear();
+      _selectedKontaktTyp = null;
+      Navigator.of(dialogContext).pop();
+      
+    } catch (e) {
+      LoggerService.logError('Exception during email validation setup: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Senden der Bestätigungs-E-Mail: $e'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
       }
     }
   }
