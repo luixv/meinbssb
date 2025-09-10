@@ -533,6 +533,14 @@ class EmailService {
         return;
       }
 
+      final tokenUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'web',
+      );
+
+      final verificationLink =
+          '${tokenUrl}verify-email?token=$verificationToken&personId=$personId';
+
       // Replace placeholders in email content
       String personalizedContent = emailContent
           .replaceAll('{firstName}', firstName)
@@ -540,8 +548,7 @@ class EmailService {
           .replaceAll('{title}', title)
           .replaceAll('{email}', email)
           .replaceAll('{emailType}', emailType == 'private' ? 'Privat' : 'Geschäftlich')
-          .replaceAll('{verificationLink}', 
-              '${_configService.getString('baseUrl', 'api')}/#/verify-email/$verificationToken/$personId',);
+          .replaceAll('{verificationLink}', verificationLink,);
 
       await sendEmail(
         sender: from,
@@ -550,7 +557,8 @@ class EmailService {
         htmlBody: personalizedContent,
       );
 
-      LoggerService.logInfo('Email validation email sent successfully to $email');
+      LoggerService.logInfo('Email validation email sending to $email');
+      LoggerService.logInfo('Verification link: $verificationLink');
     } catch (e) {
       LoggerService.logError('Error sending email validation email: $e');
     }

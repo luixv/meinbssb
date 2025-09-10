@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/reset_password_screen.dart';
 import 'package:meinbssb/screens/email_verification_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -350,20 +351,18 @@ class _MyAppState extends State<MyApp> {
               );
             }
             if (settings.name!.startsWith('/verify-email')) {
+              LoggerService.logInfo('Verifying email for settings: $settings');
               final uri = Uri.base;
-              final fragment = uri.fragment;
-              final parts = fragment.split('/');
-              if (parts.length >= 3) {
-                final token = parts[2];
-                final personId = parts[3];
-                return MaterialPageRoute(
-                  builder: (context) => EmailVerificationScreen(
-                    verificationToken: token,
-                    personId: personId,
-                  ),
-                  settings: settings,
-                );
-              }
+              final token = uri.queryParameters['token'] ?? '';
+              final personId = uri.queryParameters['personId'] ?? '';
+              LoggerService.logInfo('Token: $token, PersonId: $personId');
+              return MaterialPageRoute(
+                builder: (context) => EmailVerificationScreen(
+                  verificationToken: token,
+                  personId: personId,
+                ),
+                settings: settings,
+              );
             }
             // Allow anonymous access to SchulungenSearchScreen and all its subroutes
             if (settings.name != null &&

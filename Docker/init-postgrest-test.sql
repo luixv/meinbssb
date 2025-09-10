@@ -66,10 +66,6 @@ GRANT USAGE ON SCHEMA public TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO bssbuser;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO bssbuser;
 
--- Grant permissions for PostgREST (user_email_validation)
-GRANT SELECT, INSERT, UPDATE, DELETE ON user_email_validation TO devuser;
-GRANT USAGE ON SEQUENCE user_email_validation_id_seq TO devuser;
-
 -- Grant anonymous read access (PostgREST anon role)
 GRANT USAGE ON SCHEMA public TO web_anon;
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO web_anon;
