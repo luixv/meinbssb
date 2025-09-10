@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/reset_password_screen.dart';
+import 'package:meinbssb/screens/email_verification_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -210,6 +212,8 @@ class _MyAppState extends State<MyApp> {
           path.startsWith('/set-password');
       bool isResetPasswordUrl = fragment.startsWith('reset-password') ||
           path.startsWith('/reset-password');
+      bool isVerifyEmailUrl = fragment.startsWith('verify-email') ||
+          path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
       if (isSetPasswordUrl) {
@@ -218,6 +222,9 @@ class _MyAppState extends State<MyApp> {
       } else if (isResetPasswordUrl) {
         // If on reset-password URL, route directly to reset-password
         initialRoute = '/reset-password';
+      } else if (isVerifyEmailUrl) {
+        // If on verify-email URL, route directly to verify-email
+        initialRoute = '/verify-email';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
@@ -339,6 +346,20 @@ class _MyAppState extends State<MyApp> {
                   token: token,
                   personId: personId,
                   apiService: Provider.of<ApiService>(context, listen: false),
+                ),
+                settings: settings,
+              );
+            }
+            if (settings.name!.startsWith('/verify-email')) {
+              LoggerService.logInfo('Verifying email for settings: $settings');
+              final uri = Uri.base;
+              final token = uri.queryParameters['token'] ?? '';
+              final personId = uri.queryParameters['personId'] ?? '';
+              LoggerService.logInfo('Token: $token, PersonId: $personId');
+              return MaterialPageRoute(
+                builder: (context) => EmailVerificationScreen(
+                  verificationToken: token,
+                  personId: personId,
                 ),
                 settings: settings,
               );

@@ -340,6 +340,89 @@ class PostgrestService {
     return response;
   }
 
+  /// Create an email validation entry
+  Future<void> createEmailValidationEntry({
+    required String personId,
+    required String email,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    try {
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}user_email_validation'),
+        headers: _headers,
+        body: jsonEncode({
+          'person_id': personId,
+          'email': email,
+          'emailtype': emailType,
+          'verification_token': verificationToken,
+          'created_on': DateTime.now().toIso8601String(),
+          'validated': false,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        LoggerService.logInfo('Email validation entry created successfully');
+      } else {
+        LoggerService.logError(
+          'Failed to create email validation entry. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating email validation entry: $e');
+    }
+  }
+
+  /// Get email validation entry by verification token
+  Future<Map<String, dynamic>?> getEmailValidationByToken(String token) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$token'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> entries = jsonDecode(response.body);
+        return entries.isNotEmpty ? entries[0] : null;
+      } else {
+        LoggerService.logError(
+          'Failed to get email validation entry by token. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting email validation entry by token: $e');
+      return null;
+    }
+  }
+
+  /// Mark email validation entry as validated
+  Future<bool> markEmailValidationAsValidated(String verificationToken) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$verificationToken'),
+        headers: _headers,
+        body: jsonEncode({
+          'validated': true,
+          'validated_on': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('Email validation entry marked as validated');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to mark email validation as validated. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error marking email validation as validated: $e');
+      return false;
+    }
+  }
+
   /// Upload a new profile photo for a user (insert or update)
   Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
     try {

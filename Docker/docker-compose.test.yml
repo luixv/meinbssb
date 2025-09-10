@@ -50,11 +50,30 @@ services:
       - "443:443" #Flutter Web HTTPS
       - "8081:8081" #Postgrest API
       - "8080:8080" #Email API
+      - "8083:8083" #ZMI Monitor
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web
     depends_on:
       - postgrest
 
+  zmi-monitor:
+    build:
+      context: ./zmi-monitor
+      dockerfile: Dockerfile
+    container_name: zmi_monitor
+    restart: always
+    environment:
+      - TARGET_URL=https://webintern.bssb.bayern:56400/rest/zmi/api/serverping
+      - EXPECTED_HTTP_CODE=200
+      - MAX_RESPONSE_TIME=5.0
+      - CONNECT_TIMEOUT=3
+      - MAX_TIME=10
+      - LOG_FILE=/var/www/html/data/https_monitor.csv
+      - TZ=Europe/Berlin
+    volumes:
+      - zmi_data:/var/www/html/data
+
 volumes:
   pgdata:
+  zmi_data:

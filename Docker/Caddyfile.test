@@ -39,3 +39,7 @@ https://meintest.bssb.de:8080 {
       Access-Control-Allow-Headers "Authorization, Content-Type"
     }
 }
+
+https://meintest.bssb.de:8083 {
+  reverse_proxy zmi-monitor:80
+}

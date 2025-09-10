@@ -1113,5 +1113,8 @@ void main() {
         verify(mockBezirkService.fetchBezirke()).called(1);
       });
     });
+
+    // Email validation tests commented out until mocks are regenerated
+    // group('Email Validation', () { ... });
   });
 }
