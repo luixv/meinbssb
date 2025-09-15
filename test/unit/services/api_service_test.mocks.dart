@@ -1014,6 +1014,7 @@ class MockTrainingService extends _i1.Mock implements _i20.TrainingService {
     String? webGruppe,
     String? bezirk,
     String? fuerVerlaengerung,
+    String? fuerVuelVerlaengerung,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1023,6 +1024,7 @@ class MockTrainingService extends _i1.Mock implements _i20.TrainingService {
             webGruppe,
             bezirk,
             fuerVerlaengerung,
+            fuerVuelVerlaengerung,
           ],
         ),
         returnValue: _i3.Future<List<_i21.Schulungstermin>>.value(
@@ -1583,6 +1585,48 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
       ) as _i3.Future<_i6.Response>);
 
   @override
+  _i3.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i3.Future<Map<String, dynamic>?>.value(),
+      ) as _i3.Future<Map<String, dynamic>?>);
+
+  @override
+  _i3.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<bool> uploadProfilePhoto(
     String? userId,
     List<int>? photoBytes,
@@ -1777,6 +1821,24 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
       ) as _i3.Future<String?>);
 
   @override
+  _i3.Future<String?> getEmailValidationSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationSubject,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<String?> getEmailValidationContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationContent,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
   _i3.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1898,6 +1960,34 @@ class MockEmailService extends _i1.Mock implements _i32.EmailService {
             #schulungTotal: schulungTotal,
             #location: location,
             #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> sendEmailValidationNotifications({
+    required String? personId,
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? title,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmailValidationNotifications,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #title: title,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
           },
         ),
         returnValue: _i3.Future<void>.value(),

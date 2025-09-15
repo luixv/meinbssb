@@ -41,6 +41,7 @@ void main() {
         'WEBGRUPPE': 4,
         'VERANSTALTUNGSBEZIRK': 0,
         'FUERVERLAENGERUNGEN': true,
+        'FUERVUELVERLAENGERUNGEN': true,
         'ANMELDENERLAUBT': 0,
         'VERBANDSINTERNPASSWORT': '',
         'BEZEICHNUNG': 'Der Sportleiter im Verein / Kugeldisziplinen',
@@ -90,6 +91,7 @@ void main() {
       expect(schulungstermin.webGruppe, 4);
       expect(schulungstermin.veranstaltungsBezirk, 0);
       expect(schulungstermin.fuerVerlaengerungen, true);
+      expect(schulungstermin.fuerVuelVerlaengerungen, true);
       expect(schulungstermin.anmeldeErlaubt, 0);
       expect(schulungstermin.verbandsInternPasswort, '');
       expect(
@@ -138,6 +140,7 @@ void main() {
         webGruppe: 4,
         veranstaltungsBezirk: 0,
         fuerVerlaengerungen: true,
+        fuerVuelVerlaengerungen: true,
         anmeldeErlaubt: 0,
         verbandsInternPasswort: '',
         bezeichnung: 'Der Sportleiter im Verein / Kugeldisziplinen',
@@ -184,6 +187,7 @@ void main() {
       expect(json['WEBGRUPPE'], 4);
       expect(json['VERANSTALTUNGSBEZIRK'], 0);
       expect(json['FUERVERLAENGERUNGEN'], true);
+      expect(json['FUERVUELVERLAENGERUNGEN'], true);
       expect(json['ANMELDENERLAUBT'], 0);
       expect(json['VERBANDSINTERNPASSWORT'], '');
       expect(
@@ -232,6 +236,7 @@ void main() {
         webGruppe: 4,
         veranstaltungsBezirk: 0,
         fuerVerlaengerungen: true,
+        fuerVuelVerlaengerungen: true,
         anmeldeErlaubt: 0,
         verbandsInternPasswort: '',
         bezeichnung: 'Der Sportleiter im Verein / Kugeldisziplinen',

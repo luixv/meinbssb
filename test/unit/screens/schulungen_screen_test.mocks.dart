@@ -412,6 +412,7 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
     String? webGruppe,
     String? bezirk,
     String? fuerVerlaengerung,
+    String? fuerVuelVerlaengerung,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -421,6 +422,7 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
             webGruppe,
             bezirk,
             fuerVerlaengerung,
+            fuerVuelVerlaengerung,
           ],
         ),
         returnValue: _i4.Future<List<_i14.Schulungstermin>>.value(
@@ -970,6 +972,76 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
         returnValue: _i4.Future<List<_i23.BezirkSearchTriple>>.value(
             <_i23.BezirkSearchTriple>[]),
       ) as _i4.Future<List<_i23.BezirkSearchTriple>>);
+
+  @override
+  _i4.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
+
+  @override
+  _i4.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> sendEmailValidationNotifications({
+    required String? personId,
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? title,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmailValidationNotifications,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #title: title,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [CacheService].

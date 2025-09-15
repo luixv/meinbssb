@@ -525,6 +525,7 @@ void main() {
             webGruppe: 1,
             veranstaltungsBezirk: 1,
             fuerVerlaengerungen: false,
+            fuerVuelVerlaengerungen: false,
             anmeldeErlaubt: 1,
             verbandsInternPasswort: '',
             bezeichnung: 'Test Termin',
@@ -584,6 +585,7 @@ void main() {
             webGruppe: 1,
             veranstaltungsBezirk: 1,
             fuerVerlaengerungen: false,
+            fuerVuelVerlaengerungen: false,
             anmeldeErlaubt: 1,
             verbandsInternPasswort: '',
             bezeichnung: 'Test Termin',
@@ -596,6 +598,7 @@ void main() {
             any,
             any,
             any,
+            any,
           ),
         ).thenAnswer((_) async => expectedData);
 
@@ -604,6 +607,7 @@ void main() {
           '1',
           '1',
           'true',
+          'true',
         );
         expect(result, equals(expectedData));
         verify(
@@ -611,6 +615,7 @@ void main() {
             '2024-01-01',
             '1',
             '1',
+            'true',
             'true',
           ),
         ).called(1);
@@ -1079,7 +1084,10 @@ void main() {
       test('fetchBezirkeforSearch delegates to bezirk service', () async {
         final expectedData = [
           const BezirkSearchTriple(
-              bezirkId: 1, bezirkNr: 1, bezirkName: 'TestBezirk',),
+            bezirkId: 1,
+            bezirkNr: 1,
+            bezirkName: 'TestBezirk',
+          ),
         ];
         when(mockBezirkService.fetchBezirkeforSearch())
             .thenAnswer((_) async => expectedData);
