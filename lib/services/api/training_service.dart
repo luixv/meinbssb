@@ -120,7 +120,7 @@ class TrainingService {
   }
 
 /* 
-/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}
+/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}/{FuerVuelVerlaengerung}
 */
   Future<List<Schulungstermin>> fetchSchulungstermine(
     String abDatum,
