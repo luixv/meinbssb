@@ -236,7 +236,6 @@ void main() {
     });
   });
   group('fetchSchulungsarten', () {
-
     test('returns mapped Schulungsarten list from network', () async {
       when(mockConfigService.getString('apiProtocol', any)).thenReturn('https');
       when(mockConfigService.getString('api1BaseServer', any))
@@ -1154,6 +1153,7 @@ void main() {
         '1',
         '1',
         'true',
+        'true',
       );
       expect(result.length, 1);
       expect(result[0].schulungsterminId, 42);
@@ -1185,6 +1185,7 @@ void main() {
       });
       final result = await trainingService.fetchSchulungstermine(
         '01.01.2030',
+        '*',
         '*',
         '*',
         '*',
@@ -1236,6 +1237,7 @@ void main() {
       });
       final result = await trainingService.fetchSchulungstermine(
         '01.01.2099',
+        '*',
         '*',
         '*',
         '*',

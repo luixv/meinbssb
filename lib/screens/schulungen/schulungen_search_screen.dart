@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/services/api_service.dart';
+
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
-import '/screens/schulungen_screen.dart';
-import 'package:intl/intl.dart';
 import '/models/bezirk_data.dart';
-import 'package:provider/provider.dart';
-import '/screens/base_screen_layout.dart';
-import '/widgets/scaled_text.dart';
 import '/models/schulungstermin_data.dart';
-import 'package:meinbssb/services/api_service.dart';
+
+import '/screens/base_screen_layout.dart';
+import '/screens/schulungen_screen.dart';
+
+import '/widgets/scaled_text.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen(
@@ -37,6 +40,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   final TextEditingController _ortController = TextEditingController();
   final TextEditingController _titelController = TextEditingController();
   bool fuerVerlaengerungen = false;
+  bool fuerVuelVerlaengerungen = false;
   List<BezirkSearchTriple> _bezirke = [];
   bool isLoadingBezirke = true;
 
@@ -169,6 +173,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           ort: _ortController.text,
           titel: _titelController.text,
           fuerVerlaengerungen: fuerVerlaengerungen,
+          fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
           showMenu: widget.showMenu,
           showConnectivityIcon: widget.showConnectivityIcon,
         ),
@@ -208,6 +213,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 _ortController.clear();
                 _titelController.clear();
                 fuerVerlaengerungen = false;
+                fuerVuelVerlaengerungen = false;
               });
             },
             backgroundColor: UIConstants.defaultAppColor,
@@ -319,7 +325,17 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
               ),
-              const SizedBox(height: UIConstants.spacingM),
+              CheckboxListTile(
+                title: const Text('Für VUEL Verlaengerung'),
+                value: fuerVuelVerlaengerungen,
+                onChanged: (bool? value) {
+                  setState(() {
+                    fuerVuelVerlaengerungen = value ?? false;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
             ],
           ),
         ),

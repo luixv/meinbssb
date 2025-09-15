@@ -114,8 +114,9 @@ class AuthService {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
+      const endpoint = 'LoginMeinBSSBApp';
       final response = await _httpClient.post(
-        'LoginMeinBSSBApp',
+        endpoint,
         {
           'Email': email,
           'Passwort': password,
@@ -242,7 +243,8 @@ class AuthService {
     String newPassword,
   ) async {
     try {
-      final response = await _httpClient.put('MyBSSBPasswortAendern', {
+      const endpoint = 'MyBSSBPasswortAendern';
+      final response = await _httpClient.put(endpoint, {
         'PersonID': personId,
         'PasswortNeu': newPassword,
       });
@@ -261,8 +263,9 @@ class AuthService {
     required String passNumber,
   }) async {
     try {
+      const endpoint = 'ErstelleMyBSSBAccount';
       final response = await _httpClient.post(
-        'ErstelleMyBSSBAccount',
+        endpoint,
         {
           'PersonID': int.tryParse(personId),
           'Email': email,
@@ -516,8 +519,10 @@ class AuthService {
       LoggerService.logInfo('Got personId: $personId');
       LoggerService.logInfo('Calling MyBSSBPasswortAendern...');
       // Step 2: Call the API endpoint
+
+      const endpoint = 'MyBSSBPasswortAendern';
       final response = await _httpClient.put(
-        'MyBSSBPasswortAendern',
+        endpoint,
         {
           'PersonID': int.parse(personId),
           'PasswortNeu': newPassword,

@@ -36,6 +36,7 @@ class SchulungenScreen extends StatefulWidget {
     this.ort,
     this.titel,
     this.fuerVerlaengerungen,
+    this.fuerVuelVerlaengerungen,
     this.showMenu = true,
     this.showConnectivityIcon = true,
     super.key,
@@ -49,6 +50,7 @@ class SchulungenScreen extends StatefulWidget {
   final String? ort;
   final String? titel;
   final bool? fuerVerlaengerungen;
+  final bool? fuerVuelVerlaengerungen;
   final bool showMenu;
   final bool showConnectivityIcon;
 
@@ -94,11 +96,15 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           : '*';
       final fuerVerlaengerung =
           (widget.fuerVerlaengerungen == true) ? 'true' : '*';
+      final fuerVuelVerlaengerung =
+          (widget.fuerVuelVerlaengerungen == true) ? 'true' : '*';
+
       final result = await apiService.fetchSchulungstermine(
         abDatum,
         webGruppe,
         bezirk,
         fuerVerlaengerung,
+        fuerVuelVerlaengerung,
       );
       setState(() {
         var filteredResults = result;

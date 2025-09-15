@@ -36,6 +36,7 @@ class Schulungstermin {
     required this.webGruppe,
     required this.veranstaltungsBezirk,
     required this.fuerVerlaengerungen,
+    required this.fuerVuelVerlaengerungen,
     required this.anmeldeErlaubt,
     required this.verbandsInternPasswort,
     required this.bezeichnung,
@@ -83,6 +84,8 @@ class Schulungstermin {
         webGruppe: json['WEBGRUPPE'] as int? ?? 0,
         veranstaltungsBezirk: json['VERANSTALTUNGSBEZIRK'] as int? ?? 0,
         fuerVerlaengerungen: json['FUERVERLAENGERUNGEN'] as bool? ?? false,
+        fuerVuelVerlaengerungen:
+            json['FUERVUELVERLAENGERUNGEN'] as bool? ?? false,
         anmeldeErlaubt: json['ANMELDENERLAUBT'] as int? ?? 0,
         verbandsInternPasswort: json['VERBANDSINTERNPASSWORT'] as String? ?? '',
         bezeichnung: json['BEZEICHNUNG'] as String? ?? '',
@@ -140,6 +143,7 @@ class Schulungstermin {
   final int webGruppe;
   final int veranstaltungsBezirk;
   final bool fuerVerlaengerungen;
+  final bool fuerVuelVerlaengerungen;
   final int anmeldeErlaubt;
   final String verbandsInternPasswort;
   final String bezeichnung;
@@ -183,6 +187,7 @@ class Schulungstermin {
       'WEBGRUPPE': webGruppe,
       'VERANSTALTUNGSBEZIRK': veranstaltungsBezirk,
       'FUERVERLAENGERUNGEN': fuerVerlaengerungen,
+      'FUERVUELVERLAENGERUNGEN': fuerVuelVerlaengerungen,
       'ANMELDENERLAUBT': anmeldeErlaubt,
       'VERBANDSINTERNPASSWORT': verbandsInternPasswort,
       'BEZEICHNUNG': bezeichnung,

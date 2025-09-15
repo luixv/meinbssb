@@ -127,10 +127,11 @@ class TrainingService {
     String webGruppe,
     String bezirk,
     String fuerVerlaengerung,
+    String fuerVuelVerlaengerung,
   ) async {
     try {
       String endpoint =
-          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*';
+          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*/$fuerVuelVerlaengerung';
 
       LoggerService.logInfo(
         'endpoint $endpoint',
