@@ -326,7 +326,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 contentPadding: EdgeInsets.zero,
               ),
               CheckboxListTile(
-                title: const Text('Für VUEL Verlaengerung'),
+                title: const Text('Für VUEL Verlängerung'),
                 value: fuerVuelVerlaengerungen,
                 onChanged: (bool? value) {
                   setState(() {
