@@ -199,6 +199,19 @@ class EmailService {
     }
   }
 
+  Future<String?> getStartingRightsChangeSubject() async {
+    return 'Anfrage zur Änderung des Schützenausweises eingegangen';
+  }
+
+  Future<String?> getStartingRightsChangeContent() async {
+    try {
+      return await rootBundle.loadString('assets/html/startingRightsChangeEmail.html');
+    } catch (e) {
+      LoggerService.logError('Error reading startingRightsChangeEmail.html: $e');
+      return null;
+    }
+  }
+
   Future<List<String>> getEmailAddressesByPersonId(String personId) async {
     try {
       final endpoint = 'FindeMailadressen/$personId';
@@ -562,5 +575,139 @@ class EmailService {
     } catch (e) {
       LoggerService.logError('Error sending email validation email: $e');
     }
+  }
+
+  Future<void> sendStartingRightsChangeNotifications({
+    required int personId,
+    required Map<String, dynamic> passdaten,
+    required List<String> userEmailAddresses,
+    required List<String> clubEmailAddresses,
+    required List<Map<String, dynamic>> zweitmitgliedschaften,
+    required List<Map<String, dynamic>> zveData,
+  }) async {
+    try {
+      final from = await getFromEmail();
+      final subject = await getStartingRightsChangeSubject();
+      final emailContent = await getStartingRightsChangeContent();
+
+      if (from == null || subject == null || emailContent == null) {
+        LoggerService.logError('Missing email configuration for starting rights change');
+        return;
+      }
+
+      // Extract data from passdaten
+      final passNumber = passdaten['PASSNUMMER']?.toString() ?? '';
+      final title = passdaten['TITEL']?.toString() ?? '';
+      final firstName = passdaten['VORNAME']?.toString() ?? '';
+      final lastName = passdaten['NAMEN']?.toString() ?? '';
+      final street = passdaten['STRASSE']?.toString() ?? '';
+      final zipCode = passdaten['PLZ']?.toString() ?? '';
+      final city = passdaten['ORT']?.toString() ?? '';
+
+      // Format Zweitvereine information
+      final zweitvereine = _formatZweitvereine(zweitmitgliedschaften, zveData);
+
+      // Send emails to user's email addresses
+      for (final email in userEmailAddresses) {
+        if (email.isNotEmpty && email != 'null') {
+          final userGreeting = 'Hallo, $title $firstName $lastName,';
+          final personalizedContent = emailContent
+              .replaceAll('{greeting}', userGreeting)
+              .replaceAll('{passNumber}', passNumber)
+              .replaceAll('{title}', title)
+              .replaceAll('{firstName}', firstName)
+              .replaceAll('{lastName}', lastName)
+              .replaceAll('{street}', street)
+              .replaceAll('{zipCode}', zipCode)
+              .replaceAll('{city}', city)
+              .replaceAll('{zweitvereine}', zweitvereine);
+
+          await sendEmail(
+            sender: from,
+            recipient: email,
+            subject: subject,
+            htmlBody: personalizedContent,
+          );
+          
+          LoggerService.logInfo('Starting rights change notification sent to user email: $email');
+        }
+      }
+
+      // Send emails to club email addresses
+      for (final email in clubEmailAddresses) {
+        if (email.isNotEmpty && email != 'null') {
+          const clubGreeting = 'Hallo,';
+          final personalizedContent = emailContent
+              .replaceAll('{greeting}', clubGreeting)
+              .replaceAll('{passNumber}', passNumber)
+              .replaceAll('{title}', title)
+              .replaceAll('{firstName}', firstName)
+              .replaceAll('{lastName}', lastName)
+              .replaceAll('{street}', street)
+              .replaceAll('{zipCode}', zipCode)
+              .replaceAll('{city}', city)
+              .replaceAll('{zweitvereine}', zweitvereine);
+
+          await sendEmail(
+            sender: from,
+            recipient: email,
+            subject: subject,
+            htmlBody: personalizedContent,
+          );
+          
+          LoggerService.logInfo('Starting rights change notification sent to club email: $email');
+        }
+      }
+
+      LoggerService.logInfo('Starting rights change notifications sent successfully');
+    } catch (e) {
+      LoggerService.logError('Error sending starting rights change notifications: $e');
+    }
+  }
+
+  /// Helper method to format Zweitvereine information for email template
+  String _formatZweitvereine(
+    List<Map<String, dynamic>> zweitmitgliedschaften,
+    List<Map<String, dynamic>> zveData,
+  ) {
+    if (zweitmitgliedschaften.isEmpty) {
+      return '';
+    }
+
+    // Group ZVE data by VEREINNR
+    final Map<int, List<Map<String, dynamic>>> zveByVerein = {};
+    for (final zve in zveData) {
+      final vereinNr = zve['VEREINNR'] as int?;
+      if (vereinNr != null) {
+        zveByVerein.putIfAbsent(vereinNr, () => []);
+        zveByVerein[vereinNr]!.add(zve);
+      }
+    }
+
+    final StringBuffer buffer = StringBuffer();
+    buffer.writeln('<h3 style="color: #0B4B10; margin-top: 20px;">Zweitvereine:</h3>');
+
+    for (final membership in zweitmitgliedschaften) {
+      final vereinNr = membership['VEREINNR'] as int?;
+      final vereinName = membership['VEREINNAME']?.toString() ?? '';
+      
+      if (vereinName.isNotEmpty) {
+        buffer.writeln('<p style="margin: 5px 0; font-weight: bold;">$vereinName</p>');
+        
+        // Check if this Verein has disciplines in ZVE data
+        if (vereinNr != null && zveByVerein.containsKey(vereinNr)) {
+          final disciplines = zveByVerein[vereinNr]!;
+          for (final discipline in disciplines) {
+            final disziplinNr = discipline['DISZIPLINNR']?.toString() ?? '';
+            final disziplin = discipline['DISZIPLIN']?.toString() ?? '';
+            if (disziplinNr.isNotEmpty && disziplin.isNotEmpty) {
+              buffer.writeln('<p style="margin: 5px 0; margin-left: 20px;">$disziplinNr $disziplin</p>');
+            }
+          }
+        }
+      }
+    }
+
+    return buffer.toString();
   }
 }

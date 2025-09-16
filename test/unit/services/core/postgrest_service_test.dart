@@ -2,13 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'postgrest_service_test.mocks.dart';
 
-@GenerateMocks([http.Client, ConfigService])
+@GenerateMocks([
+  ConfigService,
+  http.Client,
+])
+import 'postgrest_service_test.mocks.dart';
 void main() {
   group('PostgrestService', () {
     late MockClient mockClient;
@@ -18,6 +22,10 @@ void main() {
     setUp(() {
       mockClient = MockClient();
       mockConfig = MockConfigService();
+
+      // Reset all mocks to avoid verification conflicts
+      reset(mockClient);
+      reset(mockConfig);
 
       // Setup basic config values
       when(mockConfig.getString('postgrestProtocol')).thenReturn('https');
@@ -83,24 +91,184 @@ void main() {
       });
     });
 
-    group('Method Functionality', () {
-      test('methods can be called without throwing exceptions', () async {
-        // These methods will fail due to network issues, but should not throw syntax errors
-        expect(
-          () => service.getUserByEmail('test@example.com'),
-          returnsNormally,
-        );
-        expect(() => service.getProfilePhoto('123'), returnsNormally);
-        expect(() => service.verifyUser('token123'), returnsNormally);
-        expect(() => service.deleteProfilePhoto('123'), returnsNormally);
-        expect(() => service.createEmailValidationEntry(
-          personId: '123',
-          email: 'test@example.com',
-          emailType: 'private',
-          verificationToken: 'token123',
-        ), returnsNormally,);
-        expect(() => service.getEmailValidationByToken('token123'), returnsNormally);
-        expect(() => service.markEmailValidationAsValidated('token123'), returnsNormally);
+    group('User Methods', () {
+      test('getUserByPersonId returns user data when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'person_id': '123',
+            'firstname': 'John',
+            'lastname': 'Doe',
+            'email': 'john@example.com',
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getUserByPersonId('123');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getUserByPersonId returns null when user not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getUserByPersonId('123');
+        expect(result, isNull);
+      });
+
+      test('getUserByPersonId returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getUserByPersonId('123');
+        expect(result, isNull);
+      });
+
+      test('getUserByPassNumber returns user data when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'pass_number': '12345678',
+            'firstname': 'John',
+            'lastname': 'Doe',
+            'email': 'john@example.com',
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getUserByPassNumber('12345678');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getUserByPassNumber returns null when user not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getUserByPassNumber('12345678');
+        expect(result, isNull);
+      });
+
+      test('getUserByPassNumber returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getUserByPassNumber('12345678');
+        expect(result, isNull);
+      });
+
+      test('getUserByEmail returns user data when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'email': 'test@example.com',
+            'firstname': 'John',
+            'lastname': 'Doe',
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getUserByEmail('test@example.com');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getUserByEmail returns null when user not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getUserByEmail('test@example.com');
+        expect(result, isNull);
+      });
+
+      test('getUserByEmail returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getUserByEmail('test@example.com');
+        expect(result, isNull);
+      });
+
+      test('verifyUser updates verification status successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.verifyUser('token123');
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).called(1);
+      });
+
+      test('verifyUser returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.verifyUser('token123');
+        expect(result, isFalse);
+      });
+
+      test('deleteUserRegistration deletes user successfully', () async {
+        when(mockClient.delete(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('', 204));
+
+        final result = await service.deleteUserRegistration(123);
+        expect(result, isTrue);
+        verify(mockClient.delete(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('deleteUserRegistration returns false on error', () async {
+        when(mockClient.delete(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.deleteUserRegistration(123);
+        expect(result, isFalse);
       });
     });
 
@@ -129,6 +297,224 @@ void main() {
       });
     });
 
+    group('Password Reset', () {
+      test('createPasswordResetEntry creates entry successfully', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 201));
+
+        await service.createPasswordResetEntry(
+          personId: '123',
+          verificationToken: 'token123',
+        );
+
+        verify(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).called(1);
+      });
+
+      test('getUserByPasswordResetVerificationToken returns user data when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'person_id': '123',
+            'verification_token': 'token123',
+            'created_at': '2024-01-01T00:00:00Z',
+            'is_used': false,
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getUserByPasswordResetVerificationToken('token123');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getUserByPasswordResetVerificationToken returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getUserByPasswordResetVerificationToken('token123');
+        expect(result, isNull);
+      });
+
+      test('getUserByPasswordResetVerificationToken returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getUserByPasswordResetVerificationToken('token123');
+        expect(result, isNull);
+      });
+
+      test('markPasswordResetEntryUsed marks entry as used successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        await service.markPasswordResetEntryUsed(verificationToken: 'token123');
+
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).called(1);
+      });
+
+      test('getLatestPasswordResetForPerson returns latest entry when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'person_id': '123',
+            'verification_token': 'token123',
+            'created_at': '2024-01-01T00:00:00Z',
+            'is_used': false,
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getLatestPasswordResetForPerson('123');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getLatestPasswordResetForPerson returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getLatestPasswordResetForPerson('123');
+        expect(result, isNull);
+      });
+
+      test('getLatestPasswordResetForPerson returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getLatestPasswordResetForPerson('123');
+        expect(result, isNull);
+      });
+    });
+
+    group('Email Validation', () {
+      test('createEmailValidationEntry creates entry successfully', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 201));
+
+        await service.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        );
+
+        verify(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).called(1);
+      });
+
+      test('getEmailValidationByToken returns entry when found', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'person_id': '123',
+            'email': 'test@example.com',
+            'emailtype': 'private',
+            'verification_token': 'token123',
+            'created_on': '2024-01-01T00:00:00Z',
+            'validated': false,
+          }
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getEmailValidationByToken('token123');
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).called(1);
+      });
+
+      test('getEmailValidationByToken returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getEmailValidationByToken('token123');
+        expect(result, isNull);
+      });
+
+      test('getEmailValidationByToken returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.getEmailValidationByToken('token123');
+        expect(result, isNull);
+      });
+
+      test('markEmailValidationAsValidated marks entry as validated successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.markEmailValidationAsValidated('token123');
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).called(1);
+      });
+
+      test('markEmailValidationAsValidated returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('Server error', 500));
+
+        final result = await service.markEmailValidationAsValidated('token123');
+        expect(result, isFalse);
+      });
+    });
+
     group('Profile Photo Cache', () {
       test('profilePhotoCache returns cached photo without network call',
           () async {
@@ -140,43 +526,60 @@ void main() {
         expect(result, bytes);
       });
 
-      test('profilePhotoCache is updated after uploadProfilePhoto', () async {
-        const userId = 'cacheUpload';
-        final bytes = [40, 50, 60];
-        // Mock GET for getUserByPersonId
-        when(
-          mockClient.get(
-            any,
-            headers: anyNamed('headers'),
-          ),
-        ).thenAnswer(
-            (_) async => http.Response('[{"person_id":"$userId"}]', 200),);
-        // Mock PATCH for uploadProfilePhoto
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('', 200));
-        final result = await service.uploadProfilePhoto(userId, bytes);
-        expect(result, true);
-        expect(service.profilePhotoCache[userId], Uint8List.fromList(bytes));
+      test('getProfilePhoto fetches and caches new photo', () async {
+        const userId = 'newPhoto';
+        const photoHex = '\\x010203';
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(
+          jsonEncode([{'profile_photo': photoHex}]),
+          200,
+        ),);
+
+        final result = await service.getProfilePhoto(userId);
+        expect(result, isA<Uint8List>());
+        expect(service.profilePhotoCache[userId], equals(result));
       });
 
-      test('profilePhotoCache is cleared after deleteProfilePhoto', () async {
-        const userId = 'cacheDelete';
-        service.profilePhotoCache[userId] = Uint8List.fromList([70, 80, 90]);
-        when(
-          mockClient.patch(
+      test('uploadProfilePhoto updates photo successfully', () async {
+        const userId = 'testUser';
+        final bytes = [1, 2, 3];
+
+        // Mock user existence check
+        when(mockClient.get(
+            any,
+            headers: anyNamed('headers'),
+        ),).thenAnswer((_) async => http.Response(
+          jsonEncode([{'person_id': userId}]),
+          200,
+        ),);
+
+        // Mock photo update
+        when(mockClient.patch(
             any,
             headers: anyNamed('headers'),
             body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('', 200));
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.uploadProfilePhoto(userId, bytes);
+        expect(result, isTrue);
+        expect(service.profilePhotoCache[userId], equals(Uint8List.fromList(bytes)));
+      });
+
+      test('deleteProfilePhoto removes photo and clears cache', () async {
+        const userId = 'deleteTest';
+        service.profilePhotoCache[userId] = Uint8List.fromList([1, 2, 3]);
+
+        when(mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+        ),).thenAnswer((_) async => http.Response('[]', 200));
+
         final result = await service.deleteProfilePhoto(userId);
-        expect(result, true);
-        expect(service.profilePhotoCache.containsKey(userId), false);
+        expect(result, isTrue);
+        expect(service.profilePhotoCache.containsKey(userId), isFalse);
       });
     });
   });

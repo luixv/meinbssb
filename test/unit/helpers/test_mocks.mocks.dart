@@ -1330,6 +1330,132 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
         returnValue: _i5.Future<List<_i28.BezirkSearchTriple>>.value(
             <_i28.BezirkSearchTriple>[]),
       ) as _i5.Future<List<_i28.BezirkSearchTriple>>);
+
+  @override
+  _i5.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<void> sendEmailValidationNotifications({
+    required String? personId,
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? title,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmailValidationNotifications,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #title: title,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdatenFromZMI,
+          [personId],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(
+          int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenFromZMI,
+          [personId],
+        ),
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> fetchVereinFromZMI(int? vereinNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchVereinFromZMI,
+          [vereinNr],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZVEDataFromZMI,
+          [personId],
+        ),
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i5.Future<void> sendStartingRightsChangeNotifications(
+          {required int? personId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {#personId: personId},
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [ConfigService].
@@ -1552,6 +1678,42 @@ class MockEmailService extends _i1.Mock implements _i29.EmailService {
       ) as _i5.Future<String?>);
 
   @override
+  _i5.Future<String?> getEmailValidationSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getEmailValidationContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getStartingRightsChangeSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getStartingRightsChangeContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
   _i5.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1673,6 +1835,60 @@ class MockEmailService extends _i1.Mock implements _i29.EmailService {
             #schulungTotal: schulungTotal,
             #location: location,
             #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendEmailValidationNotifications({
+    required String? personId,
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? title,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmailValidationNotifications,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #title: title,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendStartingRightsChangeNotifications({
+    required int? personId,
+    required Map<String, dynamic>? passdaten,
+    required List<String>? userEmailAddresses,
+    required List<String>? clubEmailAddresses,
+    required List<Map<String, dynamic>>? zweitmitgliedschaften,
+    required List<Map<String, dynamic>>? zveData,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {
+            #personId: personId,
+            #passdaten: passdaten,
+            #userEmailAddresses: userEmailAddresses,
+            #clubEmailAddresses: clubEmailAddresses,
+            #zweitmitgliedschaften: zweitmitgliedschaften,
+            #zveData: zveData,
           },
         ),
         returnValue: _i5.Future<void>.value(),
@@ -2543,6 +2759,48 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           ),
         )),
       ) as _i5.Future<_i8.Response>);
+
+  @override
+  _i5.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
   _i5.Future<bool> uploadProfilePhoto(

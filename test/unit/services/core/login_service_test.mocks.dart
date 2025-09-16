@@ -1621,6 +1621,49 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
         ),
         returnValue: _i2.Future<List<_i28.Person>>.value(<_i28.Person>[]),
       ) as _i2.Future<List<_i28.Person>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchPassdatenFromZMI,
+          [personId],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(
+          int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZweitmitgliedschaftenFromZMI,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> fetchVereinFromZMI(int? vereinNr) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchVereinFromZMI,
+          [vereinNr],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int? personId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchZVEDataFromZMI,
+          [personId],
+        ),
+        returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [BankService].
@@ -1887,6 +1930,48 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
       ) as _i2.Future<_i7.Response>);
 
   @override
+  _i2.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+      ) as _i2.Future<Map<String, dynamic>?>);
+
+  @override
+  _i2.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
   _i2.Future<bool> uploadProfilePhoto(
     String? userId,
     List<int>? photoBytes,
@@ -2081,6 +2166,42 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
       ) as _i2.Future<String?>);
 
   @override
+  _i2.Future<String?> getEmailValidationSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getEmailValidationContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getStartingRightsChangeSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getStartingRightsChangeContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
   _i2.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2202,6 +2323,60 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
             #schulungTotal: schulungTotal,
             #location: location,
             #eventDateTime: eventDateTime,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendEmailValidationNotifications({
+    required String? personId,
+    required String? email,
+    required String? firstName,
+    required String? lastName,
+    required String? title,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendEmailValidationNotifications,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #firstName: firstName,
+            #lastName: lastName,
+            #title: title,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendStartingRightsChangeNotifications({
+    required int? personId,
+    required Map<String, dynamic>? passdaten,
+    required List<String>? userEmailAddresses,
+    required List<String>? clubEmailAddresses,
+    required List<Map<String, dynamic>>? zweitmitgliedschaften,
+    required List<Map<String, dynamic>>? zveData,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {
+            #personId: personId,
+            #passdaten: passdaten,
+            #userEmailAddresses: userEmailAddresses,
+            #clubEmailAddresses: clubEmailAddresses,
+            #zweitmitgliedschaften: zweitmitgliedschaften,
+            #zveData: zveData,
           },
         ),
         returnValue: _i2.Future<void>.value(),

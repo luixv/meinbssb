@@ -1114,7 +1114,171 @@ void main() {
       });
     });
 
-    // Email validation tests commented out until mocks are regenerated
-    // group('Email Validation', () { ... });
+    group('Email Validation', () {
+      test('createEmailValidationEntry delegates to postgrest service', () async {
+        when(mockPostgrestService.createEmailValidationEntry(
+          personId: anyNamed('personId'),
+          email: anyNamed('email'),
+          emailType: anyNamed('emailType'),
+          verificationToken: anyNamed('verificationToken'),
+        ),).thenAnswer((_) async {});
+
+        await apiService.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        );
+
+        verify(mockPostgrestService.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        ),).called(1);
+      });
+
+      test('getEmailValidationByToken delegates to postgrest service', () async {
+        final expectedEntry = {
+          'id': 1,
+          'person_id': '123',
+          'email': 'test@example.com',
+          'emailtype': 'private',
+          'verification_token': 'token123',
+          'validated': false,
+        };
+        when(mockPostgrestService.getEmailValidationByToken('token123'))
+            .thenAnswer((_) async => expectedEntry);
+
+        final result = await apiService.getEmailValidationByToken('token123');
+        expect(result, equals(expectedEntry));
+        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+      });
+
+      test('getEmailValidationByToken returns null when not found', () async {
+        when(mockPostgrestService.getEmailValidationByToken('token123'))
+            .thenAnswer((_) async => null);
+
+        final result = await apiService.getEmailValidationByToken('token123');
+        expect(result, isNull);
+        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+      });
+
+      test('markEmailValidationAsValidated delegates to postgrest service', () async {
+        when(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.markEmailValidationAsValidated('token123');
+        expect(result, isTrue);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+      });
+
+      test('markEmailValidationAsValidated returns false on error', () async {
+        when(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .thenAnswer((_) async => false);
+
+        final result = await apiService.markEmailValidationAsValidated('token123');
+        expect(result, isFalse);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+      });
+
+      test('sendEmailValidationNotifications sends notifications successfully', () async {
+        when(mockEmailService.sendEmailValidationNotifications(
+          personId: anyNamed('personId'),
+          email: anyNamed('email'),
+          firstName: anyNamed('firstName'),
+          lastName: anyNamed('lastName'),
+          title: anyNamed('title'),
+          emailType: anyNamed('emailType'),
+          verificationToken: anyNamed('verificationToken'),
+        ),).thenAnswer((_) async {});
+
+        await apiService.sendEmailValidationNotifications(
+          personId: '123',
+          email: 'test@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          title: 'Dr.',
+          emailType: 'private',
+          verificationToken: 'token123',
+        );
+
+        verify(mockEmailService.sendEmailValidationNotifications(
+          personId: '123',
+          email: 'test@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          title: 'Dr.',
+          emailType: 'private',
+          verificationToken: 'token123',
+        ),).called(1);
+      });
+    });
+
+    group('Starting Rights Change Notifications', () {
+      setUp(() {
+        // Common setup for all tests in this group
+        when(mockUserService.fetchPassdatenFromZMI(123))
+            .thenAnswer((_) async => {'personId': 123, 'passnummer': '12345678'});
+        when(mockUserService.fetchZweitmitgliedschaftenFromZMI(123))
+            .thenAnswer((_) async => [{'vereinId': 1, 'vereinName': 'Test Verein'}]);
+        when(mockUserService.fetchVereinFromZMI(401006))
+            .thenAnswer((_) async => {'vereinId': 401006, 'vereinName': 'Test Verein'});
+        when(mockUserService.fetchZVEDataFromZMI(123))
+            .thenAnswer((_) async => [{'zvId': 1, 'disziplinId': 1}]);
+      });
+
+      test('fetchPassdatenFromZMI returns pass data', () async {
+        final result = await apiService.fetchPassdatenFromZMI(123);
+        expect(result, isA<Map<String, dynamic>>());
+        expect(result?['personId'], equals(123));
+        expect(result?['passnummer'], equals('12345678'));
+        verify(mockUserService.fetchPassdatenFromZMI(123)).called(1);
+      });
+
+      test('fetchZweitmitgliedschaftenFromZMI returns memberships', () async {
+        final result = await apiService.fetchZweitmitgliedschaftenFromZMI(123);
+        expect(result, isA<List<Map<String, dynamic>>>());
+        expect(result.first['vereinId'], equals(1));
+        expect(result.first['vereinName'], equals('Test Verein'));
+        verify(mockUserService.fetchZweitmitgliedschaftenFromZMI(123)).called(1);
+      });
+
+      test('fetchVereinFromZMI returns club data', () async {
+        final result = await apiService.fetchVereinFromZMI(401006);
+        expect(result, isA<Map<String, dynamic>>());
+        expect(result?['vereinId'], equals(401006));
+        expect(result?['vereinName'], equals('Test Verein'));
+        verify(mockUserService.fetchVereinFromZMI(401006)).called(1);
+      });
+
+      test('fetchZVEDataFromZMI returns ZVE data', () async {
+        final result = await apiService.fetchZVEDataFromZMI(123);
+        expect(result, isA<List<Map<String, dynamic>>>());
+        expect(result.first['zvId'], equals(1));
+        expect(result.first['disziplinId'], equals(1));
+        verify(mockUserService.fetchZVEDataFromZMI(123)).called(1);
+      });
+
+      test('sendStartingRightsChangeNotifications handles missing pass data', () async {
+        // Setup - return null for pass data
+        when(mockUserService.fetchPassdatenFromZMI(123))
+            .thenAnswer((_) async => null);
+
+        // Execute
+        await apiService.sendStartingRightsChangeNotifications(personId: 123);
+
+        // Verify - should not call email service if pass data is missing
+        verify(mockUserService.fetchPassdatenFromZMI(123)).called(1);
+        verifyNever(mockEmailService.sendStartingRightsChangeNotifications(
+          personId: anyNamed('personId'),
+          passdaten: anyNamed('passdaten'),
+          userEmailAddresses: anyNamed('userEmailAddresses'),
+          clubEmailAddresses: anyNamed('clubEmailAddresses'),
+          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+          zveData: anyNamed('zveData'),
+        ),);
+      });
+    });
   });
 }

@@ -635,4 +635,73 @@ class UserService {
       return [];
     }
   }
+
+  /// Fetches detailed pass data from ZMI API for starting rights notifications
+  Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int personId) async {
+    try {
+      final endpoint = 'Passdaten/$personId';
+      final response = await _httpClient.get(endpoint);
+      
+      if (response is List && response.isNotEmpty) {
+        return response.first as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logError('Error fetching Passdaten from ZMI: $e');
+      return null;
+    }
+  }
+
+  /// Fetches secondary club memberships from ZMI API
+  Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(int personId) async {
+    try {
+      final endpoint = 'Zweitmitgliedschaften/$personId';
+      final response = await _httpClient.get(endpoint);
+      
+      if (response is List) {
+        return response.cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      LoggerService.logError('Error fetching Zweitmitgliedschaften from ZMI: $e');
+      return [];
+    }
+  }
+
+  /// Fetches club details from ZMI API
+  Future<Map<String, dynamic>?> fetchVereinFromZMI(int vereinNr) async {
+    try {
+      final endpoint = 'Verein/$vereinNr';
+      final response = await _httpClient.get(endpoint);
+      
+      if (response is List && response.isNotEmpty) {
+        return response.first as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      LoggerService.logError('Error fetching Verein from ZMI: $e');
+      return null;
+    }
+  }
+
+  /// Fetches ZVE data (Zweitvereine with disciplines) from ZMI API
+  Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int personId) async {
+    try {
+      final baseUrl =
+          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final endpoint = 'PassdatenAkzeptierterOderAktiverPass/$personId';
+      final response = await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      
+      if (response is Map<String, dynamic> && response.containsKey('ZVEs')) {
+        final zves = response['ZVEs'];
+        if (zves is List) {
+          return zves.cast<Map<String, dynamic>>();
+        }
+      }
+      return [];
+    } catch (e) {
+      LoggerService.logError('Error fetching ZVE data from ZMI: $e');
+      return [];
+    }
+  }
 }
