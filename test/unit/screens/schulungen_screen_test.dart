@@ -67,6 +67,7 @@ void main() {
       webGruppe: 1, // Jugend
       veranstaltungsBezirk: 1,
       fuerVerlaengerungen: false,
+      fuerVuelVerlaengerungen: false,
       anmeldeErlaubt: 1,
       verbandsInternPasswort: '',
       bezeichnung: 'Test Schulung',
@@ -109,6 +110,7 @@ void main() {
       webGruppe: 2, // Jugend
       veranstaltungsBezirk: 2,
       fuerVerlaengerungen: true,
+      fuerVuelVerlaengerungen: true,
       anmeldeErlaubt: 1,
       verbandsInternPasswort: '',
       bezeichnung: 'Jugend Schulung',
@@ -152,6 +154,7 @@ void main() {
       webGruppe: 3, // Sport
       veranstaltungsBezirk: 3,
       fuerVerlaengerungen: false,
+      fuerVuelVerlaengerungen: false,
       anmeldeErlaubt: 1,
       verbandsInternPasswort: '',
       bezeichnung: 'Sport Schulung',
@@ -198,6 +201,7 @@ void main() {
       String? ort,
       String? titel,
       bool? fuerVerlaengerungen,
+      bool? fuerVuelVerlaengerungen,
     }) {
       return MaterialApp(
         home: MultiProvider(
@@ -218,6 +222,7 @@ void main() {
             ort: ort,
             titel: titel,
             fuerVerlaengerungen: fuerVerlaengerungen,
+            fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
           ),
         ),
       );
@@ -226,6 +231,7 @@ void main() {
     testWidgets('renders without crashing', (WidgetTester tester) async {
       when(
         mockApiService.fetchSchulungstermine(
+          any,
           any,
           any,
           any,
@@ -243,6 +249,7 @@ void main() {
         (WidgetTester tester) async {
       when(
         mockApiService.fetchSchulungstermine(
+          any,
           any,
           any,
           any,
@@ -270,6 +277,7 @@ void main() {
           any,
           any,
           any,
+          any,
         ),
       ).thenThrow(Exception('API Error'));
 
@@ -290,6 +298,7 @@ void main() {
           any,
           any,
           any,
+          any,
         ),
       ).thenAnswer((_) async => sampleSchulungstermine);
 
@@ -306,7 +315,7 @@ void main() {
     });
 
     testWidgets('displays correct date format', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
+      when(mockApiService.fetchSchulungstermine(any, any, any, any, any))
           .thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
@@ -319,7 +328,7 @@ void main() {
 
     testWidgets('displays webGruppe labels correctly',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
+      when(mockApiService.fetchSchulungstermine(any, any, any, any, any))
           .thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
@@ -332,7 +341,7 @@ void main() {
 
     testWidgets('filters by webGruppe when provided',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
+      when(mockApiService.fetchSchulungstermine(any, any, any, any, any))
           .thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(webGruppe: 1)); // Wettbewerbe
@@ -345,7 +354,7 @@ void main() {
 
     testWidgets('filters by bezirkId when provided',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
+      when(mockApiService.fetchSchulungstermine(any, any, any, any, any))
           .thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(bezirkId: 1));
@@ -357,8 +366,15 @@ void main() {
     });
 
     testWidgets('filters by ort when provided', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(ort: 'München'));
       await tester.pumpAndSettle();
@@ -369,8 +385,15 @@ void main() {
     });
 
     testWidgets('filters by titel when provided', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(titel: 'Test'));
       await tester.pumpAndSettle();
@@ -382,8 +405,15 @@ void main() {
 
     testWidgets('filters by fuerVerlaengerungen when provided',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(fuerVerlaengerungen: true));
       await tester.pumpAndSettle();
@@ -395,8 +425,15 @@ void main() {
 
     testWidgets('shows correct FAB colors based on anmeldungenGesperrt',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -408,8 +445,15 @@ void main() {
 
     testWidgets('shows empty state when no results',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => []);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -423,8 +467,15 @@ void main() {
 
     testWidgets('handles null userData gracefully',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => []);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(userData: null));
       await tester.pumpAndSettle();
@@ -454,20 +505,41 @@ void main() {
     testWidgets('calls API with correct date format',
         (WidgetTester tester) async {
       final testDate = DateTime(2024, 6, 15);
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => []);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(searchDate: testDate));
       await tester.pumpAndSettle();
 
-      verify(mockApiService.fetchSchulungstermine('15.06.2024', any, any, any))
-          .called(1);
+      verify(
+        mockApiService.fetchSchulungstermine(
+          '15.06.2024',
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).called(1);
     });
 
     testWidgets('displays correct number of available spots',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -478,8 +550,15 @@ void main() {
 
     testWidgets('handles multiple filter combinations',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(
         createTestWidget(
@@ -501,8 +580,15 @@ void main() {
 
     testWidgets('shows dialog when FAB is pressed',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -521,8 +607,15 @@ void main() {
     testWidgets(
         'shows gesperrt indicator in dialog when anmeldungenGesperrt is true',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -555,8 +648,15 @@ void main() {
 
     testWidgets('shows correct content priority in dialog',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -592,8 +692,15 @@ void main() {
 
     testWidgets('shows HTML content when lehrgangsinhaltHtml is available',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -647,14 +754,22 @@ void main() {
         webGruppe: 3, // Überfachlich
         veranstaltungsBezirk: 4,
         fuerVerlaengerungen: false,
+        fuerVuelVerlaengerungen: false,
         anmeldeErlaubt: 1,
         verbandsInternPasswort: '',
         bezeichnung: 'Text Only Schulung',
         angemeldeteTeilnehmer: 2,
       );
 
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => [textOnlySchulung]);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [textOnlySchulung]);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -708,14 +823,22 @@ void main() {
         webGruppe: 2, // Verbandsintern
         veranstaltungsBezirk: 5,
         fuerVerlaengerungen: false,
+        fuerVuelVerlaengerungen: false,
         anmeldeErlaubt: 1,
         verbandsInternPasswort: '',
         bezeichnung: 'Bemerkung Only Schulung',
         angemeldeteTeilnehmer: 1,
       );
 
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => [bemerkungOnlySchulung]);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [bemerkungOnlySchulung]);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -731,8 +854,15 @@ void main() {
 
     testWidgets('handles case insensitive filtering',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget(ort: 'münchen')); // lowercase
       await tester.pumpAndSettle();
@@ -742,8 +872,15 @@ void main() {
     });
 
     testWidgets('handles partial text filtering', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester
           .pumpWidget(createTestWidget(titel: 'Schulung')); // partial match
@@ -755,8 +892,15 @@ void main() {
     });
 
     testWidgets('handles zero values correctly', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -808,14 +952,22 @@ void main() {
         webGruppe: 0, // Alle
         veranstaltungsBezirk: 6,
         fuerVerlaengerungen: false,
+        fuerVuelVerlaengerungen: false,
         anmeldeErlaubt: 1,
         verbandsInternPasswort: '',
         bezeichnung: 'Full Capacity Schulung',
         angemeldeteTeilnehmer: 10, // Full capacity
       );
 
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => [fullCapacitySchulung]);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [fullCapacitySchulung]);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -868,14 +1020,22 @@ void main() {
         webGruppe: 999, // Unknown webGruppe
         veranstaltungsBezirk: 7,
         fuerVerlaengerungen: false,
+        fuerVuelVerlaengerungen: false,
         anmeldeErlaubt: 1,
         verbandsInternPasswort: '',
         bezeichnung: 'Unknown WebGruppe Schulung',
         angemeldeteTeilnehmer: 3,
       );
 
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => [unknownWebGruppeSchulung]);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [unknownWebGruppeSchulung]);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -884,8 +1044,15 @@ void main() {
     });
 
     testWidgets('handles decimal costs correctly', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -901,8 +1068,15 @@ void main() {
 
     testWidgets('handles empty bemerkung in list view',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -914,8 +1088,15 @@ void main() {
 
     testWidgets('handles multiple rapid API calls',
         (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -927,8 +1108,15 @@ void main() {
     });
 
     testWidgets('handles different screen sizes', (WidgetTester tester) async {
-      when(mockApiService.fetchSchulungstermine(any, any, any, any))
-          .thenAnswer((_) async => sampleSchulungstermine);
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
 
       // Test with a smaller screen size
       tester.view.physicalSize = const Size(400, 600);

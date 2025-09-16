@@ -772,6 +772,7 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
     String? webGruppe,
     String? bezirk,
     String? fuerVerlaengerung,
+    String? fuerVuelVerlaengerung,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -781,6 +782,7 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
             webGruppe,
             bezirk,
             fuerVerlaengerung,
+            fuerVuelVerlaengerung,
           ],
         ),
         returnValue: _i5.Future<List<_i20.Schulungstermin>>.value(
@@ -2759,6 +2761,48 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           ),
         )),
       ) as _i5.Future<_i8.Response>);
+
+  @override
+  _i5.Future<void> createEmailValidationEntry({
+    required String? personId,
+    required String? email,
+    required String? emailType,
+    required String? verificationToken,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEmailValidationEntry,
+          [],
+          {
+            #personId: personId,
+            #email: email,
+            #emailType: emailType,
+            #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<Map<String, dynamic>?> getEmailValidationByToken(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getEmailValidationByToken,
+          [token],
+        ),
+        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
+      ) as _i5.Future<Map<String, dynamic>?>);
+
+  @override
+  _i5.Future<bool> markEmailValidationAsValidated(String? verificationToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markEmailValidationAsValidated,
+          [verificationToken],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
   _i5.Future<void> createEmailValidationEntry({

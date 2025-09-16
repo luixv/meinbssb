@@ -120,17 +120,18 @@ class TrainingService {
   }
 
 /* 
-/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}
+/Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}/{FuerVuelVerlaengerung}
 */
   Future<List<Schulungstermin>> fetchSchulungstermine(
     String abDatum,
     String webGruppe,
     String bezirk,
     String fuerVerlaengerung,
+    String fuerVuelVerlaengerung,
   ) async {
     try {
       String endpoint =
-          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*';
+          'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*/$fuerVuelVerlaengerung';
 
       LoggerService.logInfo(
         'endpoint $endpoint',

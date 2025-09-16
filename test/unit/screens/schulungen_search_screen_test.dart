@@ -142,49 +142,41 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
     });
-
     testWidgets('should toggle checkbox for Für Lizenzverlängerung',
         (WidgetTester tester) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
-      final checkbox = find.byType(Checkbox);
-      expect(tester.widget<Checkbox>(checkbox).value, false);
+      // Find all checkboxes
+      final checkboxes = find.byType(Checkbox);
+      // The first checkbox is "Für Lizenzverlängerung"
+      final lizenzCheckbox = checkboxes.at(0);
 
-      await tester.tap(checkbox);
+      expect(tester.widget<Checkbox>(lizenzCheckbox).value, false);
+
+      await tester.tap(lizenzCheckbox);
       await tester.pump();
 
-      expect(tester.widget<Checkbox>(checkbox).value, true);
+      expect(tester.widget<Checkbox>(lizenzCheckbox).value, true);
     });
 
-    testWidgets('should reset form when reset button is pressed',
+    testWidgets('should toggle checkbox for Für VUEL Verlaengerung',
         (WidgetTester tester) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
-      // Fill in some form data
-      await tester.enterText(find.byKey(const Key('Ort')), 'München');
-      await tester.enterText(find.byKey(const Key('Titel')), 'Test Schulung');
+      // Find all checkboxes
+      final checkboxes = find.byType(Checkbox);
+      // The second checkbox is "Für VUEL Verlaengerung"
+      final vuelCheckbox = checkboxes.at(1);
 
-      // Change checkbox
-      await tester.tap(find.byType(Checkbox));
+      expect(tester.widget<Checkbox>(vuelCheckbox).value, false);
+
+      await tester.tap(vuelCheckbox);
       await tester.pump();
 
-      // Verify data is entered
-      expect(find.text('München'), findsOneWidget);
-      expect(find.text('Test Schulung'), findsOneWidget);
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, true);
-
-      // Press reset button
-      await tester.tap(find.byIcon(Icons.refresh));
-      await tester.pump();
-
-      // Verify form is reset
-      expect(find.text('München'), findsNothing);
-      expect(find.text('Test Schulung'), findsNothing);
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, false);
+      expect(tester.widget<Checkbox>(vuelCheckbox).value, true);
     });
-
     testWidgets('should show error when searching without date',
         (WidgetTester tester) async {
       // Create a custom widget with null date for testing

@@ -30,11 +30,10 @@ class UserService {
     try {
       String personIdStr = personId.toString();
 
-      String endpoint = 'PassdatenAkzeptierterOderAktiverPass/$personIdStr';
-
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
+      final endpoint = 'PassdatenAkzeptierterOderAktiverPass/$personIdStr';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
 

@@ -112,6 +112,7 @@ void main() {
           webGruppe: 1,
           veranstaltungsBezirk: 1,
           fuerVerlaengerungen: false,
+          fuerVuelVerlaengerungen: false,
           anmeldeErlaubt: 1,
           verbandsInternPasswort: '',
           bezeichnung: 'Training 1',

@@ -253,12 +253,14 @@ class ApiService {
     String webGruppe,
     String bezirk,
     String fuerVerlaengerung,
+    String fuerVuelVerlaengerung,
   ) async {
     return _trainingService.fetchSchulungstermine(
       abDatum,
       webGruppe,
       bezirk,
       fuerVerlaengerung,
+      fuerVuelVerlaengerung,
     );
   }
 

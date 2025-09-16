@@ -14,8 +14,8 @@ class BankService {
   /// Fetches bank data for a given weblogin ID.
   Future<List<BankData>> fetchBankData(int webloginId) async {
     try {
-      final dynamic response =
-          await _httpClient.get('BankdatenMyBSSB/$webloginId');
+      final endpoint = 'BankdatenMyBSSB/$webloginId';
+      final dynamic response = await _httpClient.get(endpoint);
       if (response is List) {
         return response
             .map((item) {
@@ -40,8 +40,9 @@ class BankService {
   /// Registers new bank data.
   Future<bool> registerBankData(BankData bankData) async {
     try {
+      const endpoint = 'BankdatenMyBSSB';
       final Map<String, dynamic> response = await _httpClient.post(
-        'BankdatenMyBSSB',
+        endpoint,
         bankData.toJson(),
       );
 
@@ -65,8 +66,9 @@ class BankService {
   /// Delete bank data.
   Future<bool> deleteBankData(BankData bankData) async {
     try {
+      final endpoint = 'BankdatenMyBSSB/${bankData.webloginId}';
       final Map<String, dynamic> response = await _httpClient.delete(
-        'BankdatenMyBSSB/${bankData.webloginId}',
+        endpoint,
         body: {},
       );
 
@@ -74,7 +76,7 @@ class BankService {
         LoggerService.logInfo(
           'Bank data deleted successfully for webloginId: ${bankData.webloginId}',
         );
-      
+
         return true;
       } else {
         LoggerService.logWarning(
