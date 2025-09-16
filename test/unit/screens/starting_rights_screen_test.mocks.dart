@@ -1033,49 +1033,6 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchPassdatenFromZMI,
-          [personId],
-        ),
-        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
-      ) as _i5.Future<Map<String, dynamic>?>);
-
-  @override
-  _i5.Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(
-          int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchZweitmitgliedschaftenFromZMI,
-          [personId],
-        ),
-        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i5.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i5.Future<Map<String, dynamic>?> fetchVereinFromZMI(int? vereinNr) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchVereinFromZMI,
-          [vereinNr],
-        ),
-        returnValue: _i5.Future<Map<String, dynamic>?>.value(),
-      ) as _i5.Future<Map<String, dynamic>?>);
-
-  @override
-  _i5.Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchZVEDataFromZMI,
-          [personId],
-        ),
-        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i5.Future<List<Map<String, dynamic>>>);
-
-  @override
   _i5.Future<void> sendStartingRightsChangeNotifications(
           {required int? personId}) =>
       (super.noSuchMethod(

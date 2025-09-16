@@ -1306,49 +1306,6 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
       ) as _i7.Future<void>);
 
   @override
-  _i7.Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchPassdatenFromZMI,
-          [personId],
-        ),
-        returnValue: _i7.Future<Map<String, dynamic>?>.value(),
-      ) as _i7.Future<Map<String, dynamic>?>);
-
-  @override
-  _i7.Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(
-          int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchZweitmitgliedschaftenFromZMI,
-          [personId],
-        ),
-        returnValue: _i7.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i7.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i7.Future<Map<String, dynamic>?> fetchVereinFromZMI(int? vereinNr) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchVereinFromZMI,
-          [vereinNr],
-        ),
-        returnValue: _i7.Future<Map<String, dynamic>?>.value(),
-      ) as _i7.Future<Map<String, dynamic>?>);
-
-  @override
-  _i7.Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int? personId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchZVEDataFromZMI,
-          [personId],
-        ),
-        returnValue: _i7.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i7.Future<List<Map<String, dynamic>>>);
-
-  @override
   _i7.Future<void> sendStartingRightsChangeNotifications(
           {required int? personId}) =>
       (super.noSuchMethod(
@@ -1715,11 +1672,11 @@ class MockEmailService extends _i1.Mock implements _i27.EmailService {
   @override
   _i7.Future<void> sendStartingRightsChangeNotifications({
     required int? personId,
-    required Map<String, dynamic>? passdaten,
+    required _i9.UserData? passdaten,
     required List<String>? userEmailAddresses,
     required List<String>? clubEmailAddresses,
-    required List<Map<String, dynamic>>? zweitmitgliedschaften,
-    required List<Map<String, dynamic>>? zveData,
+    required List<_i12.ZweitmitgliedschaftData>? zweitmitgliedschaften,
+    required _i10.PassdatenAkzeptOrAktiv? zveData,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

@@ -8,6 +8,10 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
+import 'package:meinbssb/models/zve_data.dart';
 import 'config_service.dart';
 import 'logger_service.dart';
 import 'http_client.dart';
@@ -579,11 +583,11 @@ class EmailService {
 
   Future<void> sendStartingRightsChangeNotifications({
     required int personId,
-    required Map<String, dynamic> passdaten,
+    required UserData passdaten,
     required List<String> userEmailAddresses,
     required List<String> clubEmailAddresses,
-    required List<Map<String, dynamic>> zweitmitgliedschaften,
-    required List<Map<String, dynamic>> zveData,
+    required List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    required PassdatenAkzeptOrAktiv zveData,
   }) async {
     try {
       final from = await getFromEmail();
@@ -596,13 +600,13 @@ class EmailService {
       }
 
       // Extract data from passdaten
-      final passNumber = passdaten['PASSNUMMER']?.toString() ?? '';
-      final title = passdaten['TITEL']?.toString() ?? '';
-      final firstName = passdaten['VORNAME']?.toString() ?? '';
-      final lastName = passdaten['NAMEN']?.toString() ?? '';
-      final street = passdaten['STRASSE']?.toString() ?? '';
-      final zipCode = passdaten['PLZ']?.toString() ?? '';
-      final city = passdaten['ORT']?.toString() ?? '';
+      final passNumber = passdaten.passnummer;
+      final title = passdaten.titel ?? '';
+      final firstName = passdaten.vorname;
+      final lastName = passdaten.namen;
+      final street = passdaten.strasse ?? '';
+      final zipCode = passdaten.plz ?? '';
+      final city = passdaten.ort ?? '';
 
       // Format Zweitvereine information
       final zweitvereine = _formatZweitvereine(zweitmitgliedschaften, zveData);
@@ -667,39 +671,37 @@ class EmailService {
 
   /// Helper method to format Zweitvereine information for email template
   String _formatZweitvereine(
-    List<Map<String, dynamic>> zweitmitgliedschaften,
-    List<Map<String, dynamic>> zveData,
+    List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    PassdatenAkzeptOrAktiv zveData,
   ) {
     if (zweitmitgliedschaften.isEmpty) {
       return '';
     }
 
     // Group ZVE data by VEREINNR
-    final Map<int, List<Map<String, dynamic>>> zveByVerein = {};
-    for (final zve in zveData) {
-      final vereinNr = zve['VEREINNR'] as int?;
-      if (vereinNr != null) {
-        zveByVerein.putIfAbsent(vereinNr, () => []);
-        zveByVerein[vereinNr]!.add(zve);
-      }
+    final Map<int, List<ZVE>> zveByVerein = {};
+    for (final zve in zveData.zves) {
+      final vereinNr = zve.vereinNr;
+      zveByVerein.putIfAbsent(vereinNr, () => []);
+      zveByVerein[vereinNr]!.add(zve);
     }
 
     final StringBuffer buffer = StringBuffer();
     buffer.writeln('<h3 style="color: #0B4B10; margin-top: 20px;">Zweitvereine:</h3>');
 
     for (final membership in zweitmitgliedschaften) {
-      final vereinNr = membership['VEREINNR'] as int?;
-      final vereinName = membership['VEREINNAME']?.toString() ?? '';
+      final vereinNr = membership.vereinNr;
+      final vereinName = membership.vereinName;
       
       if (vereinName.isNotEmpty) {
         buffer.writeln('<p style="margin: 5px 0; font-weight: bold;">$vereinName</p>');
         
         // Check if this Verein has disciplines in ZVE data
-        if (vereinNr != null && zveByVerein.containsKey(vereinNr)) {
+        if (zveByVerein.containsKey(vereinNr)) {
           final disciplines = zveByVerein[vereinNr]!;
           for (final discipline in disciplines) {
-            final disziplinNr = discipline['DISZIPLINNR']?.toString() ?? '';
-            final disziplin = discipline['DISZIPLIN']?.toString() ?? '';
+            final disziplinNr = discipline.disziplinNr ?? '';
+            final disziplin = discipline.disziplin ?? '';
             if (disziplinNr.isNotEmpty && disziplin.isNotEmpty) {
               buffer.writeln('<p style="margin: 5px 0; margin-left: 20px;">$disziplinNr $disziplin</p>');
             }

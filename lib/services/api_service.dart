@@ -595,29 +595,12 @@ class ApiService {
     );
   }
 
-  // Starting rights change notification methods
-  Future<Map<String, dynamic>?> fetchPassdatenFromZMI(int personId) async {
-    return _userService.fetchPassdatenFromZMI(personId);
-  }
-
-  Future<List<Map<String, dynamic>>> fetchZweitmitgliedschaftenFromZMI(int personId) async {
-    return _userService.fetchZweitmitgliedschaftenFromZMI(personId);
-  }
-
-  Future<Map<String, dynamic>?> fetchVereinFromZMI(int vereinNr) async {
-    return _userService.fetchVereinFromZMI(vereinNr);
-  }
-
-  Future<List<Map<String, dynamic>>> fetchZVEDataFromZMI(int personId) async {
-    return _userService.fetchZVEDataFromZMI(personId);
-  }
-
   Future<void> sendStartingRightsChangeNotifications({
     required int personId,
   }) async {
     try {
       // 1. Get pass data from ZMI API
-      final passdaten = await fetchPassdatenFromZMI(personId);
+      final passdaten = await fetchPassdaten(personId);
       if (passdaten == null) {
         LoggerService.logError('Could not fetch Passdaten from ZMI for person $personId');
         return;
@@ -627,40 +610,37 @@ class ApiService {
       final userEmailAddresses = (await _emailService.getEmailAddressesByPersonId(personId.toString())).toSet().toList();
 
       // 3. Get ERSTVEREINNR from pass data
-      final erstVereinNr = passdaten['VEREINNR'] as int?;
+      final erstVereinNr = passdaten.vereinNr;
       
       // 4. Get secondary club memberships
-      final zweitmitgliedschaften = await fetchZweitmitgliedschaftenFromZMI(personId);
+      final zweitmitgliedschaften = await fetchZweitmitgliedschaften(personId);
       
       // 5. Get ZVE data (Zweitvereine with disciplines)
-      final zveData = await fetchZVEDataFromZMI(personId);
+      final zveData = await fetchPassdatenAkzeptierterOderAktiverPass(personId);
       
       // 6. Collect all club numbers (first club + secondary clubs)
-      final clubNumbers = <int>[];
-      if (erstVereinNr != null) {
-        clubNumbers.add(erstVereinNr);
-      }
+      final vereinNumbers = <int>[];
+      vereinNumbers.add(erstVereinNr);
       for (final membership in zweitmitgliedschaften) {
-        final vereinNr = membership['VEREINNR'] as int?;
-        if (vereinNr != null) {
-          clubNumbers.add(vereinNr);
-        }
+        final vereinNr = membership.vereinNr;
+        vereinNumbers.add(vereinNr);
       }
 
       // 7. Get email addresses from all clubs
       final clubEmailAddresses = <String>[];
-      for (final vereinNr in clubNumbers) {
-        final vereinData = await fetchVereinFromZMI(vereinNr);
-        if (vereinData != null) {
-          final email = vereinData['EMAIL']?.toString();
-          final pEmail = vereinData['P_EMAIL']?.toString();
-          
-          if (email != null && email.isNotEmpty && email != 'null') {
-            clubEmailAddresses.add(email);
-          }
-          if (pEmail != null && pEmail.isNotEmpty && pEmail != 'null') {
-            clubEmailAddresses.add(pEmail);
-          }
+      for (final vereinNr in vereinNumbers) {
+        final vereinData = await fetchVerein(vereinNr);
+        if (vereinData.isEmpty) {
+          continue;
+        }
+        final email = vereinData[0].email;
+        final pEmail = vereinData[0].pEmail;
+        
+        if (email != null && email.isNotEmpty && email != 'null') {
+          clubEmailAddresses.add(email);
+        }
+        if (pEmail != null && pEmail.isNotEmpty && pEmail != 'null') {
+          clubEmailAddresses.add(pEmail);
         }
       }
 
@@ -671,7 +651,7 @@ class ApiService {
         userEmailAddresses: userEmailAddresses,
         clubEmailAddresses: clubEmailAddresses,
         zweitmitgliedschaften: zweitmitgliedschaften,
-        zveData: zveData,
+        zveData: zveData!,
       );
 
       LoggerService.logInfo('Starting rights change notifications sent for person $personId');
