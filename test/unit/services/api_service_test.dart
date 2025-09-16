@@ -725,7 +725,7 @@ void main() {
         final expectedData = [
           const Verein(
             id: 1,
-            vereinsNr: '1',
+            vereinsNr: 1,
             name: 'Test Verein',
           ),
         ];
@@ -741,7 +741,7 @@ void main() {
         final expectedData = [
           const Verein(
             id: 1,
-            vereinsNr: '1',
+            vereinsNr: 1,
             name: 'Test Verein',
           ),
         ];

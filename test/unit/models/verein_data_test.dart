@@ -6,7 +6,7 @@ void main() {
     test('creates Verein from JSON with all fields', () {
       final json = {
         'VEREINID': 123,
-        'VEREINNR': '456',
+        'VEREINNR': 456,
         'VEREINNAME': 'Test Club',
         'STRASSE': 'Test Street 1',
         'PLZ': '12345',
@@ -22,14 +22,14 @@ void main() {
         'P_ORT': 'Contact City',
         'P_EMAIL': 'contact@club.com',
         'GAUID': 1,
-        'GAUNR': 'G1',
+        'GAUNR': 1,
         'GAUNAME': 'Test Gau',
         'BEZIRKID': 2,
-        'BEZIRKNR': 'B2',
+        'BEZIRKNR': 2,
         'BEZIRKNAME': 'Test Bezirk',
         'LAT': 48.123,
         'LON': 11.456,
-        'GEOCODEQUELLE': 'Google Maps',
+        'GEOCODEQUELLE': 1,
         'FACEBOOK': 'facebook.com/testclub',
         'INSTAGRAM': 'instagram.com/testclub',
         'XTWITTER': 'twitter.com/testclub',
@@ -41,7 +41,7 @@ void main() {
       final verein = Verein.fromJson(json);
 
       expect(verein.id, equals(123));
-      expect(verein.vereinsNr, equals('456'));
+      expect(verein.vereinsNr, equals(456));
       expect(verein.name, equals('Test Club'));
       expect(verein.strasse, equals('Test Street 1'));
       expect(verein.plz, equals('12345'));
@@ -57,14 +57,14 @@ void main() {
       expect(verein.pOrt, equals('Contact City'));
       expect(verein.pEmail, equals('contact@club.com'));
       expect(verein.gauId, equals(1));
-      expect(verein.gauNr, equals('G1'));
+      expect(verein.gauNr, equals(1));
       expect(verein.gauName, equals('Test Gau'));
       expect(verein.bezirkId, equals(2));
-      expect(verein.bezirkNr, equals('B2'));
+      expect(verein.bezirkNr, equals(2));
       expect(verein.bezirkName, equals('Test Bezirk'));
       expect(verein.lat, equals(48.123));
       expect(verein.lon, equals(11.456));
-      expect(verein.geocodeQuelle, equals('Google Maps'));
+      expect(verein.geocodeQuelle, equals(1));
       expect(verein.facebook, equals('facebook.com/testclub'));
       expect(verein.instagram, equals('instagram.com/testclub'));
       expect(verein.xTwitter, equals('twitter.com/testclub'));
@@ -76,14 +76,14 @@ void main() {
     test('creates Verein from JSON with only required fields', () {
       final json = {
         'VEREINID': 123,
-        'VEREINNR': '456',
+        'VEREINNR': 456,
         'VEREINNAME': 'Test Club',
       };
 
       final verein = Verein.fromJson(json);
 
       expect(verein.id, equals(123));
-      expect(verein.vereinsNr, equals('456'));
+      expect(verein.vereinsNr, equals(456));
       expect(verein.name, equals('Test Club'));
       expect(verein.strasse, isNull);
       expect(verein.plz, isNull);
@@ -118,7 +118,7 @@ void main() {
     test('converts Verein to JSON with all fields', () {
       const verein = Verein(
         id: 123,
-        vereinsNr: '456',
+        vereinsNr: 456,
         name: 'Test Club',
         strasse: 'Test Street 1',
         plz: '12345',
@@ -134,14 +134,14 @@ void main() {
         pOrt: 'Contact City',
         pEmail: 'contact@club.com',
         gauId: 1,
-        gauNr: 'G1',
+        gauNr: 1,
         gauName: 'Test Gau',
         bezirkId: 2,
-        bezirkNr: 'B2',
+        bezirkNr: 2,
         bezirkName: 'Test Bezirk',
         lat: 48.123,
         lon: 11.456,
-        geocodeQuelle: 'Google Maps',
+        geocodeQuelle: 1,
         facebook: 'facebook.com/testclub',
         instagram: 'instagram.com/testclub',
         xTwitter: 'twitter.com/testclub',
@@ -153,7 +153,7 @@ void main() {
       final json = verein.toJson();
 
       expect(json['VEREINID'], equals(123));
-      expect(json['VEREINNR'], equals('456'));
+      expect(json['VEREINNR'], equals(456));
       expect(json['VEREINNAME'], equals('Test Club'));
       expect(json['STRASSE'], equals('Test Street 1'));
       expect(json['PLZ'], equals('12345'));
@@ -169,14 +169,14 @@ void main() {
       expect(json['P_ORT'], equals('Contact City'));
       expect(json['P_EMAIL'], equals('contact@club.com'));
       expect(json['GAUID'], equals(1));
-      expect(json['GAUNR'], equals('G1'));
+      expect(json['GAUNR'], equals(1));
       expect(json['GAUNAME'], equals('Test Gau'));
       expect(json['BEZIRKID'], equals(2));
-      expect(json['BEZIRKNR'], equals('B2'));
+      expect(json['BEZIRKNR'], equals(2));
       expect(json['BEZIRKNAME'], equals('Test Bezirk'));
       expect(json['LAT'], equals(48.123));
       expect(json['LON'], equals(11.456));
-      expect(json['GEOCODEQUELLE'], equals('Google Maps'));
+      expect(json['GEOCODEQUELLE'], equals(1));
       expect(json['FACEBOOK'], equals('facebook.com/testclub'));
       expect(json['INSTAGRAM'], equals('instagram.com/testclub'));
       expect(json['XTWITTER'], equals('twitter.com/testclub'));
@@ -188,14 +188,14 @@ void main() {
     test('converts Verein to JSON with only required fields', () {
       const verein = Verein(
         id: 123,
-        vereinsNr: '456',
+        vereinsNr: 456,
         name: 'Test Club',
       );
 
       final json = verein.toJson();
 
       expect(json['VEREINID'], equals(123));
-      expect(json['VEREINNR'], equals('456'));
+      expect(json['VEREINNR'], equals(456));
       expect(json['VEREINNAME'], equals('Test Club'));
       expect(json['STRASSE'], isNull);
       expect(json['PLZ'], isNull);
@@ -242,7 +242,7 @@ void main() {
     test('handles null values for optional fields in JSON', () {
       final json = {
         'VEREINID': 123,
-        'VEREINNR': '456',
+        'VEREINNR': 456,
         'VEREINNAME': 'Test Club',
         'STRASSE': null,
         'PLZ': null,
@@ -252,7 +252,7 @@ void main() {
       final verein = Verein.fromJson(json);
 
       expect(verein.id, equals(123));
-      expect(verein.vereinsNr, equals('456'));
+      expect(verein.vereinsNr, equals(456));
       expect(verein.name, equals('Test Club'));
       expect(verein.strasse, isNull);
       expect(verein.plz, isNull);
@@ -262,7 +262,7 @@ void main() {
     test('handles invalid numeric values in JSON', () {
       final json = {
         'VEREINID': 'invalid',
-        'VEREINNR': '456',
+        'VEREINNR': 456,
         'VEREINNAME': 'Test Club',
       };
 
