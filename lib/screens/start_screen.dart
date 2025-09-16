@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:intl/intl.dart';
+
 import 'dart:typed_data';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/screens/logo_widget.dart';
+
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/screens/base_screen_layout.dart';
-import 'personal_pict_upload_screen.dart';
 
-import '../models/schulungstermin_data.dart';
+import '/screens/base_screen_layout.dart';
+import '/screens/logo_widget.dart';
+import '/screens/personal_pict_upload_screen.dart';
+
+import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:intl/intl.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -40,7 +42,7 @@ class StartScreenState extends State<StartScreen> {
   void initState() {
     super.initState();
     _fetchSchulungen();
-    _fetchProfilePicture(); // Fetch profile picture on init
+    _fetchProfilePicture();
 
     LoggerService.logInfo(
       'StartScreen initialized with user: ${widget.userData}',
