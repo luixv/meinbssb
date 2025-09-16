@@ -1057,6 +1057,7 @@ class MockTrainingService extends _i1.Mock implements _i20.TrainingService {
     String? webGruppe,
     String? bezirk,
     String? fuerVerlaengerung,
+    String? fuerVuelVerlaengerung,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1066,6 +1067,7 @@ class MockTrainingService extends _i1.Mock implements _i20.TrainingService {
             webGruppe,
             bezirk,
             fuerVerlaengerung,
+            fuerVuelVerlaengerung,
           ],
         ),
         returnValue: _i3.Future<List<_i21.Schulungstermin>>.value(
