@@ -29,6 +29,7 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i7;
 import 'package:meinbssb/services/api/bank_service.dart' as _i26;
 import 'package:meinbssb/services/api/bezirk_service.dart' as _i37;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i33;
+import 'package:meinbssb/services/api/starting_rights_service.dart' as _i39;
 import 'package:meinbssb/services/api/training_service.dart' as _i20;
 import 'package:meinbssb/services/api/user_service.dart' as _i13;
 import 'package:meinbssb/services/api/verein_service.dart' as _i27;
@@ -2336,4 +2337,27 @@ class MockBezirkService extends _i1.Mock implements _i37.BezirkService {
         returnValue: _i3.Future<List<_i38.BezirkSearchTriple>>.value(
             <_i38.BezirkSearchTriple>[]),
       ) as _i3.Future<List<_i38.BezirkSearchTriple>>);
+}
+
+/// A class which mocks [StartingRightsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockStartingRightsService extends _i1.Mock
+    implements _i39.StartingRightsService {
+  MockStartingRightsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<void> sendStartingRightsChangeNotifications(
+          {required int? personId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {#personId: personId},
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

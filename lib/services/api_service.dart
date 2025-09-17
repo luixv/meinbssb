@@ -12,6 +12,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
+import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
@@ -34,7 +35,6 @@ import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
 import 'core/image_service.dart'; // Make sure this import exists
-import 'core/logger_service.dart';
 import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
@@ -65,6 +65,7 @@ class ApiService {
     required OktoberfestService oktoberfestService,
     required CalendarService calendarService,
     required BezirkService bezirkService,
+    required StartingRightsService startingRightsService,
   })  : _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
@@ -75,7 +76,8 @@ class ApiService {
         _postgrestService = postgrestService,
         _emailService = emailService,
         _oktoberfestService = oktoberfestService,
-        _bezirkService = bezirkService;
+        _bezirkService = bezirkService,
+        _startingRightsService = startingRightsService;
 
   final ImageService _imageService;
   final NetworkService _networkService;
@@ -88,6 +90,7 @@ class ApiService {
   final EmailService _emailService;
   final OktoberfestService _oktoberfestService;
   final BezirkService _bezirkService;
+  final StartingRightsService _startingRightsService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -598,65 +601,8 @@ class ApiService {
   Future<void> sendStartingRightsChangeNotifications({
     required int personId,
   }) async {
-    try {
-      // 1. Get pass data from ZMI API
-      final passdaten = await fetchPassdaten(personId);
-      if (passdaten == null) {
-        LoggerService.logError('Could not fetch Passdaten from ZMI for person $personId');
-        return;
-      }
-
-      // 2. Get user's email addresses
-      final userEmailAddresses = (await _emailService.getEmailAddressesByPersonId(personId.toString())).toSet().toList();
-
-      // 3. Get ERSTVEREINNR from pass data
-      final erstVereinNr = passdaten.vereinNr;
-      
-      // 4. Get secondary club memberships
-      final zweitmitgliedschaften = await fetchZweitmitgliedschaften(personId);
-      
-      // 5. Get ZVE data (Zweitvereine with disciplines)
-      final zveData = await fetchPassdatenAkzeptierterOderAktiverPass(personId);
-      
-      // 6. Collect all club numbers (first club + secondary clubs)
-      final vereinNumbers = <int>[];
-      vereinNumbers.add(erstVereinNr);
-      for (final membership in zweitmitgliedschaften) {
-        final vereinNr = membership.vereinNr;
-        vereinNumbers.add(vereinNr);
-      }
-
-      // 7. Get email addresses from all clubs
-      final clubEmailAddresses = <String>[];
-      for (final vereinNr in vereinNumbers) {
-        final vereinData = await fetchVerein(vereinNr);
-        if (vereinData.isEmpty) {
-          continue;
-        }
-        final email = vereinData[0].email;
-        final pEmail = vereinData[0].pEmail;
-        
-        if (email != null && email.isNotEmpty && email != 'null') {
-          clubEmailAddresses.add(email);
-        }
-        if (pEmail != null && pEmail.isNotEmpty && pEmail != 'null') {
-          clubEmailAddresses.add(pEmail);
-        }
-      }
-
-      // 8. Send notifications
-      await _emailService.sendStartingRightsChangeNotifications(
-        personId: personId,
-        passdaten: passdaten,
-        userEmailAddresses: userEmailAddresses,
-        clubEmailAddresses: clubEmailAddresses,
-        zweitmitgliedschaften: zweitmitgliedschaften,
-        zveData: zveData!,
-      );
-
-      LoggerService.logInfo('Starting rights change notifications sent for person $personId');
-    } catch (e) {
-      LoggerService.logError('Error sending starting rights change notifications: $e');
-    }
+    return _startingRightsService.sendStartingRightsChangeNotifications(
+      personId: personId,
+    );
   }
 }

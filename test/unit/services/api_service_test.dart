@@ -28,6 +28,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
+import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -54,6 +55,7 @@ import 'package:meinbssb/models/person_data.dart';
   OktoberfestService,
   CalendarService,
   BezirkService,
+  StartingRightsService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -74,6 +76,7 @@ void main() {
   late MockOktoberfestService mockOktoberfestService;
   late MockCalendarService mockCalendarService;
   late MockBezirkService mockBezirkService;
+  late MockStartingRightsService mockStartingRightsService;
 
   late HttpClient httpClient;
 
@@ -93,6 +96,7 @@ void main() {
     mockOktoberfestService = MockOktoberfestService();
     mockCalendarService = MockCalendarService();
     mockBezirkService = MockBezirkService();
+    mockStartingRightsService = MockStartingRightsService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -118,6 +122,7 @@ void main() {
       oktoberfestService: mockOktoberfestService,
       calendarService: mockCalendarService,
       bezirkService: mockBezirkService,
+      startingRightsService: mockStartingRightsService,
     );
   });
 
@@ -874,6 +879,7 @@ void main() {
           oktoberfestService: MockOktoberfestService(),
           calendarService: MockCalendarService(),
           bezirkService: MockBezirkService(),
+          startingRightsService: MockStartingRightsService(),
         );
       });
 
@@ -1124,12 +1130,12 @@ void main() {
 
     group('Email Validation', () {
       test('createEmailValidationEntry delegates to postgrest service', () async {
-        when(mockPostgrestService.createEmailValidationEntry(
-          personId: anyNamed('personId'),
-          email: anyNamed('email'),
-          emailType: anyNamed('emailType'),
-          verificationToken: anyNamed('verificationToken'),
-        ),).thenAnswer((_) async {});
+          when(mockPostgrestService.createEmailValidationEntry(
+            personId: anyNamed('personId'),
+            email: anyNamed('email'),
+            emailType: anyNamed('emailType'),
+            verificationToken: anyNamed('verificationToken'),
+          ),).thenAnswer((_) async {});
 
         await apiService.createEmailValidationEntry(
           personId: '123',

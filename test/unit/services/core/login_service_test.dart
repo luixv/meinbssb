@@ -14,6 +14,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
+import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
@@ -40,6 +41,7 @@ import 'login_service_test.mocks.dart';
   OktoberfestService,
   CalendarService,
   BezirkService,
+  StartingRightsService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +63,7 @@ void main() {
   late MockOktoberfestService mockOktoberfestService;
   late MockCalendarService mockCalendarService;
   late MockBezirkService mockBezirkService;
+  late MockStartingRightsService mockStartingRightsService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -82,6 +85,7 @@ void main() {
     mockOktoberfestService = MockOktoberfestService();
     mockCalendarService = MockCalendarService();
     mockBezirkService = MockBezirkService();
+    mockStartingRightsService = MockStartingRightsService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -99,6 +103,7 @@ void main() {
       oktoberfestService: mockOktoberfestService,
       calendarService: mockCalendarService,
       bezirkService: mockBezirkService,
+      startingRightsService: mockStartingRightsService,
     );
   });
 
