@@ -81,6 +81,19 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       _isLoading = false;
     });
 
+    if (success) {
+      // Send email notifications for starting rights changes
+      try {
+        await apiService.sendStartingRightsChangeNotifications(
+          personId: personId!,
+        );
+        LoggerService.logInfo('Starting rights change notifications sent');
+      } catch (e) {
+        LoggerService.logError('Failed to send starting rights change notifications: $e');
+        // Don't fail the save operation if email notifications fail
+      }
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

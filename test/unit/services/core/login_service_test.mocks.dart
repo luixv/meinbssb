@@ -31,6 +31,7 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i15;
 import 'package:meinbssb/services/api/bank_service.dart' as _i29;
 import 'package:meinbssb/services/api/bezirk_service.dart' as _i38;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i34;
+import 'package:meinbssb/services/api/starting_rights_service.dart' as _i40;
 import 'package:meinbssb/services/api/training_service.dart' as _i16;
 import 'package:meinbssb/services/api/user_service.dart' as _i23;
 import 'package:meinbssb/services/api/verein_service.dart' as _i30;
@@ -2143,6 +2144,24 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
       ) as _i2.Future<String?>);
 
   @override
+  _i2.Future<String?> getStartingRightsChangeSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeSubject,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
+  _i2.Future<String?> getStartingRightsChangeContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeContent,
+          [],
+        ),
+        returnValue: _i2.Future<String?>.value(),
+      ) as _i2.Future<String?>);
+
+  @override
   _i2.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2292,6 +2311,32 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
             #title: title,
             #emailType: emailType,
             #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
+
+  @override
+  _i2.Future<void> sendStartingRightsChangeNotifications({
+    required int? personId,
+    required _i21.UserData? passdaten,
+    required List<String>? userEmailAddresses,
+    required List<String>? clubEmailAddresses,
+    required List<_i25.ZweitmitgliedschaftData>? zweitmitgliedschaften,
+    required _i24.PassdatenAkzeptOrAktiv? zveData,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {
+            #personId: personId,
+            #passdaten: passdaten,
+            #userEmailAddresses: userEmailAddresses,
+            #clubEmailAddresses: clubEmailAddresses,
+            #zweitmitgliedschaften: zweitmitgliedschaften,
+            #zveData: zveData,
           },
         ),
         returnValue: _i2.Future<void>.value(),
@@ -2596,4 +2641,27 @@ class MockBezirkService extends _i1.Mock implements _i38.BezirkService {
         returnValue: _i2.Future<List<_i39.BezirkSearchTriple>>.value(
             <_i39.BezirkSearchTriple>[]),
       ) as _i2.Future<List<_i39.BezirkSearchTriple>>);
+}
+
+/// A class which mocks [StartingRightsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockStartingRightsService extends _i1.Mock
+    implements _i40.StartingRightsService {
+  MockStartingRightsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<void> sendStartingRightsChangeNotifications(
+          {required int? personId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {#personId: personId},
+        ),
+        returnValue: _i2.Future<void>.value(),
+        returnValueForMissingStub: _i2.Future<void>.value(),
+      ) as _i2.Future<void>);
 }

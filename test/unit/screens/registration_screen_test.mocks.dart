@@ -5,6 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart' as _i9;
+import 'package:meinbssb/models/user_data.dart' as _i7;
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i8;
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/core/email_service.dart' as _i6;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
@@ -472,6 +475,24 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
       ) as _i5.Future<String?>);
 
   @override
+  _i5.Future<String?> getStartingRightsChangeSubject() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeSubject,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> getStartingRightsChangeContent() => (super.noSuchMethod(
+        Invocation.method(
+          #getStartingRightsChangeContent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
   _i5.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -621,6 +642,32 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
             #title: title,
             #emailType: emailType,
             #verificationToken: verificationToken,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendStartingRightsChangeNotifications({
+    required int? personId,
+    required _i7.UserData? passdaten,
+    required List<String>? userEmailAddresses,
+    required List<String>? clubEmailAddresses,
+    required List<_i8.ZweitmitgliedschaftData>? zweitmitgliedschaften,
+    required _i9.PassdatenAkzeptOrAktiv? zveData,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendStartingRightsChangeNotifications,
+          [],
+          {
+            #personId: personId,
+            #passdaten: passdaten,
+            #userEmailAddresses: userEmailAddresses,
+            #clubEmailAddresses: clubEmailAddresses,
+            #zweitmitgliedschaften: zweitmitgliedschaften,
+            #zveData: zveData,
           },
         ),
         returnValue: _i5.Future<void>.value(),

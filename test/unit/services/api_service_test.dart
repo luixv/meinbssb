@@ -28,6 +28,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
+import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -54,6 +55,7 @@ import 'package:meinbssb/models/person_data.dart';
   OktoberfestService,
   CalendarService,
   BezirkService,
+  StartingRightsService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -74,6 +76,7 @@ void main() {
   late MockOktoberfestService mockOktoberfestService;
   late MockCalendarService mockCalendarService;
   late MockBezirkService mockBezirkService;
+  late MockStartingRightsService mockStartingRightsService;
 
   late HttpClient httpClient;
 
@@ -93,6 +96,7 @@ void main() {
     mockOktoberfestService = MockOktoberfestService();
     mockCalendarService = MockCalendarService();
     mockBezirkService = MockBezirkService();
+    mockStartingRightsService = MockStartingRightsService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -118,6 +122,7 @@ void main() {
       oktoberfestService: mockOktoberfestService,
       calendarService: mockCalendarService,
       bezirkService: mockBezirkService,
+      startingRightsService: mockStartingRightsService,
     );
   });
 
@@ -725,7 +730,7 @@ void main() {
         final expectedData = [
           const Verein(
             id: 1,
-            vereinsNr: '1',
+            vereinsNr: 1,
             name: 'Test Verein',
           ),
         ];
@@ -741,7 +746,7 @@ void main() {
         final expectedData = [
           const Verein(
             id: 1,
-            vereinsNr: '1',
+            vereinsNr: 1,
             name: 'Test Verein',
           ),
         ];
@@ -874,6 +879,7 @@ void main() {
           oktoberfestService: MockOktoberfestService(),
           calendarService: MockCalendarService(),
           bezirkService: MockBezirkService(),
+          startingRightsService: MockStartingRightsService(),
         );
       });
 
@@ -1122,7 +1128,105 @@ void main() {
       });
     });
 
-    // Email validation tests commented out until mocks are regenerated
-    // group('Email Validation', () { ... });
+    group('Email Validation', () {
+      test('createEmailValidationEntry delegates to postgrest service', () async {
+          when(mockPostgrestService.createEmailValidationEntry(
+            personId: anyNamed('personId'),
+            email: anyNamed('email'),
+            emailType: anyNamed('emailType'),
+            verificationToken: anyNamed('verificationToken'),
+          ),).thenAnswer((_) async {});
+
+        await apiService.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        );
+
+        verify(mockPostgrestService.createEmailValidationEntry(
+          personId: '123',
+          email: 'test@example.com',
+          emailType: 'private',
+          verificationToken: 'token123',
+        ),).called(1);
+      });
+
+      test('getEmailValidationByToken delegates to postgrest service', () async {
+        final expectedEntry = {
+          'id': 1,
+          'person_id': '123',
+          'email': 'test@example.com',
+          'emailtype': 'private',
+          'verification_token': 'token123',
+          'validated': false,
+        };
+        when(mockPostgrestService.getEmailValidationByToken('token123'))
+            .thenAnswer((_) async => expectedEntry);
+
+        final result = await apiService.getEmailValidationByToken('token123');
+        expect(result, equals(expectedEntry));
+        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+      });
+
+      test('getEmailValidationByToken returns null when not found', () async {
+        when(mockPostgrestService.getEmailValidationByToken('token123'))
+            .thenAnswer((_) async => null);
+
+        final result = await apiService.getEmailValidationByToken('token123');
+        expect(result, isNull);
+        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+      });
+
+      test('markEmailValidationAsValidated delegates to postgrest service', () async {
+        when(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.markEmailValidationAsValidated('token123');
+        expect(result, isTrue);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+      });
+
+      test('markEmailValidationAsValidated returns false on error', () async {
+        when(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .thenAnswer((_) async => false);
+
+        final result = await apiService.markEmailValidationAsValidated('token123');
+        expect(result, isFalse);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+      });
+
+      test('sendEmailValidationNotifications sends notifications successfully', () async {
+        when(mockEmailService.sendEmailValidationNotifications(
+          personId: anyNamed('personId'),
+          email: anyNamed('email'),
+          firstName: anyNamed('firstName'),
+          lastName: anyNamed('lastName'),
+          title: anyNamed('title'),
+          emailType: anyNamed('emailType'),
+          verificationToken: anyNamed('verificationToken'),
+        ),).thenAnswer((_) async {});
+
+        await apiService.sendEmailValidationNotifications(
+          personId: '123',
+          email: 'test@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          title: 'Dr.',
+          emailType: 'private',
+          verificationToken: 'token123',
+        );
+
+        verify(mockEmailService.sendEmailValidationNotifications(
+          personId: '123',
+          email: 'test@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          title: 'Dr.',
+          emailType: 'private',
+          verificationToken: 'token123',
+        ),).called(1);
+      });
+    });
   });
 }

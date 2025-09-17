@@ -8,6 +8,10 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:mailer/mailer.dart' as mailer;
 import 'package:mailer/smtp_server.dart' as smtp;
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
+import 'package:meinbssb/models/zve_data.dart';
 import 'config_service.dart';
 import 'logger_service.dart';
 import 'http_client.dart';
@@ -195,6 +199,19 @@ class EmailService {
       return await rootBundle.loadString('assets/html/email-address-validation.html');
     } catch (e) {
       LoggerService.logError('Error reading email-address-validation.html: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getStartingRightsChangeSubject() async {
+    return 'Anfrage zur Änderung des Schützenausweises eingegangen';
+  }
+
+  Future<String?> getStartingRightsChangeContent() async {
+    try {
+      return await rootBundle.loadString('assets/html/startingRightsChangeEmail.html');
+    } catch (e) {
+      LoggerService.logError('Error reading startingRightsChangeEmail.html: $e');
       return null;
     }
   }
@@ -562,5 +579,137 @@ class EmailService {
     } catch (e) {
       LoggerService.logError('Error sending email validation email: $e');
     }
+  }
+
+  Future<void> sendStartingRightsChangeNotifications({
+    required int personId,
+    required UserData passdaten,
+    required List<String> userEmailAddresses,
+    required List<String> clubEmailAddresses,
+    required List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    required PassdatenAkzeptOrAktiv zveData,
+  }) async {
+    try {
+      final from = await getFromEmail();
+      final subject = await getStartingRightsChangeSubject();
+      final emailContent = await getStartingRightsChangeContent();
+
+      if (from == null || subject == null || emailContent == null) {
+        LoggerService.logError('Missing email configuration for starting rights change');
+        return;
+      }
+
+      // Extract data from passdaten
+      final passNumber = passdaten.passnummer;
+      final title = passdaten.titel ?? '';
+      final firstName = passdaten.vorname;
+      final lastName = passdaten.namen;
+      final street = passdaten.strasse ?? '';
+      final zipCode = passdaten.plz ?? '';
+      final city = passdaten.ort ?? '';
+
+      // Format Zweitvereine information
+      final zweitvereine = _formatZweitvereine(zweitmitgliedschaften, zveData);
+
+      // Send emails to user's email addresses
+      for (final email in userEmailAddresses) {
+        if (email.isNotEmpty && email != 'null') {
+          final userGreeting = 'Hallo, $title $firstName $lastName,';
+          final personalizedContent = emailContent
+              .replaceAll('{greeting}', userGreeting)
+              .replaceAll('{passNumber}', passNumber)
+              .replaceAll('{title}', title)
+              .replaceAll('{firstName}', firstName)
+              .replaceAll('{lastName}', lastName)
+              .replaceAll('{street}', street)
+              .replaceAll('{zipCode}', zipCode)
+              .replaceAll('{city}', city)
+              .replaceAll('{zweitvereine}', zweitvereine);
+
+          await sendEmail(
+            sender: from,
+            recipient: email,
+            subject: subject,
+            htmlBody: personalizedContent,
+          );
+          
+          LoggerService.logInfo('Starting rights change notification sent to user email: $email');
+        }
+      }
+
+      // Send emails to club email addresses
+      for (final email in clubEmailAddresses) {
+        if (email.isNotEmpty && email != 'null') {
+          const clubGreeting = 'Hallo,';
+          final personalizedContent = emailContent
+              .replaceAll('{greeting}', clubGreeting)
+              .replaceAll('{passNumber}', passNumber)
+              .replaceAll('{title}', title)
+              .replaceAll('{firstName}', firstName)
+              .replaceAll('{lastName}', lastName)
+              .replaceAll('{street}', street)
+              .replaceAll('{zipCode}', zipCode)
+              .replaceAll('{city}', city)
+              .replaceAll('{zweitvereine}', zweitvereine);
+
+          await sendEmail(
+            sender: from,
+            recipient: email,
+            subject: subject,
+            htmlBody: personalizedContent,
+          );
+          
+          LoggerService.logInfo('Starting rights change notification sent to club email: $email');
+        }
+      }
+
+      LoggerService.logInfo('Starting rights change notifications sent successfully');
+    } catch (e) {
+      LoggerService.logError('Error sending starting rights change notifications: $e');
+    }
+  }
+
+  /// Helper method to format Zweitvereine information for email template
+  String _formatZweitvereine(
+    List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    PassdatenAkzeptOrAktiv zveData,
+  ) {
+    if (zweitmitgliedschaften.isEmpty) {
+      return '';
+    }
+
+    // Group ZVE data by VEREINNR
+    final Map<int, List<ZVE>> zveByVerein = {};
+    for (final zve in zveData.zves) {
+      final vereinNr = zve.vereinNr;
+      zveByVerein.putIfAbsent(vereinNr, () => []);
+      zveByVerein[vereinNr]!.add(zve);
+    }
+
+    final StringBuffer buffer = StringBuffer();
+    buffer.writeln('<h3 style="color: #0B4B10; margin-top: 20px;">Zweitvereine:</h3>');
+
+    for (final membership in zweitmitgliedschaften) {
+      final vereinNr = membership.vereinNr;
+      final vereinName = membership.vereinName;
+      
+      if (vereinName.isNotEmpty) {
+        buffer.writeln('<p style="margin: 5px 0; font-weight: bold;">$vereinName</p>');
+        
+        // Check if this Verein has disciplines in ZVE data
+        if (zveByVerein.containsKey(vereinNr)) {
+          final disciplines = zveByVerein[vereinNr]!;
+          for (final discipline in disciplines) {
+            final disziplinNr = discipline.disziplinNr ?? '';
+            final disziplin = discipline.disziplin ?? '';
+            if (disziplinNr.isNotEmpty && disziplin.isNotEmpty) {
+              buffer.writeln('<p style="margin: 5px 0; margin-left: 20px;">$disziplinNr $disziplin</p>');
+            }
+          }
+        }
+      }
+    }
+
+    return buffer.toString();
   }
 }

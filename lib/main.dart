@@ -11,6 +11,7 @@ import 'services/api/training_service.dart';
 import 'services/api/bank_service.dart';
 import 'services/api/verein_service.dart';
 import 'services/api/bezirk_service.dart';
+import 'services/api/starting_rights_service.dart';
 
 import 'services/core/email_service.dart';
 import 'services/core/image_service.dart';
@@ -111,6 +112,7 @@ class AppInitializer {
   static late PostgrestService postgrestService;
   static late CalendarService calendarService;
   static late BezirkService bezirkService;
+  static late StartingRightsService startingRightsService;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -206,6 +208,12 @@ class AppInitializer {
       httpClient: httpClient,
     );
 
+    startingRightsService = StartingRightsService(
+      userService: userService,
+      vereinService: vereinService,
+      emailService: emailService,
+    );
+
     apiService = ApiService(
       configService: configService,
       httpClient: httpClient,
@@ -222,6 +230,7 @@ class AppInitializer {
       oktoberfestService: oktoberfestService,
       calendarService: calendarService,
       bezirkService: bezirkService,
+      startingRightsService: startingRightsService,
     );
 
     _registerProviders();
@@ -272,6 +281,10 @@ class AppInitializer {
     calendarServiceProvider = Provider<CalendarService>(
       create: (context) => calendarService,
     );
+
+    startingRightsServiceProvider = Provider<StartingRightsService>(
+      create: (context) => startingRightsService,
+    );
   }
 
   // Public static provider instances
@@ -287,4 +300,5 @@ class AppInitializer {
   static late Provider<TokenService> tokenServiceProvider;
   static late ChangeNotifierProvider<FontSizeProvider> fontSizeProvider;
   static late Provider<CalendarService> calendarServiceProvider;
+  static late Provider<StartingRightsService> startingRightsServiceProvider;
 }

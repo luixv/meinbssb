@@ -30,12 +30,12 @@ void main() {
         {
           'VEREINID': 1,
           'GAUID': 101,
-          'GAUNR': 'GAU01',
-          'VEREINNR': 'V001',
+          'GAUNR': 101,
+          'VEREINNR': 1,
           'VEREINNAME': 'Test Verein',
           'LAT': 48.1351,
           'LON': 11.5820,
-          'GEOCODEQUELLE': 'Google',
+          'GEOCODEQUELLE': 1,
         }
       ];
 
@@ -75,7 +75,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 2,
-          'VEREINNR': 'V002',
+          'VEREINNR': 2,
           'VEREINNAME': 'Partial Data Club',
           // Missing other fields
         }
@@ -97,7 +97,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 1,
-          'VEREINNR': 'V001',
+          'VEREINNR': 1,
           'VEREINNAME': 'Valid Club',
         },
         'Invalid item', // Non-map item
@@ -122,7 +122,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 1,
-          'VEREINNR': 'V001',
+          'VEREINNR': 1,
           'VEREINNAME': 'Test Verein',
           'STRASSE': 'Teststraße 1',
           'PLZ': '12345',
@@ -138,14 +138,14 @@ void main() {
           'P_ORT': 'Poststadt',
           'P_EMAIL': 'post@test.de',
           'GAUID': 101,
-          'GAUNR': 'GAU01',
+          'GAUNR': 101,
           'GAUNAME': 'Test Gau',
           'BEZIRKID': 201,
-          'BEZIRKNR': 'BZ01',
+          'BEZIRKNR': 201,
           'BEZIRKNAME': 'Test Bezirk',
           'LAT': 48.1351,
           'LON': 11.5820,
-          'GEOCODEQUELLE': 'Google',
+          'GEOCODEQUELLE': 1,
           'FACEBOOK': 'fb.com/test',
           'INSTAGRAM': 'insta.com/test',
           'XTWITTER': 'x.com/test',
@@ -193,7 +193,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 2,
-          'VEREINNR': 'V002',
+          'VEREINNR': 2,
           'VEREINNAME': 'Partial Data Club',
           // Missing many fields
         }
@@ -232,7 +232,7 @@ void main() {
       final testResponse = [
         {
           'VEREINID': 1,
-          'VEREINNR': 'V001',
+          'VEREINNR': 1,
           'VEREINNAME': 'Valid Club',
         },
         'Invalid item', // Non-map item

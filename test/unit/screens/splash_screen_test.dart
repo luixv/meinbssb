@@ -2,23 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/splash_screen.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/models/bezirk_data.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'package:provider/provider.dart';
+
+// Generate mocks
+@GenerateMocks([ApiService])
+import 'splash_screen_test.mocks.dart';
 
 void main() {
   group('SplashScreen', () {
     late VoidCallback mockOnFinish;
+    late MockApiService mockApiService;
 
     setUp(() {
       mockOnFinish = () {};
+      mockApiService = MockApiService();
     });
 
-    Widget createSplashScreen() {
+    Widget createSplashScreen({VoidCallback? onFinish}) {
       return MaterialApp(
-        home: SplashScreen(onFinish: mockOnFinish),
+        home: Provider<ApiService>(
+          create: (_) => mockApiService,
+          child: SplashScreen(onFinish: onFinish ?? mockOnFinish),
+        ),
       );
     }
 
     testWidgets('should render with correct structure',
         (WidgetTester tester) async {
+      // Set up mock responses before widget creation
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       // Verify Scaffold exists
@@ -40,6 +61,11 @@ void main() {
 
     testWidgets('should display BSSB logo with correct properties',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       final imageFinder = find.byType(Image);
@@ -59,6 +85,11 @@ void main() {
 
     testWidgets('should start with opacity 0 and animate to 1',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       // Initially, the animation should be at 0 opacity
@@ -77,16 +108,17 @@ void main() {
 
     testWidgets('should call onFinish callback after animation completes',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       bool callbackCalled = false;
       void testOnFinish() {
         callbackCalled = true;
       }
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: SplashScreen(onFinish: testOnFinish),
-        ),
-      );
+      await tester.pumpWidget(createSplashScreen(onFinish: testOnFinish));
 
       // Initially callback should not be called
       expect(callbackCalled, false);
@@ -100,6 +132,11 @@ void main() {
 
     testWidgets('should handle animation controller lifecycle correctly',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       // Widget should be created without errors
@@ -114,20 +151,17 @@ void main() {
 
     testWidgets('should use correct animation duration',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createSplashScreen());
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
 
-      // Test that the animation completes after the expected duration
-      // by checking that the callback is called after multiple pumps
       bool callbackCalled = false;
       void testOnFinish() {
         callbackCalled = true;
       }
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: SplashScreen(onFinish: testOnFinish),
-        ),
-      );
+      await tester.pumpWidget(createSplashScreen(onFinish: testOnFinish));
 
       // Pump less than 3 seconds - callback should not be called
       await tester.pump(const Duration(milliseconds: 2500));
@@ -140,6 +174,11 @@ void main() {
 
     testWidgets('should use easeIn curve for animation',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       final fadeTransition =
@@ -156,6 +195,11 @@ void main() {
 
     testWidgets('should handle rapid widget rebuilds gracefully',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -170,6 +214,11 @@ void main() {
 
     testWidgets('should maintain correct widget structure during animation',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       // Check structure at different animation stages
@@ -192,17 +241,16 @@ void main() {
       expect(find.byType(Image), findsOneWidget);
     });
 
-    testWidgets('should handle null onFinish callback gracefully',
+    testWidgets('should handle empty callback gracefully',
         (WidgetTester tester) async {
-      // This test ensures the widget doesn't crash if onFinish is null
-      // Note: The widget requires onFinish, so we'll test with an empty function
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       void emptyCallback() {}
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: SplashScreen(onFinish: emptyCallback),
-        ),
-      );
+      await tester.pumpWidget(createSplashScreen(onFinish: emptyCallback));
 
       // Wait for animation to complete
       await tester.pump(const Duration(seconds: 3));
@@ -213,6 +261,11 @@ void main() {
 
     testWidgets('should be responsive to different screen sizes',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       // Test with different screen sizes
       await tester.binding.setSurfaceSize(const Size(400, 600));
       await tester.pumpWidget(createSplashScreen());
@@ -233,6 +286,11 @@ void main() {
 
     testWidgets('should handle widget disposal during animation',
         (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       // Start animation
@@ -246,6 +304,11 @@ void main() {
     });
 
     testWidgets('should verify logo asset exists', (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
       await tester.pumpWidget(createSplashScreen());
 
       final imageFinder = find.byType(Image);
@@ -256,6 +319,20 @@ void main() {
         (image.image as AssetImage).assetName,
         'assets/images/BSSB_Wappen.png',
       );
+    });
+
+    testWidgets('should call API service methods during initialization',
+        (WidgetTester tester) async {
+      when(mockApiService.fetchBezirkeforSearch())
+          .thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(mockApiService.fetchDisziplinen())
+          .thenAnswer((_) async => <Disziplin>[]);
+
+      await tester.pumpWidget(createSplashScreen());
+
+      // Verify that the API methods were called
+      verify(mockApiService.fetchBezirkeforSearch()).called(1);
+      verify(mockApiService.fetchDisziplinen()).called(1);
     });
   });
 }

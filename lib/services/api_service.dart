@@ -12,6 +12,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
+import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
@@ -64,6 +65,7 @@ class ApiService {
     required OktoberfestService oktoberfestService,
     required CalendarService calendarService,
     required BezirkService bezirkService,
+    required StartingRightsService startingRightsService,
   })  : _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
@@ -74,7 +76,8 @@ class ApiService {
         _postgrestService = postgrestService,
         _emailService = emailService,
         _oktoberfestService = oktoberfestService,
-        _bezirkService = bezirkService;
+        _bezirkService = bezirkService,
+        _startingRightsService = startingRightsService;
 
   final ImageService _imageService;
   final NetworkService _networkService;
@@ -87,6 +90,7 @@ class ApiService {
   final EmailService _emailService;
   final OktoberfestService _oktoberfestService;
   final BezirkService _bezirkService;
+  final StartingRightsService _startingRightsService;
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -591,6 +595,14 @@ class ApiService {
       title: title,
       emailType: emailType,
       verificationToken: verificationToken,
+    );
+  }
+
+  Future<void> sendStartingRightsChangeNotifications({
+    required int personId,
+  }) async {
+    return _startingRightsService.sendStartingRightsChangeNotifications(
+      personId: personId,
     );
   }
 }

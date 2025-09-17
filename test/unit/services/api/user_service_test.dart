@@ -921,6 +921,200 @@ void main() {
         expect(result, isNull);
       });
     });
+
+    group('fetchZweitmitgliedschaftenZVE', () {
+      const testPersonId = 123;
+      const testPassStatus = 1;
+
+      test('returns mapped data for valid response', () async {
+        final mockResponse = [
+          {
+            'VEREINID': 1474,
+            'VEREINNR': 401006,
+            'VEREINNAME': 'Vereinigte Sportschützen Paartal Aichach',
+            'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+          },
+        ];
+
+        when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+        when(mockConfigService.getString('api1BasePath')).thenReturn('');
+
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get(
+            'ZweitmitgliedschaftenZVE/$testPersonId/$testPassStatus',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
+
+        final result = await userService.fetchZweitmitgliedschaftenZVE(
+          testPersonId,
+          testPassStatus,
+        );
+
+        expect(result.length, 1);
+        expect(result[0].vereinId, 1474);
+        expect(result[0].vereinNr, 401006);
+        expect(
+          result[0].vereinName,
+          'Vereinigte Sportschützen Paartal Aichach',
+        );
+        expect(
+          result[0].eintrittVerein,
+          DateTime.parse('2012-02-26T00:00:00.000+01:00'),
+        );
+      });
+
+      test('handles empty response', () async {
+        when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+        when(mockConfigService.getString('api1BasePath')).thenReturn('');
+
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get(
+            'ZweitmitgliedschaftenZVE/$testPersonId/$testPassStatus',
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => []);
+
+        final result = await userService.fetchZweitmitgliedschaftenZVE(
+          testPersonId,
+          testPassStatus,
+        );
+
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+        when(mockConfigService.getString('api1BasePath')).thenReturn('');
+
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenThrow(Exception('Network error'));
+
+        final result = await userService.fetchZweitmitgliedschaftenZVE(
+          testPersonId,
+          testPassStatus,
+        );
+
+        expect(result, isEmpty);
+      });
+    });
+
+    group('fetchPassdaten with pending requests', () {
+      const testPersonId = 439287;
+      test('handles error in pending request', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenThrow(Exception('Network error'));
+
+        // Make concurrent requests
+        final futures = await Future.wait([
+          userService.fetchPassdaten(testPersonId),
+          userService.fetchPassdaten(testPersonId),
+        ], eagerError: false,);
+
+        // All requests should fail with null
+        for (final result in futures) {
+          expect(result, isNull);
+        }
+
+        // The cache attempt should only be made once
+        verify(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).called(1);
+      });
+    });
+
+    group('Internal mapping methods through public APIs', () {
+      test('_mapPassdatenResponse handles invalid response types', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
+        });
+
+        // Test with invalid response type
+        when(mockHttpClient.get('Passdaten/123'))
+            .thenAnswer((_) async => 'invalid response');
+
+        final result = await userService.fetchPassdaten(123);
+        expect(result, isNull);
+      });
+    });
   });
 
   group('UserService.postBSSBAppPassantrag', () {

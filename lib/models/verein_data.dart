@@ -9,7 +9,7 @@ class Verein {
   factory Verein.fromJson(Map<String, dynamic> json) {
     return Verein(
       id: json['VEREINID'] as int,
-      vereinsNr: json['VEREINNR'] as String,
+      vereinsNr: json['VEREINNR'] as int,
       name: json['VEREINNAME'] as String,
       strasse: json['STRASSE'] as String?,
       plz: json['PLZ'] as String?,
@@ -25,14 +25,14 @@ class Verein {
       pOrt: json['P_ORT'] as String?,
       pEmail: json['P_EMAIL'] as String?,
       gauId: json['GAUID'] as int?,
-      gauNr: json['GAUNR'] as String?,
+      gauNr: json['GAUNR'] as int?,
       gauName: json['GAUNAME'] as String?,
       bezirkId: json['BEZIRKID'] as int?,
-      bezirkNr: json['BEZIRKNR'] as String?,
+      bezirkNr: json['BEZIRKNR'] as int?,
       bezirkName: json['BEZIRKNAME'] as String?,
       lat: json['LAT'] as double?,
       lon: json['LON'] as double?,
-      geocodeQuelle: json['GEOCODEQUELLE'] as String?,
+      geocodeQuelle: json['GEOCODEQUELLE'] as int?,
       facebook: json['FACEBOOK'] as String?,
       instagram: json['INSTAGRAM'] as String?,
       xTwitter: json['XTWITTER'] as String?,
@@ -81,7 +81,7 @@ class Verein {
   final int id;
 
   /// The Verein's registration number.
-  final String vereinsNr;
+  final int vereinsNr;
 
   /// The name of the Verein.
   final String name;
@@ -129,7 +129,7 @@ class Verein {
   final int? gauId;
 
   /// The number of the Gau the Verein belongs to.
-  final String? gauNr;
+  final int? gauNr;
 
   /// The name of the Gau the Verein belongs to.
   final String? gauName;
@@ -138,7 +138,7 @@ class Verein {
   final int? bezirkId;
 
   /// The number of the Bezirk the Verein belongs to.
-  final String? bezirkNr;
+  final int? bezirkNr;
 
   /// The name of the Bezirk the Verein belongs to.
   final String? bezirkName;
@@ -150,7 +150,7 @@ class Verein {
   final double? lon;
 
   /// The source of the geocoding data.
-  final String? geocodeQuelle;
+  final int? geocodeQuelle;
 
   /// The Verein's Facebook page URL.
   final String? facebook;
