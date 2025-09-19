@@ -41,8 +41,14 @@ void main() {
         .thenAnswer((_) async => null);
     when(mockApiService.fetchZweitmitgliedschaften(any))
         .thenAnswer((_) async => []);
-    when(mockApiService.postBSSBAppPassantrag(any, any, any, any, any))
-        .thenAnswer((_) async => true);
+    when(mockApiService.bssbAppPassantrag(
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+    ),).thenAnswer((_) async => true);
   });
 
   Widget createWidgetUnderTest() {
