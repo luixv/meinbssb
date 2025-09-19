@@ -937,7 +937,8 @@ void main() {
         ];
 
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BaseServer'))
+            .thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
@@ -985,7 +986,8 @@ void main() {
 
       test('handles empty response', () async {
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BaseServer'))
+            .thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
@@ -1023,7 +1025,8 @@ void main() {
 
       test('handles error response', () async {
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer')).thenReturn('localhost');
+        when(mockConfigService.getString('api1BaseServer'))
+            .thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
@@ -1064,10 +1067,13 @@ void main() {
         ).thenThrow(Exception('Network error'));
 
         // Make concurrent requests
-        final futures = await Future.wait([
-          userService.fetchPassdaten(testPersonId),
-          userService.fetchPassdaten(testPersonId),
-        ], eagerError: false,);
+        final futures = await Future.wait(
+          [
+            userService.fetchPassdaten(testPersonId),
+            userService.fetchPassdaten(testPersonId),
+          ],
+          eagerError: false,
+        );
 
         // All requests should fail with null
         for (final result in futures) {
@@ -1147,7 +1153,7 @@ void main() {
         ),
       ).thenAnswer((_) async => {'result': true});
 
-      final result = await userService.postBSSBAppPassantrag(
+      final result = await userService.bssbAppPassantrag(
         {
           1: {'Disziplin 1': 10},
         },
@@ -1155,6 +1161,7 @@ void main() {
         456,
         789,
         1,
+        3,
       );
       expect(result, isTrue);
     });
@@ -1169,7 +1176,7 @@ void main() {
         ),
       ).thenAnswer((_) async => {'result': false});
 
-      final result = await userService.postBSSBAppPassantrag(
+      final result = await userService.bssbAppPassantrag(
         {
           1: {'Disziplin 1': 10},
         },
@@ -1177,6 +1184,7 @@ void main() {
         456,
         789,
         0,
+        3,
       );
       expect(result, isFalse);
     });
@@ -1191,12 +1199,13 @@ void main() {
         ),
       ).thenAnswer((_) async => {'unexpected': true});
 
-      final result = await userService.postBSSBAppPassantrag(
+      final result = await userService.bssbAppPassantrag(
         {},
         null,
         null,
         null,
         1,
+        3,
       );
       expect(result, isFalse);
     });
@@ -1211,12 +1220,13 @@ void main() {
         ),
       ).thenThrow(Exception('API error'));
 
-      final result = await userService.postBSSBAppPassantrag(
+      final result = await userService.bssbAppPassantrag(
         {},
         null,
         null,
         null,
         1,
+        3,
       );
       expect(result, isFalse);
     });

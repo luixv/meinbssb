@@ -480,12 +480,13 @@ class UserService {
     }
   }
 
-  Future<bool> postBSSBAppPassantrag(
+  Future<bool> bssbAppPassantrag(
     Map<int, Map<String, int?>> secondColumns,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
     int digitalerPass,
+    int antragsTyp,
   ) async {
     try {
       final baseUrl =
@@ -510,7 +511,7 @@ class UserService {
 
       final Map<String, dynamic> fullJson = {
         'PASSDATENID': passdatenId,
-        'ANTRAGSTYP': 3,
+        'ANTRAGSTYP': antragsTyp,
         'PERSONID': personId,
         'ERSTVEREINID': erstVereinId,
         'DIGITALERPASS': digitalerPass,

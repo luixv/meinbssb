@@ -10,7 +10,6 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
-//import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -68,13 +67,15 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     final int? personId = widget.userData?.personId;
     final int? erstVereinId = widget.userData?.erstVereinId;
 
+    const antragsTyp = 3;
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final bool success = await apiService.postBSSBAppPassantrag(
+    final bool success = await apiService.bssbAppPassantrag(
       secondColumns,
       passdatenId,
       personId,
       erstVereinId,
       _digitalerPass ? 1 : 0,
+      antragsTyp,
     );
 
     setState(() {
@@ -89,7 +90,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         );
         LoggerService.logInfo('Starting rights change notifications sent');
       } catch (e) {
-        LoggerService.logError('Failed to send starting rights change notifications: $e');
+        LoggerService.logError(
+          'Failed to send starting rights change notifications: $e',
+        );
         // Don't fail the save operation if email notifications fail
       }
     }

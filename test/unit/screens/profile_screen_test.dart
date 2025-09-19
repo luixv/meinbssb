@@ -64,7 +64,9 @@ void main() {
       expect(find.byIcon(Icons.account_balance), findsOneWidget);
       expect(find.byIcon(Icons.task_alt), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsOneWidget);
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(6));
+      expect(find.byIcon(Icons.search_off), findsOneWidget);
+
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(7));
     });
 
     testWidgets('calls onLogout when triggered', (tester) async {
