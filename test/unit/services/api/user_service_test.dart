@@ -163,6 +163,35 @@ void main() {
 
         expect(result, isNull);
       });
+
+      test('fetchPassdaten returns null for non-list, non-map response',
+          () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          final processResponse =
+              invocation.positionalArguments[3] as Function(dynamic);
+          return processResponse(response);
+        });
+
+        when(mockHttpClient.get('Passdaten/999999'))
+            .thenAnswer((_) async => 'unexpected');
+
+        final result = await userService.fetchPassdaten(999999);
+
+        expect(result, isNull);
+      });
     });
 
     group('fetchZweitmitgliedschaften', () {
@@ -277,6 +306,32 @@ void main() {
             await userService.fetchZweitmitgliedschaften(testPersonId);
 
         expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('fetchZweitmitgliedschaften skips non-map items', () async {
+        when(mockNetworkService.getCacheExpirationDuration())
+            .thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(mockHttpClient.get('Zweitmitgliedschaften/123'))
+            .thenAnswer((_) async => [123, 'string', null]);
+
+        final result = await userService.fetchZweitmitgliedschaften(123);
+
         expect(result, isEmpty);
       });
     });
@@ -605,6 +660,18 @@ void main() {
 
         expect(result, isFalse);
       });
+
+      test('deleteKontakt returns false for invalid response type', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'test@example.com',
+        );
+        when(mockHttpClient.put(any, any)).thenAnswer((_) async => 'notamap');
+        final result = await userService.deleteKontakt(contact);
+        expect(result, isFalse);
+      });
     });
 
     group('updateKontakt', () {
@@ -675,6 +742,18 @@ void main() {
 
         expect(result, isFalse);
         verifyNever(mockHttpClient.put(any, any));
+      });
+
+      test('should return false for invalid response type', () async {
+        const contact = Contact(
+          id: 10,
+          personId: 1,
+          type: 4,
+          value: 'updated@example.com',
+        );
+        when(mockHttpClient.put(any, any)).thenAnswer((_) async => 'notamap');
+        final result = await userService.updateKontakt(contact);
+        expect(result, isFalse);
       });
     });
 
@@ -778,6 +857,13 @@ void main() {
           },
         ]);
       });
+
+      test('fetchKontakte returns empty list for non-list response', () async {
+        when(mockHttpClient.get('Kontakte/123'))
+            .thenAnswer((_) async => 'notalist');
+        final result = await userService.fetchKontakte(123);
+        expect(result, isEmpty);
+      });
     });
 
     group('fetchAdresseVonPersonID', () {
@@ -831,6 +917,15 @@ void main() {
             .thenThrow(Exception('Network error'));
 
         final result = await userService.fetchAdresseVonPersonID(testPersonId);
+        expect(result, isEmpty);
+      });
+
+      test(
+          'fetchAdresseVonPersonID returns empty list for non-list/map response',
+          () async {
+        when(mockHttpClient.get('AdresseVonPersonID/123'))
+            .thenAnswer((_) async => 123);
+        final result = await userService.fetchAdresseVonPersonID(123);
         expect(result, isEmpty);
       });
     });
@@ -1229,6 +1324,44 @@ void main() {
         3,
       );
       expect(result, isFalse);
+    });
+
+    test('bssbAppPassantrag sends correct ZVE list', () async {
+      when(mockConfigService.getString(any)).thenReturn('test');
+      when(
+        mockHttpClient.post(
+          any,
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer((_) async => {'result': true});
+
+      final result = await userService.bssbAppPassantrag(
+        {
+          1: {'Disziplin 1': 10, 'Disziplin 2': null},
+          2: {'Disziplin 3': 20},
+        },
+        123,
+        456,
+        789,
+        1,
+        3,
+      );
+      expect(result, isTrue);
+      verify(
+        mockHttpClient.post(
+          'BSSBAppPassantrag',
+          argThat(predicate<Map<String, dynamic>>((body) {
+            final zves = body['ZVEs'] as List;
+            return zves.length == 2 &&
+                zves.any((zve) =>
+                    zve['VEREINID'] == 1 && zve['DISZIPLINID'] == 10) &&
+                zves.any(
+                    (zve) => zve['VEREINID'] == 2 && zve['DISZIPLINID'] == 20);
+          })),
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).called(1);
     });
   });
 }
