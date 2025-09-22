@@ -16,27 +16,35 @@ void main() {
 
     group('Initialization', () {
       test('should initialize with default font scale', () {
-        expect(provider.scaleFactor,
-            closeTo(UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should use default scale when no saved value exists', () async {
-        expect(provider.scaleFactor,
-            closeTo(UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should load saved scale factor from SharedPreferences', () async {
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(provider.scaleFactor,
-            closeTo(UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should handle SharedPreferences initialization failure gracefully',
           () async {
         final testProvider = FontSizeProvider();
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(testProvider.scaleFactor,
-            closeTo(UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          testProvider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
     });
 
@@ -44,16 +52,20 @@ void main() {
       test('getScaledFontSize should multiply base size by scale factor', () {
         const baseSize = 16.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize,
-            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with different base sizes', () {
         const baseSizes = [12.0, 14.0, 16.0, 18.0, 20.0];
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize,
-              closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
       });
 
@@ -66,23 +78,29 @@ void main() {
       test('getScaledFontSize should work with negative base size', () {
         const baseSize = -10.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize,
-            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with very large base size', () {
         const baseSize = 1000.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize,
-            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with decimal base sizes', () {
         const baseSizes = [12.5, 14.75, 16.25, 18.8, 20.1];
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize,
-              closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
       });
     });
@@ -333,8 +351,10 @@ void main() {
 
     group('Integration Tests', () {
       test('should work correctly with typical usage pattern', () {
-        expect(provider.scaleFactor,
-            closeTo(UIConstants.defaultFontScale, 0.0001),);
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
 
         provider.increaseFontSize();
         expect(
@@ -373,8 +393,10 @@ void main() {
 
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize,
-              closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),);
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
 
         provider.increaseFontSize();
@@ -718,6 +740,27 @@ void main() {
       test('should handle removing a listener that was never added', () {
         void dummyListener() {}
         provider.removeListener(dummyListener);
+      });
+    });
+
+    group('Font Size Reset', () {
+      test('resetFontSize should reset scale factor to default', () {
+        provider.increaseFontSize();
+        expect(provider.scaleFactor,
+            isNot(closeTo(UIConstants.defaultFontScale, 0.0001)),);
+        provider.resetFontSize();
+        expect(provider.scaleFactor,
+            closeTo(UIConstants.defaultFontScale, 0.0001),);
+      });
+
+      test('resetFontSize should notify listeners', () {
+        provider.increaseFontSize();
+        bool notified = false;
+        provider.addListener(() {
+          notified = true;
+        });
+        provider.resetFontSize();
+        expect(notified, isTrue);
       });
     });
   });
