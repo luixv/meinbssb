@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
 import 'package:meinbssb/services/api/auth_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/constants/messages.dart';
+import 'package:http/http.dart' as http;
+import 'package:meinbssb/services/core/config_service.dart';
 
 import '../../helpers/test_mocks.mocks.dart';
 
@@ -20,7 +20,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    // Initialize all mocks before each test
     mockHttpClient = MockHttpClient();
     mockCacheService = MockCacheService();
     mockNetworkService = MockNetworkService();
@@ -29,7 +28,6 @@ void main() {
     mockEmailService = MockEmailService();
     mockSecureStorage = MockFlutterSecureStorage();
 
-    // Create AuthService instance for each test, injecting all mocks
     authService = AuthService(
       httpClient: mockHttpClient,
       cacheService: mockCacheService,
@@ -41,7 +39,7 @@ void main() {
     );
 
     when(mockSecureStorage.read(key: anyNamed('key')))
-        .thenAnswer((_) async => null);
+        .thenAnswer((_) async => '');
     when(
       mockSecureStorage.write(
         key: anyNamed('key'),
@@ -51,29 +49,18 @@ void main() {
     when(mockSecureStorage.delete(key: anyNamed('key')))
         .thenAnswer((_) async => {});
 
-    // --- Global Stubs for CacheService methods ---
-    // These ensure common cache operations don't throw MissingStubError
     when(mockCacheService.setString(any, any)).thenAnswer((_) async => true);
     when(mockCacheService.setInt(any, any)).thenAnswer((_) async => true);
     when(mockCacheService.remove(any)).thenAnswer((_) async => true);
-    when(mockCacheService.setCacheTimestampForKey('username'))
+    when(mockCacheService.setCacheTimestampForKey(any))
         .thenAnswer((_) async => true);
-    when(mockCacheService.setCacheTimestampForKey('personId'))
-        .thenAnswer((_) async => true);
-    when(mockCacheService.setCacheTimestampForKey('webLoginId'))
-        .thenAnswer((_) async => true);
-    when(mockCacheService.getString(any)).thenAnswer((_) async => null);
+    when(mockCacheService.getString(any)).thenAnswer((_) async => '');
     when(mockCacheService.getInt(any)).thenAnswer((_) async => null);
 
-    // Default for NetworkService.getCacheExpirationDuration (can be overridden by specific tests)
     when(mockNetworkService.getCacheExpirationDuration())
-        .thenReturn(const Duration(days: 1)); // Default to non-expired
+        .thenReturn(const Duration(days: 1));
 
-    when(mockCacheService.getCacheTimestampForKey('username'))
-        .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
-    when(mockCacheService.getCacheTimestampForKey('personId'))
-        .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
-    when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+    when(mockCacheService.getCacheTimestampForKey(any))
         .thenAnswer((_) async => DateTime.now().millisecondsSinceEpoch);
     when(mockHttpClient.get(any)).thenAnswer((_) async => {});
     when(
@@ -90,14 +77,11 @@ void main() {
     when(mockConfigService.getString('api1BasePort', any)).thenReturn('56400');
     when(mockConfigService.getString('api1BasePath', any))
         .thenReturn('rest/zmi/api1');
-
-    // Mock web server config for registration
     when(mockConfigService.getString('webServer', any))
         .thenReturn('meintest.bssb.de');
     when(mockConfigService.getString('webPort', any)).thenReturn('443');
     when(mockConfigService.getString('webPath', any)).thenReturn('');
 
-    // Default behavior for PostgrestService
     when(mockPostgrestService.getUserByPassNumber(any))
         .thenAnswer((_) async => null);
     when(
@@ -112,7 +96,6 @@ void main() {
     ).thenAnswer((_) async => <String, dynamic>{});
     when(mockPostgrestService.verifyUser(any)).thenAnswer((_) async => true);
 
-    // Default behavior for EmailService
     when(mockEmailService.getFromEmail())
         .thenAnswer((_) async => 'noreply@bssb.bayern');
     when(mockEmailService.getRegistrationSubject())
@@ -134,8 +117,6 @@ void main() {
     );
     when(mockEmailService.sendAccountCreationNotifications(any, any))
         .thenAnswer((_) async => <String, dynamic>{});
-
-    // Defaults for email service used in reset password flow
     when(mockEmailService.getEmailAddressesByPersonId(any))
         .thenAnswer((_) async => ['john.doe@example.com']);
   });
@@ -151,15 +132,12 @@ void main() {
         const zipCode = '10001';
         const personId = '439287';
 
-        // Mock getUserByPassNumber to return null (no existing user)
         when(mockPostgrestService.getUserByPassNumber(passNumber))
             .thenAnswer((_) async => null);
 
-        // Mock getUserByEmail to return null (no existing user)
         when(mockPostgrestService.getUserByEmail(email))
             .thenAnswer((_) async => null);
 
-        // Mock createUser to succeed
         when(
           mockPostgrestService.createUser(
             firstName: anyNamed('firstName'),
@@ -190,10 +168,8 @@ void main() {
           personId: personId,
         );
 
-        // The register method returns a success message
         expect(result['ResultType'], 1);
 
-        // Verify the PostgreSQL user was created
         verify(
           mockPostgrestService.createUser(
             firstName: firstName,
@@ -216,15 +192,12 @@ void main() {
         const zipCode = '10001';
         const personId = '439287';
 
-        // Mock getUserByPassNumber to return null (no existing user)
         when(mockPostgrestService.getUserByPassNumber(passNumber))
             .thenAnswer((_) async => null);
 
-        // Mock getUserByEmail to return null (no existing user)
         when(mockPostgrestService.getUserByEmail(email))
             .thenAnswer((_) async => null);
 
-        // Mock createUser to fail
         when(
           mockPostgrestService.createUser(
             firstName: anyNamed('firstName'),
@@ -246,7 +219,6 @@ void main() {
           personId: personId,
         );
 
-        // The register method catches exceptions and returns error response
         expect(result['ResultType'], 0);
         expect(result['ResultMessage'], Messages.registrationDataStoreFailed);
       });
@@ -260,7 +232,6 @@ void main() {
         const zipCode = '10001';
         const personId = '439287';
 
-        // Mock getUserByPassNumber to return an existing verified user
         when(mockPostgrestService.getUserByPassNumber(passNumber)).thenAnswer(
           (_) async => {
             'id': 1,
@@ -269,7 +240,6 @@ void main() {
           },
         );
 
-        // Mock createUser to throw exception (since this would be handled in registration screen)
         when(
           mockPostgrestService.createUser(
             firstName: anyNamed('firstName'),
@@ -291,7 +261,6 @@ void main() {
           personId: personId,
         );
 
-        // The register method catches exceptions and returns error response
         expect(result['ResultType'], 0);
         expect(result['ResultMessage'], Messages.registrationDataStoreFailed);
       });
@@ -309,7 +278,6 @@ void main() {
           'ResultMessage': 'Success',
         };
 
-        // Stub the successful online login - AuthService uses POST, not GET
         when(
           mockHttpClient.post(
             'LoginMeinBSSBApp',
@@ -347,7 +315,6 @@ void main() {
           'ResultMessage': 'Invalid credentials',
         };
 
-        // AuthService uses POST, not GET
         when(
           mockHttpClient.post(
             'LoginMeinBSSBApp',
@@ -382,7 +349,6 @@ void main() {
         const cachedPersonId = 123;
         const cachedWebloginId = 456;
 
-        // Simulate network error for online login - AuthService uses POST
         when(
           mockHttpClient.post(
             any,
@@ -393,7 +359,6 @@ void main() {
           http.ClientException('Network error during online login'),
         );
 
-        // Stub offline cache data for successful offline login
         when(mockCacheService.getString('username'))
             .thenAnswer((_) async => email);
         when(mockSecureStorage.read(key: 'password'))
@@ -408,7 +373,7 @@ void main() {
               .millisecondsSinceEpoch,
         );
         when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(days: 1)); // Cache not expired
+            .thenReturn(const Duration(days: 1));
 
         final result = await authService.login(email, password);
 
@@ -435,7 +400,6 @@ void main() {
         const email = 'test@example.com';
         const password = 'password123';
 
-        // AuthService uses POST, not GET
         when(
           mockHttpClient.post(
             any,
@@ -467,7 +431,6 @@ void main() {
       const int cachedWebloginId = 456;
 
       setUp(() {
-        // Ensure online login attempt throws ClientException to trigger offline flow
         when(
           mockHttpClient.post(
             any,
@@ -478,7 +441,6 @@ void main() {
           http.ClientException('Network error during online login'),
         );
 
-        // Stub offline cache data for successful offline login
         when(mockCacheService.getString('username'))
             .thenAnswer((_) async => testUsername);
         when(mockSecureStorage.read(key: 'password'))
@@ -487,7 +449,6 @@ void main() {
             .thenAnswer((_) async => cachedPersonId);
         when(mockCacheService.getInt('webLoginId'))
             .thenAnswer((_) async => cachedWebloginId);
-        // Per-key timestamp stubs for valid login
         final now = DateTime.now().millisecondsSinceEpoch;
         when(mockCacheService.getCacheTimestampForKey('username'))
             .thenAnswer((_) async => now);
@@ -511,7 +472,6 @@ void main() {
       });
 
       test('should return failure if cached data is expired', () async {
-        // Expired timestamp for all keys
         final expired = DateTime.now()
             .subtract(const Duration(days: 2))
             .millisecondsSinceEpoch;
@@ -536,10 +496,8 @@ void main() {
       test(
           'should return failure if cached username or password does not match',
           () async {
-        // Override cached username to not match
         when(mockCacheService.getString('username'))
             .thenAnswer((_) async => 'wrong_user');
-        // Valid timestamps
         final now = DateTime.now().millisecondsSinceEpoch;
         when(mockCacheService.getCacheTimestampForKey('username'))
             .thenAnswer((_) async => now);
@@ -558,20 +516,11 @@ void main() {
       });
 
       test('should return failure if no cached data is available', () async {
-        // Set all relevant cached values to null for this test
-        when(mockCacheService.getString('username'))
-            .thenAnswer((_) async => null);
-        when(mockSecureStorage.read(key: 'password'))
-            .thenAnswer((_) async => null);
-        when(mockCacheService.getInt('personId')).thenAnswer((_) async => null);
-        when(mockCacheService.getInt('webLoginId'))
-            .thenAnswer((_) async => null);
-        // Null timestamps for all keys
-        when(mockCacheService.getCacheTimestampForKey('username'))
-            .thenAnswer((_) async => null);
-        when(mockCacheService.getCacheTimestampForKey('personId'))
-            .thenAnswer((_) async => null);
-        when(mockCacheService.getCacheTimestampForKey('webLoginId'))
+        when(mockCacheService.getString(any)).thenAnswer((_) async => '');
+        when(mockSecureStorage.read(key: anyNamed('key')))
+            .thenAnswer((_) async => '');
+        when(mockCacheService.getInt(any)).thenAnswer((_) async => null);
+        when(mockCacheService.getCacheTimestampForKey(any))
             .thenAnswer((_) async => null);
 
         final result = await authService.login(testUsername, testPassword);
@@ -683,7 +632,6 @@ void main() {
     group('fetchLoginEmail', () {
       setUp(() async {
         TestWidgetsFlutterBinding.ensureInitialized();
-        // Stub config values for base URL construction
         when(mockConfigService.getString('apiProtocol', any))
             .thenReturn('https');
         when(mockConfigService.getString('api1BaseServer', any))
@@ -748,6 +696,404 @@ void main() {
 
         final result = await authService.fetchLoginEmail(passnummer);
         expect(result, '');
+      });
+    });
+
+    test('generateVerificationToken returns a 44-char base64 string', () {
+      final token = authService.generateVerificationToken();
+      expect(token, isA<String>());
+      expect(token.length, 44);
+    });
+
+    group('finalizeRegistration', () {
+      test('should verify user and send notification on success', () async {
+        when(mockHttpClient.post(any, any)).thenAnswer(
+          (_) async => [
+            {'RESULTTYPE': 1},
+          ],
+        );
+        when(mockPostgrestService.verifyUser(any))
+            .thenAnswer((_) async => true);
+        when(mockEmailService.sendAccountCreationNotifications(any, any))
+            .thenAnswer((_) async => true);
+
+        final result = await authService.finalizeRegistration(
+          email: 'a@b.de',
+          password: 'pw',
+          token: 'tok',
+          personId: '1',
+          passNumber: '123',
+        );
+        expect(result, isA<List>());
+        verify(mockPostgrestService.verifyUser('tok')).called(1);
+        verify(mockEmailService.sendAccountCreationNotifications('1', 'a@b.de'))
+            .called(1);
+      });
+
+      test('should return error map on exception', () async {
+        when(mockHttpClient.post(any, any)).thenThrow(Exception('fail'));
+        final result = await authService.finalizeRegistration(
+          email: 'a@b.de',
+          password: 'pw',
+          token: 'tok',
+          personId: '1',
+          passNumber: '123',
+        );
+        expect(result['ResultType'], 0);
+        expect(result['ResultMessage'], Messages.accountCreationFailed);
+      });
+    });
+
+    group('logout', () {
+      test('should log info on logout', () async {
+        await authService.logout();
+      });
+    });
+
+    group('getPersonIDByPassnummer', () {
+      test('returns personId as string if found', () async {
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 42},
+          ],
+        );
+        final result = await authService.getPersonIDByPassnummer('123');
+        expect(result, '42');
+      });
+
+      test('returns "0" if not found', () async {
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => []);
+        final result = await authService.getPersonIDByPassnummer('123');
+        expect(result, '0');
+      });
+
+      test('returns "0" on error', () async {
+        reset(mockHttpClient);
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'PersonID/123',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenThrow(Exception('fail'));
+        final result = await authService.getPersonIDByPassnummer('123');
+        expect(result, '0');
+      });
+    });
+
+    group('getPassDatenByPersonId', () {
+      test('returns first map if found', () async {
+        reset(mockHttpClient);
+        // Add these lines to fix the MissingStubError:
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'foo': 'bar'},
+          ],
+        );
+        final result = await authService.getPassDatenByPersonId('1');
+        expect(result, {'foo': 'bar'});
+      });
+
+      test('returns empty map if not found', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => []);
+        final result = await authService.getPassDatenByPersonId('1');
+        expect(result, {});
+      });
+
+      test('returns empty map on error', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(Exception('fail'));
+        final result = await authService.getPassDatenByPersonId('1');
+        expect(result, {});
+      });
+    });
+
+    group('findePersonID', () {
+      test('returns personId as string if found', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 99},
+          ],
+        );
+        final result = await authService.findePersonID(
+          'Doe',
+          'John',
+          '1990-01-01',
+          '123',
+          '10001',
+        );
+        expect(result, '99');
+      });
+
+      test('returns "0" if not found', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer((_) async => []);
+        final result = await authService.findePersonID(
+          'Doe',
+          'John',
+          '1990-01-01',
+          '123',
+          '10001',
+        );
+        expect(result, '0');
+      });
+
+      test('returns "0" on error', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenThrow(Exception('fail'));
+        final result = await authService.findePersonID(
+          'Doe',
+          'John',
+          '1990-01-01',
+          '123',
+          '10001',
+        );
+        expect(result, '0');
+      });
+
+      test('handles invalid birthDate gracefully', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 88},
+          ],
+        );
+        final result = await authService.findePersonID(
+          'Doe',
+          'John',
+          'notadate',
+          '123',
+          '10001',
+        );
+        expect(result, '88');
+      });
+    });
+
+    group('resetPasswordStep1', () {
+      test('returns success if email and reset entry created', () async {
+        reset(mockHttpClient);
+        when(mockConfigService.getString('apiBaseServer', null))
+            .thenReturn('webintern.bssb.bayern');
+        when(mockConfigService.getString('apiBasePort', null))
+            .thenReturn('56400');
+        when(mockConfigService.getString('apiBasePath', null))
+            .thenReturn('rest/zmi/api1');
+
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 1},
+          ],
+        );
+        // Mock dependencies for getPassDatenByPersonId
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenAnswer(
+          (_) async => [
+            {'foo': 'bar'},
+          ],
+        );
+        when(mockEmailService.getEmailAddressesByPersonId(any))
+            .thenAnswer((_) async => ['a@b.de']);
+        when(mockPostgrestService.getLatestPasswordResetForPerson(any))
+            .thenAnswer((_) async => null);
+        when(mockEmailService.sendPasswordResetNotifications(any, any, any))
+            .thenAnswer((_) async => true);
+        when(
+          mockPostgrestService.createPasswordResetEntry(
+            personId: anyNamed('personId'),
+            verificationToken: anyNamed('verificationToken'),
+          ),
+        ).thenAnswer((_) async => true);
+
+        final result = await authService.resetPasswordStep1('123');
+        expect(result['ResultType'], 1);
+      });
+
+      test('returns error if no email found', () async {
+        when(mockCacheService.getString(any)).thenAnswer((_) async => '');
+        when(mockSecureStorage.read(key: anyNamed('key')))
+            .thenAnswer((_) async => '');
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 1},
+          ],
+        );
+        when(mockEmailService.getEmailAddressesByPersonId(any))
+            .thenAnswer((_) async => []);
+        final result = await authService.resetPasswordStep1('123');
+        expect(result['ResultType'], 99);
+      });
+
+      test('returns error if reset requested within 24h', () async {
+        // Mock getPersonIDByPassnummer
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenAnswer(
+          (_) async => [
+            {'PERSONID': 1},
+          ],
+        );
+        // Mock getPassDatenByPersonId
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenAnswer(
+          (_) async => [
+            {'foo': 'bar'},
+          ],
+        );
+        when(mockEmailService.getEmailAddressesByPersonId(any))
+            .thenAnswer((_) async => ['a@b.de']);
+        when(mockPostgrestService.getLatestPasswordResetForPerson(any))
+            .thenAnswer(
+          (_) async => {'created_at': DateTime.now().toIso8601String()},
+        );
+
+        final result = await authService.resetPasswordStep1('123');
+        expect(result['ResultType'], 98);
+      });
+
+      test('returns error on exception', () async {
+        when(
+          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+        ).thenThrow(Exception('fail'));
+        final result = await authService.resetPasswordStep1('123');
+        expect(result['ResultType'], 97);
+      });
+    });
+
+    group('resetPasswordStep2', () {
+      test('returns success if server responds with result true', () async {
+        when(mockHttpClient.put(any, any))
+            .thenAnswer((_) async => {'result': true});
+        when(
+          mockPostgrestService.markPasswordResetEntryUsed(
+            verificationToken: anyNamed('verificationToken'),
+          ),
+        ).thenAnswer((_) async => true);
+        final result = await authService.resetPasswordStep2('token', '1', 'pw');
+        expect(result['success'], true);
+      });
+
+      test('returns error if server responds with result false', () async {
+        when(mockHttpClient.put(any, any))
+            .thenAnswer((_) async => {'result': false});
+        final result = await authService.resetPasswordStep2('token', '1', 'pw');
+        expect(result['success'], false);
+      });
+
+      test('returns error if server responds with unexpected format', () async {
+        when(mockHttpClient.put(any, any)).thenAnswer((_) async => {});
+        final result = await authService.resetPasswordStep2('token', '1', 'pw');
+        expect(result['success'], false);
+      });
+
+      test('returns error on exception', () async {
+        when(mockHttpClient.put(any, any)).thenThrow(Exception('fail'));
+        final result = await authService.resetPasswordStep2('token', '1', 'pw');
+        expect(result['success'], false);
       });
     });
   });
