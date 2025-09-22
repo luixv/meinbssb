@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/screens/ausweis_bestellen_screen.dart';
+import 'package:meinbssb/screens/ausweis_bestellen_success_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/services/core/font_size_provider.dart';
+
+class FakeApiService implements ApiService {
+  bool called = false;
+  bool shouldSucceed = true;
+
+  @override
+  Future<bool> bssbAppPassantrag(
+    Map<int, Map<String, int?>> secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int digitalerPass,
+    int antragsTyp,
+  ) async {
+    called = true;
+    return shouldSucceed;
+  }
+
+  // Add stubs for all other ApiService methods:
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+void main() {
+  Widget buildTestWidget({
+    required ApiService apiService,
+    UserData? userData,
+    bool isLoggedIn = true,
+    Function()? onLogout,
+  }) {
+    return MultiProvider(
+      providers: [
+        Provider<ApiService>.value(value: apiService),
+        ChangeNotifierProvider<FontSizeProvider>(
+          create: (_) => FontSizeProvider(),
+        ),
+      ],
+      child: MaterialApp(
+        home: AusweisBestellenScreen(
+          userData: userData,
+          isLoggedIn: isLoggedIn,
+          onLogout: onLogout ?? () {},
+        ),
+      ),
+    );
+  }
+
+  testWidgets('renders button and description', (WidgetTester tester) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(buildTestWidget(apiService: apiService));
+    expect(find.text('Schützen Ausweis bestellen'), findsOneWidget);
+    expect(find.textContaining('Ausweis'), findsWidgets);
+  });
+
+  testWidgets('calls apiService.bssbAppPassantrag and navigates on success',
+      (WidgetTester tester) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(buildTestWidget(apiService: apiService));
+    await tester.tap(find.text('Schützen Ausweis bestellen'));
+    await tester.pumpAndSettle();
+    expect(apiService.called, isTrue);
+    // Success navigation: AusweisBestellendSuccessScreen should be pushed
+    expect(find.byType(AusweisBestellendSuccessScreen), findsOneWidget);
+  });
+
+  testWidgets('shows snackbar on failure', (WidgetTester tester) async {
+    final apiService = FakeApiService()..shouldSucceed = false;
+    await tester.pumpWidget(buildTestWidget(apiService: apiService));
+    await tester.tap(find.text('Schützen Ausweis bestellen'));
+    await tester.pump(); // Start async
+    await tester.pump(const Duration(seconds: 1)); // Finish async
+    expect(apiService.called, isTrue);
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text('Antrag konnte nicht gesendet werden.'), findsOneWidget);
+  });
+}
