@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart'; // Import UIStyles
+import '/constants/ui_styles.dart';
+import '/constants/messages.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/widgets/scaled_text.dart'; // Import ScaledText
-import '../providers/font_size_provider.dart'; // Import FontSizeProvider
+import '/widgets/scaled_text.dart';
+import '../providers/font_size_provider.dart';
 
-class PersonalPictUploadSuccessScreen extends StatelessWidget {
-  const PersonalPictUploadSuccessScreen({
+class AusweisBestellendSuccessScreen extends StatelessWidget {
+  const AusweisBestellendSuccessScreen({
     super.key,
     required this.userData,
     required this.isLoggedIn,
@@ -24,9 +25,9 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
     return BaseScreenLayout(
-      title: 'Profilbild erfolgreich', // Updated title
+      title: Messages.ausweisBestellenTitle,
       userData: userData,
-      isLoggedIn: isLoggedIn, // User should be logged in here
+      isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       body: Center(
         child: Column(
@@ -40,7 +41,7 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             ScaledText(
               // Using ScaledText
-              'Ihr Profilbild wurde erfolgreich hochgeladen!', // Updated message
+              'Ihr Shützenausweis wurde bestellt!', // Updated message
               style: UIStyles.dialogContentStyle.copyWith(
                 // Using UIStyles.dialogTextStyle
                 fontSize: UIStyles.dialogContentStyle.fontSize! *
@@ -63,7 +64,7 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'personalPictUploadSuccessFab',
+        heroTag: 'ausweisBestellenSuccessFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/home',

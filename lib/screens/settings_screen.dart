@@ -6,7 +6,7 @@ import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/services/core/font_size_provider.dart';
+import '../providers/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 
 class SettingsScreen extends StatelessWidget {

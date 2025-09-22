@@ -779,7 +779,6 @@ void main() {
       test('clearSchulungenCache delegates to training service', () async {
         when(mockTrainingService.clearSchulungenCache(any))
             .thenAnswer((_) async {});
-
         await apiService.clearSchulungenCache(123);
         verify(mockTrainingService.clearSchulungenCache(123)).called(1);
       });
@@ -1129,13 +1128,16 @@ void main() {
     });
 
     group('Email Validation', () {
-      test('createEmailValidationEntry delegates to postgrest service', () async {
-          when(mockPostgrestService.createEmailValidationEntry(
+      test('createEmailValidationEntry delegates to postgrest service',
+          () async {
+        when(
+          mockPostgrestService.createEmailValidationEntry(
             personId: anyNamed('personId'),
             email: anyNamed('email'),
             emailType: anyNamed('emailType'),
             verificationToken: anyNamed('verificationToken'),
-          ),).thenAnswer((_) async {});
+          ),
+        ).thenAnswer((_) async {});
 
         await apiService.createEmailValidationEntry(
           personId: '123',
@@ -1144,15 +1146,18 @@ void main() {
           verificationToken: 'token123',
         );
 
-        verify(mockPostgrestService.createEmailValidationEntry(
-          personId: '123',
-          email: 'test@example.com',
-          emailType: 'private',
-          verificationToken: 'token123',
-        ),).called(1);
+        verify(
+          mockPostgrestService.createEmailValidationEntry(
+            personId: '123',
+            email: 'test@example.com',
+            emailType: 'private',
+            verificationToken: 'token123',
+          ),
+        ).called(1);
       });
 
-      test('getEmailValidationByToken delegates to postgrest service', () async {
+      test('getEmailValidationByToken delegates to postgrest service',
+          () async {
         final expectedEntry = {
           'id': 1,
           'person_id': '123',
@@ -1166,7 +1171,8 @@ void main() {
 
         final result = await apiService.getEmailValidationByToken('token123');
         expect(result, equals(expectedEntry));
-        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+        verify(mockPostgrestService.getEmailValidationByToken('token123'))
+            .called(1);
       });
 
       test('getEmailValidationByToken returns null when not found', () async {
@@ -1175,37 +1181,46 @@ void main() {
 
         final result = await apiService.getEmailValidationByToken('token123');
         expect(result, isNull);
-        verify(mockPostgrestService.getEmailValidationByToken('token123')).called(1);
+        verify(mockPostgrestService.getEmailValidationByToken('token123'))
+            .called(1);
       });
 
-      test('markEmailValidationAsValidated delegates to postgrest service', () async {
+      test('markEmailValidationAsValidated delegates to postgrest service',
+          () async {
         when(mockPostgrestService.markEmailValidationAsValidated('token123'))
             .thenAnswer((_) async => true);
 
-        final result = await apiService.markEmailValidationAsValidated('token123');
+        final result =
+            await apiService.markEmailValidationAsValidated('token123');
         expect(result, isTrue);
-        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .called(1);
       });
 
       test('markEmailValidationAsValidated returns false on error', () async {
         when(mockPostgrestService.markEmailValidationAsValidated('token123'))
             .thenAnswer((_) async => false);
 
-        final result = await apiService.markEmailValidationAsValidated('token123');
+        final result =
+            await apiService.markEmailValidationAsValidated('token123');
         expect(result, isFalse);
-        verify(mockPostgrestService.markEmailValidationAsValidated('token123')).called(1);
+        verify(mockPostgrestService.markEmailValidationAsValidated('token123'))
+            .called(1);
       });
 
-      test('sendEmailValidationNotifications sends notifications successfully', () async {
-        when(mockEmailService.sendEmailValidationNotifications(
-          personId: anyNamed('personId'),
-          email: anyNamed('email'),
-          firstName: anyNamed('firstName'),
-          lastName: anyNamed('lastName'),
-          title: anyNamed('title'),
-          emailType: anyNamed('emailType'),
-          verificationToken: anyNamed('verificationToken'),
-        ),).thenAnswer((_) async {});
+      test('sendEmailValidationNotifications sends notifications successfully',
+          () async {
+        when(
+          mockEmailService.sendEmailValidationNotifications(
+            personId: anyNamed('personId'),
+            email: anyNamed('email'),
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            title: anyNamed('title'),
+            emailType: anyNamed('emailType'),
+            verificationToken: anyNamed('verificationToken'),
+          ),
+        ).thenAnswer((_) async {});
 
         await apiService.sendEmailValidationNotifications(
           personId: '123',
@@ -1217,14 +1232,89 @@ void main() {
           verificationToken: 'token123',
         );
 
-        verify(mockEmailService.sendEmailValidationNotifications(
-          personId: '123',
-          email: 'test@example.com',
-          firstName: 'John',
-          lastName: 'Doe',
-          title: 'Dr.',
-          emailType: 'private',
-          verificationToken: 'token123',
+        verify(
+          mockEmailService.sendEmailValidationNotifications(
+            personId: '123',
+            email: 'test@example.com',
+            firstName: 'John',
+            lastName: 'Doe',
+            title: 'Dr.',
+            emailType: 'private',
+            verificationToken: 'token123',
+          ),
+        ).called(1);
+      });
+    });
+
+    group('IBAN and BIC Validation', () {
+      test('validateIBAN returns true for valid IBAN', () {
+        expect(apiService.validateIBAN('DE89370400440532013000'), isTrue);
+      });
+
+      test('validateIBAN returns false for invalid IBAN', () {
+        expect(apiService.validateIBAN('INVALID'), isFalse);
+      });
+
+      test('validateBIC returns null for valid BIC', () {
+        expect(apiService.validateBIC('DEUTDEBBXXX'), isNull);
+      });
+
+      test('validateBIC returns error string for invalid BIC', () {
+        expect(apiService.validateBIC('INVALID'), isNotNull);
+      });
+    });
+
+    group('Email Service Tests', () {
+      test('getFromEmail delegates to emailService', () async {
+        when(mockEmailService.getFromEmail())
+            .thenAnswer((_) async => 'test@example.com');
+        final result = await apiService.getFromEmail();
+        expect(result, 'test@example.com');
+        verify(mockEmailService.getFromEmail()).called(1);
+      });
+
+      test('sendEmail delegates to emailService', () async {
+        final expected = {'success': true};
+        when(mockEmailService.sendEmail(
+          sender: anyNamed('sender'),
+          recipient: anyNamed('recipient'),
+          subject: anyNamed('subject'),
+          htmlBody: anyNamed('htmlBody'),
+          emailId: anyNamed('emailId'),
+        ),).thenAnswer((_) async => expected);
+
+        final result = await apiService.sendEmail(
+          from: 'from@example.com',
+          recipient: 'to@example.com',
+          subject: 'Test',
+          htmlBody: '<p>Test</p>',
+          emailId: 1,
+        );
+        expect(result, expected);
+      });
+
+      test('sendSchulungAbmeldungEmail delegates to emailService', () async {
+        when(mockEmailService.sendSchulungAbmeldungEmail(
+          personId: anyNamed('personId'),
+          schulungName: anyNamed('schulungName'),
+          schulungDate: anyNamed('schulungDate'),
+          firstName: anyNamed('firstName'),
+          lastName: anyNamed('lastName'),
+        ),).thenAnswer((_) async {});
+
+        await apiService.sendSchulungAbmeldungEmail(
+          personId: '1',
+          schulungName: 'Test',
+          schulungDate: '2024-01-01',
+          firstName: 'Max',
+          lastName: 'Mustermann',
+        );
+        verify(mockEmailService.sendSchulungAbmeldungEmail(
+          personId: '1',
+          schulungName: 'Test',
+          schulungDate: '2024-01-01',
+          firstName: 'Max',
+          lastName: 'Mustermann',
         ),).called(1);
       });
     });

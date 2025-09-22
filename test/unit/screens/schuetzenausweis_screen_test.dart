@@ -21,7 +21,7 @@ import 'package:meinbssb/services/api/starting_rights_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/services/core/token_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/providers/theme_provider.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';

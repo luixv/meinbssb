@@ -11,7 +11,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/error_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';

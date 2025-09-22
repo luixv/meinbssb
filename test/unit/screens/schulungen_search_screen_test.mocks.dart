@@ -27,7 +27,7 @@ import 'package:meinbssb/models/verein_data.dart' as _i17;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i4;
 import 'package:meinbssb/services/core/config_service.dart' as _i21;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i24;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i24;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i25;
@@ -243,22 +243,24 @@ class MockApiService extends _i1.Mock implements _i4.ApiService {
           ) as _i5.Future<_i7.PassdatenAkzeptOrAktiv?>);
 
   @override
-  _i5.Future<bool> postBSSBAppPassantrag(
+  _i5.Future<bool> bssbAppPassantrag(
     Map<int, Map<String, int?>>? secondColumns,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
     int? digitalerPass,
+    int? antragsTyp,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #postBSSBAppPassantrag,
+          #bssbAppPassantrag,
           [
             secondColumns,
             passdatenId,
             personId,
             erstVereinId,
             digitalerPass,
+            antragsTyp,
           ],
         ),
         returnValue: _i5.Future<bool>.value(false),

@@ -77,7 +77,6 @@ class Messages {
   static const String kontoinhaberLabel = 'Kontoinhaber';
   static const String kontoinhaberRequired =
       'Bitte geben Sie den Kontoinhaber ein';
-  static const String personalDataTitle = 'Persönliche Daten';
   static const String homeTitle = 'Home';
   static const String welcomeMessage = 'Willkommen';
   static const String checkPassNumberButtonLabel = 'Passnummer prüfen';
@@ -130,6 +129,11 @@ class Messages {
   static const String fontSizeTitle = 'Textgröße';
   static const String fontSizeDescription =
       'Anpassung der Textgröße für bessere Lesbarkeit';
+
+  // Ausweis Bestellen Screen
+  static const String ausweisBestellenTitle = 'Schützenausweis bestellen';
+  static const String ausweisBestellenDescription =
+      'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen? \nKlicken Sie auf den Button unten, um fortzufahren.';
 
   static const String firstNameLabel = 'Vorname';
   static const String lastNameLabel = 'Nachname';

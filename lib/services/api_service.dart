@@ -174,19 +174,20 @@ class ApiService {
     return _userService.fetchPassdatenAkzeptierterOderAktiverPass(personId);
   }
 
-  Future<bool> postBSSBAppPassantrag(
-    Map<int, Map<String, int?>> secondColumns,
-    int? passdatenId,
-    int? personId,
-    int? erstVereinId,
-    int digitalerPass,
-  ) async {
-    return _userService.postBSSBAppPassantrag(
+  Future<bool> bssbAppPassantrag(
+      Map<int, Map<String, int?>> secondColumns,
+      int? passdatenId,
+      int? personId,
+      int? erstVereinId,
+      int digitalerPass,
+      int antragsTyp,) async {
+    return _userService.bssbAppPassantrag(
       secondColumns,
       passdatenId,
       personId,
       erstVereinId,
       digitalerPass,
+      antragsTyp,
     );
   }
 

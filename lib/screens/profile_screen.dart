@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import '/screens/logo_widget.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
+
 import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
-import 'personal_pict_upload_screen.dart';
 import '/screens/absolvierte_schulungen_screen.dart';
+import '/screens/logo_widget.dart';
+import '/screens/personal_pict_upload_screen.dart';
+import '/screens/ausweis_bestellen_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -138,6 +140,23 @@ class ProfileScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChangePasswordScreen(
+                      userData: userData,
+                      isLoggedIn: isLoggedIn,
+                      onLogout: onLogout,
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildMenuItem(
+              context,
+              'Schützenausweis bestellen',
+              Icons.search_off,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AusweisBestellenScreen(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

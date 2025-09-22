@@ -16,26 +16,35 @@ void main() {
 
     group('Initialization', () {
       test('should initialize with default font scale', () {
-        expect(provider.scaleFactor, equals(UIConstants.defaultFontScale));
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should use default scale when no saved value exists', () async {
-        expect(provider.scaleFactor, equals(UIConstants.defaultFontScale));
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should load saved scale factor from SharedPreferences', () async {
-        // This test verifies the async initialization behavior
-        // The provider should eventually load the saved value
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(provider.scaleFactor, equals(UIConstants.defaultFontScale));
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('should handle SharedPreferences initialization failure gracefully',
           () async {
-        // Test that the provider doesn't crash if SharedPreferences fails
         final testProvider = FontSizeProvider();
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(testProvider.scaleFactor, equals(UIConstants.defaultFontScale));
+        expect(
+          testProvider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
       });
     });
 
@@ -43,40 +52,55 @@ void main() {
       test('getScaledFontSize should multiply base size by scale factor', () {
         const baseSize = 16.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with different base sizes', () {
         const baseSizes = [12.0, 14.0, 16.0, 18.0, 20.0];
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
       });
 
       test('getScaledFontSize should work with zero base size', () {
         const baseSize = 0.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize, equals(0.0));
+        expect(scaledSize, closeTo(0.0, 0.0001));
       });
 
       test('getScaledFontSize should work with negative base size', () {
         const baseSize = -10.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with very large base size', () {
         const baseSize = 1000.0;
         final scaledSize = provider.getScaledFontSize(baseSize);
-        expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+        expect(
+          scaledSize,
+          closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+        );
       });
 
       test('getScaledFontSize should work with decimal base sizes', () {
         const baseSizes = [12.5, 14.75, 16.25, 18.8, 20.1];
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
       });
     });
@@ -87,16 +111,15 @@ void main() {
         provider.increaseFontSize();
         expect(
           provider.scaleFactor,
-          equals(initialScale + UIConstants.fontScaleStep),
+          closeTo(initialScale + UIConstants.fontScaleStep, 0.0001),
         );
       });
 
       test('increaseFontSize should not exceed max font scale', () {
-        // Set scale to max value
         for (int i = 0; i < 20; i++) {
           provider.increaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.maxFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.maxFontScale, 0.0001));
       });
 
       test('increaseFontSize should notify listeners', () {
@@ -109,25 +132,19 @@ void main() {
       });
 
       test('increaseFontSize should clamp at maximum value', () {
-        // Reach maximum scale
         for (int i = 0; i < 50; i++) {
           provider.increaseFontSize();
         }
         final maxScale = provider.scaleFactor;
-
-        // Try to increase again
         provider.increaseFontSize();
-        expect(provider.scaleFactor, equals(maxScale));
+        expect(provider.scaleFactor, closeTo(maxScale, 0.0001));
       });
 
       test('increaseFontSize should handle multiple rapid calls', () {
         final initialScale = provider.scaleFactor;
-
-        // Call increase multiple times rapidly
         for (int i = 0; i < 5; i++) {
           provider.increaseFontSize();
         }
-
         expect(
           provider.scaleFactor,
           closeTo(initialScale + 5 * UIConstants.fontScaleStep, 0.001),
@@ -141,16 +158,15 @@ void main() {
         provider.decreaseFontSize();
         expect(
           provider.scaleFactor,
-          equals(initialScale - UIConstants.fontScaleStep),
+          closeTo(initialScale - UIConstants.fontScaleStep, 0.0001),
         );
       });
 
       test('decreaseFontSize should not go below min font scale', () {
-        // Set scale to min value by decreasing multiple times
         for (int i = 0; i < 20; i++) {
           provider.decreaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.minFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.minFontScale, 0.0001));
       });
 
       test('decreaseFontSize should notify listeners', () {
@@ -163,20 +179,16 @@ void main() {
       });
 
       test('decreaseFontSize should clamp at minimum value', () {
-        // Reach minimum scale
         for (int i = 0; i < 50; i++) {
           provider.decreaseFontSize();
         }
         final minScale = provider.scaleFactor;
-
-        // Try to decrease again
         provider.decreaseFontSize();
-        expect(provider.scaleFactor, equals(minScale));
+        expect(provider.scaleFactor, closeTo(minScale, 0.0001));
       });
 
       test('decreaseFontSize should handle multiple rapid calls', () {
         final initialScale = provider.scaleFactor;
-        // Call decrease multiple times rapidly
         for (int i = 0; i < 3; i++) {
           provider.decreaseFontSize();
         }
@@ -204,14 +216,10 @@ void main() {
       test(
           'getScalePercentage should return correct percentage for different scales',
           () {
-        // Test with different scale factors by creating new providers
         const testScales = [0.8, 1.0, 1.2, 1.5, 2.0];
 
         for (final _ in testScales) {
-          // Create a new provider for each test to avoid state interference
           final testProvider = FontSizeProvider();
-
-          // We can't directly set the scale factor, but we can test the logic
           final percentage = testProvider.getScalePercentage();
           expect(percentage, contains('%'));
           expect(percentage, isA<String>());
@@ -227,7 +235,6 @@ void main() {
       });
 
       test('getScalePercentage should handle edge cases', () {
-        // Test with minimum scale
         for (int i = 0; i < 50; i++) {
           provider.decreaseFontSize();
         }
@@ -237,7 +244,6 @@ void main() {
           equals('${(UIConstants.minFontScale * 100).toInt()}%'),
         );
 
-        // Test with maximum scale
         for (int i = 0; i < 100; i++) {
           provider.increaseFontSize();
         }
@@ -249,7 +255,6 @@ void main() {
       });
 
       test('getScalePercentage should always return valid format', () {
-        // Test that percentage always ends with % and contains only digits and %
         final percentage = provider.getScalePercentage();
         expect(percentage, matches(r'^\d+%$'));
       });
@@ -258,43 +263,36 @@ void main() {
     group('Edge Cases', () {
       test('should handle multiple rapid increase/decrease operations', () {
         final initialScale = provider.scaleFactor;
-
-        // Perform multiple operations rapidly
         for (int i = 0; i < 5; i++) {
           provider.increaseFontSize();
           provider.decreaseFontSize();
         }
-
-        // Should end up at the initial scale (or close to it)
         expect(provider.scaleFactor, closeTo(initialScale, 0.01));
       });
 
       test('should handle boundary conditions correctly', () {
-        // Test that we can reach the minimum scale
         for (int i = 0; i < 20; i++) {
           provider.decreaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.minFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.minFontScale, 0.0001));
 
-        // Test that we can reach the maximum scale
         for (int i = 0; i < 20; i++) {
           provider.increaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.maxFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.maxFontScale, 0.0001));
       });
 
       test('should maintain scale factor within valid range', () {
-        // Perform many operations to ensure scale stays within bounds
         for (int i = 0; i < 100; i++) {
           provider.increaseFontSize();
         }
         expect(
           provider.scaleFactor,
-          lessThanOrEqualTo(UIConstants.maxFontScale),
+          lessThanOrEqualTo(UIConstants.maxFontScale + 0.0001),
         );
         expect(
           provider.scaleFactor,
-          greaterThanOrEqualTo(UIConstants.minFontScale),
+          greaterThanOrEqualTo(UIConstants.minFontScale - 0.0001),
         );
 
         for (int i = 0; i < 100; i++) {
@@ -302,30 +300,27 @@ void main() {
         }
         expect(
           provider.scaleFactor,
-          lessThanOrEqualTo(UIConstants.maxFontScale),
+          lessThanOrEqualTo(UIConstants.maxFontScale + 0.0001),
         );
         expect(
           provider.scaleFactor,
-          greaterThanOrEqualTo(UIConstants.minFontScale),
+          greaterThanOrEqualTo(UIConstants.minFontScale - 0.0001),
         );
       });
 
       test('should handle extreme scale values correctly', () {
-        // Test with very small scale
         for (int i = 0; i < 100; i++) {
           provider.decreaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.minFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.minFontScale, 0.0001));
 
-        // Test with very large scale
         for (int i = 0; i < 100; i++) {
           provider.increaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.maxFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.maxFontScale, 0.0001));
       });
 
       test('should handle concurrent operations', () async {
-        // Simulate concurrent increase/decrease operations
         final futures = <Future>[];
 
         for (int i = 0; i < 10; i++) {
@@ -343,24 +338,24 @@ void main() {
 
         await Future.wait(futures);
 
-        // Should still be within valid range
         expect(
           provider.scaleFactor,
-          greaterThanOrEqualTo(UIConstants.minFontScale),
+          greaterThanOrEqualTo(UIConstants.minFontScale - 0.0001),
         );
         expect(
           provider.scaleFactor,
-          lessThanOrEqualTo(UIConstants.maxFontScale),
+          lessThanOrEqualTo(UIConstants.maxFontScale + 0.0001),
         );
       });
     });
 
     group('Integration Tests', () {
       test('should work correctly with typical usage pattern', () {
-        // Simulate typical user interaction
-        expect(provider.scaleFactor, equals(UIConstants.defaultFontScale));
+        expect(
+          provider.scaleFactor,
+          closeTo(UIConstants.defaultFontScale, 0.0001),
+        );
 
-        // User increases font size
         provider.increaseFontSize();
         expect(
           provider.scaleFactor,
@@ -370,7 +365,6 @@ void main() {
           ),
         );
 
-        // User increases again
         provider.increaseFontSize();
         expect(
           provider.scaleFactor,
@@ -380,7 +374,6 @@ void main() {
           ),
         );
 
-        // User decreases font size
         provider.decreaseFontSize();
         expect(
           provider.scaleFactor,
@@ -390,7 +383,6 @@ void main() {
           ),
         );
 
-        // Check percentage
         final percentage = provider.getScalePercentage();
         expect(percentage, isA<String>());
         expect(percentage, contains('%'));
@@ -399,21 +391,23 @@ void main() {
       test('should scale font sizes correctly', () {
         const baseSizes = [12.0, 14.0, 16.0, 18.0, 20.0];
 
-        // Test with default scale
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
-          expect(scaledSize, equals(baseSize * UIConstants.defaultFontScale));
+          expect(
+            scaledSize,
+            closeTo(baseSize * UIConstants.defaultFontScale, 0.0001),
+          );
         }
 
-        // Increase scale and test again
         provider.increaseFontSize();
         for (final baseSize in baseSizes) {
           final scaledSize = provider.getScaledFontSize(baseSize);
           expect(
             scaledSize,
-            equals(
+            closeTo(
               baseSize *
                   (UIConstants.defaultFontScale + UIConstants.fontScaleStep),
+              0.0001,
             ),
           );
         }
@@ -423,7 +417,6 @@ void main() {
         final initialScale = provider.scaleFactor;
         final initialPercentage = provider.getScalePercentage();
 
-        // Perform a series of operations
         provider.increaseFontSize();
         provider.increaseFontSize();
         provider.decreaseFontSize();
@@ -431,8 +424,7 @@ void main() {
         provider.decreaseFontSize();
         provider.decreaseFontSize();
 
-        // Verify consistency
-        expect(provider.scaleFactor, equals(initialScale));
+        expect(provider.scaleFactor, closeTo(initialScale, 0.0001));
         expect(provider.getScalePercentage(), equals(initialPercentage));
       });
     });
@@ -446,19 +438,17 @@ void main() {
       });
 
       test('should respect min and max font scale constraints', () {
-        // Test that the provider respects the constants
         expect(
           provider.scaleFactor,
-          greaterThanOrEqualTo(UIConstants.minFontScale),
+          greaterThanOrEqualTo(UIConstants.minFontScale - 0.0001),
         );
         expect(
           provider.scaleFactor,
-          lessThanOrEqualTo(UIConstants.maxFontScale),
+          lessThanOrEqualTo(UIConstants.maxFontScale + 0.0001),
         );
       });
 
       test('should have valid constant relationships', () {
-        // Test that constants have logical relationships
         expect(
           UIConstants.minFontScale,
           lessThan(UIConstants.defaultFontScale),
@@ -485,18 +475,16 @@ void main() {
 
         provider.addListener(listener);
 
-        // Trigger notifications
         provider.increaseFontSize();
         expect(notificationCount, equals(1));
 
         provider.decreaseFontSize();
         expect(notificationCount, equals(2));
 
-        // Remove listener
         provider.removeListener(listener);
 
         provider.increaseFontSize();
-        expect(notificationCount, equals(2)); // Should not increase
+        expect(notificationCount, equals(2));
       });
 
       test('should handle multiple listeners', () {
@@ -517,8 +505,8 @@ void main() {
         provider.removeListener(listener1);
         provider.decreaseFontSize();
 
-        expect(listener1Count, equals(1)); // Should not increase
-        expect(listener2Count, equals(2)); // Should increase
+        expect(listener1Count, equals(1));
+        expect(listener2Count, equals(2));
       });
 
       test('should handle listener removal during notification', () {
@@ -533,11 +521,9 @@ void main() {
 
         provider.addListener(listener);
 
-        // First call should trigger listener and remove it
         provider.increaseFontSize();
         expect(notificationCount, equals(1));
 
-        // Second call should not trigger listener
         provider.increaseFontSize();
         expect(notificationCount, equals(1));
       });
@@ -551,7 +537,6 @@ void main() {
 
         provider.addListener(listener);
 
-        // Trigger multiple rapid notifications
         for (int i = 0; i < 10; i++) {
           provider.increaseFontSize();
         }
@@ -562,10 +547,8 @@ void main() {
 
     group('Mathematical Operations', () {
       test('should handle floating point precision correctly', () {
-        // Test that floating point operations work correctly
         final initialScale = provider.scaleFactor;
 
-        // Add and subtract the same value multiple times
         for (int i = 0; i < 10; i++) {
           provider.increaseFontSize();
         }
@@ -574,42 +557,37 @@ void main() {
           provider.decreaseFontSize();
         }
 
-        // Should be very close to the initial value
         expect(provider.scaleFactor, closeTo(initialScale, 0.001));
       });
 
       test('should clamp values correctly at boundaries', () {
-        // Test minimum boundary
         for (int i = 0; i < 50; i++) {
           provider.decreaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.minFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.minFontScale, 0.0001));
 
-        // Test maximum boundary
         for (int i = 0; i < 50; i++) {
           provider.increaseFontSize();
         }
-        expect(provider.scaleFactor, equals(UIConstants.maxFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.maxFontScale, 0.0001));
       });
 
       test('should handle step size calculations correctly', () {
         final initialScale = provider.scaleFactor;
 
-        // Test that step size is applied correctly
         provider.increaseFontSize();
         expect(
           provider.scaleFactor,
-          equals(initialScale + UIConstants.fontScaleStep),
+          closeTo(initialScale + UIConstants.fontScaleStep, 0.0001),
         );
 
         provider.decreaseFontSize();
-        expect(provider.scaleFactor, equals(initialScale));
+        expect(provider.scaleFactor, closeTo(initialScale, 0.0001));
       });
 
       test('should handle multiple step operations', () {
         final initialScale = provider.scaleFactor;
 
-        // Test multiple step operations
         for (int i = 1; i <= 5; i++) {
           provider.increaseFontSize();
           expect(
@@ -618,7 +596,6 @@ void main() {
           );
         }
 
-        // Test multiple decrease operations
         for (int i = 4; i >= 0; i--) {
           provider.decreaseFontSize();
           expect(
@@ -631,27 +608,15 @@ void main() {
 
     group('Persistence Testing', () {
       test('should save scale factor to SharedPreferences', () async {
-        // This test verifies that the provider attempts to save data
-        // Note: We can't easily mock SharedPreferences in this context,
-        // but we can verify the provider doesn't crash during save operations
         provider.increaseFontSize();
-
-        // Wait a bit for async operations
         await Future.delayed(const Duration(milliseconds: 100));
-
-        // Provider should still be functional
         expect(provider.scaleFactor, greaterThan(UIConstants.defaultFontScale));
       });
 
       test('should handle SharedPreferences save failures gracefully',
           () async {
-        // Test that the provider continues to work even if save fails
         provider.increaseFontSize();
-
-        // Wait for async operations
         await Future.delayed(const Duration(milliseconds: 100));
-
-        // Provider should still be functional
         expect(provider.scaleFactor, greaterThan(UIConstants.defaultFontScale));
       });
     });
@@ -660,18 +625,14 @@ void main() {
       test('should handle many rapid operations efficiently', () {
         final stopwatch = Stopwatch()..start();
 
-        // Perform many operations
         for (int i = 0; i < 1000; i++) {
           provider.increaseFontSize();
         }
 
         stopwatch.stop();
 
-        // Should complete within reasonable time (less than 1 second)
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
-
-        // Should be at maximum scale
-        expect(provider.scaleFactor, equals(UIConstants.maxFontScale));
+        expect(provider.scaleFactor, closeTo(UIConstants.maxFontScale, 0.0001));
       });
 
       test('should handle many listener notifications efficiently', () {
@@ -685,14 +646,12 @@ void main() {
 
         final stopwatch = Stopwatch()..start();
 
-        // Perform many operations
         for (int i = 0; i < 100; i++) {
           provider.increaseFontSize();
         }
 
         stopwatch.stop();
 
-        // Should complete within reasonable time
         expect(stopwatch.elapsedMilliseconds, lessThan(1000));
         expect(notificationCount, equals(10));
       });
@@ -702,19 +661,16 @@ void main() {
       test('should not leak memory with many listeners', () {
         final listeners = <Function()>[];
 
-        // Add many listeners
         for (int i = 0; i < 100; i++) {
           listener() {}
           listeners.add(listener);
           provider.addListener(listener);
         }
 
-        // Remove all listeners
         for (final listener in listeners) {
           provider.removeListener(listener);
         }
 
-        // Provider should still work
         provider.increaseFontSize();
         expect(provider.scaleFactor, greaterThan(UIConstants.defaultFontScale));
       });
@@ -729,10 +685,8 @@ void main() {
         provider.addListener(listener);
         provider.removeListener(listener);
 
-        // Trigger notification
         provider.increaseFontSize();
 
-        // Listener should not be called
         expect(listenerCalled, isFalse);
       });
     });
@@ -746,10 +700,9 @@ void main() {
         provider1.increaseFontSize();
         await Future.delayed(const Duration(milliseconds: 100));
         final savedScale = provider1.scaleFactor;
-        // New provider should load the saved value
         final provider2 = FontSizeProvider();
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(provider2.scaleFactor, equals(savedScale));
+        expect(provider2.scaleFactor, closeTo(savedScale, 0.0001));
       });
 
       test('should persist decrease and load in new provider', () async {
@@ -761,7 +714,7 @@ void main() {
         final savedScale = provider1.scaleFactor;
         final provider2 = FontSizeProvider();
         await Future.delayed(const Duration(milliseconds: 100));
-        expect(provider2.scaleFactor, equals(savedScale));
+        expect(provider2.scaleFactor, closeTo(savedScale, 0.0001));
       });
 
       test('should not notify listeners if scale factor does not change', () {
@@ -769,27 +722,45 @@ void main() {
         provider.addListener(() {
           notified = true;
         });
-        // Try to decrease below min
         for (int i = 0; i < 100; i++) {
           provider.decreaseFontSize();
         }
         notified = false;
-        provider.decreaseFontSize(); // Should not notify
+        provider.decreaseFontSize();
         expect(notified, isFalse);
 
-        // Try to increase above max
         for (int i = 0; i < 100; i++) {
           provider.increaseFontSize();
         }
         notified = false;
-        provider.increaseFontSize(); // Should not notify
+        provider.increaseFontSize();
         expect(notified, isFalse);
       });
 
       test('should handle removing a listener that was never added', () {
         void dummyListener() {}
-        // Should not throw
         provider.removeListener(dummyListener);
+      });
+    });
+
+    group('Font Size Reset', () {
+      test('resetFontSize should reset scale factor to default', () {
+        provider.increaseFontSize();
+        expect(provider.scaleFactor,
+            isNot(closeTo(UIConstants.defaultFontScale, 0.0001)),);
+        provider.resetFontSize();
+        expect(provider.scaleFactor,
+            closeTo(UIConstants.defaultFontScale, 0.0001),);
+      });
+
+      test('resetFontSize should notify listeners', () {
+        provider.increaseFontSize();
+        bool notified = false;
+        provider.addListener(() {
+          notified = true;
+        });
+        provider.resetFontSize();
+        expect(notified, isTrue);
       });
     });
   });

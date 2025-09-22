@@ -5,7 +5,7 @@ import 'package:mockito/mockito.dart';
 
 import 'package:meinbssb/screens/change_password_screen.dart';
 import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import '../helpers/test_helper.dart';

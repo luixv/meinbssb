@@ -21,7 +21,7 @@ import 'services/core/config_service.dart';
 import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
-import 'services/core/font_size_provider.dart';
+import 'providers/font_size_provider.dart';
 import 'services/core/calendar_service.dart';
 
 import 'screens/schulungen/schulungen_search_screen.dart';
