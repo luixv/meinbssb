@@ -8,6 +8,7 @@ import '/models/user_data.dart';
 import '/services/core/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'ausweis_bestellen_success_screen.dart';
 
 class AusweisBestellenScreen extends StatefulWidget {
   const AusweisBestellenScreen({
@@ -34,24 +35,38 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
     int digitalerPass = 1; // 1 for yes, 0 for no
 
     final apiService = Provider.of<ApiService>(context, listen: false);
-    // Use dummy/default values for demonstration
     final bool success = await apiService.bssbAppPassantrag(
       <int, Map<String, int?>>{}, // secondColumns
       passdatenId,
-      personId, // personId
-      erstVereinId, // erstVereinId
+      personId,
+      erstVereinId,
       digitalerPass,
       antragsTyp,
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? 'Antrag erfolgreich gesendet!'
-              : 'Antrag konnte nicht gesendet werden.',
-        ),
-      ),
-    );
+
+    if (success) {
+      // Navigate to the success screen
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AusweisBestellendSuccessScreen(
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Antrag konnte nicht gesendet werden.'),
+          ),
+        );
+      }
+    }
   }
 
   @override
