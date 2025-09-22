@@ -427,31 +427,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                           .scaleFactor,
                                                 ),
                                                 children: <TextSpan>[
-                                                  /*
-                                                  TextSpan(
-                                                    text: _passData!.passnummer,
-                                                    style: UIStyles
-                                                        .subtitleStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: ' - ',
-                                                    style: UIStyles.titleStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  */
                                                   TextSpan(
                                                     text: '• ',
                                                     style: UIStyles
