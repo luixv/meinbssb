@@ -11,6 +11,7 @@ import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
 
 import 'dart:async';
 import 'dart:io';
@@ -1547,6 +1548,60 @@ void main() {
         ),
         throwsException,
       );
+    });
+  });
+
+  group('_mapSchulungstermineZusatzfelderResponse', () {
+    late TrainingService trainingService;
+
+    setUp(() {
+      trainingService = TrainingService(
+        httpClient: MockHttpClient(),
+        cacheService: MockCacheService(),
+        networkService: MockNetworkService(),
+        configService: MockConfigService(),
+      );
+    });
+
+    test('returns mapped list on valid response', () {
+      final response = [
+        {
+          'SCHULUNGENTERMINEFELDID': 1,
+          'SCHULUNGENTERMINID': 876,
+          'FELDBEZEICHNUNG': 'Feld A',
+        },
+        {
+          'SCHULUNGENTERMINEFELDID': 2,
+          'SCHULUNGENTERMINID': 876,
+          'FELDBEZEICHNUNG': 'Feld B',
+        }
+      ];
+      final result =
+          trainingService.mapSchulungstermineZusatzfelderResponse(response);
+      expect(result, isA<List<SchulungstermineZusatzfelder>>());
+      expect(result.length, 2);
+      expect(result[0].schulungstermineFeldId, 1);
+      expect(result[0].feldbezeichnung, 'Feld A');
+      expect(result[1].schulungstermineFeldId, 2);
+      expect(result[1].feldbezeichnung, 'Feld B');
+    });
+
+    test('returns empty list on empty response', () {
+      final result =
+          trainingService.mapSchulungstermineZusatzfelderResponse([]);
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list on non-list response', () {
+      final result = trainingService
+          .mapSchulungstermineZusatzfelderResponse({'unexpected': 'object'});
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list if item is not a map', () {
+      final result = trainingService
+          .mapSchulungstermineZusatzfelderResponse([123, null, 'string']);
+      expect(result, isEmpty);
     });
   });
 }
