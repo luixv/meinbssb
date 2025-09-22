@@ -5,7 +5,7 @@ import 'package:meinbssb/screens/starting_rights_screen.dart';
 
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/pass_data_zve_data.dart';

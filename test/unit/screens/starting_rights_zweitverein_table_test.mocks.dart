@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:ui' as _i4;
 
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i2;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 

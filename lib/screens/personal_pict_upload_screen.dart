@@ -10,7 +10,7 @@ import '/widgets/scaled_text.dart';
 import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/services/core/font_size_provider.dart';
+import '../providers/font_size_provider.dart';
 import '/services/core/config_service.dart';
 import '/screens/personal_pict_upload_success.dart';
 import '/screens/connectivity_icon.dart';

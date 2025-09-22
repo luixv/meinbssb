@@ -14,7 +14,7 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
 import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
   const PersonDataScreen(

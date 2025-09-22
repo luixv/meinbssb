@@ -13,7 +13,7 @@ import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/starting_rights_header.dart';
 import 'package:meinbssb/screens/starting_rights_zweitverein_table.dart';
 

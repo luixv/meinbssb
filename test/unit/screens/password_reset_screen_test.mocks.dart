@@ -8,7 +8,7 @@ import 'dart:ui' as _i8;
 
 import 'package:meinbssb/services/api/auth_service.dart' as _i3;
 import 'package:meinbssb/services/core/config_service.dart' as _i9;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i7;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i7;
 import 'package:meinbssb/services/core/network_service.dart' as _i6;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;

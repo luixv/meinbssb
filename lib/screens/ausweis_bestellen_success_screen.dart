@@ -6,7 +6,7 @@ import '/constants/messages.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import '/services/core/font_size_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class AusweisBestellendSuccessScreen extends StatelessWidget {
   const AusweisBestellendSuccessScreen({

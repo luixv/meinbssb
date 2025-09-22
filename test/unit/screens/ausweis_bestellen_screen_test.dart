@@ -5,7 +5,7 @@ import 'package:meinbssb/screens/ausweis_bestellen_screen.dart';
 import 'package:meinbssb/screens/ausweis_bestellen_success_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class FakeApiService implements ApiService {
   bool called = false;

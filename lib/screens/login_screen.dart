@@ -13,7 +13,7 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 

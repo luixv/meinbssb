@@ -6,7 +6,7 @@ import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import 'package:provider/provider.dart';
-import '/services/core/font_size_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class BaseScreenLayout extends StatelessWidget {
   const BaseScreenLayout({

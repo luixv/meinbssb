@@ -5,7 +5,7 @@ import '/constants/ui_styles.dart'; // Import UIStyles
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart'; // Import ScaledText
-import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
+import '../providers/font_size_provider.dart'; // Import FontSizeProvider
 
 class PersonalPictUploadSuccessScreen extends StatelessWidget {
   const PersonalPictUploadSuccessScreen({

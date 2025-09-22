@@ -5,7 +5,7 @@ import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/services/core/font_size_provider.dart';
+import '../providers/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'ausweis_bestellen_success_screen.dart';

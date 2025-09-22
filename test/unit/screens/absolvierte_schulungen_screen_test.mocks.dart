@@ -27,7 +27,7 @@ import 'package:meinbssb/models/verein_data.dart' as _i17;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i9;
 import 'package:meinbssb/services/api_service.dart' as _i4;
 import 'package:meinbssb/services/core/config_service.dart' as _i21;
-import 'package:meinbssb/services/core/font_size_provider.dart' as _i25;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i25;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
 import 'package:meinbssb/services/core/network_service.dart' as _i24;
 import 'package:mockito/mockito.dart' as _i1;

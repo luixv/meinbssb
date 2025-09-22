@@ -9,7 +9,7 @@ import 'package:meinbssb/screens/change_password_result_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
