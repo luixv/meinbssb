@@ -1551,7 +1551,7 @@ void main() {
     });
   });
 
-  group('_mapSchulungstermineZusatzfelderResponse', () {
+  group('mapSchulungstermineZusatzfelderResponse', () {
     late TrainingService trainingService;
 
     setUp(() {

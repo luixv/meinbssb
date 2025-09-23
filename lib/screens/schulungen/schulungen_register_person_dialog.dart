@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '../../models/schulungstermin_data.dart';
+import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
+import '/models/schulungstermine_zusatzfelder_data.dart';
+
 import '/services/api_service.dart';
 import '/services/core/config_service.dart';
 import '/services/core/email_service.dart';
@@ -49,6 +52,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
   late final TextEditingController telefonnummerController;
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  bool allFieldsFilled = false;
+
+  List<SchulungstermineZusatzfelder> zusatzfelder = [];
+  final Map<int, TextEditingController> zusatzfeldControllers = {};
+  bool zusatzfelderLoaded = false;
 
   @override
   void initState() {
@@ -62,6 +70,27 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     emailController = TextEditingController(text: widget.prefillEmail);
     telefonnummerController =
         TextEditingController(text: widget.prefillUser?.telefon ?? '');
+
+    fetchSchulungstermineZusatzfelder(widget.schulungsTermin.schulungsterminId)
+        .then((result) {
+      if (mounted) {
+        setState(() {
+          zusatzfelder = result;
+          for (final feld in zusatzfelder) {
+            final controller = TextEditingController();
+            controller.addListener(_checkAllFieldsFilled);
+            zusatzfeldControllers[feld.schulungstermineFeldId] = controller;
+          }
+          zusatzfelderLoaded = true;
+        });
+      }
+    });
+
+    vornameController.addListener(_checkAllFieldsFilled);
+    nachnameController.addListener(_checkAllFieldsFilled);
+    passnummerController.addListener(_checkAllFieldsFilled);
+    emailController.addListener(_checkAllFieldsFilled);
+    telefonnummerController.addListener(_checkAllFieldsFilled);
   }
 
   @override
@@ -71,12 +100,26 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     passnummerController.dispose();
     emailController.dispose();
     telefonnummerController.dispose();
+    for (final controller in zusatzfeldControllers.values) {
+      controller.removeListener(_checkAllFieldsFilled);
+      controller.dispose();
+    }
     super.dispose();
   }
 
   bool isEmailValid(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}');
     return emailRegex.hasMatch(email);
+  }
+
+// api service call to the fetchSchulungstermineZusatzfelder
+
+  Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
+    int schulungsTerminId,
+  ) async {
+    return widget.apiService.fetchSchulungstermineZusatzfelder(
+      schulungsTerminId,
+    );
   }
 
   Future<void> submit() async {
@@ -125,6 +168,15 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
           telefon: telefonnummerController.text,
           // other optional fields use defaults from the model
         );
+    final felderArray = zusatzfelder
+        .map(
+          (feld) => {
+            'SchulungenTermineFeldID': feld.schulungstermineFeldId,
+            'FeldWert':
+                zusatzfeldControllers[feld.schulungstermineFeldId]?.text ?? '',
+          },
+        )
+        .toList();
     final response = await widget.apiService.registerSchulungenTeilnehmer(
       schulungTerminId: widget.schulungsTermin.schulungsterminId,
       user: userData.copyWith(
@@ -136,7 +188,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
       email: emailController.text,
       telefon: telefonnummerController.text,
       bankData: widget.bankData,
-      felderArray: [],
+      felderArray: felderArray,
     );
     if (!mounted) return;
     final msg = response.msg;
@@ -181,6 +233,26 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
           duration: UIConstants.snackbarDuration,
         ),
       );
+    }
+  }
+
+  void _checkAllFieldsFilled() {
+    final staticFilled = vornameController.text.trim().isNotEmpty &&
+        nachnameController.text.trim().isNotEmpty &&
+        passnummerController.text.trim().isNotEmpty &&
+        emailController.text.trim().isNotEmpty &&
+        telefonnummerController.text.trim().isNotEmpty;
+    final zusatzFilled = zusatzfelder.every((feld) =>
+        zusatzfeldControllers[feld.schulungstermineFeldId]
+            ?.text
+            .trim()
+            .isNotEmpty ??
+        false,);
+    final filled = staticFilled && zusatzFilled;
+    if (filled != allFieldsFilled) {
+      setState(() {
+        allFieldsFilled = filled;
+      });
     }
   }
 
@@ -328,6 +400,35 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                       return null;
                                     },
                                   ),
+                                  if (!zusatzfelderLoaded) ...[
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ] else if (zusatzfelder.isNotEmpty)
+                                    ...zusatzfelder.map(
+                                      (feld) => Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: UIConstants.spacingM,
+                                        ),
+                                        child: TextFormField(
+                                          controller: zusatzfeldControllers[
+                                              feld.schulungstermineFeldId],
+                                          decoration: InputDecoration(
+                                            labelText: feld.feldbezeichnung,
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return '${feld.feldbezeichnung} ist erforderlich';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
@@ -358,8 +459,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       heroTag: 'okRegisterAnotherFab',
                       mini: true,
                       tooltip: 'OK',
-                      backgroundColor: UIConstants.defaultAppColor,
-                      onPressed: submit,
+                      backgroundColor: allFieldsFilled
+                          ? UIConstants.defaultAppColor
+                          : UIConstants.disabledBackgroundColor,
+                      onPressed: allFieldsFilled ? submit : null,
                       child: const Icon(
                         Icons.check,
                         color: UIConstants.whiteColor,

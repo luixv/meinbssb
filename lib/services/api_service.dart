@@ -1,4 +1,3 @@
-// Filename: api_service.dart
 import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
 
@@ -30,11 +29,12 @@ import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:meinbssb/models/person_data.dart';
 import 'package:meinbssb/models/result_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
+import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
 import 'core/http_client.dart';
-import 'core/image_service.dart'; // Make sure this import exists
+import 'core/image_service.dart';
 import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
@@ -175,12 +175,13 @@ class ApiService {
   }
 
   Future<bool> bssbAppPassantrag(
-      Map<int, Map<String, int?>> secondColumns,
-      int? passdatenId,
-      int? personId,
-      int? erstVereinId,
-      int digitalerPass,
-      int antragsTyp,) async {
+    Map<int, Map<String, int?>> secondColumns,
+    int? passdatenId,
+    int? personId,
+    int? erstVereinId,
+    int digitalerPass,
+    int antragsTyp,
+  ) async {
     return _userService.bssbAppPassantrag(
       secondColumns,
       passdatenId,
@@ -252,6 +253,14 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
+  Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
+    int schulungsTerminId,
+  ) async {
+    return _trainingService.fetchSchulungstermineZusatzfelder(
+      schulungsTerminId,
+    );
+  }
+
   Future<List<Schulungstermin>> fetchSchulungstermine(
     String abDatum,
     String webGruppe,
@@ -269,9 +278,9 @@ class ApiService {
   }
 
   Future<Schulungstermin?> fetchSchulungstermin(
-    String schulungenTerminID,
+    String schulungenTerminId,
   ) async {
-    return _trainingService.fetchSchulungstermin(schulungenTerminID);
+    return _trainingService.fetchSchulungstermin(schulungenTerminId);
   }
 
   Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {

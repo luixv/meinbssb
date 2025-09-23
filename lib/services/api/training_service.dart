@@ -559,13 +559,13 @@ class TrainingService {
 
   /// Fetch a single Schulungstermin by its ID.
   Future<Schulungstermin?> fetchSchulungstermin(
-    String schulungenTerminID,
+    String schulungenTerminId,
   ) async {
     try {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
-      final endpoint = 'Schulungstermin/$schulungenTerminID';
+      final endpoint = 'Schulungstermin/$schulungenTerminId';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
 
