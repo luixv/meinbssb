@@ -82,6 +82,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
             zusatzfeldControllers[feld.schulungstermineFeldId] = controller;
           }
           zusatzfelderLoaded = true;
+          _checkAllFieldsFilled();
         });
       }
     });
@@ -111,8 +112,6 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}');
     return emailRegex.hasMatch(email);
   }
-
-// api service call to the fetchSchulungstermineZusatzfelder
 
   Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
     int schulungsTerminId,
@@ -242,12 +241,14 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
         passnummerController.text.trim().isNotEmpty &&
         emailController.text.trim().isNotEmpty &&
         telefonnummerController.text.trim().isNotEmpty;
-    final zusatzFilled = zusatzfelder.every((feld) =>
-        zusatzfeldControllers[feld.schulungstermineFeldId]
-            ?.text
-            .trim()
-            .isNotEmpty ??
-        false,);
+    final zusatzFilled = zusatzfelder.every(
+      (feld) =>
+          zusatzfeldControllers[feld.schulungstermineFeldId]
+              ?.text
+              .trim()
+              .isNotEmpty ??
+          false,
+    );
     final filled = staticFilled && zusatzFilled;
     if (filled != allFieldsFilled) {
       setState(() {
@@ -456,6 +457,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       ),
                     ),
                     FloatingActionButton(
+                      key: const ValueKey('okFab'),
                       heroTag: 'okRegisterAnotherFab',
                       mini: true,
                       tooltip: 'OK',
