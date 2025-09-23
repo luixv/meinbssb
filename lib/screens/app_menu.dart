@@ -1,8 +1,3 @@
-// Project: Mein BSSB
-// Filename: app_menu.dart
-// Author: Luis Mandel / NTT DATA
-
-// Flutter/Dart core imports
 import 'package:flutter/material.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +9,6 @@ import '/screens/registration_screen.dart';
 import '/screens/schuetzenausweis_screen.dart';
 import '/screens/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
-//import '/screens/styles_screen.dart';
-
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
