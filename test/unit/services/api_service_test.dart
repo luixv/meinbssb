@@ -18,6 +18,8 @@ import 'package:meinbssb/models/pass_data_zve_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart';
+import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
+
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
@@ -723,6 +725,52 @@ void main() {
           ),
         ).called(1);
       });
+
+      test(
+          'fetchSchulungstermineZusatzfelder returns mapped list on valid response',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Feld A',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 2,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Feld B',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, equals(expectedList));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test(
+          'fetchSchulungstermineZusatzfelder returns empty list on empty response',
+          () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => []);
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, isEmpty);
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder throws on exception', () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenThrow(Exception('API error'));
+        expect(
+          () => apiService.fetchSchulungstermineZusatzfelder(876),
+          throwsException,
+        );
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
     });
 
     group('Verein Service Tests', () {
@@ -1275,13 +1323,15 @@ void main() {
 
       test('sendEmail delegates to emailService', () async {
         final expected = {'success': true};
-        when(mockEmailService.sendEmail(
-          sender: anyNamed('sender'),
-          recipient: anyNamed('recipient'),
-          subject: anyNamed('subject'),
-          htmlBody: anyNamed('htmlBody'),
-          emailId: anyNamed('emailId'),
-        ),).thenAnswer((_) async => expected);
+        when(
+          mockEmailService.sendEmail(
+            sender: anyNamed('sender'),
+            recipient: anyNamed('recipient'),
+            subject: anyNamed('subject'),
+            htmlBody: anyNamed('htmlBody'),
+            emailId: anyNamed('emailId'),
+          ),
+        ).thenAnswer((_) async => expected);
 
         final result = await apiService.sendEmail(
           from: 'from@example.com',
@@ -1294,13 +1344,15 @@ void main() {
       });
 
       test('sendSchulungAbmeldungEmail delegates to emailService', () async {
-        when(mockEmailService.sendSchulungAbmeldungEmail(
-          personId: anyNamed('personId'),
-          schulungName: anyNamed('schulungName'),
-          schulungDate: anyNamed('schulungDate'),
-          firstName: anyNamed('firstName'),
-          lastName: anyNamed('lastName'),
-        ),).thenAnswer((_) async {});
+        when(
+          mockEmailService.sendSchulungAbmeldungEmail(
+            personId: anyNamed('personId'),
+            schulungName: anyNamed('schulungName'),
+            schulungDate: anyNamed('schulungDate'),
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+          ),
+        ).thenAnswer((_) async {});
 
         await apiService.sendSchulungAbmeldungEmail(
           personId: '1',
@@ -1309,13 +1361,15 @@ void main() {
           firstName: 'Max',
           lastName: 'Mustermann',
         );
-        verify(mockEmailService.sendSchulungAbmeldungEmail(
-          personId: '1',
-          schulungName: 'Test',
-          schulungDate: '2024-01-01',
-          firstName: 'Max',
-          lastName: 'Mustermann',
-        ),).called(1);
+        verify(
+          mockEmailService.sendSchulungAbmeldungEmail(
+            personId: '1',
+            schulungName: 'Test',
+            schulungDate: '2024-01-01',
+            firstName: 'Max',
+            lastName: 'Mustermann',
+          ),
+        ).called(1);
       });
     });
   });

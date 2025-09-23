@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: schulung.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/foundation.dart';
 
 /// Represents a training (Schulung) in the system.

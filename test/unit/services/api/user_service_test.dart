@@ -1351,14 +1351,18 @@ void main() {
       verify(
         mockHttpClient.post(
           'BSSBAppPassantrag',
-          argThat(predicate<Map<String, dynamic>>((body) {
-            final zves = body['ZVEs'] as List;
-            return zves.length == 2 &&
-                zves.any((zve) =>
-                    zve['VEREINID'] == 1 && zve['DISZIPLINID'] == 10,) &&
-                zves.any(
-                    (zve) => zve['VEREINID'] == 2 && zve['DISZIPLINID'] == 20,);
-          }),),
+          argThat(
+            predicate<Map<String, dynamic>>((body) {
+              final zves = body['ZVEs'] as List;
+              return zves.length == 2 &&
+                  zves.any(
+                    (zve) => zve['VEREINID'] == 1 && zve['DISZIPLINID'] == 10,
+                  ) &&
+                  zves.any(
+                    (zve) => zve['VEREINID'] == 2 && zve['DISZIPLINID'] == 20,
+                  );
+            }),
+          ),
           overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
       ).called(1);

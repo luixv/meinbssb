@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '../../models/schulungstermin_data.dart';
-import '../../providers/font_size_provider.dart'; // Import FontSizeProvider
+import '/models/schulungstermin_data.dart';
+import '/providers/font_size_provider.dart';
 
 class SchulungenListItem extends StatelessWidget {
   const SchulungenListItem({
