@@ -455,6 +455,177 @@ void main() {
       expect(str, contains('gueltigBis: 2024-12-31'));
     });
 
-    // ...existing tests...
+    test('fromJson handles unexpected types gracefully', () {
+      final json = {
+        'ID': '1', // Should be int
+        'BEZEICHNUNG': 123, // Should be String
+        'ISONLINE': 'true', // Should be bool
+        'MAXTEILNEHMER': '10', // Should be int
+      };
+      final schulung = Schulung.fromJson(json);
+      expect(schulung.id, equals(1));
+      expect(schulung.bezeichnung, equals('123'));
+      expect(schulung.isOnline, isTrue);
+      expect(schulung.maxTeilnehmer, equals(10));
+    });
+
+    test('toJson with minimal Schulung', () {
+      const schulung = Schulung(
+        id: 0,
+        bezeichnung: '',
+        datum: '',
+        ausgestelltAm: '',
+        teilnehmerId: 0,
+        schulungsartId: 0,
+        schulungsartBezeichnung: '',
+        schulungsartKurzbezeichnung: '',
+        schulungsartBeschreibung: '',
+        maxTeilnehmer: 0,
+        anzahlTeilnehmer: 0,
+        ort: '',
+        uhrzeit: '',
+        dauer: '',
+        preis: '',
+        zielgruppe: '',
+        voraussetzungen: '',
+        inhalt: '',
+        abschluss: '',
+        anmerkungen: '',
+        isOnline: false,
+        link: '',
+        status: '',
+        gueltigBis: '',
+        lehrgangsinhaltHtml: '',
+      );
+      final json = schulung.toJson();
+      expect(json['ID'], equals(0));
+      expect(json['BEZEICHNUNG'], equals(''));
+      expect(json['ISONLINE'], isFalse);
+    });
+
+    test('copyWith returns a new instance with updated values', () {
+      const schulung = Schulung(
+        id: 1,
+        bezeichnung: 'A',
+        datum: '2024-01-01',
+        ausgestelltAm: '',
+        teilnehmerId: 0,
+        schulungsartId: 0,
+        schulungsartBezeichnung: '',
+        schulungsartKurzbezeichnung: '',
+        schulungsartBeschreibung: '',
+        maxTeilnehmer: 0,
+        anzahlTeilnehmer: 0,
+        ort: '',
+        uhrzeit: '',
+        dauer: '',
+        preis: '',
+        zielgruppe: '',
+        voraussetzungen: '',
+        inhalt: '',
+        abschluss: '',
+        anmerkungen: '',
+        isOnline: false,
+        link: '',
+        status: '',
+        gueltigBis: '',
+        lehrgangsinhaltHtml: '',
+      );
+      final updated = schulung.copyWith(bezeichnung: 'B', isOnline: true);
+      expect(updated.bezeichnung, equals('B'));
+      expect(updated.isOnline, isTrue);
+      expect(updated.id, equals(1)); // unchanged
+    });
+
+    test('lehrgangsinhaltHtml is handled correctly', () {
+      const schulung = Schulung(
+        id: 1,
+        bezeichnung: 'Test',
+        datum: '',
+        ausgestelltAm: '',
+        teilnehmerId: 0,
+        schulungsartId: 0,
+        schulungsartBezeichnung: '',
+        schulungsartKurzbezeichnung: '',
+        schulungsartBeschreibung: '',
+        maxTeilnehmer: 0,
+        anzahlTeilnehmer: 0,
+        ort: '',
+        uhrzeit: '',
+        dauer: '',
+        preis: '',
+        zielgruppe: '',
+        voraussetzungen: '',
+        inhalt: '',
+        abschluss: '',
+        anmerkungen: '',
+        isOnline: false,
+        link: '',
+        status: '',
+        gueltigBis: '',
+        lehrgangsinhaltHtml: '<b>HTML</b>',
+      );
+      expect(schulung.lehrgangsinhaltHtml, equals('<b>HTML</b>'));
+      final json = schulung.toJson();
+      expect(json['LEHRGANGSINHALTHTML'], equals('<b>HTML</b>'));
+    });
+
+    test('equality operator detects difference in lehrgangsinhaltHtml', () {
+      const s1 = Schulung(
+        id: 1,
+        bezeichnung: 'Test',
+        datum: '',
+        ausgestelltAm: '',
+        teilnehmerId: 0,
+        schulungsartId: 0,
+        schulungsartBezeichnung: '',
+        schulungsartKurzbezeichnung: '',
+        schulungsartBeschreibung: '',
+        maxTeilnehmer: 0,
+        anzahlTeilnehmer: 0,
+        ort: '',
+        uhrzeit: '',
+        dauer: '',
+        preis: '',
+        zielgruppe: '',
+        voraussetzungen: '',
+        inhalt: '',
+        abschluss: '',
+        anmerkungen: '',
+        isOnline: false,
+        link: '',
+        status: '',
+        gueltigBis: '',
+        lehrgangsinhaltHtml: 'A',
+      );
+      const s2 = Schulung(
+        id: 1,
+        bezeichnung: 'Test',
+        datum: '',
+        ausgestelltAm: '',
+        teilnehmerId: 0,
+        schulungsartId: 0,
+        schulungsartBezeichnung: '',
+        schulungsartKurzbezeichnung: '',
+        schulungsartBeschreibung: '',
+        maxTeilnehmer: 0,
+        anzahlTeilnehmer: 0,
+        ort: '',
+        uhrzeit: '',
+        dauer: '',
+        preis: '',
+        zielgruppe: '',
+        voraussetzungen: '',
+        inhalt: '',
+        abschluss: '',
+        anmerkungen: '',
+        isOnline: false,
+        link: '',
+        status: '',
+        gueltigBis: '',
+        lehrgangsinhaltHtml: 'B',
+      );
+      expect(s1 == s2, isFalse);
+    });
   });
 }
