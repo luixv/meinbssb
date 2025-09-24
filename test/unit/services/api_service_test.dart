@@ -472,6 +472,60 @@ void main() {
     });
 
     group('Training Service Tests', () {
+      test(
+          'fetchSchulungstermin delegates to training service and returns expected data',
+          () async {
+        final expectedData = Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 12345,
+          datum: DateTime.now(),
+          bemerkung: 'Test',
+          kosten: 50.0,
+          ort: 'Test',
+          lehrgangsleiter: 'Test',
+          verpflegungskosten: 10.0,
+          uebernachtungskosten: 20.0,
+          lehrmaterialkosten: 5.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 10,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '2024-01-01',
+          lehrgangsinhaltHtml: '<p>Test</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: '',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '',
+          abmeldeStopp: '',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: false,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Test Termin',
+          angemeldeteTeilnehmer: 5,
+        );
+        when(mockTrainingService.fetchSchulungstermin(any))
+            .thenAnswer((_) async => expectedData);
+
+        final result = await apiService.fetchSchulungstermin('1');
+        expect(result, equals(expectedData));
+        verify(mockTrainingService.fetchSchulungstermin('1')).called(1);
+      });
+
       test('fetchAbsolvierteSchulungen delegates to training service',
           () async {
         final expectedData = [
