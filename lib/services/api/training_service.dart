@@ -1,15 +1,17 @@
 import 'dart:async';
-import '../../models/schulung_data.dart';
-import '../../models/disziplin_data.dart';
-import '../../models/schulungsart_data.dart';
 import '/services/core/cache_service.dart';
 import '/services/core/http_client.dart';
 import '/services/core/logger_service.dart';
 import '/services/core/network_service.dart';
 import '/services/core/config_service.dart';
 
-import '../../models/schulungstermin_data.dart';
-import '../../models/register_schulungen_teilnehmer_response_data.dart';
+import '/models/schulung_data.dart';
+import '/models/disziplin_data.dart';
+import '/models/schulungsart_data.dart';
+import '/models/schulungstermin_data.dart';
+import '/models/register_schulungen_teilnehmer_response_data.dart';
+import '/models/schulungstermine_zusatzfelder_data.dart';
+
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 
@@ -257,6 +259,37 @@ class TrainingService {
         })
         .whereType<Schulungsart>()
         .toList();
+  }
+
+  Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
+    int schulungsTerminId,
+  ) async {
+    String endpoint = 'SchulungstermineZusatzfelder/$schulungsTerminId';
+
+    LoggerService.logInfo(
+      'endpoint $endpoint',
+    );
+
+    final response = await _httpClient.get(endpoint);
+
+    final mappedTermine = mapSchulungstermineZusatzfelderResponse(response);
+    LoggerService.logInfo(
+      'Mapped ${mappedTermine.length} termine from response',
+    );
+
+    return mappedTermine;
+  }
+
+  List<SchulungstermineZusatzfelder> mapSchulungstermineZusatzfelderResponse(
+    dynamic response,
+  ) {
+    if (response is List) {
+      return response
+          .whereType<Map<String, dynamic>>()
+          .map((json) => SchulungstermineZusatzfelder.fromJson(json))
+          .toList();
+    }
+    return [];
   }
 
   Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
@@ -526,13 +559,13 @@ class TrainingService {
 
   /// Fetch a single Schulungstermin by its ID.
   Future<Schulungstermin?> fetchSchulungstermin(
-    String schulungenTerminID,
+    String schulungenTerminId,
   ) async {
     try {
       final baseUrl =
           ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
 
-      final endpoint = 'Schulungstermin/$schulungenTerminID';
+      final endpoint = 'Schulungstermin/$schulungenTerminId';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
 

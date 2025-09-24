@@ -9,7 +9,7 @@ import '/models/user_data.dart';
 import '/constants/ui_constants.dart';
 import 'base_screen_layout.dart';
 import '/widgets/scaled_text.dart'; // Assuming ScaledText is available
-import '/services/core/font_size_provider.dart'; // Import FontSizeProvider
+import '../providers/font_size_provider.dart'; // Import FontSizeProvider
 
 class OktoberfestResultsScreen extends StatefulWidget {
   const OktoberfestResultsScreen({

@@ -10,11 +10,10 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
-//import 'package:meinbssb/models/fremde_verband.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/starting_rights_header.dart';
 import 'package:meinbssb/screens/starting_rights_zweitverein_table.dart';
 
@@ -37,12 +36,7 @@ class StartingRightsScreen extends StatefulWidget {
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
   bool _digitalerPass = true;
 
-  int get _yy {
-    final now = DateTime.now();
-    return now.year + 1;
-  }
-
-  String get _seasonString {
+  int get _seasonInt {
     final now = DateTime.now();
     int yy;
     // Use September 16 as the deadline
@@ -52,7 +46,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     } else {
       yy = now.year + 2;
     }
-    return ' $yy';
+    return yy;
   }
 
   bool _hasUnsavedChanges = false;
@@ -68,13 +62,15 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     final int? personId = widget.userData?.personId;
     final int? erstVereinId = widget.userData?.erstVereinId;
 
+    const antragsTyp = 3;
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final bool success = await apiService.postBSSBAppPassantrag(
+    final bool success = await apiService.bssbAppPassantrag(
       secondColumns,
       passdatenId,
       personId,
       erstVereinId,
       _digitalerPass ? 1 : 0,
+      antragsTyp,
     );
 
     setState(() {
@@ -89,7 +85,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         );
         LoggerService.logInfo('Starting rights change notifications sent');
       } catch (e) {
-        LoggerService.logError('Failed to send starting rights change notifications: $e');
+        LoggerService.logError(
+          'Failed to send starting rights change notifications: $e',
+        );
         // Don't fail the save operation if email notifications fail
       }
     }
@@ -340,7 +338,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StartingRightsHeader(seasonString: _seasonString),
+          StartingRightsHeader(seasonString: _seasonInt.toString()),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -424,31 +422,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                                           .scaleFactor,
                                                 ),
                                                 children: <TextSpan>[
-                                                  /*
-                                                  TextSpan(
-                                                    text: _passData!.passnummer,
-                                                    style: UIStyles
-                                                        .subtitleStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: ' - ',
-                                                    style: UIStyles.titleStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                  */
                                                   TextSpan(
                                                     text: '• ',
                                                     style: UIStyles
@@ -520,7 +493,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 final vereinName = fzm.vereinName;
                                 final pivot = pivotDisziplins[vereinId] ?? {};
                                 return ZweitvereinTable(
-                                  yy: _yy,
+                                  seasonInt: _seasonInt,
                                   vereinName: vereinName,
                                   firstColumns: firstColumns[vereinId] ?? {},
                                   secondColumns: secondColumns[vereinId] ?? {},

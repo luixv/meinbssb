@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 #DO NOT TOUCH THE VERSION NUMBER
 #DO NOT TOUCH THE VERSION NUMBER
-version: 0.1.0+16
+version: 0.1.0+17
 #DO NOT TOUCH THE VERSION NUMBER
 #DO NOT TOUCH THE VERSION NUMBER
 
@@ -114,6 +114,6 @@ flutter:
     - assets/html/schulungAnmeldungEmail.html
     - assets/html/email-address-validation.html
     - assets/html/startingRightsChangeEmail.html
-    
+
 
 

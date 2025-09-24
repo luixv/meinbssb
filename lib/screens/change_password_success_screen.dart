@@ -1,21 +1,16 @@
-// In lib/screens/person_data_result_screen.dart
-
 import 'package:flutter/material.dart';
-import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/constants/messages.dart';
-
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
 
-class PersonalDataResultScreen extends StatelessWidget {
-  const PersonalDataResultScreen({
+class ChangePasswordSuccessScreen extends StatelessWidget {
+  const ChangePasswordSuccessScreen({
     super.key,
     required this.success,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
-
   final bool success;
   final UserData? userData;
   final bool isLoggedIn;
@@ -24,7 +19,7 @@ class PersonalDataResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Persönliche Daten',
+      title: 'Passwort ändern',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
@@ -34,12 +29,15 @@ class PersonalDataResultScreen extends StatelessWidget {
           children: [
             Icon(
               success ? Icons.check_circle : Icons.error,
-              color: success ? Colors.green : Colors.red,
+              color:
+                  success ? UIConstants.successColor : UIConstants.errorColor,
               size: UIConstants.iconSizeXL,
             ),
             const SizedBox(height: UIConstants.spacingM),
             Text(
-              success ? Messages.personalDataSaved : Messages.errorOccurred,
+              success
+                  ? 'Ihr Passwort wurde erfolgreich geändert.'
+                  : 'Es ist ein Fehler beim Ändern des Passworts aufgetreten.',
               style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
@@ -47,16 +45,16 @@ class PersonalDataResultScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
+        heroTag: 'change_password_result_fab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/profile',
+            '/home',
             arguments: {'userData': userData, 'isLoggedIn': true},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.person,
+          Icons.home,
           color: UIConstants.whiteColor,
         ),
       ),

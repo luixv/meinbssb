@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: schulung.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/foundation.dart';
 
 /// Represents a training (Schulung) in the system.
@@ -9,34 +5,50 @@ import 'package:flutter/foundation.dart';
 class Schulung {
   /// Creates a [Schulung] instance from a JSON map.
   factory Schulung.fromJson(Map<String, dynamic> json) {
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    bool parseBool(dynamic value) {
+      if (value == null) return false;
+      if (value is bool) return value;
+      if (value is String) return value.toLowerCase() == 'true';
+      if (value is int) return value != 0;
+      return false;
+    }
+
     return Schulung(
-      id: json['ID'] as int? ?? 0,
-      bezeichnung: json['BEZEICHNUNG'] as String? ?? '',
-      datum: json['DATUM']?.toString() ?? '',
-      ausgestelltAm: json['AUSGESTELLTAM']?.toString() ?? '',
-      teilnehmerId: json['TEILNEHMERID'] as int? ?? 0,
-      schulungsartId: json['SCHULUNGSARTID'] as int? ?? 0,
-      schulungsartBezeichnung: json['SCHULUNGSARTBEZEICHNUNG'] as String? ?? '',
+      id: parseInt(json['ID']),
+      bezeichnung: (json['BEZEICHNUNG'] ?? '').toString(),
+      datum: (json['DATUM'] ?? '').toString(),
+      ausgestelltAm: (json['AUSGESTELLTAM'] ?? '').toString(),
+      teilnehmerId: parseInt(json['TEILNEHMERID']),
+      schulungsartId: parseInt(json['SCHULUNGSARTID']),
+      schulungsartBezeichnung:
+          (json['SCHULUNGSARTBEZEICHNUNG'] ?? '').toString(),
       schulungsartKurzbezeichnung:
-          json['SCHULUNGSARTKURZBEZEICHNUNG'] as String? ?? '',
+          (json['SCHULUNGSARTKURZBEZEICHNUNG'] ?? '').toString(),
       schulungsartBeschreibung:
-          json['SCHULUNGSARTBESCHREIBUNG'] as String? ?? '',
-      maxTeilnehmer: json['MAXTEILNEHMER'] as int? ?? 0,
-      anzahlTeilnehmer: json['ANZAHLTEILNEHMER'] as int? ?? 0,
-      ort: json['ORT'] as String? ?? '',
-      uhrzeit: json['UHRZEIT']?.toString() ?? '',
-      dauer: json['DAUER']?.toString() ?? '',
-      preis: json['PREIS']?.toString() ?? '',
-      zielgruppe: json['ZIELGRUPPE'] as String? ?? '',
-      voraussetzungen: json['VORAUSSETZUNGEN'] as String? ?? '',
-      inhalt: json['INHALT'] as String? ?? '',
-      lehrgangsinhaltHtml: json['LEHRGANGSINHALTHTML'] as String? ?? '',
-      abschluss: json['ABSCHLUSS'] as String? ?? '',
-      anmerkungen: json['ANMERKUNGEN'] as String? ?? '',
-      isOnline: json['ISONLINE'] as bool? ?? false,
-      link: json['LINK'] as String? ?? '',
-      status: json['STATUS'] as String? ?? '',
-      gueltigBis: json['GUELTIGBIS']?.toString() ?? '',
+          (json['SCHULUNGSARTBESCHREIBUNG'] ?? '').toString(),
+      maxTeilnehmer: parseInt(json['MAXTEILNEHMER']),
+      anzahlTeilnehmer: parseInt(json['ANZAHLTEILNEHMER']),
+      ort: (json['ORT'] ?? '').toString(),
+      uhrzeit: (json['UHRZEIT'] ?? '').toString(),
+      dauer: (json['DAUER'] ?? '').toString(),
+      preis: (json['PREIS'] ?? '').toString(),
+      zielgruppe: (json['ZIELGRUPPE'] ?? '').toString(),
+      voraussetzungen: (json['VORAUSSETZUNGEN'] ?? '').toString(),
+      inhalt: (json['INHALT'] ?? '').toString(),
+      abschluss: (json['ABSCHLUSS'] ?? '').toString(),
+      anmerkungen: (json['ANMERKUNGEN'] ?? '').toString(),
+      isOnline: parseBool(json['ISONLINE']),
+      link: (json['LINK'] ?? '').toString(),
+      status: (json['STATUS'] ?? '').toString(),
+      gueltigBis: (json['GUELTIGBIS'] ?? '').toString(),
+      lehrgangsinhaltHtml: (json['LEHRGANGSINHALTHTML'] ?? '').toString(),
     );
   }
 
@@ -172,6 +184,70 @@ class Schulung {
         'STATUS': status,
         'GUELTIGBIS': gueltigBis,
       };
+
+  /// Creates a copy of the current [Schulung] instance with the given parameters.
+  ///
+  /// This method allows you to create a new instance of [Schulung] with
+  /// modified fields, while keeping the other fields the same as the
+  /// current instance.
+  Schulung copyWith({
+    int? id,
+    String? bezeichnung,
+    String? datum,
+    String? ausgestelltAm,
+    int? teilnehmerId,
+    int? schulungsartId,
+    String? schulungsartBezeichnung,
+    String? schulungsartKurzbezeichnung,
+    String? schulungsartBeschreibung,
+    int? maxTeilnehmer,
+    int? anzahlTeilnehmer,
+    String? ort,
+    String? uhrzeit,
+    String? dauer,
+    String? preis,
+    String? zielgruppe,
+    String? voraussetzungen,
+    String? inhalt,
+    String? abschluss,
+    String? anmerkungen,
+    bool? isOnline,
+    String? link,
+    String? status,
+    String? gueltigBis,
+    String? lehrgangsinhaltHtml,
+  }) {
+    return Schulung(
+      id: id ?? this.id,
+      bezeichnung: bezeichnung ?? this.bezeichnung,
+      datum: datum ?? this.datum,
+      ausgestelltAm: ausgestelltAm ?? this.ausgestelltAm,
+      teilnehmerId: teilnehmerId ?? this.teilnehmerId,
+      schulungsartId: schulungsartId ?? this.schulungsartId,
+      schulungsartBezeichnung:
+          schulungsartBezeichnung ?? this.schulungsartBezeichnung,
+      schulungsartKurzbezeichnung:
+          schulungsartKurzbezeichnung ?? this.schulungsartKurzbezeichnung,
+      schulungsartBeschreibung:
+          schulungsartBeschreibung ?? this.schulungsartBeschreibung,
+      maxTeilnehmer: maxTeilnehmer ?? this.maxTeilnehmer,
+      anzahlTeilnehmer: anzahlTeilnehmer ?? this.anzahlTeilnehmer,
+      ort: ort ?? this.ort,
+      uhrzeit: uhrzeit ?? this.uhrzeit,
+      dauer: dauer ?? this.dauer,
+      preis: preis ?? this.preis,
+      zielgruppe: zielgruppe ?? this.zielgruppe,
+      voraussetzungen: voraussetzungen ?? this.voraussetzungen,
+      inhalt: inhalt ?? this.inhalt,
+      abschluss: abschluss ?? this.abschluss,
+      anmerkungen: anmerkungen ?? this.anmerkungen,
+      isOnline: isOnline ?? this.isOnline,
+      link: link ?? this.link,
+      status: status ?? this.status,
+      gueltigBis: gueltigBis ?? this.gueltigBis,
+      lehrgangsinhaltHtml: lehrgangsinhaltHtml ?? this.lehrgangsinhaltHtml,
+    );
+  }
 
   @override
   String toString() {

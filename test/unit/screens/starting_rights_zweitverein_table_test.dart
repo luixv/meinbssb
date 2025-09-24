@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/starting_rights_zweitverein_table.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
-import 'package:meinbssb/services/core/font_size_provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -93,7 +93,7 @@ void main() {
             ),
           ],
           child: ZweitvereinTable(
-            yy: testYear,
+            seasonInt: testYear,
             vereinName: testVereinName,
             firstColumns: testFirstColumns,
             secondColumns: testSecondColumns,
@@ -327,7 +327,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -365,7 +365,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -406,7 +406,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: longVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -443,7 +443,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,

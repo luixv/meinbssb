@@ -1,16 +1,21 @@
+// In lib/screens/person_data_result_screen.dart
+
 import 'package:flutter/material.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/messages.dart';
+
+import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 
-class BankDataResultScreen extends StatelessWidget {
-  const BankDataResultScreen({
+class PersonalDataSuccessScreen extends StatelessWidget {
+  const PersonalDataSuccessScreen({
     super.key,
     required this.success,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
+
   final bool success;
   final UserData? userData;
   final bool isLoggedIn;
@@ -19,7 +24,7 @@ class BankDataResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Bankdaten',
+      title: 'Persönliche Daten',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
@@ -29,15 +34,12 @@ class BankDataResultScreen extends StatelessWidget {
           children: [
             Icon(
               success ? Icons.check_circle : Icons.error,
-              color:
-                  success ? UIConstants.successColor : UIConstants.errorColor,
+              color: success ? Colors.green : Colors.red,
               size: UIConstants.iconSizeXL,
             ),
             const SizedBox(height: UIConstants.spacingM),
             Text(
-              success
-                  ? 'Ihre Bankdaten wurden erfolgreich gespeichert.'
-                  : 'Es ist ein Fehler aufgetreten.',
+              success ? Messages.personalDataSaved : Messages.errorOccurred,
               style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
@@ -45,7 +47,7 @@ class BankDataResultScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'bankDataResultFab',
+        heroTag: 'personalDataResultFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/profile',

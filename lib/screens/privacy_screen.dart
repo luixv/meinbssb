@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: privacy_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:meinbssb/constants/ui_constants.dart';

@@ -6,10 +6,13 @@ import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/schulung_data.dart'; // Import the Schulung model
+import 'package:meinbssb/models/schulung_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
-// Import for date formatting
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
+
 import 'dart:async';
 import 'dart:io';
 
@@ -234,6 +237,56 @@ void main() {
       expect(result[0].datumBis, '');
       expect(result[0].angemeldeteTeilnehmer, 0);
     });
+
+    test('fetchAngemeldeteSchulungen returns empty list for non-list response',
+        () async {
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+      when(mockHttpClient.get('AngemeldeteSchulungen/123/2023-01-01'))
+          .thenAnswer((_) async => 'notalist');
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      final result =
+          await trainingService.fetchAngemeldeteSchulungen(123, '2023-01-01');
+      expect(result, isEmpty);
+    });
+
+    test('fetchAngemeldeteSchulungen skips non-map items in response',
+        () async {
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+      when(mockHttpClient.get('AngemeldeteSchulungen/123/2023-01-01'))
+          .thenAnswer((_) async => [123, 'string', null]);
+      when(
+        mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      final result =
+          await trainingService.fetchAngemeldeteSchulungen(123, '2023-01-01');
+      expect(result, isEmpty);
+    });
   });
   group('fetchSchulungsarten', () {
     test('returns mapped Schulungsarten list from network', () async {
@@ -340,6 +393,40 @@ void main() {
       final result = await trainingService.fetchSchulungsarten();
 
       expect(result, isEmpty);
+    });
+
+    test('fetchSchulungsarten skips non-map and malformed items', () async {
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => [
+          123,
+          'string',
+          null,
+          {
+            'SCHULUNGSARTID': 1,
+            'BEZEICHNUNG': 'Valid',
+            'TYP': 1,
+            'KOSTEN': 0.0,
+            'UE': 1,
+            'OMKATEGORIEID': 1,
+            'RECHNUNGAN': 1,
+            'VERPFLEGUNGSKOSTEN': 0.0,
+            'UEBERNACHTUNGSKOSTEN': 0.0,
+            'LEHRMATERIALKOSTEN': 0.0,
+            'LEHRGANGSINHALT': '',
+            'LEHRGANGSINHALTHTML': '',
+            'WEBGRUPPE': 1,
+            'FUERVERLAENGERUNGEN': false,
+          }
+        ],
+      );
+      final result = await trainingService.fetchSchulungsarten();
+      expect(result.length, 1);
+      expect(result[0].bezeichnung, 'Valid');
     });
   });
 
@@ -483,6 +570,26 @@ void main() {
       expect(result[0].bezeichnung, '');
       expect(result[0].ausgestelltAm, '');
       expect(result[0].gueltigBis, '');
+    });
+
+    test('fetchAbsolvierteSchulungen skips non-map and malformed items',
+        () async {
+      when(
+        mockHttpClient.get(
+          any,
+          overrideBaseUrl: anyNamed('overrideBaseUrl'),
+        ),
+      ).thenAnswer(
+        (_) async => [
+          123,
+          'string',
+          null,
+          {'SCHULUNGID': 1, 'BEZEICHNUNG': 'Valid'},
+        ],
+      );
+      final result = await trainingService.fetchAbsolvierteSchulungen(123);
+      expect(result.length, 1);
+      expect(result[0].bezeichnung, 'Valid');
     });
   });
 
@@ -1350,6 +1457,34 @@ void main() {
           await trainingService.fetchSchulungstermin(schulungenTerminID);
       expect(result, isNull);
     });
+
+    test('fetchSchulungstermin returns null for empty list response', () async {
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(mockConfigService, name: 'api1Base');
+      when(
+        mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+      ).thenAnswer((_) async => []);
+      final result = await trainingService.fetchSchulungstermin('999');
+      expect(result, isNull);
+    });
+
+    test('fetchSchulungstermin returns null for list with non-map', () async {
+      when(mockConfigService.getString('apiProtocol')).thenReturn('https');
+      when(mockConfigService.getString('api1BaseServer'))
+          .thenReturn('example.com');
+      when(mockConfigService.getString('api1Port')).thenReturn('1234');
+      when(mockConfigService.getString('api1BasePath')).thenReturn('api');
+      ConfigService.buildBaseUrlForServer(mockConfigService, name: 'api1Base');
+      when(
+        mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+      ).thenAnswer((_) async => [123]);
+      final result = await trainingService.fetchSchulungstermin('999');
+      expect(result, isNull);
+    });
   });
 
   group('Cache clearing', () {
@@ -1374,6 +1509,99 @@ void main() {
           .thenAnswer((_) async => true);
       await trainingService.clearDisziplinenCache();
       verify(mockCacheService.remove('disziplinen')).called(1);
+    });
+  });
+
+  group('registerSchulungenTeilnehmer', () {
+    test('registerSchulungenTeilnehmer rethrows on error', () async {
+      const user = UserData(
+        personId: 1,
+        webLoginId: 1,
+        namen: 'Test',
+        vorname: 'Test',
+        passnummer: '123',
+        vereinNr: 1,
+        vereinName: '',
+        passdatenId: 0,
+        mitgliedschaftId: 0,
+      );
+      const bank = BankData(
+        id: 1,
+        webloginId: 1,
+        kontoinhaber: '',
+        bankName: '',
+        iban: '',
+        bic: '',
+        mandatNr: '',
+        mandatName: '',
+        mandatSeq: 0,
+      );
+      when(mockHttpClient.post(any, any)).thenThrow(Exception('fail'));
+      expect(
+        () => trainingService.registerSchulungenTeilnehmer(
+          schulungTerminId: 1,
+          user: user,
+          email: 'a@b.de',
+          telefon: '123',
+          bankData: bank,
+          felderArray: [],
+        ),
+        throwsException,
+      );
+    });
+  });
+
+  group('mapSchulungstermineZusatzfelderResponse', () {
+    late TrainingService trainingService;
+
+    setUp(() {
+      trainingService = TrainingService(
+        httpClient: MockHttpClient(),
+        cacheService: MockCacheService(),
+        networkService: MockNetworkService(),
+        configService: MockConfigService(),
+      );
+    });
+
+    test('returns mapped list on valid response', () {
+      final response = [
+        {
+          'SCHULUNGENTERMINEFELDID': 1,
+          'SCHULUNGENTERMINID': 876,
+          'FELDBEZEICHNUNG': 'Feld A',
+        },
+        {
+          'SCHULUNGENTERMINEFELDID': 2,
+          'SCHULUNGENTERMINID': 876,
+          'FELDBEZEICHNUNG': 'Feld B',
+        }
+      ];
+      final result =
+          trainingService.mapSchulungstermineZusatzfelderResponse(response);
+      expect(result, isA<List<SchulungstermineZusatzfelder>>());
+      expect(result.length, 2);
+      expect(result[0].schulungstermineFeldId, 1);
+      expect(result[0].feldbezeichnung, 'Feld A');
+      expect(result[1].schulungstermineFeldId, 2);
+      expect(result[1].feldbezeichnung, 'Feld B');
+    });
+
+    test('returns empty list on empty response', () {
+      final result =
+          trainingService.mapSchulungstermineZusatzfelderResponse([]);
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list on non-list response', () {
+      final result = trainingService
+          .mapSchulungstermineZusatzfelderResponse({'unexpected': 'object'});
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list if item is not a map', () {
+      final result = trainingService
+          .mapSchulungstermineZusatzfelderResponse([123, null, 'string']);
+      expect(result, isEmpty);
     });
   });
 }

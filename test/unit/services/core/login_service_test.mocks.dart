@@ -9,36 +9,38 @@ import 'dart:typed_data' as _i10;
 import 'package:flutter/foundation.dart' as _i14;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i7;
-import 'package:meinbssb/models/bank_data.dart' as _i22;
-import 'package:meinbssb/models/bezirk_data.dart' as _i39;
-import 'package:meinbssb/models/contact_data.dart' as _i27;
-import 'package:meinbssb/models/disziplin_data.dart' as _i20;
-import 'package:meinbssb/models/fremde_verband_data.dart' as _i32;
-import 'package:meinbssb/models/gewinn_data.dart' as _i36;
-import 'package:meinbssb/models/pass_data_zve_data.dart' as _i26;
-import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart' as _i24;
-import 'package:meinbssb/models/person_data.dart' as _i28;
+import 'package:meinbssb/models/bank_data.dart' as _i23;
+import 'package:meinbssb/models/bezirk_data.dart' as _i40;
+import 'package:meinbssb/models/contact_data.dart' as _i28;
+import 'package:meinbssb/models/disziplin_data.dart' as _i21;
+import 'package:meinbssb/models/fremde_verband_data.dart' as _i33;
+import 'package:meinbssb/models/gewinn_data.dart' as _i37;
+import 'package:meinbssb/models/pass_data_zve_data.dart' as _i27;
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart' as _i25;
+import 'package:meinbssb/models/person_data.dart' as _i29;
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart'
     as _i5;
-import 'package:meinbssb/models/result_data.dart' as _i35;
-import 'package:meinbssb/models/schulung_data.dart' as _i19;
+import 'package:meinbssb/models/result_data.dart' as _i36;
+import 'package:meinbssb/models/schulung_data.dart' as _i20;
 import 'package:meinbssb/models/schulungsart_data.dart' as _i18;
 import 'package:meinbssb/models/schulungstermin_data.dart' as _i17;
-import 'package:meinbssb/models/user_data.dart' as _i21;
-import 'package:meinbssb/models/verein_data.dart' as _i31;
-import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i25;
+import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart'
+    as _i19;
+import 'package:meinbssb/models/user_data.dart' as _i22;
+import 'package:meinbssb/models/verein_data.dart' as _i32;
+import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i26;
 import 'package:meinbssb/services/api/auth_service.dart' as _i15;
-import 'package:meinbssb/services/api/bank_service.dart' as _i29;
-import 'package:meinbssb/services/api/bezirk_service.dart' as _i38;
-import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i34;
-import 'package:meinbssb/services/api/starting_rights_service.dart' as _i40;
+import 'package:meinbssb/services/api/bank_service.dart' as _i30;
+import 'package:meinbssb/services/api/bezirk_service.dart' as _i39;
+import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i35;
+import 'package:meinbssb/services/api/starting_rights_service.dart' as _i41;
 import 'package:meinbssb/services/api/training_service.dart' as _i16;
-import 'package:meinbssb/services/api/user_service.dart' as _i23;
-import 'package:meinbssb/services/api/verein_service.dart' as _i30;
+import 'package:meinbssb/services/api/user_service.dart' as _i24;
+import 'package:meinbssb/services/api/verein_service.dart' as _i31;
 import 'package:meinbssb/services/core/cache_service.dart' as _i12;
-import 'package:meinbssb/services/core/calendar_service.dart' as _i37;
+import 'package:meinbssb/services/core/calendar_service.dart' as _i38;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
-import 'package:meinbssb/services/core/email_service.dart' as _i33;
+import 'package:meinbssb/services/core/email_service.dart' as _i34;
 import 'package:meinbssb/services/core/http_client.dart' as _i8;
 import 'package:meinbssb/services/core/image_service.dart' as _i11;
 import 'package:meinbssb/services/core/network_service.dart' as _i13;
@@ -1322,14 +1324,38 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
       ) as _i2.Future<List<_i18.Schulungsart>>);
 
   @override
-  _i2.Future<List<_i19.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
+  _i2.Future<List<_i19.SchulungstermineZusatzfelder>>
+      fetchSchulungstermineZusatzfelder(int? schulungsTerminId) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #fetchSchulungstermineZusatzfelder,
+              [schulungsTerminId],
+            ),
+            returnValue:
+                _i2.Future<List<_i19.SchulungstermineZusatzfelder>>.value(
+                    <_i19.SchulungstermineZusatzfelder>[]),
+          ) as _i2.Future<List<_i19.SchulungstermineZusatzfelder>>);
+
+  @override
+  List<_i19.SchulungstermineZusatzfelder>
+      mapSchulungstermineZusatzfelderResponse(dynamic response) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #mapSchulungstermineZusatzfelderResponse,
+              [response],
+            ),
+            returnValue: <_i19.SchulungstermineZusatzfelder>[],
+          ) as List<_i19.SchulungstermineZusatzfelder>);
+
+  @override
+  _i2.Future<List<_i20.Schulung>> fetchAbsolvierteSchulungen(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAbsolvierteSchulungen,
           [personId],
         ),
-        returnValue: _i2.Future<List<_i19.Schulung>>.value(<_i19.Schulung>[]),
-      ) as _i2.Future<List<_i19.Schulung>>);
+        returnValue: _i2.Future<List<_i20.Schulung>>.value(<_i20.Schulung>[]),
+      ) as _i2.Future<List<_i20.Schulung>>);
 
   @override
   _i2.Future<bool> registerForSchulung(
@@ -1378,13 +1404,13 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<List<_i20.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
+  _i2.Future<List<_i21.Disziplin>> fetchDisziplinen() => (super.noSuchMethod(
         Invocation.method(
           #fetchDisziplinen,
           [],
         ),
-        returnValue: _i2.Future<List<_i20.Disziplin>>.value(<_i20.Disziplin>[]),
-      ) as _i2.Future<List<_i20.Disziplin>>);
+        returnValue: _i2.Future<List<_i21.Disziplin>>.value(<_i21.Disziplin>[]),
+      ) as _i2.Future<List<_i21.Disziplin>>);
 
   @override
   _i2.Future<void> clearDisziplinenCache() => (super.noSuchMethod(
@@ -1400,10 +1426,10 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
   _i2.Future<_i5.RegisterSchulungenTeilnehmerResponse>
       registerSchulungenTeilnehmer({
     required int? schulungTerminId,
-    required _i21.UserData? user,
+    required _i22.UserData? user,
     required String? email,
     required String? telefon,
-    required _i22.BankData? bankData,
+    required _i23.BankData? bankData,
     required List<Map<String, dynamic>>? felderArray,
   }) =>
           (super.noSuchMethod(
@@ -1440,11 +1466,11 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
 
   @override
   _i2.Future<_i17.Schulungstermin?> fetchSchulungstermin(
-          String? schulungenTerminID) =>
+          String? schulungenTerminId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchSchulungstermin,
-          [schulungenTerminID],
+          [schulungenTerminId],
         ),
         returnValue: _i2.Future<_i17.Schulungstermin?>.value(),
       ) as _i2.Future<_i17.Schulungstermin?>);
@@ -1453,34 +1479,34 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
 /// A class which mocks [UserService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserService extends _i1.Mock implements _i23.UserService {
+class MockUserService extends _i1.Mock implements _i24.UserService {
   MockUserService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<_i24.PassdatenAkzeptOrAktiv?>
+  _i2.Future<_i25.PassdatenAkzeptOrAktiv?>
       fetchPassdatenAkzeptierterOderAktiverPass(int? personId) =>
           (super.noSuchMethod(
             Invocation.method(
               #fetchPassdatenAkzeptierterOderAktiverPass,
               [personId],
             ),
-            returnValue: _i2.Future<_i24.PassdatenAkzeptOrAktiv?>.value(),
-          ) as _i2.Future<_i24.PassdatenAkzeptOrAktiv?>);
+            returnValue: _i2.Future<_i25.PassdatenAkzeptOrAktiv?>.value(),
+          ) as _i2.Future<_i25.PassdatenAkzeptOrAktiv?>);
 
   @override
-  _i2.Future<_i21.UserData?> fetchPassdaten(int? personId) =>
+  _i2.Future<_i22.UserData?> fetchPassdaten(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchPassdaten,
           [personId],
         ),
-        returnValue: _i2.Future<_i21.UserData?>.value(),
-      ) as _i2.Future<_i21.UserData?>);
+        returnValue: _i2.Future<_i22.UserData?>.value(),
+      ) as _i2.Future<_i22.UserData?>);
 
   @override
-  _i2.Future<bool> updateKritischeFelderUndAdresse(_i21.UserData? userData) =>
+  _i2.Future<bool> updateKritischeFelderUndAdresse(_i22.UserData? userData) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateKritischeFelderUndAdresse,
@@ -1510,7 +1536,7 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<void>);
 
   @override
-  _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
+  _i2.Future<List<_i26.ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
     int? personId,
     int? passStatus,
   ) =>
@@ -1522,24 +1548,24 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
             passStatus,
           ],
         ),
-        returnValue: _i2.Future<List<_i25.ZweitmitgliedschaftData>>.value(
-            <_i25.ZweitmitgliedschaftData>[]),
-      ) as _i2.Future<List<_i25.ZweitmitgliedschaftData>>);
+        returnValue: _i2.Future<List<_i26.ZweitmitgliedschaftData>>.value(
+            <_i26.ZweitmitgliedschaftData>[]),
+      ) as _i2.Future<List<_i26.ZweitmitgliedschaftData>>);
 
   @override
-  _i2.Future<List<_i25.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
+  _i2.Future<List<_i26.ZweitmitgliedschaftData>> fetchZweitmitgliedschaften(
           int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchZweitmitgliedschaften,
           [personId],
         ),
-        returnValue: _i2.Future<List<_i25.ZweitmitgliedschaftData>>.value(
-            <_i25.ZweitmitgliedschaftData>[]),
-      ) as _i2.Future<List<_i25.ZweitmitgliedschaftData>>);
+        returnValue: _i2.Future<List<_i26.ZweitmitgliedschaftData>>.value(
+            <_i26.ZweitmitgliedschaftData>[]),
+      ) as _i2.Future<List<_i26.ZweitmitgliedschaftData>>);
 
   @override
-  _i2.Future<List<_i26.PassDataZVE>> fetchPassdatenZVE(
+  _i2.Future<List<_i27.PassDataZVE>> fetchPassdatenZVE(
     int? passdatenId,
     int? personId,
   ) =>
@@ -1552,8 +1578,8 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
           ],
         ),
         returnValue:
-            _i2.Future<List<_i26.PassDataZVE>>.value(<_i26.PassDataZVE>[]),
-      ) as _i2.Future<List<_i26.PassDataZVE>>);
+            _i2.Future<List<_i27.PassDataZVE>>.value(<_i27.PassDataZVE>[]),
+      ) as _i2.Future<List<_i27.PassDataZVE>>);
 
   @override
   _i2.Future<List<Map<String, dynamic>>> fetchKontakte(int? personId) =>
@@ -1567,7 +1593,7 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i2.Future<bool> addKontakt(_i27.Contact? contact) => (super.noSuchMethod(
+  _i2.Future<bool> addKontakt(_i28.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #addKontakt,
           [contact],
@@ -1576,29 +1602,31 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> postBSSBAppPassantrag(
+  _i2.Future<bool> bssbAppPassantrag(
     Map<int, Map<String, int?>>? secondColumns,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
     int? digitalerPass,
+    int? antragsTyp,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #postBSSBAppPassantrag,
+          #bssbAppPassantrag,
           [
             secondColumns,
             passdatenId,
             personId,
             erstVereinId,
             digitalerPass,
+            antragsTyp,
           ],
         ),
         returnValue: _i2.Future<bool>.value(false),
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteKontakt(_i27.Contact? contact) => (super.noSuchMethod(
+  _i2.Future<bool> deleteKontakt(_i28.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #deleteKontakt,
           [contact],
@@ -1607,7 +1635,7 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> updateKontakt(_i27.Contact? contact) => (super.noSuchMethod(
+  _i2.Future<bool> updateKontakt(_i28.Contact? contact) => (super.noSuchMethod(
         Invocation.method(
           #updateKontakt,
           [contact],
@@ -1616,36 +1644,36 @@ class MockUserService extends _i1.Mock implements _i23.UserService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<List<_i28.Person>> fetchAdresseVonPersonID(int? personId) =>
+  _i2.Future<List<_i29.Person>> fetchAdresseVonPersonID(int? personId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchAdresseVonPersonID,
           [personId],
         ),
-        returnValue: _i2.Future<List<_i28.Person>>.value(<_i28.Person>[]),
-      ) as _i2.Future<List<_i28.Person>>);
+        returnValue: _i2.Future<List<_i29.Person>>.value(<_i29.Person>[]),
+      ) as _i2.Future<List<_i29.Person>>);
 }
 
 /// A class which mocks [BankService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBankService extends _i1.Mock implements _i29.BankService {
+class MockBankService extends _i1.Mock implements _i30.BankService {
   MockBankService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<_i22.BankData>> fetchBankData(int? webloginId) =>
+  _i2.Future<List<_i23.BankData>> fetchBankData(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBankData,
           [webloginId],
         ),
-        returnValue: _i2.Future<List<_i22.BankData>>.value(<_i22.BankData>[]),
-      ) as _i2.Future<List<_i22.BankData>>);
+        returnValue: _i2.Future<List<_i23.BankData>>.value(<_i23.BankData>[]),
+      ) as _i2.Future<List<_i23.BankData>>);
 
   @override
-  _i2.Future<bool> registerBankData(_i22.BankData? bankData) =>
+  _i2.Future<bool> registerBankData(_i23.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #registerBankData,
@@ -1655,7 +1683,7 @@ class MockBankService extends _i1.Mock implements _i29.BankService {
       ) as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBankData(_i22.BankData? bankData) =>
+  _i2.Future<bool> deleteBankData(_i23.BankData? bankData) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteBankData,
@@ -1668,40 +1696,40 @@ class MockBankService extends _i1.Mock implements _i29.BankService {
 /// A class which mocks [VereinService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVereinService extends _i1.Mock implements _i30.VereinService {
+class MockVereinService extends _i1.Mock implements _i31.VereinService {
   MockVereinService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<_i31.Verein>> fetchVereine() => (super.noSuchMethod(
+  _i2.Future<List<_i32.Verein>> fetchVereine() => (super.noSuchMethod(
         Invocation.method(
           #fetchVereine,
           [],
         ),
-        returnValue: _i2.Future<List<_i31.Verein>>.value(<_i31.Verein>[]),
-      ) as _i2.Future<List<_i31.Verein>>);
+        returnValue: _i2.Future<List<_i32.Verein>>.value(<_i32.Verein>[]),
+      ) as _i2.Future<List<_i32.Verein>>);
 
   @override
-  _i2.Future<List<_i31.Verein>> fetchVerein(int? vereinsNr) =>
+  _i2.Future<List<_i32.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchVerein,
           [vereinsNr],
         ),
-        returnValue: _i2.Future<List<_i31.Verein>>.value(<_i31.Verein>[]),
-      ) as _i2.Future<List<_i31.Verein>>);
+        returnValue: _i2.Future<List<_i32.Verein>>.value(<_i32.Verein>[]),
+      ) as _i2.Future<List<_i32.Verein>>);
 
   @override
-  _i2.Future<List<_i32.FremdeVerband>> fetchFremdeVerbaende() =>
+  _i2.Future<List<_i33.FremdeVerband>> fetchFremdeVerbaende() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchFremdeVerbaende,
           [],
         ),
         returnValue:
-            _i2.Future<List<_i32.FremdeVerband>>.value(<_i32.FremdeVerband>[]),
-      ) as _i2.Future<List<_i32.FremdeVerband>>);
+            _i2.Future<List<_i33.FremdeVerband>>.value(<_i33.FremdeVerband>[]),
+      ) as _i2.Future<List<_i33.FremdeVerband>>);
 }
 
 /// A class which mocks [PostgrestService].
@@ -1970,7 +1998,7 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
 /// A class which mocks [EmailService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailService extends _i1.Mock implements _i33.EmailService {
+class MockEmailService extends _i1.Mock implements _i34.EmailService {
   MockEmailService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2320,11 +2348,11 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
   @override
   _i2.Future<void> sendStartingRightsChangeNotifications({
     required int? personId,
-    required _i21.UserData? passdaten,
+    required _i22.UserData? passdaten,
     required List<String>? userEmailAddresses,
     required List<String>? clubEmailAddresses,
-    required List<_i25.ZweitmitgliedschaftData>? zweitmitgliedschaften,
-    required _i24.PassdatenAkzeptOrAktiv? zveData,
+    required List<_i26.ZweitmitgliedschaftData>? zweitmitgliedschaften,
+    required _i25.PassdatenAkzeptOrAktiv? zveData,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2348,13 +2376,13 @@ class MockEmailService extends _i1.Mock implements _i33.EmailService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockOktoberfestService extends _i1.Mock
-    implements _i34.OktoberfestService {
+    implements _i35.OktoberfestService {
   MockOktoberfestService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<_i35.Result>> fetchResults({
+  _i2.Future<List<_i36.Result>> fetchResults({
     required String? passnummer,
     required _i6.ConfigService? configService,
   }) =>
@@ -2367,11 +2395,11 @@ class MockOktoberfestService extends _i1.Mock
             #configService: configService,
           },
         ),
-        returnValue: _i2.Future<List<_i35.Result>>.value(<_i35.Result>[]),
-      ) as _i2.Future<List<_i35.Result>>);
+        returnValue: _i2.Future<List<_i36.Result>>.value(<_i36.Result>[]),
+      ) as _i2.Future<List<_i36.Result>>);
 
   @override
-  _i2.Future<List<_i36.Gewinn>> fetchGewinne({
+  _i2.Future<List<_i37.Gewinn>> fetchGewinne({
     required int? jahr,
     required String? passnummer,
     required _i6.ConfigService? configService,
@@ -2386,8 +2414,8 @@ class MockOktoberfestService extends _i1.Mock
             #configService: configService,
           },
         ),
-        returnValue: _i2.Future<List<_i36.Gewinn>>.value(<_i36.Gewinn>[]),
-      ) as _i2.Future<List<_i36.Gewinn>>);
+        returnValue: _i2.Future<List<_i37.Gewinn>>.value(<_i37.Gewinn>[]),
+      ) as _i2.Future<List<_i37.Gewinn>>);
 
   @override
   _i2.Future<bool> gewinneAbrufen({
@@ -2414,7 +2442,7 @@ class MockOktoberfestService extends _i1.Mock
 /// A class which mocks [CalendarService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCalendarService extends _i1.Mock implements _i37.CalendarService {
+class MockCalendarService extends _i1.Mock implements _i38.CalendarService {
   MockCalendarService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2607,47 +2635,47 @@ class MockCalendarService extends _i1.Mock implements _i37.CalendarService {
 /// A class which mocks [BezirkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBezirkService extends _i1.Mock implements _i38.BezirkService {
+class MockBezirkService extends _i1.Mock implements _i39.BezirkService {
   MockBezirkService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Future<List<_i39.Bezirk>> fetchBezirke() => (super.noSuchMethod(
+  _i2.Future<List<_i40.Bezirk>> fetchBezirke() => (super.noSuchMethod(
         Invocation.method(
           #fetchBezirke,
           [],
         ),
-        returnValue: _i2.Future<List<_i39.Bezirk>>.value(<_i39.Bezirk>[]),
-      ) as _i2.Future<List<_i39.Bezirk>>);
+        returnValue: _i2.Future<List<_i40.Bezirk>>.value(<_i40.Bezirk>[]),
+      ) as _i2.Future<List<_i40.Bezirk>>);
 
   @override
-  _i2.Future<List<_i39.Bezirk>> fetchBezirk(int? bezirkNr) =>
+  _i2.Future<List<_i40.Bezirk>> fetchBezirk(int? bezirkNr) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBezirk,
           [bezirkNr],
         ),
-        returnValue: _i2.Future<List<_i39.Bezirk>>.value(<_i39.Bezirk>[]),
-      ) as _i2.Future<List<_i39.Bezirk>>);
+        returnValue: _i2.Future<List<_i40.Bezirk>>.value(<_i40.Bezirk>[]),
+      ) as _i2.Future<List<_i40.Bezirk>>);
 
   @override
-  _i2.Future<List<_i39.BezirkSearchTriple>> fetchBezirkeforSearch() =>
+  _i2.Future<List<_i40.BezirkSearchTriple>> fetchBezirkeforSearch() =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchBezirkeforSearch,
           [],
         ),
-        returnValue: _i2.Future<List<_i39.BezirkSearchTriple>>.value(
-            <_i39.BezirkSearchTriple>[]),
-      ) as _i2.Future<List<_i39.BezirkSearchTriple>>);
+        returnValue: _i2.Future<List<_i40.BezirkSearchTriple>>.value(
+            <_i40.BezirkSearchTriple>[]),
+      ) as _i2.Future<List<_i40.BezirkSearchTriple>>);
 }
 
 /// A class which mocks [StartingRightsService].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockStartingRightsService extends _i1.Mock
-    implements _i40.StartingRightsService {
+    implements _i41.StartingRightsService {
   MockStartingRightsService() {
     _i1.throwOnMissingStub(this);
   }

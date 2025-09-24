@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: auth_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -371,7 +367,7 @@ class AuthService {
       return '0';
     } catch (e) {
       LoggerService.logError('Find Person ID error: $e');
-      rethrow;
+      return '0';
     }
   }
 
@@ -389,7 +385,7 @@ class AuthService {
       return {};
     } catch (e) {
       LoggerService.logError('Find Person ID error: $e');
-      rethrow;
+      return {};
     }
   }
 
@@ -430,7 +426,7 @@ class AuthService {
       return '0';
     } catch (e) {
       LoggerService.logError('Find Person ID error: $e');
-      rethrow;
+      return '0';
     }
   }
 
