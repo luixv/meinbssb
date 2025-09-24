@@ -3,8 +3,8 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
 
-class BankDataResultScreen extends StatelessWidget {
-  const BankDataResultScreen({
+class ChangePasswordSuccessScreen extends StatelessWidget {
+  const ChangePasswordSuccessScreen({
     super.key,
     required this.success,
     required this.userData,
@@ -19,7 +19,7 @@ class BankDataResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Bankdaten',
+      title: 'Passwort ändern',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
@@ -36,8 +36,8 @@ class BankDataResultScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             Text(
               success
-                  ? 'Ihre Bankdaten wurden erfolgreich gespeichert.'
-                  : 'Es ist ein Fehler aufgetreten.',
+                  ? 'Ihr Passwort wurde erfolgreich geändert.'
+                  : 'Es ist ein Fehler beim Ändern des Passworts aufgetreten.',
               style: const TextStyle(fontSize: UIConstants.dialogFontSize),
               textAlign: TextAlign.center,
             ),
@@ -45,16 +45,16 @@ class BankDataResultScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        heroTag: 'bankDataResultFab',
+        heroTag: 'change_password_result_fab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/profile',
+            '/home',
             arguments: {'userData': userData, 'isLoggedIn': true},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
         child: const Icon(
-          Icons.person,
+          Icons.home,
           color: UIConstants.whiteColor,
         ),
       ),
