@@ -187,6 +187,14 @@ class AbsolvierteSchulungenScreenState
                             ? 'Unbekannt'
                             : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
 
+                        final gueltigBis =
+                            DateTime.tryParse(seminar.gueltigBis);
+                        final formattedGueltigBis = gueltigBis == null ||
+                                seminar.gueltigBis.isEmpty ||
+                                seminar.gueltigBis == '-'
+                            ? 'Unbekannt'
+                            : '${gueltigBis.day.toString().padLeft(2, '0')}.${gueltigBis.month.toString().padLeft(2, '0')}.${gueltigBis.year}';
+
                         return ListTile(
                           tileColor: UIConstants.tileColor,
                           shape: RoundedRectangleBorder(
@@ -215,7 +223,7 @@ class AbsolvierteSchulungenScreenState
                                 style: UIStyles.listItemSubtitleStyle,
                               ),
                               ScaledText(
-                                'Gültig bis: ${seminar.gueltigBis.isEmpty || seminar.gueltigBis == '-' ? 'Unbekannt' : seminar.gueltigBis}',
+                                'Gültig bis: $formattedGueltigBis',
                                 style: UIStyles.listItemSubtitleStyle,
                               ),
                             ],
