@@ -117,6 +117,15 @@ class MockFontSizeProvider extends _i1.Mock implements _i4.FontSizeProvider {
       );
 
   @override
+  void setScaleFactor(double? value) => super.noSuchMethod(
+        Invocation.method(
+          #setScaleFactor,
+          [value],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
         Invocation.method(
           #getScaledFontSize,
