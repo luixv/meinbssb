@@ -46,6 +46,12 @@ class FontSizeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setScaleFactor(double value) {
+    _scaleFactor = value;
+    _saveScale();
+    notifyListeners();
+  }
+
   double getScaledFontSize(double baseSize) {
     return baseSize * _scaleFactor;
   }

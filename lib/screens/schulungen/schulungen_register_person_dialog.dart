@@ -277,7 +277,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                   ),
                 ),
                 padding: const EdgeInsets.only(
-                  top: UIConstants.spacingXL,
+                  top: UIConstants.spacingM,
                   left: UIConstants.spacingM,
                   right: UIConstants.spacingM,
                   bottom: UIConstants.spacingXL,
@@ -293,7 +293,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                           style: UIStyles.dialogTitleStyle,
                         ),
                       ),
-                      const SizedBox(height: UIConstants.spacingL),
+                      const SizedBox(height: UIConstants.spacingM),
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(
@@ -335,7 +335,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: UIConstants.spacingM,
+                                    height: UIConstants.spacingS,
                                   ),
                                   TextFormField(
                                     controller: nachnameController,
@@ -351,7 +351,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: UIConstants.spacingM,
+                                    height: UIConstants.spacingS,
                                   ),
                                   TextFormField(
                                     controller: passnummerController,
@@ -367,7 +367,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: UIConstants.spacingM,
+                                    height: UIConstants.spacingS,
                                   ),
                                   TextFormField(
                                     controller: emailController,
@@ -386,7 +386,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: UIConstants.spacingM,
+                                    height: UIConstants.spacingS,
                                   ),
                                   TextFormField(
                                     controller: telefonnummerController,
@@ -403,32 +403,56 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                   ),
                                   if (!zusatzfelderLoaded) ...[
                                     const SizedBox(
-                                      height: UIConstants.spacingM,
+                                      height: UIConstants.spacingS,
                                     ),
                                     const Center(
                                       child: CircularProgressIndicator(),
                                     ),
                                   ] else if (zusatzfelder.isNotEmpty)
-                                    ...zusatzfelder.map(
-                                      (feld) => Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: UIConstants.spacingM,
-                                        ),
-                                        child: TextFormField(
-                                          controller: zusatzfeldControllers[
-                                              feld.schulungstermineFeldId],
-                                          decoration: InputDecoration(
-                                            labelText: feld.feldbezeichnung,
+                                    ...zusatzfelder.asMap().entries.map(
+                                      (entry) {
+                                        final index = entry.key;
+                                        final feld = entry.value;
+                                        final isSecondZusatzfeld =
+                                            index == zusatzfelder.length - 2;
+                                        zusatzfeldControllers[
+                                                feld.schulungstermineFeldId] ??=
+                                            TextEditingController(
+                                          text: feld.feldbezeichnung,
+                                        );
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: UIConstants.spacingS,
                                           ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.trim().isEmpty) {
-                                              return '${feld.feldbezeichnung} ist erforderlich';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
+                                          child: TextFormField(
+                                            controller: zusatzfeldControllers[
+                                                feld.schulungstermineFeldId],
+                                            decoration: InputDecoration(
+                                              labelText: isSecondZusatzfeld
+                                                  ? null
+                                                  : feld.feldbezeichnung,
+                                              hintText: isSecondZusatzfeld
+                                                  ? feld.feldbezeichnung
+                                                  : null,
+                                            ),
+                                            minLines:
+                                                isSecondZusatzfeld ? 2 : 1,
+                                            maxLines: isSecondZusatzfeld
+                                                ? null
+                                                : 1, // allow wrapping and growing
+                                            expands:
+                                                false, // do NOT use expands:true, it fills all available space
+                                            textAlign: TextAlign.start,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.trim().isEmpty) {
+                                                return '${feld.feldbezeichnung} ist erforderlich';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        );
+                                      },
                                     ),
                                 ],
                               ),

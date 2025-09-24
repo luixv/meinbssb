@@ -342,8 +342,8 @@ class UIConstants {
   static const double dialogMaxWidth = 420.0;
   static const double dialogMaxWidthWide = 640.0;
   static const double dialogMaxHeight = 520.0;
-  static const double dialogMinWidth = 300.0;
-  static const double dialogNarrowWidth = 240.0;
+  static const double dialogMinWidth = 400.0;
+  static const double dialogNarrowWidth = 340.0;
   static const double dialogColumnGap = 8.0;
 
   // Schulungen (Course Registration) Colors
