@@ -7,16 +7,21 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/contact_data.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:meinbssb/models/fremde_verband_data.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
+import 'package:meinbssb/models/pass_data_zve_data.dart';
+import 'package:meinbssb/models/result_data.dart';
+
 import 'package:meinbssb/models/schulung_data.dart';
 import 'package:meinbssb/models/schulungsart_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
-import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/verein_data.dart';
-import 'package:meinbssb/models/fremde_verband_data.dart';
-import 'package:meinbssb/models/pass_data_zve_data.dart';
+
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
-import 'package:meinbssb/models/bezirk_data.dart';
+
 import 'package:meinbssb/models/register_schulungen_teilnehmer_response_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
 
@@ -422,6 +427,47 @@ void main() {
           mockUserService
               .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId),
         ).called(1);
+      });
+
+      test(
+          'fetchZweitmitgliedschaftenZVE delegates to user service and returns expected data',
+          () async {
+        final expectedData = [
+          ZweitmitgliedschaftData(
+            vereinId: 1,
+            vereinNr: 1,
+            vereinName: 'Testverein',
+            eintrittVerein: DateTime(2024, 1, 1),
+          ),
+        ];
+        when(mockUserService.fetchZweitmitgliedschaftenZVE(any, any))
+            .thenAnswer((_) async => expectedData);
+
+        final result = await apiService.fetchZweitmitgliedschaftenZVE(123, 1);
+        expect(result, equals(expectedData));
+        verify(mockUserService.fetchZweitmitgliedschaftenZVE(123, 1)).called(1);
+      });
+
+      test('fetchZweitmitgliedschaftenZVE returns empty list on empty response',
+          () async {
+        when(mockUserService.fetchZweitmitgliedschaftenZVE(any, any))
+            .thenAnswer((_) async => <ZweitmitgliedschaftData>[]);
+
+        final result = await apiService.fetchZweitmitgliedschaftenZVE(123, 1);
+        expect(result, isEmpty);
+        verify(mockUserService.fetchZweitmitgliedschaftenZVE(123, 1)).called(1);
+      });
+
+      test('fetchZweitmitgliedschaftenZVE propagates unexpected error',
+          () async {
+        when(mockUserService.fetchZweitmitgliedschaftenZVE(any, any))
+            .thenThrow(ArgumentError('Unexpected argument'));
+
+        expect(
+          () => apiService.fetchZweitmitgliedschaftenZVE(123, 1),
+          throwsArgumentError,
+        );
+        verify(mockUserService.fetchZweitmitgliedschaftenZVE(123, 1)).called(1);
       });
     });
 
@@ -1131,6 +1177,38 @@ void main() {
         verify(mockPostgrestService.getUserByVerificationToken('token123'))
             .called(1);
       });
+
+      test('add delegates to postgrest service and returns expected user',
+          () async {
+        final expectedUser = {
+          'id': 1,
+          'personId': '123',
+          'email': 'test@example.com',
+        };
+        when(mockPostgrestService.getUserByPersonId('123'))
+            .thenAnswer((_) async => expectedUser);
+
+        final result = await apiService.getUserByPersonId('123');
+        expect(result, equals(expectedUser));
+        verify(mockPostgrestService.getUserByPersonId('123')).called(1);
+      });
+
+      test('getUserByPersonId returns null when user not found', () async {
+        when(mockPostgrestService.getUserByPersonId('456'))
+            .thenAnswer((_) async => null);
+
+        final result = await apiService.getUserByPersonId('456');
+        expect(result, isNull);
+        verify(mockPostgrestService.getUserByPersonId('456')).called(1);
+      });
+
+      test('getUserByPersonId throws exception on error', () async {
+        when(mockPostgrestService.getUserByPersonId('789'))
+            .thenThrow(Exception('Database error'));
+
+        expect(() => apiService.getUserByPersonId('789'), throwsException);
+        verify(mockPostgrestService.getUserByPersonId('789')).called(1);
+      });
     });
 
     group('Bezirk Service Tests', () {
@@ -1368,6 +1446,179 @@ void main() {
             schulungDate: '2024-01-01',
             firstName: 'Max',
             lastName: 'Mustermann',
+          ),
+        ).called(1);
+      });
+    });
+
+    group('BSSB App Passantrag', () {
+      test(
+        'bssbAppPassantrag delegates to userService and returns expected result',
+        () async {
+          const expectedResponse = true;
+          final secondColumns = <int, Map<String, int?>>{
+            1: {'fieldA': 42},
+          };
+          const passdatenId = 2;
+          const personId = 3;
+          const erstVereinId = 4;
+          const digitalerPass = 1;
+          const antragsTyp = 2;
+
+          when(
+            mockUserService.bssbAppPassantrag(
+              secondColumns,
+              passdatenId,
+              personId,
+              erstVereinId,
+              digitalerPass,
+              antragsTyp,
+            ),
+          ).thenAnswer((_) async => expectedResponse);
+
+          final result = await apiService.bssbAppPassantrag(
+            secondColumns,
+            passdatenId,
+            personId,
+            erstVereinId,
+            digitalerPass,
+            antragsTyp,
+          );
+
+          expect(result, equals(expectedResponse));
+          verify(
+            mockUserService.bssbAppPassantrag(
+              secondColumns,
+              passdatenId,
+              personId,
+              erstVereinId,
+              digitalerPass,
+              antragsTyp,
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('Bank Service Tests', () {
+      test('fetchBankData delegates to bankService and returns expected data',
+          () async {
+        final expectedData = [
+          const BankData(
+            id: 1,
+            webloginId: 123,
+            kontoinhaber: 'Max Mustermann',
+            iban: 'DE89370400440532013000',
+            bic: 'DEUTDEBBXXX',
+            mandatSeq: 1,
+          ),
+        ];
+        when(mockBankService.fetchBankData(any))
+            .thenAnswer((_) async => expectedData);
+
+        final result = await apiService.fetchBankData(123);
+        expect(result, equals(expectedData));
+        verify(mockBankService.fetchBankData(123)).called(1);
+      });
+
+      test('registerBankData delegates to bankService and returns true',
+          () async {
+        const bankData = BankData(
+          id: 1,
+          webloginId: 123,
+          kontoinhaber: 'Max Mustermann',
+          iban: 'DE89370400440532013000',
+          bic: 'DEUTDEBBXXX',
+          mandatSeq: 1,
+        );
+        when(mockBankService.registerBankData(any))
+            .thenAnswer((_) async => true);
+
+        final result = await apiService.registerBankData(bankData);
+        expect(result, isTrue);
+        verify(mockBankService.registerBankData(bankData)).called(1);
+      });
+
+      test('deleteBankData delegates to bankService and returns true',
+          () async {
+        const bankData = BankData(
+          id: 1,
+          webloginId: 123,
+          kontoinhaber: 'Max Mustermann',
+          iban: 'DE89370400440532013000',
+          bic: 'DEUTDEBBXXX',
+          mandatSeq: 1,
+        );
+        when(mockBankService.deleteBankData(any)).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBankData(bankData);
+        expect(result, isTrue);
+        verify(mockBankService.deleteBankData(bankData)).called(1);
+      });
+    });
+
+    group('OktoberfestService Tests', () {
+      test(
+          'fetchResults delegates to oktoberfestService and returns expected data',
+          () async {
+        final expectedResults = [
+          const Result(
+            wettbewerb: 'Wettbewerb A',
+            platz: 1,
+            gesamt: 100,
+            postfix: 'A',
+          ),
+        ];
+        when(
+          mockOktoberfestService.fetchResults(
+            passnummer: anyNamed('passnummer'),
+            configService: anyNamed('configService'),
+          ),
+        ).thenAnswer((_) async => expectedResults);
+
+        final result =
+            await apiService.fetchResults('123456', mockConfigService);
+        expect(result, equals(expectedResults));
+        verify(
+          mockOktoberfestService.fetchResults(
+            passnummer: '123456',
+            configService: mockConfigService,
+          ),
+        ).called(1);
+      });
+
+      test(
+          'fetchGewinne delegates to oktoberfestService and returns expected data',
+          () async {
+        final expectedGewinne = [
+          const Gewinn(
+            gewinnId: 1,
+            jahr: 2024,
+            tradition: true,
+            isSachpreis: false,
+            geldpreis: 50,
+            sachpreis: 'Sachpreis A',
+            wettbewerb: 'Wettbewerb A',
+            abgerufenAm: '2024-09-24',
+            platz: 1,
+          ),
+        ];
+        when(
+          mockOktoberfestService.fetchGewinne(
+            jahr: anyNamed('jahr'),
+            passnummer: anyNamed('passnummer'),
+            configService: anyNamed('configService'),
+          ),
+        ).thenAnswer((_) async => expectedGewinne);
+
+        final result =
+            await apiService.fetchGewinne(2024, '123456', mockConfigService);
+        expect(result, equals(expectedGewinne));
+        verify(
+          mockOktoberfestService.fetchGewinne(
+            jahr: 2024,
+            passnummer: '123456',
+            configService: mockConfigService,
           ),
         ).called(1);
       });
