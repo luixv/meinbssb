@@ -36,12 +36,7 @@ class StartingRightsScreen extends StatefulWidget {
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
   bool _digitalerPass = true;
 
-  int get _yy {
-    final now = DateTime.now();
-    return now.year + 1;
-  }
-
-  String get _seasonString {
+  int get _seasonInt {
     final now = DateTime.now();
     int yy;
     // Use September 16 as the deadline
@@ -51,7 +46,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     } else {
       yy = now.year + 2;
     }
-    return ' $yy';
+    return yy;
   }
 
   bool _hasUnsavedChanges = false;
@@ -343,7 +338,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StartingRightsHeader(seasonString: _seasonString),
+          StartingRightsHeader(seasonString: _seasonInt.toString()),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -498,7 +493,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 final vereinName = fzm.vereinName;
                                 final pivot = pivotDisziplins[vereinId] ?? {};
                                 return ZweitvereinTable(
-                                  yy: _yy,
+                                  seasonInt: _seasonInt,
                                   vereinName: vereinName,
                                   firstColumns: firstColumns[vereinId] ?? {},
                                   secondColumns: secondColumns[vereinId] ?? {},

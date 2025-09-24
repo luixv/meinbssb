@@ -93,7 +93,7 @@ void main() {
             ),
           ],
           child: ZweitvereinTable(
-            yy: testYear,
+            seasonInt: testYear,
             vereinName: testVereinName,
             firstColumns: testFirstColumns,
             secondColumns: testSecondColumns,
@@ -327,7 +327,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -365,7 +365,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -406,7 +406,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: longVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
@@ -443,7 +443,7 @@ void main() {
               ),
             ],
             child: ZweitvereinTable(
-              yy: testYear,
+              seasonInt: testYear,
               vereinName: testVereinName,
               firstColumns: testFirstColumns,
               secondColumns: testSecondColumns,
