@@ -6,7 +6,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 
-import 'package:meinbssb/screens/personal_data_result_screen.dart';
+import 'package:meinbssb/screens/personal_data_success_screen.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:intl/intl.dart';
@@ -206,7 +206,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => PersonalDataResultScreen(
+                builder: (context) => PersonalDataSuccessScreen(
                   success: true,
                   userData: widget.userData,
                   isLoggedIn: widget.isLoggedIn,
@@ -333,26 +333,29 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               filled: true,
             ),
             items: titelOptions
-                .map((titel) => DropdownMenuItem<String>(
-                      value: titel,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0.0,), // Minimum space
-                        child: Text(
-                          titel.isEmpty ? '(Kein Titel)' : titel,
-                          style: _isEditing
-                              ? UIStyles.formValueStyle.copyWith(
-                                  fontSize: UIStyles.formValueStyle.fontSize! *
-                                      fontSizeProvider.scaleFactor,
-                                )
-                              : UIStyles.formValueBoldStyle.copyWith(
-                                  fontSize:
-                                      UIStyles.formValueBoldStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                ),
-                        ),
+                .map(
+                  (titel) => DropdownMenuItem<String>(
+                    value: titel,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 0.0,
+                      ), // Minimum space
+                      child: Text(
+                        titel.isEmpty ? '(Kein Titel)' : titel,
+                        style: _isEditing
+                            ? UIStyles.formValueStyle.copyWith(
+                                fontSize: UIStyles.formValueStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              )
+                            : UIStyles.formValueBoldStyle.copyWith(
+                                fontSize:
+                                    UIStyles.formValueBoldStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                              ),
                       ),
-                    ),)
+                    ),
+                  ),
+                )
                 .toList(),
             onChanged: _isEditing
                 ? (value) {

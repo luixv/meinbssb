@@ -7,8 +7,8 @@ import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 
-class PersonalDataResultScreen extends StatelessWidget {
-  const PersonalDataResultScreen({
+class PersonalDataSuccessScreen extends StatelessWidget {
+  const PersonalDataSuccessScreen({
     super.key,
     required this.success,
     required this.userData,
