@@ -72,7 +72,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
+    return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
   }
 
   bool _isBicRequired(String iban) {
@@ -1114,7 +1114,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                                 ),
                                                                                 UIConstants.horizontalSpacingS,
                                                                                 Text(
-                                                                                  DateFormat('dd.MM.yyyy').format(t.datum),
+                                                                                  DateFormat('dd.MM.yyyy', 'de_DE').format(t.datum),
                                                                                   style: UIStyles.bodyStyle,
                                                                                 ),
                                                                               ],

@@ -23,7 +23,7 @@ class SchulungenListItem extends StatelessWidget {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
         String formattedDate =
-            DateFormat('dd.MM.yyyy').format(schulungsTermin.datum);
+            DateFormat('dd.MM.yyyy', 'de_DE').format(schulungsTermin.datum);
 
         // Determine the background color for the FloatingActionButton based on webGruppeLabel
         Color fabBackgroundColor;
