@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:meinbssb/screens/schulungen_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
@@ -16,6 +17,10 @@ import 'package:mockito/annotations.dart';
 import 'schulungen_screen_test.mocks.dart';
 
 void main() {
+  // Initialize German locale data for date formatting
+  setUpAll(() async {
+    await initializeDateFormatting('de_DE', null);
+  });
   const dummyUser = UserData(
     personId: 1,
     webLoginId: 1,
