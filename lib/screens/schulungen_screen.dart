@@ -72,7 +72,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
+    return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
   }
 
   bool _isBicRequired(String iban) {
@@ -794,7 +794,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     Navigator.of(parentContext).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) => SchulungenSearchScreen(
-                          widget.userData,
+                          userData: widget.userData,
                           isLoggedIn: widget.isLoggedIn,
                           onLogout: widget.onLogout,
                           showMenu: widget.isLoggedIn,
@@ -868,7 +868,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SchulungenSearchScreen(
-                      widget.userData,
+                      userData: widget.userData,
                       isLoggedIn: widget.isLoggedIn,
                       onLogout: widget.onLogout,
                       showMenu: widget.showMenu,
@@ -1114,7 +1114,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                                 ),
                                                                                 UIConstants.horizontalSpacingS,
                                                                                 Text(
-                                                                                  DateFormat('dd.MM.yyyy').format(t.datum),
+                                                                                  DateFormat('dd.MM.yyyy', 'de_DE').format(t.datum),
                                                                                   style: UIStyles.bodyStyle,
                                                                                 ),
                                                                               ],
@@ -1505,7 +1505,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => SchulungenSearchScreen(
-            widget.userData,
+            userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
             showMenu: widget.isLoggedIn,

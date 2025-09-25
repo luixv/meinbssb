@@ -15,17 +15,19 @@ import '/screens/schulungen_screen.dart';
 import '/widgets/scaled_text.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
-  const SchulungenSearchScreen(
-    this.userData, {
+  const SchulungenSearchScreen({
+    this.userData,
     required this.isLoggedIn,
     required this.onLogout,
     this.showMenu = true,
     this.showConnectivityIcon = true,
     super.key,
   });
+
+  
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
   final bool showMenu;
   final bool showConnectivityIcon;
 
@@ -51,18 +53,36 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   }
 
   Future<void> _fetchBezirke() async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    final bezirke = await apiService.fetchBezirkeforSearch();
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final bezirke = await apiService.fetchBezirkeforSearch();
 
-    // Add "Alle" option
-    _bezirke = [
-      const BezirkSearchTriple(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
-      ...bezirke,
-    ];
-
-    setState(() {
-      isLoadingBezirke = false;
-    });
+      // Add "Alle" option
+      _bezirke = [
+        const BezirkSearchTriple(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
+        ...bezirke,
+      ];
+    } catch (e) {
+      // Fallback to only "Alle" and inform the user
+      _bezirke = const [
+        BezirkSearchTriple(bezirkId: 0, bezirkNr: 0, bezirkName: 'Alle'),
+      ];
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Regierungsbezirke konnten nicht geladen werden.'),
+            backgroundColor: UIConstants.errorColor,
+            duration: UIConstants.snackbarDuration,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingBezirke = false;
+        });
+      }
+    }
   }
 
   @override
@@ -72,9 +92,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
-  }
+  String _formatDate(DateTime date) =>
+      DateFormat('dd.MM.yyyy', 'de_DE').format(date);
 
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
@@ -149,16 +168,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
   }
 
   void _navigateToResults() {
-    if (selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte wählen Sie ein Datum.'),
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-      return;
-    }
-    final safeDate = selectedDate ?? DateTime.now();
+    final date = selectedDate ?? DateTime.now();
     final userData = widget.userData;
     Navigator.push(
       context,
@@ -167,7 +177,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
-          searchDate: safeDate,
+          searchDate: date,
           webGruppe: selectedWebGruppe,
           bezirkId: selectedBezirkId,
           ort: _ortController.text,
@@ -250,9 +260,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     suffixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: ScaledText(
-                    selectedDate == null
-                        ? 'Bitte wählen Sie ein Datum'
-                        : _formatDate(selectedDate ?? DateTime.now()),
+                    _formatDate(selectedDate ?? DateTime.now()),
                     style: UIStyles.bodyStyle,
                   ),
                 ),
@@ -263,12 +271,20 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Fachbereich',
                 ),
-                items: Schulungstermin.webGruppeMap.entries.map((entry) {
-                  return DropdownMenuItem<int>(
-                    value: entry.key,
-                    child: Text(entry.value),
-                  );
-                }).toList(),
+                items: [
+                  const DropdownMenuItem<int>(
+                    value: 0,
+                    child: Text('Alle'),
+                  ),
+                  ...Schulungstermin.webGruppeMap.entries
+                      .where((entry) => entry.key != 0)
+                      .map(
+                        (entry) => DropdownMenuItem<int>(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        ),
+                      ),
+                ],
                 onChanged: (value) {
                   setState(() {
                     selectedWebGruppe = value;

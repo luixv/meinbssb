@@ -27,17 +27,15 @@ import 'services/core/calendar_service.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
-import 'package:flutter/foundation.dart';
 import 'services/core/postgrest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {}
   // Global error handler for all uncaught errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint(
-      'GLOBAL FLUTTER ERROR: \n [31m${details.exceptionAsString()}\u001b[0m',
+      'GLOBAL FLUTTER ERROR: \n \u001b[31m${details.exceptionAsString()}\u001b[0m',
     );
     if (details.stack != null) {
       debugPrint('STACK TRACE: \n${details.stack}');
@@ -45,6 +43,7 @@ void main() async {
   };
   await AppInitializer.init();
 
+  
   final fragment = Uri.base.fragment;
   final path = Uri.base.path;
 
@@ -53,19 +52,32 @@ void main() async {
       path == '/schulungen_search' ||
       path == 'schulungen_search';
 
-  final oktoberfestService =
-      OktoberfestService(httpClient: AppInitializer.httpClient);
-
   runZonedGuarded(() {
     if (isDirectSchulungenSearch) {
       runApp(
-        MyAppWrapper(
-          initialScreen: SchulungenSearchScreen(
-            null,
-            isLoggedIn: false,
-            onLogout: () {},
-            showMenu: false,
-            showConnectivityIcon: false,
+        MultiProvider(
+          providers: [
+            AppInitializer.configServiceProvider,
+            AppInitializer.emailSenderProvider,
+            AppInitializer.emailServiceProvider,
+            AppInitializer.authServiceProvider,
+            AppInitializer.apiServiceProvider,
+            AppInitializer.networkServiceProvider,
+            AppInitializer.cacheServiceProvider,
+            AppInitializer.trainingServiceProvider,
+            AppInitializer.userServiceProvider,
+            AppInitializer.tokenServiceProvider,
+            AppInitializer.fontSizeProvider,
+            AppInitializer.oktoberfestServiceProvider,
+          ],
+          child: MyAppWrapper(
+            initialScreen: SchulungenSearchScreen(
+              userData: null,
+              isLoggedIn: false,
+              onLogout: () {},
+              showMenu: false,
+              showConnectivityIcon: false,
+            ),
           ),
         ),
       );
@@ -84,14 +96,14 @@ void main() async {
             AppInitializer.userServiceProvider,
             AppInitializer.tokenServiceProvider,
             AppInitializer.fontSizeProvider,
-            Provider<OktoberfestService>.value(value: oktoberfestService),
+            AppInitializer.oktoberfestServiceProvider,
           ],
           child: const MyAppWrapper(),
         ),
       );
     }
   }, (error, stack) {
-    debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
+    debugPrint('GLOBAL ZONED ERROR: \n \u001b[31m$error\u001b[0m');
     debugPrint('STACK TRACE: \n$stack');
   });
 }
@@ -108,11 +120,14 @@ class AppInitializer {
   static late AuthService authService;
   static late BankService bankService;
   static late VereinService vereinService;
+  static late OktoberfestService oktoberfestService;
   static late TokenService tokenService;
   static late PostgrestService postgrestService;
   static late CalendarService calendarService;
   static late BezirkService bezirkService;
   static late StartingRightsService startingRightsService;
+  static late http.Client baseHttpClient;
+  static bool _disposed = false;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -130,7 +145,8 @@ class AppInitializer {
     );
     networkService = NetworkService(configService: configService);
 
-    final baseHttpClient = http.Client();
+    // Shared underlying HTTP client used across services
+    baseHttpClient = http.Client();
 
     // Initialize PostgrestService
     postgrestService = PostgrestService(
@@ -162,7 +178,7 @@ class AppInitializer {
     // Initialize EmailService before AuthService since AuthService depends on it
     final emailSender = MailerEmailSender();
 
-    final oktoberfestService = OktoberfestService(
+    oktoberfestService = OktoberfestService(
       httpClient: httpClient,
     );
 
@@ -202,7 +218,7 @@ class AppInitializer {
       networkService: networkService,
     );
 
-    bankService = BankService(httpClient);
+    bankService = BankService.withClient(httpClient: httpClient);
 
     vereinService = VereinService(
       httpClient: httpClient,
@@ -266,8 +282,7 @@ class AppInitializer {
     userServiceProvider = Provider<UserService>(
       create: (context) => userService,
     );
-    LoggerService.logInfo('UserService provider registered.');
-
+    
 // This is just in case the token_service is needed elsewhere.
 // In fact the only place where it is used is in the HttpClient
     tokenServiceProvider = Provider<TokenService>(
@@ -285,6 +300,20 @@ class AppInitializer {
     startingRightsServiceProvider = Provider<StartingRightsService>(
       create: (context) => startingRightsService,
     );
+
+    oktoberfestServiceProvider = Provider<OktoberfestService>(
+      create: (context) => oktoberfestService,
+    );
+  }
+
+  static void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    try {
+      baseHttpClient.close();
+    } catch (e) {
+      debugPrint('Error closing baseHttpClient: $e');
+    }
   }
 
   // Public static provider instances
@@ -301,4 +330,6 @@ class AppInitializer {
   static late ChangeNotifierProvider<FontSizeProvider> fontSizeProvider;
   static late Provider<CalendarService> calendarServiceProvider;
   static late Provider<StartingRightsService> startingRightsServiceProvider;
+  static late Provider<OktoberfestService> oktoberfestServiceProvider;
 }
+

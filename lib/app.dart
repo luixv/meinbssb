@@ -369,7 +369,7 @@ class _MyAppState extends State<MyApp> {
                 settings.name!.startsWith('/schulungen_search')) {
               return MaterialPageRoute(
                 builder: (_) => SchulungenSearchScreen(
-                  _userData,
+                  userData: _userData,
                   isLoggedIn: _isLoggedIn,
                   onLogout: _handleLogout,
                   showMenu: false,
