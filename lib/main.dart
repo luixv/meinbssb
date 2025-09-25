@@ -27,12 +27,10 @@ import 'services/core/calendar_service.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
-import 'package:flutter/foundation.dart';
 import 'services/core/postgrest_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {}
   // Global error handler for all uncaught errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -287,8 +285,7 @@ class AppInitializer {
     userServiceProvider = Provider<UserService>(
       create: (context) => userService,
     );
-    LoggerService.logInfo('UserService provider registered.');
-
+    
 // This is just in case the token_service is needed elsewhere.
 // In fact the only place where it is used is in the HttpClient
     tokenServiceProvider = Provider<TokenService>(
