@@ -43,10 +43,7 @@ void main() async {
   };
   await AppInitializer.init();
 
-  // Register lifecycle observer to clean up resources when the app is backgrounded/closed
-  final lifecycleHandler = _AppLifecycleHandler();
-  WidgetsBinding.instance.addObserver(lifecycleHandler);
-
+  
   final fragment = Uri.base.fragment;
   final path = Uri.base.path;
 
@@ -336,14 +333,3 @@ class AppInitializer {
   static late Provider<OktoberfestService> oktoberfestServiceProvider;
 }
 
-class _AppLifecycleHandler with WidgetsBindingObserver {
-  bool _disposed = false;
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!_disposed && (state == AppLifecycleState.detached || state == AppLifecycleState.inactive || state == AppLifecycleState.paused)) {
-      _disposed = true;
-      AppInitializer.dispose();
-    }
-  }
-}

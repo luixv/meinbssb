@@ -27,7 +27,7 @@ class SchulungenSearchScreen extends StatefulWidget {
   
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
+  final VoidCallback onLogout;
   final bool showMenu;
   final bool showConnectivityIcon;
 
@@ -265,12 +265,20 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Fachbereich',
                 ),
-                items: Schulungstermin.webGruppeMap.entries.map((entry) {
-                  return DropdownMenuItem<int>(
-                    value: entry.key,
-                    child: Text(entry.value),
-                  );
-                }).toList(),
+                items: [
+                  const DropdownMenuItem<int>(
+                    value: 0,
+                    child: Text('Alle'),
+                  ),
+                  ...Schulungstermin.webGruppeMap.entries
+                      .where((entry) => entry.key != 0)
+                      .map(
+                        (entry) => DropdownMenuItem<int>(
+                          value: entry.key,
+                          child: Text(entry.value),
+                        ),
+                      ),
+                ],
                 onChanged: (value) {
                   setState(() {
                     selectedWebGruppe = value;
