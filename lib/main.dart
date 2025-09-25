@@ -221,7 +221,7 @@ class AppInitializer {
       networkService: networkService,
     );
 
-    bankService = BankService(httpClient);
+    bankService = BankService.withClient(httpClient: httpClient);
 
     vereinService = VereinService(
       httpClient: httpClient,

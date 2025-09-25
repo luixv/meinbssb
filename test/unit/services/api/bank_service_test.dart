@@ -15,7 +15,7 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    bankService = BankService(mockHttpClient);
+    bankService = BankService.withClient(httpClient: mockHttpClient);
   });
 
   group('BankService', () {

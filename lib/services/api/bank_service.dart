@@ -7,7 +7,12 @@ import '/services/core/logger_service.dart';
 /// Service for handling bank data operations.
 class BankService {
   /// Creates a new instance of [BankService].
+  @Deprecated('Use the named constructor BankService.withClient(httpClient: ...) instead')
   const BankService(this._httpClient);
+
+  /// Preferred constructor using named parameter for consistency with other services.
+  const BankService.withClient({required HttpClient httpClient})
+      : _httpClient = httpClient;
 
   final HttpClient _httpClient;
 
