@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:meinbssb/screens/schulungen/schulungen_search_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
@@ -16,6 +17,11 @@ import 'package:mockito/annotations.dart';
 import 'schulungen_search_screen_test.mocks.dart';
 
 void main() {
+  // Initialize German locale data for date formatting
+  setUpAll(() async {
+    await initializeDateFormatting('de_DE', null);
+  });
+
   late MockApiService mockApiService;
   late MockFontSizeProvider mockFontSizeProvider;
   late Widget testWidget;
