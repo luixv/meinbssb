@@ -56,13 +56,29 @@ void main() async {
   runZonedGuarded(() {
     if (isDirectSchulungenSearch) {
       runApp(
-        MyAppWrapper(
-          initialScreen: SchulungenSearchScreen(
-            null,
-            isLoggedIn: false,
-            onLogout: () {},
-            showMenu: false,
-            showConnectivityIcon: false,
+        MultiProvider(
+          providers: [
+            AppInitializer.configServiceProvider,
+            AppInitializer.emailSenderProvider,
+            AppInitializer.emailServiceProvider,
+            AppInitializer.authServiceProvider,
+            AppInitializer.apiServiceProvider,
+            AppInitializer.networkServiceProvider,
+            AppInitializer.cacheServiceProvider,
+            AppInitializer.trainingServiceProvider,
+            AppInitializer.userServiceProvider,
+            AppInitializer.tokenServiceProvider,
+            AppInitializer.fontSizeProvider,
+            AppInitializer.oktoberfestServiceProvider,
+          ],
+          child: MyAppWrapper(
+            initialScreen: SchulungenSearchScreen(
+              null,
+              isLoggedIn: false,
+              onLogout: () {},
+              showMenu: false,
+              showConnectivityIcon: false,
+            ),
           ),
         ),
       );
