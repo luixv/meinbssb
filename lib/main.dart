@@ -37,7 +37,7 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint(
-      'GLOBAL FLUTTER ERROR: \n [31m${details.exceptionAsString()}\u001b[0m',
+      'GLOBAL FLUTTER ERROR: \n \u001b[31m${details.exceptionAsString()}\u001b[0m',
     );
     if (details.stack != null) {
       debugPrint('STACK TRACE: \n${details.stack}');
@@ -108,7 +108,7 @@ void main() async {
       );
     }
   }, (error, stack) {
-    debugPrint('GLOBAL ZONED ERROR: \n [31m$error\u001b[0m');
+    debugPrint('GLOBAL ZONED ERROR: \n \u001b[31m$error\u001b[0m');
     debugPrint('STACK TRACE: \n$stack');
   });
 }
