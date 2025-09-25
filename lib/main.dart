@@ -45,6 +45,10 @@ void main() async {
   };
   await AppInitializer.init();
 
+  // Register lifecycle observer to clean up resources when the app is backgrounded/closed
+  final lifecycleHandler = _AppLifecycleHandler();
+  WidgetsBinding.instance.addObserver(lifecycleHandler);
+
   final fragment = Uri.base.fragment;
   final path = Uri.base.path;
 
@@ -127,6 +131,8 @@ class AppInitializer {
   static late CalendarService calendarService;
   static late BezirkService bezirkService;
   static late StartingRightsService startingRightsService;
+  static late http.Client baseHttpClient;
+  static bool _disposed = false;
 
   static Future<void> init() async {
     LoggerService.init();
@@ -144,7 +150,8 @@ class AppInitializer {
     );
     networkService = NetworkService(configService: configService);
 
-    final baseHttpClient = http.Client();
+    // Shared underlying HTTP client used across services
+    baseHttpClient = http.Client();
 
     // Initialize PostgrestService
     postgrestService = PostgrestService(
@@ -305,6 +312,16 @@ class AppInitializer {
     );
   }
 
+  static void dispose() {
+    if (_disposed) return;
+    _disposed = true;
+    try {
+      baseHttpClient.close();
+    } catch (e) {
+      debugPrint('Error closing baseHttpClient: $e');
+    }
+  }
+
   // Public static provider instances
   static late Provider<ApiService> apiServiceProvider;
   static late Provider<NetworkService> networkServiceProvider;
@@ -320,4 +337,16 @@ class AppInitializer {
   static late Provider<CalendarService> calendarServiceProvider;
   static late Provider<StartingRightsService> startingRightsServiceProvider;
   static late Provider<OktoberfestService> oktoberfestServiceProvider;
+}
+
+class _AppLifecycleHandler with WidgetsBindingObserver {
+  bool _disposed = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_disposed && (state == AppLifecycleState.detached || state == AppLifecycleState.inactive || state == AppLifecycleState.paused)) {
+      _disposed = true;
+      AppInitializer.dispose();
+    }
+  }
 }
