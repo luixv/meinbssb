@@ -15,14 +15,16 @@ import '/screens/schulungen_screen.dart';
 import '/widgets/scaled_text.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
-  const SchulungenSearchScreen(
-    this.userData, {
+  const SchulungenSearchScreen({
+    this.userData,
     required this.isLoggedIn,
     required this.onLogout,
     this.showMenu = true,
     this.showConnectivityIcon = true,
     super.key,
   });
+
+  
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;

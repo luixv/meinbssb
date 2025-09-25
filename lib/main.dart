@@ -75,7 +75,7 @@ void main() async {
           ],
           child: MyAppWrapper(
             initialScreen: SchulungenSearchScreen(
-              null,
+              userData: null,
               isLoggedIn: false,
               onLogout: () {},
               showMenu: false,

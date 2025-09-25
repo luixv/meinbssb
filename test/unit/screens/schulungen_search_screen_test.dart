@@ -73,7 +73,7 @@ void main() {
           ),
         ],
         child: SchulungenSearchScreen(
-          dummyUser,
+          userData: dummyUser,
           isLoggedIn: true,
           onLogout: mockLogout,
         ),
@@ -226,7 +226,7 @@ void main() {
             ),
           ],
           child: SchulungenSearchScreen(
-            dummyUser,
+            userData: dummyUser,
             isLoggedIn: true,
             onLogout: mockLogout,
             showMenu: false,
@@ -278,7 +278,7 @@ void main() {
             ),
           ],
           child: SchulungenSearchScreen(
-            null,
+            userData: null,
             isLoggedIn: false,
             onLogout: mockLogout,
           ),

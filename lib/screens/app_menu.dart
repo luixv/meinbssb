@@ -135,7 +135,7 @@ class AppDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SchulungenSearchScreen(
-                      userData,
+                      userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
                     ),

@@ -794,7 +794,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     Navigator.of(parentContext).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) => SchulungenSearchScreen(
-                          widget.userData,
+                          userData: widget.userData,
                           isLoggedIn: widget.isLoggedIn,
                           onLogout: widget.onLogout,
                           showMenu: widget.isLoggedIn,
@@ -868,7 +868,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SchulungenSearchScreen(
-                      widget.userData,
+                      userData: widget.userData,
                       isLoggedIn: widget.isLoggedIn,
                       onLogout: widget.onLogout,
                       showMenu: widget.showMenu,
@@ -1505,7 +1505,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => SchulungenSearchScreen(
-            widget.userData,
+            userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
             showMenu: widget.isLoggedIn,
