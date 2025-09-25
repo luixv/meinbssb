@@ -53,9 +53,6 @@ void main() async {
       path == '/schulungen_search' ||
       path == 'schulungen_search';
 
-  final oktoberfestService =
-      OktoberfestService(httpClient: AppInitializer.httpClient);
-
   runZonedGuarded(() {
     if (isDirectSchulungenSearch) {
       runApp(
@@ -84,7 +81,7 @@ void main() async {
             AppInitializer.userServiceProvider,
             AppInitializer.tokenServiceProvider,
             AppInitializer.fontSizeProvider,
-            Provider<OktoberfestService>.value(value: oktoberfestService),
+            AppInitializer.oktoberfestServiceProvider,
           ],
           child: const MyAppWrapper(),
         ),
@@ -108,6 +105,7 @@ class AppInitializer {
   static late AuthService authService;
   static late BankService bankService;
   static late VereinService vereinService;
+  static late OktoberfestService oktoberfestService;
   static late TokenService tokenService;
   static late PostgrestService postgrestService;
   static late CalendarService calendarService;
@@ -162,7 +160,7 @@ class AppInitializer {
     // Initialize EmailService before AuthService since AuthService depends on it
     final emailSender = MailerEmailSender();
 
-    final oktoberfestService = OktoberfestService(
+    oktoberfestService = OktoberfestService(
       httpClient: httpClient,
     );
 
@@ -285,6 +283,10 @@ class AppInitializer {
     startingRightsServiceProvider = Provider<StartingRightsService>(
       create: (context) => startingRightsService,
     );
+
+    oktoberfestServiceProvider = Provider<OktoberfestService>(
+      create: (context) => oktoberfestService,
+    );
   }
 
   // Public static provider instances
@@ -301,4 +303,5 @@ class AppInitializer {
   static late ChangeNotifierProvider<FontSizeProvider> fontSizeProvider;
   static late Provider<CalendarService> calendarServiceProvider;
   static late Provider<StartingRightsService> startingRightsServiceProvider;
+  static late Provider<OktoberfestService> oktoberfestServiceProvider;
 }
