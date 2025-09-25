@@ -92,9 +92,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
-  }
+  String _formatDate(DateTime date) =>
+      DateFormat('dd.MM.yyyy', 'de_DE').format(date);
 
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
