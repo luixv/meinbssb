@@ -41,7 +41,7 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             ScaledText(
               // Using ScaledText
-              'Ihr Shützenausweis wurde bestellt!', // Updated message
+              'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.',
               style: UIStyles.dialogContentStyle.copyWith(
                 // Using UIStyles.dialogTextStyle
                 fontSize: UIStyles.dialogContentStyle.fontSize! *

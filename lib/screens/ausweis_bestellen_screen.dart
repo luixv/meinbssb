@@ -108,7 +108,9 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                   Center(
                     child: ElevatedButton(
                       onPressed: _onSave,
-                      child: const Text('Schützenausweis bestellen'),
+                      child: const Text(
+                        'Schützenausweis kostenpflichtig  bestellen',
+                      ),
                     ),
                   ),
               ],
