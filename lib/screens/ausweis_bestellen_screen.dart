@@ -27,7 +27,13 @@ class AusweisBestellenScreen extends StatefulWidget {
 }
 
 class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
+  bool isLoading = false;
+
   Future<void> _onSave() async {
+    setState(() {
+      isLoading = true;
+    });
+
     const antragsTyp = 5;
     final int? passdatenId = widget.userData?.passdatenId;
     final int? personId = widget.userData?.personId;
@@ -44,9 +50,13 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
       antragsTyp,
     );
 
-    if (success) {
-      // Navigate to the success screen
-      if (mounted) {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+
+      if (success) {
+        // Navigate to the success screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -57,9 +67,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
             ),
           ),
         );
-      }
-    } else {
-      if (mounted) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Antrag konnte nicht gesendet werden.'),
@@ -94,12 +102,15 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                   style: UIStyles.bodyStyle,
                 ),
                 const SizedBox(height: UIConstants.spacingM),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _onSave,
-                    child: const Text('Schützenausweis bestellen'),
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _onSave,
+                      child: const Text('Schützenausweis bestellen'),
+                    ),
                   ),
-                ),
               ],
             ),
           );
