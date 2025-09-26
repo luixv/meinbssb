@@ -59,9 +59,16 @@ void main() {
   testWidgets('shows success icon and main message', (tester) async {
     await tester.pumpWidget(buildTestWidget());
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
-    expect(find.text('Ihr Shützenausweis wurde bestellt!'), findsOneWidget);
-    expect(find.text('Sie können nun zu Ihrem Profil zurückkehren.'),
-        findsOneWidget,);
+    expect(
+      find.text(
+        'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Sie können nun zu Ihrem Profil zurückkehren.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('FAB navigates to home screen', (tester) async {
