@@ -1152,8 +1152,7 @@ void main() {
       ).thenAnswer((_) async => sampleSchulungstermine);
 
       // Mock details fetch with delay
-      when(mockApiService.fetchSchulungstermin(any))
-          .thenAnswer((_) async {
+      when(mockApiService.fetchSchulungstermin(any)).thenAnswer((_) async {
         await Future.delayed(const Duration(milliseconds: 100));
         return sampleSchulungstermine[0];
       });
@@ -1168,7 +1167,7 @@ void main() {
 
       // Should show loading spinner
       expect(find.byType(CircularProgressIndicator), findsWidgets);
-      
+
       // Wait for the async operation to complete
       await tester.pumpAndSettle();
     });
@@ -1199,7 +1198,8 @@ void main() {
 
       // Should show error dialog
       expect(find.text('Fehler'), findsOneWidget);
-      expect(find.text('Details konnten nicht geladen werden.'), findsOneWidget);
+      expect(
+          find.text('Details konnten nicht geladen werden.'), findsOneWidget);
       expect(find.text('OK'), findsOneWidget);
 
       // Tap OK to close error dialog
@@ -1223,7 +1223,8 @@ void main() {
           .thenAnswer((_) async => sampleSchulungstermine[0]);
 
       // Create widget without user data (unauthenticated)
-      await tester.pumpWidget(createTestWidget(userData: null, isLoggedIn: false));
+      await tester
+          .pumpWidget(createTestWidget(userData: null, isLoggedIn: false));
       await tester.pumpAndSettle();
 
       // Find and tap details button (FloatingActionButton with description icon)
@@ -1276,51 +1277,53 @@ void main() {
           any,
           any,
         ),
-      ).thenAnswer((_) async => [
-        Schulungstermin(
-          schulungsterminId: 1,
-          schulungsartId: 1,
-          schulungsTeilnehmerId: 0,
-          datum: testDate,
-          bemerkung: 'Date Test Schulung',
-          kosten: 50.0,
-          ort: 'München',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: false,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: '2024-03-08',
-          abmeldeStopp: '2024-03-10',
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 1,
-          veranstaltungsBezirk: 1,
-          fuerVerlaengerungen: true,
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Date Test Schulung',
-          angemeldeteTeilnehmer: 20,
-        ),
-      ],);
+      ).thenAnswer(
+        (_) async => [
+          Schulungstermin(
+            schulungsterminId: 1,
+            schulungsartId: 1,
+            schulungsTeilnehmerId: 0,
+            datum: testDate,
+            bemerkung: 'Date Test Schulung',
+            kosten: 50.0,
+            ort: 'München',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '2024-03-08',
+            abmeldeStopp: '2024-03-10',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1,
+            veranstaltungsBezirk: 1,
+            fuerVerlaengerungen: true,
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Date Test Schulung',
+            angemeldeteTeilnehmer: 20,
+          ),
+        ],
+      );
 
       await tester.pumpWidget(createTestWidget(searchDate: testDate));
       await tester.pumpAndSettle();
@@ -1339,51 +1342,53 @@ void main() {
           any,
           any,
         ),
-      ).thenAnswer((_) async => [
-        Schulungstermin(
-          schulungsterminId: 1,
-          schulungsartId: 1,
-          schulungsTeilnehmerId: 0,
-          datum: DateTime.now().add(const Duration(days: 30)),
-          bemerkung: 'Full Course',
-          kosten: 50.0,
-          ort: 'München',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: false,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: '2024-06-23',
-          abmeldeStopp: '2024-06-25',
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 1,
-          veranstaltungsBezirk: 1,
-          fuerVerlaengerungen: true,
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Full Course',
-          angemeldeteTeilnehmer: 25, // Full capacity
-        ),
-      ],);
+      ).thenAnswer(
+        (_) async => [
+          Schulungstermin(
+            schulungsterminId: 1,
+            schulungsartId: 1,
+            schulungsTeilnehmerId: 0,
+            datum: DateTime.now().add(const Duration(days: 30)),
+            bemerkung: 'Full Course',
+            kosten: 50.0,
+            ort: 'München',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '2024-06-23',
+            abmeldeStopp: '2024-06-25',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1,
+            veranstaltungsBezirk: 1,
+            fuerVerlaengerungen: true,
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Full Course',
+            angemeldeteTeilnehmer: 25, // Full capacity
+          ),
+        ],
+      );
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -1407,51 +1412,53 @@ void main() {
           any,
           any,
         ),
-      ).thenAnswer((_) async => [
-        Schulungstermin(
-          schulungsterminId: 1,
-          schulungsartId: 1,
-          schulungsTeilnehmerId: 0,
-          datum: DateTime.now().add(const Duration(days: 30)),
-          bemerkung: 'Expired Registration',
-          kosten: 50.0,
-          ort: 'München',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: true,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: formattedDate,
-          abmeldeStopp: formattedDate,
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 1,
-          veranstaltungsBezirk: 1,
-          fuerVerlaengerungen: true,
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Expired Registration',
-          angemeldeteTeilnehmer: 10,
-        ),
-      ],);
+      ).thenAnswer(
+        (_) async => [
+          Schulungstermin(
+            schulungsterminId: 1,
+            schulungsartId: 1,
+            schulungsTeilnehmerId: 0,
+            datum: DateTime.now().add(const Duration(days: 30)),
+            bemerkung: 'Expired Registration',
+            kosten: 50.0,
+            ort: 'München',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: true,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: formattedDate,
+            abmeldeStopp: formattedDate,
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1,
+            veranstaltungsBezirk: 1,
+            fuerVerlaengerungen: true,
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Expired Registration',
+            angemeldeteTeilnehmer: 10,
+          ),
+        ],
+      );
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -1473,104 +1480,108 @@ void main() {
           any,
           any,
         ),
-      ).thenAnswer((_) async => [
-        // This should match all filters
-        Schulungstermin(
-          schulungsterminId: 1,
-          schulungsartId: 1,
-          schulungsTeilnehmerId: 0,
-          datum: DateTime.now().add(const Duration(days: 30)),
-          bemerkung: 'Matching Course Training',
-          kosten: 50.0,
-          ort: 'Test Location',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: false,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: '2024-06-23',
-          abmeldeStopp: '2024-06-25',
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 2, // Specific webGruppe
-          veranstaltungsBezirk: 3, // Specific bezirk
-          fuerVerlaengerungen: true,
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Matching Course Training',
-          angemeldeteTeilnehmer: 10,
-        ),
-        // This should NOT match (wrong webGruppe)
-        Schulungstermin(
-          schulungsterminId: 2,
-          schulungsartId: 2,
-          schulungsTeilnehmerId: 0,
-          datum: DateTime.now().add(const Duration(days: 30)),
-          bemerkung: 'Non-Matching Course',
-          kosten: 50.0,
-          ort: 'Test Location',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: false,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: '2024-06-23',
-          abmeldeStopp: '2024-06-25',
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 1, // Wrong webGruppe
-          veranstaltungsBezirk: 3,
-          fuerVerlaengerungen: true,
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Non-Matching Course',
-          angemeldeteTeilnehmer: 10,
-        ),
-      ],);
+      ).thenAnswer(
+        (_) async => [
+          // This should match all filters
+          Schulungstermin(
+            schulungsterminId: 1,
+            schulungsartId: 1,
+            schulungsTeilnehmerId: 0,
+            datum: DateTime.now().add(const Duration(days: 30)),
+            bemerkung: 'Matching Course Training',
+            kosten: 50.0,
+            ort: 'Test Location',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '2024-06-23',
+            abmeldeStopp: '2024-06-25',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 2, // Specific webGruppe
+            veranstaltungsBezirk: 3, // Specific bezirk
+            fuerVerlaengerungen: true,
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Matching Course Training',
+            angemeldeteTeilnehmer: 10,
+          ),
+          // This should NOT match (wrong webGruppe)
+          Schulungstermin(
+            schulungsterminId: 2,
+            schulungsartId: 2,
+            schulungsTeilnehmerId: 0,
+            datum: DateTime.now().add(const Duration(days: 30)),
+            bemerkung: 'Non-Matching Course',
+            kosten: 50.0,
+            ort: 'Test Location',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '2024-06-23',
+            abmeldeStopp: '2024-06-25',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1, // Wrong webGruppe
+            veranstaltungsBezirk: 3,
+            fuerVerlaengerungen: true,
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Non-Matching Course',
+            angemeldeteTeilnehmer: 10,
+          ),
+        ],
+      );
 
-      await tester.pumpWidget(createTestWidget(
-        webGruppe: 2,
-        bezirkId: 3,
-        ort: 'Test Location',
-        titel: 'Training',
-        fuerVerlaengerungen: true,
-      ),);
+      await tester.pumpWidget(
+        createTestWidget(
+          webGruppe: 2,
+          bezirkId: 3,
+          ort: 'Test Location',
+          titel: 'Training',
+          fuerVerlaengerungen: true,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should only show the matching course
@@ -1588,57 +1599,61 @@ void main() {
           any,
           any,
         ),
-      ).thenAnswer((_) async => [
-        // Course that won't match our filters
-        Schulungstermin(
-          schulungsterminId: 1,
-          schulungsartId: 1,
-          schulungsTeilnehmerId: 0,
-          datum: DateTime.now().add(const Duration(days: 30)),
-          bemerkung: 'Different Course',
-          kosten: 50.0,
-          ort: 'Different Location',
-          lehrgangsleiter: 'Test Leader',
-          verpflegungskosten: 20.0,
-          uebernachtungskosten: 0.0,
-          lehrmaterialkosten: 10.0,
-          lehrgangsinhalt: 'Test content',
-          maxTeilnehmer: 25,
-          webVeroeffentlichenAm: '2024-01-01',
-          anmeldungenGesperrt: false,
-          status: 1,
-          datumBis: '',
-          lehrgangsinhaltHtml: '<p>Test HTML</p>',
-          lehrgangsleiter2: '',
-          lehrgangsleiter3: '',
-          lehrgangsleiter4: '',
-          lehrgangsleiterTel: '0123456789',
-          lehrgangsleiter2Tel: '',
-          lehrgangsleiter3Tel: '',
-          lehrgangsleiter4Tel: '',
-          lehrgangsleiterMail: 'test@example.com',
-          lehrgangsleiter2Mail: '',
-          lehrgangsleiter3Mail: '',
-          lehrgangsleiter4Mail: '',
-          anmeldeStopp: '2024-06-23',
-          abmeldeStopp: '2024-06-25',
-          geloescht: false,
-          stornoGrund: '',
-          webGruppe: 1,
-          veranstaltungsBezirk: 1,
-          fuerVerlaengerungen: false, // Won't match our filter
-          fuerVuelVerlaengerungen: false,
-          anmeldeErlaubt: 1,
-          verbandsInternPasswort: '',
-          bezeichnung: 'Different Course',
-          angemeldeteTeilnehmer: 10,
-        ),
-      ],);
+      ).thenAnswer(
+        (_) async => [
+          // Course that won't match our filters
+          Schulungstermin(
+            schulungsterminId: 1,
+            schulungsartId: 1,
+            schulungsTeilnehmerId: 0,
+            datum: DateTime.now().add(const Duration(days: 30)),
+            bemerkung: 'Different Course',
+            kosten: 50.0,
+            ort: 'Different Location',
+            lehrgangsleiter: 'Test Leader',
+            verpflegungskosten: 20.0,
+            uebernachtungskosten: 0.0,
+            lehrmaterialkosten: 10.0,
+            lehrgangsinhalt: 'Test content',
+            maxTeilnehmer: 25,
+            webVeroeffentlichenAm: '2024-01-01',
+            anmeldungenGesperrt: false,
+            status: 1,
+            datumBis: '',
+            lehrgangsinhaltHtml: '<p>Test HTML</p>',
+            lehrgangsleiter2: '',
+            lehrgangsleiter3: '',
+            lehrgangsleiter4: '',
+            lehrgangsleiterTel: '0123456789',
+            lehrgangsleiter2Tel: '',
+            lehrgangsleiter3Tel: '',
+            lehrgangsleiter4Tel: '',
+            lehrgangsleiterMail: 'test@example.com',
+            lehrgangsleiter2Mail: '',
+            lehrgangsleiter3Mail: '',
+            lehrgangsleiter4Mail: '',
+            anmeldeStopp: '2024-06-23',
+            abmeldeStopp: '2024-06-25',
+            geloescht: false,
+            stornoGrund: '',
+            webGruppe: 1,
+            veranstaltungsBezirk: 1,
+            fuerVerlaengerungen: false, // Won't match our filter
+            fuerVuelVerlaengerungen: false,
+            anmeldeErlaubt: 1,
+            verbandsInternPasswort: '',
+            bezeichnung: 'Different Course',
+            angemeldeteTeilnehmer: 10,
+          ),
+        ],
+      );
 
-      await tester.pumpWidget(createTestWidget(
-        ort: 'NonExistent Location',
-        fuerVerlaengerungen: true,
-      ),);
+      await tester.pumpWidget(
+        createTestWidget(
+          ort: 'NonExistent Location',
+          fuerVerlaengerungen: true,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should show empty state
@@ -1689,23 +1704,27 @@ void main() {
       ).thenAnswer((_) async => sampleSchulungstermine);
 
       final testDate = DateTime(2024, 6, 15);
-      await tester.pumpWidget(createTestWidget(
-        searchDate: testDate,
-        webGruppe: 2,
-        bezirkId: 3,
-        fuerVerlaengerungen: true,
-        fuerVuelVerlaengerungen: false,
-      ),);
+      await tester.pumpWidget(
+        createTestWidget(
+          searchDate: testDate,
+          webGruppe: 2,
+          bezirkId: 3,
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Verify API was called with correct parameters
-      verify(mockApiService.fetchSchulungstermine(
-        '15.06.2024', // German date format
-        '2', // webGruppe as string
-        '3', // bezirkId as string
-        'true', // fuerVerlaengerungen as string
-        '*', // fuerVuelVerlaengerungen as '*' when false
-      ),).called(1);
+      verify(
+        mockApiService.fetchSchulungstermine(
+          '15.06.2024', // German date format
+          '2', // webGruppe as string
+          '3', // bezirkId as string
+          'true', // fuerVerlaengerungen as string
+          '*', // fuerVuelVerlaengerungen as '*' when false
+        ),
+      ).called(1);
     });
 
     testWidgets('handles concurrent API requests gracefully',
@@ -1724,12 +1743,12 @@ void main() {
       });
 
       await tester.pumpWidget(createTestWidget());
-      
+
       // Pump multiple times to simulate rapid interactions
       await tester.pump();
       await tester.pump();
       await tester.pump();
-      
+
       await tester.pumpAndSettle();
 
       // Should handle concurrent requests without crashing
