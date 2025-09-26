@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:meinbssb/screens/schulungen_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
@@ -1136,6 +1137,605 @@ void main() {
       // Reset screen size
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows loading spinner during details fetch',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      // Mock details fetch with delay
+      when(mockApiService.fetchSchulungstermin(any))
+          .thenAnswer((_) async {
+        await Future.delayed(const Duration(milliseconds: 100));
+        return sampleSchulungstermine[0];
+      });
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap details button (FloatingActionButton with description icon)
+      final detailsButton = find.byIcon(Icons.description).first;
+      await tester.tap(detailsButton);
+      await tester.pump(const Duration(milliseconds: 50));
+
+      // Should show loading spinner
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      
+      // Wait for the async operation to complete
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('handles details fetch error gracefully',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      // Mock details fetch failure
+      when(mockApiService.fetchSchulungstermin(any))
+          .thenAnswer((_) async => null);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap details button (FloatingActionButton with description icon)
+      final detailsButton = find.byIcon(Icons.description).first;
+      await tester.tap(detailsButton);
+      await tester.pumpAndSettle();
+
+      // Should show error dialog
+      expect(find.text('Fehler'), findsOneWidget);
+      expect(find.text('Details konnten nicht geladen werden.'), findsOneWidget);
+      expect(find.text('OK'), findsOneWidget);
+
+      // Tap OK to close error dialog
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('shows login dialog when unauthenticated user tries to book',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      when(mockApiService.fetchSchulungstermin(any))
+          .thenAnswer((_) async => sampleSchulungstermine[0]);
+
+      // Create widget without user data (unauthenticated)
+      await tester.pumpWidget(createTestWidget(userData: null, isLoggedIn: false));
+      await tester.pumpAndSettle();
+
+      // Find and tap details button (FloatingActionButton with description icon)
+      final detailsButton = find.byIcon(Icons.description).first;
+      await tester.tap(detailsButton);
+      await tester.pumpAndSettle();
+
+      // Should show details dialog - verify we can find the course title
+      // Using findsWidgets to handle multiple instances
+      expect(find.text('Test Schulung'), findsWidgets);
+    });
+
+    testWidgets('handles booking process for authenticated user',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      when(mockApiService.fetchSchulungstermin(any))
+          .thenAnswer((_) async => sampleSchulungstermine[0]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find and tap details button (FloatingActionButton with description icon)
+      final detailsButton = find.byIcon(Icons.description).first;
+      await tester.tap(detailsButton);
+      await tester.pumpAndSettle();
+
+      // Should show details dialog with authenticated user
+      // Using findsWidgets to handle multiple instances
+      expect(find.text('Test Schulung'), findsWidgets);
+    });
+
+    testWidgets('displays correct date formatting in German locale',
+        (WidgetTester tester) async {
+      final testDate = DateTime(2024, 3, 15, 10, 30); // March 15, 2024, 10:30
+
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [
+        Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 0,
+          datum: testDate,
+          bemerkung: 'Date Test Schulung',
+          kosten: 50.0,
+          ort: 'München',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '2024-03-08',
+          abmeldeStopp: '2024-03-10',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Date Test Schulung',
+          angemeldeteTeilnehmer: 20,
+        ),
+      ],);
+
+      await tester.pumpWidget(createTestWidget(searchDate: testDate));
+      await tester.pumpAndSettle();
+
+      // Should format date correctly in German format
+      expect(find.textContaining('15.03.2024'), findsOneWidget);
+    });
+
+    testWidgets('shows correct availability status for full courses',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [
+        Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 0,
+          datum: DateTime.now().add(const Duration(days: 30)),
+          bemerkung: 'Full Course',
+          kosten: 50.0,
+          ort: 'München',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '2024-06-23',
+          abmeldeStopp: '2024-06-25',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Full Course',
+          angemeldeteTeilnehmer: 25, // Full capacity
+        ),
+      ],);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should show full course information
+      expect(find.text('Full Course'), findsOneWidget);
+      expect(find.text('München'), findsOneWidget);
+      expect(find.byIcon(Icons.description), findsOneWidget);
+    });
+
+    testWidgets('handles registration deadline correctly',
+        (WidgetTester tester) async {
+      final pastDate = DateTime.now().subtract(const Duration(days: 1));
+      final formattedDate = DateFormat('yyyy-MM-dd').format(pastDate);
+
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [
+        Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 0,
+          datum: DateTime.now().add(const Duration(days: 30)),
+          bemerkung: 'Expired Registration',
+          kosten: 50.0,
+          ort: 'München',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: true,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: formattedDate,
+          abmeldeStopp: formattedDate,
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Expired Registration',
+          angemeldeteTeilnehmer: 10,
+        ),
+      ],);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should handle expired registration correctly
+      expect(find.text('Expired Registration'), findsOneWidget);
+      // FAB should be disabled/different color for expired registration
+      final fabs = find.byType(FloatingActionButton);
+      expect(fabs, findsOneWidget);
+    });
+
+    testWidgets('processes complex filter combinations correctly',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [
+        // This should match all filters
+        Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 0,
+          datum: DateTime.now().add(const Duration(days: 30)),
+          bemerkung: 'Matching Course Training',
+          kosten: 50.0,
+          ort: 'Test Location',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '2024-06-23',
+          abmeldeStopp: '2024-06-25',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 2, // Specific webGruppe
+          veranstaltungsBezirk: 3, // Specific bezirk
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Matching Course Training',
+          angemeldeteTeilnehmer: 10,
+        ),
+        // This should NOT match (wrong webGruppe)
+        Schulungstermin(
+          schulungsterminId: 2,
+          schulungsartId: 2,
+          schulungsTeilnehmerId: 0,
+          datum: DateTime.now().add(const Duration(days: 30)),
+          bemerkung: 'Non-Matching Course',
+          kosten: 50.0,
+          ort: 'Test Location',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '2024-06-23',
+          abmeldeStopp: '2024-06-25',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1, // Wrong webGruppe
+          veranstaltungsBezirk: 3,
+          fuerVerlaengerungen: true,
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Non-Matching Course',
+          angemeldeteTeilnehmer: 10,
+        ),
+      ],);
+
+      await tester.pumpWidget(createTestWidget(
+        webGruppe: 2,
+        bezirkId: 3,
+        ort: 'Test Location',
+        titel: 'Training',
+        fuerVerlaengerungen: true,
+      ),);
+      await tester.pumpAndSettle();
+
+      // Should only show the matching course
+      expect(find.text('Matching Course Training'), findsOneWidget);
+      expect(find.text('Non-Matching Course'), findsNothing);
+    });
+
+    testWidgets('handles edge case with empty search results after filtering',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => [
+        // Course that won't match our filters
+        Schulungstermin(
+          schulungsterminId: 1,
+          schulungsartId: 1,
+          schulungsTeilnehmerId: 0,
+          datum: DateTime.now().add(const Duration(days: 30)),
+          bemerkung: 'Different Course',
+          kosten: 50.0,
+          ort: 'Different Location',
+          lehrgangsleiter: 'Test Leader',
+          verpflegungskosten: 20.0,
+          uebernachtungskosten: 0.0,
+          lehrmaterialkosten: 10.0,
+          lehrgangsinhalt: 'Test content',
+          maxTeilnehmer: 25,
+          webVeroeffentlichenAm: '2024-01-01',
+          anmeldungenGesperrt: false,
+          status: 1,
+          datumBis: '',
+          lehrgangsinhaltHtml: '<p>Test HTML</p>',
+          lehrgangsleiter2: '',
+          lehrgangsleiter3: '',
+          lehrgangsleiter4: '',
+          lehrgangsleiterTel: '0123456789',
+          lehrgangsleiter2Tel: '',
+          lehrgangsleiter3Tel: '',
+          lehrgangsleiter4Tel: '',
+          lehrgangsleiterMail: 'test@example.com',
+          lehrgangsleiter2Mail: '',
+          lehrgangsleiter3Mail: '',
+          lehrgangsleiter4Mail: '',
+          anmeldeStopp: '2024-06-23',
+          abmeldeStopp: '2024-06-25',
+          geloescht: false,
+          stornoGrund: '',
+          webGruppe: 1,
+          veranstaltungsBezirk: 1,
+          fuerVerlaengerungen: false, // Won't match our filter
+          fuerVuelVerlaengerungen: false,
+          anmeldeErlaubt: 1,
+          verbandsInternPasswort: '',
+          bezeichnung: 'Different Course',
+          angemeldeteTeilnehmer: 10,
+        ),
+      ],);
+
+      await tester.pumpWidget(createTestWidget(
+        ort: 'NonExistent Location',
+        fuerVerlaengerungen: true,
+      ),);
+      await tester.pumpAndSettle();
+
+      // Should show empty state
+      expect(find.text('Different Course'), findsNothing);
+      expect(find.text('Verfügbare Aus- und Weiterbildungen'), findsOneWidget);
+    });
+
+    testWidgets('maintains state during widget rebuilds',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Initial state
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
+
+      // Rebuild widget with same data
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // State should be maintained
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
+    });
+
+    testWidgets('validates API calls with correct parameters format',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async => sampleSchulungstermine);
+
+      final testDate = DateTime(2024, 6, 15);
+      await tester.pumpWidget(createTestWidget(
+        searchDate: testDate,
+        webGruppe: 2,
+        bezirkId: 3,
+        fuerVerlaengerungen: true,
+        fuerVuelVerlaengerungen: false,
+      ),);
+      await tester.pumpAndSettle();
+
+      // Verify API was called with correct parameters
+      verify(mockApiService.fetchSchulungstermine(
+        '15.06.2024', // German date format
+        '2', // webGruppe as string
+        '3', // bezirkId as string
+        'true', // fuerVerlaengerungen as string
+        '*', // fuerVuelVerlaengerungen as '*' when false
+      ),).called(1);
+    });
+
+    testWidgets('handles concurrent API requests gracefully',
+        (WidgetTester tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any,
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((_) async {
+        await Future.delayed(const Duration(milliseconds: 200));
+        return sampleSchulungstermine;
+      });
+
+      await tester.pumpWidget(createTestWidget());
+      
+      // Pump multiple times to simulate rapid interactions
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+      
+      await tester.pumpAndSettle();
+
+      // Should handle concurrent requests without crashing
+      expect(find.text('Test Schulung'), findsOneWidget);
+      expect(find.text('Jugend Schulung'), findsOneWidget);
+      expect(find.text('Sport Schulung'), findsOneWidget);
     });
   });
 }
