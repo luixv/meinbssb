@@ -148,7 +148,8 @@ void main() {
       await tester.tap(ausweisFinder);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Ausweis'), findsWidgets);
+      // Check for the screen title or button instead of generic text
+      expect(find.byType(ElevatedButton), findsOneWidget);
     });
   });
 }
