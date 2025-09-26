@@ -56,15 +56,18 @@ void main() {
   testWidgets('renders button and description', (WidgetTester tester) async {
     final apiService = FakeApiService();
     await tester.pumpWidget(buildTestWidget(apiService: apiService));
-    expect(find.text('Schützen Ausweis bestellen'), findsOneWidget);
-    expect(find.textContaining('Ausweis'), findsWidgets);
+    expect(find.byType(ElevatedButton), findsOneWidget);
+    expect(
+        find.text(
+            'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen? \nKlicken Sie auf den Button unten, um fortzufahren.',),
+        findsOneWidget,);
   });
 
   testWidgets('calls apiService.bssbAppPassantrag and navigates on success',
       (WidgetTester tester) async {
     final apiService = FakeApiService();
     await tester.pumpWidget(buildTestWidget(apiService: apiService));
-    await tester.tap(find.text('Schützen Ausweis bestellen'));
+    await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
     expect(apiService.called, isTrue);
     // Success navigation: AusweisBestellendSuccessScreen should be pushed
@@ -74,7 +77,7 @@ void main() {
   testWidgets('shows snackbar on failure', (WidgetTester tester) async {
     final apiService = FakeApiService()..shouldSucceed = false;
     await tester.pumpWidget(buildTestWidget(apiService: apiService));
-    await tester.tap(find.text('Schützen Ausweis bestellen'));
+    await tester.tap(find.byType(ElevatedButton));
     await tester.pump(); // Start async
     await tester.pump(const Duration(seconds: 1)); // Finish async
     expect(apiService.called, isTrue);
