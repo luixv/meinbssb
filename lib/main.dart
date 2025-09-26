@@ -44,7 +44,7 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await AppInitializer.init();
-    
+
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
@@ -282,7 +282,7 @@ class AppInitializer {
     userServiceProvider = Provider<UserService>(
       create: (context) => userService,
     );
-    
+
 // This is just in case the token_service is needed elsewhere.
 // In fact the only place where it is used is in the HttpClient
     tokenServiceProvider = Provider<TokenService>(
@@ -332,4 +332,3 @@ class AppInitializer {
   static late Provider<StartingRightsService> startingRightsServiceProvider;
   static late Provider<OktoberfestService> oktoberfestServiceProvider;
 }
-
