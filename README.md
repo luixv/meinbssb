@@ -229,6 +229,55 @@ docker exec zmi_monitor tail -5 /var/www/html/data/https_monitor.csv
 | Mail SMTP    | localhost:1025                   |
 | PostgreSQL   | localhost:5432 (external tools)  |
 
+## How to deploy and create a new APK
+
+First get a VPN connection to BSSB-Server.
+This can be done using OpenVPN Connect (URL = vpn.bssb.bayern)
+(You have to have installed AuthPoint at your phone)
+
+Get a shell at the BSSB-Server (I use putty for that)
+For this you need the password for the admin user (username: bssb-admin). Ask the project leader.
+
+After that you will get a shell at the server (bssb-admin@mbssb-app-01:~$)
+
+cd ./meinbssb/app/meinbssb/scripts/
+
+./deployAndBuild.sh
+
+It might be the case that this script has no running mode.
+
+ls -l deployAndBuild.sh
+-rw-rw-r--  1 bssb-admin bssb-admin 4338 Sep 25 16:49 deployAndBuild.sh
+
+If this is the case just
+
+chmod 0755 deployAndBuild.sh
+
+When running this it will be asked:
+
+Username for 'https://github.com
+(well, I use my email address luis.mandel@nttdata.com )
+The password MUST be your TOKEN and NOT your password
+
+The result of this script is a new deployment and a new APK
+
+The APK is located under build/app/outputs/flutter-apk/app-debug.apk
+
+Using FTP (I use filezilla) upload the new APK version to out teams 
+
+The PATH to the APK file is /home/bssb-admin/meinbssb/app/meinbssb/build/app/outputs/flutter-apk/<APK file>
+
+Note: The version number is incremented automatically. DO NOT MAKE IT MANUALLY
+
+
+
+
+
+
+
+
+
+
 ## Notes
 
 - Ensure `init-postgrest.sql` creates necessary schema and roles (especially `web_anon`) for PostgREST.
