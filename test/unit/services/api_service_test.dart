@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
@@ -872,13 +873,257 @@ void main() {
             .called(1);
       });
 
+      test(
+          'fetchSchulungstermineZusatzfelder handles different schulungsterminId',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 10,
+            schulungsterminId: 999,
+            feldbezeichnung: 'Custom Field',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(999))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(999);
+        expect(result, equals(expectedList));
+        expect(result.first.schulungsterminId, equals(999));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(999))
+            .called(1);
+      });
+
+      test(
+          'fetchSchulungstermineZusatzfelder handles multiple fields with different types',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 500,
+            feldbezeichnung: 'Text Field',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 2,
+            schulungsterminId: 500,
+            feldbezeichnung: 'Number Field',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 3,
+            schulungsterminId: 500,
+            feldbezeichnung: 'Date Field',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 4,
+            schulungsterminId: 500,
+            feldbezeichnung: 'Boolean Field',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(500))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(500);
+        expect(result, equals(expectedList));
+        expect(result.length, equals(4));
+        expect(
+          result.map((e) => e.feldbezeichnung).toList(),
+          containsAll([
+            'Text Field',
+            'Number Field',
+            'Date Field',
+            'Boolean Field',
+          ]),
+        );
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(500))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder throws NetworkException',
+          () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenThrow(NetworkException('Network connection failed'));
+        expect(
+          () => apiService.fetchSchulungstermineZusatzfelder(876),
+          throwsA(isA<NetworkException>()),
+        );
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder throws FormatException',
+          () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenThrow(const FormatException('Invalid data format'));
+        expect(
+          () => apiService.fetchSchulungstermineZusatzfelder(876),
+          throwsA(isA<FormatException>()),
+        );
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder handles large dataset correctly',
+          () async {
+        // Generate a large list of additional fields
+        final expectedList = List.generate(
+          100,
+          (index) => SchulungstermineZusatzfelder(
+            schulungstermineFeldId: index + 1,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Field ${index + 1}',
+          ),
+        );
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, equals(expectedList));
+        expect(result.length, equals(100));
+        expect(result.first.feldbezeichnung, equals('Field 1'));
+        expect(result.last.feldbezeichnung, equals('Field 100'));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder handles zero schulungsterminId',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 0,
+            feldbezeichnung: 'Default Field',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(0))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(0);
+        expect(result, equals(expectedList));
+        expect(result.first.schulungsterminId, equals(0));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(0))
+            .called(1);
+      });
+
+      test(
+          'fetchSchulungstermineZusatzfelder handles negative schulungsterminId',
+          () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(-1))
+            .thenAnswer((_) async => []);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(-1);
+        expect(result, isEmpty);
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(-1))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder validates field IDs are unique',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Field A',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 2,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Field B',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 3,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Field C',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, equals(expectedList));
+
+        // Validate that all field IDs are unique
+        final fieldIds = result.map((e) => e.schulungstermineFeldId).toList();
+        final uniqueFieldIds = fieldIds.toSet().toList();
+        expect(fieldIds.length, equals(uniqueFieldIds.length));
+
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test(
+          'fetchSchulungstermineZusatzfelder handles fields with special characters',
+          () async {
+        final expectedList = [
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Feld mit Umlauten: äöüß',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 2,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Field with symbols: @#\$%^&*()',
+          ),
+          const SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 3,
+            schulungsterminId: 876,
+            feldbezeichnung: 'Unicode: 🎯📚💻',
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, equals(expectedList));
+        expect(result[0].feldbezeichnung, contains('äöüß'));
+        expect(result[1].feldbezeichnung, contains('@#\$%'));
+        expect(result[2].feldbezeichnung, contains('🎯'));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder handles very long field names',
+          () async {
+        final longFieldName = 'A' * 500; // Very long field name
+        final expectedList = [
+          SchulungstermineZusatzfelder(
+            schulungstermineFeldId: 1,
+            schulungsterminId: 876,
+            feldbezeichnung: longFieldName,
+          ),
+        ];
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenAnswer((_) async => expectedList);
+
+        final result = await apiService.fetchSchulungstermineZusatzfelder(876);
+        expect(result, equals(expectedList));
+        expect(result.first.feldbezeichnung.length, equals(500));
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
+      test('fetchSchulungstermineZusatzfelder handles timeout exception',
+          () async {
+        when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .thenThrow(TimeoutException(
+                'Request timeout', const Duration(seconds: 30)));
+        expect(
+          () => apiService.fetchSchulungstermineZusatzfelder(876),
+          throwsA(isA<TimeoutException>()),
+        );
+        verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
+            .called(1);
+      });
+
       group('isRegisterForThisSchulung', () {
         test(
             'delegates to training service and returns true when registration found',
             () async {
-          when(mockTrainingService.isRegisterForThisSchulung(
-                  argThat(equals(123)), argThat(equals(456)),),)
-              .thenAnswer((_) async => true);
+          when(
+            mockTrainingService.isRegisterForThisSchulung(
+              argThat(equals(123)),
+              argThat(equals(456)),
+            ),
+          ).thenAnswer((_) async => true);
 
           final result = await apiService.isRegisterForThisSchulung(123, 456);
 
@@ -890,9 +1135,12 @@ void main() {
         test(
             'delegates to training service and returns false when no registration found',
             () async {
-          when(mockTrainingService.isRegisterForThisSchulung(
-                  argThat(equals(789)), argThat(equals(101)),),)
-              .thenAnswer((_) async => false);
+          when(
+            mockTrainingService.isRegisterForThisSchulung(
+              argThat(equals(789)),
+              argThat(equals(101)),
+            ),
+          ).thenAnswer((_) async => false);
 
           final result = await apiService.isRegisterForThisSchulung(789, 101);
 
@@ -902,9 +1150,12 @@ void main() {
         });
 
         test('propagates exception when training service throws', () async {
-          when(mockTrainingService.isRegisterForThisSchulung(
-                  argThat(equals(111)), argThat(equals(222)),),)
-              .thenThrow(Exception('Database connection failed'));
+          when(
+            mockTrainingService.isRegisterForThisSchulung(
+              argThat(equals(111)),
+              argThat(equals(222)),
+            ),
+          ).thenThrow(Exception('Database connection failed'));
 
           expect(
             () => apiService.isRegisterForThisSchulung(111, 222),

@@ -1199,7 +1199,7 @@ void main() {
       // Should show error dialog
       expect(find.text('Fehler'), findsOneWidget);
       expect(
-          find.text('Details konnten nicht geladen werden.'), findsOneWidget);
+          find.text('Details konnten nicht geladen werden.'), findsOneWidget,);
       expect(find.text('OK'), findsOneWidget);
 
       // Tap OK to close error dialog
