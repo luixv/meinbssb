@@ -1358,6 +1358,22 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
       ) as _i2.Future<List<_i20.Schulung>>);
 
   @override
+  _i2.Future<bool> isRegisterForThisSchulung(
+    int? personId,
+    int? schulungsterminId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isRegisterForThisSchulung,
+          [
+            personId,
+            schulungsterminId,
+          ],
+        ),
+        returnValue: _i2.Future<bool>.value(false),
+      ) as _i2.Future<bool>);
+
+  @override
   _i2.Future<bool> registerForSchulung(
     int? personId,
     int? schulungId,

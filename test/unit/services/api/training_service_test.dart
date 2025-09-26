@@ -1604,4 +1604,277 @@ void main() {
       expect(result, isEmpty);
     });
   });
+
+  group('isRegisterForThisSchulung', () {
+    const testPersonId = 123;
+    const testSchulungsterminId = 456;
+    final testToday = DateTime.now();
+    final testAbDatum =
+        "${testToday.day.toString().padLeft(2, '0')}.${testToday.month.toString().padLeft(2, '0')}.${testToday.year}";
+
+    test('returns true when user is registered for the specific Schulung',
+        () async {
+      // Mock response with the matching schulungsterminId
+      final testResponse = [
+        {
+          'SCHULUNGENTERMINID': testSchulungsterminId, // Matches the search
+          'SCHULUNGSARTID': 1,
+          'DATUM': '2023-01-15T00:00:00.000',
+          'BEMERKUNG': 'Test Bemerkung',
+          'KOSTEN': 100.0,
+          'ORT': 'Test Ort',
+          'LEHRGANGSLEITER': 'Test Leiter',
+          'VERPFLEGUNGSKOSTEN': 10.0,
+          'UEBERNACHTUNGSKOSTEN': 20.0,
+          'LEHRMATERIALKOSTEN': 5.0,
+          'LEHRGANGSINHALT': 'Test Inhalt',
+          'MAXTEILNEHMER': 20,
+          'WEBVEROEFFENTLICHENAM': '2023-01-01',
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 1,
+          'DATUMBIS': '2023-01-16',
+          'LEHRGANGSINHALTHTML': '<p>Test HTML</p>',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 1,
+          'VERANSTALTUNGSBEZIRK': 1,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 1,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'Test Schulung',
+          'ANGEMELDETETEILNEHMER': 5,
+        },
+      ];
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      when(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .thenAnswer((_) async => testResponse);
+
+      final result = await trainingService.isRegisterForThisSchulung(
+        testPersonId,
+        testSchulungsterminId,
+      );
+
+      expect(result, isTrue);
+      verify(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .called(1);
+    });
+
+    test('returns false when user is not registered for the specific Schulung',
+        () async {
+      // Mock response with different schulungsterminId
+      final testResponse = [
+        {
+          'SCHULUNGENTERMINID': 999, // Different from testSchulungsterminId
+          'SCHULUNGSARTID': 1,
+          'DATUM': '2023-01-15T00:00:00.000',
+          'BEMERKUNG': 'Test Bemerkung',
+          'KOSTEN': 100.0,
+          'ORT': 'Test Ort',
+          'LEHRGANGSLEITER': 'Test Leiter',
+          'VERPFLEGUNGSKOSTEN': 10.0,
+          'UEBERNACHTUNGSKOSTEN': 20.0,
+          'LEHRMATERIALKOSTEN': 5.0,
+          'LEHRGANGSINHALT': 'Test Inhalt',
+          'MAXTEILNEHMER': 20,
+          'WEBVEROEFFENTLICHENAM': '2023-01-01',
+          'ANMELDUNGENGESPERRT': false,
+          'STATUS': 1,
+          'DATUMBIS': '2023-01-16',
+          'LEHRGANGSINHALTHTML': '<p>Test HTML</p>',
+          'LEHRGANGSLEITER2': '',
+          'LEHRGANGSLEITER3': '',
+          'LEHRGANGSLEITER4': '',
+          'LEHRGANGSLEITERTEL': '',
+          'LEHRGANGSLEITER2TEL': '',
+          'LEHRGANGSLEITER3TEL': '',
+          'LEHRGANGSLEITER4TEL': '',
+          'LEHRGANGSLEITERMAIL': '',
+          'LEHRGANGSLEITER2MAIL': '',
+          'LEHRGANGSLEITER3MAIL': '',
+          'LEHRGANGSLEITER4MAIL': '',
+          'ANMELDESTOPP': '',
+          'ABMELDESTOPP': '',
+          'GELOESCHT': false,
+          'STORNOGRUND': '',
+          'WEBGRUPPE': 1,
+          'VERANSTALTUNGSBEZIRK': 1,
+          'FUERVERLAENGERUNGEN': false,
+          'ANMELDENERLAUBT': 1,
+          'VERBANDSINTERNPASSWORT': '',
+          'BEZEICHNUNG': 'Other Schulung',
+          'ANGEMELDETETEILNEHMER': 3,
+        },
+      ];
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      when(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .thenAnswer((_) async => testResponse);
+
+      final result = await trainingService.isRegisterForThisSchulung(
+        testPersonId,
+        testSchulungsterminId,
+      );
+
+      expect(result, isFalse);
+      verify(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .called(1);
+    });
+
+    test('returns false when user has no registered Schulungen', () async {
+      // Mock empty response
+      final testResponse = <Map<String, dynamic>>[];
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      when(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .thenAnswer((_) async => testResponse);
+
+      final result = await trainingService.isRegisterForThisSchulung(
+        testPersonId,
+        testSchulungsterminId,
+      );
+
+      expect(result, isFalse);
+      verify(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .called(1);
+    });
+
+    test('returns false when fetchAngemeldeteSchulungen throws exception',
+        () async {
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      when(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .thenThrow(Exception('Network error'));
+
+      final result = await trainingService.isRegisterForThisSchulung(
+        testPersonId,
+        testSchulungsterminId,
+      );
+
+      expect(result, isFalse);
+      verify(mockHttpClient
+              .get('AngemeldeteSchulungen/$testPersonId/$testAbDatum'),)
+          .called(1);
+    });
+
+    test('uses correct date format for abDatum parameter', () async {
+      final testResponse = <Map<String, dynamic>>[];
+
+      when(mockNetworkService.getCacheExpirationDuration())
+          .thenReturn(const Duration(hours: 1));
+
+      when(
+        mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+          any,
+          any,
+          any,
+          any,
+        ),
+      ).thenAnswer((invocation) async {
+        final fetchData =
+            invocation.positionalArguments[2] as Future<dynamic> Function();
+        final response = await fetchData();
+        return response;
+      });
+
+      when(mockHttpClient.get(any)).thenAnswer((_) async => testResponse);
+
+      await trainingService.isRegisterForThisSchulung(
+        testPersonId,
+        testSchulungsterminId,
+      );
+
+      // Capture the call to verify the date format
+      final capturedCall =
+          verify(mockHttpClient.get(captureAny)).captured.single as String;
+
+      // Verify it matches the expected format: AngemeldeteSchulungen/{personId}/{DD.MM.YYYY}
+      final dateRegex =
+          RegExp(r'AngemeldeteSchulungen/\d+/\d{2}\.\d{2}\.\d{4}$');
+      expect(capturedCall, matches(dateRegex));
+    });
+  });
 }

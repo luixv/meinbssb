@@ -979,6 +979,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 lehrgangsleiterMail: lehrgangsleiterMail,
                                 lehrgangsleiterTel: lehrgangsleiterTel,
                                 isUserLoggedIn: _userData != null,
+                                personId: _userData?.personId,
                                 onBookingPressed: () {
                                   if (_userData == null) {
                                     showDialog(

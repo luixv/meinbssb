@@ -871,6 +871,50 @@ void main() {
         verify(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
             .called(1);
       });
+
+      group('isRegisterForThisSchulung', () {
+        test(
+            'delegates to training service and returns true when registration found',
+            () async {
+          when(mockTrainingService.isRegisterForThisSchulung(
+                  argThat(equals(123)), argThat(equals(456)),),)
+              .thenAnswer((_) async => true);
+
+          final result = await apiService.isRegisterForThisSchulung(123, 456);
+
+          expect(result, isTrue);
+          verify(mockTrainingService.isRegisterForThisSchulung(123, 456))
+              .called(1);
+        });
+
+        test(
+            'delegates to training service and returns false when no registration found',
+            () async {
+          when(mockTrainingService.isRegisterForThisSchulung(
+                  argThat(equals(789)), argThat(equals(101)),),)
+              .thenAnswer((_) async => false);
+
+          final result = await apiService.isRegisterForThisSchulung(789, 101);
+
+          expect(result, isFalse);
+          verify(mockTrainingService.isRegisterForThisSchulung(789, 101))
+              .called(1);
+        });
+
+        test('propagates exception when training service throws', () async {
+          when(mockTrainingService.isRegisterForThisSchulung(
+                  argThat(equals(111)), argThat(equals(222)),),)
+              .thenThrow(Exception('Database connection failed'));
+
+          expect(
+            () => apiService.isRegisterForThisSchulung(111, 222),
+            throwsException,
+          );
+
+          verify(mockTrainingService.isRegisterForThisSchulung(111, 222))
+              .called(1);
+        });
+      });
     });
 
     group('Verein Service Tests', () {

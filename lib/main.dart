@@ -30,7 +30,6 @@ import 'services/api/oktoberfest_service.dart';
 import 'services/core/postgrest_service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   // Global error handler for all uncaught errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -41,18 +40,19 @@ void main() async {
       debugPrint('STACK TRACE: \n${details.stack}');
     }
   };
-  await AppInitializer.init();
 
-  
-  final fragment = Uri.base.fragment;
-  final path = Uri.base.path;
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await AppInitializer.init();
+    
+    final fragment = Uri.base.fragment;
+    final path = Uri.base.path;
 
-  final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
-      fragment == 'schulungen_search' ||
-      path == '/schulungen_search' ||
-      path == 'schulungen_search';
+    final bool isDirectSchulungenSearch = fragment == '/schulungen_search' ||
+        fragment == 'schulungen_search' ||
+        path == '/schulungen_search' ||
+        path == 'schulungen_search';
 
-  runZonedGuarded(() {
     if (isDirectSchulungenSearch) {
       runApp(
         MultiProvider(
