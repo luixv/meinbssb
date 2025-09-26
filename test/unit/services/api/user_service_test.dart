@@ -325,7 +325,8 @@ void main() {
         }
       });
 
-      test('fetchPassdaten handles multiple response items (takes first)', () async {
+      test('fetchPassdaten handles multiple response items (takes first)',
+          () async {
         const testPersonId = 54321;
         final multipleResponses = [
           testResponse,
@@ -594,12 +595,15 @@ void main() {
 
       test('fetchZweitmitgliedschaften handles large datasets', () async {
         // Create a large dataset
-        final largeResponse = List.generate(100, (index) => {
-              'VEREINID': 1000 + index,
-              'VEREINNR': 400000 + index,
-              'VEREINNAME': 'Verein $index',
-              'EINTRITTVEREIN': '2020-01-01T00:00:00.000+01:00',
-            },);
+        final largeResponse = List.generate(
+          100,
+          (index) => {
+            'VEREINID': 1000 + index,
+            'VEREINNR': 400000 + index,
+            'VEREINNAME': 'Verein $index',
+            'EINTRITTVEREIN': '2020-01-01T00:00:00.000+01:00',
+          },
+        );
 
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
@@ -669,14 +673,15 @@ void main() {
         // The actual service might filter out incomplete entries or handle them gracefully
         // So we test that it returns some result (could be empty or filled)
         expect(result, isA<List>());
-        
+
         // If entries are included, they should be properly formed
         for (final entry in result) {
           expect(entry.vereinName, isNotNull);
         }
       });
 
-      test('fetchZweitmitgliedschaften handles mixed valid/invalid items', () async {
+      test('fetchZweitmitgliedschaften handles mixed valid/invalid items',
+          () async {
         final mixedResponse = [
           {
             'VEREINID': 1474,
@@ -719,13 +724,13 @@ void main() {
 
         // The service should filter out invalid entries
         expect(result, isA<List>());
-        
+
         // All returned entries should be valid
         for (final entry in result) {
           expect(entry.vereinName, isNotNull);
           expect(entry.vereinName, isA<String>());
         }
-        
+
         // Should have filtered to only include valid map entries
         // The actual count depends on the implementation's validation logic
         expect(result.length, lessThanOrEqualTo(2));
@@ -922,20 +927,23 @@ void main() {
       });
 
       test('fetchPassdatenZVE handles large datasets', () async {
-        final largeResponse = List.generate(50, (index) => {
-              'PASSDATENZVID': 30000 + index,
-              'ZVEREINID': 2000 + index,
-              'VVEREINNR': 420000 + index,
-              'DISZIPLINNR': 'B.${90 + index}',
-              'GAUID': 50 + index,
-              'BEZIRKID': 4,
-              'DISZIAUSBLENDEN': 0,
-              'ERSAETZENDURCHID': 0,
-              'ZVMITGLIEDSCHAFTID': 500000 + index,
-              'VEREINNAME': 'Test Verein $index',
-              'DISZIPLIN': 'Disziplin $index',
-              'DISZIPLINID': 90 + index,
-            },);
+        final largeResponse = List.generate(
+          50,
+          (index) => {
+            'PASSDATENZVID': 30000 + index,
+            'ZVEREINID': 2000 + index,
+            'VVEREINNR': 420000 + index,
+            'DISZIPLINNR': 'B.${90 + index}',
+            'GAUID': 50 + index,
+            'BEZIRKID': 4,
+            'DISZIAUSBLENDEN': 0,
+            'ERSAETZENDURCHID': 0,
+            'ZVMITGLIEDSCHAFTID': 500000 + index,
+            'VEREINNAME': 'Test Verein $index',
+            'DISZIPLIN': 'Disziplin $index',
+            'DISZIPLINID': 90 + index,
+          },
+        );
 
         when(mockNetworkService.getCacheExpirationDuration())
             .thenReturn(const Duration(hours: 1));
@@ -1020,7 +1028,7 @@ void main() {
 
         // The service should handle incomplete entries appropriately
         expect(result, isA<List>());
-        
+
         // If entries are included, they should be properly formed
         for (final entry in result) {
           expect(entry, isNotNull);
@@ -1086,13 +1094,13 @@ void main() {
 
         // Should filter out invalid entries
         expect(result, isA<List>());
-        
+
         // All returned entries should be valid
         for (final entry in result) {
           expect(entry, isNotNull);
           expect(entry.vereinName, isA<String>());
         }
-        
+
         // Should have filtered to only include valid map entries
         expect(result.length, lessThanOrEqualTo(2));
       });
@@ -1303,7 +1311,7 @@ void main() {
         // The service might validate contact types and reject type 0
         // Let's test that it handles the zero type appropriately
         expect(result, isA<bool>());
-        
+
         if (result) {
           verify(
             mockHttpClient.post(
@@ -1417,8 +1425,7 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => null);
+        when(mockHttpClient.post(any, any)).thenAnswer((_) async => null);
 
         final result = await userService.addKontakt(contact);
 
@@ -1635,7 +1642,8 @@ void main() {
       });
 
       test('updateKontakt handles very long contact value', () async {
-        final longValue = 'very.long.email.address.with.many.parts@${'a' * 200}.com';
+        final longValue =
+            'very.long.email.address.with.many.parts@${'a' * 200}.com';
         final contact = Contact(
           id: 10,
           personId: 1,
@@ -1959,7 +1967,7 @@ void main() {
         const personId = 123;
         when(mockCacheService.remove('passdaten_123'))
             .thenAnswer((_) async => false);
-        
+
         // Should not throw even if cache service fails
         await userService.clearPassdatenCache(personId);
         verify(mockCacheService.remove('passdaten_123')).called(1);
@@ -1969,15 +1977,16 @@ void main() {
         const personId = 123;
         when(mockCacheService.remove('passdaten_123'))
             .thenThrow(Exception('Cache service error'));
-        
+
         // Should not throw exception to caller
-        expect(() => userService.clearPassdatenCache(personId), returnsNormally);
+        expect(
+            () => userService.clearPassdatenCache(personId), returnsNormally,);
       });
 
       test('clearAllPassdatenCache handles cache service failure', () async {
         when(mockCacheService.clearPattern('passdaten_'))
             .thenAnswer((_) async => false);
-        
+
         await userService.clearAllPassdatenCache();
         verify(mockCacheService.clearPattern('passdaten_')).called(1);
       });
@@ -1985,7 +1994,7 @@ void main() {
       test('clearAllPassdatenCache handles cache service exception', () async {
         when(mockCacheService.clearPattern('passdaten_'))
             .thenThrow(Exception('Cache service error'));
-        
+
         expect(() => userService.clearAllPassdatenCache(), returnsNormally);
       });
     });
@@ -2418,14 +2427,15 @@ void main() {
           networkService: mockNetworkService,
           configService: mockConfigService,
         );
-        
+
         expect(service, isNotNull);
       });
 
       test('UserService handles different config values', () {
         // Test with HTTPS protocol
         when(mockConfigService.getString('apiProtocol')).thenReturn('https');
-        when(mockConfigService.getString('api1BaseServer')).thenReturn('api.example.com');
+        when(mockConfigService.getString('api1BaseServer'))
+            .thenReturn('api.example.com');
         when(mockConfigService.getString('api1BasePort')).thenReturn('443');
         when(mockConfigService.getString('api1BasePath')).thenReturn('/api/v1');
 
@@ -2435,7 +2445,7 @@ void main() {
           networkService: mockNetworkService,
           configService: mockConfigService,
         );
-        
+
         expect(service, isNotNull);
       });
 
@@ -2451,7 +2461,7 @@ void main() {
           networkService: mockNetworkService,
           configService: mockConfigService,
         );
-        
+
         expect(service, isNotNull);
       });
 
@@ -2467,7 +2477,7 @@ void main() {
           networkService: mockNetworkService,
           configService: mockConfigService,
         );
-        
+
         expect(service, isNotNull);
       });
 
@@ -2483,15 +2493,16 @@ void main() {
 
         for (final duration in testDurations) {
           reset(mockNetworkService);
-          when(mockNetworkService.getCacheExpirationDuration()).thenReturn(duration);
-          
+          when(mockNetworkService.getCacheExpirationDuration())
+              .thenReturn(duration);
+
           final service = UserService(
             httpClient: mockHttpClient,
             cacheService: mockCacheService,
             networkService: mockNetworkService,
             configService: mockConfigService,
           );
-          
+
           expect(service, isNotNull);
         }
       });
