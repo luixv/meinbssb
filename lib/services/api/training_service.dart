@@ -358,6 +358,28 @@ class TrainingService {
         .toList();
   }
 
+  Future<bool> isRegisterForThisSchulung(int personId, int schulungsterminId) {
+    final today = DateTime.now();
+    final abDatum =
+        "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
+    try {
+      final result = fetchAngemeldeteSchulungen(
+        personId,
+        abDatum,
+      );
+
+      return result.then((schulungen) {
+        final exists =
+            schulungen.any((s) => s.schulungsterminId == schulungsterminId);
+
+        return exists;
+      });
+    } catch (e) {
+      LoggerService.logError('Error checking registration for Schulung: $e');
+      return Future.value(false);
+    }
+  }
+
   Future<bool> registerForSchulung(int personId, int schulungId) async {
     try {
       const endpoint = 'RegisterForSchulung';

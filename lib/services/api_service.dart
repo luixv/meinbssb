@@ -253,6 +253,12 @@ class ApiService {
     return _trainingService.fetchAngemeldeteSchulungen(personId, abDatum);
   }
 
+  Future<bool> isRegisterForThisSchulung(
+      int personId, int schulungsterminId,) async {
+    return _trainingService.isRegisterForThisSchulung(
+        personId, schulungsterminId,);
+  }
+
   Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
     int schulungsTerminId,
   ) async {

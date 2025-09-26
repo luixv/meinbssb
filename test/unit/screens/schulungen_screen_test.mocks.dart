@@ -411,6 +411,22 @@ class MockApiService extends _i1.Mock implements _i5.ApiService {
       ) as _i4.Future<List<_i14.Schulungstermin>>);
 
   @override
+  _i4.Future<bool> isRegisterForThisSchulung(
+    int? personId,
+    int? schulungsterminId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isRegisterForThisSchulung,
+          [
+            personId,
+            schulungsterminId,
+          ],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
   _i4.Future<List<_i15.SchulungstermineZusatzfelder>>
       fetchSchulungstermineZusatzfelder(int? schulungsTerminId) =>
           (super.noSuchMethod(
