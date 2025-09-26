@@ -1105,7 +1105,7 @@ void main() {
           () async {
         when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
             .thenThrow(TimeoutException(
-                'Request timeout', const Duration(seconds: 30)));
+                'Request timeout', const Duration(seconds: 30),),);
         expect(
           () => apiService.fetchSchulungstermineZusatzfelder(876),
           throwsA(isA<TimeoutException>()),
