@@ -1,12 +1,12 @@
-# API Service Method Calls by Screen File
+# API Service Aufrufe nach Screen-Datei
 
-This document lists the Dart/Flutter screen files (from the `../lib/screens` folder) and the associated API service methods used in each file.
+Diese Tabelle listet die Dart/Flutter Screen-Dateien (aus dem Ordner ../lib/screens) und die zugehörigen API-Service-Methoden auf, die in jeder Datei verwendet werden.
 
-| Nr. | Screen File                                | Used API Service Methods                                                                                                                                   |
+| Nr. | Screen File                                |  API Service Methode                                                                                                                                   |
 |-----|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1   | `absolvierte_schulungen_screen.dart`        | AbsolvierteSchulungen                                                                                                                                       |
 | 2   | `ausweis_bestellen_screen.dart`             | bssbAppPassantrag                                                                                                                                            |
-| 3   | `bank_data_screen.dart`                     | BankData(webloginId)                                                                                                                                        |
+| 3   | `bank_data_screen.dart`                     | BankData                                                                                                                                        |
 | 4   | `change_password_screen.dart`               | login, myBSSBPasswortAendern                                                                                                                                |
 | 5   | `contact_data_screen.dart`                  | Kontakte, KontaktAendern, KontaktHinzufuegen                                                                                                                |
 | 6   | `email_verification_screen.dart`            | KontaktHinzufuegen                                                                                                                                          |
@@ -16,11 +16,11 @@ This document lists the Dart/Flutter screen files (from the `../lib/screens` fol
 | 10  | `password_reset_screen.dart`                | PersonID, FindeMailadressen                                                                                                                                 |
 | 11  | `personal_data_screen.dart`                 | Passdaten, KritischeFelderUndAdresse                                                                                                                        |
 | 12  | `personal_pict_upload_screen.dart`          | `apiService.getProfilePhoto(userId)`, `apiService.uploadProfilePhoto(userId, imageBytes)`, `apiService.deleteProfilePhoto(userId)`                         |
-| 13  | `registration_screen.dart`                  | findePersonID, ErstelleMyBSSBAccount *(uses AuthService)*                                                                                                   |
+| 13  | `registration_screen.dart`                  | findePersonID, ErstelleMyBSSBAccount                                                                                                   |
 | 14  | `reset_password_screen.dart`                | MyBSSBPasswortAendern                                                                                                                                       |
 | 15  | `schuetzenausweis_screen.dart`              | Schuetzenausweis                                                                                                                                            |
 | 16  | `schulungen_screen.dart`                    | Schulungstermine, BankData, Kontakte, Schulungstermin, Passdaten                                                                                           |
-| 17  | `set_password_screen.dart`                  | ErstelleMyBSSBAccount *(uses AuthService)*                                                                                                                  |
+| 17  | `set_password_screen.dart`                  | ErstelleMyBSSBAccount                                                                                                                  |
 | 18  | `splash_screen.dart`                        | Bezirke, Disziplinen                                                                                                                                        |
 | 19  | `start_screen.dart`                         | `apiService.getProfilePhoto(personId)`, AngemeldeteSchulungen, SchulungenTeilnehmer, FindeMailadressen, Schulungstermin                                   |
 | 20  | `starting_rights_screen.dart`               | bssbAppPassantrag, Passdaten, FindeMailadressen, Disziplinen, PassdatenZVE, PassdatenAkzeptierterOderAktiverPass, ZweitmitgliedschaftenZVE                |
