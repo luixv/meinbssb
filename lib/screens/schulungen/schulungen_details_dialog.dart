@@ -124,36 +124,25 @@ class SchulungenDetailsDialog {
                                             horizontal: UIConstants.spacingXL,
                                             vertical: UIConstants.spacingS,
                                           ),
-                                          child: Table(
-                                            columnWidths: const {
-                                              0: IntrinsicColumnWidth(),
-                                              1: FixedColumnWidth(
-                                                UIConstants.dialogColumnGap,
-                                              ),
-                                              2: IntrinsicColumnWidth(),
-                                            },
+                                          child: Row(
                                             children: [
-                                              TableRow(
-                                                children: [
-                                                  // First column: Date and Place
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .calendar_today,
-                                                            size: UIConstants
-                                                                .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Text(
+                                              // First column: Date and Place
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.calendar_today,
+                                                          size: UIConstants
+                                                              .defaultIconSize,
+                                                        ),
+                                                        UIConstants
+                                                            .horizontalSpacingS,
+                                                        Flexible(
+                                                          child: Text(
                                                             DateFormat(
                                                               'dd.MM.yyyy',
                                                               'de_DE',
@@ -162,25 +151,29 @@ class SchulungenDetailsDialog {
                                                             ),
                                                             style: UIStyles
                                                                 .bodyStyle,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
                                                           ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingXS,
-                                                      ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.location_on,
-                                                            size: UIConstants
-                                                                .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Text(
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingXS,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.location_on,
+                                                          size: UIConstants
+                                                              .defaultIconSize,
+                                                        ),
+                                                        UIConstants
+                                                            .horizontalSpacingS,
+                                                        Flexible(
+                                                          child: Text(
                                                             termin.ort,
                                                             style: UIStyles
                                                                 .bodyStyle,
@@ -189,29 +182,33 @@ class SchulungenDetailsDialog {
                                                                     .ellipsis,
                                                             maxLines: 1,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(),
-                                                  // Second column: Group and Price
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.group,
-                                                            size: UIConstants
-                                                                .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Text(
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width:
+                                                    UIConstants.dialogColumnGap,
+                                              ),
+                                              // Second column: Group and Price
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.group,
+                                                          size: UIConstants
+                                                              .defaultIconSize,
+                                                        ),
+                                                        UIConstants
+                                                            .horizontalSpacingS,
+                                                        Flexible(
+                                                          child: Text(
                                                             termin
                                                                 .webGruppeLabel,
                                                             style: UIStyles
@@ -221,33 +218,37 @@ class SchulungenDetailsDialog {
                                                                     .ellipsis,
                                                             maxLines: 1,
                                                           ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingXS,
-                                                      ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.request_quote,
-                                                            size: UIConstants
-                                                                .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Text(
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingXS,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.request_quote,
+                                                          size: UIConstants
+                                                              .defaultIconSize,
+                                                        ),
+                                                        UIConstants
+                                                            .horizontalSpacingS,
+                                                        Flexible(
+                                                          child: Text(
                                                             '${termin.kosten.toStringAsFixed(2)} €',
                                                             style: UIStyles
                                                                 .bodyStyle,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -275,7 +276,6 @@ class SchulungenDetailsDialog {
                                                 height: UIConstants.spacingXS,
                                               ),
                                               Row(
-                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   const Icon(
                                                     Icons.email,
@@ -284,12 +284,14 @@ class SchulungenDetailsDialog {
                                                   ),
                                                   UIConstants
                                                       .horizontalSpacingS,
-                                                  Text(
-                                                    lehrgangsleiterMail,
-                                                    style: UIStyles.bodyStyle,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
+                                                  Flexible(
+                                                    child: Text(
+                                                      lehrgangsleiterMail,
+                                                      style: UIStyles.bodyStyle,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -297,7 +299,6 @@ class SchulungenDetailsDialog {
                                                 height: UIConstants.spacingXXS,
                                               ),
                                               Row(
-                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   const Icon(
                                                     Icons.phone,
@@ -306,9 +307,14 @@ class SchulungenDetailsDialog {
                                                   ),
                                                   UIConstants
                                                       .horizontalSpacingS,
-                                                  Text(
-                                                    lehrgangsleiterTel,
-                                                    style: UIStyles.bodyStyle,
+                                                  Flexible(
+                                                    child: Text(
+                                                      lehrgangsleiterTel,
+                                                      style: UIStyles.bodyStyle,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
