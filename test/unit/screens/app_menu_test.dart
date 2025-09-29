@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/app_menu.dart';
+import 'package:meinbssb/screens/app_menu_accessible.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
@@ -24,7 +24,7 @@ void main() {
               child: Text('Drawer'),
             ),
             body: Builder(
-              builder: (context) => AppMenu(
+              builder: (context) => AppMenuAccessible(
                 context: context,
                 userData: null,
                 isLoggedIn: false,
@@ -53,7 +53,7 @@ void main() {
           create: (_) => FontSizeProvider(),
           child: MaterialApp(
             home: Scaffold(
-              drawer: AppDrawer(
+              drawer: AppDrawerAccessible(
                 userData: null,
                 isLoggedIn: false,
                 onLogout: () {},
@@ -90,7 +90,7 @@ void main() {
                   const Placeholder(key: ValueKey('loginScreen')),
             },
             home: const Scaffold(
-              drawer: AppDrawer(
+              drawer: AppDrawerAccessible(
                 userData: null,
                 isLoggedIn: false,
                 onLogout: _noop,
@@ -129,7 +129,7 @@ void main() {
           ],
           child: const MaterialApp(
             home: Scaffold(
-              drawer: AppDrawer(
+              drawer: AppDrawerAccessible(
                 userData: null,
                 isLoggedIn: false,
                 onLogout: _noop,
@@ -167,7 +167,7 @@ void main() {
           ],
           child: const MaterialApp(
             home: Scaffold(
-              drawer: AppDrawer(
+              drawer: AppDrawerAccessible(
                 userData: null,
                 isLoggedIn: false,
                 onLogout: _noop,

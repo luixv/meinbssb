@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/screens/bank_data_screen.dart';
+import 'package:meinbssb/screens/bank_data_screen_accessible.dart';
 import '../helpers/test_helper.dart';
 
 void main() {
@@ -11,7 +11,7 @@ void main() {
 
   Widget createBankDataScreen() {
     return TestHelper.createTestApp(
-      home: BankDataScreen(
+      home: BankDataScreenAccessible(
         const UserData(
           personId: 439287,
           webLoginId: 13901,

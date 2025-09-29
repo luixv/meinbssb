@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BITV 2.0 Accessibility Analysis - ContactDataScreen</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #dc2626; color: white; padding: 20px; margin: -20px -20px 20px -20px; border-radius: 8px 8px 0 0; }
+        .compliance-score { font-size: 2em; font-weight: bold; text-align: center; margin: 20px 0; }
+        .good { color: #22c55e; }
+        .warning { color: #f59e0b; }
+        .error { color: #ef4444; }
+        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #f59e0b; background: #f8fafc; }
+        .violation { background: #fef2f2; border-left-color: #ef4444; margin: 10px 0; padding: 10px; }
+        .recommendation { background: #f0f9ff; border-left-color: #0066cc; margin: 10px 0; padding: 10px; }
+        .bitv-criterion { font-weight: bold; color: #dc2626; }
+        .code-block { background: #1f2937; color: #f9fafb; padding: 15px; border-radius: 6px; overflow-x: auto; margin: 10px 0; }
+        ul { line-height: 1.6; }
+        .metric { display: inline-block; margin: 10px 20px 10px 0; padding: 10px 15px; background: #fef3c7; border-radius: 6px; }
+        .positive { background: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 BITV 2.0 Accessibility Analysis</h1>
+            <h2>ContactDataScreen - Kontaktdaten-Verwaltung</h2>
+            <p><strong>Datei:</strong> lib/screens/contact_data_screen.dart</p>
+            <p><strong>Analysedatum:</strong> 29. September 2025</p>
+        </div>
+
+        <div class="compliance-score error">
+            📊 BITV 2.0 Compliance Score: 42%
+        </div>
+
+        <div class="section">
+            <h3>📈 Accessibility Metriken</h3>
+            <div class="metric">🎯 Semantics Widgets: <strong>0</strong></div>
+            <div class="metric">📢 SemanticsService: <strong>0</strong></div>
+            <div class="metric">🗣️ Deutsche Labels: <strong>28</strong></div>
+            <div class="metric">⚠️ Kritische Probleme: <strong>12</strong></div>
+            <div class="metric">💡 Verbesserungen: <strong>15</strong></div>
+            <div class="metric positive">✅ Gute Aspekte: <strong>4</strong></div>
+        </div>
+
+        <div class="section">
+            <h3>❌ Kritische BITV 2.0 Verstöße</h3>
+            
+            <div class="violation">
+                <h4 class="bitv-criterion">📝 BITV 4.1.2 - Name, Rolle, Wert (Level A)</h4>
+                <p><strong>Problem:</strong> Keine semantische Kennzeichnung für Kontakt-Listen und Formularelemente</p>
+                <div class="code-block">Widget _buildContactTile({
+  required int kontaktId,
+  required int rawKontaktTyp,
+  required String displayValue,
+  required String displayLabel,
+  // Fehlende Semantics-Wrapper
+}) {
+  return Padding(
+    // Keine semantische Struktur für Kontakt-Element
+    child: TextFormField(
+      // Keine semantische Kennzeichnung als schreibgeschützt
+      readOnly: true,</div>
+                <p><strong>Auswirkung:</strong> Screen Reader können Kontaktliste und Beziehungen nicht verstehen</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">🗣️ BITV 4.1.3 - Statusmeldungen (Level AA)</h4>
+                <p><strong>Problem:</strong> Keine automatischen Ankündigungen für CRUD-Operationen</p>
+                <div class="code-block">if (success) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Kontaktdaten erfolgreich gelöscht.'),
+      // Keine SemanticsService.announce für Screen Reader
+    ),
+  );
+}</div>
+                <p><strong>Auswirkung:</strong> Benutzer werden nicht über Erfolg/Fehler von Operationen informiert</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">📱 BITV 2.5.3 - Beschriftung im Namen (Level A)</h4>
+                <p><strong>Problem:</strong> Floating Action Button ohne aussagekräftige Beschriftung</p>
+                <div class="code-block">FloatingActionButton(
+  heroTag: 'contactDataFab',
+  onPressed: _showAddContactForm,
+  backgroundColor: UIConstants.defaultAppColor,
+  child: const Icon(Icons.add, color: UIConstants.whiteColor),
+  // Fehlende semanticLabel und tooltip
+)</div>
+                <p><strong>Auswirkung:</strong> Screen Reader können Funktion des Buttons nicht beschreiben</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">🎯 BITV 1.3.1 - Info und Beziehungen (Level A)</h4>
+                <p><strong>Problem:</strong> Kontakt-Kategorien nicht als Überschriften strukturiert</p>
+                <div class="code-block">ScaledText(
+  categoryName,
+  style: UIStyles.subtitleStyle.copyWith(
+    color: UIConstants.primaryColor,
+    fontWeight: FontWeight.bold,
+    // Keine semantische Kennzeichnung als Überschrift
+  ),
+)</div>
+                <p><strong>Auswirkung:</strong> Hierarchische Struktur der Kontakte nicht erkennbar</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">📋 BITV 2.4.3 - Fokus-Reihenfolge (Level A)</h4>
+                <p><strong>Problem:</strong> Keine explizite Fokus-Verwaltung in Dialogen</p>
+                <div class="code-block">showDialog(
+  context: context,
+  builder: (BuildContext dialogContext) {
+    return StatefulBuilder(
+      builder: (context, setStateDialog) {
+        return AlertDialog(
+          // Keine Fokus-Verwaltung für erstes Element
+          title: Center(child: ScaledText('Neuen Kontakt hinzufügen')),</div>
+                <p><strong>Auswirkung:</strong> Tastatur-Navigation in Dialogen nicht vorhersagbar</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">⚠️ BITV 3.3.1 - Fehlererkennung (Level A)</h4>
+                <p><strong>Problem:</strong> Formular-Validierung nicht barrierefrei kommuniziert</p>
+                <div class="code-block">if (!_emailRegex.hasMatch(kontaktValue)) {
+  validationErrorMessage = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+}
+// Fehlermeldung nur über SnackBar, nicht direkt am Eingabefeld
+if (validationErrorMessage != null) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    // Keine live region oder field-spezifische Fehlermeldung</div>
+                <p><strong>Auswirkung:</strong> Validierungsfehler schwer für Screen Reader-Nutzer zu finden</p>
+            </div>
+
+            <div class="violation">
+                <h4 class="bitv-criterion">🔄 BITV 2.2.2 - Pausieren, Stoppen, Ausblenden (Level A)</h4>
+                <p><strong>Problem:</strong> Loading-Dialoge ohne Möglichkeit zum Abbrechen</p>
+                <div class="code-block">showDialog(
+  context: context,
+  barrierDismissible: false, // Nicht abbrechbar
+  builder: (BuildContext context) {
+    return const AlertDialog(
+      content: Column(
+        children: [
+          CircularProgressIndicator(),
+          Text('Kontakt wird gelöscht...'),
+        ],
+      ),
+    );
+  },
+);</div>
+                <p><strong>Auswirkung:</strong> Benutzer können laufende Operationen nicht abbrechen</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>💡 Empfohlene Verbesserungen</h3>
+            
+            <div class="recommendation">
+                <h4>1. Kontakt-Liste semantisch strukturieren</h4>
+                <div class="code-block">Widget _buildContactDataList(...) {
+  return Semantics(
+    list: true,
+    label: 'Kontaktdaten-Liste mit ${contactData.length} Kategorien',
+    child: Padding(
+      child: Column(
+        children: [
+          Expanded(
+            child: Semantics(
+              label: 'Scrollbare Liste der Kontaktkategorien',
+              child: ListView.builder(
+                // Bestehender Code
+                itemBuilder: (context, index) {
+                  return Semantics(
+                    header: true,
+                    label: 'Kategorie: $categoryName',
+                    child: Column(
+                      children: [
+                        // Kategorie-Header
+                        ...contacts.map((contact) => 
+                          _buildAccessibleContactTile(contact)
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>2. Zugängliche Kontakt-Kacheln implementieren</h4>
+                <div class="code-block">Widget _buildAccessibleContactTile({
+  required int kontaktId,
+  required int rawKontaktTyp,
+  required String displayValue,
+  required String displayLabel,
+  required Function onDelete,
+}) {
+  return Semantics(
+    container: true,
+    label: 'Kontakt-Eintrag: $displayLabel',
+    hint: 'Wert: $displayValue. Löschen-Button verfügbar.',
+    child: Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Padding(
+          child: Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  readOnly: true,
+                  label: '$displayLabel: $displayValue',
+                  child: TextFormField(
+                    initialValue: displayValue.isNotEmpty ? displayValue : '-',
+                    readOnly: true,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: displayLabel,
+                    ),
+                  ),
+                ),
+              ),
+              Semantics(
+                button: true,
+                label: '$displayLabel löschen',
+                hint: 'Löscht den Kontakt $displayValue',
+                onTap: () => onDelete(kontaktId, rawKontaktTyp, displayValue, displayLabel),
+                child: IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: '$displayLabel löschen',
+                  onPressed: () => onDelete(kontaktId, rawKontaktTyp, displayValue, displayLabel),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>3. Automatische Status-Ankündigungen hinzufügen</h4>
+                <div class="code-block">Future<void> _onDeleteContact(...) async {
+  // Nach erfolgreichem Löschen
+  if (success) {
+    // Visuelle Rückmeldung
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Kontaktdaten erfolgreich gelöscht.'),
+      ),
+    );
+    
+    // Semantische Ankündigung für Screen Reader
+    SemanticsService.announce(
+      'Kontakt $contactLabel mit Wert $contactValue wurde erfolgreich gelöscht',
+      TextDirection.ltr,
+    );
+    
+    _fetchContacts();
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fehler beim Löschen der Kontaktdaten.'),
+        backgroundColor: UIConstants.errorColor,
+      ),
+    );
+    
+    SemanticsService.announce(
+      'Fehler: Kontakt $contactLabel konnte nicht gelöscht werden',
+      TextDirection.ltr,
+    );
+  }
+}</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>4. Floating Action Button zugänglich machen</h4>
+                <div class="code-block">floatingActionButton: Semantics(
+  button: true,
+  label: 'Neuen Kontakt hinzufügen',
+  hint: 'Öffnet Dialog zum Hinzufügen eines neuen Kontakts',
+  child: FloatingActionButton(
+    heroTag: 'contactDataFab',
+    onPressed: () {
+      // Ankündigung vor Dialog-Öffnung
+      SemanticsService.announce(
+        'Dialog zum Hinzufügen eines neuen Kontakts wird geöffnet',
+        TextDirection.ltr,
+      );
+      _showAddContactForm();
+    },
+    backgroundColor: UIConstants.defaultAppColor,
+    tooltip: 'Neuen Kontakt hinzufügen',
+    child: const Icon(
+      Icons.add, 
+      color: UIConstants.whiteColor,
+      semanticLabel: 'Plus-Symbol zum Hinzufügen',
+    ),
+  ),
+),</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>5. Dialog-Zugänglichkeit verbessern</h4>
+                <div class="code-block">void _showAddContactForm() {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return Semantics(
+            scopesRoute: true,
+            explicitChildNodes: true,
+            label: 'Dialog: Neuen Kontakt hinzufügen',
+            child: AlertDialog(
+              backgroundColor: UIConstants.backgroundColor,
+              title: Semantics(
+                header: true,
+                label: 'Dialog-Überschrift',
+                child: Center(
+                  child: ScaledText('Neuen Kontakt hinzufügen'),
+                ),
+              ),
+              content: Semantics(
+                label: 'Formular zum Eingeben der Kontaktdaten',
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Kontakttyp-Dropdown
+                      Semantics(
+                        label: 'Kontakttyp auswählen',
+                        hint: 'Dropdown-Menü mit verfügbaren Kontakttypen',
+                        child: DropdownButtonFormField<int>(
+                          // Bestehender Code
+                        ),
+                      ),
+                      
+                      // Kontakt-Eingabefeld
+                      Semantics(
+                        textField: true,
+                        label: 'Kontaktwert eingeben',
+                        hint: 'z.B. E-Mail-Adresse oder Telefonnummer',
+                        child: TextFormField(
+                          controller: _kontaktController,
+                          // Bestehender Code
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                // Abbrechen-Button
+                Semantics(
+                  button: true,
+                  label: 'Abbrechen',
+                  hint: 'Schließt Dialog ohne Speichern',
+                  child: ElevatedButton(/* Bestehender Code */),
+                ),
+                
+                // Hinzufügen-Button
+                Semantics(
+                  button: true,
+                  label: _isAdding ? 'Wird hinzugefügt...' : 'Kontakt hinzufügen',
+                  hint: _isAdding ? 'Vorgang läuft' : 'Speichert den neuen Kontakt',
+                  child: ElevatedButton(/* Bestehender Code */),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>6. Formular-Validierung zugänglich machen</h4>
+                <div class="code-block">// Im Dialog - Eingabefeld mit Live-Validierung
+TextFormField(
+  controller: _kontaktController,
+  decoration: UIStyles.formInputDecoration.copyWith(
+    labelText: 'Kontakt',
+    hintText: 'z.B. email@beispiel.de oder 0123 456789',
+    errorText: _validationError, // Live-Fehlermeldung
+  ),
+  onChanged: (value) {
+    setState(() {
+      _validationError = _validateContactValue(value, _selectedKontaktTyp);
+    });
+    
+    // Live-Ankündigung bei Validierungsfehlern
+    if (_validationError != null) {
+      SemanticsService.announce(
+        'Eingabefehler: $_validationError',
+        TextDirection.ltr,
+      );
+    }
+  },
+)
+
+String? _validateContactValue(String value, int? contactType) {
+  if (value.isEmpty) return null;
+  
+  if (contactType == 4 || contactType == 5) { // E-Mail
+    if (!_emailRegex.hasMatch(value)) {
+      return 'Ungültige E-Mail-Adresse';
+    }
+  } else if (contactType == 1 || contactType == 2 || contactType == 3) { // Telefon
+    if (!_phoneFaxMobileRegex.hasMatch(value)) {
+      return 'Ungültige Telefonnummer';
+    }
+  }
+  return null;
+}</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>7. Loading-States zugänglich machen</h4>
+                <div class="code-block">// Zugänglicher Loading-Dialog
+showDialog(
+  context: context,
+  barrierDismissible: true, // Erlaubt Abbrechen
+  builder: (BuildContext context) {
+    return Semantics(
+      label: 'Ladedialog: Kontakt wird gelöscht',
+      hint: 'Vorgang läuft. Dialog kann durch Zurück-Taste geschlossen werden.',
+      child: AlertDialog(
+        backgroundColor: UIConstants.backgroundColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Semantics(
+              label: 'Ladeindikator',
+              hint: 'Kontakt wird gelöscht, bitte warten',
+              child: const CircularProgressIndicator(),
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            Semantics(
+              liveRegion: true,
+              label: 'Status-Nachricht',
+              child: const Text('Kontakt wird gelöscht...'),
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            Semantics(
+              button: true,
+              label: 'Vorgang abbrechen',
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Abbrechen'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  },
+);</div>
+            </div>
+
+            <div class="recommendation">
+                <h4>8. Kategorie-Überschriften strukturieren</h4>
+                <div class="code-block">// Kategorie-Header als semantische Überschrift
+Semantics(
+  header: true,
+  label: 'Kontaktkategorie: $categoryName',
+  child: Padding(
+    padding: const EdgeInsets.symmetric(vertical: UIConstants.spacingS),
+    child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: UIConstants.spacingM,
+        vertical: UIConstants.spacingS,
+      ),
+      decoration: BoxDecoration(
+        color: UIConstants.primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.left(
+          width: 4.0,
+          color: UIConstants.primaryColor,
+        ),
+      ),
+      child: ScaledText(
+        categoryName,
+        style: UIStyles.subtitleStyle.copyWith(
+          color: UIConstants.primaryColor,
+          fontWeight: FontWeight.bold,
+          fontSize: UIConstants.titleFontSize * fontSizeProvider.scaleFactor,
+        ),
+      ),
+    ),
+  ),
+),</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>✅ Positive Aspekte</h3>
+            <ul>
+                <li class="positive">✅ <strong>Accessible Base Layout:</strong> BaseScreenLayoutAccessible verwendet</li>
+                <li class="positive">✅ <strong>Deutsche Sprache:</strong> Alle Texte in deutscher Sprache (28 Labels)</li>
+                <li class="positive">✅ <strong>Font Scaling:</strong> FontSizeProvider für Schriftgrößen-Anpassung</li>
+                <li class="positive">✅ <strong>Keyboard Support:</strong> Normale Formular-Navigation funktioniert</li>
+                <li>⚠️ <strong>Error Handling:</strong> Grundlegende Fehlermeldungen vorhanden, aber nicht zugänglich</li>
+                <li>⚠️ <strong>Loading States:</strong> Visuelle Indikatoren vorhanden, aber nicht semantisch</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>🎯 BITV 2.0 Bewertung nach Kriterien</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Level A Kriterien:</h4>
+                    <ul>
+                        <li class="error">❌ 1.3.1 Info und Beziehungen</li>
+                        <li class="warning">⚠️ 2.1.1 Tastatur</li>
+                        <li class="error">❌ 2.4.3 Fokus-Reihenfolge</li>
+                        <li class="error">❌ 2.5.3 Beschriftung im Namen</li>
+                        <li class="good">✅ 3.1.1 Sprache der Seite</li>
+                        <li class="error">❌ 3.3.1 Fehlererkennung</li>
+                        <li class="error">❌ 4.1.2 Name, Rolle, Wert</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Level AA Kriterien:</h4>
+                    <ul>
+                        <li class="warning">⚠️ 1.4.3 Kontrast (Mindestmaß)</li>
+                        <li class="error">❌ 2.4.6 Überschriften und Beschriftungen</li>
+                        <li class="warning">⚠️ 2.4.7 Sichtbarer Fokus</li>
+                        <li class="error">❌ 3.3.3 Fehlerkorrektur</li>
+                        <li class="error">❌ 4.1.3 Statusmeldungen</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📋 Empfohlene nächste Schritte</h3>
+            <ol>
+                <li><strong>Höchste Priorität:</strong> Kontakt-Liste mit Semantics strukturieren</li>
+                <li><strong>Hoch:</strong> Automatische Status-Ankündigungen für CRUD-Operationen</li>
+                <li><strong>Hoch:</strong> Floating Action Button zugänglich machen</li>
+                <li><strong>Hoch:</strong> Dialog-Zugänglichkeit mit Fokus-Verwaltung</li>
+                <li><strong>Mittel:</strong> Live-Validierung für Formularfelder</li>
+                <li><strong>Mittel:</strong> Kategorie-Überschriften semantisch kennzeichnen</li>
+                <li><strong>Niedrig:</strong> Loading-States mit Abbrechen-Option</li>
+                <li><strong>Niedrig:</strong> Erweiterte Tastatur-Navigation</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h3>🧪 Test-Empfehlungen</h3>
+            <ul>
+                <li>🎯 <strong>Screen Reader Test:</strong> NVDA/JAWS mit Kontakt-Listen-Navigation</li>
+                <li>⌨️ <strong>Tastatur-Test:</strong> Tab-Navigation durch Kontakte und Dialoge</li>
+                <li>🔊 <strong>Audio-Test:</strong> CRUD-Operationen mit Ankündigungen</li>
+                <li>📱 <strong>Mobile Test:</strong> Touch-Accessibility auf mobilen Geräten</li>
+                <li>🎨 <strong>Kontrast-Test:</strong> Farbkontraste bei Kategorien und Buttons</li>
+                <li>⚡ <strong>Performance Test:</strong> Große Kontaktlisten mit Semantics</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>📊 Vergleich mit anderen Screens</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr style="background: #f3f4f6;">
+                    <th style="border: 1px solid #d1d5db; padding: 8px;">Screen</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px;">BITV Score</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px;">Semantics</th>
+                    <th style="border: 1px solid #d1d5db; padding: 8px;">Announcements</th>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">ChangePasswordScreen</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; color: #22c55e;">93.3%</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">10</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">10</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;"><strong>ContactDataScreen</strong></td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; color: #ef4444;"><strong>42%</strong></td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;"><strong>0</strong></td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;"><strong>0</strong></td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">BankDataScreen</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px; color: #22c55e;">87.5%</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">30</td>
+                    <td style="border: 1px solid #d1d5db; padding: 8px;">24</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

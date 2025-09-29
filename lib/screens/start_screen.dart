@@ -10,7 +10,7 @@ import '/constants/ui_styles.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/screens/logo_widget.dart';
 import '/screens/personal_pict_upload_screen.dart';
 
@@ -281,7 +281,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     final userData = widget.userData;
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Home',
       userData: userData,
       isLoggedIn: widget.isLoggedIn,

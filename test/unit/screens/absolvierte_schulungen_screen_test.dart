@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:meinbssb/screens/absolvierte_schulungen_screen.dart';
+import 'package:meinbssb/screens/absolvierte_schulungen_screen_accessible.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -36,7 +36,7 @@ void main() {
 
   Widget createAbsolvierteSchulungenScreen({UserData? userData}) {
     return TestHelper.createTestApp(
-      home: AbsolvierteSchulungenScreen(
+      home: AbsolvierteSchulungenScreenAccessible(
         userData ?? testUserData,
         isLoggedIn: true,
         onLogout: () {},
@@ -178,7 +178,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('displays schulungen when data is available',
@@ -313,7 +315,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('handles null userData', (WidgetTester tester) async {
@@ -322,7 +326,7 @@ void main() {
 
       await tester.pumpWidget(
         TestHelper.createTestApp(
-          home: AbsolvierteSchulungenScreen(
+          home: AbsolvierteSchulungenScreenAccessible(
             null, // Pass null userData
             isLoggedIn: true,
             onLogout: () {},
@@ -332,11 +336,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
       verifyNever(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any));
     });
 
-    testWidgets('displays task_alt icons for each schulung',
+    testWidgets('displays appropriate icons based on certificate validity',
         (WidgetTester tester) async {
       when(TestHelper.mockNetworkService.hasInternet())
           .thenAnswer((_) async => true);
@@ -346,7 +352,12 @@ void main() {
       await tester.pumpWidget(createAbsolvierteSchulungenScreen());
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.task_alt), findsNWidgets(3));
+      // First schulung: valid until 2026 -> task_alt
+      // Second schulung: expired since June 2025 -> warning
+      // Third schulung: invalid date -> task_alt (fallback)
+      expect(find.byIcon(Icons.task_alt), findsNWidgets(2));
+      expect(find.byIcon(Icons.warning), findsNWidgets(1));
+      expect(find.byIcon(Icons.schedule), findsNWidgets(0));
     });
 
     testWidgets('shows FloatingActionButton when online',

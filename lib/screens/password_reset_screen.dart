@@ -13,7 +13,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/error_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/password_reset_success_screen.dart';
@@ -109,7 +109,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: Messages.passwordResetTitle,
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 
 import '/constants/ui_styles.dart';
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/models/user_data.dart';
 import '../providers/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: Messages.settingsTitle,
       userData: userData,
       isLoggedIn: isLoggedIn,

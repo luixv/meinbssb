@@ -1,0 +1,1753 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/services/api/auth_service.dart';
+import 'package:intl/intl.dart';
+
+import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
+import '/models/schulungstermin_data.dart';
+import '/models/user_data.dart';
+import '/models/bank_data.dart';
+
+import '/screens/base_screen_layout_accessible.dart';
+import '/services/api_service.dart';
+import '/widgets/scaled_text.dart';
+import '/widgets/dialog_fabs.dart';
+
+import '/services/core/cache_service.dart';
+import '/services/core/config_service.dart';
+import '/services/core/email_service.dart';
+
+import '/screens/agb_screen_accessible.dart';
+
+import '/screens/schulungen/schulungen_search_screen.dart';
+import '/screens/schulungen/schulungen_register_person_dialog_accessible.dart';
+import '/screens/schulungen/schulungen_list_item_accessible.dart';
+import '/screens/schulungen/schulungen_details_dialog_accessible.dart';
+
+class SchulungenScreen extends StatefulWidget {
+  const SchulungenScreen(
+    this.userData, {
+    required this.isLoggedIn,
+    required this.onLogout,
+    required this.searchDate,
+    this.webGruppe,
+    this.bezirkId,
+    this.ort,
+    this.titel,
+    this.fuerVerlaengerungen,
+    this.fuerVuelVerlaengerungen,
+    this.showMenu = true,
+    this.showConnectivityIcon = true,
+    super.key,
+  });
+  final UserData? userData;
+  final bool isLoggedIn;
+  final Function() onLogout;
+  final DateTime searchDate;
+  final int? webGruppe;
+  final int? bezirkId;
+  final String? ort;
+  final String? titel;
+  final bool? fuerVerlaengerungen;
+  final bool? fuerVuelVerlaengerungen;
+  final bool showMenu;
+  final bool showConnectivityIcon;
+
+  @override
+  State<SchulungenScreen> createState() => _SchulungenScreenState();
+}
+
+class _SchulungenScreenState extends State<SchulungenScreen> {
+  bool _isLoading = false;
+  List<Schulungstermin> _results = [];
+  String? _errorMessage;
+  UserData? _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _userData = widget.userData;
+    _search();
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
+  }
+
+  bool _isBicRequired(String iban) {
+    return !iban.toUpperCase().startsWith('DE');
+  }
+
+  Future<void> _search() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _results = [];
+    });
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final abDatum = _formatDate(widget.searchDate);
+      final webGruppe = (widget.webGruppe != null && widget.webGruppe != 0)
+          ? widget.webGruppe.toString()
+          : '*';
+      final bezirk = (widget.bezirkId != null && widget.bezirkId != 0)
+          ? widget.bezirkId.toString()
+          : '*';
+      final fuerVerlaengerung =
+          (widget.fuerVerlaengerungen == true) ? 'true' : '*';
+      final fuerVuelVerlaengerung =
+          (widget.fuerVuelVerlaengerungen == true) ? 'true' : '*';
+
+      final result = await apiService.fetchSchulungstermine(
+        abDatum,
+        webGruppe,
+        bezirk,
+        fuerVerlaengerung,
+        fuerVuelVerlaengerung,
+      );
+      setState(() {
+        var filteredResults = result;
+        if (widget.webGruppe != null && widget.webGruppe != 0) {
+          filteredResults = filteredResults
+              .where((s) => s.webGruppe == widget.webGruppe)
+              .toList();
+        }
+        if (widget.bezirkId != null && widget.bezirkId != 0) {
+          filteredResults = filteredResults
+              .where((s) => s.veranstaltungsBezirk == widget.bezirkId)
+              .toList();
+        }
+        if (widget.ort != null && widget.ort!.isNotEmpty) {
+          filteredResults = filteredResults
+              .where(
+                (s) => s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),
+              )
+              .toList();
+        }
+        if (widget.titel != null && widget.titel!.isNotEmpty) {
+          filteredResults = filteredResults
+              .where(
+                (s) => s.bezeichnung.toLowerCase().contains(
+                      widget.titel!.toLowerCase(),
+                    ),
+              )
+              .toList();
+        }
+        if (widget.fuerVerlaengerungen == true) {
+          filteredResults =
+              filteredResults.where((s) => s.fuerVerlaengerungen).toList();
+        }
+        _results = filteredResults;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Fehler beim Laden der Schulungen: $e';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _showBookingDialog(
+    Schulungstermin schulungsTermin, {
+    required List<_RegisteredPerson> registeredPersons,
+  }) async {
+    if (!mounted) return;
+    final parentContext = context;
+    final user = _userData;
+    if (user == null) {
+      ScaffoldMessenger.of(parentContext).showSnackBar(
+        SnackBar(
+          content: Semantics(
+            container: true,
+            liveRegion: true,
+            label: 'Fehler: Kein Benutzer für die Buchung verfügbar',
+            child: const Text('Kein Benutzer für die Buchung verfügbar.'),
+          ),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
+    final apiService = Provider.of<ApiService>(parentContext, listen: false);
+    Provider.of<CacheService>(parentContext, listen: false);
+
+    // Show the dialog immediately with a loading indicator
+    showDialog(
+      context: parentContext,
+      barrierDismissible: false,
+      builder: (context) {
+        return Semantics(
+          container: true,
+          label: 'Laden der Buchungsdaten',
+          child: const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                UIConstants.defaultAppColor,
+              ),
+              semanticsLabel: 'Buchungsdaten werden geladen',
+            ),
+          ),
+        );
+      },
+    );
+
+    // Fetch bank data and contacts in parallel
+    final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
+      user.webLoginId,
+    );
+    final Future<List<Map<String, dynamic>>> contactsFuture =
+        apiService.fetchKontakte(user.personId);
+
+    final List<BankData> bankDataList = await bankDataFuture;
+    if (!mounted) return;
+    final List<Map<String, dynamic>> contacts = await contactsFuture;
+    if (!mounted) return;
+
+    // Get phone number from contacts
+    String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
+      final privateContacts = contacts.firstWhere(
+        (category) => category['category'] == 'Privat',
+        orElse: () => {'contacts': []},
+      )['contacts'] as List<dynamic>;
+      var phoneContact = privateContacts
+          .cast<Map<String, dynamic>>()
+          .firstWhere(
+            (contact) =>
+                contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
+            orElse: () => {'value': ''},
+          );
+      if (phoneContact['value'] == '') {
+        final businessContacts = contacts.firstWhere(
+          (category) => category['category'] == 'Geschäftlich',
+          orElse: () => {'contacts': []},
+        )['contacts'] as List<dynamic>;
+        phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
+              (contact) =>
+                  contact['rawKontaktTyp'] == 5 ||
+                  contact['rawKontaktTyp'] == 6,
+              orElse: () => {'value': ''},
+            );
+      }
+      return phoneContact['value'] as String;
+    }
+
+    final String phoneNumber = extractPhoneNumber(contacts);
+    final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
+
+    if (!mounted) return;
+    if (!parentContext.mounted) return;
+
+    // Pop the loading indicator
+    Navigator.of(parentContext, rootNavigator: true).pop();
+
+    // Show the actual booking dialog with the fetched data
+    bool agbChecked = false;
+    bool lastschriftChecked = false;
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: parentContext,
+      builder: (context) {
+        final telefonController = TextEditingController(text: phoneNumber);
+        final kontoinhaberController = TextEditingController(
+          text: bankData?.kontoinhaber ?? '',
+        );
+        final ibanController = TextEditingController(
+          text: bankData?.iban ?? '',
+        );
+        final bicController = TextEditingController(
+          text: bankData?.bic ?? '',
+        );
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            kontoinhaberController.removeListener(() {});
+            ibanController.removeListener(() {});
+            bicController.removeListener(() {});
+            kontoinhaberController.addListener(() {
+              setState(() {});
+            });
+            ibanController.addListener(() {
+              setState(() {});
+              if (formKey.currentState != null) {
+                formKey.currentState!.validate();
+              }
+            });
+            bicController.addListener(() {
+              setState(() {});
+            });
+
+            return SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: UIConstants.dialogMaxWidth,
+                    maxHeight: UIConstants.dialogMaxHeight,
+                  ),
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        // force the AlertDialog to respect max width
+                        width: MediaQuery.of(context)
+                            .size
+                            .width
+                            .clamp(0, UIConstants.dialogMaxWidth.toDouble()),
+                        child: AlertDialog(
+                          backgroundColor: UIConstants.backgroundColor,
+                          insetPadding:
+                              EdgeInsets.zero, // remove default Flutter margins
+                          contentPadding: EdgeInsets.zero,
+                          semanticLabel: 'Buchungsdaten erfassen Dialog',
+                          title: Semantics(
+                            header: true,
+                            label:
+                                'Dialog Titel: Buchungsdaten erfassen für Schulung',
+                            child: const Center(
+                              child: ScaledText(
+                                'Buchungsdaten Erfassen',
+                                style: UIStyles.dialogTitleStyle,
+                              ),
+                            ),
+                          ),
+                          content: Semantics(
+                            container: true,
+                            label:
+                                'Buchungsformular mit Bankdaten und Bestätigungen',
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  width: double
+                                      .maxFinite, // 👈 stretch form inside dialog
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: UIConstants.spacingM,
+                                      left: UIConstants.spacingM,
+                                      right: UIConstants.spacingM,
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Semantics(
+                                        container: true,
+                                        label: 'Formulareingaben',
+                                        child: Form(
+                                          key: formKey,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Semantics(
+                                                container: true,
+                                                label: 'Bankdaten Sektion',
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        UIConstants.whiteColor,
+                                                    border: Border.all(
+                                                      color: UIConstants
+                                                          .mydarkGreyColor,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      UIConstants.cornerRadius,
+                                                    ),
+                                                  ),
+                                                  padding: UIConstants
+                                                      .defaultPadding,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Semantics(
+                                                        header: true,
+                                                        child: const Text(
+                                                          'Bankdaten',
+                                                          style: UIStyles
+                                                              .subtitleStyle,
+                                                          semanticsLabel:
+                                                              'Abschnitt: Bankdaten eingeben',
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      Semantics(
+                                                        container: true,
+                                                        textField: true,
+                                                        label:
+                                                            'Kontoinhaber Eingabefeld',
+                                                        hint:
+                                                            'Geben Sie den Namen des Kontoinhabers ein',
+                                                        child: TextFormField(
+                                                          controller:
+                                                              kontoinhaberController,
+                                                          decoration: UIStyles
+                                                              .formInputDecoration
+                                                              .copyWith(
+                                                            labelText:
+                                                                'Kontoinhaber',
+                                                          ),
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Kontoinhaber ist erforderlich';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      Semantics(
+                                                        container: true,
+                                                        textField: true,
+                                                        label:
+                                                            'IBAN Eingabefeld',
+                                                        hint:
+                                                            'Geben Sie die IBAN des Kontos ein',
+                                                        child: TextFormField(
+                                                          controller:
+                                                              ibanController,
+                                                          decoration: UIStyles
+                                                              .formInputDecoration
+                                                              .copyWith(
+                                                            labelText: 'IBAN',
+                                                          ),
+                                                          validator: (value) {
+                                                            final apiService =
+                                                                Provider.of<
+                                                                    ApiService>(
+                                                              context,
+                                                              listen: false,
+                                                            );
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'IBAN ist erforderlich';
+                                                            }
+                                                            if (!apiService
+                                                                .validateIBAN(
+                                                              value,
+                                                            )) {
+                                                              return 'Ungültige IBAN';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                      Semantics(
+                                                        container: true,
+                                                        textField: true,
+                                                        label:
+                                                            'BIC Eingabefeld',
+                                                        hint:
+                                                            'Geben Sie den BIC-Code der Bank ein, falls erforderlich',
+                                                        child: TextFormField(
+                                                          controller:
+                                                              bicController,
+                                                          decoration: UIStyles
+                                                              .formInputDecoration
+                                                              .copyWith(
+                                                            labelText:
+                                                                _isBicRequired(
+                                                              ibanController
+                                                                  .text
+                                                                  .trim(),
+                                                            )
+                                                                    ? 'BIC *'
+                                                                    : 'BIC (optional)',
+                                                          ),
+                                                          validator: (value) {
+                                                            final apiService =
+                                                                Provider.of<
+                                                                    ApiService>(
+                                                              context,
+                                                              listen: false,
+                                                            );
+                                                            final iban =
+                                                                ibanController
+                                                                    .text
+                                                                    .trim()
+                                                                    .toUpperCase();
+                                                            if (!iban
+                                                                    .startsWith(
+                                                                  'DE',
+                                                                ) &&
+                                                                (value ==
+                                                                        null ||
+                                                                    value
+                                                                        .trim()
+                                                                        .isEmpty)) {
+                                                              return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                                            }
+                                                            if (value != null &&
+                                                                value
+                                                                    .trim()
+                                                                    .isNotEmpty) {
+                                                              final bicError =
+                                                                  apiService
+                                                                      .validateBIC(
+                                                                value,
+                                                              );
+                                                              if (bicError !=
+                                                                  null) {
+                                                                return bicError;
+                                                              }
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              Semantics(
+                                                container: true,
+                                                label: 'Bestätigungen und AGB',
+                                                child: ListTileTheme(
+                                                  data: const ListTileThemeData(
+                                                    horizontalTitleGap:
+                                                        UIConstants.spacingXS,
+                                                    minLeadingWidth: 0,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Semantics(
+                                                        container: true,
+                                                        button: true,
+                                                        label:
+                                                            'AGB akzeptieren Checkbox',
+                                                        hint:
+                                                            'Aktivieren Sie diese Checkbox um die Allgemeinen Geschäftsbedingungen zu akzeptieren',
+                                                        checked: agbChecked,
+                                                        child: CheckboxListTile(
+                                                          value: agbChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () => agbChecked =
+                                                                  val ?? false,
+                                                            );
+                                                          },
+                                                          title: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Semantics(
+                                                                button: true,
+                                                                label:
+                                                                    'AGB Link öffnen',
+                                                                hint:
+                                                                    'Tippen Sie hier um die Allgemeinen Geschäftsbedingungen zu lesen',
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    Navigator
+                                                                        .of(
+                                                                      context,
+                                                                    ).push(
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (_) =>
+                                                                                const AgbScreenAccessible(),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  child: Text(
+                                                                    'AGB',
+                                                                    style: UIStyles
+                                                                        .linkStyle
+                                                                        .copyWith(
+                                                                      color: UIConstants
+                                                                          .linkColor,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .underline,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: UIConstants
+                                                                    .spacingS,
+                                                              ),
+                                                              const Text(
+                                                                'akzeptieren',
+                                                              ),
+                                                              const SizedBox(
+                                                                width: UIConstants
+                                                                    .spacingS,
+                                                              ),
+                                                              Semantics(
+                                                                button: true,
+                                                                label:
+                                                                    'AGB Information',
+                                                                hint:
+                                                                    'Tippen für weitere Informationen über die AGB',
+                                                                child:
+                                                                    const Tooltip(
+                                                                  message:
+                                                                      'Ich bin mit den AGB einverstanden.',
+                                                                  triggerMode:
+                                                                      TooltipTriggerMode
+                                                                          .tap,
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .info_outline,
+                                                                    color: UIConstants
+                                                                        .defaultAppColor,
+                                                                    size: UIConstants
+                                                                        .tooltipIconSize,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          controlAffinity:
+                                                              ListTileControlAffinity
+                                                                  .leading,
+                                                          contentPadding:
+                                                              EdgeInsets.zero,
+                                                        ),
+                                                      ),
+                                                      Semantics(
+                                                        container: true,
+                                                        button: true,
+                                                        label:
+                                                            'Lastschrifteinzug bestätigen Checkbox',
+                                                        hint:
+                                                            'Aktivieren Sie diese Checkbox um dem Lastschrifteinzug zuzustimmen',
+                                                        checked:
+                                                            lastschriftChecked,
+                                                        child: CheckboxListTile(
+                                                          value:
+                                                              lastschriftChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () =>
+                                                                  lastschriftChecked =
+                                                                      val ??
+                                                                          false,
+                                                            );
+                                                          },
+                                                          title: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Expanded(
+                                                                child: Wrap(
+                                                                  crossAxisAlignment:
+                                                                      WrapCrossAlignment
+                                                                          .center,
+                                                                  spacing:
+                                                                      UIConstants
+                                                                          .spacingS,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Bestätigung des\nLastschrifteinzugs',
+                                                                    ),
+                                                                    Semantics(
+                                                                      button:
+                                                                          true,
+                                                                      label:
+                                                                          'Lastschrift Information',
+                                                                      hint:
+                                                                          'Tippen für weitere Informationen über den Lastschrifteinzug',
+                                                                      child:
+                                                                          const Tooltip(
+                                                                        message:
+                                                                            'Ich erteile die Einzugsermächtigung für die Abbuchung der Schulungsgebühr.',
+                                                                        triggerMode:
+                                                                            TooltipTriggerMode.tap,
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .info_outline,
+                                                                          color:
+                                                                              UIConstants.defaultAppColor,
+                                                                          size:
+                                                                              UIConstants.tooltipIconSize,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          controlAffinity:
+                                                              ListTileControlAffinity
+                                                                  .leading,
+                                                          contentPadding:
+                                                              EdgeInsets.zero,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: UIConstants
+                                                            .spacingM,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: UIConstants.spacingM,
+                                  right: UIConstants.spacingM,
+                                  child: Semantics(
+                                    container: true,
+                                    label: 'Dialog Aktionen',
+                                    child: DialogFABs(
+                                      children: [
+                                        Semantics(
+                                          container: true,
+                                          button: true,
+                                          label: 'Buchung abbrechen',
+                                          hint:
+                                              'Schließt den Dialog ohne zu buchen',
+                                          child: FloatingActionButton(
+                                            heroTag: 'cancelBookingFab',
+                                            mini: true,
+                                            tooltip: 'Buchung abbrechen',
+                                            backgroundColor:
+                                                UIConstants.defaultAppColor,
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: Semantics(
+                                              excludeSemantics: true,
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: UIConstants.whiteColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Semantics(
+                                          container: true,
+                                          button: true,
+                                          enabled: (agbChecked &&
+                                              lastschriftChecked &&
+                                              kontoinhaberController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              ibanController.text
+                                                  .trim()
+                                                  .isNotEmpty &&
+                                              (!_isBicRequired(
+                                                    ibanController.text.trim(),
+                                                  ) ||
+                                                  bicController.text
+                                                      .trim()
+                                                      .isNotEmpty)),
+                                          label: (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!_isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? 'Schulung buchen'
+                                              : 'Buchung nicht möglich - Felder unvollständig',
+                                          hint: (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!_isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? 'Führt die Buchung der Schulung durch'
+                                              : 'Füllen Sie alle erforderlichen Felder aus und akzeptieren Sie die Bedingungen',
+                                          child: FloatingActionButton(
+                                            heroTag: 'submitBookingFab',
+                                            mini: true,
+                                            tooltip: (agbChecked &&
+                                                    lastschriftChecked &&
+                                                    kontoinhaberController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    ibanController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    (!_isBicRequired(
+                                                          ibanController.text
+                                                              .trim(),
+                                                        ) ||
+                                                        bicController.text
+                                                            .trim()
+                                                            .isNotEmpty))
+                                                ? 'Schulung buchen'
+                                                : 'Buchung nicht möglich',
+                                            backgroundColor: (agbChecked &&
+                                                    lastschriftChecked &&
+                                                    kontoinhaberController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    ibanController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    (!_isBicRequired(
+                                                          ibanController.text
+                                                              .trim(),
+                                                        ) ||
+                                                        bicController.text
+                                                            .trim()
+                                                            .isNotEmpty))
+                                                ? UIConstants.defaultAppColor
+                                                : UIConstants
+                                                    .cancelButtonBackground,
+                                            onPressed: (agbChecked &&
+                                                    lastschriftChecked &&
+                                                    kontoinhaberController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    ibanController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    (!_isBicRequired(
+                                                          ibanController.text
+                                                              .trim(),
+                                                        ) ||
+                                                        bicController.text
+                                                            .trim()
+                                                            .isNotEmpty))
+                                                ? () async {
+                                                    if (formKey.currentState !=
+                                                            null &&
+                                                        formKey.currentState!
+                                                            .validate()) {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      final cacheService =
+                                                          Provider.of<
+                                                              CacheService>(
+                                                        context,
+                                                        listen: false,
+                                                      );
+                                                      final String email =
+                                                          await cacheService
+                                                                  .getString(
+                                                                'username',
+                                                              ) ??
+                                                              '';
+                                                      final BankData
+                                                          safeBankData =
+                                                          bankData ??
+                                                              BankData(
+                                                                id: 0,
+                                                                webloginId: user
+                                                                    .webLoginId,
+                                                                kontoinhaber:
+                                                                    '',
+                                                                iban: '',
+                                                                bic: '',
+                                                                mandatSeq: 2,
+                                                                bankName: '',
+                                                                mandatNr: '',
+                                                                mandatName: '',
+                                                              );
+                                                      await registerPersonAndShowDialog(
+                                                        schulungsTermin:
+                                                            schulungsTermin,
+                                                        registeredPersons:
+                                                            registeredPersons,
+                                                        bankData: safeBankData,
+                                                        prefillUser:
+                                                            user.copyWith(
+                                                          telefon:
+                                                              telefonController
+                                                                  .text,
+                                                        ),
+                                                        prefillEmail: email,
+                                                      );
+                                                    }
+                                                  }
+                                                : null,
+                                            child: Semantics(
+                                              excludeSemantics: true,
+                                              child: const Icon(
+                                                Icons.check,
+                                                color: UIConstants.whiteColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget buildRegisterAnotherDialog(
+    BuildContext parentContext,
+    Schulungstermin schulungsTermin,
+    List<_RegisteredPerson> registeredPersons,
+    BankData bankData, {
+    required Future<void> Function() onRegisterAnother,
+  }) {
+    return AlertDialog(
+      backgroundColor: UIConstants.backgroundColor,
+      semanticLabel: 'Weitere Person anmelden Dialog',
+      title: Semantics(
+        header: true,
+        label: 'Dialog Titel: Bereits angemeldete Personen für diese Schulung',
+        child: const Center(
+          child: ScaledText(
+            'Bereits angemeldete Personen',
+            style: UIStyles.dialogTitleStyle,
+          ),
+        ),
+      ),
+      content: Semantics(
+        container: true,
+        label: 'Liste der angemeldeten Personen und Anmeldebestätigung',
+        child: SizedBox(
+          width: double.maxFinite,
+          // Set a reasonable max height for the dialog content
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (registeredPersons.isNotEmpty)
+                  Semantics(
+                    container: true,
+                    label: 'Liste der bereits angemeldeten Personen',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...registeredPersons.map(
+                          (p) => Semantics(
+                            container: true,
+                            label:
+                                'Angemeldete Person: ${p.vorname} ${p.nachname}, Passnummer: ${p.passnummer}',
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: UIStyles.dialogContentStyle,
+                                      children: [
+                                        const TextSpan(
+                                          text: '• ',
+                                          style: UIStyles.dialogContentStyle,
+                                        ),
+                                        TextSpan(
+                                          text: '${p.vorname} ${p.nachname}',
+                                          style: UIStyles.dialogContentStyle
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' (${p.passnummer})',
+                                          style: UIStyles.dialogContentStyle,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingM),
+                      ],
+                    ),
+                  ),
+                Semantics(
+                  container: true,
+                  label:
+                      'Anmeldebestätigung für Schulung: ${schulungsTermin.bezeichnung}',
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: UIStyles.dialogContentStyle,
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: 'Sie sind angemeldet für die Schulung\n\n',
+                        ),
+                        TextSpan(
+                          text: schulungsTermin.bezeichnung,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const TextSpan(text: '.'),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingL),
+                Semantics(
+                  container: true,
+                  label: 'Frage: Möchten Sie eine weitere Person anmelden?',
+                  child: const Text(
+                    'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
+                    textAlign: TextAlign.center,
+                    style: UIStyles.dialogContentStyle,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        Semantics(
+          container: true,
+          label: 'Dialog Aktionen für weitere Anmeldung',
+          child: Padding(
+            padding: UIConstants.dialogPadding,
+            child: Row(
+              mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+              children: [
+                Expanded(
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    label: 'Nein, keine weitere Person anmelden',
+                    hint:
+                        'Beendet den Anmeldeprozess und kehrt zur Schulungssuche zurück',
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(parentContext).pop(); // Close the dialog
+                        Navigator.of(parentContext).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => SchulungenSearchScreen(
+                              userData: widget.userData,
+                              isLoggedIn: widget.isLoggedIn,
+                              onLogout: widget.onLogout,
+                              showMenu: widget.isLoggedIn,
+                              showConnectivityIcon: widget.isLoggedIn,
+                            ),
+                          ),
+                          (route) => false, // Remove all previous routes
+                        );
+                      },
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: UIConstants.centerAlignment,
+                        children: [
+                          Semantics(
+                            excludeSemantics: true,
+                            child: const Icon(
+                              Icons.close,
+                              color: UIConstants.closeIcon,
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ScaledText(
+                            'Nein',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                UIConstants.horizontalSpacingM,
+                Expanded(
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    label: 'Ja, weitere Person anmelden',
+                    hint: 'Öffnet das Anmeldeformular für eine weitere Person',
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(parentContext).pop();
+                        await onRegisterAnother();
+                      },
+                      style: UIStyles.dialogAcceptButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: UIConstants.centerAlignment,
+                        children: [
+                          Semantics(
+                            excludeSemantics: true,
+                            child: const Icon(
+                              Icons.check,
+                              color: UIConstants.checkIcon,
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ScaledText(
+                            'Ja',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.submitButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      container: true,
+      label: 'Schulungsübersicht Bildschirm',
+      child: BaseScreenLayoutAccessible(
+        title: 'Aus- und Weiterbildung',
+        userData: widget.userData,
+        isLoggedIn: widget.isLoggedIn,
+        onLogout: widget.onLogout,
+        automaticallyImplyLeading: widget.showMenu,
+        showMenu: widget.showMenu,
+        showConnectivityIcon: widget.showConnectivityIcon,
+        leading: !widget.showMenu
+            ? Semantics(
+                button: true,
+                label: 'Zurück zur Schulungssuche',
+                hint: 'Kehrt zur Schulungssuchseite zurück',
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: UIConstants.textColor,
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SchulungenSearchScreen(
+                          userData: widget.userData,
+                          isLoggedIn: widget.isLoggedIn,
+                          onLogout: widget.onLogout,
+                          showMenu: widget.showMenu,
+                          showConnectivityIcon: widget.showConnectivityIcon,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            : null,
+        body: Semantics(
+          container: true,
+          label: 'Hauptinhalt der Schulungsübersicht',
+          child: Padding(
+            padding: const EdgeInsets.all(UIConstants.spacingM),
+            child: _isLoading
+                ? Semantics(
+                    container: true,
+                    liveRegion: true,
+                    label: 'Schulungen werden geladen',
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          UIConstants.defaultAppColor,
+                        ),
+                        semanticsLabel: 'Laden der verfügbaren Schulungen',
+                      ),
+                    ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Semantics(
+                        header: true,
+                        label:
+                            'Hauptüberschrift: Verfügbare Aus- und Weiterbildungen',
+                        child: const ScaledText(
+                          'Verfügbare Aus- und Weiterbildungen',
+                          style: UIStyles.headerStyle,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      if (_errorMessage != null)
+                        Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: 'Fehlermeldung: $_errorMessage',
+                          child: ScaledText(
+                            _errorMessage!,
+                            style: UIStyles.errorStyle,
+                          ),
+                        ),
+                      if (!_isLoading &&
+                          _errorMessage == null &&
+                          _results.isNotEmpty)
+                        Expanded(
+                          child: Semantics(
+                            container: true,
+                            label:
+                                'Liste der verfügbaren Schulungen, ${_results.length} Schulungen gefunden',
+                            hint:
+                                'Navigieren Sie durch die Liste um Details zu einzelnen Schulungen zu sehen',
+                            child: ListView.separated(
+                              itemCount: _results.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: UIConstants.spacingS),
+                              itemBuilder: (context, index) {
+                                final schulungsTermin = _results[index];
+                                return Semantics(
+                                  container: true,
+                                  label:
+                                      'Schulung ${index + 1} von ${_results.length}: ${schulungsTermin.bezeichnung}',
+                                  hint:
+                                      'Tippen Sie für Details zu dieser Schulung',
+                                  child: SchulungenListItem(
+                                    schulungsTermin: schulungsTermin,
+                                    index: index,
+                                    onDetailsPressed: () async {
+                                      // Show loading spinner with accessibility
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => Semantics(
+                                          container: true,
+                                          liveRegion: true,
+                                          label:
+                                              'Schulungsdetails werden geladen',
+                                          child: const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                UIConstants.defaultAppColor,
+                                              ),
+                                              semanticsLabel:
+                                                  'Laden der Schulungsdetails',
+                                            ),
+                                          ),
+                                        ),
+                                        barrierDismissible: false,
+                                      );
+
+                                      final apiService =
+                                          Provider.of<ApiService>(
+                                        context,
+                                        listen: false,
+                                      );
+                                      final termin =
+                                          await apiService.fetchSchulungstermin(
+                                        schulungsTermin.schulungsterminId
+                                            .toString(),
+                                      );
+                                      if (!context.mounted) return;
+
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pop(); // Remove spinner
+
+                                      if (termin == null) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            semanticLabel:
+                                                'Fehler beim Laden der Details',
+                                            title: Semantics(
+                                              header: true,
+                                              child: const Text('Fehler'),
+                                            ),
+                                            content: Semantics(
+                                              container: true,
+                                              label:
+                                                  'Fehlermeldung: Details konnten nicht geladen werden',
+                                              child: const Text(
+                                                'Details konnten nicht geladen werden.',
+                                              ),
+                                            ),
+                                            actions: [
+                                              Semantics(
+                                                button: true,
+                                                label:
+                                                    'OK, Fehlerdialog schließen',
+                                                child: TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        return;
+                                      }
+
+                                      // Fallback for lehrgangsleiterMail and lehrgangsleiterTel
+                                      final lehrgangsleiterMail = (termin
+                                              .lehrgangsleiterMail.isNotEmpty)
+                                          ? termin.lehrgangsleiterMail
+                                          : schulungsTermin.lehrgangsleiterMail;
+                                      final lehrgangsleiterTel = (termin
+                                              .lehrgangsleiterTel.isNotEmpty)
+                                          ? termin.lehrgangsleiterTel
+                                          : schulungsTermin.lehrgangsleiterTel;
+
+                                      // Show the extracted details dialog
+                                      await SchulungenDetailsDialog.show(
+                                        context,
+                                        termin,
+                                        schulungsTermin,
+                                        lehrgangsleiterMail:
+                                            lehrgangsleiterMail,
+                                        lehrgangsleiterTel: lehrgangsleiterTel,
+                                        isUserLoggedIn: _userData != null,
+                                        personId: _userData?.personId,
+                                        onBookingPressed: () {
+                                          if (_userData == null) {
+                                            showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (dialogContext) =>
+                                                  LoginDialog(
+                                                onLoginSuccess: (userData) {
+                                                  setState(() {
+                                                    _userData = userData;
+                                                  });
+                                                },
+                                              ),
+                                            );
+                                          } else {
+                                            _showBookingDialog(
+                                              termin,
+                                              registeredPersons: [],
+                                            );
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      if (!_isLoading &&
+                          _errorMessage == null &&
+                          _results.isEmpty)
+                        Semantics(
+                          container: true,
+                          liveRegion: true,
+                          label: 'Suchergebnis: Keine Schulungen gefunden',
+                          child: const ScaledText(
+                            'Keine Schulungen gefunden.',
+                            style: UIStyles.bodyStyle,
+                          ),
+                        ),
+                      const SizedBox(height: UIConstants.helpSpacing),
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> registerPersonAndShowDialog({
+    required Schulungstermin schulungsTermin,
+    required List<_RegisteredPerson> registeredPersons,
+    required BankData bankData,
+    UserData? prefillUser,
+    String prefillEmail = '',
+  }) async {
+    final configService = Provider.of<ConfigService>(context, listen: false);
+    final emailService = Provider.of<EmailService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    // Show registration form dialog and wait for result
+    final RegisteredPerson? newPerson = await showDialog<RegisteredPerson>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return RegisterPersonFormDialog(
+          schulungsTermin: schulungsTermin,
+          bankData: bankData,
+          prefillUser: prefillUser,
+          prefillEmail: prefillEmail,
+          configService: configService,
+          emailService: emailService,
+          apiService: apiService,
+        );
+      },
+    );
+    if (newPerson == null) return; // User cancelled
+    final updatedRegisteredPersons =
+        List<_RegisteredPerson>.from(registeredPersons)
+          ..add(
+            _RegisteredPerson(
+              newPerson.vorname,
+              newPerson.nachname,
+              newPerson.passnummer,
+            ),
+          );
+
+    // After registration, show the 'register another' dialog
+    final bool? registerAnother = await showDialog<bool>(
+      // ignore: use_build_context_synchronously
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return buildRegisterAnotherDialog(
+          context,
+          schulungsTermin,
+          updatedRegisteredPersons,
+          bankData,
+          onRegisterAnother: () async {
+            await registerPersonAndShowDialog(
+              schulungsTermin: schulungsTermin,
+              registeredPersons: updatedRegisteredPersons,
+              bankData: bankData,
+            );
+          },
+        );
+      },
+    );
+    if (!mounted) return;
+    if (registerAnother == true) {
+      // Call the method again for the next person
+      await registerPersonAndShowDialog(
+        schulungsTermin: schulungsTermin,
+        registeredPersons: updatedRegisteredPersons,
+        bankData: bankData,
+      );
+    } else if (registerAnother == false) {
+      // Navigate to search page
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => SchulungenSearchScreen(
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
+            showMenu: widget.isLoggedIn,
+            showConnectivityIcon: widget.isLoggedIn,
+          ),
+        ),
+        (route) => false,
+      );
+    }
+  }
+}
+
+class _RegisteredPerson {
+  _RegisteredPerson(this.vorname, this.nachname, this.passnummer);
+  final String vorname;
+  final String nachname;
+  final String passnummer;
+}
+
+class LoginDialog extends StatefulWidget {
+  const LoginDialog({super.key, required this.onLoginSuccess});
+  final Function(UserData) onLoginSuccess;
+
+  @override
+  State<LoginDialog> createState() => _LoginDialogState();
+}
+
+class _LoginDialogState extends State<LoginDialog> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  String _errorMessage = '';
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    try {
+      final response = await authService.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+      if (!mounted) return;
+      if (response['ResultType'] == 1) {
+        final personId = response['PersonID'];
+        final webloginId = response['WebLoginID'];
+        var passdaten = await apiService.fetchPassdaten(personId);
+        if (!mounted) return;
+        if (passdaten != null) {
+          final userData = passdaten.copyWith(webLoginId: webloginId);
+          Navigator.of(context).pop();
+          widget.onLoginSuccess(userData);
+        } else {
+          setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
+        }
+      } else {
+        setState(
+          () => _errorMessage =
+              response['ResultMessage'] ?? 'Login fehlgeschlagen.',
+        );
+      }
+    } catch (e) {
+      setState(() => _errorMessage = 'Fehler: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: UIConstants.backgroundColor,
+      semanticLabel: 'Login erforderlich Dialog',
+      title: Semantics(
+        header: true,
+        label: 'Dialog Titel: Login erforderlich für Schulungsbuchung',
+        child: const Center(
+          child: ScaledText(
+            'Login erforderlich',
+            style: UIStyles.dialogTitleStyle,
+          ),
+        ),
+      ),
+      content: Semantics(
+        container: true,
+        label: 'Login Formular',
+        child: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: UIConstants.dialogPadding
+                  .copyWith(bottom: UIConstants.spacingS),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_errorMessage.isNotEmpty)
+                    Semantics(
+                      container: true,
+                      liveRegion: true,
+                      label: 'Login Fehler: $_errorMessage',
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: UIConstants.spacingS),
+                        child: ScaledText(
+                          _errorMessage,
+                          style: UIStyles.errorStyle,
+                        ),
+                      ),
+                    ),
+                  Semantics(
+                    container: true,
+                    textField: true,
+                    label: 'E-Mail Adresse Eingabefeld',
+                    hint: 'Geben Sie Ihre E-Mail Adresse ein',
+                    child: TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'E-Mail',
+                      ),
+                      enabled: !_isLoading,
+                      style: UIStyles.dialogContentStyle,
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  Semantics(
+                    container: true,
+                    textField: true,
+                    obscured: !_isPasswordVisible,
+                    label: 'Passwort Eingabefeld',
+                    hint: 'Geben Sie Ihr Passwort ein',
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: !_isPasswordVisible,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Passwort',
+                        suffixIcon: Semantics(
+                          button: true,
+                          label: _isPasswordVisible
+                              ? 'Passwort verbergen'
+                              : 'Passwort anzeigen',
+                          child: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      enabled: !_isLoading,
+                      style: UIStyles.dialogContentStyle,
+                      onSubmitted: (_) => _handleLogin(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        Semantics(
+          container: true,
+          label: 'Login Dialog Aktionen',
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              16,
+              4,
+              16,
+              12,
+            ),
+            child: Row(
+              mainAxisAlignment: UIConstants.spaceBetweenAlignment,
+              children: [
+                Expanded(
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    enabled: !_isLoading,
+                    label: 'Login abbrechen',
+                    hint: 'Schließt den Login Dialog ohne sich anzumelden',
+                    child: ElevatedButton(
+                      onPressed:
+                          _isLoading ? null : () => Navigator.of(context).pop(),
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: UIConstants.centerAlignment,
+                        children: [
+                          Semantics(
+                            excludeSemantics: true,
+                            child: const Icon(
+                              Icons.close,
+                              color: UIConstants.closeIcon,
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                UIConstants.horizontalSpacingM,
+                Expanded(
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    enabled: !_isLoading,
+                    label: _isLoading ? 'Login wird durchgeführt' : 'Anmelden',
+                    hint: _isLoading
+                        ? 'Login ist in Bearbeitung, bitte warten'
+                        : 'Führt die Anmeldung mit den eingegebenen Daten durch',
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleLogin,
+                      style: UIStyles.dialogAcceptButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: UIConstants.centerAlignment,
+                        children: [
+                          Semantics(
+                            excludeSemantics: true,
+                            child: const Icon(
+                              Icons.login,
+                              color: UIConstants.checkIcon,
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          _isLoading
+                              ? Semantics(
+                                  label: 'Login wird verarbeitet',
+                                  child: const SizedBox(
+                                    width: UIConstants.loadingIndicatorSize,
+                                    height: UIConstants.loadingIndicatorSize,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        UIConstants.whiteColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : ScaledText(
+                                  'Login',
+                                  style:
+                                      UIStyles.dialogButtonTextStyle.copyWith(
+                                    color: UIConstants.submitButtonText,
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

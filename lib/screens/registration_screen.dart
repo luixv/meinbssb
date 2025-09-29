@@ -11,7 +11,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/screens/privacy_screen.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/screens/registration_success_screen.dart';
 import 'package:meinbssb/screens/registration_fail_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
@@ -256,11 +256,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     try {
       // First find PersonID
       final personId = await widget.authService.findePersonID(
-          _lastNameController.text,
-          _firstNameController.text,
-          _selectedDate!.toString(),
-          _passNumberController.text,
-          _zipCodeController.text,);
+        _lastNameController.text,
+        _firstNameController.text,
+        _selectedDate!.toString(),
+        _passNumberController.text,
+        _zipCodeController.text,
+      );
 
       if (personId == '0') {
         setState(() {
@@ -382,7 +383,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Registrierung',
       userData: null,
       isLoggedIn: false,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:meinbssb/screens/schulungen/schulungen_list_item.dart';
+import 'package:meinbssb/screens/schulungen/schulungen_list_item_accessible.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';

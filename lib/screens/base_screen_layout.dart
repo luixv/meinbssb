@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/screens/app_menu.dart';
+import '/screens/app_menu_accessible.dart';
 import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -68,7 +68,7 @@ class BaseScreenLayout extends StatelessWidget {
         ],
       ),
       endDrawer: showMenu
-          ? AppDrawer(
+          ? AppDrawerAccessible(
               userData: userData,
               isLoggedIn: isLoggedIn,
               onLogout: onLogout,

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/reset_password_screen.dart';
-import 'package:meinbssb/screens/email_verification_screen.dart';
+import 'package:meinbssb/screens/email_verification_screen_accessible.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +17,13 @@ import 'package:meinbssb/services/api/auth_service.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
-import 'screens/help_screen.dart';
+import 'screens/help_screen_accessible.dart';
 import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/set_password_screen.dart';
-import 'screens/cookie_consent_screen.dart';
+import 'screens/cookie_consent_screen_accessible.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -307,7 +307,7 @@ class _MyAppState extends State<MyApp> {
                 highlightColor: UIConstants.highlightColor,
                 splashColor: UIConstants.splashColor,
               ),
-              child: CookieConsent(
+              child: CookieConsentAccessible(
                 child: Material(
                   type: MaterialType.transparency,
                   child: child ?? const SizedBox.shrink(),
@@ -357,7 +357,7 @@ class _MyAppState extends State<MyApp> {
               final personId = uri.queryParameters['personId'] ?? '';
               LoggerService.logInfo('Token: $token, PersonId: $personId');
               return MaterialPageRoute(
-                builder: (context) => EmailVerificationScreen(
+                builder: (context) => EmailVerificationScreenAccessible(
                   verificationToken: token,
                   personId: personId,
                 ),
@@ -390,7 +390,7 @@ class _MyAppState extends State<MyApp> {
             if (!_isLoggedIn || _userData == null) {
               if (settings.name == '/help') {
                 return MaterialPageRoute(
-                  builder: (_) => HelpScreen(
+                  builder: (_) => HelpScreenAccessible(
                     userData: _userData,
                     isLoggedIn: _isLoggedIn,
                     onLogout: _handleLogout,
@@ -416,7 +416,7 @@ class _MyAppState extends State<MyApp> {
                 );
               case '/help':
                 return MaterialPageRoute(
-                  builder: (_) => HelpScreen(
+                  builder: (_) => HelpScreenAccessible(
                     userData: _userData,
                     isLoggedIn: _isLoggedIn,
                     onLogout: _handleLogout,

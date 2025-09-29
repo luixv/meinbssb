@@ -2,12 +2,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meinbssb/screens/app_menu_accessible.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '../providers/font_size_provider.dart';
@@ -616,7 +616,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             padding: UIConstants.appBarRightPadding,
             child: ConnectivityIcon(),
           ),
-          AppMenu(
+          AppMenuAccessible(
             context: context,
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
@@ -747,7 +747,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
           ),
         ],
       ),
-      endDrawer: AppDrawer(
+      endDrawer: AppDrawerAccessible(
         userData: widget.userData,
         isLoggedIn: widget.isLoggedIn,
         onLogout: widget.onLogout,

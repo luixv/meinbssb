@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 
 class StylesScreen extends StatelessWidget {
@@ -18,7 +18,7 @@ class StylesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Styles',
       userData: userData,
       isLoggedIn: isLoggedIn,

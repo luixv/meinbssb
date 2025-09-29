@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BITV 2.0 Web Accessibility Test - Mein BSSB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            border: 1px solid #ccc;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .pass { background-color: #d4edda; border-color: #c3e6cb; }
+        .fail { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        .test-result {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .pass-result { background: #28a745; color: white; }
+        .fail-result { background: #dc3545; color: white; }
+        .warning-result { background: #ffc107; color: black; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .checklist {
+            list-style-type: none;
+        }
+        .checklist li {
+            margin: 5px 0;
+        }
+        .checklist input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .checklist label {
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .checklist li {
+            position: relative;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🇩🇪 BITV 2.0 Web Accessibility Test</h1>
+    <h2>Mein BSSB Flutter Web Application</h2>
+
+    <div id="test-results">
+        <div class="test-section">
+            <h3>🔍 Automatisierte Tests</h3>
+            <div id="automated-tests">
+                <p>Führe automatisierte Accessibility-Tests durch...</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>⌨️ Tastaturnavigation Test</h3>
+            <div id="keyboard-tests">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="tab-nav" aria-describedby="tab-nav-desc"><label for="tab-nav"> Tab-Navigation funktioniert</label><span id="tab-nav-desc" class="sr-only"> - Alle interaktiven Elemente sind über Tab-Taste erreichbar</span></li>
+                    <li><input type="checkbox" id="skip-link" aria-describedby="skip-link-desc"><label for="skip-link"> Skip-Links sind vorhanden</label><span id="skip-link-desc" class="sr-only"> - Sprunglinks zum Hauptinhalt verfügbar</span></li>
+                    <li><input type="checkbox" id="focus-visible" aria-describedby="focus-visible-desc"><label for="focus-visible"> Focus ist sichtbar</label><span id="focus-visible-desc" class="sr-only"> - Fokussierte Elemente haben sichtbare Umrandung</span></li>
+                    <li><input type="checkbox" id="keyboard-trap" aria-describedby="keyboard-trap-desc"><label for="keyboard-trap"> Keine Keyboard-Traps</label><span id="keyboard-trap-desc" class="sr-only"> - Nutzer können aus allen Bereichen per Tastatur navigieren</span></li>
+                    <li><input type="checkbox" id="esc-closes" aria-describedby="esc-closes-desc"><label for="esc-closes"> Escape schließt Dialoge</label><span id="esc-closes-desc" class="sr-only"> - Escape-Taste schließt Modals und Overlays</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎨 Farb-Kontrast Test</h3>
+            <div id="contrast-tests">
+                <p>Überprüfe Farbkontraste gemäß BITV 2.0...</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 Semantische Struktur</h3>
+            <div id="semantic-tests">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="lang-attr" aria-describedby="lang-attr-desc"><label for="lang-attr"> HTML lang="de" gesetzt</label><span id="lang-attr-desc" class="sr-only"> - Sprachattribut für deutsche Inhalte definiert</span></li>
+                    <li><input type="checkbox" id="page-title" aria-describedby="page-title-desc"><label for="page-title"> Sinnvoller Seitentitel</label><span id="page-title-desc" class="sr-only"> - Beschreibender title-Tag vorhanden</span></li>
+                    <li><input type="checkbox" id="headings" aria-describedby="headings-desc"><label for="headings"> Überschriften-Struktur korrekt</label><span id="headings-desc" class="sr-only"> - Logische H1-H6 Hierarchie</span></li>
+                    <li><input type="checkbox" id="landmarks" aria-describedby="landmarks-desc"><label for="landmarks"> ARIA Landmarks vorhanden</label><span id="landmarks-desc" class="sr-only"> - Navigation, Main, Header, Footer definiert</span></li>
+                    <li><input type="checkbox" id="alt-text" aria-describedby="alt-text-desc"><label for="alt-text"> Alt-Texte für Bilder</label><span id="alt-text-desc" class="sr-only"> - Alle Bilder haben beschreibende Alt-Attribute</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Formulare</h3>
+            <div id="form-tests">
+                <ul class="checklist">
+                    <li><input type="checkbox" id="form-labels" aria-describedby="form-labels-desc"><label for="form-labels"> Alle Felder haben Labels</label><span id="form-labels-desc" class="sr-only"> - Jedes Eingabefeld hat ein zugehöriges Label</span></li>
+                    <li><input type="checkbox" id="required-fields" aria-describedby="required-fields-desc"><label for="required-fields"> Pflichtfelder markiert</label><span id="required-fields-desc" class="sr-only"> - Required-Felder sind klar gekennzeichnet</span></li>
+                    <li><input type="checkbox" id="error-messages" aria-describedby="error-messages-desc"><label for="error-messages"> Fehlermeldungen zugänglich</label><span id="error-messages-desc" class="sr-only"> - Validierungsfehler werden per Screen Reader vorgelesen</span></li>
+                    <li><input type="checkbox" id="form-validation" aria-describedby="form-validation-desc"><label for="form-validation"> Validierung funktioniert</label><span id="form-validation-desc" class="sr-only"> - Formular-Validierung erfolgt barrierefrei</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔊 Screen Reader Test</h3>
+            <div id="screen-reader-tests">
+                <p>Test mit NVDA, JAWS oder VoiceOver:</p>
+                <ul class="checklist">
+                    <li><input type="checkbox" id="sr-navigation" aria-describedby="sr-navigation-desc"><label for="sr-navigation"> Navigation funktioniert</label><span id="sr-navigation-desc" class="sr-only"> - Screen Reader kann durch alle Bereiche navigieren</span></li>
+                    <li><input type="checkbox" id="sr-content" aria-describedby="sr-content-desc"><label for="sr-content"> Alle Inhalte lesbar</label><span id="sr-content-desc" class="sr-only"> - Texte und UI-Elemente werden korrekt vorgelesen</span></li>
+                    <li><input type="checkbox" id="sr-buttons" aria-describedby="sr-buttons-desc"><label for="sr-buttons"> Button-Beschreibungen klar</label><span id="sr-buttons-desc" class="sr-only"> - Alle Buttons haben verständliche Labels</span></li>
+                    <li><input type="checkbox" id="sr-forms" aria-describedby="sr-forms-desc"><label for="sr-forms"> Formulare verständlich</label><span id="sr-forms-desc" class="sr-only"> - Eingabefelder und Validierung sind per Screen Reader nutzbar</span></li>
+                    <li><input type="checkbox" id="sr-errors" aria-describedby="sr-errors-desc"><label for="sr-errors"> Fehlermeldungen werden vorgelesen</label><span id="sr-errors-desc" class="sr-only"> - Fehler werden automatisch angekündigt</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 BITV 2.0 Compliance Report</h3>
+        <div id="compliance-report">
+            <p><strong>Gesamt-Score:</strong> <span id="total-score">Wird berechnet...</span></p>
+            <div id="detailed-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // BITV 2.0 Accessibility Testing Script
+        class BITVAccessibilityTester {
+            constructor() {
+                this.results = {
+                    automated: [],
+                    manual: [],
+                    issues: [],
+                    score: 0
+                };
+                this.init();
+            }
+
+            init() {
+                this.runAutomatedTests();
+                this.setupManualTests();
+                this.generateReport();
+            }
+
+            runAutomatedTests() {
+                console.log('🔍 Starte automatisierte BITV 2.0 Tests...');
+                
+                // Test 1: HTML Struktur
+                this.testHTMLStructure();
+                
+                // Test 2: Semantik
+                this.testSemanticStructure();
+                
+                // Test 3: Tastaturzugänglichkeit
+                this.testKeyboardAccessibility();
+                
+                // Test 4: Farbkontrast
+                this.testColorContrast();
+                
+                // Test 5: ARIA Labels
+                this.testARIALabels();
+                
+                this.updateAutomatedResults();
+            }
+
+            testHTMLStructure() {
+                const results = [];
+                
+                // Test lang attribute
+                const langAttr = document.documentElement.lang;
+                if (langAttr === 'de') {
+                    results.push({ test: 'HTML lang="de"', status: 'pass' });
+                } else {
+                    results.push({ test: 'HTML lang="de"', status: 'fail', issue: `Found: ${langAttr}` });
+                }
+                
+                // Test page title
+                const title = document.title;
+                if (title && title.length > 10) {
+                    results.push({ test: 'Seitentitel vorhanden', status: 'pass' });
+                } else {
+                    results.push({ test: 'Seitentitel vorhanden', status: 'fail', issue: 'Titel zu kurz oder fehlt' });
+                }
+                
+                // Test meta description
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc && metaDesc.content.length > 50) {
+                    results.push({ test: 'Meta Description', status: 'pass' });
+                } else {
+                    results.push({ test: 'Meta Description', status: 'fail', issue: 'Beschreibung fehlt oder zu kurz' });
+                }
+                
+                this.results.automated.push(...results);
+            }
+
+            testSemanticStructure() {
+                const results = [];
+                
+                // Test heading structure
+                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                const h1Count = document.querySelectorAll('h1').length;
+                
+                if (h1Count === 1) {
+                    results.push({ test: 'Genau eine H1-Überschrift', status: 'pass' });
+                } else {
+                    results.push({ test: 'Genau eine H1-Überschrift', status: 'fail', issue: `${h1Count} H1 gefunden` });
+                }
+                
+                // Test landmarks
+                const landmarks = document.querySelectorAll('[role="main"], [role="navigation"], [role="banner"], [role="contentinfo"], main, nav, header, footer');
+                if (landmarks.length > 0) {
+                    results.push({ test: 'ARIA Landmarks', status: 'pass' });
+                } else {
+                    results.push({ test: 'ARIA Landmarks', status: 'fail', issue: 'Keine Landmarks gefunden' });
+                }
+                
+                // Test skip links
+                const skipLinks = document.querySelectorAll('a[href*="#"]');
+                const hasSkipLink = Array.from(skipLinks).some(link => 
+                    link.textContent.toLowerCase().includes('skip') || 
+                    link.textContent.toLowerCase().includes('sprung') ||
+                    link.textContent.toLowerCase().includes('hauptinhalt')
+                );
+                
+                if (hasSkipLink) {
+                    results.push({ test: 'Skip-Links vorhanden', status: 'pass' });
+                } else {
+                    results.push({ test: 'Skip-Links vorhanden', status: 'warning', issue: 'Keine Skip-Links gefunden' });
+                }
+                
+                this.results.automated.push(...results);
+            }
+
+            testKeyboardAccessibility() {
+                const results = [];
+                
+                // Test focusable elements
+                const focusableElements = document.querySelectorAll(
+                    'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                
+                if (focusableElements.length > 0) {
+                    results.push({ test: 'Fokussierbare Elemente', status: 'pass', note: `${focusableElements.length} Elemente` });
+                } else {
+                    results.push({ test: 'Fokussierbare Elemente', status: 'fail', issue: 'Keine fokussierbaren Elemente' });
+                }
+                
+                // Test for focus indicators
+                let hasFocusStyles = false;
+                const stylesheets = Array.from(document.styleSheets);
+                try {
+                    stylesheets.forEach(sheet => {
+                        try {
+                            const rules = Array.from(sheet.cssRules || []);
+                            rules.forEach(rule => {
+                                if (rule.selectorText && rule.selectorText.includes(':focus')) {
+                                    hasFocusStyles = true;
+                                }
+                            });
+                        } catch (e) {
+                            // Cross-origin stylesheet - can't access
+                        }
+                    });
+                } catch (e) {
+                    // Fallback
+                }
+                
+                if (hasFocusStyles) {
+                    results.push({ test: 'Focus-Styles definiert', status: 'pass' });
+                } else {
+                    results.push({ test: 'Focus-Styles definiert', status: 'warning', issue: 'Focus-Styles nicht erkennbar' });
+                }
+                
+                this.results.automated.push(...results);
+            }
+
+            testColorContrast() {
+                const results = [];
+                
+                // This is a simplified contrast test
+                // In a real implementation, you'd use a proper contrast analysis tool
+                const textElements = document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, a, button');
+                let contrastIssues = 0;
+                
+                // Note: This is a basic implementation
+                // For production, use libraries like 'color-contrast' or integrate with axe-core
+                results.push({ 
+                    test: 'Farbkontrast-Analyse', 
+                    status: 'warning', 
+                    note: 'Manuelle Überprüfung erforderlich - verwende WAVE oder axe-core für präzise Ergebnisse' 
+                });
+                
+                this.results.automated.push(...results);
+            }
+
+            testARIALabels() {
+                const results = [];
+                
+                // Test buttons without accessible names
+                const buttons = document.querySelectorAll('button');
+                let buttonsWithoutLabels = 0;
+                
+                buttons.forEach(button => {
+                    const hasLabel = button.textContent.trim() || 
+                                   button.getAttribute('aria-label') || 
+                                   button.getAttribute('aria-labelledby') ||
+                                   button.querySelector('img[alt]');
+                    if (!hasLabel) {
+                        buttonsWithoutLabels++;
+                    }
+                });
+                
+                if (buttonsWithoutLabels === 0) {
+                    results.push({ test: 'Button-Labels', status: 'pass' });
+                } else {
+                    results.push({ test: 'Button-Labels', status: 'fail', issue: `${buttonsWithoutLabels} Buttons ohne Label` });
+                }
+                
+                // Test images without alt text
+                const images = document.querySelectorAll('img');
+                let imagesWithoutAlt = 0;
+                
+                images.forEach(img => {
+                    if (!img.hasAttribute('alt')) {
+                        imagesWithoutAlt++;
+                    }
+                });
+                
+                if (imagesWithoutAlt === 0) {
+                    results.push({ test: 'Bild Alt-Texte', status: 'pass' });
+                } else {
+                    results.push({ test: 'Bild Alt-Texte', status: 'fail', issue: `${imagesWithoutAlt} Bilder ohne Alt-Text` });
+                }
+                
+                this.results.automated.push(...results);
+            }
+
+            updateAutomatedResults() {
+                const container = document.getElementById('automated-tests');
+                let html = '<h4>Testergebnisse:</h4>';
+                
+                this.results.automated.forEach(result => {
+                    const statusClass = result.status === 'pass' ? 'pass-result' : 
+                                      result.status === 'fail' ? 'fail-result' : 'warning-result';
+                    
+                    html += `
+                        <div class="test-result ${statusClass}">
+                            ${result.test}: ${result.status.toUpperCase()}
+                            ${result.issue ? ` - ${result.issue}` : ''}
+                            ${result.note ? ` (${result.note})` : ''}
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            setupManualTests() {
+                const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        this.updateScore();
+                    });
+                });
+            }
+
+            updateScore() {
+                const totalTests = this.results.automated.length;
+                const passedAutomated = this.results.automated.filter(r => r.status === 'pass').length;
+                
+                const manualCheckboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                const checkedBoxes = document.querySelectorAll('.checklist input[type="checkbox"]:checked');
+                
+                const totalManual = manualCheckboxes.length;
+                const passedManual = checkedBoxes.length;
+                
+                const totalScore = Math.round(((passedAutomated + passedManual) / (totalTests + totalManual)) * 100);
+                
+                document.getElementById('total-score').textContent = `${totalScore}%`;
+                
+                this.generateDetailedReport(totalScore, passedAutomated, totalTests, passedManual, totalManual);
+            }
+
+            generateDetailedReport(totalScore, passedAutomated, totalTests, passedManual, totalManual) {
+                const reportContainer = document.getElementById('detailed-results');
+                
+                let complianceLevel = 'Nicht konform';
+                let recommendations = [];
+                
+                if (totalScore >= 95) {
+                    complianceLevel = '✅ BITV 2.0 Level AA konform';
+                } else if (totalScore >= 85) {
+                    complianceLevel = '⚠️ BITV 2.0 Level A konform (Level AA Verbesserungen nötig)';
+                    recommendations.push('Arbeiten Sie an Level AA Anforderungen');
+                } else if (totalScore >= 70) {
+                    complianceLevel = '❌ Teilweise konform (kritische Probleme vorhanden)';
+                    recommendations.push('Beheben Sie kritische Accessibility-Probleme');
+                    recommendations.push('Führen Sie Screen Reader Tests durch');
+                } else {
+                    complianceLevel = '❌ Nicht BITV 2.0 konform';
+                    recommendations.push('Umfassende Accessibility-Überarbeitung erforderlich');
+                    recommendations.push('Professionelle BITV 2.0 Beratung empfohlen');
+                }
+                
+                let html = `
+                    <h4>📊 Detaillierte Ergebnisse:</h4>
+                    <p><strong>Compliance Status:</strong> ${complianceLevel}</p>
+                    <p><strong>Automatisierte Tests:</strong> ${passedAutomated}/${totalTests} bestanden</p>
+                    <p><strong>Manuelle Tests:</strong> ${passedManual}/${totalManual} bestanden</p>
+                    <p><strong>Gesamt-Score:</strong> ${totalScore}%</p>
+                `;
+                
+                if (recommendations.length > 0) {
+                    html += '<h5>🎯 Empfehlungen:</h5><ul>';
+                    recommendations.forEach(rec => {
+                        html += `<li>${rec}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                html += `
+                    <h5>📋 Nächste Schritte:</h5>
+                    <ol>
+                        <li>Führen Sie alle manuellen Tests durch</li>
+                        <li>Testen Sie mit Screen Readern (NVDA, JAWS)</li>
+                        <li>Überprüfen Sie Farbkontraste mit WAVE oder axe-core</li>
+                        <li>Validieren Sie Tastaturnavigation</li>
+                        <li>Lassen Sie eine professionelle BITV 2.0 Prüfung durchführen</li>
+                    </ol>
+                `;
+                
+                reportContainer.innerHTML = html;
+            }
+
+            generateReport() {
+                this.updateScore();
+                
+                // Add additional test instructions
+                const contrastContainer = document.getElementById('contrast-tests');
+                contrastContainer.innerHTML = `
+                    <p><strong>🔍 Farbkontrast testen:</strong></p>
+                    <ol>
+                        <li>Verwenden Sie das <a href="https://wave.webaim.org/" target="_blank">WAVE Tool</a></li>
+                        <li>Oder installieren Sie die <a href="https://chrome.google.com/webstore/detail/axe-devtools-web-accessibility/lhdoppojpmngadmnindnejefpokejbdd" target="_blank">axe DevTools Extension</a></li>
+                        <li>Überprüfen Sie alle Text/Hintergrund-Kombinationen</li>
+                        <li><strong>Mindestanforderung:</strong> 4.5:1 Kontrast für normalen Text</li>
+                    </ol>
+                    <div class="test-result warning-result">
+                        Manuelle Überprüfung erforderlich
+                    </div>
+                `;
+                
+                console.log('✅ BITV 2.0 Test abgeschlossen');
+                console.log('Ergebnisse:', this.results);
+            }
+        }
+
+        // Start testing when page loads
+        window.addEventListener('load', () => {
+            console.log('🚀 Starte BITV 2.0 Accessibility Tests...');
+            new BITVAccessibilityTester();
+        });
+
+        // Add keyboard shortcuts for testing
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        console.log('⌨️ Keyboard shortcut Alt+1 funktioniert');
+                        alert('Keyboard Navigation Test: Alt+1 funktioniert!');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        console.log('⌨️ Keyboard shortcut Alt+2 funktioniert');
+                        document.getElementById('keyboard-tests').scrollIntoView();
+                        break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                console.log('⌨️ Escape key funktioniert');
+                // Test that escape key works for modals/dialogs
+            }
+        });
+    </script>
+</body>
+</html>

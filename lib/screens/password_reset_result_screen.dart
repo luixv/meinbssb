@@ -8,7 +8,7 @@ import 'package:meinbssb/constants/messages.dart';
 
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/login_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
@@ -28,7 +28,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Passwort zurücksetzen',
       userData: userData,
       isLoggedIn: isLoggedIn,

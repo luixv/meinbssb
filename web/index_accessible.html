@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  
+  <!-- Enhanced meta information for BITV 2.0 compliance -->
+  <meta name="description" content="Mein BSSB - Digitale Plattform des Bayerischen Sportschützenbundes für Mitglieder. Schulungen buchen, Schützenausweis verwalten, Startrechte einsehen.">
+  <meta name="keywords" content="BSSB, Bayerischer Sportschützenbund, Schießsport, Schulungen, Mitglieder, Schützenausweis, Startrechte">
+  <meta name="author" content="Bayerischer Sportschützenbund e.V.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Accessibility and theme meta tags with cross-browser compatibility -->
+  <!-- 
+    BITV 2.0 Cross-Browser Theme Implementation:
+    - Uses conditional loading for browser-specific features
+    - Provides CSS fallbacks for all browsers
+    - Maintains consistent BSSB branding across platforms
+  -->
+  <script>
+    // Progressive enhancement: Add theme-color meta tags only for supported browsers
+    (function() {
+      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+      const isEdge = /Edge/.test(navigator.userAgent);
+      const isWebKit = /WebKit/.test(navigator.userAgent);
+      
+      if (isChrome || isSafari || isEdge || isWebKit) {
+        // Add theme-color meta tags for supported browsers
+        const lightTheme = document.createElement('meta');
+        lightTheme.name = 'theme-color';
+        lightTheme.content = '#0175C2';
+        lightTheme.media = '(prefers-color-scheme: light)';
+        document.head.appendChild(lightTheme);
+        
+        const darkTheme = document.createElement('meta');
+        darkTheme.name = 'theme-color';
+        darkTheme.content = '#014a8a';
+        darkTheme.media = '(prefers-color-scheme: dark)';
+        document.head.appendChild(darkTheme);
+      }
+    })();
+  </script>
+  
+  <!-- Cross-browser theme color fallback with BITV 2.0 compliance -->
+  <style>
+    /* CSS Custom Properties for consistent theming */
+    :root {
+      --bssb-primary: #0175C2;
+      --bssb-primary-dark: #014a8a;
+      --bssb-background: #ffffff;
+      --bssb-text: #333333;
+    }
+    
+    /* Dark mode support for accessibility */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bssb-primary: #014a8a;
+        --bssb-background: #1a1a1a;
+        --bssb-text: #ffffff;
+      }
+    }
+    
+    /* Browser chrome theming fallback */
+    body {
+      background-color: var(--bssb-background);
+      color: var(--bssb-text);
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Ensure Flutter app container has proper background */
+    flt-glass-pane, 
+    flutter-view,
+    #app-container {
+      background-color: var(--bssb-background) !important;
+      min-height: 100vh;
+    }
+    
+    /* Loading screen with BSSB branding */
+    .loading-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bssb-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    /* Hide loading when Flutter is ready */
+    body.flutter-ready .loading-indicator {
+      display: none;
+    }
+  </style>
+  <meta name="color-scheme" content="light">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mein BSSB">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon with multiple sizes -->
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="228x228" href="favicon-228x228.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <title>Mein BSSB - Bayerischer Sportschützenbund</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Preload critical resources for performance -->
+  <link rel="preload" href="flutter.js" as="script">
+  <link rel="preload" href="main.dart.js" as="script">
+
+  <!-- BITV 2.0 Accessibility Styles -->
+  <style>
+    /* Skip navigation link for keyboard users */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 6px;
+      background: #0175C2;
+      color: white;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: top 0.3s ease;
+      z-index: 9999;
+      border: 2px solid white;
+    }
+
+    .skip-link:focus {
+      top: 6px;
+      outline: 3px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    /* Enhanced focus indicators */
+    *:focus {
+      outline: 3px solid #0175C2;
+      outline-offset: 2px;
+    }
+
+    button:focus, 
+    input:focus, 
+    select:focus, 
+    textarea:focus,
+    a:focus {
+      outline: 3px solid #0175C2;
+      outline-offset: 2px;
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      * {
+        border-color: ButtonText !important;
+        color: ButtonText !important;
+      }
+      
+      .skip-link {
+        background: ButtonFace !important;
+        color: ButtonText !important;
+        border-color: ButtonText !important;
+      }
+    }
+
+    /* Reduced motion support for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Loading state styling */
+    #loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #loading-message {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 1.2rem;
+      color: #0175C2;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e3f2fd;
+      border-top: 4px solid #0175C2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Ensure app container has proper ARIA structure */
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Screen reader only content */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* No-script styling */
+    .no-script-message {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      color: #856404;
+      text-align: center;
+      margin: 20px;
+    }
+  </style>
+
+  <script>
+    // Disable service worker for now
+    const serviceWorkerVersion = null;
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+</head>
+
+<body>
+  <!-- Skip navigation for keyboard accessibility -->
+  <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+  
+  <!-- Screen reader announcement for page structure -->
+  <div class="sr-only">
+    <h1>Mein BSSB - Bayerischer Sportschützenbund</h1>
+    <p>Digitale Plattform für BSSB Mitglieder</p>
+  </div>
+
+  <!-- Loading state with accessibility -->
+  <div id="loading-container" role="status" aria-live="polite" aria-label="Anwendung wird geladen">
+    <div id="loading-message">
+      <p>Mein BSSB wird geladen...</p>
+      <p class="sr-only">Bitte warten Sie, während die Anwendung geladen wird. Dies kann einen Moment dauern.</p>
+    </div>
+    <div id="loading-spinner" aria-hidden="true"></div>
+  </div>
+
+  <!-- Main application container -->
+  <div id="app" role="application" aria-label="Mein BSSB Anwendung">
+    <!-- Flutter app will be rendered here -->
+  </div>
+
+  <!-- Fallback for users without JavaScript -->
+  <noscript>
+    <div class="no-script-message" role="alert">
+      <h2>JavaScript erforderlich</h2>
+      <p>Diese Anwendung benötigt JavaScript für den Betrieb. Bitte aktivieren Sie JavaScript in Ihrem Browser und laden Sie die Seite neu.</p>
+      <p>Falls Sie Hilfe benötigen, wenden Sie sich bitte an: <a href="mailto:info@bssb.de">info@bssb.de</a></p>
+    </div>
+  </noscript>
+
+  <script>
+    window.addEventListener('load', function (ev) {
+      // Hide loading screen when app starts
+      const hideLoading = () => {
+        const loadingContainer = document.getElementById('loading-container');
+        if (loadingContainer) {
+          loadingContainer.style.display = 'none';
+        }
+      };
+
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine({
+            useColorEmoji: true,
+            renderer: "html", // Use HTML renderer for better accessibility
+            // Configure accessibility settings
+            hostElement: document.getElementById('app'),
+          }).then(function (appRunner) {
+            hideLoading();
+            appRunner.runApp();
+            
+            // Announce that app is ready for screen readers
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = 'Mein BSSB Anwendung ist jetzt geladen und bereit zur Nutzung.';
+            document.body.appendChild(announcement);
+            
+            // Remove announcement after screen readers have processed it
+            setTimeout(() => {
+              document.body.removeChild(announcement);
+            }, 3000);
+          });
+        }
+      });
+    });
+
+    // Handle loading timeout
+    setTimeout(() => {
+      const loadingContainer = document.getElementById('loading-container');
+      if (loadingContainer && loadingContainer.style.display !== 'none') {
+        const errorMessage = document.createElement('div');
+        errorMessage.innerHTML = `
+          <p>Die Anwendung konnte nicht geladen werden. Bitte:</p>
+          <ul>
+            <li>Überprüfen Sie Ihre Internetverbindung</li>
+            <li>Laden Sie die Seite neu (F5 oder Strg+R)</li>
+            <li>Kontaktieren Sie den Support bei anhaltenden Problemen</li>
+          </ul>
+        `;
+        errorMessage.setAttribute('role', 'alert');
+        errorMessage.style.color = '#721c24';
+        errorMessage.style.background = '#f8d7da';
+        errorMessage.style.padding = '20px';
+        errorMessage.style.borderRadius = '4px';
+        errorMessage.style.border = '1px solid #f5c6cb';
+        
+        const loadingMessage = document.getElementById('loading-message');
+        if (loadingMessage) {
+          loadingMessage.innerHTML = '';
+          loadingMessage.appendChild(errorMessage);
+        }
+      }
+    }, 30000); // 30 second timeout
+  </script>
+</body>
+
+</html>

@@ -3,7 +3,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/screens/password_reset_fail_screen.dart';
 import 'package:meinbssb/screens/password_reset_success_screen.dart';
 
@@ -58,11 +58,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (entry != null) {
       // Check if personId matches
       final dynamic entryPersonId = entry['person_id'];
-      if (entryPersonId == null || entryPersonId.toString() != widget.personId) {
+      if (entryPersonId == null ||
+          entryPersonId.toString() != widget.personId) {
         _failAndExit('Ungültiger Link: PersonID stimmt nicht überein.');
         return;
       }
-      
+
       // Check if already verified
       if (entry['is_used'] == true) {
         _failAndExit(
@@ -174,7 +175,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       );
     }
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Passwort zurücksetzen',
       userData: null,
       isLoggedIn: false,

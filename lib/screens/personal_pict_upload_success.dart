@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart'; // Import UIStyles
-import '/screens/base_screen_layout.dart';
+import '/constants/ui_styles.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/models/user_data.dart';
-import '/widgets/scaled_text.dart'; // Import ScaledText
-import '../providers/font_size_provider.dart'; // Import FontSizeProvider
+import '/widgets/scaled_text.dart';
+import '../providers/font_size_provider.dart';
 
 class PersonalPictUploadSuccessScreen extends StatelessWidget {
   const PersonalPictUploadSuccessScreen({
@@ -23,7 +23,7 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Profilbild erfolgreich', // Updated title
       userData: userData,
       isLoggedIn: isLoggedIn, // User should be logged in here

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/screens/schulungen_screen.dart';
+import 'package:meinbssb/screens/schulungen_screen_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:provider/provider.dart';
@@ -1199,7 +1199,9 @@ void main() {
       // Should show error dialog
       expect(find.text('Fehler'), findsOneWidget);
       expect(
-          find.text('Details konnten nicht geladen werden.'), findsOneWidget,);
+        find.text('Details konnten nicht geladen werden.'),
+        findsOneWidget,
+      );
       expect(find.text('OK'), findsOneWidget);
 
       // Tap OK to close error dialog

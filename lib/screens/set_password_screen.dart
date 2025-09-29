@@ -3,7 +3,7 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/screens/registration_fail_screen.dart';
 import 'package:meinbssb/screens/registration_success_screen.dart';
 
@@ -180,7 +180,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       );
     }
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Passwort setzen',
       userData: null,
       isLoggedIn: false,

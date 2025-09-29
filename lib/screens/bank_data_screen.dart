@@ -9,7 +9,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/network_service.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/screens/bank_data_success_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
@@ -438,7 +438,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     // Wrap entire content in a Stack
     return Stack(
       children: [
-        BaseScreenLayout(
+        BaseScreenLayoutAccessible(
           title: 'Bankdaten',
           userData: widget.userData,
           isLoggedIn: widget.isLoggedIn,

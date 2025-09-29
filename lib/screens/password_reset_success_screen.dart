@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/models/user_data.dart';
 
 class PasswordResetSuccessScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class PasswordResetSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Passwort-Reset erfolgreich',
       userData: userData,
       isLoggedIn: false,

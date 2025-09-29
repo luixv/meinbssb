@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/models/user_data.dart';
 
 class EmailVerificationSuccessScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class EmailVerificationSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'E-Mail-Bestätigung erfolgreich',
       userData: userData,
       isLoggedIn: userData != null,

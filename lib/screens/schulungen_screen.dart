@@ -9,7 +9,7 @@ import '../models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
@@ -21,9 +21,9 @@ import '/services/core/email_service.dart';
 import '/screens/agb_screen.dart';
 
 import 'schulungen/schulungen_search_screen.dart';
-import 'schulungen/schulungen_register_person_dialog.dart';
+import 'schulungen/schulungen_register_person_dialog_accessible.dart';
 import 'schulungen/schulungen_list_item.dart';
-import 'schulungen/schulungen_details_dialog.dart';
+import 'schulungen/schulungen_details_dialog_accessible.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -852,7 +852,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Aus- und Weiterbildung',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

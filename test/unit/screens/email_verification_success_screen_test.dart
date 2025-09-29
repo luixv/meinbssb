@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/email_verification_success_screen.dart';
+import 'package:meinbssb/screens/email_verification_success_screen_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -49,7 +49,7 @@ void main() {
           '/contact-data': (context) =>
               const Scaffold(body: Text('Contact Data Screen')),
         },
-        home: EmailVerificationSuccessScreen(
+        home: EmailVerificationSuccessScreenAccessible(
           message: message,
           userData: userData,
         ),
@@ -59,25 +59,39 @@ void main() {
 
   testWidgets('shows success icon and message', (tester) async {
     await tester.pumpWidget(
-        buildTestWidget(message: 'Erfolgstext', userData: userData),);
+      buildTestWidget(message: 'Erfolgstext', userData: userData),
+    );
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(find.text('Erfolgstext'), findsOneWidget);
     expect(find.text('E-Mail-Bestätigung erfolgreich'), findsOneWidget);
   });
 
-  testWidgets('FAB navigates to contact-data when userData is not null',
+  testWidgets(
+      'action button navigates to contact-data when userData is not null',
       (tester) async {
     await tester.pumpWidget(
-        buildTestWidget(message: 'Erfolgstext', userData: userData),);
-    await tester.tap(find.byType(FloatingActionButton));
+      buildTestWidget(message: 'Erfolgstext', userData: userData),
+    );
+
+    // Find and tap the button by its text
+    final buttonFinder = find.text('Zu Kontaktdaten');
+    expect(buttonFinder, findsOneWidget);
+
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
     expect(find.text('Contact Data Screen'), findsOneWidget);
   });
 
-  testWidgets('FAB navigates to login when userData is null', (tester) async {
+  testWidgets('action button navigates to login when userData is null',
+      (tester) async {
     await tester
         .pumpWidget(buildTestWidget(message: 'Erfolgstext', userData: null));
-    await tester.tap(find.byType(FloatingActionButton));
+
+    // Look for text on button instead of widget type
+    final buttonFinder = find.text('Zur Anmeldung');
+    expect(buttonFinder, findsOneWidget);
+
+    await tester.tap(buttonFinder);
     await tester.pumpAndSettle();
     expect(find.text('Login Screen'), findsOneWidget);
   });

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/constants/ui_constants.dart';
 
 class OktoberfestEintrittFestzelt extends StatefulWidget {
@@ -61,7 +61,7 @@ class OktoberfestEintrittFestzeltState
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Eintritt Festzelt',
       userData: null,
       isLoggedIn: true,

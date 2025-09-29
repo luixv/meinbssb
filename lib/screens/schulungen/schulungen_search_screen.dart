@@ -9,8 +9,8 @@ import '/models/user_data.dart';
 import '/models/bezirk_data.dart';
 import '/models/schulungstermin_data.dart';
 
-import '/screens/base_screen_layout.dart';
-import '/screens/schulungen_screen.dart';
+import '/screens/base_screen_layout_accessible.dart';
+import '/screens/schulungen_screen_accessible.dart';
 
 import '/widgets/scaled_text.dart';
 
@@ -24,7 +24,6 @@ class SchulungenSearchScreen extends StatefulWidget {
     super.key,
   });
 
-  
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
@@ -193,7 +192,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Aus- und Weiterbildung',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

@@ -7,9 +7,9 @@ import '../models/result_data.dart';
 import '/models/user_data.dart';
 
 import '/constants/ui_constants.dart';
-import 'base_screen_layout.dart';
-import '/widgets/scaled_text.dart'; // Assuming ScaledText is available
-import '../providers/font_size_provider.dart'; // Import FontSizeProvider
+import 'base_screen_layout_accessible.dart';
+import '/widgets/scaled_text.dart';
+import '../providers/font_size_provider.dart';
 
 class OktoberfestResultsScreen extends StatefulWidget {
   const OktoberfestResultsScreen({
@@ -53,7 +53,7 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
   Widget build(BuildContext context) {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Meine Ergebnisse',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 
 import '/screens/personal_data_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/bank_data_screen.dart';
-import '/screens/change_password_screen.dart';
-import '/screens/absolvierte_schulungen_screen.dart';
+import '/screens/contact_data_screen_accessible.dart';
+import '/screens/bank_data_screen_accessible.dart';
+import '/screens/change_password_screen_accessible.dart';
+import '/screens/absolvierte_schulungen_screen_accessible.dart';
 import '/screens/logo_widget.dart';
 import '/screens/personal_pict_upload_screen.dart';
-import '/screens/ausweis_bestellen_screen.dart';
+import '/screens/ausweis_bestellen_screen_accessible.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Profil',
       userData: userData,
       isLoggedIn: isLoggedIn,
@@ -87,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ContactDataScreen(
+                    builder: (context) => ContactDataScreenAccessible(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -104,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BankDataScreen(
+                    builder: (context) => BankDataScreenAccessible(
                       userData,
                       webloginId: userData?.webLoginId ?? 0,
                       isLoggedIn: isLoggedIn,
@@ -122,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AbsolvierteSchulungenScreen(
+                    builder: (context) => AbsolvierteSchulungenScreenAccessible(
                       userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -139,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChangePasswordScreen(
+                    builder: (context) => ChangePasswordScreenAccessible(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -156,7 +156,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AusweisBestellenScreen(
+                    builder: (context) => AusweisBestellenScreenAccessible(
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

@@ -19,8 +19,104 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Mein BSSB - Bayerischer Sportschützenbund - Barrierefreie Web-Anwendung für Mitglieder, Schulungen und Schützenausweise">
+  <meta name="keywords" content="BSSB, Bayerischer Sportschützenbund, Schießsport, Schulungen, Mitglieder, Schützenausweis, Barrierefreiheit">
+  <meta name="author" content="Bayerischer Sportschützenbund e.V.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- BITV 2.0 Cross-Browser Theme Implementation -->
+  <script>
+    // Progressive enhancement: Add theme-color meta tags only for supported browsers
+    (function() {
+      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+      const isEdge = /Edge/.test(navigator.userAgent);
+      const isWebKit = /WebKit/.test(navigator.userAgent);
+      
+      if (isChrome || isSafari || isEdge || isWebKit) {
+        // Add theme-color meta tags for supported browsers
+        const lightTheme = document.createElement('meta');
+        lightTheme.name = 'theme-color';
+        lightTheme.content = '#0175C2';
+        lightTheme.media = '(prefers-color-scheme: light)';
+        document.head.appendChild(lightTheme);
+        
+        const darkTheme = document.createElement('meta');
+        darkTheme.name = 'theme-color';
+        darkTheme.content = '#014a8a';
+        darkTheme.media = '(prefers-color-scheme: dark)';
+        document.head.appendChild(darkTheme);
+      }
+    })();
+  </script>
+  
+  <!-- Cross-browser CSS theming fallbacks -->
+  <style>
+    /* BITV 2.0 compliant CSS variables for theming */
+    :root {
+      --bssb-primary: #0175C2;
+      --bssb-primary-dark: #014a8a;
+      --bssb-background: #ffffff;
+      --bssb-text: #333333;
+    }
+    
+    /* Dark mode accessibility support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bssb-primary: #014a8a;
+        --bssb-background: #1a1a1a;
+        --bssb-text: #ffffff;
+      }
+    }
+    
+    /* High contrast mode support for accessibility */
+    @media (prefers-contrast: high) {
+      :root {
+        --bssb-primary: #000080;
+        --bssb-text: #000000;
+        --bssb-background: #ffffff;
+      }
+    }
+    
+    body {
+      background-color: var(--bssb-background);
+      color: var(--bssb-text);
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+    
+    /* Flutter app container styling */
+    flt-glass-pane, 
+    flutter-view {
+      background-color: var(--bssb-background) !important;
+      min-height: 100vh;
+    }
+    
+    /* Loading screen with accessibility considerations */
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--bssb-primary);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    /* Screen reader support for loading state */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">

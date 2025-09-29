@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
-import '/screens/base_screen_layout.dart';
-
-// Assuming ScaledText is defined elsewhere and handles font scaling properly
+import '/screens/base_screen_layout_accessible.dart';
 
 class ImpressumScreen extends StatelessWidget {
   const ImpressumScreen({
@@ -19,7 +17,7 @@ class ImpressumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Impressum',
       userData: userData,
       isLoggedIn: isLoggedIn,

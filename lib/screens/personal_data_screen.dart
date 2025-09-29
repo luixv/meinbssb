@@ -10,9 +10,9 @@ import 'package:meinbssb/screens/personal_data_success_screen.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
+import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -243,7 +243,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     // Access FontSizeProvider at the top level of the build method
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Persönliche Daten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

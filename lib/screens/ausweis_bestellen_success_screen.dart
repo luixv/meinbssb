@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/constants/messages.dart';
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '../providers/font_size_provider.dart';
@@ -24,7 +24,7 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: Messages.ausweisBestellenTitle,
       userData: userData,
       isLoggedIn: isLoggedIn,

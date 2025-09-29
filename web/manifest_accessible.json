@@ -1,0 +1,104 @@
+{
+  "name": "Mein BSSB - Bayerischer Sportschützenbund",
+  "short_name": "Mein BSSB",
+  "description": "Digitale Plattform für BSSB Mitglieder mit Schulungen, Ausweis und Verwaltung. Barrierefreie Nutzung für alle Mitglieder.",
+  "lang": "de",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#0175C2",
+  "categories": ["sports", "education", "productivity"],
+  "prefer_related_applications": false,
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/Icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/Icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Schulungen",
+      "short_name": "Schulungen",
+      "description": "Schulungen und Kurse suchen und buchen",
+      "url": "/schulungen?utm_source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "icons/Icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Profil",
+      "short_name": "Profil",
+      "description": "Persönliche Daten und Profileinstellungen",
+      "url": "/profile?utm_source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "icons/Icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Schützenausweis",
+      "short_name": "Ausweis",
+      "description": "Digitaler Schützenausweis anzeigen",
+      "url": "/ausweis?utm_source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "icons/Icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-home.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "form_factor": "wide",
+      "label": "Mein BSSB Startseite auf Desktop"
+    },
+    {
+      "src": "screenshots/mobile-home.png",
+      "type": "image/png",
+      "sizes": "390x844",
+      "form_factor": "narrow",
+      "label": "Mein BSSB Startseite auf Mobilgerät"
+    }
+  ]
+}

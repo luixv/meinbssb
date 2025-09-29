@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/screens/base_screen_layout.dart';
+import '/screens/base_screen_layout_accessible.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/screens/email_verification_success_screen.dart';
+import '/screens/email_verification_success_screen_accessible.dart';
 import '/screens/email_verification_fail_screen.dart';
 import '/models/contact_data.dart';
 
@@ -36,19 +36,21 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   Future<void> _processEmailVerification() async {
     if (_isProcessing) return;
-    
+
     setState(() {
       _isProcessing = true;
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      
+
       // Get email validation entry by token
-      final validationEntry = await apiService.getEmailValidationByToken(widget.verificationToken);
-      
+      final validationEntry =
+          await apiService.getEmailValidationByToken(widget.verificationToken);
+
       if (validationEntry == null) {
-        _navigateToFailScreen('Der Bestätigungslink ist ungültig oder bereits verwendet worden.');
+        _navigateToFailScreen(
+            'Der Bestätigungslink ist ungültig oder bereits verwendet worden.',);
         return;
       }
 
@@ -65,8 +67,9 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
       }
 
       // Mark as validated
-      final success = await apiService.markEmailValidationAsValidated(widget.verificationToken);
-      
+      final success = await apiService
+          .markEmailValidationAsValidated(widget.verificationToken);
+
       if (!success) {
         _navigateToFailScreen('Fehler beim Bestätigen der E-Mail-Adresse.');
         return;
@@ -81,13 +84,14 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
       );
 
       final contactSuccess = await apiService.addKontakt(contact);
-      
-      if (contactSuccess) {
-        _navigateToSuccessScreen('Ihre E-Mail-Adresse wurde erfolgreich bestätigt und zu Ihren Kontaktdaten hinzugefügt.');
-      } else {
-        _navigateToFailScreen('E-Mail-Adresse bestätigt, aber Fehler beim Hinzufügen zu den Kontaktdaten.');
-      }
 
+      if (contactSuccess) {
+        _navigateToSuccessScreen(
+            'Ihre E-Mail-Adresse wurde erfolgreich bestätigt und zu Ihren Kontaktdaten hinzugefügt.',);
+      } else {
+        _navigateToFailScreen(
+            'E-Mail-Adresse bestätigt, aber Fehler beim Hinzufügen zu den Kontaktdaten.',);
+      }
     } catch (e) {
       LoggerService.logError('Error during email verification: $e');
       _navigateToFailScreen('Ein Fehler ist aufgetreten: $e');
@@ -96,10 +100,10 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _navigateToSuccessScreen(String message) {
     if (!mounted) return;
-    
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => EmailVerificationSuccessScreen(
+        builder: (context) => EmailVerificationSuccessScreenAccessible(
           message: message,
           userData: null, // We don't have user data in this context
         ),
@@ -109,7 +113,7 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _navigateToFailScreen(String message) {
     if (!mounted) return;
-    
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => EmailVerificationFailScreen(
@@ -122,7 +126,7 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'E-Mail-Bestätigung',
       userData: null,
       isLoggedIn: false,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meinbssb/screens/cookie_consent_screen.dart';
+import 'package:meinbssb/screens/cookie_consent_screen_accessible.dart';
 
 void main() {
   setUp(() async {
@@ -10,7 +10,7 @@ void main() {
 
   Widget buildTestWidget({Widget? child}) {
     return MaterialApp(
-      home: CookieConsent(
+      home: CookieConsentAccessible(
         child: child ?? const Text('Main Content'),
       ),
     );
@@ -21,8 +21,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-        find.byKey(const ValueKey('cookieConsentBackground')), findsOneWidget,);
-    expect(find.text('Zustimmen'), findsOneWidget);
+      find.byKey(const ValueKey('cookieConsentAccessibleBackground')),
+      findsOneWidget,
+    );
+    expect(find.text('Cookies akzeptieren'), findsOneWidget);
   });
 
   testWidgets('does not show consent overlay when accepted', (tester) async {
@@ -32,7 +34,10 @@ void main() {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('cookieConsentBackground')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('cookieConsentAccessibleBackground')),
+      findsNothing,
+    );
     expect(find.text('Main Content'), findsOneWidget);
   });
 
@@ -42,12 +47,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-        find.byKey(const ValueKey('cookieConsentBackground')), findsOneWidget,);
+      find.byKey(const ValueKey('cookieConsentAccessibleBackground')),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.text('Zustimmen'));
+    await tester.tap(find.text('Cookies akzeptieren'));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('cookieConsentBackground')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('cookieConsentAccessibleBackground')),
+      findsNothing,
+    );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool('cookieConsentAccepted'), isTrue);

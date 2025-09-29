@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: contact_data_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -10,7 +6,7 @@ import 'package:meinbssb/constants/messages.dart';
 
 import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
@@ -305,7 +301,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      
+
       // If it's an email contact, handle email validation flow
       if (contact.isEmail) {
         await _handleEmailValidation(contact, dialogContext);
@@ -355,17 +351,20 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
   }
 
-  Future<void> _handleEmailValidation(Contact contact, BuildContext dialogContext) async {
+  Future<void> _handleEmailValidation(
+    Contact contact,
+    BuildContext dialogContext,
+  ) async {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final authService = Provider.of<AuthService>(context, listen: false);
-      
+
       // Generate verification token
       final verificationToken = authService.generateVerificationToken();
-      
+
       // Determine email type
       final emailType = contact.type == 4 ? 'private' : 'business';
-      
+
       // Create email validation entry in database
       await apiService.createEmailValidationEntry(
         personId: widget.userData!.personId.toString(),
@@ -373,7 +372,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         emailType: emailType,
         verificationToken: verificationToken,
       );
-      
+
       // Send validation email
       await apiService.sendEmailValidationNotifications(
         personId: widget.userData!.personId.toString(),
@@ -386,20 +385,21 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       );
 
       if (!mounted) return;
-      
+
       // Show success message in German
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.'),
+          content: Text(
+            'Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.',
+          ),
           duration: UIConstants.snackbarDuration,
           backgroundColor: Colors.orange,
         ),
       );
-      
+
       _kontaktController.clear();
       _selectedKontaktTyp = null;
       Navigator.of(dialogContext).pop();
-      
     } catch (e) {
       LoggerService.logError('Exception during email validation setup: $e');
       if (mounted) {
@@ -644,7 +644,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Kontaktdaten',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

@@ -5,7 +5,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 
 class SchuetzenausweisScreen extends StatefulWidget {
@@ -42,7 +42,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
+    return BaseScreenLayoutAccessible(
       title: 'Schützenausweis',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/screens/contact_data_screen.dart';
+import 'package:meinbssb/screens/contact_data_screen_accessible.dart';
 import '../helpers/test_helper.dart';
 
 void main() {
@@ -32,7 +32,7 @@ void main() {
     VoidCallback? onLogout,
   }) {
     return TestHelper.createTestApp(
-      home: ContactDataScreen(
+      home: ContactDataScreenAccessible(
         userData,
         isLoggedIn: isLoggedIn,
         onLogout: onLogout ?? () {},
@@ -49,7 +49,7 @@ void main() {
       await tester.pump(); // First pump to build the widget
 
       // Assert
-      expect(find.text('Kontaktdaten'), findsOneWidget);
+      expect(find.text('Kontaktdaten verwalten'), findsOneWidget);
     });
 
     testWidgets('add contact button is present', (WidgetTester tester) async {

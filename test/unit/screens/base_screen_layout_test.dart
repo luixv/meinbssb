@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/base_screen_layout_accessible.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -29,7 +29,7 @@ void main() {
     return ChangeNotifierProvider<FontSizeProvider>(
       create: (_) => FontSizeProvider(),
       child: MaterialApp(
-        home: BaseScreenLayout(
+        home: BaseScreenLayoutAccessible(
           title: title,
           userData: dummyUser,
           isLoggedIn: true,
