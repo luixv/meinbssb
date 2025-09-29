@@ -263,7 +263,7 @@ class SchulungenDetailsDialog {
                                           ),
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Text(
                                                 'Lehrgangsleiter:',
@@ -276,6 +276,8 @@ class SchulungenDetailsDialog {
                                                 height: UIConstants.spacingXS,
                                               ),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   const Icon(
                                                     Icons.email,
@@ -299,6 +301,8 @@ class SchulungenDetailsDialog {
                                                 height: UIConstants.spacingXXS,
                                               ),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   const Icon(
                                                     Icons.phone,
