@@ -13,7 +13,7 @@ class BankService {
   final HttpClient _httpClient;
 
   /// Fetches bank data for a given weblogin ID.
-  Future<List<BankData>> fetchBankData(int webloginId) async {
+  Future<List<BankData>> fetchBankdatenMyBSSB(int webloginId) async {
     try {
       final endpoint = 'BankdatenMyBSSB/$webloginId';
       final dynamic response = await _httpClient.get(endpoint);

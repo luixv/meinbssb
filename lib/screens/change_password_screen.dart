@@ -84,7 +84,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       }
 
       // If current password is valid, proceed with password change
-      final result = await apiService.changePassword(
+      final result = await apiService.myBSSBPasswortAendern(
         personId,
         _newPasswordController.text,
       );

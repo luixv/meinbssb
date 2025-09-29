@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/services/api/oktoberfest_service.dart';
 import '/services/api_service.dart';
-import '/services/core/config_service.dart';
 
 import '../models/gewinn_data.dart';
 import '/constants/ui_styles.dart';
@@ -20,13 +18,13 @@ class OktoberfestGewinnScreen extends StatefulWidget {
   const OktoberfestGewinnScreen({
     super.key,
     required this.passnummer,
-    required this.configService,
+    required this.apiService,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
   final String passnummer;
-  final ConfigService configService;
+  final ApiService apiService;
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
@@ -68,7 +66,8 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
     final userData = widget.userData;
     BankData? bankData;
     if (userData != null) {
-      final bankList = await apiService.fetchBankData(userData.webLoginId);
+      final bankList =
+          await apiService.fetchBankdatenMyBSSB(userData.webLoginId);
       if (bankList.isNotEmpty) {
         bankData = bankList.first;
       }
@@ -94,14 +93,11 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
       _gewinne.clear();
       _bankDataResult = null;
     });
-    final oktoberfestService =
-        Provider.of<OktoberfestService>(context, listen: false);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
-      final result = await oktoberfestService.fetchGewinne(
-        jahr: _selectedYear,
-        passnummer: widget.passnummer,
-        configService: widget.configService,
+      final result = await widget.apiService.fetchGewinne(
+        _selectedYear,
+        widget.passnummer,
       );
       if (!mounted) return;
       setState(() {
@@ -323,11 +319,6 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                       .startsWith('DE') ||
                                   _bankDataResult!.bic.isNotEmpty))
                           ? () async {
-                              final oktoberfestService =
-                                  Provider.of<OktoberfestService>(
-                                context,
-                                listen: false,
-                              );
                               setState(() {
                                 _loading = true;
                               });
@@ -336,12 +327,11 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                               final navigator = Navigator.of(context);
                               try {
                                 final result =
-                                    await oktoberfestService.gewinneAbrufen(
+                                    await widget.apiService.gewinneAbrufen(
                                   gewinnIDs:
                                       _gewinne.map((g) => g.gewinnId).toList(),
                                   iban: _bankDataResult!.iban,
                                   passnummer: widget.passnummer,
-                                  configService: widget.configService,
                                 );
                                 if (!mounted) return;
                                 if (result) {

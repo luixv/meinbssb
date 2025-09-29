@@ -54,7 +54,8 @@ void main() {
       );
     });
 
-    testWidgets('validates password strength requirements', (WidgetTester tester) async {
+    testWidgets('validates password strength requirements',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createChangePasswordScreen());
       await tester.pumpAndSettle();
 
@@ -71,13 +72,15 @@ void main() {
       );
     });
 
-    testWidgets('validates password confirmation match', (WidgetTester tester) async {
+    testWidgets('validates password confirmation match',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createChangePasswordScreen());
       await tester.pumpAndSettle();
 
       // Enter different passwords
       await tester.enterText(find.byType(TextFormField).at(1), 'ValidPass123!');
-      await tester.enterText(find.byType(TextFormField).at(2), 'DifferentPass123!');
+      await tester.enterText(
+          find.byType(TextFormField).at(2), 'DifferentPass123!',);
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save));
@@ -105,7 +108,8 @@ void main() {
       expect(find.byIcon(Icons.visibility_off).first, findsOneWidget);
     });
 
-    testWidgets('shows password strength indicator', (WidgetTester tester) async {
+    testWidgets('shows password strength indicator',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createChangePasswordScreen());
       await tester.pumpAndSettle();
 
@@ -118,7 +122,8 @@ void main() {
       expect(find.text('Stark'), findsOneWidget);
     });
 
-    testWidgets('successfully changes password with valid data', (WidgetTester tester) async {
+    testWidgets('successfully changes password with valid data',
+        (WidgetTester tester) async {
       const userData = UserData(
         personId: 12345,
         webLoginId: 67890,
@@ -139,7 +144,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Fill in all required fields
-      await tester.enterText(find.byType(TextFormField).at(0), 'currentPassword');
+      await tester.enterText(
+          find.byType(TextFormField).at(0), 'currentPassword',);
       await tester.enterText(find.byType(TextFormField).at(1), 'NewPass123!');
       await tester.enterText(find.byType(TextFormField).at(2), 'NewPass123!');
       await tester.pumpAndSettle();
@@ -151,7 +157,8 @@ void main() {
       // Verify that the API service methods were called
       verify(TestHelper.mockApiService.login(any, any)).called(1);
       // changePassword is only called if login is successful (ResultType == 1)
-      verify(TestHelper.mockApiService.changePassword(any, any)).called(1);
+      verify(TestHelper.mockApiService.myBSSBPasswortAendern(any, any))
+          .called(1);
     });
 
     testWidgets('handles API error gracefully', (WidgetTester tester) async {

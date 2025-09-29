@@ -234,7 +234,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> changePassword(
+  Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int personId,
     String newPassword,
   ) async {

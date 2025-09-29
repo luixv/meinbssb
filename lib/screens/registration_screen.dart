@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: registration_screen.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -256,11 +252,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     try {
       // First find PersonID
       final personId = await widget.authService.findePersonID(
-          _lastNameController.text,
-          _firstNameController.text,
-          _selectedDate!.toString(),
-          _passNumberController.text,
-          _zipCodeController.text,);
+        _lastNameController.text,
+        _firstNameController.text,
+        _selectedDate!.toString(),
+        _passNumberController.text,
+        _zipCodeController.text,
+      );
 
       if (personId == '0') {
         setState(() {

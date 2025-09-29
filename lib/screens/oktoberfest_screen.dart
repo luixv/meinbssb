@@ -11,7 +11,7 @@ import '/screens/oktoberfest_results_screen.dart';
 import '/screens/oktoberfest_gewinn_screen.dart';
 import 'oktoberfest_eintritt_festzelt_screen.dart';
 
-import '/services/core/config_service.dart';
+import '/services/api_service.dart';
 
 class OktoberfestScreen extends StatelessWidget {
   const OktoberfestScreen({
@@ -54,8 +54,8 @@ class OktoberfestScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => OktoberfestResultsScreen(
                       passnummer: userData?.passnummer ?? '',
-                      configService:
-                          Provider.of<ConfigService>(context, listen: false),
+                      apiService:
+                          Provider.of<ApiService>(context, listen: false),
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,
@@ -74,8 +74,8 @@ class OktoberfestScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => OktoberfestGewinnScreen(
                       passnummer: userData?.passnummer ?? '',
-                      configService:
-                          Provider.of<ConfigService>(context, listen: false),
+                      apiService:
+                          Provider.of<ApiService>(context, listen: false),
                       userData: userData,
                       isLoggedIn: isLoggedIn,
                       onLogout: onLogout,

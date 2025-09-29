@@ -117,13 +117,13 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<Map<String, dynamic>> changePassword(
+  _i5.Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int? personId,
     String? newPassword,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #changePassword,
+          #myBSSBPasswortAendern,
           [
             personId,
             newPassword,

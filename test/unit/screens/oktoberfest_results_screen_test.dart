@@ -6,7 +6,6 @@ import 'package:meinbssb/screens/oktoberfest_results_screen.dart';
 import 'package:meinbssb/models/result_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -17,13 +16,10 @@ import 'oktoberfest_results_screen_test.mocks.dart';
 
 void main() {
   late MockApiService mockApiService;
-  late ConfigService configService;
   late UserData userData;
 
   setUp(() async {
     mockApiService = MockApiService();
-    // Use the static load method to get a ConfigService instance
-    configService = await ConfigService.load('assets/config.json');
     userData = const UserData(
       personId: 1,
       webLoginId: 1,
@@ -48,7 +44,7 @@ void main() {
       child: MaterialApp(
         home: OktoberfestResultsScreen(
           passnummer: '123456',
-          configService: configService,
+          apiService: mockApiService,
           userData: userData,
           isLoggedIn: true,
           onLogout: () {},
@@ -60,8 +56,7 @@ void main() {
   testWidgets('shows loading indicator while waiting', (tester) async {
     // Simulate a future that is not yet completed
     final completer = Completer<List<Result>>();
-    when(mockApiService.fetchResults(any, any))
-        .thenAnswer((_) => completer.future);
+    when(mockApiService.fetchResults(any)).thenAnswer((_) => completer.future);
 
     await tester.pumpWidget(buildTestWidget());
     // The loading indicator should be visible while the future is pending
@@ -73,8 +68,7 @@ void main() {
   });
 
   testWidgets('shows error message on error', (tester) async {
-    when(mockApiService.fetchResults(any, any))
-        .thenThrow(Exception('Test error'));
+    when(mockApiService.fetchResults(any)).thenThrow(Exception('Test error'));
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
@@ -87,7 +81,7 @@ void main() {
 
   testWidgets('shows "Keine Ergebnisse gefunden." when no results',
       (tester) async {
-    when(mockApiService.fetchResults(any, any)).thenAnswer((_) async => []);
+    when(mockApiService.fetchResults(any)).thenAnswer((_) async => []);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
     expect(find.text('Keine Ergebnisse gefunden.'), findsOneWidget);
@@ -99,8 +93,7 @@ void main() {
     final results = [
       const Result(wettbewerb: 'Test', platz: 0, gesamt: 100, postfix: ''),
     ];
-    when(mockApiService.fetchResults(any, any))
-        .thenAnswer((_) async => results);
+    when(mockApiService.fetchResults(any)).thenAnswer((_) async => results);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
     expect(
@@ -124,8 +117,7 @@ void main() {
         postfix: '',
       ),
     ];
-    when(mockApiService.fetchResults(any, any))
-        .thenAnswer((_) async => results);
+    when(mockApiService.fetchResults(any)).thenAnswer((_) async => results);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
     expect(find.text('Wettbewerb'), findsOneWidget);

@@ -68,7 +68,7 @@ class TestHelper {
     );
     when(mockApiService.fetchSchuetzenausweis(any))
         .thenAnswer((_) async => Uint8List(0));
-    when(mockApiService.changePassword(any, any)).thenAnswer(
+    when(mockApiService.myBSSBPasswortAendern(any, any)).thenAnswer(
       (_) async => {'result': true},
     );
     when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);

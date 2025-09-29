@@ -187,7 +187,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
 
     // Fetch bank data and contacts in parallel
-    final Future<List<BankData>> bankDataFuture = apiService.fetchBankData(
+    final Future<List<BankData>> bankDataFuture =
+        apiService.fetchBankdatenMyBSSB(
       user.webLoginId,
     );
     final Future<List<Map<String, dynamic>>> contactsFuture =

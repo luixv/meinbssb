@@ -254,12 +254,14 @@ void main() {
 
       test('changePassword delegates to auth service', () async {
         final expectedResponse = {'ResultType': 1, 'ResultMessage': 'Success'};
-        when(mockAuthService.changePassword(any, any))
+        when(mockAuthService.myBSSBPasswortAendern(any, any))
             .thenAnswer((_) async => expectedResponse);
 
-        final result = await apiService.changePassword(123, 'newPassword');
+        final result =
+            await apiService.myBSSBPasswortAendern(123, 'newPassword');
         expect(result, equals(expectedResponse));
-        verify(mockAuthService.changePassword(123, 'newPassword')).called(1);
+        verify(mockAuthService.myBSSBPasswortAendern(123, 'newPassword'))
+            .called(1);
       });
 
       test('findePersonID2 delegates to auth service', () async {
@@ -1104,8 +1106,12 @@ void main() {
       test('fetchSchulungstermineZusatzfelder handles timeout exception',
           () async {
         when(mockTrainingService.fetchSchulungstermineZusatzfelder(876))
-            .thenThrow(TimeoutException(
-                'Request timeout', const Duration(seconds: 30),),);
+            .thenThrow(
+          TimeoutException(
+            'Request timeout',
+            const Duration(seconds: 30),
+          ),
+        );
         expect(
           () => apiService.fetchSchulungstermineZusatzfelder(876),
           throwsA(isA<TimeoutException>()),
@@ -1862,12 +1868,12 @@ void main() {
             mandatSeq: 1,
           ),
         ];
-        when(mockBankService.fetchBankData(any))
+        when(mockBankService.fetchBankdatenMyBSSB(any))
             .thenAnswer((_) async => expectedData);
 
-        final result = await apiService.fetchBankData(123);
+        final result = await apiService.fetchBankdatenMyBSSB(123);
         expect(result, equals(expectedData));
-        verify(mockBankService.fetchBankData(123)).called(1);
+        verify(mockBankService.fetchBankdatenMyBSSB(123)).called(1);
       });
 
       test('registerBankData delegates to bankService and returns true',
@@ -1925,8 +1931,7 @@ void main() {
           ),
         ).thenAnswer((_) async => expectedResults);
 
-        final result =
-            await apiService.fetchResults('123456', mockConfigService);
+        final result = await apiService.fetchResults('123456');
         expect(result, equals(expectedResults));
         verify(
           mockOktoberfestService.fetchResults(
@@ -1960,8 +1965,7 @@ void main() {
           ),
         ).thenAnswer((_) async => expectedGewinne);
 
-        final result =
-            await apiService.fetchGewinne(2024, '123456', mockConfigService);
+        final result = await apiService.fetchGewinne(2024, '123456');
         expect(result, equals(expectedGewinne));
         verify(
           mockOktoberfestService.fetchGewinne(

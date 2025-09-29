@@ -267,13 +267,13 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
       ) as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<Map<String, dynamic>> changePassword(
+  _i5.Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int? personId,
     String? newPassword,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #changePassword,
+          #myBSSBPasswortAendern,
           [
             personId,
             newPassword,
@@ -576,13 +576,13 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
       ) as _i5.Future<Map<String, dynamic>?>);
 
   @override
-  _i5.Future<Map<String, dynamic>> changePassword(
+  _i5.Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int? personId,
     String? newPassword,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #changePassword,
+          #myBSSBPasswortAendern,
           [
             personId,
             newPassword,
@@ -869,10 +869,10 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
       ) as _i5.Future<List<_i22.Disziplin>>);
 
   @override
-  _i5.Future<List<_i23.BankData>> fetchBankData(int? webloginId) =>
+  _i5.Future<List<_i23.BankData>> fetchBankdatenMyBSSB(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchBankData,
+          #fetchBankdatenMyBSSB,
           [webloginId],
         ),
         returnValue: _i5.Future<List<_i23.BankData>>.value(<_i23.BankData>[]),
@@ -1303,17 +1303,11 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<List<_i27.Result>> fetchResults(
-    String? passnummer,
-    _i7.ConfigService? configService,
-  ) =>
+  _i5.Future<List<_i27.Result>> fetchResults(String? passnummer) =>
       (super.noSuchMethod(
         Invocation.method(
           #fetchResults,
-          [
-            passnummer,
-            configService,
-          ],
+          [passnummer],
         ),
         returnValue: _i5.Future<List<_i27.Result>>.value(<_i27.Result>[]),
       ) as _i5.Future<List<_i27.Result>>);
@@ -1322,7 +1316,6 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
   _i5.Future<List<_i28.Gewinn>> fetchGewinne(
     int? jahr,
     String? passnummer,
-    _i7.ConfigService? configService,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1330,11 +1323,29 @@ class MockApiService extends _i1.Mock implements _i11.ApiService {
           [
             jahr,
             passnummer,
-            configService,
           ],
         ),
         returnValue: _i5.Future<List<_i28.Gewinn>>.value(<_i28.Gewinn>[]),
       ) as _i5.Future<List<_i28.Gewinn>>);
+
+  @override
+  _i5.Future<bool> gewinneAbrufen({
+    required List<int>? gewinnIDs,
+    required String? iban,
+    required String? passnummer,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #gewinneAbrufen,
+          [],
+          {
+            #gewinnIDs: gewinnIDs,
+            #iban: iban,
+            #passnummer: passnummer,
+          },
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
   _i5.Future<List<_i29.Bezirk>> fetchBezirke() => (super.noSuchMethod(

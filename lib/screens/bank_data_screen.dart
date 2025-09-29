@@ -63,7 +63,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       _bankDataFuture =
-          apiService.fetchBankData(widget.webloginId).then((list) {
+          apiService.fetchBankdatenMyBSSB(widget.webloginId).then((list) {
         final hasData = list.isNotEmpty;
         if (mounted) {
           setState(() {});

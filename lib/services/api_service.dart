@@ -66,7 +66,8 @@ class ApiService {
     required CalendarService calendarService,
     required BezirkService bezirkService,
     required StartingRightsService startingRightsService,
-  })  : _imageService = imageService,
+  })  : _configService = configService,
+        _imageService = imageService,
         _networkService = networkService,
         _trainingService = trainingService,
         _userService = userService,
@@ -79,6 +80,7 @@ class ApiService {
         _bezirkService = bezirkService,
         _startingRightsService = startingRightsService;
 
+  final ConfigService _configService;
   final ImageService _imageService;
   final NetworkService _networkService;
   final TrainingService _trainingService;
@@ -156,11 +158,11 @@ class ApiService {
     return _postgrestService.getUserByPasswordResetVerificationToken(token);
   }
 
-  Future<Map<String, dynamic>> changePassword(
+  Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int personId,
     String newPassword,
   ) async {
-    return _authService.changePassword(personId, newPassword);
+    return _authService.myBSSBPasswortAendern(personId, newPassword);
   }
 
   // User Service
@@ -254,9 +256,13 @@ class ApiService {
   }
 
   Future<bool> isRegisterForThisSchulung(
-      int personId, int schulungsterminId,) async {
+    int personId,
+    int schulungsterminId,
+  ) async {
     return _trainingService.isRegisterForThisSchulung(
-        personId, schulungsterminId,);
+      personId,
+      schulungsterminId,
+    );
   }
 
   Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
@@ -302,8 +308,8 @@ class ApiService {
   }
 
   // Bank Service
-  Future<List<BankData>> fetchBankData(int webloginId) async {
-    return _bankService.fetchBankData(webloginId);
+  Future<List<BankData>> fetchBankdatenMyBSSB(int webloginId) async {
+    return _bankService.fetchBankdatenMyBSSB(webloginId);
   }
 
   Future<bool> registerBankData(BankData bankData) async {
@@ -534,23 +540,34 @@ class ApiService {
 
   Future<List<Result>> fetchResults(
     String passnummer,
-    ConfigService configService,
   ) async {
     return _oktoberfestService.fetchResults(
       passnummer: passnummer,
-      configService: configService,
+      configService: _configService,
     );
   }
 
   Future<List<Gewinn>> fetchGewinne(
     int jahr,
     String passnummer,
-    ConfigService configService,
   ) async {
     return _oktoberfestService.fetchGewinne(
       jahr: jahr,
       passnummer: passnummer,
-      configService: configService,
+      configService: _configService,
+    );
+  }
+
+  Future<bool> gewinneAbrufen({
+    required List<int> gewinnIDs,
+    required String iban,
+    required String passnummer,
+  }) async {
+    return _oktoberfestService.gewinneAbrufen(
+      gewinnIDs: gewinnIDs,
+      iban: iban,
+      passnummer: passnummer,
+      configService: _configService,
     );
   }
 

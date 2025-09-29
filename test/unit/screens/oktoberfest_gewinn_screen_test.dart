@@ -4,27 +4,21 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/oktoberfest_gewinn_screen.dart';
 import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'dart:async';
 
-@GenerateMocks([OktoberfestService, ApiService])
+@GenerateMocks([ApiService])
 import 'oktoberfest_gewinn_screen_test.mocks.dart';
 
 void main() {
-  late MockOktoberfestService mockOktoberfestService;
   late MockApiService mockApiService;
-  late ConfigService configService;
   late UserData userData;
 
   setUp(() async {
-    mockOktoberfestService = MockOktoberfestService();
     mockApiService = MockApiService();
-    configService = await ConfigService.load('assets/config.json');
     userData = const UserData(
       personId: 1,
       webLoginId: 1,
@@ -41,7 +35,6 @@ void main() {
   Widget buildTestWidget() {
     return MultiProvider(
       providers: [
-        Provider<OktoberfestService>(create: (_) => mockOktoberfestService),
         Provider<ApiService>(create: (_) => mockApiService),
         ChangeNotifierProvider<FontSizeProvider>(
           create: (_) => FontSizeProvider(),
@@ -50,7 +43,7 @@ void main() {
       child: MaterialApp(
         home: OktoberfestGewinnScreen(
           passnummer: '123456',
-          configService: configService,
+          apiService: mockApiService,
           userData: userData,
           isLoggedIn: true,
           onLogout: () {},
@@ -62,11 +55,7 @@ void main() {
   testWidgets('shows loading indicator while fetching', (tester) async {
     final completer = Completer<List<Gewinn>>();
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) => completer.future);
 
     await tester.pumpWidget(buildTestWidget());
@@ -81,11 +70,7 @@ void main() {
       'shows "Keine Gewinne für das gewählte Jahr gefunden." snackbar when no gewinne',
       (tester) async {
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) async => []);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
@@ -121,11 +106,7 @@ void main() {
       ),
     ];
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) async => gewinne);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
@@ -153,11 +134,7 @@ void main() {
       ),
     ];
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) async => gewinne);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
@@ -181,11 +158,7 @@ void main() {
       ),
     ];
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) async => gewinne);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
@@ -207,11 +180,7 @@ void main() {
       ),
     ];
     when(
-      mockOktoberfestService.fetchGewinne(
-        jahr: anyNamed('jahr'),
-        passnummer: anyNamed('passnummer'),
-        configService: anyNamed('configService'),
-      ),
+      mockApiService.fetchGewinne(any, any),
     ).thenAnswer((_) async => gewinne);
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();

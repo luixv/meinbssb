@@ -201,13 +201,13 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
       ) as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> changePassword(
+  _i3.Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int? personId,
     String? newPassword,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #changePassword,
+          #myBSSBPasswortAendern,
           [
             personId,
             newPassword,
@@ -1225,10 +1225,10 @@ class MockBankService extends _i1.Mock implements _i27.BankService {
   }
 
   @override
-  _i3.Future<List<_i26.BankData>> fetchBankData(int? webloginId) =>
+  _i3.Future<List<_i26.BankData>> fetchBankdatenMyBSSB(int? webloginId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #fetchBankData,
+          #fetchBankdatenMyBSSB,
           [webloginId],
         ),
         returnValue: _i3.Future<List<_i26.BankData>>.value(<_i26.BankData>[]),

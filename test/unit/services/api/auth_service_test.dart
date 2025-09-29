@@ -548,7 +548,8 @@ void main() {
         when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
             .thenAnswer((_) async => expectedResponse);
 
-        final result = await authService.changePassword(personId, newPassword);
+        final result =
+            await authService.myBSSBPasswortAendern(personId, newPassword);
 
         expect(result, expectedResponse);
         verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
@@ -569,7 +570,8 @@ void main() {
         when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
             .thenAnswer((_) async => expectedResponse);
 
-        final result = await authService.changePassword(personId, newPassword);
+        final result =
+            await authService.myBSSBPasswortAendern(personId, newPassword);
 
         expect(result, expectedResponse);
         verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
@@ -586,7 +588,8 @@ void main() {
         when(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))
             .thenAnswer((_) async => 'Invalid response format');
 
-        final result = await authService.changePassword(personId, newPassword);
+        final result =
+            await authService.myBSSBPasswortAendern(personId, newPassword);
 
         expect(result, {});
         verify(mockHttpClient.put('MyBSSBPasswortAendern', requestBody))

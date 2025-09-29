@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '/services/api_service.dart';
-import '/services/core/config_service.dart';
 import '../models/result_data.dart';
 import '/models/user_data.dart';
 
@@ -15,13 +14,13 @@ class OktoberfestResultsScreen extends StatefulWidget {
   const OktoberfestResultsScreen({
     super.key,
     required this.passnummer,
-    required this.configService,
+    required this.apiService,
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
   });
   final String passnummer;
-  final ConfigService configService;
+  final ApiService apiService;
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
@@ -42,10 +41,8 @@ class OktoberfestResultsScreenState extends State<OktoberfestResultsScreen> {
 
   // Method to fetch results, allowing it to be called on refresh
   void _fetchResults() {
-    final apiService = Provider.of<ApiService>(context, listen: false);
     setState(() {
-      _resultsFuture =
-          apiService.fetchResults(widget.passnummer, widget.configService);
+      _resultsFuture = widget.apiService.fetchResults(widget.passnummer);
     });
   }
 

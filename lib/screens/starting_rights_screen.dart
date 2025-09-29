@@ -34,7 +34,7 @@ class StartingRightsScreen extends StatefulWidget {
 }
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
-  bool _digitalerPass = true;
+  bool _digitalerPass = false;
 
   int get _seasonInt {
     final now = DateTime.now();
@@ -280,8 +280,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
           ...localSecondColumns[vereinId] ?? {},
         };
       }
-
-      // final fremdeVerbande = await apiService.fetchFremdeVerbaende(vereinNr);
 
       if (mounted) {
         setState(() {

@@ -39,7 +39,7 @@ void main() {
         when(mockHttpClient.get('BankdatenMyBSSB/13901'))
             .thenAnswer((_) async => testResponse);
 
-        final result = await bankService.fetchBankData(13901);
+        final result = await bankService.fetchBankdatenMyBSSB(13901);
 
         expect(result.length, 1);
         expect(result[0].webloginId, 13901);
@@ -52,7 +52,7 @@ void main() {
         when(mockHttpClient.get('BankdatenMyBSSB/13901'))
             .thenAnswer((_) async => []);
 
-        final result = await bankService.fetchBankData(13901);
+        final result = await bankService.fetchBankdatenMyBSSB(13901);
 
         expect(result, isEmpty);
         verify(mockHttpClient.get('BankdatenMyBSSB/13901')).called(1);
@@ -62,7 +62,7 @@ void main() {
         when(mockHttpClient.get('BankdatenMyBSSB/13901'))
             .thenThrow(Exception('API error'));
 
-        final result = await bankService.fetchBankData(13901);
+        final result = await bankService.fetchBankdatenMyBSSB(13901);
 
         expect(result, isEmpty);
         verify(mockHttpClient.get('BankdatenMyBSSB/13901')).called(1);
