@@ -38,7 +38,7 @@ void main() {
       });
 
       test('should handle SocketException', () {
-        const error = 'SocketException: Failed host lookup';
+        const error = 'SocketException: Benutzername oder Passwort ist falsch';
 
         final result = ErrorService.handleNetworkError(error);
 

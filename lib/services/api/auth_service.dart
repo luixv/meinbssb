@@ -169,8 +169,17 @@ class AuthService {
 
       if (e is http.ClientException) {
         LoggerService.logError('http.ClientException occurred: ${e.message}');
+        
+        // Check if this is an authentication error from server (contains "Benutzername oder Passwort")
+        if (e.message.contains('Benutzername oder Passwort ist falsch')) {
+          LoggerService.logError('Server returned authentication error');
+          return {
+            'ResultType': 0,
+            'ResultMessage': 'Benutzername oder Passwort ist falsch',
+          };
+        }
 
-        // Check if we have cached data before trying offline login
+        // Check if we have cached data before trying offline login for actual network errors
         final cachedUsername = await _cacheService.getString('username');
         if (cachedUsername != null && cachedUsername.isNotEmpty) {
           LoggerService.logInfo('Cached data found, attempting offline login');
