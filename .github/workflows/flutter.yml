@@ -194,12 +194,12 @@ jobs:
             zip -r "$RELEASE_DIR/windows_build.zip" *
             cd -
           else
-            echo "::warning::No Windows build found"
+            echo "::warning::No Windows build found."
           fi
 
           # iOS
           if [ -d "artifacts/release-ios" ]; then
-            cp artifacts/release-ios/*.zip "$RELEASE_DIR/" 2>/dev/null || echo "::warning::No iOS zip files found"
+            cp artifacts/release-ios/*.zip "$RELEASE_DIR/" 2>/dev/null || echo "::warning::No iOS zip files found."
           else
             echo "::warning::No iOS build artifacts found"
           fi
