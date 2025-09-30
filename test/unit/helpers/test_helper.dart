@@ -79,6 +79,9 @@ class TestHelper {
         .thenAnswer((_) async => 'test_username');
     when(mockHttpClient.get(any)).thenAnswer((_) async => MockResponse());
     when(mockHttpClient.post(any, any)).thenAnswer((_) async => MockResponse());
+
+    // Add API service getters
+    when(mockApiService.configService).thenReturn(mockConfigService);
   }
 
   static Widget createTestApp({

@@ -194,12 +194,16 @@ void _noop() {}
 class _FakeApiService implements ApiService {
   final _authService = _FakeAuthService();
   final _emailService = _FakeEmailService();
+  final _configService = _FakeConfigService();
 
   @override
   AuthService get authService => _authService;
 
   @override
   EmailService get emailService => _emailService;
+
+  @override
+  ConfigService get configService => _configService;
 
   @override
   noSuchMethod(Invocation invocation) => null;
@@ -216,6 +220,14 @@ class _FakeEmailService implements EmailService {
 }
 
 class _FakeConfigService implements ConfigService {
+  @override
+  String? getString(String key, [String? section]) {
+    if (key == 'logoName' && section == 'appTheme') {
+      return 'assets/images/myBSSB-logo.png';
+    }
+    return null;
+  }
+
   @override
   noSuchMethod(Invocation invocation) => null;
 }
