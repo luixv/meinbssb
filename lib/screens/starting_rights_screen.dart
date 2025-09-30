@@ -7,7 +7,6 @@ import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
@@ -168,13 +167,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     }
 
     try {
-      // Get providers before any await
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
+      // Get API service before any await
       final apiService = Provider.of<ApiService>(context, listen: false);
 
       // Check offline status before fetching
-      final isOffline = !(await networkService.hasInternet());
+      final isOffline = !(await apiService.hasInternet());
       if (isOffline) {
         if (mounted) {
           setState(() {

@@ -71,6 +71,7 @@ class TestHelper {
     when(mockApiService.myBSSBPasswortAendern(any, any)).thenAnswer(
       (_) async => {'result': true},
     );
+    when(mockApiService.hasInternet()).thenAnswer((_) async => true);
     when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
     when(mockNetworkService.getCacheExpirationDuration())
         .thenReturn(const Duration(hours: 1));

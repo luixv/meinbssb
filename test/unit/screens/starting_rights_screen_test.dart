@@ -14,7 +14,13 @@ import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 
 class FakeApiService implements ApiService {
+
+  FakeApiService(this.networkService);
   bool passantragShouldSucceed = true;
+  final NetworkService networkService;
+
+  @override
+  Future<bool> hasInternet() => networkService.hasInternet();
 
   @override
   Future<bool> bssbAppPassantrag(
@@ -34,20 +40,48 @@ class FakeApiService implements ApiService {
   }) async {}
 
   @override
-  Future<List<Disziplin>> fetchDisziplinen() async => [];
+  Future<List<Disziplin>> fetchDisziplinen() async => [
+        const Disziplin(
+          disziplinId: 1,
+          disziplinNr: '1',
+          disziplin: 'Test Disziplin',
+        ),
+      ];
 
   @override
   Future<List<PassDataZVE>> fetchPassdatenZVE(
     int passdatenId,
     int personId,
   ) async =>
-      [];
+      [
+        PassDataZVE(
+          passdatenZvId: 1,
+          zvVereinId: 1,
+          vVereinNr: 123,
+          disziplinNr: '1',
+          gauId: 1,
+          bezirkId: 1,
+          disziAusblenden: 0,
+          ersaetzendurchId: 0,
+          zvMitgliedschaftId: 1,
+          vereinName: 'Test ZVE Verein',
+          disziplin: 'Test Disziplin',
+          disziplinId: 1,
+        ),
+      ];
 
   @override
   Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
     int personId,
   ) async =>
-      null;
+      PassdatenAkzeptOrAktiv(
+        passdatenId: 1,
+        personId: personId,
+        passStatus: 1,
+        digitalerPass: 0,
+        erstVereinId: 1,
+        evVereinNr: 123,
+      );
 
   @override
   Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
@@ -75,8 +109,8 @@ void main() {
   late UserData userData;
 
   setUp(() {
-    fakeApiService = FakeApiService();
     fakeNetworkService = FakeNetworkService();
+    fakeApiService = FakeApiService(fakeNetworkService);
     userData = const UserData(
       personId: 1,
       passdatenId: 1,
