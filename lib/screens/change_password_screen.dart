@@ -8,7 +8,6 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/change_password_success_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/cache_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
@@ -59,14 +58,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     try {
       final personId = widget.userData?.personId;
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final cacheService = Provider.of<CacheService>(context, listen: false);
 
       if (personId == null) {
         throw Exception(Messages.personIdMissing);
       }
 
       // Get username from cache
-      final username = await cacheService.getString('username');
+      final username = await apiService.cacheService.getString('username');
       if (username == null) {
         throw Exception(Messages.usernameNotFound);
       }

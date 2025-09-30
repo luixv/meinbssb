@@ -4,13 +4,11 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:meinbssb/screens/change_password_screen.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import '../helpers/test_helper.dart';
 
-@GenerateMocks([NetworkService, FontSizeProvider, ConfigService])
+@GenerateMocks([FontSizeProvider])
 void main() {
   setUp(() {
     TestHelper.setupMocks();
@@ -80,7 +78,9 @@ void main() {
       // Enter different passwords
       await tester.enterText(find.byType(TextFormField).at(1), 'ValidPass123!');
       await tester.enterText(
-          find.byType(TextFormField).at(2), 'DifferentPass123!',);
+        find.byType(TextFormField).at(2),
+        'DifferentPass123!',
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.save));
@@ -145,7 +145,9 @@ void main() {
 
       // Fill in all required fields
       await tester.enterText(
-          find.byType(TextFormField).at(0), 'currentPassword',);
+        find.byType(TextFormField).at(0),
+        'currentPassword',
+      );
       await tester.enterText(find.byType(TextFormField).at(1), 'NewPass123!');
       await tester.enterText(find.byType(TextFormField).at(2), 'NewPass123!');
       await tester.pumpAndSettle();
@@ -156,6 +158,9 @@ void main() {
 
       // Verify that the API service methods were called
       verify(TestHelper.mockApiService.login(any, any)).called(1);
+      // Verify cache service was called to get username
+      verify(TestHelper.mockApiService.cacheService).called(1);
+      verify(TestHelper.mockCacheService.getString('username')).called(1);
       // changePassword is only called if login is successful (ResultType == 1)
       verify(TestHelper.mockApiService.myBSSBPasswortAendern(any, any))
           .called(1);
@@ -196,7 +201,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.save));
       await tester.pumpAndSettle();
 
-      // Should show error snackbar
+      // Should show error snackbar for incorrect password
+      await tester.pumpAndSettle();
       expect(find.byType(SnackBar), findsOneWidget);
     });
   });

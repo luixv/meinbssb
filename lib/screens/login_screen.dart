@@ -154,8 +154,7 @@ class LoginScreenState extends State<LoginScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => RegistrationScreen(
-          authService: apiService.authService,
-          emailService: apiService.emailService,
+          apiService: apiService,
         ),
       ),
     );

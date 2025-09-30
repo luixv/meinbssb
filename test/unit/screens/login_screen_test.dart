@@ -36,8 +36,7 @@ void main() {
             ),
         '/help': (context) => const Scaffold(body: Text('Hilfe')),
         '/register': (context) => RegistrationScreen(
-              authService: TestHelper.mockAuthService,
-              emailService: TestHelper.mockEmailService,
+              apiService: TestHelper.mockApiService,
             ),
       },
     );

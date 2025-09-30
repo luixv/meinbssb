@@ -122,6 +122,7 @@ class PostgrestService {
   /// Get user by pass number
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
+      
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber'),
         headers: _headers,

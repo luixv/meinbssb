@@ -15,8 +15,7 @@ void main() {
   Widget createRegistrationScreen() {
     return TestHelper.createTestApp(
       home: RegistrationScreen(
-        authService: TestHelper.mockAuthService,
-        emailService: TestHelper.mockEmailService,
+        apiService: TestHelper.mockApiService,
       ),
     );
   }

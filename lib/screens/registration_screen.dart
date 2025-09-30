@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
@@ -10,20 +9,16 @@ import 'package:meinbssb/screens/privacy_screen.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/registration_success_screen.dart';
 import 'package:meinbssb/screens/registration_fail_screen.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
-import 'package:meinbssb/services/core/email_service.dart';
-import 'package:meinbssb/services/core/network_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({
-    required this.authService,
-    required this.emailService,
+    required this.apiService,
     super.key,
   });
-  final AuthService authService;
-  final EmailService emailService;
+  final ApiService apiService;
 
   @override
   RegistrationScreenState createState() => RegistrationScreenState();
@@ -224,8 +219,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       _isRegistering = true;
     });
     // Check for offline before proceeding
-    final networkService = Provider.of<NetworkService>(context, listen: false);
-    final isOffline = !(await networkService.hasInternet());
+    final isOffline = !(await widget.apiService.hasInternet());
     if (isOffline) {
       setState(() {
         _isRegistering = false;
@@ -251,7 +245,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     try {
       // First find PersonID
-      final personId = await widget.authService.findePersonID(
+      final personId = await widget.apiService.authService.findePersonID(
         _lastNameController.text,
         _firstNameController.text,
         _selectedDate!.toString(),
@@ -276,11 +270,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       }
 
       // Check if user already exists in PostgreSQL
-      final existingUser = await widget.authService.postgrestService
+      final existingUser = await widget.apiService.authService.postgrestService
           .getUserByPassNumber(_passNumberController.text);
       if (existingUser != null) {
         // Check if user exists with this email
-        final userWithEmail = await widget.authService.postgrestService
+        final userWithEmail = await widget
+            .apiService.authService.postgrestService
             .getUserByEmail(_emailController.text);
 
         // If either the pass number or email is verified, prevent registration
@@ -324,7 +319,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       }
 
       // Complete the registration
-      final result = await widget.authService.register(
+      final result = await widget.apiService.authService.register(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,

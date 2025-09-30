@@ -82,6 +82,7 @@ class TestHelper {
 
     // Add API service getters
     when(mockApiService.configService).thenReturn(mockConfigService);
+    when(mockApiService.cacheService).thenReturn(mockCacheService);
   }
 
   static Widget createTestApp({

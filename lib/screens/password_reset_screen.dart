@@ -12,7 +12,6 @@ import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/error_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -50,9 +49,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
 
   Future<bool> _isOffline() async {
     try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
+      return !(await widget.apiService.hasInternet());
     } catch (e) {
       return true; // Assume offline if we can't check
     }

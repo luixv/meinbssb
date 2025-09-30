@@ -102,6 +102,7 @@ class ApiService {
   ConfigService get configService => _configService;
   EmailService get emailService => _emailService;
   AuthService get authService => _authService;
+  CacheService get cacheService => _cacheService;
 
   Duration getCacheExpirationDuration() =>
       _networkService.getCacheExpirationDuration();
