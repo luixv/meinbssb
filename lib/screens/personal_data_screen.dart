@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart'; // Ensure ScaledText is correctly implemented to use FontSizeProvider
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
 class PersonDataScreen extends StatefulWidget {
@@ -71,9 +70,8 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
   Future<bool> _isOffline() async {
     try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      return !(await apiService.hasInternet());
     } catch (e) {
       LoggerService.logError('Error checking network status: $e');
       return true; // Assume offline if we can't check
@@ -237,7 +235,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     }
   }
 
-  // --- UI Building ---
   @override
   Widget build(BuildContext context) {
     // Access FontSizeProvider at the top level of the build method
