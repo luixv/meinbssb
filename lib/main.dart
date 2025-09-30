@@ -123,6 +123,7 @@ class AppInitializer {
   static late OktoberfestService oktoberfestService;
   static late TokenService tokenService;
   static late PostgrestService postgrestService;
+  static late EmailService emailService;
   static late CalendarService calendarService;
   static late BezirkService bezirkService;
   static late StartingRightsService startingRightsService;
@@ -182,7 +183,7 @@ class AppInitializer {
       httpClient: httpClient,
     );
 
-    final emailService = EmailService(
+    emailService = EmailService(
       emailSender: emailSender,
       configService: configService,
       httpClient: httpClient,
@@ -260,11 +261,7 @@ class AppInitializer {
       create: (context) => MailerEmailSender(),
     );
     emailServiceProvider = Provider<EmailService>(
-      create: (context) => EmailService(
-        emailSender: Provider.of<EmailSender>(context, listen: false),
-        configService: Provider.of<ConfigService>(context, listen: false),
-        httpClient: httpClient,
-      ),
+      create: (context) => emailService,
     );
     authServiceProvider = Provider<AuthService>(
       create: (context) => authService,

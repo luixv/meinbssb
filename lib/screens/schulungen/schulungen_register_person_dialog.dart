@@ -8,8 +8,6 @@ import '/models/bank_data.dart';
 import '/models/schulungstermine_zusatzfelder_data.dart';
 
 import '/services/api_service.dart';
-import '/services/core/config_service.dart';
-import '/services/core/email_service.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
 
@@ -27,16 +25,12 @@ class RegisterPersonFormDialog extends StatefulWidget {
     required this.bankData,
     this.prefillUser,
     this.prefillEmail = '',
-    required this.configService,
-    required this.emailService,
     required this.apiService,
   });
   final Schulungstermin schulungsTermin;
   final BankData bankData;
   final UserData? prefillUser;
   final String prefillEmail;
-  final ConfigService configService;
-  final EmailService emailService;
   final ApiService apiService;
 
   @override

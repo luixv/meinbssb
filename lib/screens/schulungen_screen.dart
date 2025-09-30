@@ -1034,8 +1034,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           bankData: bankData,
           prefillUser: prefillUser,
           prefillEmail: prefillEmail,
-          configService: apiService.configService,
-          emailService: apiService.emailService,
           apiService: apiService,
         );
       },

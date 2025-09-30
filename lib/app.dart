@@ -13,7 +13,6 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'providers/theme_provider.dart';
 import 'package:meinbssb/services/core/http_client.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
@@ -80,7 +79,7 @@ class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   UserData? _userData;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  late final AuthService _authService;
+  late final ApiService _apiService;
   bool _loading = true;
   bool _splashDone = false;
   bool _authCheckDone = false;
@@ -88,7 +87,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _authService = Provider.of<AuthService>(context, listen: false);
+    _apiService = Provider.of<ApiService>(context, listen: false);
     _startSplashAndAuthCheck();
   }
 
@@ -118,7 +117,7 @@ class _MyAppState extends State<MyApp> {
     bool valid = false;
     if (isLoggedIn) {
       try {
-        valid = await _authService.isTokenValid();
+        valid = await _apiService.authService.isTokenValid();
       } catch (e) {
         valid = false;
       }
@@ -163,8 +162,8 @@ class _MyAppState extends State<MyApp> {
 
   void _handleLogout() async {
     try {
-      // Get AuthService before async operations to avoid BuildContext issues
-      final authService = Provider.of<AuthService>(context, listen: false);
+      // Get ApiService before async operations to avoid BuildContext issues
+      final apiService = Provider.of<ApiService>(context, listen: false);
 
       // Clear SharedPreferences
       final prefs = await SharedPreferences.getInstance();
@@ -172,7 +171,7 @@ class _MyAppState extends State<MyApp> {
       await prefs.remove('userData');
 
       // Call AuthService logout to clear cached data
-      await authService.logout();
+      await apiService.authService.logout();
 
       // Update local state
       setState(() {
@@ -332,7 +331,8 @@ class _MyAppState extends State<MyApp> {
               return MaterialPageRoute(
                 builder: (context) => SetPasswordScreen(
                   token: token,
-                  authService: Provider.of<AuthService>(context, listen: false),
+                  authService: Provider.of<ApiService>(context, listen: false)
+                      .authService,
                 ),
                 settings: settings,
               );

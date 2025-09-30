@@ -6,8 +6,6 @@ import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/services/core/email_service.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -23,22 +21,14 @@ class StubApiService extends Mock implements ApiService {
   }
 }
 
-class MockConfigService extends Mock implements ConfigService {}
-
-class MockEmailService extends Mock implements EmailService {}
-
 void main() {
   late StubApiService mockApiService;
-  late MockConfigService mockConfigService;
-  late MockEmailService mockEmailService;
   // Mutable data source for zusatzfelder to avoid re-stubbing during tests
   List<SchulungstermineZusatzfelder> currentZusatzfelder =
       <SchulungstermineZusatzfelder>[];
 
   setUp(() {
     mockApiService = StubApiService();
-    mockConfigService = MockConfigService();
-    mockEmailService = MockEmailService();
     currentZusatzfelder = <SchulungstermineZusatzfelder>[];
     mockApiService.currentZusatzfelder = currentZusatzfelder;
   });
@@ -104,8 +94,6 @@ void main() {
               iban: '',
               bic: '',
             ),
-            configService: mockConfigService,
-            emailService: mockEmailService,
             apiService: mockApiService,
           ),
         ),
