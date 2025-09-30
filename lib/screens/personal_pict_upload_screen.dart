@@ -10,8 +10,7 @@ import '/widgets/scaled_text.dart';
 import '/screens/app_menu.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '../providers/font_size_provider.dart';
-import '/services/core/config_service.dart';
+import '/providers/font_size_provider.dart';
 import '/screens/personal_pict_upload_success.dart';
 import '/screens/connectivity_icon.dart';
 
@@ -160,10 +159,10 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   }
 
   Future<Map<String, dynamic>> _validateImage(XFile image) async {
-    final configService = Provider.of<ConfigService>(context, listen: false);
-    final maxSizeMB = configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final maxSizeMB = apiService.configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
     final allowedFormats =
-        configService.getList('allowedFormats', 'profilePhoto') ??
+        apiService.configService.getList('allowedFormats', 'profilePhoto') ??
             ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
     LoggerService.logInfo(

@@ -12,7 +12,6 @@ import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -351,13 +350,15 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }
 
   Future<void> _handleEmailValidation(
-      Contact contact, BuildContext dialogContext,) async {
+    Contact contact,
+    BuildContext dialogContext,
+  ) async {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final authService = Provider.of<AuthService>(context, listen: false);
 
       // Generate verification token
-      final verificationToken = authService.generateVerificationToken();
+      final verificationToken =
+          apiService.authService.generateVerificationToken();
 
       // Determine email type
       final emailType = contact.type == 4 ? 'private' : 'business';
@@ -387,7 +388,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.',),
+            'Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.',
+          ),
           duration: UIConstants.snackbarDuration,
           backgroundColor: Colors.orange,
         ),

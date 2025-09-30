@@ -9,9 +9,7 @@ import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/user_data.dart';
@@ -83,7 +81,6 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    final authService = Provider.of<AuthService>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     setState(() {
@@ -95,7 +92,7 @@ class LoginScreenState extends State<LoginScreen> {
     await _saveRememberMeState();
 
     try {
-      final response = await authService.login(
+      final response = await apiService.login(
         _emailController.text,
         _passwordController.text,
       );
@@ -151,15 +148,14 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToRegistrationPage() {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final emailService = Provider.of<EmailService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => RegistrationScreen(
-          authService: authService,
-          emailService: emailService,
+          authService: apiService.authService,
+          emailService: apiService.emailService,
         ),
       ),
     );
