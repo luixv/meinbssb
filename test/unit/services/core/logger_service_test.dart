@@ -16,7 +16,7 @@ void main() {
 
       // Clear any existing subscriptions for clean testing
       Logger.root.clearListeners();
-      
+
       // Set logger level to OFF initially to prevent console output during tests
       Logger.root.level = Level.OFF;
     });
@@ -138,11 +138,13 @@ void main() {
         expect(capturedLogs, hasLength(1));
         final logTime = capturedLogs.first.time;
         expect(
-            logTime.isAfter(beforeTime) || logTime.isAtSameMomentAs(beforeTime),
-            isTrue,);
+          logTime.isAfter(beforeTime) || logTime.isAtSameMomentAs(beforeTime),
+          isTrue,
+        );
         expect(
-            logTime.isBefore(afterTime) || logTime.isAtSameMomentAs(afterTime),
-            isTrue,);
+          logTime.isBefore(afterTime) || logTime.isAtSameMomentAs(afterTime),
+          isTrue,
+        );
       });
     });
 
@@ -394,8 +396,10 @@ void main() {
         LoggerService.logError('Error');
 
         expect(capturedLogs, hasLength(4));
-        expect(capturedLogs.every((log) => log.loggerName == 'MyAppLogger'),
-            isTrue,);
+        expect(
+          capturedLogs.every((log) => log.loggerName == 'MyAppLogger'),
+          isTrue,
+        );
 
         subscription.cancel();
       });
@@ -441,23 +445,30 @@ void main() {
       test('logging API request and response simulation', () {
         LoggerService.logInfo('Starting API request to /api/users');
         LoggerService.logDebug(
-            'Request headers: {Authorization: Bearer token123}',);
+          'Request headers: {Authorization: Bearer token123}',
+        );
         LoggerService.logInfo('API request completed successfully');
         LoggerService.logDebug('Response: {users: [...], total: 25}');
 
         expect(capturedLogs, hasLength(4));
         expect(
-            capturedLogs.where((log) => log.level == Level.INFO), hasLength(2),);
+          capturedLogs.where((log) => log.level == Level.INFO),
+          hasLength(2),
+        );
         expect(
-            capturedLogs.where((log) => log.level == Level.FINE), hasLength(2),);
+          capturedLogs.where((log) => log.level == Level.FINE),
+          hasLength(2),
+        );
       });
 
       test('logging error handling flow simulation', () {
         LoggerService.logInfo('Processing user registration');
         LoggerService.logWarning(
-            'Email validation failed for user@example.com',);
+          'Email validation failed for user@example.com',
+        );
         LoggerService.logError(
-            'User registration failed: Invalid email format',);
+          'User registration failed: Invalid email format',
+        );
         LoggerService.logDebug('Returning error response to client');
 
         expect(capturedLogs, hasLength(4));
