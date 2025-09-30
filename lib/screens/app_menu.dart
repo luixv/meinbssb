@@ -14,9 +14,6 @@ import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
 import '/screens/oktoberfest_screen.dart';
 
-// Services
-import '/services/api/auth_service.dart';
-import '/services/core/email_service.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -327,16 +324,14 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                final authService =
-                    Provider.of<AuthService>(context, listen: false);
-                final emailService =
-                    Provider.of<EmailService>(context, listen: false);
+                final apiService =
+                    Provider.of<ApiService>(context, listen: false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => RegistrationScreen(
-                      authService: authService,
-                      emailService: emailService,
+                      authService: apiService.authService,
+                      emailService: apiService.emailService,
                     ),
                   ),
                 );
