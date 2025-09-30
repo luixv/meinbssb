@@ -16,11 +16,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({
-    required this.onLoginSuccess,
-    this.logoWidget,
-    super.key,
-  });
+  const LoginScreen({required this.onLoginSuccess, this.logoWidget, super.key});
   final Function(UserData) onLoginSuccess;
   final Widget? logoWidget;
 
@@ -38,7 +34,26 @@ class LoginScreenState extends State<LoginScreen> {
   UserData? _userData;
   bool _isLoggedIn = false;
   bool _rememberMe = false;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+      keyCipherAlgorithm:
+          KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+    ),
+    iOptions: IOSOptions(
+      groupId: 'de.bssb.meinbssb',
+      accountName: 'meinbssb_login_storage',
+      synchronizable: false,
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+    wOptions: WindowsOptions(useBackwardCompatibility: true),
+    lOptions: LinuxOptions(),
+    webOptions: WebOptions(
+      dbName: 'meinbssb_login_db',
+      publicKey: 'meinbssb_login_key',
+    ),
+  );
 
   @override
   void initState() {
@@ -153,9 +168,7 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegistrationScreen(
-          apiService: apiService,
-        ),
+        builder: (context) => RegistrationScreen(apiService: apiService),
       ),
     );
   }
@@ -167,12 +180,13 @@ class LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PasswordResetScreen(
-          apiService: apiService,
-          userData: _userData,
-          isLoggedIn: _isLoggedIn,
-          onLogout: _handleLogout,
-        ),
+        builder:
+            (context) => PasswordResetScreen(
+              apiService: apiService,
+              userData: _userData,
+              isLoggedIn: _isLoggedIn,
+              onLogout: _handleLogout,
+            ),
       ),
     );
   }
@@ -231,7 +245,8 @@ class LoginScreenState extends State<LoginScreen> {
             labelText: 'E-mail',
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             labelStyle: UIStyles.formLabelStyle.copyWith(
-              fontSize: UIStyles.formLabelStyle.fontSize! *
+              fontSize:
+                  UIStyles.formLabelStyle.fontSize! *
                   fontSizeProvider.scaleFactor,
             ),
           ),
@@ -254,7 +269,8 @@ class LoginScreenState extends State<LoginScreen> {
           decoration: UIStyles.formInputDecoration.copyWith(
             labelText: 'Passwort',
             labelStyle: UIStyles.formLabelStyle.copyWith(
-              fontSize: UIStyles.formLabelStyle.fontSize! *
+              fontSize:
+                  UIStyles.formLabelStyle.fontSize! *
                   fontSizeProvider.scaleFactor,
             ),
             suffixIcon: IconButton(
@@ -284,22 +300,24 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: _isLoading ? null : _handleLogin,
         style: UIStyles.defaultButtonStyle,
         child: SizedBox(
-          height: UIConstants
-              .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
+          height:
+              UIConstants
+                  .defaultButtonHeight, // Match the minimumSize height from defaultButtonStyle
           child: Center(
-            child: _isLoading
-                ? UIConstants.defaultLoadingIndicator
-                : const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.login, color: UIConstants.whiteColor),
-                      SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        Messages.loginButtonLabel,
-                        style: UIStyles.buttonStyle,
-                      ),
-                    ],
-                  ),
+            child:
+                _isLoading
+                    ? UIConstants.defaultLoadingIndicator
+                    : const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.login, color: UIConstants.whiteColor),
+                        SizedBox(width: UIConstants.spacingS),
+                        ScaledText(
+                          Messages.loginButtonLabel,
+                          style: UIStyles.buttonStyle,
+                        ),
+                      ],
+                    ),
           ),
         ),
       ),
@@ -325,10 +343,7 @@ class LoginScreenState extends State<LoginScreen> {
         Navigator.pushNamed(context, '/help');
       },
       style: UIStyles.textButtonStyle,
-      child: const ScaledText(
-        Messages.helpTitle,
-        style: UIStyles.linkStyle,
-      ),
+      child: const ScaledText(Messages.helpTitle, style: UIStyles.linkStyle),
     );
   }
 
@@ -356,10 +371,7 @@ class LoginScreenState extends State<LoginScreen> {
           },
           activeColor: _appColor,
         ),
-        const ScaledText(
-          'Angemeldet bleiben',
-          style: UIStyles.bodyStyle,
-        ),
+        const ScaledText('Angemeldet bleiben', style: UIStyles.bodyStyle),
       ],
     );
   }
@@ -374,7 +386,8 @@ class LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
+              minHeight:
+                  MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   MediaQuery.of(context).padding.bottom,
             ),
@@ -388,16 +401,11 @@ class LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: UIConstants.spacingS),
                   ScaledText(
                     Messages.loginTitle,
-                    style: UIStyles.headerStyle.copyWith(
-                      color: _appColor,
-                    ),
+                    style: UIStyles.headerStyle.copyWith(color: _appColor),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
                   if (_errorMessage.isNotEmpty)
-                    ScaledText(
-                      _errorMessage,
-                      style: UIStyles.errorStyle,
-                    ),
+                    ScaledText(_errorMessage, style: UIStyles.errorStyle),
                   const SizedBox(height: UIConstants.spacingM),
                   _buildEmailField(),
                   const SizedBox(height: UIConstants.spacingS),
@@ -415,9 +423,7 @@ class LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: UIConstants.spacingS),
-                  Center(
-                    child: _buildRegisterButton(),
-                  ),
+                  Center(child: _buildRegisterButton()),
                 ],
               ),
             ),

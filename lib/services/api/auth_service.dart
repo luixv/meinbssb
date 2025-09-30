@@ -23,13 +23,34 @@ class AuthService {
     required PostgrestService postgrestService,
     FlutterSecureStorage? secureStorage,
     required EmailService emailService,
-  })  : _httpClient = httpClient,
-        _cacheService = cacheService,
-        _networkService = networkService,
-        _configService = configService,
-        _postgrestService = postgrestService,
-        _secureStorage = secureStorage ?? const FlutterSecureStorage(),
-        _emailService = emailService;
+  }) : _httpClient = httpClient,
+       _cacheService = cacheService,
+       _networkService = networkService,
+       _configService = configService,
+       _postgrestService = postgrestService,
+       _secureStorage =
+           secureStorage ??
+           const FlutterSecureStorage(
+             aOptions: AndroidOptions(
+               encryptedSharedPreferences: true,
+               keyCipherAlgorithm:
+                   KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+               storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+             ),
+             iOptions: IOSOptions(
+               groupId: 'de.bssb.meinbssb',
+               accountName: 'meinbssb_secure_storage',
+               synchronizable: false,
+               accessibility: KeychainAccessibility.first_unlock_this_device,
+             ),
+             wOptions: WindowsOptions(useBackwardCompatibility: true),
+             lOptions: LinuxOptions(),
+             webOptions: WebOptions(
+               dbName: 'meinbssb_secure_db',
+               publicKey: 'meinbssb_public_key',
+             ),
+           ),
+       _emailService = emailService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -73,18 +94,14 @@ class AuthService {
         personId: personId,
         verificationToken: verificationToken, // pass as verificationToken
       );
-      LoggerService.logInfo(
-        'User created...',
-      );
+      LoggerService.logInfo('User created...');
       final tokenUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'web',
       );
       final verificationLink =
           '${tokenUrl}set-password?token=$verificationToken';
-      LoggerService.logInfo(
-        'Verification link: $verificationLink',
-      );
+      LoggerService.logInfo('Verification link: $verificationLink');
       // Send registration email
       await _emailService.sendRegistrationEmail(
         email: email,
@@ -107,18 +124,16 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
 
       const endpoint = 'LoginMeinBSSBApp';
-      final response = await _httpClient.post(
-        endpoint,
-        {
-          'Email': email,
-          'Passwort': password,
-        },
-        overrideBaseUrl: baseUrl,
-      );
+      final response = await _httpClient.post(endpoint, {
+        'Email': email,
+        'Passwort': password,
+      }, overrideBaseUrl: baseUrl);
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
@@ -143,9 +158,7 @@ class AuthService {
       }
     } on Exception catch (e) {
       if (e is http.ClientException) {
-        LoggerService.logError(
-          'http.ClientException occurred: ${e.message}',
-        );
+        LoggerService.logError('http.ClientException occurred: ${e.message}');
         return await _handleOfflineLogin(email, password);
       } else {
         LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
@@ -165,40 +178,43 @@ class AuthService {
     final cachedPassword = await _secureStorage.read(key: 'password');
     final cachedPersonId = await _cacheService.getInt('personId');
     final cachedWebloginId = await _cacheService.getInt('webLoginId');
-    final cachedUsernameTimestamp =
-        await _cacheService.getCacheTimestampForKey('username');
-    final cachedPersonIdTimestamp =
-        await _cacheService.getCacheTimestampForKey('personId');
-    final cachedWebloginIdTimestamp =
-        await _cacheService.getCacheTimestampForKey('webLoginId');
+    final cachedUsernameTimestamp = await _cacheService.getCacheTimestampForKey(
+      'username',
+    );
+    final cachedPersonIdTimestamp = await _cacheService.getCacheTimestampForKey(
+      'personId',
+    );
+    final cachedWebloginIdTimestamp = await _cacheService
+        .getCacheTimestampForKey('webLoginId');
     final expirationDuration = _networkService.getCacheExpirationDuration();
     final now = DateTime.now();
     bool isUsernameValid = false;
     bool isPersonIdValid = false;
     bool isWebloginIdValid = false;
     if (cachedUsernameTimestamp != null) {
-      final expirationTime =
-          DateTime.fromMillisecondsSinceEpoch(cachedUsernameTimestamp)
-              .add(expirationDuration);
+      final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        cachedUsernameTimestamp,
+      ).add(expirationDuration);
       isUsernameValid = now.isBefore(expirationTime);
     }
     if (cachedPersonIdTimestamp != null) {
-      final expirationTime =
-          DateTime.fromMillisecondsSinceEpoch(cachedPersonIdTimestamp)
-              .add(expirationDuration);
+      final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        cachedPersonIdTimestamp,
+      ).add(expirationDuration);
       isPersonIdValid = now.isBefore(expirationTime);
     }
     if (cachedWebloginIdTimestamp != null) {
-      final expirationTime =
-          DateTime.fromMillisecondsSinceEpoch(cachedWebloginIdTimestamp)
-              .add(expirationDuration);
+      final expirationTime = DateTime.fromMillisecondsSinceEpoch(
+        cachedWebloginIdTimestamp,
+      ).add(expirationDuration);
       isWebloginIdValid = now.isBefore(expirationTime);
     }
     final testCachedUsername = cachedUsername == email;
     final testCachedPassword = cachedPassword == password;
     final testCachedPersonId = cachedPersonId != null;
     final testCachedWebloginId = cachedWebloginId != null;
-    final isCacheValid = testCachedUsername &&
+    final isCacheValid =
+        testCachedUsername &&
         testCachedPassword &&
         testCachedPersonId &&
         testCachedWebloginId &&
@@ -260,14 +276,11 @@ class AuthService {
   }) async {
     try {
       const endpoint = 'ErstelleMyBSSBAccount';
-      final response = await _httpClient.post(
-        endpoint,
-        {
-          'PersonID': int.tryParse(personId),
-          'Email': email,
-          'Passwort': password,
-        },
-      );
+      final response = await _httpClient.post(endpoint, {
+        'PersonID': int.tryParse(personId),
+        'Email': email,
+        'Passwort': password,
+      });
       if (response is List && response.isNotEmpty) {
         final result = response[0];
         LoggerService.logInfo('We got this response: $result');
@@ -317,11 +330,15 @@ class AuthService {
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
       // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
       final endpoint = 'FindeLoginMail/$passnummer';
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         final loginMail = response[0]['LOGINMAIL'];
         if (loginMail is String) {
@@ -338,10 +355,11 @@ class AuthService {
   /// Checks if the current authentication token is valid (exists and is not empty).
   Future<bool> isTokenValid() async {
     try {
-      final tokenService = _tokenService ??= TokenService(
-        configService: _configService,
-        cacheService: _cacheService,
-      );
+      final tokenService =
+          _tokenService ??= TokenService(
+            configService: _configService,
+            cacheService: _cacheService,
+          );
       final token = await tokenService.getAuthToken();
       return token.isNotEmpty;
     } catch (e) {
@@ -352,11 +370,15 @@ class AuthService {
 
   Future<String> getPersonIDByPassnummer(String passNumber) async {
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
       final endpoint = 'PersonID/$passNumber';
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         final personId = response[0]['PERSONID'];
         if (personId != null && personId != 0) {
@@ -373,11 +395,15 @@ class AuthService {
 
   Future<Map<String, dynamic>> getPassDatenByPersonId(String personId) async {
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'apiBase',
+      );
       final endpoint = 'Passdaten/$personId';
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         return response[0];
       }
@@ -408,13 +434,17 @@ class AuthService {
         formattedBirthDate = birthDate;
       }
 
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'apiBase');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'apiBase',
+      );
       final endpoint =
           'FindePersonID/$lastName/$firstName/$formattedBirthDate/$passNumber/$zipCode';
       LoggerService.logInfo('Searching for person: $baseUrl$endpoint');
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         final personId = response[0]['PERSONID'];
         if (personId != null && personId != 0) {
@@ -431,13 +461,12 @@ class AuthService {
   }
 
   /// Step 1: Send password reset link to user
-  Future<Map<String, dynamic>> resetPasswordStep1(
-    String passNumber,
-  ) async {
+  Future<Map<String, dynamic>> resetPasswordStep1(String passNumber) async {
     try {
       String personId = await getPersonIDByPassnummer(passNumber);
-      final emailAddresses =
-          await _emailService.getEmailAddressesByPersonId(personId);
+      final emailAddresses = await _emailService.getEmailAddressesByPersonId(
+        personId,
+      );
 
       if (emailAddresses.isEmpty) {
         // Propagate error: no email found for passNumber
@@ -452,11 +481,12 @@ class AuthService {
       final passData = await getPassDatenByPersonId(personId);
 
       // Check latest password reset for this person
-      final latestReset =
-          await _postgrestService.getLatestPasswordResetForPerson(personId);
+      final latestReset = await _postgrestService
+          .getLatestPasswordResetForPerson(personId);
       if (latestReset != null && latestReset['created_at'] != null) {
-        final createdAt =
-            DateTime.tryParse(latestReset['created_at'].toString());
+        final createdAt = DateTime.tryParse(
+          latestReset['created_at'].toString(),
+        );
         if (createdAt != null &&
             DateTime.now().difference(createdAt).inHours < 24) {
           return {
@@ -473,9 +503,7 @@ class AuthService {
       );
       final verificationLink =
           '${tokenUrl}reset-password?token=$verificationToken&personId=$personId';
-      LoggerService.logInfo(
-        'Verification link: $verificationLink',
-      );
+      LoggerService.logInfo('Verification link: $verificationLink');
       await _emailService.sendPasswordResetNotifications(
         passData,
         emailAddresses,
@@ -517,13 +545,10 @@ class AuthService {
       // Step 2: Call the API endpoint
 
       const endpoint = 'MyBSSBPasswortAendern';
-      final response = await _httpClient.put(
-        endpoint,
-        {
-          'PersonID': int.parse(personId),
-          'PasswortNeu': newPassword,
-        },
-      );
+      final response = await _httpClient.put(endpoint, {
+        'PersonID': int.parse(personId),
+        'PasswortNeu': newPassword,
+      });
       LoggerService.logInfo("Got response: $response['result']");
       // Step 3: Check response
       if (response is Map<String, dynamic> &&
