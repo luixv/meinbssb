@@ -113,9 +113,8 @@ void main() {
 
     testWidgets('logged out: tapping Registrieren pushes RegistrationScreen',
         (tester) async {
-      // Minimal fake services for providers
-      final fakeAuthService = _FakeAuthService();
-      final fakeEmailService = _FakeEmailService();
+      // Minimal fake ApiService for provider
+      final fakeApiService = _FakeApiService();
 
       await tester.pumpWidget(
         MultiProvider(
@@ -123,8 +122,7 @@ void main() {
             ChangeNotifierProvider<FontSizeProvider>(
               create: (_) => FontSizeProvider(),
             ),
-            Provider<AuthService>.value(value: fakeAuthService),
-            Provider<EmailService>.value(value: fakeEmailService),
+            Provider<ApiService>.value(value: fakeApiService),
             Provider<ConfigService>.value(value: _FakeConfigService()),
           ],
           child: const MaterialApp(
@@ -193,17 +191,26 @@ void main() {
 // Helpers
 void _noop() {}
 
+class _FakeApiService implements ApiService {
+  final _authService = _FakeAuthService();
+  final _emailService = _FakeEmailService();
+
+  @override
+  AuthService get authService => _authService;
+
+  @override
+  EmailService get emailService => _emailService;
+
+  @override
+  noSuchMethod(Invocation invocation) => null;
+}
+
 class _FakeAuthService implements AuthService {
   @override
   noSuchMethod(Invocation invocation) => null;
 }
 
 class _FakeEmailService implements EmailService {
-  @override
-  noSuchMethod(Invocation invocation) => null;
-}
-
-class _FakeApiService implements ApiService {
   @override
   noSuchMethod(Invocation invocation) => null;
 }
