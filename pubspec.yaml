@@ -57,8 +57,8 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.1.14
   image_picker: ^1.0.4
-  web: ^0.5.0
-  package_info_plus: ^8.3.1
+  web: ^1.1.1
+  package_info_plus: ^9.0.0
   
   flutter_localizations:
     sdk: flutter
@@ -76,7 +76,7 @@ dev_dependencies:
   plugin_platform_interface: ^2.0.0
   integration_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   mocktail: ^1.0.0
 
   
