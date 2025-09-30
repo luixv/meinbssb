@@ -110,16 +110,23 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      LoggerService.logInfo('Starting login for email: $email');
+
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'api1Base',
       );
 
+      LoggerService.logInfo('Using base URL: $baseUrl');
       const endpoint = 'LoginMeinBSSBApp';
+      LoggerService.logInfo('Calling endpoint: $endpoint');
+
       final response = await _httpClient.post(endpoint, {
         'Email': email,
         'Passwort': password,
       }, overrideBaseUrl: baseUrl);
+
+      LoggerService.logInfo('Received response type: ${response.runtimeType}');
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
@@ -159,20 +166,23 @@ class AuthService {
       }
     } on Exception catch (e) {
       LoggerService.logError('Login exception occurred: $e');
-      
+
       if (e is http.ClientException) {
         LoggerService.logError('http.ClientException occurred: ${e.message}');
-        
+
         // Check if we have cached data before trying offline login
         final cachedUsername = await _cacheService.getString('username');
         if (cachedUsername != null && cachedUsername.isNotEmpty) {
           LoggerService.logInfo('Cached data found, attempting offline login');
           return await _handleOfflineLogin(email, password);
         } else {
-          LoggerService.logError('No cached data for offline login on first-time login');
+          LoggerService.logError(
+            'No cached data for offline login on first-time login',
+          );
           return {
             'ResultType': 0,
-            'ResultMessage': 'Netzwerkfehler: ${e.message}. Bitte überprüfen Sie Ihre Internetverbindung.',
+            'ResultMessage':
+                'Netzwerkfehler: ${e.message}. Bitte überprüfen Sie Ihre Internetverbindung.',
           };
         }
       } else {
@@ -265,16 +275,22 @@ class AuthService {
       };
     } else {
       LoggerService.logWarning('Offline login failed.');
-      
+
       // Check if this is a first-time login (no cached data at all)
-      if (cachedUsername == null && cachedPassword == null && cachedPersonId == null && cachedWebloginId == null) {
-        LoggerService.logError('First-time login attempted offline - no cached data available');
+      if (cachedUsername == null &&
+          cachedPassword == null &&
+          cachedPersonId == null &&
+          cachedWebloginId == null) {
+        LoggerService.logError(
+          'First-time login attempted offline - no cached data available',
+        );
         return {
           'ResultType': 0,
-          'ResultMessage': 'Erste Anmeldung erfordert eine Internetverbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.',
+          'ResultMessage':
+              'Erste Anmeldung erfordert eine Internetverbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.',
         };
       }
-      
+
       if (testCachedUsername &&
           testCachedPassword &&
           testCachedPersonId &&
