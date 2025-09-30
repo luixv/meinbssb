@@ -14,7 +14,6 @@ import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 
 class FakeApiService implements ApiService {
-
   FakeApiService(this.networkService);
   bool passantragShouldSucceed = true;
   final NetworkService networkService;

@@ -68,6 +68,7 @@ class ApiService {
     required StartingRightsService startingRightsService,
   })  : _configService = configService,
         _imageService = imageService,
+        _cacheService = cacheService,
         _networkService = networkService,
         _trainingService = trainingService,
         _userService = userService,
@@ -82,6 +83,7 @@ class ApiService {
 
   final ConfigService _configService;
   final ImageService _imageService;
+  final CacheService _cacheService;
   final NetworkService _networkService;
   final TrainingService _trainingService;
   final UserService _userService;
@@ -97,9 +99,15 @@ class ApiService {
   Future<bool> hasInternet() => _networkService.hasInternet();
 
   ImageService get imageService => _imageService;
+  ConfigService get configService => _configService;
+  EmailService get emailService => _emailService;
+  AuthService get authService => _authService;
 
   Duration getCacheExpirationDuration() =>
       _networkService.getCacheExpirationDuration();
+
+  // Cache methods
+  Future<String?> getCachedUsername() => _cacheService.getString('username');
 
   // Use the register method from AuthService
   Future<Map<String, dynamic>> register({

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:intl/intl.dart';
 
 import '/constants/ui_constants.dart';
@@ -13,10 +12,6 @@ import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
-
-import '/services/core/cache_service.dart';
-import '/services/core/config_service.dart';
-import '/services/core/email_service.dart';
 
 import '/screens/agb_screen.dart';
 
@@ -169,7 +164,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       return;
     }
     final apiService = Provider.of<ApiService>(parentContext, listen: false);
-    Provider.of<CacheService>(parentContext, listen: false);
 
     // Show the dialog immediately with a loading indicator
     showDialog(
@@ -633,16 +627,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   formKey.currentState!
                                                       .validate()) {
                                                 Navigator.of(context).pop();
-                                                final cacheService =
-                                                    Provider.of<CacheService>(
+                                                final apiService =
+                                                    Provider.of<ApiService>(
                                                   context,
                                                   listen: false,
                                                 );
                                                 final String email =
-                                                    await cacheService
-                                                            .getString(
-                                                          'username',
-                                                        ) ??
+                                                    await apiService
+                                                            .getCachedUsername() ??
                                                         '';
                                                 final BankData safeBankData =
                                                     bankData ??
@@ -1030,8 +1022,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     UserData? prefillUser,
     String prefillEmail = '',
   }) async {
-    final configService = Provider.of<ConfigService>(context, listen: false);
-    final emailService = Provider.of<EmailService>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     // Show registration form dialog and wait for result
@@ -1044,8 +1034,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           bankData: bankData,
           prefillUser: prefillUser,
           prefillEmail: prefillEmail,
-          configService: configService,
-          emailService: emailService,
+          configService: apiService.configService,
+          emailService: apiService.emailService,
           apiService: apiService,
         );
       },
@@ -1143,10 +1133,9 @@ class _LoginDialogState extends State<LoginDialog> {
       _isLoading = true;
       _errorMessage = '';
     });
-    final authService = Provider.of<AuthService>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
     try {
-      final response = await authService.login(
+      final response = await apiService.login(
         _emailController.text,
         _passwordController.text,
       );
