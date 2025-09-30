@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '/services/api_service.dart';
 import '/screens/base_screen_layout.dart';
 import '/constants/ui_constants.dart';
 
@@ -13,12 +14,14 @@ class OktoberfestEintrittFestzelt extends StatefulWidget {
     required this.vorname,
     required this.nachname,
     required this.geburtsdatum,
+    required this.apiService,
   });
   final String date;
   final String passnummer;
   final String vorname;
   final String nachname;
   final String geburtsdatum;
+  final ApiService apiService;
 
   @override
   OktoberfestEintrittFestzeltState createState() =>
@@ -29,12 +32,15 @@ class OktoberfestEintrittFestzeltState
     extends State<OktoberfestEintrittFestzelt> {
   late String _currentTime;
   Timer? _timer;
+  bool _hasInternet = true;
+  bool _checkingConnection = false;
 
   @override
   void initState() {
     super.initState();
     _currentTime = _getCurrentTime();
     _startClock();
+    _checkNetworkConnectivity();
   }
 
   @override
@@ -55,6 +61,31 @@ class OktoberfestEintrittFestzeltState
     final now = DateTime.now();
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     return '${twoDigits(now.hour)}:${twoDigits(now.minute)}:${twoDigits(now.second)}';
+  }
+
+  Future<void> _checkNetworkConnectivity() async {
+    if (!mounted) return;
+
+    setState(() {
+      _checkingConnection = true;
+    });
+
+    try {
+      final hasConnection = await widget.apiService.hasInternet();
+      if (mounted) {
+        setState(() {
+          _hasInternet = hasConnection;
+          _checkingConnection = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasInternet = false;
+          _checkingConnection = false;
+        });
+      }
+    }
   }
 
   @override
@@ -89,6 +120,8 @@ class OktoberfestEintrittFestzeltState
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: UIConstants.spacingS),
+                  _buildNetworkStatus(),
+                  const SizedBox(height: UIConstants.spacingS),
                   _buildDatumWithTime(),
                   const SizedBox(height: UIConstants.spacingS),
                   _buildInfoTable(),
@@ -98,6 +131,61 @@ class OktoberfestEintrittFestzeltState
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNetworkStatus() {
+    if (_checkingConnection) {
+      return const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(UIConstants.textColor),
+            ),
+          ),
+          SizedBox(width: UIConstants.spacingS),
+          Text(
+            'Verbindung prüfen...',
+            style: TextStyle(
+              color: UIConstants.textColor,
+              fontSize: UIConstants.bodyFontSize,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          _hasInternet ? Icons.wifi : Icons.wifi_off,
+          color: _hasInternet ? Colors.green : Colors.red,
+          size: 20,
+        ),
+        const SizedBox(width: UIConstants.spacingXS),
+        Text(
+          _hasInternet ? 'Online' : 'Offline',
+          style: TextStyle(
+            color: _hasInternet ? Colors.green : Colors.red,
+            fontSize: UIConstants.bodyFontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: UIConstants.spacingS),
+        GestureDetector(
+          onTap: _checkNetworkConnectivity,
+          child: const Icon(
+            Icons.refresh,
+            color: UIConstants.textColor,
+            size: 16,
+          ),
+        ),
+      ],
     );
   }
 

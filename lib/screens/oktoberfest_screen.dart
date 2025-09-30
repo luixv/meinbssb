@@ -89,6 +89,8 @@ class OktoberfestScreen extends StatelessWidget {
               'Eintritt Festzelt',
               Icons.festival,
               () {
+                final apiService =
+                    Provider.of<ApiService>(context, listen: false);
                 final now = DateTime.now();
                 final formattedDate =
                     '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
@@ -103,6 +105,7 @@ class OktoberfestScreen extends StatelessWidget {
                       geburtsdatum: userData?.geburtsdatum != null
                           ? '${userData!.geburtsdatum!.day.toString().padLeft(2, '0')}.${userData!.geburtsdatum!.month.toString().padLeft(2, '0')}.${userData!.geburtsdatum!.year}'
                           : 'Nicht verfügbar',
+                      apiService: apiService,
                     ),
                   ),
                 );
