@@ -160,7 +160,8 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
   Future<Map<String, dynamic>> _validateImage(XFile image) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final maxSizeMB = apiService.configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
+    final maxSizeMB =
+        apiService.configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
     final allowedFormats =
         apiService.configService.getList('allowedFormats', 'profilePhoto') ??
             ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
@@ -667,11 +668,12 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               // Show validation requirements
               Consumer<ApiService>(
                 builder: (context, apiService, child) {
-                  final maxSizeMB =
-                      apiService.configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
-                  final allowedFormats =
-                      apiService.configService.getList('allowedFormats', 'profilePhoto') ??
-                          ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                  final maxSizeMB = apiService.configService
+                          .getInt('maxSizeMB', 'profilePhoto') ??
+                      2;
+                  final allowedFormats = apiService.configService
+                          .getList('allowedFormats', 'profilePhoto') ??
+                      ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
                   return Center(
                     child: Column(

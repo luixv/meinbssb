@@ -15,6 +15,7 @@ class MockConfigService implements ConfigService {
     if (key == 'maxSizeMB' && section == 'profilePhoto') return 2;
     return null;
   }
+
   @override
   List<String>? getList(String key, [String? section]) {
     if (key == 'allowedFormats' && section == 'profilePhoto') {
@@ -22,16 +23,17 @@ class MockConfigService implements ConfigService {
     }
     return null;
   }
+
   @override
   bool? getBool(String key, [String? section]) => null;
 }
 
 class FakeApiService implements ApiService {
   final _configService = MockConfigService();
-  
+
   @override
   ConfigService get configService => _configService;
-  
+
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
 }
