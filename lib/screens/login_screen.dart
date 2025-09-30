@@ -35,23 +35,9 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isLoggedIn = false;
   bool _rememberMe = false;
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-      keyCipherAlgorithm:
-          KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
-      groupId: 'de.bssb.meinbssb',
-      accountName: 'meinbssb_login_storage',
-      synchronizable: false,
       accessibility: KeychainAccessibility.first_unlock_this_device,
-    ),
-    wOptions: WindowsOptions(useBackwardCompatibility: true),
-    lOptions: LinuxOptions(),
-    webOptions: WebOptions(
-      dbName: 'meinbssb_login_db',
-      publicKey: 'meinbssb_login_key',
     ),
   );
 

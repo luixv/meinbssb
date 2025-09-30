@@ -31,23 +31,9 @@ class AuthService {
        _secureStorage =
            secureStorage ??
            const FlutterSecureStorage(
-             aOptions: AndroidOptions(
-               encryptedSharedPreferences: true,
-               keyCipherAlgorithm:
-                   KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-               storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
-             ),
+             aOptions: AndroidOptions(encryptedSharedPreferences: true),
              iOptions: IOSOptions(
-               groupId: 'de.bssb.meinbssb',
-               accountName: 'meinbssb_secure_storage',
-               synchronizable: false,
                accessibility: KeychainAccessibility.first_unlock_this_device,
-             ),
-             wOptions: WindowsOptions(useBackwardCompatibility: true),
-             lOptions: LinuxOptions(),
-             webOptions: WebOptions(
-               dbName: 'meinbssb_secure_db',
-               publicKey: 'meinbssb_public_key',
              ),
            ),
        _emailService = emailService;
@@ -138,7 +124,22 @@ class AuthService {
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
           await _cacheService.setString('username', email);
-          await _secureStorage.write(key: 'password', value: password);
+
+          // Try secure storage with fallback
+          try {
+            await _secureStorage.write(key: 'password', value: password);
+            LoggerService.logInfo(
+              'Password stored in secure storage successfully.',
+            );
+          } catch (e) {
+            LoggerService.logError(
+              'Failed to store password in secure storage: $e',
+            );
+            // Fallback to SharedPreferences for password (less secure but functional)
+            await _cacheService.setString('password_fallback', password);
+            LoggerService.logInfo('Password stored in fallback cache.');
+          }
+
           await _cacheService.setInt('personId', response['PersonID']);
           await _cacheService.setInt('webLoginId', response['WebLoginID']);
           await _cacheService.setCacheTimestampForKey('username');
@@ -157,14 +158,28 @@ class AuthService {
         return {};
       }
     } on Exception catch (e) {
+      LoggerService.logError('Login exception occurred: $e');
+      
       if (e is http.ClientException) {
         LoggerService.logError('http.ClientException occurred: ${e.message}');
-        return await _handleOfflineLogin(email, password);
+        
+        // Check if we have cached data before trying offline login
+        final cachedUsername = await _cacheService.getString('username');
+        if (cachedUsername != null && cachedUsername.isNotEmpty) {
+          LoggerService.logInfo('Cached data found, attempting offline login');
+          return await _handleOfflineLogin(email, password);
+        } else {
+          LoggerService.logError('No cached data for offline login on first-time login');
+          return {
+            'ResultType': 0,
+            'ResultMessage': 'Netzwerkfehler: ${e.message}. Bitte überprüfen Sie Ihre Internetverbindung.',
+          };
+        }
       } else {
-        LoggerService.logError('Benutzername oder Passwort ist falsch: $e');
+        LoggerService.logError('Other login exception: $e');
         return {
           'ResultType': 0,
-          'ResultMessage': 'Benutzername oder Passwort ist falsch',
+          'ResultMessage': 'Anmeldung fehlgeschlagen: $e',
         };
       }
     }
@@ -174,10 +189,18 @@ class AuthService {
     String email,
     String password,
   ) async {
+    LoggerService.logInfo('Starting offline login for email: $email');
+
     final cachedUsername = await _cacheService.getString('username');
     final cachedPassword = await _secureStorage.read(key: 'password');
     final cachedPersonId = await _cacheService.getInt('personId');
     final cachedWebloginId = await _cacheService.getInt('webLoginId');
+
+    // Debug logging
+    LoggerService.logInfo('Cached username: ${cachedUsername ?? "NULL"}');
+    LoggerService.logInfo('Cached password exists: ${cachedPassword != null}');
+    LoggerService.logInfo('Cached personId: ${cachedPersonId ?? "NULL"}');
+    LoggerService.logInfo('Cached webLoginId: ${cachedWebloginId ?? "NULL"}');
     final cachedUsernameTimestamp = await _cacheService.getCacheTimestampForKey(
       'username',
     );
@@ -213,6 +236,18 @@ class AuthService {
     final testCachedPassword = cachedPassword == password;
     final testCachedPersonId = cachedPersonId != null;
     final testCachedWebloginId = cachedWebloginId != null;
+
+    // Debug logging for validation tests
+    LoggerService.logInfo(
+      'Username match: $testCachedUsername (input: $email, cached: $cachedUsername)',
+    );
+    LoggerService.logInfo('Password match: $testCachedPassword');
+    LoggerService.logInfo('PersonId exists: $testCachedPersonId');
+    LoggerService.logInfo('WebLoginId exists: $testCachedWebloginId');
+    LoggerService.logInfo('Username timestamp valid: $isUsernameValid');
+    LoggerService.logInfo('PersonId timestamp valid: $isPersonIdValid');
+    LoggerService.logInfo('WebLoginId timestamp valid: $isWebloginIdValid');
+
     final isCacheValid =
         testCachedUsername &&
         testCachedPassword &&
@@ -230,6 +265,16 @@ class AuthService {
       };
     } else {
       LoggerService.logWarning('Offline login failed.');
+      
+      // Check if this is a first-time login (no cached data at all)
+      if (cachedUsername == null && cachedPassword == null && cachedPersonId == null && cachedWebloginId == null) {
+        LoggerService.logError('First-time login attempted offline - no cached data available');
+        return {
+          'ResultType': 0,
+          'ResultMessage': 'Erste Anmeldung erfordert eine Internetverbindung. Bitte überprüfen Sie Ihre Netzwerkverbindung.',
+        };
+      }
+      
       if (testCachedUsername &&
           testCachedPassword &&
           testCachedPersonId &&
@@ -301,6 +346,19 @@ class AuthService {
 
   Future<void> logout() async {
     try {
+      // Clear all cached data
+      await _cacheService.remove('username');
+      await _cacheService.remove('personId');
+      await _cacheService.remove('webLoginId');
+      await _cacheService.remove('password_fallback');
+
+      // Clear secure storage
+      try {
+        await _secureStorage.delete(key: 'password');
+      } catch (e) {
+        LoggerService.logError('Failed to clear secure storage: $e');
+      }
+
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
