@@ -4,9 +4,8 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/services/core/network_service.dart';
 import '/screens/base_screen_layout.dart';
-import '../models/schulung_data.dart';
+import '/models/schulung_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
@@ -101,9 +100,8 @@ class AbsolvierteSchulungenScreenState
 
   Future<bool> _isOffline() async {
     try {
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      return !(await networkService.hasInternet());
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      return !(await apiService.hasInternet());
     } catch (e) {
       LoggerService.logError('Error checking network status: $e');
       return true; // Assume offline if we can't check

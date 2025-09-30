@@ -8,7 +8,6 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/bank_data_success_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -88,9 +87,8 @@ class BankDataScreenState extends State<BankDataScreen> {
     });
 
     // Check offline status before saving
-    final networkService = Provider.of<NetworkService>(context, listen: false);
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final isOffline = !(await networkService.hasInternet());
+    final isOffline = !(await apiService.hasInternet());
     if (isOffline) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -164,7 +162,6 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   Future<void> _onDeleteBankData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final networkService = Provider.of<NetworkService>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -277,7 +274,7 @@ class BankDataScreenState extends State<BankDataScreen> {
     if (!mounted) return;
 
     if (confirm == true) {
-      final isOffline = !(await networkService.hasInternet());
+      final isOffline = !(await apiService.hasInternet());
       if (isOffline) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

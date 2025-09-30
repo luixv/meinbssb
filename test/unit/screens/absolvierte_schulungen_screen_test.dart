@@ -5,14 +5,13 @@ import 'package:mockito/mockito.dart';
 
 import 'package:meinbssb/screens/absolvierte_schulungen_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
 import '../helpers/test_helper.dart';
 
-@GenerateMocks([ApiService, NetworkService, FontSizeProvider, ConfigService])
+@GenerateMocks([ApiService, FontSizeProvider, ConfigService])
 void main() {
   setUp(() {
     TestHelper.setupMocks();
@@ -140,7 +139,7 @@ void main() {
 
     testWidgets('shows offline message when offline',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => false);
 
       await tester.pumpWidget(createAbsolvierteSchulungenScreen());
@@ -154,7 +153,7 @@ void main() {
 
     testWidgets('shows loading indicator initially',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => []);
@@ -169,7 +168,7 @@ void main() {
 
     testWidgets('shows empty message when no schulungen found',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => []);
@@ -178,12 +177,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('displays schulungen when data is available',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => sampleSchulungen);
@@ -197,7 +198,7 @@ void main() {
     });
 
     testWidgets('formats dates correctly', (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => sampleSchulungen);
@@ -214,7 +215,7 @@ void main() {
 
     testWidgets('handles invalid dates with "Unbekannt"',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => sampleSchulungen);
@@ -286,7 +287,7 @@ void main() {
         ),
       ];
 
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => unsortedSchulungen);
@@ -304,7 +305,7 @@ void main() {
     });
 
     testWidgets('handles API error gracefully', (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenThrow(Exception('API Error'));
@@ -313,11 +314,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('handles null userData', (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
 
       await tester.pumpWidget(
@@ -332,13 +335,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Keine absolvierten Schulungen gefunden.'), findsOneWidget,);
+        find.text('Keine absolvierten Schulungen gefunden.'),
+        findsOneWidget,
+      );
       verifyNever(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any));
     });
 
     testWidgets('displays task_alt icons for each schulung',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => sampleSchulungen);
@@ -351,7 +356,7 @@ void main() {
 
     testWidgets('shows FloatingActionButton when online',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => []);
@@ -365,7 +370,7 @@ void main() {
 
     testWidgets('hides FloatingActionButton when offline',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => false);
 
       await tester.pumpWidget(createAbsolvierteSchulungenScreen());
@@ -376,7 +381,7 @@ void main() {
 
     testWidgets('calls fetchAbsolvierteSchulungen with correct personId',
         (WidgetTester tester) async {
-      when(TestHelper.mockNetworkService.hasInternet())
+      when(TestHelper.mockApiService.hasInternet())
           .thenAnswer((_) async => true);
       when(TestHelper.mockApiService.fetchAbsolvierteSchulungen(any))
           .thenAnswer((_) async => []);

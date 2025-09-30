@@ -15,7 +15,6 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class ContactDataScreen extends StatefulWidget {
@@ -179,10 +178,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
 
     try {
-      // Check network status
-      final networkService =
-          Provider.of<NetworkService>(context, listen: false);
-      final isOffline = !(await networkService.hasInternet());
+      // Check network status and get API service
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final isOffline = !(await apiService.hasInternet());
       if (!mounted) return;
       if (isOffline) {
         navigator.pop(); // Close loading dialog
@@ -197,7 +195,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       }
 
       // Perform deletion
-      final apiService = Provider.of<ApiService>(context, listen: false);
       final contact = Contact(
         id: kontaktId,
         personId: widget.userData?.personId ?? 0,
@@ -256,8 +253,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       return;
     }
 
-    final networkService = Provider.of<NetworkService>(context, listen: false);
-    final isOffline = !(await networkService.hasInternet());
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final isOffline = !(await apiService.hasInternet());
     if (!mounted) return;
     if (isOffline) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -304,8 +301,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
 
     try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      
       // If it's an email contact, handle email validation flow
       if (contact.isEmail) {
         await _handleEmailValidation(contact, dialogContext);
@@ -355,17 +350,18 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     }
   }
 
-  Future<void> _handleEmailValidation(Contact contact, BuildContext dialogContext) async {
+  Future<void> _handleEmailValidation(
+      Contact contact, BuildContext dialogContext,) async {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final authService = Provider.of<AuthService>(context, listen: false);
-      
+
       // Generate verification token
       final verificationToken = authService.generateVerificationToken();
-      
+
       // Determine email type
       final emailType = contact.type == 4 ? 'private' : 'business';
-      
+
       // Create email validation entry in database
       await apiService.createEmailValidationEntry(
         personId: widget.userData!.personId.toString(),
@@ -373,7 +369,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         emailType: emailType,
         verificationToken: verificationToken,
       );
-      
+
       // Send validation email
       await apiService.sendEmailValidationNotifications(
         personId: widget.userData!.personId.toString(),
@@ -386,20 +382,20 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       );
 
       if (!mounted) return;
-      
+
       // Show success message in German
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.'),
+          content: Text(
+              'Bitte überprüfen Sie Ihre E-Mail, um Ihre neue E-Mail-Adresse zu bestätigen.',),
           duration: UIConstants.snackbarDuration,
           backgroundColor: Colors.orange,
         ),
       );
-      
+
       _kontaktController.clear();
       _selectedKontaktTyp = null;
       Navigator.of(dialogContext).pop();
-      
     } catch (e) {
       LoggerService.logError('Exception during email validation setup: $e');
       if (mounted) {
