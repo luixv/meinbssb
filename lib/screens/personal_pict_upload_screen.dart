@@ -665,12 +665,12 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
               const SizedBox(height: UIConstants.spacingM),
               // Show validation requirements
-              Consumer<ConfigService>(
-                builder: (context, configService, child) {
+              Consumer<ApiService>(
+                builder: (context, apiService, child) {
                   final maxSizeMB =
-                      configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
+                      apiService.configService.getInt('maxSizeMB', 'profilePhoto') ?? 2;
                   final allowedFormats =
-                      configService.getList('allowedFormats', 'profilePhoto') ??
+                      apiService.configService.getList('allowedFormats', 'profilePhoto') ??
                           ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
                   return Center(

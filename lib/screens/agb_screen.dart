@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../constants/ui_constants.dart';
-import '../constants/ui_styles.dart';
+import '/constants/ui_constants.dart';
+import '/constants/ui_styles.dart';
 
 class AgbScreen extends StatelessWidget {
   const AgbScreen({super.key});

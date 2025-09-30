@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/font_size_provider.dart';
-import '../constants/ui_constants.dart';
+import '/providers/font_size_provider.dart';
+import '/constants/ui_constants.dart';
 
 class ScaledTextStyle {
   static TextStyle scale(TextStyle baseStyle, BuildContext context) {

@@ -11,14 +11,27 @@ class MockConfigService implements ConfigService {
   @override
   String? getString(String key, [String? section]) => null;
   @override
-  int? getInt(String key, [String? section]) => null;
+  int? getInt(String key, [String? section]) {
+    if (key == 'maxSizeMB' && section == 'profilePhoto') return 2;
+    return null;
+  }
   @override
-  List<String>? getList(String key, [String? section]) => null;
+  List<String>? getList(String key, [String? section]) {
+    if (key == 'allowedFormats' && section == 'profilePhoto') {
+      return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    }
+    return null;
+  }
   @override
   bool? getBool(String key, [String? section]) => null;
 }
 
 class FakeApiService implements ApiService {
+  final _configService = MockConfigService();
+  
+  @override
+  ConfigService get configService => _configService;
+  
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
 }

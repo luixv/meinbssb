@@ -12,8 +12,9 @@ import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
-import '../helpers/test_helper.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+
+import '../helpers/test_helper.dart';
 
 @GenerateMocks([AuthService, ApiService, EmailService])
 void main() {
@@ -111,9 +112,13 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(
-          find.byKey(const Key('usernameField')), 'test@example.com',);
+        find.byKey(const Key('usernameField')),
+        'test@example.com',
+      );
       await tester.enterText(
-          find.byKey(const Key('passwordField')), 'password123',);
+        find.byKey(const Key('passwordField')),
+        'password123',
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('test@example.com'), findsOneWidget);

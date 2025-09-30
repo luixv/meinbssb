@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Import provider
+import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
-import '/constants/ui_styles.dart'; // Import UIStyles
+import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/widgets/scaled_text.dart'; // Import ScaledText
-import '../providers/font_size_provider.dart'; // Import FontSizeProvider
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class PersonalPictUploadSuccessScreen extends StatelessWidget {
   const PersonalPictUploadSuccessScreen({
