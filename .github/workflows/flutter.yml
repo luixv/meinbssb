@@ -70,13 +70,33 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Build IPA
-        run: flutter build ipa --release --no-codesign
-      - name: Upload IPA
+      - name: Build iOS Framework
+        run: flutter build ios --release --no-codesign
+      - name: List build directory contents
+        run: |
+          echo "Contents of build/ios/:"
+          ls -la build/ios/ || echo "build/ios/ not found"
+          echo "Contents of build/ios/iphoneos/:"
+          ls -la build/ios/iphoneos/ || echo "build/ios/iphoneos/ not found"
+      - name: Create iOS Archive
+        run: |
+          mkdir -p build/ios/archive
+          if [ -d "build/ios/iphoneos/Runner.app" ]; then
+            echo "Creating archive from Runner.app"
+            cd build/ios/iphoneos
+            zip -r ../archive/ios-app.zip Runner.app
+          else
+            echo "Runner.app not found, creating placeholder"
+            mkdir -p build/ios/archive
+            echo "iOS build completed but no distributable app created (requires code signing)" > build/ios/archive/README.txt
+            zip build/ios/archive/ios-build-info.zip build/ios/archive/README.txt
+          fi
+      - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
-          name: release-ipa
-          path: build/ios/ipa/*.ipa
+          name: release-ios
+          path: build/ios/archive/*.zip
+          if-no-files-found: warn
 
   build-web:
     name: Build Web
@@ -178,10 +198,10 @@ jobs:
           fi
 
           # iOS
-          if compgen -G "artifacts/release-ipa/*.ipa" > /dev/null; then
-            cp artifacts/release-ipa/*.ipa "$RELEASE_DIR/"
+          if [ -d "artifacts/release-ios" ]; then
+            cp artifacts/release-ios/*.zip "$RELEASE_DIR/" 2>/dev/null || echo "::warning::No iOS zip files found"
           else
-            echo "::warning::No iOS build found"
+            echo "::warning::No iOS build artifacts found"
           fi
 
       - name: Create GitHub Release
