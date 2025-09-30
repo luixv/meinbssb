@@ -169,10 +169,14 @@ class AuthService {
 
       if (e is http.ClientException) {
         LoggerService.logError('http.ClientException occurred: ${e.message}');
-        
-        // Check if this is an authentication error from server (contains "Benutzername oder Passwort")
-        if (e.message.contains('Benutzername oder Passwort ist falsch')) {
-          LoggerService.logError('Server returned authentication error');
+
+        // Check if this is an authentication error from server
+        if (e.message.contains('Benutzername oder Passwort') ||
+            e.message.contains('ist falsch') ||
+            e.message.contains('bssb.bayern')) {
+          LoggerService.logError(
+            'Server returned authentication error: ${e.message}',
+          );
           return {
             'ResultType': 0,
             'ResultMessage': 'Benutzername oder Passwort ist falsch',
