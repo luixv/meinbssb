@@ -78,10 +78,11 @@ class ThemeProvider extends ChangeNotifier {
           vertical: UIConstants.spacingS,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          borderRadius:
+              BorderRadius.all(Radius.circular(UIConstants.cornerRadius)),
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -89,7 +90,7 @@ class ThemeProvider extends ChangeNotifier {
         foregroundColor: colorScheme.onPrimary,
         titleTextStyle: UIStyles.appBarTitleStyle,
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         titleTextStyle: UIStyles.dialogTitleStyle,
         contentTextStyle: UIStyles.dialogContentStyle,
         shape: RoundedRectangleBorder(
