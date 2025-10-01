@@ -52,6 +52,12 @@ jobs:
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
+      - name: Clean previous builds
+        run: |
+          flutter clean
+          # Stop any running Gradle daemons
+          cd android && ./gradlew --stop || true
+          cd ..
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
@@ -63,8 +69,11 @@ jobs:
           echo "--- New config.json (first 10 lines) ---"
           head -10 assets/config.json
           echo "Config file replaced successfully"
-      - name: Build Android
-        run: flutter build apk --release
+      - name: Build APK
+        run: |
+          # Disable file watchers and hot reload for CI/CD
+          export FLUTTER_WEB=false
+          flutter build apk --release --no-tree-shake-icons
       - name: Create versioned APK archive
         run: |
           mkdir -p release_artifacts
@@ -77,6 +86,7 @@ jobs:
         with:
           name: release-${{ steps.version.outputs.version }}-apk
           path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
+          if-no-files-found: error
 
   build-ios:
     name: Build iOS
@@ -96,39 +106,52 @@ jobs:
           VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
+      - name: Clean previous builds
+        run: flutter clean
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
         run: |
+          echo "Original config (first 10 lines):"
+          head -10 assets/config.json
           echo "Copying config.test.json to config.json for deployment"
           cp assets/config.test.json assets/config.json
+          echo "New config (first 10 lines):"
+          head -10 assets/config.json
           echo "Config file replaced successfully"
       - name: Build iOS Framework
-        run: flutter build ios --release --no-codesign
+        run: |
+          # Disable file watchers for CI/CD
+          export FLUTTER_WEB=false
+          flutter build ios --release --no-codesign --no-tree-shake-icons
       - name: List build directory contents
         run: |
           echo "Contents of build/ios/:"
-          ls -la build/ios/ || echo "build/ios/ not found"
-          echo "Contents of build/ios/iphoneos/:"
-          ls -la build/ios/iphoneos/ || echo "build/ios/iphoneos/ not found"
+          ls -la build/ios/ || echo "build/ios/ does not exist"
+          if [ -d "build/ios/iphoneos" ]; then
+            echo "Contents of build/ios/iphoneos/:"
+            ls -la build/ios/iphoneos/
+          fi
       - name: Create iOS Archive
         run: |
           mkdir -p build/ios/archive
           if [ -d "build/ios/iphoneos/Runner.app" ]; then
             echo "Creating archive from Runner.app"
             cd build/ios/iphoneos
-            zip -r ../archive/release-${{ steps.version.outputs.version }}-ios.zip Runner.app
+            # Rename to include version
+            cp -r Runner.app meinbssb-${{ steps.version.outputs.version }}.app
+            zip -r ../archive/release-${{ steps.version.outputs.version }}-ios.zip meinbssb-${{ steps.version.outputs.version }}.app
           else
             echo "Runner.app not found, creating placeholder"
             mkdir -p build/ios/archive
-            echo "iOS build completed but no distributable app created (requires code signing)" > build/ios/archive/README.txt
-            zip build/ios/archive/release-${{ steps.version.outputs.version }}-ios.zip build/ios/archive/README.txt
+            echo "iOS build completed but no distributable app created (requires code signing)" > build/ios/archive/meinbssb-${{ steps.version.outputs.version }}-README.txt
+            zip build/ios/archive/release-${{ steps.version.outputs.version }}-ios.zip build/ios/archive/meinbssb-${{ steps.version.outputs.version }}-README.txt
           fi
       - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-ios
-          path: build/ios/archive/release-${{ steps.version.outputs.version }}-ios.zip
+          path: build/ios/archive/*.zip
           if-no-files-found: warn
 
   build-web:
@@ -265,25 +288,25 @@ jobs:
             echo "::warning::No Android build artifacts found for version $VERSION"
           fi
 
-          # Web
-          cd "artifacts/release-web"
-          zip -r "$RELEASE_DIR/release-$VERSION-web.zip" .
-          cd -
-
-          # Windows
-          if [ -d "artifacts/release-windows" ]; then
-            cd "artifacts/release-windows"
-            zip -r "$RELEASE_DIR/release-$VERSION-windows.zip" *
-            cd -
-          else
-            echo "::warning::No Windows build found."
-          fi
-
           # iOS - copy the versioned zip file
           if [ -d "artifacts/release-$VERSION-ios" ]; then
             cp "artifacts/release-$VERSION-ios/release-$VERSION-ios.zip" "$RELEASE_DIR/"
           else
             echo "::warning::No iOS build artifacts found for version $VERSION"
+          fi
+
+          # Web - copy the versioned zip file
+          if [ -d "artifacts/release-$VERSION-web" ]; then
+            cp "artifacts/release-$VERSION-web/release-$VERSION-web.zip" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Web build artifacts found for version $VERSION"
+          fi
+
+          # Windows - copy the versioned zip file
+          if [ -d "artifacts/release-$VERSION-windows" ]; then
+            cp "artifacts/release-$VERSION-windows/release-$VERSION-windows.zip" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Windows build artifacts found for version $VERSION"
           fi
 
       - name: Create GitHub Release
