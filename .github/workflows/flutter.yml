@@ -91,7 +91,8 @@ jobs:
   build-ios:
     name: Build iOS
     needs: test
-    runs-on: macos-latest
+    runs-on: macos-13  # Use specific version instead of macos-latest
+    timeout-minutes: 45  # Add timeout to prevent indefinite waiting
     steps:
       - uses: actions/checkout@v4
       - name: Setup Flutter
