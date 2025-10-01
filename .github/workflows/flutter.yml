@@ -8,8 +8,8 @@ on:
 
 permissions:
   contents: write
-  packages: write
-  actions: write
+  packages: read
+  actions: none
 
 jobs:
   test:
