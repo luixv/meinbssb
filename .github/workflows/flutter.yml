@@ -68,9 +68,10 @@ jobs:
       - name: Create versioned APK archive
         run: |
           mkdir -p release_artifacts
-          cp build/app/outputs/flutter-apk/app-release.apk release_artifacts/
+          # Rename APK to include version
+          cp build/app/outputs/flutter-apk/app-release.apk release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
           cd release_artifacts
-          zip release-${{ steps.version.outputs.version }}-apk.zip app-release.apk
+          zip release-${{ steps.version.outputs.version }}-apk.zip meinbssb-${{ steps.version.outputs.version }}.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -142,6 +143,12 @@ jobs:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
@@ -151,11 +158,17 @@ jobs:
           echo "Config file replaced successfully"
       - name: Build Web
         run: flutter build web
+      - name: Create versioned Web archive
+        run: |
+          mkdir -p release_artifacts
+          cd build/web
+          zip -r ../../release_artifacts/release-${{ steps.version.outputs.version }}-web.zip .
+          cd -
       - name: Upload Web Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-web
-          path: build/web
+          name: release-${{ steps.version.outputs.version }}-web
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-web.zip
           if-no-files-found: ignore
 
   build-windows:
@@ -170,6 +183,12 @@ jobs:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          $VERSION = (Get-Content pubspec.yaml | Select-String '^version:').ToString().Split(':')[1].Trim() -replace '\+', '-'
+          echo "version=$VERSION" >> $env:GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
@@ -179,14 +198,23 @@ jobs:
           echo "Config file replaced successfully"
       - name: Build Windows
         run: flutter build windows
+      - name: Create versioned Windows archive
+        run: |
+          mkdir release_artifacts
+          # Copy and rename main executable
+          copy "build\windows\x64\runner\Release\meinbssb.exe" "release_artifacts\meinbssb-${{ steps.version.outputs.version }}.exe"
+          # Copy other necessary files
+          copy "build\windows\x64\runner\Release\*.dll" "release_artifacts\"
+          if (Test-Path "build\windows\x64\runner\Release\data") {
+            xcopy "build\windows\x64\runner\Release\data" "release_artifacts\data" /E /I
+          }
+          # Create ZIP
+          Compress-Archive -Path "release_artifacts\*" -DestinationPath "release_artifacts\release-${{ steps.version.outputs.version }}-windows.zip"
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
-          name: release-windows
-          path: |
-            build/windows/x64/runner/Release/*.exe
-            build/windows/x64/runner/Release/*.dll
-            build/windows/x64/runner/Release/data/*
+          name: release-${{ steps.version.outputs.version }}-windows
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-windows.zip
           if-no-files-found: error
           
   release:
