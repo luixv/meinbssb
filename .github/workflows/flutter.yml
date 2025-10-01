@@ -48,6 +48,15 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Replace config for deployment
+        run: |
+          echo "Copying config.test.json to config.json for deployment"
+          echo "--- Original config.json (first 10 lines) ---"
+          head -10 assets/config.json || echo "No original config.json found"
+          cp assets/config.test.json assets/config.json
+          echo "--- New config.json (first 10 lines) ---"
+          head -10 assets/config.json
+          echo "Config file replaced successfully"
       - name: Build Android
         run: flutter build apk --release
       - name: Upload APK
@@ -70,6 +79,11 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Replace config for deployment
+        run: |
+          echo "Copying config.test.json to config.json for deployment"
+          cp assets/config.test.json assets/config.json
+          echo "Config file replaced successfully"
       - name: Build iOS Framework
         run: flutter build ios --release --no-codesign
       - name: List build directory contents
@@ -112,6 +126,11 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Replace config for deployment
+        run: |
+          echo "Copying config.test.json to config.json for deployment"
+          cp assets/config.test.json assets/config.json
+          echo "Config file replaced successfully"
       - name: Build Web
         run: flutter build web
       - name: Upload Web Artifacts
@@ -135,6 +154,11 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Replace config for deployment
+        run: |
+          echo "Copying config.test.json to config.json for deployment"
+          copy assets\config.test.json assets\config.json
+          echo "Config file replaced successfully"
       - name: Build Windows
         run: flutter build windows
       - name: Upload Windows Build
