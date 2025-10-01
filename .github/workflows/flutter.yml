@@ -46,6 +46,12 @@ jobs:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
@@ -59,11 +65,17 @@ jobs:
           echo "Config file replaced successfully"
       - name: Build Android
         run: flutter build apk --release
+      - name: Create versioned APK archive
+        run: |
+          mkdir -p release_artifacts
+          cp build/app/outputs/flutter-apk/app-release.apk release_artifacts/
+          cd release_artifacts
+          zip release-${{ steps.version.outputs.version }}-apk.zip app-release.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: release-${{ steps.version.outputs.version }}-apk
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
 
   build-ios:
     name: Build iOS
@@ -77,6 +89,12 @@ jobs:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
       - name: Install dependencies
         run: flutter pub get
       - name: Replace config for deployment
@@ -98,18 +116,18 @@ jobs:
           if [ -d "build/ios/iphoneos/Runner.app" ]; then
             echo "Creating archive from Runner.app"
             cd build/ios/iphoneos
-            zip -r ../archive/ios-app.zip Runner.app
+            zip -r ../archive/release-${{ steps.version.outputs.version }}-ios.zip Runner.app
           else
             echo "Runner.app not found, creating placeholder"
             mkdir -p build/ios/archive
             echo "iOS build completed but no distributable app created (requires code signing)" > build/ios/archive/README.txt
-            zip build/ios/archive/ios-build-info.zip build/ios/archive/README.txt
+            zip build/ios/archive/release-${{ steps.version.outputs.version }}-ios.zip build/ios/archive/README.txt
           fi
       - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
-          name: release-ios
-          path: build/ios/archive/*.zip
+          name: release-${{ steps.version.outputs.version }}-ios
+          path: build/ios/archive/release-${{ steps.version.outputs.version }}-ios.zip
           if-no-files-found: warn
 
   build-web:
@@ -199,33 +217,45 @@ jobs:
         with:
           path: artifacts
 
+      - name: Extract version for release
+        id: release_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version for release: $VERSION"
+      
       - name: Prepare Release Assets
         run: |
           RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
           mkdir -p "$RELEASE_DIR"
+          VERSION="${{ steps.release_version.outputs.version }}"
 
-          # Android
-          cp "artifacts/release-apk/app-release.apk" "$RELEASE_DIR/"
+          # Android - copy the versioned zip file
+          if [ -d "artifacts/release-$VERSION-apk" ]; then
+            cp "artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Android build artifacts found for version $VERSION"
+          fi
 
           # Web
           cd "artifacts/release-web"
-          zip -r "$RELEASE_DIR/web_build.zip" .
+          zip -r "$RELEASE_DIR/release-$VERSION-web.zip" .
           cd -
 
           # Windows
           if [ -d "artifacts/release-windows" ]; then
             cd "artifacts/release-windows"
-            zip -r "$RELEASE_DIR/windows_build.zip" *
+            zip -r "$RELEASE_DIR/release-$VERSION-windows.zip" *
             cd -
           else
             echo "::warning::No Windows build found."
           fi
 
-          # iOS
-          if [ -d "artifacts/release-ios" ]; then
-            cp artifacts/release-ios/*.zip "$RELEASE_DIR/" 2>/dev/null || echo "::warning::No iOS zip files found."
+          # iOS - copy the versioned zip file
+          if [ -d "artifacts/release-$VERSION-ios" ]; then
+            cp "artifacts/release-$VERSION-ios/release-$VERSION-ios.zip" "$RELEASE_DIR/"
           else
-            echo "::warning::No iOS build artifacts found"
+            echo "::warning::No iOS build artifacts found for version $VERSION"
           fi
 
       - name: Create GitHub Release

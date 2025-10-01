@@ -62,7 +62,9 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> _loadStoredCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final savedEmail = prefs.getString('savedEmail');
-    final savedPassword = await _secureStorage.read(key: 'password');
+    final savedPassword = await _secureStorage.read(
+      key: 'saved_password_remember_me',
+    );
 
     setState(() {
       if (savedEmail != null && savedEmail.isNotEmpty) {
@@ -136,6 +138,11 @@ class LoginScreenState extends State<LoginScreen> {
       _isLoggedIn = true;
       widget.onLoginSuccess(_userData!);
 
+      // Save credentials if Remember Me is checked (after successful login)
+      if (_rememberMe) {
+        await _saveRememberMeCredentials();
+      }
+
       await apiService.fetchSchuetzenausweis(personId);
       if (!mounted) return;
       Navigator.pushReplacementNamed(
@@ -188,21 +195,33 @@ class LoginScreenState extends State<LoginScreen> {
     // Navigation is handled by the app's logout handler
   }
 
+  Future<void> _saveRememberMeCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('rememberMe', true);
+    await prefs.setString('savedEmail', _emailController.text);
+    // Save password to secure storage with separate key for remember me functionality
+    await _secureStorage.write(
+      key: 'saved_password_remember_me',
+      value: _passwordController.text,
+    );
+    LoggerService.logInfo('Remember Me credentials saved successfully.');
+  }
+
   Future<void> _saveRememberMeState() async {
     final prefs = await SharedPreferences.getInstance();
     if (_rememberMe) {
       await prefs.setBool('rememberMe', true);
       await prefs.setString('savedEmail', _emailController.text);
-      // Save password to secure storage immediately when remember me is enabled
+      // Save password to secure storage with separate key for remember me functionality
       await _secureStorage.write(
-        key: 'password',
+        key: 'saved_password_remember_me',
         value: _passwordController.text,
       );
     } else {
       await prefs.setBool('rememberMe', false);
       await prefs.remove('savedEmail');
       // Clear password from secure storage when "remember me" is disabled
-      await _secureStorage.delete(key: 'password');
+      await _secureStorage.delete(key: 'saved_password_remember_me');
     }
   }
 
@@ -210,7 +229,7 @@ class LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('rememberMe');
     await prefs.remove('savedEmail');
-    await _secureStorage.delete(key: 'password');
+    await _secureStorage.delete(key: 'saved_password_remember_me');
   }
 
   Widget _buildEmailField() {
