@@ -416,7 +416,7 @@ class StartScreenState extends State<StartScreen> {
                   padding:
                       const EdgeInsets.only(bottom: UIConstants.helpSpacing),
                   itemCount: schulungen.length,
-                  separatorBuilder: (_, __) => const SizedBox(
+                  separatorBuilder: (_, _) => const SizedBox(
                     height: UIConstants.defaultSeparatorHeight,
                   ),
                   itemBuilder: (context, index) {

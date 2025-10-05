@@ -898,7 +898,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     Expanded(
                       child: ListView.separated(
                         itemCount: _results.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: UIConstants.spacingS),
                         itemBuilder: (context, index) {
                           final schulungsTermin = _results[index];

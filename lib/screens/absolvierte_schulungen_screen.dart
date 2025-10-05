@@ -172,7 +172,7 @@ class AbsolvierteSchulungenScreenState
                   Expanded(
                     child: ListView.separated(
                       itemCount: absolvierteSchulungen.length,
-                      separatorBuilder: (_, __) => const SizedBox(
+                      separatorBuilder: (_, _) => const SizedBox(
                         height: UIConstants.defaultSeparatorHeight,
                       ),
                       itemBuilder: (context, index) {
