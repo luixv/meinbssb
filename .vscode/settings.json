@@ -26,8 +26,13 @@
     "!ImportValue",
     "!Join",
     "!Select"
-  ]
+  ],
 
-  
+"yaml.format.enable": true,
+"yaml.trace.server": "off",
+"files.eol": "\n",
+"editor.insertSpaces": true,
+"editor.tabSize": 2
+
 
 }
