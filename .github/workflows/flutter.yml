@@ -31,11 +31,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Run tests
-        run: flutter test ./test/unit --coverage
+        run: flutter test ./test/unit --coverage        
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
+          # yaml-language-server: disable
           token: ${{ secrets.CODECOV_TOKEN }}
+          # yaml-language-server: enable
           files: ./coverage/lcov.info
           fail_ci_if_error: true
 
