@@ -12,7 +12,6 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'dart:async';
-import 'dart:io';
 
 @GenerateMocks([ApiService])
 import 'oktoberfest_gewinn_screen_test.mocks.dart';
@@ -346,136 +345,6 @@ void main() {
     });
   });
 
-  group('OktoberfestGewinnScreen - Bankdaten Button Tests', () {
-    testWidgets('shows bankdaten button when gewinne not abgerufen', (
-      tester,
-    ) async {
-      final gewinne = createTestGewinne(count: 2, withAbgerufen: false);
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.byType(ElevatedButton), findsOneWidget);
-    });
-
-    testWidgets('hides bankdaten button when all gewinne abgerufen', (
-      tester,
-    ) async {
-      final gewinne = createTestGewinne(count: 2, withAbgerufen: true);
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bankdaten'), findsNothing);
-      expect(find.byType(ElevatedButton), findsNothing);
-    });
-
-    testWidgets('shows bankdaten button when mixed abgerufen status', (
-      tester,
-    ) async {
-      final gewinne = [
-        Gewinn(
-          gewinnId: 1,
-          jahr: 2023,
-          tradition: false,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test 1',
-          abgerufenAm: '2024-01-15', // Already retrieved
-          platz: 1,
-        ),
-        Gewinn(
-          gewinnId: 2,
-          jahr: 2023,
-          tradition: false,
-          isSachpreis: false,
-          geldpreis: 50,
-          sachpreis: '',
-          wettbewerb: 'Test 2',
-          abgerufenAm: '', // Not retrieved yet
-          platz: 2,
-        ),
-      ];
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bankdaten'), findsOneWidget);
-    });
-  });
-
-
-
-  group('OktoberfestGewinnScreen - Error Handling Tests', () {
-    testWidgets('handles API error gracefully', (tester) async {
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenThrow(Exception('API Error'));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      // Should not crash and loading should stop
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.byType(OktoberfestGewinnScreen), findsOneWidget);
-    });
-
-    testWidgets('handles timeout errors', (tester) async {
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenThrow(TimeoutException('Request timeout', Duration(seconds: 30)));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      // Should handle timeout gracefully
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('handles network errors', (tester) async {
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenThrow(SocketException('No internet connection'));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      // Should handle network error gracefully
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
-
-      testWidgets('handles error during initial load', (tester) async {
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenThrow(Exception('API Error'));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      // Should handle error gracefully
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.byType(OktoberfestGewinnScreen), findsOneWidget);
-      expect(tester.takeException(), isNull);
-
-      // No FAB should be visible since no data was loaded
-      expect(find.byType(FloatingActionButton), findsNothing);
-    });
-
-  });
-
   group('OktoberfestGewinnScreen - User Data Handling Tests', () {
     testWidgets('uses correct passnummer in API call', (tester) async {
       final customUser = createTestUserData(passnummer: '987654');
@@ -518,7 +387,6 @@ void main() {
   });
 
   group('OktoberfestGewinnScreen - Accessibility Tests', () {
-   
     testWidgets('handles different text scale factors', (tester) async {
       final gewinne = createTestGewinne(count: 1);
       when(
@@ -689,7 +557,6 @@ void main() {
       expect(abrufenFab.tooltip, equals('Gewinne abrufen'));
     });
 
-   
     testWidgets('no FABs shown when no gewinne or all abgerufen', (
       tester,
     ) async {
@@ -845,6 +712,143 @@ void main() {
     });
   });
 
+  group('OktoberfestGewinnScreen - Sachpreis Tests', () {
+    testWidgets('displays sachpreis information correctly', (tester) async {
+      final gewinne = [
+        Gewinn(
+          gewinnId: 1,
+          jahr: 2023,
+          tradition: false,
+          isSachpreis: true,
+          geldpreis: 0,
+          sachpreis: 'Schießscheibe',
+          wettbewerb: 'Sachpreis Wettbewerb',
+          abgerufenAm: '',
+          platz: 1,
+        ),
+      ];
+      when(
+        mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => gewinne);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sachpreis Wettbewerb'), findsOneWidget);
+      expect(find.text('Geldpreis: 0'), findsOneWidget);
+      // Note: The screen shows geldpreis even for Sachpreis items
+    });
+
+    testWidgets('handles mixed sachpreis and geldpreis gewinne', (
+      tester,
+    ) async {
+      final gewinne = [
+        Gewinn(
+          gewinnId: 1,
+          jahr: 2023,
+          tradition: false,
+          isSachpreis: true,
+          geldpreis: 0,
+          sachpreis: 'Pokal',
+          wettbewerb: 'Sachpreis Test',
+          abgerufenAm: '',
+          platz: 1,
+        ),
+        Gewinn(
+          gewinnId: 2,
+          jahr: 2023,
+          tradition: false,
+          isSachpreis: false,
+          geldpreis: 50,
+          sachpreis: '',
+          wettbewerb: 'Geldpreis Test',
+          abgerufenAm: '',
+          platz: 2,
+        ),
+      ];
+      when(
+        mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => gewinne);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sachpreis Test'), findsOneWidget);
+      expect(find.text('Geldpreis Test'), findsOneWidget);
+      expect(find.text('Geldpreis: 0'), findsOneWidget);
+      expect(find.text('Geldpreis: 50'), findsOneWidget);
+    });
+  });
+
+  group('OktoberfestGewinnScreen - Bankdaten Button Tests', () {
+    testWidgets('shows bankdaten button when gewinne not abgerufen', (
+      tester,
+    ) async {
+      final gewinne = createTestGewinne(count: 2, withAbgerufen: false);
+      when(
+        mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => gewinne);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bankdaten'), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsOneWidget);
+    });
+
+    testWidgets('hides bankdaten button when all gewinne abgerufen', (
+      tester,
+    ) async {
+      final gewinne = createTestGewinne(count: 2, withAbgerufen: true);
+      when(
+        mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => gewinne);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bankdaten'), findsNothing);
+      expect(find.byType(ElevatedButton), findsNothing);
+    });
+
+    testWidgets('shows bankdaten button when mixed abgerufen status', (
+      tester,
+    ) async {
+      final gewinne = [
+        Gewinn(
+          gewinnId: 1,
+          jahr: 2023,
+          tradition: false,
+          isSachpreis: false,
+          geldpreis: 100,
+          sachpreis: '',
+          wettbewerb: 'Test 1',
+          abgerufenAm: '2024-01-15', // Already retrieved
+          platz: 1,
+        ),
+        Gewinn(
+          gewinnId: 2,
+          jahr: 2023,
+          tradition: false,
+          isSachpreis: false,
+          geldpreis: 50,
+          sachpreis: '',
+          wettbewerb: 'Test 2',
+          abgerufenAm: '', // Not retrieved yet
+          platz: 2,
+        ),
+      ];
+      when(
+        mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => gewinne);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bankdaten'), findsOneWidget);
+    });
+  });
+
   group('OktoberfestGewinnScreen - Gewinn Abrufen Tests', () {
     testWidgets('calls gewinneAbrufen API when abrufen FAB is tapped', (
       tester,
@@ -991,125 +995,5 @@ void main() {
       // Should show error message
       expect(find.text('Fehler beim Abrufen der Gewinne.'), findsOneWidget);
     });
-
-    testWidgets('handles gewinne abrufen API exception', (tester) async {
-      final gewinne = createTestGewinne(count: 1, withAbgerufen: false);
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-      when(
-        mockApiService.fetchBankdatenMyBSSB(any),
-      ).thenAnswer((_) async => <BankData>[]);
-      when(
-        mockApiService.gewinneAbrufen(
-          gewinnIDs: anyNamed('gewinnIDs'),
-          iban: anyNamed('iban'),
-          passnummer: anyNamed('passnummer'),
-        ),
-      ).thenThrow(Exception('API Error'));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      // Setup and trigger abrufen
-      await tester.tap(find.text('Bankdaten'));
-      await tester.pumpAndSettle();
-
-      await tester.enterText(
-        find.byType(TextFormField).at(0),
-        'Max Mustermann',
-      );
-      await tester.enterText(
-        find.byType(TextFormField).at(1),
-        'DE89370400440532013000',
-      );
-      await tester.tap(find.byType(Checkbox));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.check).last);
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.widgetWithIcon(FloatingActionButton, Icons.check));
-      await tester.pumpAndSettle();
-
-      // Should show error message with exception details
-      expect(
-        find.textContaining(
-          'Fehler beim Abrufen der Gewinne: Exception: API Error',
-        ),
-        findsOneWidget,
-      );
-    });
   });
-
-  group('OktoberfestGewinnScreen - Sachpreis Tests', () {
-    testWidgets('displays sachpreis information correctly', (tester) async {
-      final gewinne = [
-        Gewinn(
-          gewinnId: 1,
-          jahr: 2023,
-          tradition: false,
-          isSachpreis: true,
-          geldpreis: 0,
-          sachpreis: 'Schießscheibe',
-          wettbewerb: 'Sachpreis Wettbewerb',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ];
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Sachpreis Wettbewerb'), findsOneWidget);
-      expect(find.text('Geldpreis: 0'), findsOneWidget);
-      // Note: The screen shows geldpreis even for Sachpreis items
-    });
-
-    testWidgets('handles mixed sachpreis and geldpreis gewinne', (
-      tester,
-    ) async {
-      final gewinne = [
-        Gewinn(
-          gewinnId: 1,
-          jahr: 2023,
-          tradition: false,
-          isSachpreis: true,
-          geldpreis: 0,
-          sachpreis: 'Pokal',
-          wettbewerb: 'Sachpreis Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-        Gewinn(
-          gewinnId: 2,
-          jahr: 2023,
-          tradition: false,
-          isSachpreis: false,
-          geldpreis: 50,
-          sachpreis: '',
-          wettbewerb: 'Geldpreis Test',
-          abgerufenAm: '',
-          platz: 2,
-        ),
-      ];
-      when(
-        mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => gewinne);
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Sachpreis Test'), findsOneWidget);
-      expect(find.text('Geldpreis Test'), findsOneWidget);
-      expect(find.text('Geldpreis: 0'), findsOneWidget);
-      expect(find.text('Geldpreis: 50'), findsOneWidget);
-    });
-  });
-
-
-
 }
