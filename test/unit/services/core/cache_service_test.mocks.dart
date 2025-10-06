@@ -19,72 +19,41 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [ConfigService].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockConfigService extends _i1.Mock implements _i2.ConfigService {
   @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
+  int? getInt(String? key, [String? section]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getInt,
-          [
-            key,
-            section,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      ) as int?);
+            Invocation.method(#getInt, [key, section]),
+            returnValueForMissingStub: null,
+          )
+          as int?);
 
   @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
+  String? getString(String? key, [String? section]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getString,
-          [
-            key,
-            section,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      ) as String?);
+            Invocation.method(#getString, [key, section]),
+            returnValueForMissingStub: null,
+          )
+          as String?);
 
   @override
-  List<String>? getList(
-    String? key, [
-    String? section,
-  ]) =>
+  List<String>? getList(String? key, [String? section]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getList,
-          [
-            key,
-            section,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      ) as List<String>?);
+            Invocation.method(#getList, [key, section]),
+            returnValueForMissingStub: null,
+          )
+          as List<String>?);
 
   @override
-  bool? getBool(
-    String? key, [
-    String? section,
-  ]) =>
+  bool? getBool(String? key, [String? section]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getBool,
-          [
-            key,
-            section,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      ) as bool?);
+            Invocation.method(#getBool, [key, section]),
+            returnValueForMissingStub: null,
+          )
+          as bool?);
 }

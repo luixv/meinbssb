@@ -22,6 +22,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [FontSizeProvider].
 ///
@@ -32,110 +33,79 @@ class MockFontSizeProvider extends _i1.Mock implements _i2.FontSizeProvider {
   }
 
   @override
-  double get scaleFactor => (super.noSuchMethod(
-        Invocation.getter(#scaleFactor),
-        returnValue: 0.0,
-      ) as double);
+  double get scaleFactor =>
+      (super.noSuchMethod(Invocation.getter(#scaleFactor), returnValue: 0.0)
+          as double);
 
   @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
 
   @override
   void increaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #increaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#increaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void decreaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #decreaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#decreaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void resetFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #resetFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#resetFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setScaleFactor(double? value) => super.noSuchMethod(
-        Invocation.method(
-          #setScaleFactor,
-          [value],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#setScaleFactor, [value]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
-        Invocation.method(
-          #getScaledFontSize,
-          [baseSize],
-        ),
-        returnValue: 0.0,
-      ) as double);
+  double getScaledFontSize(double? baseSize) =>
+      (super.noSuchMethod(
+            Invocation.method(#getScaledFontSize, [baseSize]),
+            returnValue: 0.0,
+          )
+          as double);
 
   @override
-  String getScalePercentage() => (super.noSuchMethod(
-        Invocation.method(
-          #getScalePercentage,
-          [],
-        ),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getScalePercentage,
-            [],
-          ),
-        ),
-      ) as String);
+  String getScalePercentage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getScalePercentage, []),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.method(#getScalePercentage, []),
+            ),
+          )
+          as String);
 
   @override
   void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }

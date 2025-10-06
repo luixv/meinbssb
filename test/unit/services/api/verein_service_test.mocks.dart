@@ -23,6 +23,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [HttpClient].
 ///
@@ -33,19 +34,20 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
   }
 
   @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
 
   @override
-  int get serverTimeout => (super.noSuchMethod(
-        Invocation.getter(#serverTimeout),
-        returnValue: 0,
-      ) as int);
+  int get serverTimeout =>
+      (super.noSuchMethod(Invocation.getter(#serverTimeout), returnValue: 0)
+          as int);
 
   @override
   _i4.Future<dynamic> post(
@@ -54,16 +56,14 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #post,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+            Invocation.method(
+              #post,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i4.Future<dynamic>.value(),
+          )
+          as _i4.Future<dynamic>);
 
   @override
   _i4.Future<dynamic> put(
@@ -72,16 +72,14 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+            Invocation.method(
+              #put,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i4.Future<dynamic>.value(),
+          )
+          as _i4.Future<dynamic>);
 
   @override
   _i4.Future<dynamic> delete(
@@ -90,37 +88,32 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [endpoint],
-          {
-            #body: body,
-            #overrideBaseUrl: overrideBaseUrl,
-          },
-        ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+            Invocation.method(
+              #delete,
+              [endpoint],
+              {#body: body, #overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i4.Future<dynamic>.value(),
+          )
+          as _i4.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> get(
-    String? endpoint, {
-    String? overrideBaseUrl,
-  }) =>
+  _i4.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+            Invocation.method(
+              #get,
+              [endpoint],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i4.Future<dynamic>.value(),
+          )
+          as _i4.Future<dynamic>);
 
   @override
-  _i4.Future<_i5.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
-        Invocation.method(
-          #getBytes,
-          [endpoint],
-        ),
-        returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i4.Future<_i5.Uint8List>);
+  _i4.Future<_i5.Uint8List> getBytes(String? endpoint) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBytes, [endpoint]),
+            returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+          )
+          as _i4.Future<_i5.Uint8List>);
 }

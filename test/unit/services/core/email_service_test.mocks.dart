@@ -28,15 +28,11 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeSendReport_0 extends _i1.SmartFake implements _i2.SendReport {
-  _FakeSendReport_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSendReport_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [ConfigService].
@@ -48,56 +44,23 @@ class MockConfigService extends _i1.Mock implements _i3.ConfigService {
   }
 
   @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [
-          key,
-          section,
-        ],
-      )) as int?);
+  int? getInt(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getInt, [key, section])) as int?);
 
   @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getString,
-        [
-          key,
-          section,
-        ],
-      )) as String?);
+  String? getString(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getString, [key, section]))
+          as String?);
 
   @override
-  List<String>? getList(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getList,
-        [
-          key,
-          section,
-        ],
-      )) as List<String>?);
+  List<String>? getList(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getList, [key, section]))
+          as List<String>?);
 
   @override
-  bool? getBool(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getBool,
-        [
-          key,
-          section,
-        ],
-      )) as bool?);
+  bool? getBool(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getBool, [key, section]))
+          as bool?);
 }
 
 /// A class which mocks [HttpClient].
@@ -109,19 +72,20 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
   }
 
   @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
 
   @override
-  int get serverTimeout => (super.noSuchMethod(
-        Invocation.getter(#serverTimeout),
-        returnValue: 0,
-      ) as int);
+  int get serverTimeout =>
+      (super.noSuchMethod(Invocation.getter(#serverTimeout), returnValue: 0)
+          as int);
 
   @override
   _i6.Future<dynamic> post(
@@ -130,16 +94,14 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #post,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+            Invocation.method(
+              #post,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i6.Future<dynamic>.value(),
+          )
+          as _i6.Future<dynamic>);
 
   @override
   _i6.Future<dynamic> put(
@@ -148,16 +110,14 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+            Invocation.method(
+              #put,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i6.Future<dynamic>.value(),
+          )
+          as _i6.Future<dynamic>);
 
   @override
   _i6.Future<dynamic> delete(
@@ -166,39 +126,34 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [endpoint],
-          {
-            #body: body,
-            #overrideBaseUrl: overrideBaseUrl,
-          },
-        ),
-        returnValue: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+            Invocation.method(
+              #delete,
+              [endpoint],
+              {#body: body, #overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i6.Future<dynamic>.value(),
+          )
+          as _i6.Future<dynamic>);
 
   @override
-  _i6.Future<dynamic> get(
-    String? endpoint, {
-    String? overrideBaseUrl,
-  }) =>
+  _i6.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+            Invocation.method(
+              #get,
+              [endpoint],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i6.Future<dynamic>.value(),
+          )
+          as _i6.Future<dynamic>);
 
   @override
-  _i6.Future<_i7.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
-        Invocation.method(
-          #getBytes,
-          [endpoint],
-        ),
-        returnValue: _i6.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i6.Future<_i7.Uint8List>);
+  _i6.Future<_i7.Uint8List> getBytes(String? endpoint) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBytes, [endpoint]),
+            returnValue: _i6.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+          )
+          as _i6.Future<_i7.Uint8List>);
 }
 
 /// A class which mocks [CalendarService].
@@ -218,32 +173,27 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
     required String? organizerEmail,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #generateIcsFile,
-          [],
-          {
-            #eventTitle: eventTitle,
-            #eventDate: eventDate,
-            #location: location,
-            #description: description,
-            #organizerEmail: organizerEmail,
-          },
-        ),
-        returnValue: _i6.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #generateIcsFile,
-            [],
-            {
+            Invocation.method(#generateIcsFile, [], {
               #eventTitle: eventTitle,
               #eventDate: eventDate,
               #location: location,
               #description: description,
               #organizerEmail: organizerEmail,
-            },
-          ),
-        )),
-      ) as _i6.Future<String>);
+            }),
+            returnValue: _i6.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#generateIcsFile, [], {
+                  #eventTitle: eventTitle,
+                  #eventDate: eventDate,
+                  #location: location,
+                  #description: description,
+                  #organizerEmail: organizerEmail,
+                }),
+              ),
+            ),
+          )
+          as _i6.Future<String>);
 
   @override
   _i6.Future<String> saveIcsFile({
@@ -251,26 +201,21 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
     required String? fileName,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #saveIcsFile,
-          [],
-          {
-            #icsContent: icsContent,
-            #fileName: fileName,
-          },
-        ),
-        returnValue: _i6.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #saveIcsFile,
-            [],
-            {
+            Invocation.method(#saveIcsFile, [], {
               #icsContent: icsContent,
               #fileName: fileName,
-            },
-          ),
-        )),
-      ) as _i6.Future<String>);
+            }),
+            returnValue: _i6.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#saveIcsFile, [], {
+                  #icsContent: icsContent,
+                  #fileName: fileName,
+                }),
+              ),
+            ),
+          )
+          as _i6.Future<String>);
 
   @override
   _i6.Future<String> generateCalendarLink({
@@ -281,117 +226,82 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
     required String? organizerEmail,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #generateCalendarLink,
-          [],
-          {
-            #eventTitle: eventTitle,
-            #eventDate: eventDate,
-            #location: location,
-            #description: description,
-            #organizerEmail: organizerEmail,
-          },
-        ),
-        returnValue: _i6.Future<String>.value(_i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #generateCalendarLink,
-            [],
-            {
+            Invocation.method(#generateCalendarLink, [], {
               #eventTitle: eventTitle,
               #eventDate: eventDate,
               #location: location,
               #description: description,
               #organizerEmail: organizerEmail,
-            },
-          ),
-        )),
-      ) as _i6.Future<String>);
+            }),
+            returnValue: _i6.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#generateCalendarLink, [], {
+                  #eventTitle: eventTitle,
+                  #eventDate: eventDate,
+                  #location: location,
+                  #description: description,
+                  #organizerEmail: organizerEmail,
+                }),
+              ),
+            ),
+          )
+          as _i6.Future<String>);
 
   @override
-  String generateUID(
-    String? eventTitle,
-    DateTime? eventDate,
-  ) =>
+  String generateUID(String? eventTitle, DateTime? eventDate) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #generateUID,
-          [
-            eventTitle,
-            eventDate,
-          ],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #generateUID,
-            [
-              eventTitle,
-              eventDate,
-            ],
-          ),
-        ),
-      ) as String);
+            Invocation.method(#generateUID, [eventTitle, eventDate]),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#generateUID, [eventTitle, eventDate]),
+            ),
+          )
+          as String);
 
   @override
-  String formatDateTime(DateTime? dateTime) => (super.noSuchMethod(
-        Invocation.method(
-          #formatDateTime,
-          [dateTime],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #formatDateTime,
-            [dateTime],
-          ),
-        ),
-      ) as String);
+  String formatDateTime(DateTime? dateTime) =>
+      (super.noSuchMethod(
+            Invocation.method(#formatDateTime, [dateTime]),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#formatDateTime, [dateTime]),
+            ),
+          )
+          as String);
 
   @override
-  String escapeText(String? text) => (super.noSuchMethod(
-        Invocation.method(
-          #escapeText,
-          [text],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #escapeText,
-            [text],
-          ),
-        ),
-      ) as String);
+  String escapeText(String? text) =>
+      (super.noSuchMethod(
+            Invocation.method(#escapeText, [text]),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#escapeText, [text]),
+            ),
+          )
+          as String);
 
   @override
-  String sanitizeFileName(String? fileName) => (super.noSuchMethod(
-        Invocation.method(
-          #sanitizeFileName,
-          [fileName],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #sanitizeFileName,
-            [fileName],
-          ),
-        ),
-      ) as String);
+  String sanitizeFileName(String? fileName) =>
+      (super.noSuchMethod(
+            Invocation.method(#sanitizeFileName, [fileName]),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#sanitizeFileName, [fileName]),
+            ),
+          )
+          as String);
 
   @override
-  String formatDateForFileName(DateTime? date) => (super.noSuchMethod(
-        Invocation.method(
-          #formatDateForFileName,
-          [date],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #formatDateForFileName,
-            [date],
-          ),
-        ),
-      ) as String);
+  String formatDateForFileName(DateTime? date) =>
+      (super.noSuchMethod(
+            Invocation.method(#formatDateForFileName, [date]),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.method(#formatDateForFileName, [date]),
+            ),
+          )
+          as String);
 }
 
 /// A class which mocks [EmailSender].
@@ -408,22 +318,13 @@ class MockEmailSender extends _i1.Mock implements _i9.EmailSender {
     _i10.SmtpServer? server,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #send,
-          [
-            message,
-            server,
-          ],
-        ),
-        returnValue: _i6.Future<_i2.SendReport>.value(_FakeSendReport_0(
-          this,
-          Invocation.method(
-            #send,
-            [
-              message,
-              server,
-            ],
-          ),
-        )),
-      ) as _i6.Future<_i2.SendReport>);
+            Invocation.method(#send, [message, server]),
+            returnValue: _i6.Future<_i2.SendReport>.value(
+              _FakeSendReport_0(
+                this,
+                Invocation.method(#send, [message, server]),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.SendReport>);
 }

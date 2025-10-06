@@ -3,14 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-import 'dart:ui' as _i6;
+import 'dart:ui' as _i4;
 
-import 'package:meinbssb/providers/font_size_provider.dart' as _i4;
-import 'package:meinbssb/services/core/config_service.dart' as _i7;
-import 'package:meinbssb/services/core/network_service.dart' as _i2;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,224 +22,90 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
-
-class _FakeDuration_0 extends _i1.SmartFake implements Duration {
-  _FakeDuration_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-/// A class which mocks [NetworkService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i2.NetworkService {
-  MockNetworkService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.Future<bool> hasInternet() => (super.noSuchMethod(
-        Invocation.method(
-          #hasInternet,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  Duration getCacheExpirationDuration() => (super.noSuchMethod(
-        Invocation.method(
-          #getCacheExpirationDuration,
-          [],
-        ),
-        returnValue: _FakeDuration_0(
-          this,
-          Invocation.method(
-            #getCacheExpirationDuration,
-            [],
-          ),
-        ),
-      ) as Duration);
-}
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i4.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i2.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  double get scaleFactor => (super.noSuchMethod(
-        Invocation.getter(#scaleFactor),
-        returnValue: 0.0,
-      ) as double);
+  double get scaleFactor =>
+      (super.noSuchMethod(Invocation.getter(#scaleFactor), returnValue: 0.0)
+          as double);
 
   @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
 
   @override
   void increaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #increaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#increaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void decreaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #decreaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#decreaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void resetFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #resetFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#resetFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setScaleFactor(double? value) => super.noSuchMethod(
-        Invocation.method(
-          #setScaleFactor,
-          [value],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#setScaleFactor, [value]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
-        Invocation.method(
-          #getScaledFontSize,
-          [baseSize],
-        ),
-        returnValue: 0.0,
-      ) as double);
+  double getScaledFontSize(double? baseSize) =>
+      (super.noSuchMethod(
+            Invocation.method(#getScaledFontSize, [baseSize]),
+            returnValue: 0.0,
+          )
+          as double);
 
   @override
-  String getScalePercentage() => (super.noSuchMethod(
-        Invocation.method(
-          #getScalePercentage,
-          [],
-        ),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getScalePercentage,
-            [],
-          ),
-        ),
-      ) as String);
+  String getScalePercentage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getScalePercentage, []),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.method(#getScalePercentage, []),
+            ),
+          )
+          as String);
 
   @override
-  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-}
-
-/// A class which mocks [ConfigService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockConfigService extends _i1.Mock implements _i7.ConfigService {
-  MockConfigService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [
-          key,
-          section,
-        ],
-      )) as int?);
-
-  @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getString,
-        [
-          key,
-          section,
-        ],
-      )) as String?);
-
-  @override
-  List<String>? getList(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getList,
-        [
-          key,
-          section,
-        ],
-      )) as List<String>?);
-
-  @override
-  bool? getBool(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getBool,
-        [
-          key,
-          section,
-        ],
-      )) as bool?);
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }

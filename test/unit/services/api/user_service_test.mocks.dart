@@ -26,25 +26,16 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeFuture_0<T1> extends _i1.SmartFake implements _i2.Future<T1> {
-  _FakeFuture_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFuture_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDuration_1 extends _i1.SmartFake implements Duration {
-  _FakeDuration_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDuration_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [HttpClient].
@@ -56,19 +47,20 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
   }
 
   @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i4.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
 
   @override
-  int get serverTimeout => (super.noSuchMethod(
-        Invocation.getter(#serverTimeout),
-        returnValue: 0,
-      ) as int);
+  int get serverTimeout =>
+      (super.noSuchMethod(Invocation.getter(#serverTimeout), returnValue: 0)
+          as int);
 
   @override
   _i2.Future<dynamic> post(
@@ -77,16 +69,14 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #post,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
+            Invocation.method(
+              #post,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i2.Future<dynamic>.value(),
+          )
+          as _i2.Future<dynamic>);
 
   @override
   _i2.Future<dynamic> put(
@@ -95,16 +85,14 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [
-            endpoint,
-            body,
-          ],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
+            Invocation.method(
+              #put,
+              [endpoint, body],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i2.Future<dynamic>.value(),
+          )
+          as _i2.Future<dynamic>);
 
   @override
   _i2.Future<dynamic> delete(
@@ -113,39 +101,34 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
     String? overrideBaseUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [endpoint],
-          {
-            #body: body,
-            #overrideBaseUrl: overrideBaseUrl,
-          },
-        ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
+            Invocation.method(
+              #delete,
+              [endpoint],
+              {#body: body, #overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i2.Future<dynamic>.value(),
+          )
+          as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<dynamic> get(
-    String? endpoint, {
-    String? overrideBaseUrl,
-  }) =>
+  _i2.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [endpoint],
-          {#overrideBaseUrl: overrideBaseUrl},
-        ),
-        returnValue: _i2.Future<dynamic>.value(),
-      ) as _i2.Future<dynamic>);
+            Invocation.method(
+              #get,
+              [endpoint],
+              {#overrideBaseUrl: overrideBaseUrl},
+            ),
+            returnValue: _i2.Future<dynamic>.value(),
+          )
+          as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<_i5.Uint8List> getBytes(String? endpoint) => (super.noSuchMethod(
-        Invocation.method(
-          #getBytes,
-          [endpoint],
-        ),
-        returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-      ) as _i2.Future<_i5.Uint8List>);
+  _i2.Future<_i5.Uint8List> getBytes(String? endpoint) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBytes, [endpoint]),
+            returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+          )
+          as _i2.Future<_i5.Uint8List>);
 }
 
 /// A class which mocks [CacheService].
@@ -157,166 +140,124 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
   }
 
   @override
-  _i2.Future<void> setString(
-    String? key,
-    String? value,
-  ) =>
+  _i2.Future<void> setString(String? key, String? value) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setString,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+            Invocation.method(#setString, [key, value]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<String?> getString(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getString,
-          [key],
-        ),
-        returnValue: _i2.Future<String?>.value(),
-      ) as _i2.Future<String?>);
-
-  @override
-  _i2.Future<void> setJson(
-    String? key,
-    Map<String, dynamic>? json,
-  ) =>
+  _i2.Future<String?> getString(String? key) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setJson,
-          [
-            key,
-            json,
-          ],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+            Invocation.method(#getString, [key]),
+            returnValue: _i2.Future<String?>.value(),
+          )
+          as _i2.Future<String?>);
 
   @override
-  _i2.Future<Map<String, dynamic>?> getJson(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getJson,
-          [key],
-        ),
-        returnValue: _i2.Future<Map<String, dynamic>?>.value(),
-      ) as _i2.Future<Map<String, dynamic>?>);
-
-  @override
-  _i2.Future<void> setInt(
-    String? key,
-    int? value,
-  ) =>
+  _i2.Future<void> setJson(String? key, Map<String, dynamic>? json) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setInt,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+            Invocation.method(#setJson, [key, json]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<int?> getInt(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getInt,
-          [key],
-        ),
-        returnValue: _i2.Future<int?>.value(),
-      ) as _i2.Future<int?>);
-
-  @override
-  _i2.Future<void> setBool(
-    String? key,
-    bool? value,
-  ) =>
+  _i2.Future<Map<String, dynamic>?> getJson(String? key) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setBool,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+            Invocation.method(#getJson, [key]),
+            returnValue: _i2.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i2.Future<Map<String, dynamic>?>);
 
   @override
-  _i2.Future<bool?> getBool(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getBool,
-          [key],
-        ),
-        returnValue: _i2.Future<bool?>.value(),
-      ) as _i2.Future<bool?>);
+  _i2.Future<void> setInt(String? key, int? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setInt, [key, value]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<void> remove(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #remove,
-          [key],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+  _i2.Future<int?> getInt(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getInt, [key]),
+            returnValue: _i2.Future<int?>.value(),
+          )
+          as _i2.Future<int?>);
 
   @override
-  _i2.Future<void> clear() => (super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+  _i2.Future<void> setBool(String? key, bool? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setBool, [key, value]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<void> clearPattern(String? pattern) => (super.noSuchMethod(
-        Invocation.method(
-          #clearPattern,
-          [pattern],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+  _i2.Future<bool?> getBool(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBool, [key]),
+            returnValue: _i2.Future<bool?>.value(),
+          )
+          as _i2.Future<bool?>);
 
   @override
-  _i2.Future<bool> containsKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #containsKey,
-          [key],
-        ),
-        returnValue: _i2.Future<bool>.value(false),
-      ) as _i2.Future<bool>);
+  _i2.Future<void> remove(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#remove, [key]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<void> setCacheTimestampForKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #setCacheTimestampForKey,
-          [key],
-        ),
-        returnValue: _i2.Future<void>.value(),
-        returnValueForMissingStub: _i2.Future<void>.value(),
-      ) as _i2.Future<void>);
+  _i2.Future<void> clear() =>
+      (super.noSuchMethod(
+            Invocation.method(#clear, []),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
-  _i2.Future<int?> getCacheTimestampForKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getCacheTimestampForKey,
-          [key],
-        ),
-        returnValue: _i2.Future<int?>.value(),
-      ) as _i2.Future<int?>);
+  _i2.Future<void> clearPattern(String? pattern) =>
+      (super.noSuchMethod(
+            Invocation.method(#clearPattern, [pattern]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
+
+  @override
+  _i2.Future<bool> containsKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#containsKey, [key]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
+  _i2.Future<void> setCacheTimestampForKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#setCacheTimestampForKey, [key]),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
+
+  @override
+  _i2.Future<int?> getCacheTimestampForKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getCacheTimestampForKey, [key]),
+            returnValue: _i2.Future<int?>.value(),
+          )
+          as _i2.Future<int?>);
 
   @override
   _i2.Future<T> getCachedData<T>(
@@ -324,37 +265,24 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
     _i2.Future<T> Function()? getCachedData,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getCachedData,
-          [
-            cacheKey,
-            getCachedData,
-          ],
-        ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #getCachedData,
-                  [
-                    cacheKey,
-                    getCachedData,
-                  ],
+            Invocation.method(#getCachedData, [cacheKey, getCachedData]),
+            returnValue:
+                _i4.ifNotNull(
+                  _i4.dummyValueOrNull<T>(
+                    this,
+                    Invocation.method(#getCachedData, [
+                      cacheKey,
+                      getCachedData,
+                    ]),
+                  ),
+                  (T v) => _i2.Future<T>.value(v),
+                ) ??
+                _FakeFuture_0<T>(
+                  this,
+                  Invocation.method(#getCachedData, [cacheKey, getCachedData]),
                 ),
-              ),
-              (T v) => _i2.Future<T>.value(v),
-            ) ??
-            _FakeFuture_0<T>(
-              this,
-              Invocation.method(
-                #getCachedData,
-                [
-                  cacheKey,
-                  getCachedData,
-                ],
-              ),
-            ),
-      ) as _i2.Future<T>);
+          )
+          as _i2.Future<T>);
 
   @override
   _i2.Future<T> cacheAndRetrieveData<T>(
@@ -364,43 +292,36 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
     T Function(dynamic)? processResponse,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #cacheAndRetrieveData,
-          [
-            cacheKey,
-            validityDuration,
-            fetchData,
-            processResponse,
-          ],
-        ),
-        returnValue: _i4.ifNotNull(
-              _i4.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #cacheAndRetrieveData,
-                  [
+            Invocation.method(#cacheAndRetrieveData, [
+              cacheKey,
+              validityDuration,
+              fetchData,
+              processResponse,
+            ]),
+            returnValue:
+                _i4.ifNotNull(
+                  _i4.dummyValueOrNull<T>(
+                    this,
+                    Invocation.method(#cacheAndRetrieveData, [
+                      cacheKey,
+                      validityDuration,
+                      fetchData,
+                      processResponse,
+                    ]),
+                  ),
+                  (T v) => _i2.Future<T>.value(v),
+                ) ??
+                _FakeFuture_0<T>(
+                  this,
+                  Invocation.method(#cacheAndRetrieveData, [
                     cacheKey,
                     validityDuration,
                     fetchData,
                     processResponse,
-                  ],
+                  ]),
                 ),
-              ),
-              (T v) => _i2.Future<T>.value(v),
-            ) ??
-            _FakeFuture_0<T>(
-              this,
-              Invocation.method(
-                #cacheAndRetrieveData,
-                [
-                  cacheKey,
-                  validityDuration,
-                  fetchData,
-                  processResponse,
-                ],
-              ),
-            ),
-      ) as _i2.Future<T>);
+          )
+          as _i2.Future<T>);
 }
 
 /// A class which mocks [NetworkService].
@@ -412,28 +333,23 @@ class MockNetworkService extends _i1.Mock implements _i7.NetworkService {
   }
 
   @override
-  _i2.Future<bool> hasInternet() => (super.noSuchMethod(
-        Invocation.method(
-          #hasInternet,
-          [],
-        ),
-        returnValue: _i2.Future<bool>.value(false),
-      ) as _i2.Future<bool>);
+  _i2.Future<bool> hasInternet() =>
+      (super.noSuchMethod(
+            Invocation.method(#hasInternet, []),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
 
   @override
-  Duration getCacheExpirationDuration() => (super.noSuchMethod(
-        Invocation.method(
-          #getCacheExpirationDuration,
-          [],
-        ),
-        returnValue: _FakeDuration_1(
-          this,
-          Invocation.method(
-            #getCacheExpirationDuration,
-            [],
-          ),
-        ),
-      ) as Duration);
+  Duration getCacheExpirationDuration() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCacheExpirationDuration, []),
+            returnValue: _FakeDuration_1(
+              this,
+              Invocation.method(#getCacheExpirationDuration, []),
+            ),
+          )
+          as Duration);
 }
 
 /// A class which mocks [ConfigService].
@@ -445,54 +361,21 @@ class MockConfigService extends _i1.Mock implements _i8.ConfigService {
   }
 
   @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [
-          key,
-          section,
-        ],
-      )) as int?);
+  int? getInt(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getInt, [key, section])) as int?);
 
   @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getString,
-        [
-          key,
-          section,
-        ],
-      )) as String?);
+  String? getString(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getString, [key, section]))
+          as String?);
 
   @override
-  List<String>? getList(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getList,
-        [
-          key,
-          section,
-        ],
-      )) as List<String>?);
+  List<String>? getList(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getList, [key, section]))
+          as List<String>?);
 
   @override
-  bool? getBool(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getBool,
-        [
-          key,
-          section,
-        ],
-      )) as bool?);
+  bool? getBool(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getBool, [key, section]))
+          as bool?);
 }

@@ -27,26 +27,17 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePostgrestService_0 extends _i1.SmartFake
     implements _i2.PostgrestService {
-  _FakePostgrestService_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePostgrestService_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDuration_1 extends _i1.SmartFake implements Duration {
-  _FakeDuration_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDuration_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AuthService].
@@ -58,28 +49,26 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
   }
 
   @override
-  _i2.PostgrestService get postgrestService => (super.noSuchMethod(
-        Invocation.getter(#postgrestService),
-        returnValue: _FakePostgrestService_0(
-          this,
-          Invocation.getter(#postgrestService),
-        ),
-      ) as _i2.PostgrestService);
+  _i2.PostgrestService get postgrestService =>
+      (super.noSuchMethod(
+            Invocation.getter(#postgrestService),
+            returnValue: _FakePostgrestService_0(
+              this,
+              Invocation.getter(#postgrestService),
+            ),
+          )
+          as _i2.PostgrestService);
 
   @override
-  String generateVerificationToken() => (super.noSuchMethod(
-        Invocation.method(
-          #generateVerificationToken,
-          [],
-        ),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.method(
-            #generateVerificationToken,
-            [],
-          ),
-        ),
-      ) as String);
+  String generateVerificationToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#generateVerificationToken, []),
+            returnValue: _i4.dummyValue<String>(
+              this,
+              Invocation.method(#generateVerificationToken, []),
+            ),
+          )
+          as String);
 
   @override
   _i5.Future<Map<String, dynamic>> register({
@@ -92,39 +81,30 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     required String? personId,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #register,
-          [],
-          {
-            #firstName: firstName,
-            #lastName: lastName,
-            #passNumber: passNumber,
-            #email: email,
-            #birthDate: birthDate,
-            #zipCode: zipCode,
-            #personId: personId,
-          },
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#register, [], {
+              #firstName: firstName,
+              #lastName: lastName,
+              #passNumber: passNumber,
+              #email: email,
+              #birthDate: birthDate,
+              #zipCode: zipCode,
+              #personId: personId,
+            }),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i5.Future<Map<String, dynamic>> login(
-    String? email,
-    String? password,
-  ) =>
+  _i5.Future<Map<String, dynamic>> login(String? email, String? password) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #login,
-          [
-            email,
-            password,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#login, [email, password]),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<Map<String, dynamic>> myBSSBPasswortAendern(
@@ -132,16 +112,12 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     String? newPassword,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #myBSSBPasswortAendern,
-          [
-            personId,
-            newPassword,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#myBSSBPasswortAendern, [personId, newPassword]),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<dynamic> finalizeRegistration({
@@ -152,96 +128,77 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     required String? passNumber,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #finalizeRegistration,
-          [],
-          {
-            #email: email,
-            #password: password,
-            #token: token,
-            #personId: personId,
-            #passNumber: passNumber,
-          },
-        ),
-        returnValue: _i5.Future<dynamic>.value(),
-      ) as _i5.Future<dynamic>);
+            Invocation.method(#finalizeRegistration, [], {
+              #email: email,
+              #password: password,
+              #token: token,
+              #personId: personId,
+              #passNumber: passNumber,
+            }),
+            returnValue: _i5.Future<dynamic>.value(),
+          )
+          as _i5.Future<dynamic>);
 
   @override
-  _i5.Future<void> logout() => (super.noSuchMethod(
-        Invocation.method(
-          #logout,
-          [],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<int> findePersonID2(
-    String? nachname,
-    String? passnummer,
-  ) =>
+  _i5.Future<void> logout() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #findePersonID2,
-          [
-            nachname,
-            passnummer,
-          ],
-        ),
-        returnValue: _i5.Future<int>.value(0),
-      ) as _i5.Future<int>);
+            Invocation.method(#logout, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 
   @override
-  _i5.Future<String> fetchLoginEmail(String? passnummer) => (super.noSuchMethod(
-        Invocation.method(
-          #fetchLoginEmail,
-          [passnummer],
-        ),
-        returnValue: _i5.Future<String>.value(_i4.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchLoginEmail,
-            [passnummer],
-          ),
-        )),
-      ) as _i5.Future<String>);
+  _i5.Future<int> findePersonID2(String? nachname, String? passnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#findePersonID2, [nachname, passnummer]),
+            returnValue: _i5.Future<int>.value(0),
+          )
+          as _i5.Future<int>);
 
   @override
-  _i5.Future<bool> isTokenValid() => (super.noSuchMethod(
-        Invocation.method(
-          #isTokenValid,
-          [],
-        ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+  _i5.Future<String> fetchLoginEmail(String? passnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchLoginEmail, [passnummer]),
+            returnValue: _i5.Future<String>.value(
+              _i4.dummyValue<String>(
+                this,
+                Invocation.method(#fetchLoginEmail, [passnummer]),
+              ),
+            ),
+          )
+          as _i5.Future<String>);
+
+  @override
+  _i5.Future<bool> isTokenValid() =>
+      (super.noSuchMethod(
+            Invocation.method(#isTokenValid, []),
+            returnValue: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
 
   @override
   _i5.Future<String> getPersonIDByPassnummer(String? passNumber) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getPersonIDByPassnummer,
-          [passNumber],
-        ),
-        returnValue: _i5.Future<String>.value(_i4.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getPersonIDByPassnummer,
-            [passNumber],
-          ),
-        )),
-      ) as _i5.Future<String>);
+            Invocation.method(#getPersonIDByPassnummer, [passNumber]),
+            returnValue: _i5.Future<String>.value(
+              _i4.dummyValue<String>(
+                this,
+                Invocation.method(#getPersonIDByPassnummer, [passNumber]),
+              ),
+            ),
+          )
+          as _i5.Future<String>);
 
   @override
   _i5.Future<Map<String, dynamic>> getPassDatenByPersonId(String? personId) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getPassDatenByPersonId,
-          [personId],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#getPassDatenByPersonId, [personId]),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<String> findePersonID(
@@ -252,41 +209,37 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     String? zipCode,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #findePersonID,
-          [
-            lastName,
-            firstName,
-            birthDate,
-            passNumber,
-            zipCode,
-          ],
-        ),
-        returnValue: _i5.Future<String>.value(_i4.dummyValue<String>(
-          this,
-          Invocation.method(
-            #findePersonID,
-            [
+            Invocation.method(#findePersonID, [
               lastName,
               firstName,
               birthDate,
               passNumber,
               zipCode,
-            ],
-          ),
-        )),
-      ) as _i5.Future<String>);
+            ]),
+            returnValue: _i5.Future<String>.value(
+              _i4.dummyValue<String>(
+                this,
+                Invocation.method(#findePersonID, [
+                  lastName,
+                  firstName,
+                  birthDate,
+                  passNumber,
+                  zipCode,
+                ]),
+              ),
+            ),
+          )
+          as _i5.Future<String>);
 
   @override
   _i5.Future<Map<String, dynamic>> resetPasswordStep1(String? passNumber) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #resetPasswordStep1,
-          [passNumber],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#resetPasswordStep1, [passNumber]),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
   _i5.Future<Map<String, dynamic>> resetPasswordStep2(
@@ -295,17 +248,16 @@ class MockAuthService extends _i1.Mock implements _i3.AuthService {
     String? newPassword,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #resetPasswordStep2,
-          [
-            token,
-            personId,
-            newPassword,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
+            Invocation.method(#resetPasswordStep2, [
+              token,
+              personId,
+              newPassword,
+            ]),
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i5.Future<Map<String, dynamic>>);
 }
 
 /// A class which mocks [NetworkService].
@@ -317,28 +269,23 @@ class MockNetworkService extends _i1.Mock implements _i6.NetworkService {
   }
 
   @override
-  _i5.Future<bool> hasInternet() => (super.noSuchMethod(
-        Invocation.method(
-          #hasInternet,
-          [],
-        ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+  _i5.Future<bool> hasInternet() =>
+      (super.noSuchMethod(
+            Invocation.method(#hasInternet, []),
+            returnValue: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
 
   @override
-  Duration getCacheExpirationDuration() => (super.noSuchMethod(
-        Invocation.method(
-          #getCacheExpirationDuration,
-          [],
-        ),
-        returnValue: _FakeDuration_1(
-          this,
-          Invocation.method(
-            #getCacheExpirationDuration,
-            [],
-          ),
-        ),
-      ) as Duration);
+  Duration getCacheExpirationDuration() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCacheExpirationDuration, []),
+            returnValue: _FakeDuration_1(
+              this,
+              Invocation.method(#getCacheExpirationDuration, []),
+            ),
+          )
+          as Duration);
 }
 
 /// A class which mocks [FontSizeProvider].
@@ -350,112 +297,81 @@ class MockFontSizeProvider extends _i1.Mock implements _i7.FontSizeProvider {
   }
 
   @override
-  double get scaleFactor => (super.noSuchMethod(
-        Invocation.getter(#scaleFactor),
-        returnValue: 0.0,
-      ) as double);
+  double get scaleFactor =>
+      (super.noSuchMethod(Invocation.getter(#scaleFactor), returnValue: 0.0)
+          as double);
 
   @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
 
   @override
   void increaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #increaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#increaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void decreaseFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #decreaseFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#decreaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void resetFontSize() => super.noSuchMethod(
-        Invocation.method(
-          #resetFontSize,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#resetFontSize, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setScaleFactor(double? value) => super.noSuchMethod(
-        Invocation.method(
-          #setScaleFactor,
-          [value],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#setScaleFactor, [value]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  double getScaledFontSize(double? baseSize) => (super.noSuchMethod(
-        Invocation.method(
-          #getScaledFontSize,
-          [baseSize],
-        ),
-        returnValue: 0.0,
-      ) as double);
+  double getScaledFontSize(double? baseSize) =>
+      (super.noSuchMethod(
+            Invocation.method(#getScaledFontSize, [baseSize]),
+            returnValue: 0.0,
+          )
+          as double);
 
   @override
-  String getScalePercentage() => (super.noSuchMethod(
-        Invocation.method(
-          #getScalePercentage,
-          [],
-        ),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getScalePercentage,
-            [],
-          ),
-        ),
-      ) as String);
+  String getScalePercentage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getScalePercentage, []),
+            returnValue: _i4.dummyValue<String>(
+              this,
+              Invocation.method(#getScalePercentage, []),
+            ),
+          )
+          as String);
 
   @override
   void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [ConfigService].
@@ -467,54 +383,21 @@ class MockConfigService extends _i1.Mock implements _i9.ConfigService {
   }
 
   @override
-  int? getInt(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [
-          key,
-          section,
-        ],
-      )) as int?);
+  int? getInt(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getInt, [key, section])) as int?);
 
   @override
-  String? getString(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getString,
-        [
-          key,
-          section,
-        ],
-      )) as String?);
+  String? getString(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getString, [key, section]))
+          as String?);
 
   @override
-  List<String>? getList(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getList,
-        [
-          key,
-          section,
-        ],
-      )) as List<String>?);
+  List<String>? getList(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getList, [key, section]))
+          as List<String>?);
 
   @override
-  bool? getBool(
-    String? key, [
-    String? section,
-  ]) =>
-      (super.noSuchMethod(Invocation.method(
-        #getBool,
-        [
-          key,
-          section,
-        ],
-      )) as bool?);
+  bool? getBool(String? key, [String? section]) =>
+      (super.noSuchMethod(Invocation.method(#getBool, [key, section]))
+          as bool?);
 }

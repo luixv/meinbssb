@@ -23,15 +23,11 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeSendReport_0 extends _i1.SmartFake implements _i2.SendReport {
-  _FakeSendReport_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeSendReport_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [EmailSender].
@@ -48,24 +44,15 @@ class MockEmailSender extends _i1.Mock implements _i3.EmailSender {
     _i5.SmtpServer? server,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #send,
-          [
-            message,
-            server,
-          ],
-        ),
-        returnValue: _i4.Future<_i2.SendReport>.value(_FakeSendReport_0(
-          this,
-          Invocation.method(
-            #send,
-            [
-              message,
-              server,
-            ],
-          ),
-        )),
-      ) as _i4.Future<_i2.SendReport>);
+            Invocation.method(#send, [message, server]),
+            returnValue: _i4.Future<_i2.SendReport>.value(
+              _FakeSendReport_0(
+                this,
+                Invocation.method(#send, [message, server]),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.SendReport>);
 }
 
 /// A class which mocks [EmailSender].
@@ -82,22 +69,13 @@ class TestEmailSender extends _i1.Mock implements _i3.EmailSender {
     _i5.SmtpServer? server,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #send,
-          [
-            message,
-            server,
-          ],
-        ),
-        returnValue: _i4.Future<_i2.SendReport>.value(_FakeSendReport_0(
-          this,
-          Invocation.method(
-            #send,
-            [
-              message,
-              server,
-            ],
-          ),
-        )),
-      ) as _i4.Future<_i2.SendReport>);
+            Invocation.method(#send, [message, server]),
+            returnValue: _i4.Future<_i2.SendReport>.value(
+              _FakeSendReport_0(
+                this,
+                Invocation.method(#send, [message, server]),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.SendReport>);
 }
