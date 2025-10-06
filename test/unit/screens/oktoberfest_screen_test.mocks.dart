@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
 import 'dart:typed_data' as _i16;
+import 'dart:ui' as _i30;
 
 import 'package:meinbssb/models/bank_data.dart' as _i21;
 import 'package:meinbssb/models/bezirk_data.dart' as _i27;
@@ -26,6 +27,7 @@ import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart'
 import 'package:meinbssb/models/user_data.dart' as _i10;
 import 'package:meinbssb/models/verein_data.dart' as _i22;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i13;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i28;
 import 'package:meinbssb/services/api/auth_service.dart' as _i5;
 import 'package:meinbssb/services/api_service.dart' as _i8;
 import 'package:meinbssb/services/core/cache_service.dart' as _i6;
@@ -33,6 +35,7 @@ import 'package:meinbssb/services/core/config_service.dart' as _i3;
 import 'package:meinbssb/services/core/email_service.dart' as _i4;
 import 'package:meinbssb/services/core/image_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i29;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -1039,4 +1042,90 @@ class MockConfigService extends _i1.Mock implements _i3.ConfigService {
   bool? getBool(String? key, [String? section]) =>
       (super.noSuchMethod(Invocation.method(#getBool, [key, section]))
           as bool?);
+}
+
+/// A class which mocks [FontSizeProvider].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFontSizeProvider extends _i1.Mock implements _i28.FontSizeProvider {
+  MockFontSizeProvider() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  double get scaleFactor =>
+      (super.noSuchMethod(Invocation.getter(#scaleFactor), returnValue: 0.0)
+          as double);
+
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
+
+  @override
+  void increaseFontSize() => super.noSuchMethod(
+    Invocation.method(#increaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void decreaseFontSize() => super.noSuchMethod(
+    Invocation.method(#decreaseFontSize, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void resetFontSize() => super.noSuchMethod(
+    Invocation.method(#resetFontSize, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void setScaleFactor(double? value) => super.noSuchMethod(
+    Invocation.method(#setScaleFactor, [value]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  double getScaledFontSize(double? baseSize) =>
+      (super.noSuchMethod(
+            Invocation.method(#getScaledFontSize, [baseSize]),
+            returnValue: 0.0,
+          )
+          as double);
+
+  @override
+  String getScalePercentage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getScalePercentage, []),
+            returnValue: _i29.dummyValue<String>(
+              this,
+              Invocation.method(#getScalePercentage, []),
+            ),
+          )
+          as String);
+
+  @override
+  void addListener(_i30.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeListener(_i30.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }
