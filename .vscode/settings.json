@@ -1,4 +1,33 @@
 {
-    "cmake.ignoreCMakeListsMissing": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+  // --- Existing project settings ---
+  "cmake.ignoreCMakeListsMissing": true,
+  "java.configuration.updateBuildConfiguration": "interactive",
+  
+
+  "github-actions.workflows.validate": true,
+
+  // --- YAML / GitHub Actions fixes ---
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.yml"
+  },
+
+  // Suppress false GitHub Actions context warnings like CODECOV_TOKEN
+  "github-actions.workflows.ignoreContextErrors": true,
+
+  // Optional: improves YAML IntelliSense and disables overly strict validation
+  "yaml.validate": true,
+
+  "yaml.customTags": [
+    "!Ref",
+    "!Sub",
+    "!GetAtt",
+    "!If",
+    "!FindInMap",
+    "!ImportValue",
+    "!Join",
+    "!Select"
+  ]
+
+  
+
 }
