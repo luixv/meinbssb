@@ -127,7 +127,19 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     super.initState();
     _isLoading = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchData();
+      final personId = widget.userData?.personId;
+      final passdatenId = widget.userData?.passdatenId;
+      if (personId == null || passdatenId == null) {
+        if (mounted) {
+          setState(() {
+            _errorMessage =
+                'Benutzerdaten nicht verfügbar. Bitte erneut anmelden.';
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+      _fetchStartingRights(personId, passdatenId);
     });
   }
 
@@ -142,24 +154,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchData() async {
-    final int? personId = widget.userData?.personId;
-    final int? passdatenId = widget.userData?.passdatenId;
-
-    if (personId == null || passdatenId == null) {
-      LoggerService.logError(
-        'Person ID or Passdaten ID is null. Cannot fetch starting rights data.',
-      );
-      if (mounted) {
-        setState(() {
-          _errorMessage =
-              'Benutzerdaten nicht verfügbar. Bitte erneut anmelden.';
-          _isLoading = false;
-        });
-      }
-      return;
-    }
-
+  Future<void> _fetchStartingRights(int personId, int passdatenId) async {
     if (mounted) {
       setState(() {
         _errorMessage = null;
@@ -167,10 +162,8 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     }
 
     try {
-      // Get API service before any await
       final apiService = Provider.of<ApiService>(context, listen: false);
 
-      // Check offline status before fetching
       final isOffline = !(await apiService.hasInternet());
       if (isOffline) {
         if (mounted) {
@@ -189,41 +182,31 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       );
 
       final PassdatenAkzeptOrAktiv?
-          fetchedPassdatenAkzeptierterOderAktiverPassData =
-          await apiService.fetchPassdatenAkzeptierterOderAktiverPass(
-        personId,
-      );
+      fetchedPassdatenAkzeptierterOderAktiverPassData = await apiService
+          .fetchPassdatenAkzeptierterOderAktiverPass(personId);
 
-      // PassStatus darf 1=aktiv und 4=akzeptiert sein. Alle andere Stati werden nicht akzeptiert.
       int passStatus = 4;
+      final fetchedZweitmitgliedschaften = await apiService
+          .fetchZweitmitgliedschaftenZVE(personId, passStatus);
 
-      final fetchedZweitmitgliedschaften =
-          await apiService.fetchZweitmitgliedschaftenZVE(
-        personId,
-        passStatus,
-      );
-
-      // Initialize data structures for each ZVE
       Map<int, Map<String, int?>> localFirstColumns = {};
-
-      // Fill the first column for each ZVE
       if (fetchedZveData.isNotEmpty) {
         for (final zveData in fetchedZveData) {
-          int zvVereinId = zveData.zvVereinId;
-          String? disziplinNr = zveData.disziplinNr;
-          String? disziplin = zveData.disziplin;
-          int? disziplinId = zveData.disziplinId;
+          final zvVereinId = zveData.zvVereinId;
+          final disziplinNr = zveData.disziplinNr;
+          final disziplin = zveData.disziplin;
+          final disziplinId = zveData.disziplinId;
           String combined = '';
           if (disziplin != null && disziplin.isNotEmpty) {
-            // combined : disziplinNr - disziplin
-            combined = ((disziplinNr ?? '') +
-                    (disziplinNr != null &&
-                            disziplinNr.isNotEmpty &&
-                            disziplin.isNotEmpty
-                        ? ' - '
-                        : '') +
-                    disziplin)
-                .trim();
+            combined =
+                ((disziplinNr ?? '') +
+                        (disziplinNr != null &&
+                                disziplinNr.isNotEmpty &&
+                                disziplin.isNotEmpty
+                            ? ' - '
+                            : '') +
+                        disziplin)
+                    .trim();
           }
           if (combined.isNotEmpty) {
             localFirstColumns[zvVereinId] ??= {};
@@ -232,32 +215,32 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         }
       }
 
-      // Fill the seconds column for each ZVE
       Map<int, Map<String, int?>> localSecondColumns = {};
       Map<int, Map<String, int?>> localPivotDisziplins = {};
 
       if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
         for (final zve
             in fetchedPassdatenAkzeptierterOderAktiverPassData.zves) {
-          final int vereinId = zve.vereinId;
-          final String? disziplinNr = zve.disziplinNr;
-          final String? disziplin = zve.disziplin;
-          final int disziplinId = zve.disziplinId;
+          final vereinId = zve.vereinId;
+          final disziplinNr = zve.disziplinNr;
+          final disziplin = zve.disziplin;
+          final disziplinId = zve.disziplinId;
 
-          // Remove disciplines from fetchedDisciplines that are already in fetchedZveData by ID
-          fetchedDisciplines
-              .removeWhere((d) => d.disziplinId == zve.disziplinId);
+          fetchedDisciplines.removeWhere(
+            (d) => d.disziplinId == zve.disziplinId,
+          );
 
           String combined = '';
           if (disziplin != null && disziplin.isNotEmpty) {
-            combined = ((disziplinNr ?? '') +
-                    (disziplinNr != null &&
-                            disziplinNr.isNotEmpty &&
-                            disziplin.isNotEmpty
-                        ? ' - '
-                        : '') +
-                    disziplin)
-                .trim();
+            combined =
+                ((disziplinNr ?? '') +
+                        (disziplinNr != null &&
+                                disziplinNr.isNotEmpty &&
+                                disziplin.isNotEmpty
+                            ? ' - '
+                            : '') +
+                        disziplin)
+                    .trim();
           }
           if (combined.isNotEmpty) {
             localSecondColumns[vereinId] ??= {};
@@ -266,7 +249,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         }
       }
 
-      // Ensure every club in localFirstColumns gets a pivot entry
       final allVereinIds = <int>{
         ...localFirstColumns.keys,
         ...localSecondColumns.keys,
@@ -282,10 +264,9 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         setState(() {
           _disciplines = fetchedDisciplines;
           _zweitmitgliedschaften = fetchedZweitmitgliedschaften;
-          firstColumns = Map<int, Map<String, int?>>.from(localFirstColumns);
-          secondColumns = Map<int, Map<String, int?>>.from(localSecondColumns);
-          pivotDisziplins =
-              Map<int, Map<String, int?>>.from(localPivotDisziplins);
+          firstColumns = Map.from(localFirstColumns);
+          secondColumns = Map.from(localSecondColumns);
+          pivotDisziplins = Map.from(localPivotDisziplins);
         });
       }
     } catch (e) {
@@ -311,37 +292,41 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      floatingActionButton: _hasUnsavedChanges
-          ? FloatingActionButton(
-              heroTag: 'saveFab',
-              onPressed: _onSave,
-              backgroundColor: UIConstants.defaultAppColor,
-              child: _isLoading
-                  ? const SizedBox(
-                      width: UIConstants.fabIconSize,
-                      height: UIConstants.fabIconSize,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.whiteColor,
-                        ),
-                        strokeWidth: UIConstants.defaultStrokeWidth,
-                      ),
-                    )
-                  : const Icon(Icons.save, color: UIConstants.whiteColor),
-            )
-          : null,
+      floatingActionButton:
+          _hasUnsavedChanges
+              ? FloatingActionButton(
+                heroTag: 'saveFab',
+                onPressed: _onSave,
+                backgroundColor: UIConstants.defaultAppColor,
+                child:
+                    _isLoading
+                        ? const SizedBox(
+                          width: UIConstants.fabIconSize,
+                          height: UIConstants.fabIconSize,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.whiteColor,
+                            ),
+                            strokeWidth: UIConstants.defaultStrokeWidth,
+                          ),
+                        )
+                        : const Icon(Icons.save, color: UIConstants.whiteColor),
+              )
+              : null,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           StartingRightsHeader(seasonString: _seasonInt.toString()),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _errorMessage != null
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _errorMessage != null
                     ? Center(
-                        child: _errorMessage ==
-                                'Startrechte sind offline nicht verfügbar'
-                            ? Padding(
+                      child:
+                          _errorMessage ==
+                                  'Startrechte sind offline nicht verfügbar'
+                              ? Padding(
                                 padding: UIConstants.screenPadding,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -375,288 +360,296 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   ],
                                 ),
                               )
-                            : ScaledText(
+                              : ScaledText(
                                 _errorMessage!,
-                                style: UIStyles.bodyStyle
-                                    .copyWith(color: UIConstants.errorColor),
+                                style: UIStyles.bodyStyle.copyWith(
+                                  color: UIConstants.errorColor,
+                                ),
                               ),
-                      )
+                    )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.all(UIConstants.spacingM),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ScaledText(
-                              Messages.clubLabel,
-                              style: UIStyles.headerStyle.copyWith(
-                                color: UIConstants.defaultAppColor,
-                              ),
+                      padding: const EdgeInsets.all(UIConstants.spacingM),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ScaledText(
+                            Messages.clubLabel,
+                            style: UIStyles.headerStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
                             ),
-                            const SizedBox(height: UIConstants.spacingS),
-                            if (widget.userData != null)
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Consumer<FontSizeProvider>(
-                                          builder: (
-                                            context,
-                                            fontSizeProvider,
-                                            child,
-                                          ) {
-                                            return RichText(
-                                              text: TextSpan(
-                                                style: UIStyles.subtitleStyle
-                                                    .copyWith(
-                                                  fontSize: UIStyles
-                                                          .subtitleStyle
-                                                          .fontSize! *
-                                                      fontSizeProvider
-                                                          .scaleFactor,
-                                                ),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                    text: '• ',
-                                                    style: UIStyles
-                                                        .subtitleStyle
-                                                        .copyWith(
-                                                      fontSize: (UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor *
-                                                          1.5),
-                                                      height: 1.0,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: widget
-                                                        .userData!.vereinName,
-                                                    style: UIStyles
-                                                        .subtitleStyle
-                                                        .copyWith(
-                                                      fontSize: UIStyles
-                                                              .subtitleStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            else
-                              Consumer<FontSizeProvider>(
-                                builder: (context, fontSizeProvider, child) {
-                                  return ScaledText(
-                                    Messages.noPrimaryClubDataAvailable,
-                                    style: UIStyles.bodyStyle.copyWith(
-                                      fontSize: UIStyles.bodyStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                  );
-                                },
-                              ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            // Show Zweitmitgliedschaften tables
-                            if (_zweitmitgliedschaften.isNotEmpty) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: UIConstants.spacingS,
-                                  bottom: UIConstants.spacingS,
-                                ),
-                                child: ScaledText(
-                                  'Zweitvereine',
-                                  style: UIStyles.headerStyle.copyWith(
-                                    color: UIConstants.defaultAppColor,
-                                  ),
-                                ),
-                              ),
-                              ...List.generate(_zweitmitgliedschaften.length,
-                                  (index) {
-                                final fzm = _zweitmitgliedschaften[index];
-                                final vereinId = fzm.vereinId;
-                                final vereinName = fzm.vereinName;
-                                final pivot = pivotDisziplins[vereinId] ?? {};
-                                return ZweitvereinTable(
-                                  seasonInt: _seasonInt,
-                                  vereinName: vereinName,
-                                  firstColumns: firstColumns[vereinId] ?? {},
-                                  secondColumns: secondColumns[vereinId] ?? {},
-                                  pivot: pivot,
-                                  disciplines: _disciplines,
-                                  onDelete: (key) {
-                                    setState(() {
-                                      final updatedSecondColumns =
-                                          Map<int, Map<String, int?>>.from(
-                                        secondColumns,
-                                      );
-                                      final updatedPivotDisziplins =
-                                          Map<int, Map<String, int?>>.from(
-                                        pivotDisziplins,
-                                      );
-                                      final currentSecond =
-                                          Map<String, int?>.from(
-                                        updatedSecondColumns[vereinId] ?? {},
-                                      );
-                                      // Find the DisziplinId for the deleted key
-                                      final deletedDisziplinId =
-                                          currentSecond[key] ??
-                                              firstColumns[vereinId]?[key];
-                                      // Remove from table
-                                      currentSecond.remove(key);
-                                      updatedSecondColumns[vereinId] =
-                                          currentSecond;
-                                      updatedPivotDisziplins[vereinId] = {
-                                        ...firstColumns[vereinId] ?? {},
-                                        ...currentSecond,
-                                      };
-                                      secondColumns = updatedSecondColumns;
-                                      pivotDisziplins = updatedPivotDisziplins;
-                                      // Reconstruct Disziplin from key and id, add if not present
-                                      if (deletedDisziplinId != null) {
-                                        // Try to parse disziplinNr and disziplin from key
-                                        String? disziplinNr;
-                                        String? disziplin;
-                                        final parts = key.split(' - ');
-                                        if (parts.length == 2) {
-                                          disziplinNr = parts[0];
-                                          disziplin = parts[1];
-                                        } else if (parts.length == 1) {
-                                          disziplinNr = null;
-                                          disziplin = parts[0];
-                                        }
-                                        final reconstructed = Disziplin(
-                                          disziplinId: deletedDisziplinId,
-                                          disziplinNr: disziplinNr,
-                                          disziplin: disziplin,
-                                        );
-                                        if (!_disciplines.any(
-                                          (d) =>
-                                              d.disziplinId ==
-                                              deletedDisziplinId,
-                                        )) {
-                                          _disciplines =
-                                              List<Disziplin>.from(_disciplines)
-                                                ..add(reconstructed);
-                                        }
-                                      }
-                                      _hasUnsavedChanges = true;
-                                    });
-                                  },
-                                  onAdd: (selected) {
-                                    final combined =
-                                        ((selected.disziplinNr ?? '') +
-                                                (selected.disziplinNr != null &&
-                                                        selected.disziplinNr!
-                                                            .isNotEmpty &&
-                                                        (selected.disziplin
-                                                                ?.isNotEmpty ??
-                                                            false)
-                                                    ? ' - '
-                                                    : '') +
-                                                (selected.disziplin ?? ''))
-                                            .trim();
-                                    setState(() {
-                                      final updatedSecondColumns =
-                                          Map<int, Map<String, int?>>.from(
-                                        secondColumns,
-                                      );
-                                      final updatedPivotDisziplins =
-                                          Map<int, Map<String, int?>>.from(
-                                        pivotDisziplins,
-                                      );
-                                      final currentSecond =
-                                          Map<String, int?>.from(
-                                        updatedSecondColumns[vereinId] ?? {},
-                                      );
-                                      currentSecond[combined] =
-                                          selected.disziplinId;
-                                      updatedSecondColumns[vereinId] =
-                                          currentSecond;
-                                      updatedPivotDisziplins[vereinId] = {
-                                        ...firstColumns[vereinId] ?? {},
-                                        ...currentSecond,
-                                      };
-                                      secondColumns = updatedSecondColumns;
-                                      pivotDisziplins = updatedPivotDisziplins;
-                                      // Remove from _disciplines if present
-                                      _disciplines =
-                                          List<Disziplin>.from(_disciplines)
-                                            ..removeWhere(
-                                              (d) =>
-                                                  d.disziplinId ==
-                                                  selected.disziplinId,
-                                            );
-                                      _hasUnsavedChanges = true;
-                                    });
-                                    if (_zveTextControllers[vereinId] != null) {
-                                      _zveTextControllers[vereinId]!.clear();
-                                    }
-                                  },
-                                );
-                              }),
-                            ],
-                            const SizedBox(height: UIConstants.spacingXXXL),
-                            // FIX: Use Wrap for the checkbox line to handle wrapping gracefully
-                            Wrap(
-                              crossAxisAlignment: WrapCrossAlignment
-                                  .center, // Align items vertically
-                              spacing: UIConstants.spacingS /
-                                  2, // Small horizontal space between items
-                              runSpacing: UIConstants
-                                  .spacingS, // Vertical space between wrapped lines
+                          ),
+                          const SizedBox(height: UIConstants.spacingS),
+                          if (widget.userData != null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Checkbox(
-                                  value: _digitalerPass,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      _digitalerPass = val ?? false;
-                                      _hasUnsavedChanges = true;
-                                    });
-                                  },
-                                ),
-                                // Use a Row with mainAxisSize.min to keep the text and tooltip together
                                 Row(
-                                  mainAxisSize: MainAxisSize
-                                      .min, // Essential for Row inside Wrap
                                   children: [
-                                    ScaledText(
-                                      'zusätzlicher physikalischer Ausweis',
-                                      style: UIStyles.bodyStyle.copyWith(
-                                        // Consistent style
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Small space between text and icon
-                                    const SizedBox(
-                                      width: UIConstants.spacingXS,
-                                    ),
-                                    const Tooltip(
-                                      message: 'Kostenpflichtig',
-                                      triggerMode: TooltipTriggerMode.tap,
-                                      child: Icon(
-                                        Icons.info_outline,
-                                        color: UIConstants.defaultAppColor,
-                                        size: UIConstants.tooltipIconSize,
+                                    Expanded(
+                                      child: Consumer<FontSizeProvider>(
+                                        builder: (
+                                          context,
+                                          fontSizeProvider,
+                                          child,
+                                        ) {
+                                          return RichText(
+                                            text: TextSpan(
+                                              style: UIStyles.subtitleStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .subtitleStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: '• ',
+                                                  style: UIStyles.subtitleStyle
+                                                      .copyWith(
+                                                        fontSize:
+                                                            (UIStyles
+                                                                    .subtitleStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor *
+                                                                1.5),
+                                                        height: 1.0,
+                                                      ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      widget
+                                                          .userData!
+                                                          .vereinName,
+                                                  style: UIStyles.subtitleStyle
+                                                      .copyWith(
+                                                        fontSize:
+                                                            UIStyles
+                                                                .subtitleStyle
+                                                                .fontSize! *
+                                                            fontSizeProvider
+                                                                .scaleFactor,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],
                                 ),
                               ],
+                            )
+                          else
+                            Consumer<FontSizeProvider>(
+                              builder: (context, fontSizeProvider, child) {
+                                return ScaledText(
+                                  Messages.noPrimaryClubDataAvailable,
+                                  style: UIStyles.bodyStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.bodyStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
+                                );
+                              },
                             ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          // Show Zweitmitgliedschaften tables
+                          if (_zweitmitgliedschaften.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: UIConstants.spacingS,
+                                bottom: UIConstants.spacingS,
+                              ),
+                              child: ScaledText(
+                                'Zweitvereine',
+                                style: UIStyles.headerStyle.copyWith(
+                                  color: UIConstants.defaultAppColor,
+                                ),
+                              ),
+                            ),
+                            ...List.generate(_zweitmitgliedschaften.length, (
+                              index,
+                            ) {
+                              final fzm = _zweitmitgliedschaften[index];
+                              final vereinId = fzm.vereinId;
+                              final vereinName = fzm.vereinName;
+                              final pivot = pivotDisziplins[vereinId] ?? {};
+                              return ZweitvereinTable(
+                                seasonInt: _seasonInt,
+                                vereinName: vereinName,
+                                firstColumns: firstColumns[vereinId] ?? {},
+                                secondColumns: secondColumns[vereinId] ?? {},
+                                pivot: pivot,
+                                disciplines: _disciplines,
+                                onDelete: (key) {
+                                  setState(() {
+                                    final updatedSecondColumns =
+                                        Map<int, Map<String, int?>>.from(
+                                          secondColumns,
+                                        );
+                                    final updatedPivotDisziplins =
+                                        Map<int, Map<String, int?>>.from(
+                                          pivotDisziplins,
+                                        );
+                                    final currentSecond =
+                                        Map<String, int?>.from(
+                                          updatedSecondColumns[vereinId] ?? {},
+                                        );
+                                    // Find the DisziplinId for the deleted key
+                                    final deletedDisziplinId =
+                                        currentSecond[key] ??
+                                        firstColumns[vereinId]?[key];
+                                    // Remove from table
+                                    currentSecond.remove(key);
+                                    updatedSecondColumns[vereinId] =
+                                        currentSecond;
+                                    updatedPivotDisziplins[vereinId] = {
+                                      ...firstColumns[vereinId] ?? {},
+                                      ...currentSecond,
+                                    };
+                                    secondColumns = updatedSecondColumns;
+                                    pivotDisziplins = updatedPivotDisziplins;
+                                    // Reconstruct Disziplin from key and id, add if not present
+                                    if (deletedDisziplinId != null) {
+                                      // Try to parse disziplinNr and disziplin from key
+                                      String? disziplinNr;
+                                      String? disziplin;
+                                      final parts = key.split(' - ');
+                                      if (parts.length == 2) {
+                                        disziplinNr = parts[0];
+                                        disziplin = parts[1];
+                                      } else if (parts.length == 1) {
+                                        disziplinNr = null;
+                                        disziplin = parts[0];
+                                      }
+                                      final reconstructed = Disziplin(
+                                        disziplinId: deletedDisziplinId,
+                                        disziplinNr: disziplinNr,
+                                        disziplin: disziplin,
+                                      );
+                                      if (!_disciplines.any(
+                                        (d) =>
+                                            d.disziplinId == deletedDisziplinId,
+                                      )) {
+                                        _disciplines = List<Disziplin>.from(
+                                          _disciplines,
+                                        )..add(reconstructed);
+                                      }
+                                    }
+                                    _hasUnsavedChanges = true;
+                                  });
+                                },
+                                onAdd: (selected) {
+                                  final combined =
+                                      ((selected.disziplinNr ?? '') +
+                                              (selected.disziplinNr != null &&
+                                                      selected
+                                                          .disziplinNr!
+                                                          .isNotEmpty &&
+                                                      (selected
+                                                              .disziplin
+                                                              ?.isNotEmpty ??
+                                                          false)
+                                                  ? ' - '
+                                                  : '') +
+                                              (selected.disziplin ?? ''))
+                                          .trim();
+                                  setState(() {
+                                    final updatedSecondColumns =
+                                        Map<int, Map<String, int?>>.from(
+                                          secondColumns,
+                                        );
+                                    final updatedPivotDisziplins =
+                                        Map<int, Map<String, int?>>.from(
+                                          pivotDisziplins,
+                                        );
+                                    final currentSecond =
+                                        Map<String, int?>.from(
+                                          updatedSecondColumns[vereinId] ?? {},
+                                        );
+                                    currentSecond[combined] =
+                                        selected.disziplinId;
+                                    updatedSecondColumns[vereinId] =
+                                        currentSecond;
+                                    updatedPivotDisziplins[vereinId] = {
+                                      ...firstColumns[vereinId] ?? {},
+                                      ...currentSecond,
+                                    };
+                                    secondColumns = updatedSecondColumns;
+                                    pivotDisziplins = updatedPivotDisziplins;
+                                    // Remove from _disciplines if present
+                                    _disciplines = List<Disziplin>.from(
+                                      _disciplines,
+                                    )..removeWhere(
+                                      (d) =>
+                                          d.disziplinId == selected.disziplinId,
+                                    );
+                                    _hasUnsavedChanges = true;
+                                  });
+                                  if (_zveTextControllers[vereinId] != null) {
+                                    _zveTextControllers[vereinId]!.clear();
+                                  }
+                                },
+                              );
+                            }),
                           ],
-                        ),
+                          const SizedBox(height: UIConstants.spacingXXXL),
+                          // FIX: Use Wrap for the checkbox line to handle wrapping gracefully
+                          Wrap(
+                            crossAxisAlignment:
+                                WrapCrossAlignment
+                                    .center, // Align items vertically
+                            spacing:
+                                UIConstants.spacingS /
+                                2, // Small horizontal space between items
+                            runSpacing:
+                                UIConstants
+                                    .spacingS, // Vertical space between wrapped lines
+                            children: [
+                              Checkbox(
+                                value: _digitalerPass,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _digitalerPass = val ?? false;
+                                    _hasUnsavedChanges = true;
+                                  });
+                                },
+                              ),
+                              // Use a Row with mainAxisSize.min to keep the text and tooltip together
+                              Row(
+                                mainAxisSize:
+                                    MainAxisSize
+                                        .min, // Essential for Row inside Wrap
+                                children: [
+                                  ScaledText(
+                                    'zusätzlicher physikalischer Ausweis',
+                                    style: UIStyles.bodyStyle.copyWith(
+                                      // Consistent style
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  // Small space between text and icon
+                                  const SizedBox(width: UIConstants.spacingXS),
+                                  const Tooltip(
+                                    message: 'Kostenpflichtig',
+                                    triggerMode: TooltipTriggerMode.tap,
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: UIConstants.defaultAppColor,
+                                      size: UIConstants.tooltipIconSize,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
+                    ),
           ),
           // ...existing code...
           // Add extra space at the bottom
