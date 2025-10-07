@@ -24,15 +24,11 @@ void main() {
       cacheService: mockCacheService,
       networkService: mockNetworkService,
     );
-    when(mockNetworkService.getCacheExpirationDuration())
-        .thenReturn(const Duration(hours: 24));
     when(
-      mockCacheService.cacheAndRetrieveData<dynamic>(
-        any,
-        any,
-        any,
-        any,
-      ),
+      mockNetworkService.getCacheExpirationDuration(),
+    ).thenReturn(const Duration(hours: 24));
+    when(
+      mockCacheService.cacheAndRetrieveData<dynamic>(any, any, any, any),
     ).thenAnswer((invocation) async {
       final fetchData =
           invocation.positionalArguments[2] as Future<dynamic> Function();
@@ -52,8 +48,9 @@ void main() {
         {'BEZIRKID': 1, 'BEZIRKNR': 100, 'BEZIRKNAME': 'TestBezirk'},
         {'BEZIRKID': 2, 'BEZIRKNR': 200, 'BEZIRKNAME': 'TestBezirk2'},
       ];
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value(response));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value(response));
       final result = await bezirkService.fetchBezirke();
       expect(result, isA<List<Bezirk>>());
       expect(result.length, 2);
@@ -62,15 +59,17 @@ void main() {
     });
 
     test('returns empty list and logs error on exception', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.error(Exception('fail')));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.error(Exception('fail')));
       final result = await bezirkService.fetchBezirke();
       expect(result, isEmpty);
     });
 
     test('returns empty list on malformed data', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value({'unexpected': 'object'}));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value({'unexpected': 'object'}));
       final result = await bezirkService.fetchBezirke();
       expect(result, isEmpty);
     });
@@ -81,8 +80,9 @@ void main() {
       final response = [
         {'BEZIRKID': 3, 'BEZIRKNR': 300, 'BEZIRKNAME': 'Bezirk300'},
       ];
-      when(mockHttpClient.get('Bezirk/300'))
-          .thenAnswer((_) => Future.value(response));
+      when(
+        mockHttpClient.get('Bezirk/300'),
+      ).thenAnswer((_) => Future.value(response));
       final result = await bezirkService.fetchBezirk(300);
       expect(result, isA<List<Bezirk>>());
       expect(result.length, 1);
@@ -90,15 +90,17 @@ void main() {
     });
 
     test('returns empty list and logs error on exception', () async {
-      when(mockHttpClient.get('Bezirk/123'))
-          .thenAnswer((_) => Future.error(Exception('fail')));
+      when(
+        mockHttpClient.get('Bezirk/123'),
+      ).thenAnswer((_) => Future.error(Exception('fail')));
       final result = await bezirkService.fetchBezirk(123);
       expect(result, isEmpty);
     });
 
     test('returns empty list on malformed data', () async {
-      when(mockHttpClient.get('Bezirk/123'))
-          .thenAnswer((_) => Future.value({'unexpected': 'object'}));
+      when(
+        mockHttpClient.get('Bezirk/123'),
+      ).thenAnswer((_) => Future.value({'unexpected': 'object'}));
       final result = await bezirkService.fetchBezirk(123);
       expect(result, isEmpty);
     });
@@ -110,8 +112,9 @@ void main() {
         {'BEZIRKID': 1, 'BEZIRKNR': 100, 'BEZIRKNAME': 'TestBezirk'},
         {'BEZIRKID': 2, 'BEZIRKNR': 200, 'BEZIRKNAME': 'TestBezirk2'},
       ];
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value(response));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value(response));
       final result = await bezirkService.fetchBezirkeforSearch();
       expect(result, isA<List<BezirkSearchTriple>>());
       expect(result.length, 2);
@@ -120,15 +123,17 @@ void main() {
     });
 
     test('returns empty list and logs error on exception', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.error(Exception('fail')));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.error(Exception('fail')));
       final result = await bezirkService.fetchBezirkeforSearch();
       expect(result, isEmpty);
     });
 
     test('returns empty list on malformed data', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value({'unexpected': 'object'}));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value({'unexpected': 'object'}));
       final result = await bezirkService.fetchBezirkeforSearch();
       expect(result, isEmpty);
     });
@@ -136,17 +141,18 @@ void main() {
 
   group('BezirkService._mapBezirkeResponse', () {
     test('returns empty list if response is not a List', () {
-      bezirkService
-          .fetchBezirke()
-          .then((value) => bezirkService.fetchBezirke());
+      bezirkService.fetchBezirke().then(
+        (value) => bezirkService.fetchBezirke(),
+      );
       expect(bezirkService.fetchBezirke(), completes);
       // Directly test the private mapping method via reflection or by making it public for test
       // Here, we simulate by calling through fetchBezirke with a stubbed cache returning a non-list
     });
 
     test('skips items that are not Map<String, dynamic>', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value([123, 'string', null]));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value([123, 'string', null]));
       final result = await bezirkService.fetchBezirke();
       expect(result, isEmpty);
     });
@@ -165,15 +171,17 @@ void main() {
 
   group('BezirkService._mapBezirkResponse', () {
     test('returns empty list if response is not a List', () async {
-      when(mockHttpClient.get('Bezirk/999'))
-          .thenAnswer((_) => Future.value('notalist'));
+      when(
+        mockHttpClient.get('Bezirk/999'),
+      ).thenAnswer((_) => Future.value('notalist'));
       final result = await bezirkService.fetchBezirk(999);
       expect(result, isEmpty);
     });
 
     test('skips items that are not Map<String, dynamic>', () async {
-      when(mockHttpClient.get('Bezirk/888'))
-          .thenAnswer((_) => Future.value([123, 'string', null]));
+      when(
+        mockHttpClient.get('Bezirk/888'),
+      ).thenAnswer((_) => Future.value([123, 'string', null]));
       final result = await bezirkService.fetchBezirk(888);
       expect(result, isEmpty);
     });
@@ -201,10 +209,104 @@ void main() {
     });
 
     test('returns empty list if response is not a List', () async {
-      when(mockHttpClient.get('Bezirke'))
-          .thenAnswer((_) => Future.value('notalist'));
+      when(
+        mockHttpClient.get('Bezirke'),
+      ).thenAnswer((_) => Future.value('notalist'));
       final result = await bezirkService.fetchBezirkeforSearch();
       expect(result, isEmpty);
     });
   });
+
+  group(
+    'BezirkService.fetchBezirkeforSearch mapping closure (additional coverage)',
+    () {
+      test(
+        'process closure maps only required keys and filters non-maps',
+        () async {
+          // Custom stub to invoke the 4th param (process function) with our crafted raw list
+          when(
+            mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            // Execute fetchData (its result ignored here)
+            await fetchData();
+            final process =
+                invocation.positionalArguments[3]
+                    as List<Map<String, dynamic>> Function(dynamic);
+
+            final raw = [
+              {
+                'BEZIRKID': 1,
+                'BEZIRKNR': 100,
+                'BEZIRKNAME': 'A',
+                'EXTRA': 'should be removed',
+              },
+              'not a map',
+              {
+                'BEZIRKID': 2,
+                'BEZIRKNR': 200,
+                'BEZIRKNAME': 'B',
+                'IGNORED': 123,
+              },
+              42,
+              null,
+            ];
+            return process(raw);
+          });
+
+          when(mockHttpClient.get('Bezirke')).thenAnswer(
+            (_) async => [
+              {
+                'BEZIRKID': 9,
+                'BEZIRKNR': 999,
+                'BEZIRKNAME': 'WillBeIgnoredByStub',
+              },
+            ],
+          );
+
+          final result = await bezirkService.fetchBezirkeforSearch();
+
+          expect(result.length, 2);
+          expect(result.map((e) => e.bezirkName), containsAll(['A', 'B']));
+          expect(result.first.bezirkId, 1);
+          expect(result.last.bezirkNr, 200);
+        },
+      );
+
+      test(
+        'process closure returns empty list when rawResponse is non-list',
+        () async {
+          when(
+            mockCacheService.cacheAndRetrieveData<List<Map<String, dynamic>>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            await fetchData();
+            final process =
+                invocation.positionalArguments[3]
+                    as List<Map<String, dynamic>> Function(dynamic);
+            return process('not-a-list');
+          });
+
+          when(
+            mockHttpClient.get('Bezirke'),
+          ).thenAnswer((_) async => 'ignored');
+
+          final result = await bezirkService.fetchBezirkeforSearch();
+          expect(result, isEmpty);
+        },
+      );
+    },
+  );
 }
