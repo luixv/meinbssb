@@ -31,19 +31,39 @@ abstract class DrawerNavigator {
   void logout(BuildContext context, VoidCallback onLogout);
 }
 
-// Default (production) implementation performing real navigation.
+// Replace RealDrawerNavigator with builder‑injectable version to allow light-weight testing.
 class RealDrawerNavigator implements DrawerNavigator {
   const RealDrawerNavigator({
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
-  });
+    WidgetBuilder? schulungenBuilder,
+    WidgetBuilder? schuetzenausweisBuilder,
+    WidgetBuilder? startingRightsBuilder,
+    WidgetBuilder? oktoberfestBuilder,
+    WidgetBuilder? impressumBuilder,
+    WidgetBuilder? settingsBuilder,
+    WidgetBuilder? helpBuilder,
+  }) : _schulungenBuilder = schulungenBuilder,
+       _schuetzenausweisBuilder = schuetzenausweisBuilder,
+       _startingRightsBuilder = startingRightsBuilder,
+       _oktoberfestBuilder = oktoberfestBuilder,
+       _impressumBuilder = impressumBuilder,
+       _settingsBuilder = settingsBuilder,
+       _helpBuilder = helpBuilder;
 
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
 
-  // Helper to close drawer first
+  final WidgetBuilder? _schulungenBuilder;
+  final WidgetBuilder? _schuetzenausweisBuilder;
+  final WidgetBuilder? _startingRightsBuilder;
+  final WidgetBuilder? _oktoberfestBuilder;
+  final WidgetBuilder? _impressumBuilder;
+  final WidgetBuilder? _settingsBuilder;
+  final WidgetBuilder? _helpBuilder;
+
   void _close(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
@@ -68,10 +88,11 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _schulungenBuilder ??
             (_) => SchulungenSearchScreen(
               isLoggedIn: isLoggedIn,
-              userData: userData, // if constructor has this
-              onLogout: onLogout, // if constructor has this
+              userData: userData,
+              onLogout: onLogout,
             ),
       ),
     );
@@ -80,12 +101,14 @@ class RealDrawerNavigator implements DrawerNavigator {
   @override
   void schuetzenausweis(BuildContext context) {
     _close(context);
+    if (userData == null) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _schuetzenausweisBuilder ??
             (_) => SchuetzenausweisScreen(
               userData: userData!,
-              personId: userData!.personId, // adjust if different
+              personId: userData!.personId,
               isLoggedIn: isLoggedIn,
               onLogout: onLogout,
             ),
@@ -99,6 +122,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _startingRightsBuilder ??
             (_) => StartingRightsScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -114,6 +138,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _oktoberfestBuilder ??
             (_) => OktoberfestScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -129,6 +154,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _impressumBuilder ??
             (_) => ImpressumScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -144,6 +170,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _settingsBuilder ??
             (_) => SettingsScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -159,6 +186,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
+            _helpBuilder ??
             (_) => HelpScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,

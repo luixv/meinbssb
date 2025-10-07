@@ -518,4 +518,122 @@ void main() {
       expect(nav.trainingCalled, isFalse);
     });
   });
+
+  group('RealDrawerNavigator direct methods', () {
+    // Lightweight placeholder builders to avoid heavy screen dependencies.
+    WidgetBuilder placeholder(String key) =>
+        (_) => Scaffold(body: Center(child: Text(key)));
+
+    Future<void> pumpAndInvoke(
+      WidgetTester tester,
+      void Function(BuildContext, RealDrawerNavigator) call,
+    ) async {
+      final nav = RealDrawerNavigator(
+        userData: buildTestUser(),
+        isLoggedIn: true,
+        onLogout: () {},
+        schulungenBuilder: placeholder('SCHULUNGEN'),
+        schuetzenausweisBuilder: placeholder('AUSWEIS'),
+        startingRightsBuilder: placeholder('STARTRECHTE'),
+        oktoberfestBuilder: placeholder('OKTOBERFEST'),
+        impressumBuilder: placeholder('IMPRESSUM'),
+        settingsBuilder: placeholder('SETTINGS'),
+        helpBuilder: placeholder('HELP'),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          routes: {
+            '/home':
+                (_) => const Scaffold(body: Center(child: Text('HOME_PAGE'))),
+            '/profile':
+                (_) =>
+                    const Scaffold(body: Center(child: Text('PROFILE_PAGE'))),
+          },
+          home: Builder(
+            builder: (ctx) {
+              // Defer call until after first frame.
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => call(ctx, nav),
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('home() navigates to /home via replacement', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.home(ctx));
+      expect(find.text('HOME_PAGE'), findsOneWidget);
+    });
+
+    testWidgets('profile() pushes /profile', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.profile(ctx));
+      expect(find.text('PROFILE_PAGE'), findsOneWidget);
+    });
+
+    testWidgets('training() pushes Schulungen placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.training(ctx));
+      expect(find.text('SCHULUNGEN'), findsOneWidget);
+    });
+
+    testWidgets('schuetzenausweis() pushes Ausweis placeholder', (
+      tester,
+    ) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.schuetzenausweis(ctx));
+      expect(find.text('AUSWEIS'), findsOneWidget);
+    });
+
+    testWidgets('startingRights() pushes Startrechte placeholder', (
+      tester,
+    ) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.startingRights(ctx));
+      expect(find.text('STARTRECHTE'), findsOneWidget);
+    });
+
+    testWidgets('oktoberfest() pushes Oktoberfest placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.oktoberfest(ctx));
+      expect(find.text('OKTOBERFEST'), findsOneWidget);
+    });
+
+    testWidgets('impressum() pushes Impressum placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.impressum(ctx));
+      expect(find.text('IMPRESSUM'), findsOneWidget);
+    });
+
+    testWidgets('settings() pushes Settings placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.settings(ctx));
+      expect(find.text('SETTINGS'), findsOneWidget);
+    });
+
+    testWidgets('help() pushes Help placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.help(ctx));
+      expect(find.text('HELP'), findsOneWidget);
+    });
+
+    testWidgets('logout() invokes callback (no navigation)', (tester) async {
+      var calls = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (ctx) {
+              final nav = RealDrawerNavigator(
+                userData: buildTestUser(),
+                isLoggedIn: true,
+                onLogout: () => calls++,
+              );
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => nav.logout(ctx, () => calls++),
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(calls, 1); // only the passed callback
+    });
+  });
 }
