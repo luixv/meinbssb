@@ -5,6 +5,13 @@ import 'package:meinbssb/exceptions/authentication_exception.dart';
 import 'package:meinbssb/exceptions/network_exception.dart';
 import 'package:meinbssb/exceptions/validation_exception.dart';
 import 'package:meinbssb/services/core/error_service.dart';
+import 'package:meinbssb/exceptions/base_exception.dart';
+
+// If the real exception constructors differ, adjust parameters accordingly.
+
+class DummyBaseException extends BaseException {
+  DummyBaseException(String msg) : super(message: msg);
+}
 
 void main() {
   group('ErrorService', () {
@@ -153,9 +160,7 @@ void main() {
       });
 
       test('should handle missing ResultMessage', () {
-        final response = {
-          'ResultCode': 'ERR_001',
-        };
+        final response = {'ResultCode': 'ERR_001'};
 
         final result = ErrorService.formatApiError(response);
 
@@ -163,10 +168,7 @@ void main() {
       });
 
       test('should handle null ResultMessage', () {
-        final response = {
-          'ResultMessage': null,
-          'ResultCode': 'ERR_001',
-        };
+        final response = {'ResultMessage': null, 'ResultCode': 'ERR_001'};
 
         final result = ErrorService.formatApiError(response);
 
@@ -180,13 +182,15 @@ void main() {
           MaterialApp(
             home: Scaffold(
               body: Builder(
-                builder: (context) => ElevatedButton(
-                  onPressed: () => ErrorService.showErrorSnackBar(
-                    context,
-                    'Test error message',
-                  ),
-                  child: const Text('Show Error'),
-                ),
+                builder:
+                    (context) => ElevatedButton(
+                      onPressed:
+                          () => ErrorService.showErrorSnackBar(
+                            context,
+                            'Test error message',
+                          ),
+                      child: const Text('Show Error'),
+                    ),
               ),
             ),
           ),
@@ -203,13 +207,15 @@ void main() {
           MaterialApp(
             home: Scaffold(
               body: Builder(
-                builder: (context) => ElevatedButton(
-                  onPressed: () => ErrorService.showSuccessSnackBar(
-                    context,
-                    'Test success message',
-                  ),
-                  child: const Text('Show Success'),
-                ),
+                builder:
+                    (context) => ElevatedButton(
+                      onPressed:
+                          () => ErrorService.showSuccessSnackBar(
+                            context,
+                            'Test success message',
+                          ),
+                      child: const Text('Show Success'),
+                    ),
               ),
             ),
           ),
@@ -220,6 +226,122 @@ void main() {
 
         expect(find.text('Test success message'), findsOneWidget);
       });
+    });
+  });
+
+  group('ErrorService.handleException private branches', () {
+    test('ApiException with response uses formatted ResultMessage', () {
+      final ex = ApiException(
+        message: 'Fallback message',
+        response: {'ResultMessage': 'API sagt Fehler A'},
+      );
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'API sagt Fehler A');
+    });
+
+    test('ApiException without response returns its message', () {
+      final ex = ApiException(message: 'Nur Nachricht');
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'Nur Nachricht');
+    });
+
+    test('NetworkException returns its message', () {
+      final ex = NetworkException(message: 'Netzwerk down');
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'Netzwerk down');
+    });
+
+    test('AuthenticationException returns its message', () {
+      final ex = AuthenticationException(message: 'Nicht authentifiziert');
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'Nicht authentifiziert');
+    });
+
+    test('ValidationException with errors map returns first error value', () {
+      final ex = ValidationException(
+        message: 'Ignored main message',
+        field: 'email',
+        errors: {'email': 'Ungültige E-Mail', 'pass': 'Zu kurz'},
+      );
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'Ungültige E-Mail');
+    });
+
+    test('ValidationException without errors returns field: message', () {
+      final ex = ValidationException(message: 'Pflichtfeld', field: 'vorname');
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'vorname: Pflichtfeld');
+    });
+
+    test('BaseException path returns its message', () {
+      final ex = DummyBaseException('Basisfehler');
+      final msg = ErrorService.handleException(ex);
+      expect(msg, 'Basisfehler');
+    });
+
+    test('Unknown error returns generic fallback', () {
+      final msg = ErrorService.handleException(Exception('Etwas'));
+      expect(
+        msg,
+        'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
+      );
+    });
+  });
+
+  group('ErrorService.formatApiError', () {
+    test('Returns ResultMessage when present', () {
+      final msg = ErrorService.formatApiError({
+        'ResultMessage': 'Spezielle Meldung',
+      });
+      expect(msg, 'Spezielle Meldung');
+    });
+
+    test('Returns default when ResultMessage missing', () {
+      final msg = ErrorService.formatApiError({'other': 'x'});
+      expect(msg, 'Ein unbekannter Fehler ist aufgetreten.');
+    });
+  });
+
+  group('ErrorService.handleNetworkError', () {
+    test('NetworkException returns its message', () {
+      final msg = ErrorService.handleNetworkError(
+        NetworkException(message: 'Timeout Server'),
+      );
+      expect(msg, 'Timeout Server');
+    });
+
+    test('SocketException text returns connectivity message', () {
+      final msg = ErrorService.handleNetworkError('SocketException: no route');
+      expect(
+        msg,
+        'Keine Internetverbindung verfügbar. Bitte überprüfen Sie Ihre Verbindung.',
+      );
+    });
+
+    test('TimeoutException text returns timeout message', () {
+      final msg = ErrorService.handleNetworkError('TimeoutException after 30s');
+      expect(
+        msg,
+        'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut.',
+      );
+    });
+
+    test('Connection refused text returns server unreachable message', () {
+      final msg = ErrorService.handleNetworkError(
+        'OS Error: Connection refused (111)',
+      );
+      expect(
+        msg,
+        'Verbindung zum Server nicht möglich. Bitte versuchen Sie es später erneut.',
+      );
+    });
+
+    test('Other text returns generic network message', () {
+      final msg = ErrorService.handleNetworkError('Unbekannt');
+      expect(
+        msg,
+        'Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.',
+      );
     });
   });
 }

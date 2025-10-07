@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: error_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -37,37 +33,31 @@ class ErrorService {
   }
 
   /// Handles any exception and returns a user-friendly error message
-  static String handleException(dynamic error, [StackTrace? stackTrace]) {
-    if (error is BaseException) {
-      return _handleBaseException(error);
-    }
-
+  static String handleException(Object error) {
+    // Order matters: handle the most specific subclasses BEFORE BaseException.
     if (error is ApiException) {
       return _handleApiException(error);
     }
-
-    if (error is NetworkException) {
-      return _handleNetworkException(error);
-    }
-
-    if (error is AuthenticationException) {
-      return _handleAuthenticationException(error);
-    }
-
     if (error is ValidationException) {
       return _handleValidationException(error);
     }
-
-    // Handle unknown errors
+    if (error is AuthenticationException) {
+      return _handleAuthenticationException(error);
+    }
+    if (error is NetworkException) {
+      return _handleNetworkException(error);
+    }
+    if (error is BaseException) {
+      // Fallback for any other BaseException subclass
+      return error.message;
+    }
+    // Unknown error type
     return 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
   }
 
   /// Handles validation errors and returns a user-friendly error message
   static String handleValidationError(String field, String message) {
-    return ValidationException(
-      message: message,
-      field: field,
-    ).message;
+    return ValidationException(message: message, field: field).message;
   }
 
   /// Handles network errors and returns a user-friendly error message
@@ -90,10 +80,6 @@ class ErrorService {
     }
 
     return 'Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.';
-  }
-
-  static String _handleBaseException(BaseException error) {
-    return error.message;
   }
 
   static String _handleApiException(ApiException error) {
