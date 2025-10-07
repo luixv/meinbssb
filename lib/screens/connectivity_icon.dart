@@ -24,8 +24,9 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
   void initState() {
     super.initState();
     _initConnectivity();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionState);
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+      _updateConnectionState,
+    );
   }
 
   @override
@@ -64,6 +65,12 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
     }
   }
 
+  // --- TEST HOOK (fixed) ---
+  // Wrap the single result into a list to match _updateConnectionState signature.
+  void updateConnectionStateForTest(ConnectivityResult result) {
+    _updateConnectionState(<ConnectivityResult>[result]);
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget icon;
@@ -71,71 +78,78 @@ class _ConnectivityIconState extends State<ConnectivityIcon> {
 
     switch (_connectivityResult) {
       case ConnectivityResult.wifi:
-        icon = _useSvg
-            ? SvgPicture.asset(
-                'assets/wifi_on.svg', // Replace with your SVG asset path
-                width: UIConstants.defaultIconSize,
-                height: UIConstants.defaultIconSize,
-                colorFilter: const ColorFilter.mode(
-                  UIConstants.wifiConnectedColor,
-                  BlendMode.srcIn,
-                ),
-              )
-            : const Icon(Icons.wifi, color: UIConstants.wifiConnectedColor);
+        icon =
+            _useSvg
+                ? SvgPicture.asset(
+                  'assets/wifi_on.svg', // Replace with your SVG asset path
+                  width: UIConstants.defaultIconSize,
+                  height: UIConstants.defaultIconSize,
+                  colorFilter: const ColorFilter.mode(
+                    UIConstants.wifiConnectedColor,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : const Icon(Icons.wifi, color: UIConstants.wifiConnectedColor);
         tooltip = 'Connected to Wi-Fi';
         break;
       case ConnectivityResult.mobile:
-        icon = _useSvg
-            ? SvgPicture.asset(
-                'assets/signal_cellular_4_bar.svg',
-                width: UIConstants.defaultIconSize,
-                height: UIConstants.defaultIconSize,
-                colorFilter: const ColorFilter.mode(
-                  UIConstants.connectivityIcon,
-                  BlendMode.srcIn,
-                ),
-              )
-            : const Icon(
-                Icons.signal_cellular_4_bar,
-                color: UIConstants.connectivityIcon,
-              );
+        icon =
+            _useSvg
+                ? SvgPicture.asset(
+                  'assets/signal_cellular_4_bar.svg',
+                  width: UIConstants.defaultIconSize,
+                  height: UIConstants.defaultIconSize,
+                  colorFilter: const ColorFilter.mode(
+                    UIConstants.connectivityIcon,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : const Icon(
+                  Icons.signal_cellular_4_bar,
+                  color: UIConstants.connectivityIcon,
+                );
         tooltip = 'Connected to Mobile Data';
         break;
       case ConnectivityResult.ethernet:
         // Use a generic network icon or your own custom icon for Ethernet
-        icon = _useSvg
-            ? SvgPicture.asset(
-                'assets/ethernet.svg', // Replace with your SVG asset path
-                width: UIConstants.defaultIconSize,
-                height: UIConstants.defaultIconSize,
-                colorFilter: const ColorFilter.mode(
-                  UIConstants.connectivityIcon,
-                  BlendMode.srcIn,
-                ),
-              )
-            : const Icon(
-                Icons
-                    .network_check, // Using a more widely available network icon
-                color: UIConstants.connectivityIcon,
-              );
+        icon =
+            _useSvg
+                ? SvgPicture.asset(
+                  'assets/ethernet.svg', // Replace with your SVG asset path
+                  width: UIConstants.defaultIconSize,
+                  height: UIConstants.defaultIconSize,
+                  colorFilter: const ColorFilter.mode(
+                    UIConstants.connectivityIcon,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : const Icon(
+                  Icons
+                      .network_check, // Using a more widely available network icon
+                  color: UIConstants.connectivityIcon,
+                );
         tooltip = 'Connected to Ethernet';
         break;
       case ConnectivityResult.none:
-        icon = _useSvg
-            ? SvgPicture.asset(
-                'assets/wifi_off.svg', // Replace with your SVG asset path
-                width: UIConstants.defaultIconSize,
-                height: UIConstants.defaultIconSize,
-                colorFilter: const ColorFilter.mode(
-                  UIConstants.noConnectivityIcon,
-                  BlendMode.srcIn,
-                ),
-              )
-            : const Icon(Icons.wifi_off, color: UIConstants.noConnectivityIcon);
+        icon =
+            _useSvg
+                ? SvgPicture.asset(
+                  'assets/wifi_off.svg', // Replace with your SVG asset path
+                  width: UIConstants.defaultIconSize,
+                  height: UIConstants.defaultIconSize,
+                  colorFilter: const ColorFilter.mode(
+                    UIConstants.noConnectivityIcon,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : const Icon(
+                  Icons.wifi_off,
+                  color: UIConstants.noConnectivityIcon,
+                );
         tooltip = 'No Internet Connection';
         break;
       case ConnectivityResult
-            .bluetooth: // You might want to handle this differently
+          .bluetooth: // You might want to handle this differently
         icon = const Icon(
           Icons.bluetooth_connected,
           color: UIConstants.bluetoothConnected,

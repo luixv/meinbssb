@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-// ignore: unused_import
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:meinbssb/screens/connectivity_icon.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 
+class _ConnCase {
+  const _ConnCase(this.icon, this.fragment);
+  final IconData icon;
+  final String fragment;
+}
+
 void main() {
   Widget createTestWidget() {
-    return MaterialApp(home: Scaffold(body: ConnectivityIcon()));
+    return const MaterialApp(home: Scaffold(body: ConnectivityIcon()));
   }
 
   group('ConnectivityIcon - Widget Structure Tests', () {
@@ -302,6 +307,58 @@ void main() {
       final currentTooltip =
           tester.widget<Tooltip>(find.byType(Tooltip)).message;
       expect(currentTooltip, isNotEmpty);
+    });
+  });
+
+  group('ConnectivityIcon - _updateConnectionState mapping', () {
+    Future<State> pump(WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+      return tester.state(find.byType(ConnectivityIcon));
+    }
+
+    final Map<ConnectivityResult, _ConnCase> cases = {
+      ConnectivityResult.wifi: const _ConnCase(Icons.wifi, 'wi-fi'),
+      ConnectivityResult.mobile: const _ConnCase(
+        Icons.signal_cellular_4_bar,
+        'mobile',
+      ),
+      ConnectivityResult.ethernet: const _ConnCase(
+        Icons.network_check,
+        'ethernet',
+      ),
+      ConnectivityResult.none: const _ConnCase(Icons.wifi_off, 'no internet'),
+      ConnectivityResult.bluetooth: const _ConnCase(
+        Icons.bluetooth_connected,
+        'bluetooth',
+      ),
+      ConnectivityResult.vpn: const _ConnCase(Icons.vpn_lock, 'vpn'),
+      ConnectivityResult.other: const _ConnCase(Icons.network_check, 'other'),
+    };
+
+    cases.forEach((result, data) {
+      testWidgets('updates state for $result', (tester) async {
+        final st = await pump(tester);
+        (st as dynamic).updateConnectionStateForTest(result);
+        await tester.pump();
+        final iconW = tester.widget<Icon>(find.byType(Icon));
+        expect(iconW.icon, data.icon);
+        final tooltipWidget = tester.widget<Tooltip>(find.byType(Tooltip));
+        final msg = tooltipWidget.message ?? '';
+        expect(msg.isNotEmpty, isTrue);
+        expect(msg.toLowerCase(), contains(data.fragment));
+      });
+    });
+
+    testWidgets('idempotent (wifi twice)', (tester) async {
+      final st = await pump(tester);
+      (st as dynamic).updateConnectionStateForTest(ConnectivityResult.wifi);
+      await tester.pump();
+      final firstIcon = tester.widget<Icon>(find.byType(Icon)).icon;
+      (st as dynamic).updateConnectionStateForTest(ConnectivityResult.wifi);
+      await tester.pump();
+      final secondIcon = tester.widget<Icon>(find.byType(Icon)).icon;
+      expect(secondIcon, firstIcon);
     });
   });
 }
