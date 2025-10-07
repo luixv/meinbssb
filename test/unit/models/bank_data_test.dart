@@ -172,6 +172,186 @@ void main() {
     });
   });
 
+  group('BankData additional coverage', () {
+    test('fromJson sets defaults when optional fields missing or null', () {
+      final json = {
+        'BANKDATENWEBID': 5,
+        'WEBLOGINID': 9,
+        'KONTOINHABER': 'Alice',
+        'IBAN': 'DE001122',
+        'BIC': 'TESTBIC',
+        'BANKNAME': null,
+        'MANDATNR': null,
+        'MANDATNAME': null,
+        'MANDATSEQ': null,
+        'LETZTENUTZUNG': null,
+        'UNGUELTIG': null,
+      };
+      final data = BankData.fromJson(json);
+      expect(data.id, 5);
+      expect(data.webloginId, 9);
+      expect(data.bankName, '');
+      expect(data.mandatNr, '');
+      expect(data.mandatName, '');
+      expect(data.mandatSeq, 0);
+      expect(data.letzteNutzung, isNull);
+      expect(data.ungueltig, false);
+    });
+
+    test(
+      'fromJson parses LETZTENUTZUNG when valid and ignores invalid format',
+      () {
+        final good = BankData.fromJson({
+          'BANKDATENWEBID': 1,
+          'WEBLOGINID': 1,
+          'KONTOINHABER': 'A',
+          'IBAN': 'X',
+          'BIC': 'Y',
+          'LETZTENUTZUNG': '2024-05-01T12:34:56Z',
+        });
+        expect(good.letzteNutzung, isNotNull);
+
+        final bad = BankData.fromJson({
+          'BANKDATENWEBID': 2,
+          'WEBLOGINID': 1,
+          'KONTOINHABER': 'B',
+          'IBAN': 'X',
+          'BIC': 'Y',
+          'LETZTENUTZUNG': 'not-a-date',
+        });
+        expect(bad.letzteNutzung, isNull);
+      },
+    );
+
+    test('fromJson coerces MANDATSEQ when provided as string', () {
+      final data = BankData.fromJson({
+        'BANKDATENWEBID': 3,
+        'WEBLOGINID': 4,
+        'KONTOINHABER': 'C',
+        'IBAN': 'I',
+        'BIC': 'B',
+        'MANDATSEQ': '7',
+      });
+      expect(data.mandatSeq, 7);
+    });
+
+    test('toJson includes optional fields when set', () {
+      final data = BankData(
+        id: 10,
+        webloginId: 11,
+        kontoinhaber: 'Holder',
+        iban: 'DE123',
+        bic: 'BICX',
+        bankName: 'Bank X',
+        mandatNr: 'MN',
+        mandatName: 'Name X',
+        mandatSeq: 4,
+        letzteNutzung: DateTime.parse('2024-01-01T00:00:00Z'),
+        ungueltig: true,
+      );
+      final json = data.toJson();
+      expect(json['Bankname'], 'Bank X');
+      expect(json['MandatNr'], 'MN');
+      expect(json['MandatSeq'], 4);
+      // id may intentionally not be serialized (depends on model) so no assertion on id
+    });
+
+    test('copyWith can update every mutable field', () {
+      final original = BankData(
+        id: 1,
+        webloginId: 2,
+        kontoinhaber: 'Orig',
+        iban: 'IBAN1',
+        bic: 'BIC1',
+        bankName: 'Bank1',
+        mandatNr: 'M1',
+        mandatName: 'MN1',
+        mandatSeq: 1,
+        letzteNutzung: DateTime.parse('2024-04-01T00:00:00Z'),
+        ungueltig: false,
+      );
+      final newDate = DateTime.parse('2024-05-01T00:00:00Z');
+      final updated = original.copyWith(
+        kontoinhaber: 'New',
+        iban: 'IBAN2',
+        bic: 'BIC2',
+        bankName: 'Bank2',
+        mandatNr: 'M2',
+        mandatName: 'MN2',
+        mandatSeq: 9,
+        letzteNutzung: newDate,
+        ungueltig: true,
+      );
+      expect(updated.kontoinhaber, 'New');
+      expect(updated.iban, 'IBAN2');
+      expect(updated.bic, 'BIC2');
+      expect(updated.bankName, 'Bank2');
+      expect(updated.mandatNr, 'M2');
+      expect(updated.mandatName, 'MN2');
+      expect(updated.mandatSeq, 9);
+      expect(updated.letzteNutzung, newDate);
+      expect(updated.ungueltig, true);
+      // unchanged
+      expect(updated.id, original.id);
+      expect(updated.webloginId, original.webloginId);
+    });
+
+    test('equality differs when a single field (iban) changes', () {
+      const a = BankData(
+        id: 1,
+        webloginId: 2,
+        kontoinhaber: 'Same',
+        iban: 'IBAN_A',
+        bic: 'BIC',
+      );
+      const b = BankData(
+        id: 1,
+        webloginId: 2,
+        kontoinhaber: 'Same',
+        iban: 'IBAN_B',
+        bic: 'BIC',
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('round trip fromJson -> toJson preserves key fields', () {
+      final src = {
+        'BANKDATENWEBID': 99,
+        'WEBLOGINID': 3,
+        'KONTOINHABER': 'Holder',
+        'IBAN': 'DE3344',
+        'BIC': 'BICZ',
+        'BANKNAME': 'MyBank',
+        'MANDATNR': 'M55',
+        'MANDATNAME': 'Holder',
+        'MANDATSEQ': 12,
+        'UNGUELTIG': true,
+      };
+      final model = BankData.fromJson(src);
+      final json = model.toJson();
+      expect(json['WebloginID'], 3);
+      expect(json['Kontoinhaber'], 'Holder');
+      expect(json['IBAN'], 'DE3344');
+      expect(json['BIC'], 'BICZ');
+      expect(json['Bankname'], 'MyBank');
+      expect(json['MandatNr'], 'M55');
+      expect(json['MandatSeq'], 12);
+    });
+
+    test('toString reflects ungueltig true state', () {
+      final model = BankData(
+        id: 7,
+        webloginId: 8,
+        kontoinhaber: 'Z',
+        iban: 'IB',
+        bic: 'BC',
+        ungueltig: true,
+      );
+      final s = model.toString();
+      expect(s, contains('ungueltig: true'));
+    });
+  });
+
   test('BankData creates instance from JSON', () {
     final json = {
       'BANKDATENWEBID': 1,

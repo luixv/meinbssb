@@ -86,7 +86,7 @@ class ImageService {
     }
   }
 
-/*
+  /*
   Future<Uint8List> fetchAndCacheSchuetzenausweis(
     int personId,
     Future<Uint8List> Function() fetchFunction, // Accepts a function
@@ -204,7 +204,7 @@ class ImageService {
     return '$day.$month.$year';
   }
 
-//=== Web Implementation ===//
+  //=== Web Implementation ===//
   Future<void> _cacheImageWeb(
     String filename,
     Uint8List imageData,

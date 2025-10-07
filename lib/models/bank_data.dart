@@ -1,35 +1,43 @@
-import 'package:flutter/foundation.dart';
+// ...existing imports (leave them)...
 
-/// Represents bank account data for a user.
-/// This model is used to store and manage bank account information
-/// such as account holder, IBAN, BIC, and mandate details.
-@immutable
+// Add safe helpers (outside or at top of file, BEFORE the class). They must NOT include 'factory'.
+DateTime? _safeParseDate(String? value) {
+  if (value == null || value.isEmpty) return null;
+  try {
+    return DateTime.parse(value);
+  } catch (_) {
+    return null;
+  }
+}
+
+int _parseMandatSeq(dynamic v) {
+  if (v == null) return 0;
+  if (v is int) return v;
+  if (v is String) return int.tryParse(v) ?? 0;
+  return 0;
+}
+
+// Ensure the BankData class starts cleanly (remove any accidental 'factory BankData...' top‑level code)
 class BankData {
-  /// Creates a [BankData] instance from a JSON map.
   factory BankData.fromJson(Map<String, dynamic> json) {
-    final webloginId = json['WEBLOGINID'] as int?;
-    if (webloginId == null || webloginId == 0) {
-      throw Exception('WEBLOGINID is required and cannot be 0');
-    }
+    final rawDate = json['LETZTENUTZUNG'];
+    final parsedDate = rawDate is String ? _safeParseDate(rawDate) : null;
 
     return BankData(
-      id: json['BANKDATENWEBID'] as int? ?? 0,
-      webloginId: webloginId,
-      kontoinhaber: json['KONTOINHABER'] as String? ?? '',
-      iban: json['IBAN'] as String? ?? '',
-      bic: json['BIC'] as String? ?? '',
-      bankName: json['BANKNAME'] as String? ?? '',
-      mandatNr: json['MANDATNR'] as String? ?? '',
-      mandatName: json['MANDATNAME'] as String? ?? '',
-      mandatSeq: json['MANDATSEQ'] as int? ?? 0,
-      letzteNutzung: json['LETZTENUTZUNG'] != null
-          ? DateTime.parse(json['LETZTENUTZUNG'] as String)
-          : null,
-      ungueltig: json['UNGUELTIG'] as bool? ?? false,
+      id: json['BANKDATENWEBID'] as int,
+      webloginId: json['WEBLOGINID'] as int,
+      kontoinhaber: (json['KONTOINHABER'] as String?) ?? '',
+      iban: (json['IBAN'] as String?) ?? '',
+      bic: (json['BIC'] as String?) ?? '',
+      bankName: (json['BANKNAME'] as String?) ?? '',
+      mandatNr: (json['MANDATNR'] as String?) ?? '',
+      mandatName: (json['MANDATNAME'] as String?) ?? '',
+      mandatSeq: _parseMandatSeq(json['MANDATSEQ']),
+      letzteNutzung: parsedDate,
+      ungueltig: (json['UNGUELTIG'] as bool?) ?? false,
     );
   }
 
-  /// Creates a new instance of [BankData].
   const BankData({
     required this.id,
     required this.webloginId,
@@ -43,57 +51,33 @@ class BankData {
     this.letzteNutzung,
     this.ungueltig = false,
   });
-
-  /// The unique identifier for the bank data record.
   final int id;
-
-  /// The web login ID associated with this bank data.
   final int webloginId;
-
-  /// The account holder's name.
   final String kontoinhaber;
-
-  /// The International Bank Account Number.
   final String iban;
-
-  /// The Bank Identifier Code.
   final String bic;
-
-  /// The name of the bank.
   final String bankName;
-
-  /// The mandate number for SEPA direct debits.
   final String mandatNr;
-
-  /// The name associated with the mandate.
   final String mandatName;
-
-  /// The sequence number of the mandate.
   final int mandatSeq;
-
-  /// The date of the last usage of this bank data.
   final DateTime? letzteNutzung;
-
-  /// Whether this bank data is invalid.
   final bool ungueltig;
 
-  /// Converts this [BankData] instance to a JSON map.
-  Map<String, dynamic> toJson() {
-    return {
-      'WebloginID': webloginId,
-      'Kontoinhaber': kontoinhaber,
-      'IBAN': iban,
-      'BIC': bic,
-      'Bankname': bankName,
-      'MandatNr': mandatNr,
-      'MandatSeq': mandatSeq,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'WebloginID': webloginId,
+    'Kontoinhaber': kontoinhaber,
+    'IBAN': iban,
+    'BIC': bic,
+    'Bankname': bankName,
+    'MandatNr': mandatNr,
+    'MandatName': mandatName,
+    'MandatSeq': mandatSeq,
+    if (letzteNutzung != null)
+      'LetzteNutzung': letzteNutzung!.toIso8601String(),
+    'Ungueltig': ungueltig,
+  };
 
-  /// Creates a copy of this [BankData] with the given fields replaced with new values.
   BankData copyWith({
-    int? id,
-    int? webloginId,
     String? kontoinhaber,
     String? iban,
     String? bic,
@@ -105,8 +89,8 @@ class BankData {
     bool? ungueltig,
   }) {
     return BankData(
-      id: id ?? this.id,
-      webloginId: webloginId ?? this.webloginId,
+      id: id,
+      webloginId: webloginId,
       kontoinhaber: kontoinhaber ?? this.kontoinhaber,
       iban: iban ?? this.iban,
       bic: bic ?? this.bic,
@@ -120,44 +104,39 @@ class BankData {
   }
 
   @override
-  String toString() {
-    return 'BankData(id: $id, webloginId: $webloginId, kontoinhaber: $kontoinhaber, '
-        'iban: $iban, bic: $bic, bankName: $bankName, mandatNr: $mandatNr, '
-        'mandatName: $mandatName, mandatSeq: $mandatSeq, '
-        'letzteNutzung: $letzteNutzung, ungueltig: $ungueltig)';
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BankData &&
+          id == other.id &&
+          webloginId == other.webloginId &&
+          kontoinhaber == other.kontoinhaber &&
+          iban == other.iban &&
+          bic == other.bic &&
+          bankName == other.bankName &&
+          mandatNr == other.mandatNr &&
+          mandatName == other.mandatName &&
+          mandatSeq == other.mandatSeq &&
+          letzteNutzung == other.letzteNutzung &&
+          ungueltig == other.ungueltig;
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is BankData &&
-        other.id == id &&
-        other.webloginId == webloginId &&
-        other.kontoinhaber == kontoinhaber &&
-        other.iban == iban &&
-        other.bic == bic &&
-        other.bankName == bankName &&
-        other.mandatNr == mandatNr &&
-        other.mandatName == mandatName &&
-        other.mandatSeq == mandatSeq &&
-        other.letzteNutzung == letzteNutzung &&
-        other.ungueltig == ungueltig;
-  }
+  int get hashCode =>
+      id ^
+      webloginId ^
+      kontoinhaber.hashCode ^
+      iban.hashCode ^
+      bic.hashCode ^
+      bankName.hashCode ^
+      mandatNr.hashCode ^
+      mandatName.hashCode ^
+      mandatSeq.hashCode ^
+      (letzteNutzung?.hashCode ?? 0) ^
+      ungueltig.hashCode;
 
   @override
-  int get hashCode {
-    return Object.hash(
-      id,
-      webloginId,
-      kontoinhaber,
-      iban,
-      bic,
-      bankName,
-      mandatNr,
-      mandatName,
-      mandatSeq,
-      letzteNutzung,
-      ungueltig,
-    );
-  }
+  String toString() =>
+      'BankData(id: $id, webloginId: $webloginId, kontoinhaber: $kontoinhaber, '
+      'iban: $iban, bic: $bic, bankName: $bankName, mandatNr: $mandatNr, '
+      'mandatName: $mandatName, mandatSeq: $mandatSeq, letzteNutzung: $letzteNutzung, '
+      'ungueltig: $ungueltig)';
 }
