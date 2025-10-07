@@ -13,7 +13,7 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/models/user_data.dart';
 
-// ---------- Test helpers / fakes ----------
+// ---------- Helpers / Fakes ----------
 
 UserData buildTestUser() => const UserData(
   personId: 1,
@@ -72,42 +72,34 @@ class TestNavObserver extends NavigatorObserver {
 }
 
 Future<void> openDrawer(WidgetTester tester) async {
-  final scaffoldState = tester.firstState<ScaffoldState>(find.byType(Scaffold));
-  scaffoldState.openDrawer();
+  final scaffold = tester.firstState<ScaffoldState>(find.byType(Scaffold));
+  scaffold.openDrawer();
   await tester.pumpAndSettle();
 }
 
 Future<void> ensureVisible(WidgetTester tester, String label) async {
-  final finder = find.text(label);
-  if (finder.evaluate().isNotEmpty) {
-    return;
-  }
-  // Try to locate a scrollable inside the Drawer (if present)
+  final f = find.text(label);
+  if (f.evaluate().isNotEmpty) return;
   final scrollable = find.descendant(
     of: find.byType(Drawer),
     matching: find.byType(Scrollable),
   );
-  if (scrollable.evaluate().isEmpty) {
-    // No scrollable; just fail normally
-    expect(finder, findsOneWidget);
-    return;
+  if (scrollable.evaluate().isNotEmpty) {
+    await tester.scrollUntilVisible(f, 120, scrollable: scrollable);
+    await tester.pumpAndSettle();
   }
-  await tester.scrollUntilVisible(finder, 120, scrollable: scrollable);
-  await tester.pumpAndSettle();
-  expect(finder, findsOneWidget);
+  expect(f, findsOneWidget);
 }
 
-Widget baseLoggedOut({Widget? home}) => MultiProvider(
+Widget baseLoggedOut() => MultiProvider(
   providers: [
     ChangeNotifierProvider(create: (_) => FontSizeProvider()),
     Provider<ApiService>.value(value: FakeApiService()),
   ],
   child: MaterialApp(
-    home:
-        home ??
-        const Scaffold(
-          drawer: AppDrawer(userData: null, isLoggedIn: false, onLogout: noop),
-        ),
+    home: Scaffold(
+      drawer: AppDrawer(userData: null, isLoggedIn: false, onLogout: noop),
+    ),
     routes: {
       '/login': (_) => const Scaffold(body: Center(child: Text('LOGIN_ROUTE'))),
     },
@@ -136,6 +128,110 @@ Widget baseLoggedIn({UserData? user, TestNavObserver? observer}) =>
         ),
       ),
     );
+
+// Fake navigator for delegate tests
+class FakeDrawerNavigator implements DrawerNavigator {
+  bool homeCalled = false;
+  bool profileCalled = false;
+  bool trainingCalled = false;
+  bool schutzAusweisCalled = false;
+  bool startingRightsCalled = false;
+  bool oktoberfestCalled = false;
+  bool impressumCalled = false;
+  bool settingsCalled = false;
+  bool helpCalled = false;
+  bool logoutCalled = false;
+
+  void _close(BuildContext c) {
+    if (Navigator.of(c).canPop()) Navigator.of(c).pop();
+  }
+
+  @override
+  void home(BuildContext context) {
+    homeCalled = true;
+    _close(context);
+  }
+
+  @override
+  void profile(BuildContext context) {
+    profileCalled = true;
+    _close(context);
+  }
+
+  @override
+  void training(BuildContext context) {
+    trainingCalled = true;
+    _close(context);
+  }
+
+  @override
+  void schuetzenausweis(BuildContext context) {
+    schutzAusweisCalled = true;
+    _close(context);
+  }
+
+  @override
+  void startingRights(BuildContext context) {
+    startingRightsCalled = true;
+    _close(context);
+  }
+
+  @override
+  void oktoberfest(BuildContext context) {
+    oktoberfestCalled = true;
+    _close(context);
+  }
+
+  @override
+  void impressum(BuildContext context) {
+    impressumCalled = true;
+    _close(context);
+  }
+
+  @override
+  void settings(BuildContext context) {
+    settingsCalled = true;
+    _close(context);
+  }
+
+  @override
+  void help(BuildContext context) {
+    helpCalled = true;
+    _close(context);
+  }
+
+  @override
+  void logout(BuildContext context, VoidCallback onLogout) {
+    logoutCalled = true;
+    onLogout();
+    _close(context);
+  }
+}
+
+Widget loggedInWithNavigator(
+  FakeDrawerNavigator nav, {
+  VoidCallback? onLogout,
+}) => MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (_) => FontSizeProvider()),
+    Provider<ApiService>.value(value: FakeApiService()),
+  ],
+  child: MaterialApp(
+    routes: {
+      '/home': (_) => const Scaffold(body: Text('HOME_ROUTE_BODY')),
+      '/profile': (_) => const Scaffold(body: Text('PROFILE_ROUTE_BODY')),
+    },
+    home: Scaffold(
+      drawer: AppDrawer(
+        userData: buildTestUser(),
+        isLoggedIn: true,
+        onLogout: onLogout ?? noop,
+        navigator: nav,
+      ),
+      body: const Text('ROOT'),
+    ),
+  ),
+);
 
 // ---------- Tests ----------
 
@@ -220,8 +316,7 @@ void main() {
     ) async {
       await tester.pumpWidget(baseLoggedIn());
       await openDrawer(tester);
-
-      final loggedInLabels = [
+      final labels = [
         'Home',
         'Profil',
         'Aus- und Weiterbildung',
@@ -233,8 +328,9 @@ void main() {
         'Hilfe',
         'Abmelden',
       ];
-      for (final l in loggedInLabels) {
+      for (final l in labels) {
         await ensureVisible(tester, l);
+        expect(find.text(l), findsOneWidget);
       }
       for (final auth in [
         'Anmelden',
@@ -260,6 +356,7 @@ void main() {
                 isLoggedIn: true,
                 onLogout: () => calls++,
               ),
+              body: const Text('ROOT'),
             ),
           ),
         ),
@@ -298,39 +395,98 @@ void main() {
       expect(find.text('PROFILE_ROUTE_BODY'), findsOneWidget);
       expect(observer.pushed.length, greaterThanOrEqualTo(1));
     });
+  });
 
-    // Removed smoke tapping of every other item to avoid constructing heavy screens
-    // (e.g. SchulungenSearchScreen) that use ScaffoldMessenger/DateFormat in initState.
-    testWidgets('Null userData but isLoggedIn true does not crash', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => FontSizeProvider()),
-            Provider<ApiService>.value(value: FakeApiService()),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              drawer: AppDrawer(
-                userData: null,
-                isLoggedIn: true,
-                onLogout: noop,
-              ),
-            ),
-          ),
-        ),
-      );
+  group('Drawer logged in onTap delegates', () {
+    Future<FakeDrawerNavigator> pumpAndOpen(WidgetTester tester) async {
+      final nav = FakeDrawerNavigator();
+      await tester.pumpWidget(loggedInWithNavigator(nav, onLogout: () {}));
       await openDrawer(tester);
-      expect(find.byType(Drawer), findsOneWidget);
+      return nav;
+    }
+
+    testWidgets('Home triggers navigator.home', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await tester.tap(find.text('Home'));
+      await tester.pumpAndSettle();
+      expect(nav.homeCalled, isTrue);
     });
 
-    // Optional: relax image expectation (drawer may have no Image in test env)
-    testWidgets('Drawer builds without images gracefully', (tester) async {
-      await tester.pumpWidget(baseLoggedOut());
+    testWidgets('Profil triggers navigator.profile', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await tester.tap(find.text('Profil'));
+      await tester.pumpAndSettle();
+      expect(nav.profileCalled, isTrue);
+    });
+
+    testWidgets('Aus- und Weiterbildung triggers navigator.training', (
+      tester,
+    ) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Aus- und Weiterbildung');
+      await tester.tap(find.text('Aus- und Weiterbildung'));
+      await tester.pumpAndSettle();
+      expect(nav.trainingCalled, isTrue);
+    });
+
+    testWidgets('Schützenausweis triggers navigator.schuetzenausweis', (
+      tester,
+    ) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Schützenausweis');
+      await tester.tap(find.text('Schützenausweis'));
+      await tester.pumpAndSettle();
+      expect(nav.schutzAusweisCalled, isTrue);
+    });
+
+    testWidgets('Startrechte triggers navigator.startingRights', (
+      tester,
+    ) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Startrechte');
+      await tester.tap(find.text('Startrechte'));
+      await tester.pumpAndSettle();
+      expect(nav.startingRightsCalled, isTrue);
+    });
+
+    testWidgets('Oktoberfest triggers navigator.oktoberfest', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Oktoberfest');
+      await tester.tap(find.text('Oktoberfest'));
+      await tester.pumpAndSettle();
+      expect(nav.oktoberfestCalled, isTrue);
+    });
+
+    testWidgets('Impressum triggers navigator.impressum', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Impressum');
+      await tester.tap(find.text('Impressum'));
+      await tester.pumpAndSettle();
+      expect(nav.impressumCalled, isTrue);
+    });
+
+    testWidgets('Hilfe triggers navigator.help', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Hilfe');
+      await tester.tap(find.text('Hilfe'));
+      await tester.pumpAndSettle();
+      expect(nav.helpCalled, isTrue);
+    });
+
+    testWidgets('Abmelden triggers navigator.logout and callback', (
+      tester,
+    ) async {
+      var logoutCalls = 0;
+      final nav = FakeDrawerNavigator();
+      await tester.pumpWidget(
+        loggedInWithNavigator(nav, onLogout: () => logoutCalls++),
+      );
       await openDrawer(tester);
-      // Just ensure Drawer is present; do not fail on missing Image
-      expect(find.byType(Drawer), findsOneWidget);
+      await ensureVisible(tester, 'Abmelden');
+      await tester.tap(find.text('Abmelden'));
+      await tester.pumpAndSettle();
+      expect(nav.logoutCalled, isTrue);
+      expect(logoutCalls, 1);
     });
   });
 }
