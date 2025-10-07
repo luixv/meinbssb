@@ -78,17 +78,34 @@ Future<void> openDrawer(WidgetTester tester) async {
 }
 
 Future<void> ensureVisible(WidgetTester tester, String label) async {
-  final f = find.text(label);
-  if (f.evaluate().isNotEmpty) return;
-  final scrollable = find.descendant(
-    of: find.byType(Drawer),
-    matching: find.byType(Scrollable),
-  );
-  if (scrollable.evaluate().isNotEmpty) {
-    await tester.scrollUntilVisible(f, 120, scrollable: scrollable);
-    await tester.pumpAndSettle();
+  final finder = find.text(label);
+  // Always attempt to bring into view (previous version only checked presence).
+  if (finder.evaluate().isEmpty) {
+    // Scroll until it appears if not in the tree yet (unlikely, but keep fallback).
+    final scrollable = find.descendant(
+      of: find.byType(Drawer),
+      matching: find.byType(Scrollable),
+    );
+    if (scrollable.evaluate().isNotEmpty) {
+      await tester.scrollUntilVisible(finder, 120, scrollable: scrollable);
+    }
+  } else {
+    // Use built-in ensureVisible to handle partially off-screen widgets.
+    try {
+      await tester.ensureVisible(finder);
+    } catch (_) {
+      // Fallback manual scroll if ensureVisible fails (e.g. multiple scrollables).
+      final scrollable = find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(Scrollable),
+      );
+      if (scrollable.evaluate().isNotEmpty) {
+        await tester.scrollUntilVisible(finder, 150, scrollable: scrollable);
+      }
+    }
   }
-  expect(f, findsOneWidget);
+  await tester.pumpAndSettle();
+  expect(finder, findsOneWidget);
 }
 
 Widget baseLoggedOut() => MultiProvider(
@@ -487,6 +504,18 @@ void main() {
       await tester.pumpAndSettle();
       expect(nav.logoutCalled, isTrue);
       expect(logoutCalls, 1);
+    });
+
+    testWidgets('Einstellungen triggers navigator.settings', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Einstellungen');
+      await tester.tap(find.text('Einstellungen'));
+      await tester.pumpAndSettle();
+      expect(nav.settingsCalled, isTrue);
+      // Optional: ensure others not touched
+      expect(nav.homeCalled, isFalse);
+      expect(nav.profileCalled, isFalse);
+      expect(nav.trainingCalled, isFalse);
     });
   });
 }
