@@ -10,6 +10,7 @@ import '/services/core/http_client.dart';
 
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io' as io;
+import 'package:meta/meta.dart';
 
 class ImageService {
   ImageService({
@@ -86,7 +87,7 @@ class ImageService {
     }
   }
 
-/*
+  /*
   Future<Uint8List> fetchAndCacheSchuetzenausweis(
     int personId,
     Future<Uint8List> Function() fetchFunction, // Accepts a function
@@ -204,7 +205,36 @@ class ImageService {
     return '$day.$month.$year';
   }
 
-//=== Web Implementation ===//
+  // ================= TEST HOOKS (web private helpers) =================
+  @visibleForTesting
+  Future<void> testCacheImageWeb(
+    String cacheKey,
+    Uint8List bytes,
+    int timestamp,
+  ) {
+    return _cacheImageWeb(cacheKey, bytes, timestamp);
+  }
+
+  @visibleForTesting
+  Future<Uint8List?> testGetCachedImageWeb(String cacheKey, Duration validity) {
+    // Derive timestamp key exactly as _cacheImageWeb stores it
+    final tsKey = '${cacheKey.split('.').first}_timestamp';
+    return _getCachedImageWeb(cacheKey, validity, timestampKey: tsKey);
+  }
+
+  // Public API already returns a formatted date string (DD.MM.YYYY).
+  // Expose a test hook with the same signature (no validity parameter).
+  @visibleForTesting
+  Future<String?> testGetSchuetzenausweisCacheDate(int personId) {
+    return getSchuetzenausweisCacheDate(personId);
+  }
+
+  @visibleForTesting
+  String buildSchuetzenausweisCacheKey(int personId) =>
+      'schuetzenausweis_$personId.jpg';
+  // =================
+
+  //=== Web Implementation ===//
   Future<void> _cacheImageWeb(
     String filename,
     Uint8List imageData,
