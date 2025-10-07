@@ -28,13 +28,14 @@ void main() {
       mockNetworkService = MockNetworkService();
       mockConfigService = MockConfigService();
 
-      when(mockNetworkService.getCacheExpirationDuration()).thenReturn(
-        const Duration(days: 7),
-      );
+      when(
+        mockNetworkService.getCacheExpirationDuration(),
+      ).thenReturn(const Duration(days: 7));
 
       when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-      when(mockConfigService.getString('api1BaseServer'))
-          .thenReturn('localhost');
+      when(
+        mockConfigService.getString('api1BaseServer'),
+      ).thenReturn('localhost');
       when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
       when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
@@ -73,8 +74,9 @@ void main() {
       };
 
       test('returns UserData from network', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -92,8 +94,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/$testPersonId'))
-            .thenAnswer((_) async => [testResponse]);
+        when(
+          mockHttpClient.get('Passdaten/$testPersonId'),
+        ).thenAnswer((_) async => [testResponse]);
 
         final result = await userService.fetchPassdaten(testPersonId);
 
@@ -119,8 +122,9 @@ void main() {
       });
 
       test('handles empty response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -138,8 +142,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/$testPersonId'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('Passdaten/$testPersonId'),
+        ).thenAnswer((_) async => []);
 
         final result = await userService.fetchPassdaten(testPersonId);
 
@@ -147,8 +152,9 @@ void main() {
       });
 
       test('handles error response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -164,38 +170,43 @@ void main() {
         expect(result, isNull);
       });
 
-      test('fetchPassdaten returns null for non-list, non-map response',
-          () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+      test(
+        'fetchPassdaten returns null for non-list, non-map response',
+        () async {
+          when(
+            mockNetworkService.getCacheExpirationDuration(),
+          ).thenReturn(const Duration(hours: 1));
 
-        when(
-          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-            any,
-            any,
-            any,
-            any,
-          ),
-        ).thenAnswer((invocation) async {
-          final fetchData =
-              invocation.positionalArguments[2] as Future<dynamic> Function();
-          final response = await fetchData();
-          final processResponse =
-              invocation.positionalArguments[3] as Function(dynamic);
-          return processResponse(response);
-        });
+          when(
+            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            final response = await fetchData();
+            final processResponse =
+                invocation.positionalArguments[3] as Function(dynamic);
+            return processResponse(response);
+          });
 
-        when(mockHttpClient.get('Passdaten/999999'))
-            .thenAnswer((_) async => 'unexpected');
+          when(
+            mockHttpClient.get('Passdaten/999999'),
+          ).thenAnswer((_) async => 'unexpected');
 
-        final result = await userService.fetchPassdaten(999999);
+          final result = await userService.fetchPassdaten(999999);
 
-        expect(result, isNull);
-      });
+          expect(result, isNull);
+        },
+      );
 
       test('fetchPassdaten handles negative person ID', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -213,8 +224,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/-1'))
-            .thenAnswer((_) async => [testResponse]);
+        when(
+          mockHttpClient.get('Passdaten/-1'),
+        ).thenAnswer((_) async => [testResponse]);
 
         final result = await userService.fetchPassdaten(-1);
 
@@ -222,8 +234,9 @@ void main() {
       });
 
       test('fetchPassdaten handles zero person ID', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -241,8 +254,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/0'))
-            .thenAnswer((_) async => [testResponse]);
+        when(
+          mockHttpClient.get('Passdaten/0'),
+        ).thenAnswer((_) async => [testResponse]);
 
         final result = await userService.fetchPassdaten(0);
 
@@ -251,8 +265,9 @@ void main() {
 
       test('fetchPassdaten handles very large person ID', () async {
         const largePersonId = 999999999;
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -270,8 +285,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/$largePersonId'))
-            .thenAnswer((_) async => [testResponse]);
+        when(
+          mockHttpClient.get('Passdaten/$largePersonId'),
+        ).thenAnswer((_) async => [testResponse]);
 
         final result = await userService.fetchPassdaten(largePersonId);
 
@@ -289,8 +305,9 @@ void main() {
           'ONLINE': true,
         };
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -308,8 +325,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/$incompletePersonId'))
-            .thenAnswer((_) async => [incompleteResponse]);
+        when(
+          mockHttpClient.get('Passdaten/$incompletePersonId'),
+        ).thenAnswer((_) async => [incompleteResponse]);
 
         final result = await userService.fetchPassdaten(incompletePersonId);
 
@@ -325,50 +343,54 @@ void main() {
         }
       });
 
-      test('fetchPassdaten handles multiple response items (takes first)',
-          () async {
-        const testPersonId = 54321;
-        final multipleResponses = [
-          testResponse,
-          {
-            'PASSNUMMER': '99999999',
-            'VEREINNR': 999999,
-            'NAMEN': 'Second',
-            'VORNAME': 'Entry',
-            'PERSONID': testPersonId,
-            'ONLINE': false,
-          }
-        ];
+      test(
+        'fetchPassdaten handles multiple response items (takes first)',
+        () async {
+          const testPersonId = 54321;
+          final multipleResponses = [
+            testResponse,
+            {
+              'PASSNUMMER': '99999999',
+              'VEREINNR': 999999,
+              'NAMEN': 'Second',
+              'VORNAME': 'Entry',
+              'PERSONID': testPersonId,
+              'ONLINE': false,
+            },
+          ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+          when(
+            mockNetworkService.getCacheExpirationDuration(),
+          ).thenReturn(const Duration(hours: 1));
 
-        when(
-          mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
-            any,
-            any,
-            any,
-            any,
-          ),
-        ).thenAnswer((invocation) async {
-          final fetchData =
-              invocation.positionalArguments[2] as Future<dynamic> Function();
-          final response = await fetchData();
-          final processResponse =
-              invocation.positionalArguments[3] as Function(dynamic);
-          return processResponse(response);
-        });
+          when(
+            mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            final response = await fetchData();
+            final processResponse =
+                invocation.positionalArguments[3] as Function(dynamic);
+            return processResponse(response);
+          });
 
-        when(mockHttpClient.get('Passdaten/$testPersonId'))
-            .thenAnswer((_) async => multipleResponses);
+          when(
+            mockHttpClient.get('Passdaten/$testPersonId'),
+          ).thenAnswer((_) async => multipleResponses);
 
-        final result = await userService.fetchPassdaten(testPersonId);
+          final result = await userService.fetchPassdaten(testPersonId);
 
-        expect(result, isA<UserData>());
-        // Should use first response
-        expect(result?.passnummer, '40100709');
-        expect(result?.namen, 'Schürz');
-      });
+          expect(result, isA<UserData>());
+          // Should use first response
+          expect(result?.passnummer, '40100709');
+          expect(result?.namen, 'Schürz');
+        },
+      );
 
       test('fetchPassdaten handles null fields in response', () async {
         const nullFieldPersonId = 67890;
@@ -390,8 +412,9 @@ void main() {
           'ONLINE': null,
         };
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -409,8 +432,9 @@ void main() {
           return processResponse(response);
         });
 
-        when(mockHttpClient.get('Passdaten/$nullFieldPersonId'))
-            .thenAnswer((_) async => [responseWithNulls]);
+        when(
+          mockHttpClient.get('Passdaten/$nullFieldPersonId'),
+        ).thenAnswer((_) async => [responseWithNulls]);
 
         final result = await userService.fetchPassdaten(nullFieldPersonId);
 
@@ -446,8 +470,9 @@ void main() {
           },
         ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -463,12 +488,14 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'))
-            .thenAnswer((_) async => mockResponse);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
-        final result =
-            await userService.fetchZweitmitgliedschaften(testPersonId);
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
 
         // Assert
         expect(result.length, 2);
@@ -494,8 +521,9 @@ void main() {
       });
 
       test('handles empty response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -511,19 +539,22 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'),
+        ).thenAnswer((_) async => []);
 
-        final result =
-            await userService.fetchZweitmitgliedschaften(testPersonId);
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
 
         expect(result, isA<List<dynamic>>());
         expect(result, isEmpty);
       });
 
       test('handles error response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -534,16 +565,18 @@ void main() {
           ),
         ).thenThrow(Exception('Network error'));
 
-        final result =
-            await userService.fetchZweitmitgliedschaften(testPersonId);
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
 
         expect(result, isA<List<dynamic>>());
         expect(result, isEmpty);
       });
 
       test('fetchZweitmitgliedschaften skips non-map items', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -559,8 +592,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/123'))
-            .thenAnswer((_) async => [123, 'string', null]);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/123'),
+        ).thenAnswer((_) async => [123, 'string', null]);
 
         final result = await userService.fetchZweitmitgliedschaften(123);
 
@@ -568,8 +602,9 @@ void main() {
       });
 
       test('fetchZweitmitgliedschaften handles negative person ID', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -585,8 +620,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/-1'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/-1'),
+        ).thenAnswer((_) async => []);
 
         final result = await userService.fetchZweitmitgliedschaften(-1);
 
@@ -605,8 +641,9 @@ void main() {
           },
         );
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -622,8 +659,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/999'))
-            .thenAnswer((_) async => largeResponse);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/999'),
+        ).thenAnswer((_) async => largeResponse);
 
         final result = await userService.fetchZweitmitgliedschaften(999);
 
@@ -645,11 +683,12 @@ void main() {
             'VEREINNR': 401006,
             'VEREINNAME': 'Another Verein',
             'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
-          }
+          },
         ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -665,8 +704,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/456'))
-            .thenAnswer((_) async => incompleteResponse);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/456'),
+        ).thenAnswer((_) async => incompleteResponse);
 
         final result = await userService.fetchZweitmitgliedschaften(456);
 
@@ -680,65 +720,70 @@ void main() {
         }
       });
 
-      test('fetchZweitmitgliedschaften handles mixed valid/invalid items',
-          () async {
-        final mixedResponse = [
-          {
-            'VEREINID': 1474,
-            'VEREINNR': 401006,
-            'VEREINNAME': 'Valid Verein',
-            'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
-          },
-          'invalid string',
-          {
-            'VEREINID': 2420,
-            'VEREINNR': 421037,
-            'VEREINNAME': 'Another Valid Verein',
-            'EINTRITTVEREIN': '2001-11-01T00:00:00.000+01:00',
-          },
-          null,
-          123,
-        ];
+      test(
+        'fetchZweitmitgliedschaften handles mixed valid/invalid items',
+        () async {
+          final mixedResponse = [
+            {
+              'VEREINID': 1474,
+              'VEREINNR': 401006,
+              'VEREINNAME': 'Valid Verein',
+              'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+            },
+            'invalid string',
+            {
+              'VEREINID': 2420,
+              'VEREINNR': 421037,
+              'VEREINNAME': 'Another Valid Verein',
+              'EINTRITTVEREIN': '2001-11-01T00:00:00.000+01:00',
+            },
+            null,
+            123,
+          ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+          when(
+            mockNetworkService.getCacheExpirationDuration(),
+          ).thenReturn(const Duration(hours: 1));
 
-        when(
-          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
-            any,
-            any,
-            any,
-            any,
-          ),
-        ).thenAnswer((invocation) async {
-          final fetchData =
-              invocation.positionalArguments[2] as Future<dynamic> Function();
-          final response = await fetchData();
-          return response;
-        });
+          when(
+            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            final response = await fetchData();
+            return response;
+          });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/789'))
-            .thenAnswer((_) async => mixedResponse);
+          when(
+            mockHttpClient.get('Zweitmitgliedschaften/789'),
+          ).thenAnswer((_) async => mixedResponse);
 
-        final result = await userService.fetchZweitmitgliedschaften(789);
+          final result = await userService.fetchZweitmitgliedschaften(789);
 
-        // The service should filter out invalid entries
-        expect(result, isA<List>());
+          // The service should filter out invalid entries
+          expect(result, isA<List>());
 
-        // All returned entries should be valid
-        for (final entry in result) {
-          expect(entry.vereinName, isNotNull);
-          expect(entry.vereinName, isA<String>());
-        }
+          // All returned entries should be valid
+          for (final entry in result) {
+            expect(entry.vereinName, isNotNull);
+            expect(entry.vereinName, isA<String>());
+          }
 
-        // Should have filtered to only include valid map entries
-        // The actual count depends on the implementation's validation logic
-        expect(result.length, lessThanOrEqualTo(2));
-      });
+          // Should have filtered to only include valid map entries
+          // The actual count depends on the implementation's validation logic
+          expect(result.length, lessThanOrEqualTo(2));
+        },
+      );
 
       test('fetchZweitmitgliedschaften handles null response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -754,8 +799,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('Zweitmitgliedschaften/000'))
-            .thenAnswer((_) async => null);
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/000'),
+        ).thenAnswer((_) async => null);
 
         final result = await userService.fetchZweitmitgliedschaften(000);
 
@@ -783,11 +829,12 @@ void main() {
             'VEREINNAME': 'SV Alpenrose Grimolzhausen',
             'DISZIPLIN': 'RWK Luftpistole',
             'DISZIPLINID': 94,
-          }
+          },
         ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -803,12 +850,15 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'))
-            .thenAnswer((_) async => mockResponse);
+        when(
+          mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
-        final result =
-            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
+        final result = await userService.fetchPassdatenZVE(
+          testPassdatenId,
+          testPersonId,
+        );
 
         // Assert
         expect(result.length, 1);
@@ -827,8 +877,9 @@ void main() {
       });
 
       test('handles empty response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -844,19 +895,23 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('PassdatenZVE/$testPassdatenId/$testPersonId'),
+        ).thenAnswer((_) async => []);
 
-        final result =
-            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
+        final result = await userService.fetchPassdatenZVE(
+          testPassdatenId,
+          testPersonId,
+        );
 
         expect(result, isA<List<dynamic>>());
         expect(result, isEmpty);
       });
 
       test('handles error response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -867,16 +922,19 @@ void main() {
           ),
         ).thenThrow(Exception('Network error'));
 
-        final result =
-            await userService.fetchPassdatenZVE(testPassdatenId, testPersonId);
+        final result = await userService.fetchPassdatenZVE(
+          testPassdatenId,
+          testPersonId,
+        );
 
         expect(result, isA<List<dynamic>>());
         expect(result, isEmpty);
       });
 
       test('fetchPassdatenZVE handles negative IDs', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -892,8 +950,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/-1/-2'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('PassdatenZVE/-1/-2'),
+        ).thenAnswer((_) async => []);
 
         final result = await userService.fetchPassdatenZVE(-1, -2);
 
@@ -901,8 +960,9 @@ void main() {
       });
 
       test('fetchPassdatenZVE handles zero IDs', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -918,8 +978,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/0/0'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('PassdatenZVE/0/0'),
+        ).thenAnswer((_) async => []);
 
         final result = await userService.fetchPassdatenZVE(0, 0);
 
@@ -945,8 +1006,9 @@ void main() {
           },
         );
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -962,8 +1024,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/999/888'))
-            .thenAnswer((_) async => largeResponse);
+        when(
+          mockHttpClient.get('PassdatenZVE/999/888'),
+        ).thenAnswer((_) async => largeResponse);
 
         final result = await userService.fetchPassdatenZVE(999, 888);
 
@@ -1001,11 +1064,12 @@ void main() {
             // Missing VEREINNAME
             'DISZIPLIN': 'Another Disziplin',
             'DISZIPLINID': 95,
-          }
+          },
         ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -1021,8 +1085,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/111/222'))
-            .thenAnswer((_) async => incompleteResponse);
+        when(
+          mockHttpClient.get('PassdatenZVE/111/222'),
+        ).thenAnswer((_) async => incompleteResponse);
 
         final result = await userService.fetchPassdatenZVE(111, 222);
 
@@ -1067,11 +1132,12 @@ void main() {
             'VEREINNAME': 'Another Valid Entry',
             'DISZIPLIN': 'RWK Gewehr',
             'DISZIPLINID': 95,
-          }
+          },
         ];
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -1087,8 +1153,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/333/444'))
-            .thenAnswer((_) async => mixedResponse);
+        when(
+          mockHttpClient.get('PassdatenZVE/333/444'),
+        ).thenAnswer((_) async => mixedResponse);
 
         final result = await userService.fetchPassdatenZVE(333, 444);
 
@@ -1106,8 +1173,9 @@ void main() {
       });
 
       test('fetchPassdatenZVE handles null response', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -1123,8 +1191,9 @@ void main() {
           return response;
         });
 
-        when(mockHttpClient.get('PassdatenZVE/555/666'))
-            .thenAnswer((_) async => null);
+        when(
+          mockHttpClient.get('PassdatenZVE/555/666'),
+        ).thenAnswer((_) async => null);
 
         final result = await userService.fetchPassdatenZVE(555, 666);
 
@@ -1170,8 +1239,9 @@ void main() {
           }),
         ).thenAnswer((_) async => {'result': true});
 
-        final result =
-            await userService.updateKritischeFelderUndAdresse(testUserData);
+        final result = await userService.updateKritischeFelderUndAdresse(
+          testUserData,
+        );
 
         expect(result, isTrue);
         verify(
@@ -1189,21 +1259,25 @@ void main() {
       });
 
       test('returns false on failed update', () async {
-        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
-            .thenAnswer((_) async => {'result': false});
+        when(
+          mockHttpClient.put('KritischeFelderUndAdresse', any),
+        ).thenAnswer((_) async => {'result': false});
 
-        final result =
-            await userService.updateKritischeFelderUndAdresse(testUserData);
+        final result = await userService.updateKritischeFelderUndAdresse(
+          testUserData,
+        );
 
         expect(result, isFalse);
       });
 
       test('returns false on network error', () async {
-        when(mockHttpClient.put('KritischeFelderUndAdresse', any))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockHttpClient.put('KritischeFelderUndAdresse', any),
+        ).thenThrow(Exception('Network error'));
 
-        final result =
-            await userService.updateKritischeFelderUndAdresse(testUserData);
+        final result = await userService.updateKritischeFelderUndAdresse(
+          testUserData,
+        );
 
         expect(result, isFalse);
       });
@@ -1218,40 +1292,41 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.post(
-            'KontaktHinzufuegen',
-            {
-              'PersonID': contact.personId,
-              'KontaktTyp': contact.type,
-              'Kontakt': contact.value,
-            },
-          ),
+          mockHttpClient.post('KontaktHinzufuegen', {
+            'PersonID': contact.personId,
+            'KontaktTyp': contact.type,
+            'Kontakt': contact.value,
+          }),
         ).called(1);
       });
 
-      test('should return false on failed contact add (API ResultType not 1)',
-          () async {
-        const contact = Contact(
-          id: 0,
-          personId: 1,
-          type: 4,
-          value: 'test@example.com',
-        );
+      test(
+        'should return false on failed contact add (API ResultType not 1)',
+        () async {
+          const contact = Contact(
+            id: 0,
+            personId: 1,
+            type: 4,
+            value: 'test@example.com',
+          );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': false});
+          when(
+            mockHttpClient.post(any, any),
+          ).thenAnswer((_) async => {'result': false});
 
-        final result = await userService.addKontakt(contact);
+          final result = await userService.addKontakt(contact);
 
-        expect(result, isFalse);
-      });
+          expect(result, isFalse);
+        },
+      );
 
       test('should return false on exception during contact add', () async {
         const contact = Contact(
@@ -1261,8 +1336,9 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockHttpClient.post(any, any),
+        ).thenThrow(Exception('Network error'));
 
         final result = await userService.addKontakt(contact);
 
@@ -1277,21 +1353,19 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.post(
-            'KontaktHinzufuegen',
-            {
-              'PersonID': -1,
-              'KontaktTyp': 4,
-              'Kontakt': 'test@example.com',
-            },
-          ),
+          mockHttpClient.post('KontaktHinzufuegen', {
+            'PersonID': -1,
+            'KontaktTyp': 4,
+            'Kontakt': 'test@example.com',
+          }),
         ).called(1);
       });
 
@@ -1303,8 +1377,9 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
@@ -1314,55 +1389,41 @@ void main() {
 
         if (result) {
           verify(
-            mockHttpClient.post(
-              'KontaktHinzufuegen',
-              {
-                'PersonID': 1,
-                'KontaktTyp': 0,
-                'Kontakt': 'test@example.com',
-              },
-            ),
+            mockHttpClient.post('KontaktHinzufuegen', {
+              'PersonID': 1,
+              'KontaktTyp': 0,
+              'Kontakt': 'test@example.com',
+            }),
           ).called(1);
         }
       });
 
       test('addKontakt handles empty contact value', () async {
-        const contact = Contact(
-          id: 0,
-          personId: 1,
-          type: 4,
-          value: '',
-        );
+        const contact = Contact(id: 0, personId: 1, type: 4, value: '');
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.post(
-            'KontaktHinzufuegen',
-            {
-              'PersonID': 1,
-              'KontaktTyp': 4,
-              'Kontakt': '',
-            },
-          ),
+          mockHttpClient.post('KontaktHinzufuegen', {
+            'PersonID': 1,
+            'KontaktTyp': 4,
+            'Kontakt': '',
+          }),
         ).called(1);
       });
 
       test('addKontakt handles very long contact value', () async {
         final longValue = 'a' * 1000; // Very long string
-        final contact = Contact(
-          id: 0,
-          personId: 1,
-          type: 4,
-          value: longValue,
-        );
+        final contact = Contact(id: 0, personId: 1, type: 4, value: longValue);
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
@@ -1377,8 +1438,9 @@ void main() {
           value: 'test+special@domain-name.co.uk',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.addKontakt(contact);
 
@@ -1393,8 +1455,9 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => {'result': 'success'});
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => {'result': 'success'});
 
         final result = await userService.addKontakt(contact);
 
@@ -1409,8 +1472,9 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.post(any, any))
-            .thenAnswer((_) async => 'invalid_response');
+        when(
+          mockHttpClient.post(any, any),
+        ).thenAnswer((_) async => 'invalid_response');
 
         final result = await userService.addKontakt(contact);
 
@@ -1456,41 +1520,42 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.deleteKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.put(
-            'KontaktAendern',
-            {
-              'PersonID': contact.personId,
-              'KontaktID': contact.id,
-              'KontaktTyp': contact.type,
-              'Kontakt': '', // Empty contact value to indicate deletion
-            },
-          ),
+          mockHttpClient.put('KontaktAendern', {
+            'PersonID': contact.personId,
+            'KontaktID': contact.id,
+            'KontaktTyp': contact.type,
+            'Kontakt': '', // Empty contact value to indicate deletion
+          }),
         ).called(1);
       });
 
-      test('should return false on failed contact delete (API result false)',
-          () async {
-        const contact = Contact(
-          id: 10,
-          personId: 1,
-          type: 4,
-          value: 'test@example.com',
-        );
+      test(
+        'should return false on failed contact delete (API result false)',
+        () async {
+          const contact = Contact(
+            id: 10,
+            personId: 1,
+            type: 4,
+            value: 'test@example.com',
+          );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': false});
+          when(
+            mockHttpClient.put(any, any),
+          ).thenAnswer((_) async => {'result': false});
 
-        final result = await userService.deleteKontakt(contact);
+          final result = await userService.deleteKontakt(contact);
 
-        expect(result, isFalse);
-      });
+          expect(result, isFalse);
+        },
+      );
 
       test('should return false on exception during contact delete', () async {
         const contact = Contact(
@@ -1500,8 +1565,9 @@ void main() {
           value: 'test@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockHttpClient.put(any, any),
+        ).thenThrow(Exception('Network error'));
 
         final result = await userService.deleteKontakt(contact);
 
@@ -1530,36 +1596,37 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.put(
-            'KontaktAendern',
-            contact.toJson(),
-          ),
+          mockHttpClient.put('KontaktAendern', contact.toJson()),
         ).called(1);
       });
 
-      test('should return false on failed contact update (API result false)',
-          () async {
-        const contact = Contact(
-          id: 10,
-          personId: 1,
-          type: 4,
-          value: 'updated@example.com',
-        );
+      test(
+        'should return false on failed contact update (API result false)',
+        () async {
+          const contact = Contact(
+            id: 10,
+            personId: 1,
+            type: 4,
+            value: 'updated@example.com',
+          );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': false});
+          when(
+            mockHttpClient.put(any, any),
+          ).thenAnswer((_) async => {'result': false});
 
-        final result = await userService.updateKontakt(contact);
+          final result = await userService.updateKontakt(contact);
 
-        expect(result, isFalse);
-      });
+          expect(result, isFalse);
+        },
+      );
 
       test('should return false on exception during contact update', () async {
         const contact = Contact(
@@ -1569,8 +1636,9 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockHttpClient.put(any, any),
+        ).thenThrow(Exception('Network error'));
 
         final result = await userService.updateKontakt(contact);
 
@@ -1611,17 +1679,15 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.put(
-            'KontaktAendern',
-            contact.toJson(),
-          ),
+          mockHttpClient.put('KontaktAendern', contact.toJson()),
         ).called(1);
       });
 
@@ -1633,8 +1699,9 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1644,15 +1711,11 @@ void main() {
       test('updateKontakt handles very long contact value', () async {
         final longValue =
             'very.long.email.address.with.many.parts@${'a' * 200}.com';
-        final contact = Contact(
-          id: 10,
-          personId: 1,
-          type: 4,
-          value: longValue,
-        );
+        final contact = Contact(id: 10, personId: 1, type: 4, value: longValue);
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1667,8 +1730,9 @@ void main() {
           value: 'test+special@domain-äöü.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': true});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1684,17 +1748,15 @@ void main() {
         ];
 
         for (final contact in testCases) {
-          when(mockHttpClient.put(any, any))
-              .thenAnswer((_) async => {'result': true});
+          when(
+            mockHttpClient.put(any, any),
+          ).thenAnswer((_) async => {'result': true});
 
           final result = await userService.updateKontakt(contact);
 
           expect(result, isTrue);
           verify(
-            mockHttpClient.put(
-              'KontaktAendern',
-              contact.toJson(),
-            ),
+            mockHttpClient.put('KontaktAendern', contact.toJson()),
           ).called(1);
           reset(mockHttpClient);
         }
@@ -1708,8 +1770,9 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': null});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': null});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1724,8 +1787,9 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'other_field': true});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'other_field': true});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1740,8 +1804,9 @@ void main() {
           value: 'updated@example.com',
         );
 
-        when(mockHttpClient.put(any, any))
-            .thenAnswer((_) async => {'result': 1});
+        when(
+          mockHttpClient.put(any, any),
+        ).thenAnswer((_) async => {'result': 1});
 
         final result = await userService.updateKontakt(contact);
 
@@ -1766,8 +1831,9 @@ void main() {
           },
         ];
 
-        when(mockHttpClient.get('Kontakte/123'))
-            .thenAnswer((_) async => apiResponse);
+        when(
+          mockHttpClient.get('Kontakte/123'),
+        ).thenAnswer((_) async => apiResponse);
 
         final result = await userService.fetchKontakte(123);
 
@@ -1789,10 +1855,7 @@ void main() {
               },
             ],
           },
-          {
-            'category': 'Geschäftlich',
-            'contacts': [],
-          },
+          {'category': 'Geschäftlich', 'contacts': []},
         ]);
       });
 
@@ -1802,14 +1865,8 @@ void main() {
         final result = await userService.fetchKontakte(123);
 
         expect(result, [
-          {
-            'category': 'Privat',
-            'contacts': [],
-          },
-          {
-            'category': 'Geschäftlich',
-            'contacts': [],
-          },
+          {'category': 'Privat', 'contacts': []},
+          {'category': 'Geschäftlich', 'contacts': []},
         ]);
       });
 
@@ -1821,13 +1878,12 @@ void main() {
             'KontaktTyp': 4,
             'Kontakt': 'test@example.com',
           },
-          {
-            'invalid': 'data',
-          },
+          {'invalid': 'data'},
         ];
 
-        when(mockHttpClient.get('Kontakte/123'))
-            .thenAnswer((_) async => apiResponse);
+        when(
+          mockHttpClient.get('Kontakte/123'),
+        ).thenAnswer((_) async => apiResponse);
 
         final result = await userService.fetchKontakte(123);
 
@@ -1843,16 +1899,14 @@ void main() {
               },
             ],
           },
-          {
-            'category': 'Geschäftlich',
-            'contacts': [],
-          },
+          {'category': 'Geschäftlich', 'contacts': []},
         ]);
       });
 
       test('fetchKontakte returns empty list for non-list response', () async {
-        when(mockHttpClient.get('Kontakte/123'))
-            .thenAnswer((_) async => 'notalist');
+        when(
+          mockHttpClient.get('Kontakte/123'),
+        ).thenAnswer((_) async => 'notalist');
         final result = await userService.fetchKontakte(123);
         expect(result, isEmpty);
       });
@@ -1875,8 +1929,9 @@ void main() {
       ];
 
       test('returns List<Person> from network', () async {
-        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
-            .thenAnswer((_) async => testResponse);
+        when(
+          mockHttpClient.get('AdresseVonPersonID/$testPersonId'),
+        ).thenAnswer((_) async => testResponse);
 
         final result = await userService.fetchAdresseVonPersonID(testPersonId);
 
@@ -1897,76 +1952,88 @@ void main() {
       });
 
       test('handles empty response', () async {
-        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('AdresseVonPersonID/$testPersonId'),
+        ).thenAnswer((_) async => []);
 
         final result = await userService.fetchAdresseVonPersonID(testPersonId);
         expect(result, isEmpty);
       });
 
       test('handles error response', () async {
-        when(mockHttpClient.get('AdresseVonPersonID/$testPersonId'))
-            .thenThrow(Exception('Network error'));
+        when(
+          mockHttpClient.get('AdresseVonPersonID/$testPersonId'),
+        ).thenThrow(Exception('Network error'));
 
         final result = await userService.fetchAdresseVonPersonID(testPersonId);
         expect(result, isEmpty);
       });
 
       test(
-          'fetchAdresseVonPersonID returns empty list for non-list/map response',
-          () async {
-        when(mockHttpClient.get('AdresseVonPersonID/123'))
-            .thenAnswer((_) async => 123);
-        final result = await userService.fetchAdresseVonPersonID(123);
-        expect(result, isEmpty);
-      });
+        'fetchAdresseVonPersonID returns empty list for non-list/map response',
+        () async {
+          when(
+            mockHttpClient.get('AdresseVonPersonID/123'),
+          ).thenAnswer((_) async => 123);
+          final result = await userService.fetchAdresseVonPersonID(123);
+          expect(result, isEmpty);
+        },
+      );
     });
 
     group('Cache clearing', () {
       test('clearPassdatenCache removes the correct cache key', () async {
         const personId = 123;
-        when(mockCacheService.remove('passdaten_123'))
-            .thenAnswer((_) async => true);
+        when(
+          mockCacheService.remove('passdaten_123'),
+        ).thenAnswer((_) async => true);
         await userService.clearPassdatenCache(personId);
         verify(mockCacheService.remove('passdaten_123')).called(1);
       });
 
-      test('clearAllPassdatenCache calls clearPattern with passdaten_',
-          () async {
-        when(mockCacheService.clearPattern('passdaten_'))
-            .thenAnswer((_) async => true);
-        await userService.clearAllPassdatenCache();
-        verify(mockCacheService.clearPattern('passdaten_')).called(1);
-      });
+      test(
+        'clearAllPassdatenCache calls clearPattern with passdaten_',
+        () async {
+          when(
+            mockCacheService.clearPattern('passdaten_'),
+          ).thenAnswer((_) async => true);
+          await userService.clearAllPassdatenCache();
+          verify(mockCacheService.clearPattern('passdaten_')).called(1);
+        },
+      );
 
       test('clearPassdatenCache handles negative person ID', () async {
         const personId = -1;
-        when(mockCacheService.remove('passdaten_-1'))
-            .thenAnswer((_) async => true);
+        when(
+          mockCacheService.remove('passdaten_-1'),
+        ).thenAnswer((_) async => true);
         await userService.clearPassdatenCache(personId);
         verify(mockCacheService.remove('passdaten_-1')).called(1);
       });
 
       test('clearPassdatenCache handles zero person ID', () async {
         const personId = 0;
-        when(mockCacheService.remove('passdaten_0'))
-            .thenAnswer((_) async => true);
+        when(
+          mockCacheService.remove('passdaten_0'),
+        ).thenAnswer((_) async => true);
         await userService.clearPassdatenCache(personId);
         verify(mockCacheService.remove('passdaten_0')).called(1);
       });
 
       test('clearPassdatenCache handles very large person ID', () async {
         const personId = 999999999;
-        when(mockCacheService.remove('passdaten_999999999'))
-            .thenAnswer((_) async => true);
+        when(
+          mockCacheService.remove('passdaten_999999999'),
+        ).thenAnswer((_) async => true);
         await userService.clearPassdatenCache(personId);
         verify(mockCacheService.remove('passdaten_999999999')).called(1);
       });
 
       test('clearPassdatenCache handles cache service failure', () async {
         const personId = 123;
-        when(mockCacheService.remove('passdaten_123'))
-            .thenAnswer((_) async => false);
+        when(
+          mockCacheService.remove('passdaten_123'),
+        ).thenAnswer((_) async => false);
 
         // Should not throw even if cache service fails
         await userService.clearPassdatenCache(personId);
@@ -1975,25 +2042,30 @@ void main() {
 
       test('clearPassdatenCache handles cache service exception', () async {
         const personId = 123;
-        when(mockCacheService.remove('passdaten_123'))
-            .thenThrow(Exception('Cache service error'));
+        when(
+          mockCacheService.remove('passdaten_123'),
+        ).thenThrow(Exception('Cache service error'));
 
         // Should not throw exception to caller
         expect(
-            () => userService.clearPassdatenCache(personId), returnsNormally,);
+          () => userService.clearPassdatenCache(personId),
+          returnsNormally,
+        );
       });
 
       test('clearAllPassdatenCache handles cache service failure', () async {
-        when(mockCacheService.clearPattern('passdaten_'))
-            .thenAnswer((_) async => false);
+        when(
+          mockCacheService.clearPattern('passdaten_'),
+        ).thenAnswer((_) async => false);
 
         await userService.clearAllPassdatenCache();
         verify(mockCacheService.clearPattern('passdaten_')).called(1);
       });
 
       test('clearAllPassdatenCache handles cache service exception', () async {
-        when(mockCacheService.clearPattern('passdaten_'))
-            .thenThrow(Exception('Cache service error'));
+        when(
+          mockCacheService.clearPattern('passdaten_'),
+        ).thenThrow(Exception('Cache service error'));
 
         expect(() => userService.clearAllPassdatenCache(), returnsNormally);
       });
@@ -2020,8 +2092,9 @@ void main() {
         when(
           mockHttpClient.get(
             any,
-            overrideBaseUrl:
-                anyNamed('overrideBaseUrl'), // Ensure this is correct
+            overrideBaseUrl: anyNamed(
+              'overrideBaseUrl',
+            ), // Ensure this is correct
           ),
         ).thenAnswer((_) async => [testResponse]);
 
@@ -2039,8 +2112,9 @@ void main() {
 
       test('returns null when response is null', () async {
         when(
-          mockHttpClient
-              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+          mockHttpClient.get(
+            'PassdatenAkzeptierterOderAktiverPass/$testPersonId',
+          ),
         ).thenAnswer((_) async => null);
         final result = await userService
             .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
@@ -2049,8 +2123,9 @@ void main() {
 
       test('returns null when response is empty map', () async {
         when(
-          mockHttpClient
-              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+          mockHttpClient.get(
+            'PassdatenAkzeptierterOderAktiverPass/$testPersonId',
+          ),
         ).thenAnswer((_) async => <String, dynamic>{});
         final result = await userService
             .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
@@ -2059,8 +2134,9 @@ void main() {
 
       test('returns null when response is list but empty', () async {
         when(
-          mockHttpClient
-              .get('PassdatenAkzeptierterOderAktiverPass/$testPersonId'),
+          mockHttpClient.get(
+            'PassdatenAkzeptierterOderAktiverPass/$testPersonId',
+          ),
         ).thenAnswer((_) async => <dynamic>[]);
         final result = await userService
             .fetchPassdatenAkzeptierterOderAktiverPass(testPersonId);
@@ -2083,13 +2159,15 @@ void main() {
         ];
 
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer'))
-            .thenReturn('localhost');
+        when(
+          mockConfigService.getString('api1BaseServer'),
+        ).thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -2132,13 +2210,15 @@ void main() {
 
       test('handles empty response', () async {
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer'))
-            .thenReturn('localhost');
+        when(
+          mockConfigService.getString('api1BaseServer'),
+        ).thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -2171,13 +2251,15 @@ void main() {
 
       test('handles error response', () async {
         when(mockConfigService.getString('apiProtocol')).thenReturn('http');
-        when(mockConfigService.getString('api1BaseServer'))
-            .thenReturn('localhost');
+        when(
+          mockConfigService.getString('api1BaseServer'),
+        ).thenReturn('localhost');
         when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
         when(mockConfigService.getString('api1BasePath')).thenReturn('');
 
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<List<dynamic>>(
@@ -2200,8 +2282,9 @@ void main() {
     group('fetchPassdaten with pending requests', () {
       const testPersonId = 439287;
       test('handles error in pending request', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -2213,13 +2296,10 @@ void main() {
         ).thenThrow(Exception('Network error'));
 
         // Make concurrent requests
-        final futures = await Future.wait(
-          [
-            userService.fetchPassdaten(testPersonId),
-            userService.fetchPassdaten(testPersonId),
-          ],
-          eagerError: false,
-        );
+        final futures = await Future.wait([
+          userService.fetchPassdaten(testPersonId),
+          userService.fetchPassdaten(testPersonId),
+        ], eagerError: false);
 
         // All requests should fail with null
         for (final result in futures) {
@@ -2240,8 +2320,9 @@ void main() {
 
     group('Internal mapping methods through public APIs', () {
       test('_mapPassdatenResponse handles invalid response types', () async {
-        when(mockNetworkService.getCacheExpirationDuration())
-            .thenReturn(const Duration(hours: 1));
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
 
         when(
           mockCacheService.cacheAndRetrieveData<Map<String, dynamic>>(
@@ -2260,11 +2341,124 @@ void main() {
         });
 
         // Test with invalid response type
-        when(mockHttpClient.get('Passdaten/123'))
-            .thenAnswer((_) async => 'invalid response');
+        when(
+          mockHttpClient.get('Passdaten/123'),
+        ).thenAnswer((_) async => 'invalid response');
 
         final result = await userService.fetchPassdaten(123);
         expect(result, isNull);
+      });
+    });
+
+    group('_mapZweitmitgliedschaftenResponse (isolated)', () {
+      // We isolate these tests so stubbing cacheAndRetrieveData does NOT
+      // affect the other UserService tests (avoids verify() count failures).
+
+      late UserService localService;
+      late MockHttpClient localHttp;
+      late MockCacheService localCache;
+      late MockNetworkService localNetwork;
+      late MockConfigService localConfig;
+
+      setUp(() {
+        localHttp = MockHttpClient();
+        localCache = MockCacheService();
+        localNetwork = MockNetworkService();
+        localConfig = MockConfigService();
+
+        when(
+          localNetwork.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(minutes: 10));
+
+        // Minimal config stubs (if service builds base URL)
+        when(localConfig.getString('apiProtocol')).thenReturn('http');
+        when(localConfig.getString('api1BaseServer')).thenReturn('localhost');
+        when(localConfig.getString('api1BasePort')).thenReturn('8080');
+        when(localConfig.getString('api1BasePath')).thenReturn('');
+
+        localService = UserService(
+          httpClient: localHttp,
+          cacheService: localCache,
+          networkService: localNetwork,
+          configService: localConfig,
+        );
+      });
+
+      /// Helper: wires cache so that the processResponse receives [raw].
+      void stubProcess(List<dynamic> raw) {
+        when(
+          localCache.cacheAndRetrieveData<List<dynamic>>(any, any, any, any),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          // Execute original fetch (to satisfy any internal logic)
+          await fetchData();
+          final process =
+              invocation.positionalArguments[3] as dynamic Function(dynamic);
+          return process(raw);
+        });
+        when(localHttp.get(any)).thenAnswer((_) async => raw);
+      }
+
+      test('filters non-map items keeps valid map', () async {
+        stubProcess([
+          123,
+          'string',
+          null,
+          {
+            'VEREINID': 1,
+            'VEREINNR': 400001,
+            'VEREINNAME': 'Valid Verein',
+            'EINTRITTVEREIN': '2020-01-01T00:00:00.000+01:00',
+          },
+        ]);
+        final r = await localService.fetchZweitmitgliedschaften(777);
+        expect(r.length, 1);
+        expect(r.first.vereinId, 1);
+        expect(r.first.vereinName, 'Valid Verein');
+      });
+
+      test('returns empty for only invalid items', () async {
+        stubProcess([null, 5, 'x', 9.9]);
+        final r = await localService.fetchZweitmitgliedschaften(777);
+        expect(r, isEmpty);
+      });
+
+      test('mixed maps preserves all valid maps', () async {
+        stubProcess([
+          {
+            'VEREINID': 10,
+            'VEREINNR': 410000,
+            'VEREINNAME': 'Alpha',
+            'EINTRITTVEREIN': '2021-02-02T00:00:00.000+01:00',
+          },
+          'bad',
+          {
+            'VEREINID': 11,
+            'VEREINNR': 410001,
+            'VEREINNAME': 'Beta',
+            'EINTRITTVEREIN': '2022-03-03T00:00:00.000+01:00',
+          },
+        ]);
+        final r = await localService.fetchZweitmitgliedschaften(777);
+        expect(r.length, 2);
+        expect(r.map((e) => e.vereinName), containsAll(['Alpha', 'Beta']));
+      });
+
+      test('non-list raw response yields empty list', () async {
+        when(
+          localCache.cacheAndRetrieveData<List<dynamic>>(any, any, any, any),
+        ).thenAnswer((inv) async {
+          final fetchData =
+              inv.positionalArguments[2] as Future<dynamic> Function();
+          await fetchData();
+          final process =
+              inv.positionalArguments[3] as dynamic Function(dynamic);
+          return process('not-a-list');
+        });
+        when(localHttp.get(any)).thenAnswer((_) async => 'not-a-list');
+        final r = await localService.fetchZweitmitgliedschaften(777);
+        expect(r, isEmpty);
       });
     });
   });
@@ -2434,8 +2628,9 @@ void main() {
       test('UserService handles different config values', () {
         // Test with HTTPS protocol
         when(mockConfigService.getString('apiProtocol')).thenReturn('https');
-        when(mockConfigService.getString('api1BaseServer'))
-            .thenReturn('api.example.com');
+        when(
+          mockConfigService.getString('api1BaseServer'),
+        ).thenReturn('api.example.com');
         when(mockConfigService.getString('api1BasePort')).thenReturn('443');
         when(mockConfigService.getString('api1BasePath')).thenReturn('/api/v1');
 
@@ -2493,8 +2688,9 @@ void main() {
 
         for (final duration in testDurations) {
           reset(mockNetworkService);
-          when(mockNetworkService.getCacheExpirationDuration())
-              .thenReturn(duration);
+          when(
+            mockNetworkService.getCacheExpirationDuration(),
+          ).thenReturn(duration);
 
           final service = UserService(
             httpClient: mockHttpClient,
