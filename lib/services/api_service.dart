@@ -66,20 +66,20 @@ class ApiService {
     required CalendarService calendarService,
     required BezirkService bezirkService,
     required StartingRightsService startingRightsService,
-  })  : _configService = configService,
-        _imageService = imageService,
-        _cacheService = cacheService,
-        _networkService = networkService,
-        _trainingService = trainingService,
-        _userService = userService,
-        _authService = authService,
-        _bankService = bankService,
-        _vereinService = vereinService,
-        _postgrestService = postgrestService,
-        _emailService = emailService,
-        _oktoberfestService = oktoberfestService,
-        _bezirkService = bezirkService,
-        _startingRightsService = startingRightsService;
+  }) : _configService = configService,
+       _imageService = imageService,
+       _cacheService = cacheService,
+       _networkService = networkService,
+       _trainingService = trainingService,
+       _userService = userService,
+       _authService = authService,
+       _bankService = bankService,
+       _vereinService = vereinService,
+       _postgrestService = postgrestService,
+       _emailService = emailService,
+       _oktoberfestService = oktoberfestService,
+       _bezirkService = bezirkService,
+       _startingRightsService = startingRightsService;
 
   final ConfigService _configService;
   final ImageService _imageService;
@@ -107,10 +107,24 @@ class ApiService {
   Duration getCacheExpirationDuration() =>
       _networkService.getCacheExpirationDuration();
 
-  // Cache methods
+  //
+  // --- Cache Service Methods ---
+  //
   Future<String?> getCachedUsername() => _cacheService.getString('username');
 
-  // Use the register method from AuthService
+  //
+  // --- Image Service Methods --
+  //
+  Future<Uint8List> fetchSchuetzenausweis(int personId) async {
+    return _imageService.fetchAndCacheSchuetzenausweis(
+      personId,
+      getCacheExpirationDuration(),
+    );
+  }
+
+  //
+  // --- Auth Service Methods ---
+  //
   Future<Map<String, dynamic>> register({
     required String firstName,
     required String lastName,
@@ -131,7 +145,6 @@ class ApiService {
     );
   }
 
-  // Auth service
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _authService.login(username, password);
@@ -161,12 +174,6 @@ class ApiService {
     return _authService.resetPasswordStep2(token, personId, newPassword);
   }
 
-  Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
-    String token,
-  ) async {
-    return _postgrestService.getUserByPasswordResetVerificationToken(token);
-  }
-
   Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int personId,
     String newPassword,
@@ -174,7 +181,9 @@ class ApiService {
     return _authService.myBSSBPasswortAendern(personId, newPassword);
   }
 
-  // User Service
+  //
+  // --- User Service Methods ---
+  //
   Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
   }
@@ -227,11 +236,6 @@ class ApiService {
     return _userService.fetchZweitmitgliedschaftenZVE(personId, passStatus);
   }
 
-  Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
-    return _trainingService.fetchAbsolvierteSchulungen(personId);
-  }
-
-  // User Service - Kontakte
   Future<List<Map<String, dynamic>>> fetchKontakte(int personId) async {
     return _userService.fetchKontakte(personId);
   }
@@ -244,15 +248,27 @@ class ApiService {
     return _userService.deleteKontakt(contact);
   }
 
-  // Image Service
-  Future<Uint8List> fetchSchuetzenausweis(int personId) async {
-    return _imageService.fetchAndCacheSchuetzenausweis(
-      personId,
-      getCacheExpirationDuration(),
-    );
+  /// Clears all passdaten caches
+  Future<void> clearAllPassdatenCache() async {
+    await _userService.clearAllPassdatenCache();
   }
 
-  // Training Service
+  /// Clears the passdaten cache for a specific person
+  Future<void> clearPassdatenCache(int personId) async {
+    await _userService.clearPassdatenCache(personId);
+  }
+
+  Future<List<Person>> fetchAdresseVonPersonID(int personId) async {
+    return _userService.fetchAdresseVonPersonID(personId);
+  }
+
+  //
+  // --- Training Service Methods ---
+  //
+  Future<List<Schulung>> fetchAbsolvierteSchulungen(int personId) async {
+    return _trainingService.fetchAbsolvierteSchulungen(personId);
+  }
+
   Future<List<Schulungsart>> fetchSchulungsarten() async {
     return _trainingService.fetchSchulungsarten();
   }
@@ -282,6 +298,10 @@ class ApiService {
     );
   }
 
+  Future<int> findePersonID2(String nachname, String passnummer) async {
+    return _authService.findePersonID2(nachname, passnummer);
+  }
+
   Future<List<Schulungstermin>> fetchSchulungstermine(
     String abDatum,
     String webGruppe,
@@ -298,53 +318,19 @@ class ApiService {
     );
   }
 
+  Future<void> clearAllSchulungenCache() async {
+    await _trainingService.clearAllSchulungenCache();
+  }
+
   Future<Schulungstermin?> fetchSchulungstermin(
     String schulungenTerminId,
   ) async {
     return _trainingService.fetchSchulungstermin(schulungenTerminId);
   }
 
-  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
-    return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
-  }
-
-  Future<bool> registerFromSchulung(int personId, int schulungId) async {
-    return _trainingService.registerForSchulung(personId, schulungId);
-  }
-
-  Future<List<Disziplin>> fetchDisziplinen() async {
-    return _trainingService.fetchDisziplinen();
-  }
-
-  // Bank Service
-  Future<List<BankData>> fetchBankdatenMyBSSB(int webloginId) async {
-    return _bankService.fetchBankdatenMyBSSB(webloginId);
-  }
-
-  Future<bool> registerBankData(BankData bankData) async {
-    return _bankService.registerBankData(bankData);
-  }
-
-  Future<bool> deleteBankData(BankData bankData) async {
-    return _bankService.deleteBankData(bankData);
-  }
-
-  /// Fetches a list of all Vereine (clubs/associations).
-  /// Returns a list of [Verein] objects containing basic club information.
-  Future<List<Verein>> fetchVereine() async {
-    return await _vereinService.fetchVereine();
-  }
-
-  /// Fetches detailed information for a specific Verein by its Vereinsnummer.
-  /// Returns a list containing a single [Verein] object with complete club details.
-  ///
-  /// [vereinsNr] The registration number of the Verein to fetch.
-  Future<List<Verein>> fetchVerein(int vereinsNr) async {
-    return await _vereinService.fetchVerein(vereinsNr);
-  }
-
-  Future<List<FremdeVerband>> fetchFremdeVerbaende(int vereinsNr) async {
-    return await _vereinService.fetchFremdeVerbaende();
+  /// Clears the disziplinen cache
+  Future<void> clearDisziplinenCache() async {
+    await _trainingService.clearDisziplinenCache();
   }
 
   Future<RegisterSchulungenTeilnehmerResponse> registerSchulungenTeilnehmer({
@@ -365,25 +351,177 @@ class ApiService {
     );
   }
 
-  // Auth service
-  Future<int> findePersonID2(String nachname, String passnummer) async {
-    return _authService.findePersonID2(nachname, passnummer);
-  }
-
   /// Clears the schulungen cache for a specific person
   Future<void> clearSchulungenCache(int personId) async {
     await _trainingService.clearSchulungenCache(personId);
   }
 
-  /// Clears all schulungen caches
-  Future<void> clearAllSchulungenCache() async {
-    await _trainingService.clearAllSchulungenCache();
+  Future<bool> unregisterFromSchulung(int schulungenTeilnehmerID) async {
+    return _trainingService.unregisterFromSchulung(schulungenTeilnehmerID);
   }
 
-  /// Clears the passdaten cache for a specific person
-  Future<void> clearPassdatenCache(int personId) async {
-    await _userService.clearPassdatenCache(personId);
+  Future<bool> registerFromSchulung(int personId, int schulungId) async {
+    return _trainingService.registerForSchulung(personId, schulungId);
   }
+
+  Future<List<Disziplin>> fetchDisziplinen() async {
+    return _trainingService.fetchDisziplinen();
+  }
+
+  //
+  // --- Bank Service Methods ---
+  //
+  Future<List<BankData>> fetchBankdatenMyBSSB(int webloginId) async {
+    return _bankService.fetchBankdatenMyBSSB(webloginId);
+  }
+
+  bool validateIBAN(String? iban) {
+    return BankService.validateIBAN(iban);
+  }
+
+  String? validateBIC(String? bic) {
+    return BankService.validateBIC(bic);
+  }
+
+  Future<bool> registerBankData(BankData bankData) async {
+    return _bankService.registerBankData(bankData);
+  }
+
+  Future<bool> deleteBankData(BankData bankData) async {
+    return _bankService.deleteBankData(bankData);
+  }
+
+  //
+  // --- Verein Service Methods ---
+  //
+  /// Fetches a list of all Vereine (clubs/associations).
+  /// Returns a list of [Verein] objects containing basic club information.
+  Future<List<Verein>> fetchVereine() async {
+    return await _vereinService.fetchVereine();
+  }
+
+  /// Fetches detailed information for a specific Verein by its Vereinsnummer.
+  /// Returns a list containing a single [Verein] object with complete club details.
+  ///
+  /// [vereinsNr] The registration number of the Verein to fetch.
+  Future<List<Verein>> fetchVerein(int vereinsNr) async {
+    return await _vereinService.fetchVerein(vereinsNr);
+  }
+
+  Future<List<FremdeVerband>> fetchFremdeVerbaende(int vereinsNr) async {
+    return await _vereinService.fetchFremdeVerbaende();
+  }
+
+  //
+  // --- Postgrest Service methods ---
+  //
+  Future<Map<String, dynamic>> createUser({
+    required String? firstName,
+    required String? lastName,
+    required String? email,
+    required String? passNumber,
+    required String? personId,
+    required String? verificationToken,
+  }) async {
+    return _postgrestService.createUser(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      passNumber: passNumber,
+      personId: personId,
+      verificationToken: verificationToken,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getUserByPasswordResetVerificationToken(
+    String token,
+  ) async {
+    return _postgrestService.getUserByPasswordResetVerificationToken(token);
+  }
+
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    return _postgrestService.getUserByEmail(email);
+  }
+
+  Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
+    return _postgrestService.getUserByPersonId(personId);
+  }
+
+  Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
+    return _postgrestService.getUserByPassNumber(passNumber);
+  }
+
+  Future<bool> verifyUser(String? verificationToken) async {
+    return _postgrestService.verifyUser(verificationToken);
+  }
+
+  Future<bool> deleteUserRegistration(int id) async {
+    return _postgrestService.deleteUserRegistration(id);
+  }
+
+  Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
+    return _postgrestService.getUserByVerificationToken(token);
+  }
+
+  Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
+    return _postgrestService.uploadProfilePhoto(userId, photoBytes);
+  }
+
+  Future<bool> deleteProfilePhoto(String userId) async {
+    return _postgrestService.deleteProfilePhoto(userId);
+  }
+
+  /// Fetch a profile picture for a given user ID.
+  /// Returns the profile photo as bytes or null if no picture is available.
+  Future<Uint8List?> getProfilePhoto(String userId) async {
+    return _postgrestService.getProfilePhoto(userId);
+  }
+
+  Future<void> createEmailValidationEntry({
+    required String personId,
+    required String email,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    return _postgrestService.createEmailValidationEntry(
+      personId: personId,
+      email: email,
+      emailType: emailType,
+      verificationToken: verificationToken,
+    );
+  }
+
+  Future<Map<String, dynamic>?> getEmailValidationByToken(String token) async {
+    return _postgrestService.getEmailValidationByToken(token);
+  }
+
+  Future<bool> markEmailValidationAsValidated(String verificationToken) async {
+    return _postgrestService.markEmailValidationAsValidated(verificationToken);
+  }
+
+  Future<void> sendEmailValidationNotifications({
+    required String personId,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required String title,
+    required String emailType,
+    required String verificationToken,
+  }) async {
+    return _emailService.sendEmailValidationNotifications(
+      personId: personId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      title: title,
+      emailType: emailType,
+      verificationToken: verificationToken,
+    );
+  }
+
+  //
+  // --- Email Service Methods ---
+  //
 
   /// Sends a training unregistration email notification
   Future<void> sendSchulungAbmeldungEmail({
@@ -431,87 +569,6 @@ class ApiService {
     );
   }
 
-  /// Clears all passdaten caches
-  Future<void> clearAllPassdatenCache() async {
-    await _userService.clearAllPassdatenCache();
-  }
-
-  /// Clears the disziplinen cache
-  Future<void> clearDisziplinenCache() async {
-    await _trainingService.clearDisziplinenCache();
-  }
-
-  Future<List<Person>> fetchAdresseVonPersonID(int personId) async {
-    return _userService.fetchAdresseVonPersonID(personId);
-  }
-
-  // --- Bank validation helpers ---
-  bool validateIBAN(String? iban) {
-    return BankService.validateIBAN(iban);
-  }
-
-  String? validateBIC(String? bic) {
-    return BankService.validateBIC(bic);
-  }
-
-  // --- PostgrestService methods ---
-  Future<Map<String, dynamic>> createUser({
-    required String? firstName,
-    required String? lastName,
-    required String? email,
-    required String? passNumber,
-    required String? personId,
-    required String? verificationToken,
-  }) async {
-    return _postgrestService.createUser(
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      passNumber: passNumber,
-      personId: personId,
-      verificationToken: verificationToken,
-    );
-  }
-
-  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
-    return _postgrestService.getUserByEmail(email);
-  }
-
-  Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
-    return _postgrestService.getUserByPersonId(personId);
-  }
-
-  Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
-    return _postgrestService.getUserByPassNumber(passNumber);
-  }
-
-  Future<bool> verifyUser(String? verificationToken) async {
-    return _postgrestService.verifyUser(verificationToken);
-  }
-
-  Future<bool> deleteUserRegistration(int id) async {
-    return _postgrestService.deleteUserRegistration(id);
-  }
-
-  Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
-    return _postgrestService.getUserByVerificationToken(token);
-  }
-
-  Future<bool> uploadProfilePhoto(String userId, List<int> photoBytes) async {
-    return _postgrestService.uploadProfilePhoto(userId, photoBytes);
-  }
-
-  Future<bool> deleteProfilePhoto(String userId) async {
-    return _postgrestService.deleteProfilePhoto(userId);
-  }
-
-  /// Fetch a profile picture for a given user ID.
-  /// Returns the profile photo as bytes or null if no picture is available.
-  Future<Uint8List?> getProfilePhoto(String userId) async {
-    return _postgrestService.getProfilePhoto(userId);
-  }
-
-  // --- EmailService methods ---
   Future<String?> getFromEmail() async {
     return _emailService.getFromEmail();
   }
@@ -547,19 +604,17 @@ class ApiService {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
 
-  Future<List<Result>> fetchResults(
-    String passnummer,
-  ) async {
+  //
+  // --- Oktoberfest Service Methods ---
+  //
+  Future<List<Result>> fetchResults(String passnummer) async {
     return _oktoberfestService.fetchResults(
       passnummer: passnummer,
       configService: _configService,
     );
   }
 
-  Future<List<Gewinn>> fetchGewinne(
-    int jahr,
-    String passnummer,
-  ) async {
+  Future<List<Gewinn>> fetchGewinne(int jahr, String passnummer) async {
     return _oktoberfestService.fetchGewinne(
       jahr: jahr,
       passnummer: passnummer,
@@ -580,64 +635,19 @@ class ApiService {
     );
   }
 
-  // Bezirke Service
+  //
+  // --- Bezirke Service Methods ---
+  //
   Future<List<Bezirk>> fetchBezirke() async {
     return _bezirkService.fetchBezirke();
   }
 
-  Future<List<Bezirk>> fetchBezirk(
-    int bezirkNr,
-  ) async {
-    return _bezirkService.fetchBezirk(
-      bezirkNr,
-    );
+  Future<List<Bezirk>> fetchBezirk(int bezirkNr) async {
+    return _bezirkService.fetchBezirk(bezirkNr);
   }
 
   Future<List<BezirkSearchTriple>> fetchBezirkeforSearch() async {
     return _bezirkService.fetchBezirkeforSearch();
-  }
-
-  // Email validation methods
-  Future<void> createEmailValidationEntry({
-    required String personId,
-    required String email,
-    required String emailType,
-    required String verificationToken,
-  }) async {
-    return _postgrestService.createEmailValidationEntry(
-      personId: personId,
-      email: email,
-      emailType: emailType,
-      verificationToken: verificationToken,
-    );
-  }
-
-  Future<Map<String, dynamic>?> getEmailValidationByToken(String token) async {
-    return _postgrestService.getEmailValidationByToken(token);
-  }
-
-  Future<bool> markEmailValidationAsValidated(String verificationToken) async {
-    return _postgrestService.markEmailValidationAsValidated(verificationToken);
-  }
-
-  Future<void> sendEmailValidationNotifications({
-    required String personId,
-    required String email,
-    required String firstName,
-    required String lastName,
-    required String title,
-    required String emailType,
-    required String verificationToken,
-  }) async {
-    return _emailService.sendEmailValidationNotifications(
-      personId: personId,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      title: title,
-      emailType: emailType,
-      verificationToken: verificationToken,
-    );
   }
 
   Future<void> sendStartingRightsChangeNotifications({
