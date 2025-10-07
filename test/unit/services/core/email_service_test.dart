@@ -11,20 +11,12 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 
-@GenerateMocks([
-  ConfigService,
-  HttpClient,
-  CalendarService,
-  EmailSender,
-])
+@GenerateMocks([ConfigService, HttpClient, CalendarService, EmailSender])
 import 'email_service_test.mocks.dart';
 
 // Mock Response class for http client
 class MockResponse extends Mock implements http.Response {
-  MockResponse({
-    required this.statusCode,
-    this.body = '{"success": true}',
-  });
+  MockResponse({required this.statusCode, this.body = '{"success": true}'});
   @override
   final int statusCode;
   @override
@@ -58,8 +50,9 @@ void main() {
         // Setup
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
 
         // Execute
         await emailService.sendEmail(
@@ -77,11 +70,13 @@ void main() {
       test('uses test recipient when test emails are enabled', () async {
         // Setup
         when(mockConfigService.getBool('testEmails')).thenReturn(true);
-        when(mockConfigService.getString('testRecipient'))
-            .thenReturn('test-recipient@example.com');
+        when(
+          mockConfigService.getString('testRecipient'),
+        ).thenReturn('test-recipient@example.com');
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
 
         // Execute
         await emailService.sendEmail(
@@ -102,8 +97,9 @@ void main() {
         // Common setup for email tests
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
       test('handles email sending failure gracefully', () async {
         // Mock failed HTTP response
@@ -190,16 +186,18 @@ void main() {
 
     group('Email Template Methods', () {
       test('getRegistrationSubject returns configured subject', () async {
-        when(mockConfigService.getString('registrationSubject', 'emailContent'))
-            .thenReturn('Registration Subject');
+        when(
+          mockConfigService.getString('registrationSubject', 'emailContent'),
+        ).thenReturn('Registration Subject');
 
         final result = await emailService.getRegistrationSubject();
         expect(result, equals('Registration Subject'));
       });
 
       test('getFromEmail returns configured email', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
 
         final result = await emailService.getFromEmail();
         expect(result, equals('noreply@example.com'));
@@ -210,68 +208,81 @@ void main() {
         expect(result, equals('E-Mail-Adresse bestätigen'));
       });
 
-      test('getStartingRightsChangeSubject returns hardcoded subject',
-          () async {
-        final result = await emailService.getStartingRightsChangeSubject();
-        expect(result,
-            equals('Anfrage zur Änderung des Schützenausweises eingegangen'),);
-      });
+      test(
+        'getStartingRightsChangeSubject returns hardcoded subject',
+        () async {
+          final result = await emailService.getStartingRightsChangeSubject();
+          expect(
+            result,
+            equals('Anfrage zur Änderung des Schützenausweises eingegangen'),
+          );
+        },
+      );
 
       test('getAccountCreatedSubject returns configured subject', () async {
-        when(mockConfigService.getString(
-                'accountCreatedSubject', 'emailContent',),)
-            .thenReturn('Account Created Subject');
+        when(
+          mockConfigService.getString('accountCreatedSubject', 'emailContent'),
+        ).thenReturn('Account Created Subject');
 
         final result = await emailService.getAccountCreatedSubject();
         expect(result, equals('Account Created Subject'));
       });
 
       test('getPasswordResetSubject returns configured subject', () async {
-        when(mockConfigService.getString(
-                'passwordResetSubject', 'emailContent',),)
-            .thenReturn('Password Reset Subject');
+        when(
+          mockConfigService.getString('passwordResetSubject', 'emailContent'),
+        ).thenReturn('Password Reset Subject');
 
         final result = await emailService.getPasswordResetSubject();
         expect(result, equals('Password Reset Subject'));
       });
 
       test('getSchulungAbmeldungSubject returns configured subject', () async {
-        when(mockConfigService.getString(
-                'schulungAbmeldungSubject', 'emailContent',),)
-            .thenReturn('Training Unregistration Subject');
+        when(
+          mockConfigService.getString(
+            'schulungAbmeldungSubject',
+            'emailContent',
+          ),
+        ).thenReturn('Training Unregistration Subject');
 
         final result = await emailService.getSchulungAbmeldungSubject();
         expect(result, equals('Training Unregistration Subject'));
       });
 
       test('getSchulungAnmeldungSubject returns configured subject', () async {
-        when(mockConfigService.getString(
-                'schulungAnmeldungSubject', 'emailContent',),)
-            .thenReturn('Training Registration Subject');
+        when(
+          mockConfigService.getString(
+            'schulungAnmeldungSubject',
+            'emailContent',
+          ),
+        ).thenReturn('Training Registration Subject');
 
         final result = await emailService.getSchulungAnmeldungSubject();
         expect(result, equals('Training Registration Subject'));
       });
 
       test('getVerificationBaseUrl returns configured URL', () async {
-        when(mockConfigService.getString('verificationBaseUrl', 'smtpSettings'))
-            .thenReturn('https://verify.example.com');
+        when(
+          mockConfigService.getString('verificationBaseUrl', 'smtpSettings'),
+        ).thenReturn('https://verify.example.com');
 
         final result = await emailService.getVerificationBaseUrl();
         expect(result, equals('https://verify.example.com'));
       });
 
       test('getWelcomeSubject returns configured subject', () async {
-        when(mockConfigService.getString('welcomeSubject', 'smtpSettings'))
-            .thenReturn('Welcome Subject');
+        when(
+          mockConfigService.getString('welcomeSubject', 'smtpSettings'),
+        ).thenReturn('Welcome Subject');
 
         final result = await emailService.getWelcomeSubject();
         expect(result, equals('Welcome Subject'));
       });
 
       test('getWelcomeContent returns configured content', () async {
-        when(mockConfigService.getString('welcomeContent', 'smtpSettings'))
-            .thenReturn('Welcome Content');
+        when(
+          mockConfigService.getString('welcomeContent', 'smtpSettings'),
+        ).thenReturn('Welcome Content');
 
         final result = await emailService.getWelcomeContent();
         expect(result, equals('Welcome Content'));
@@ -284,15 +295,17 @@ void main() {
 
     group('sendAccountCreationNotifications', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
-        when(mockConfigService.getString(
-                'accountCreatedSubject', 'emailContent',),)
-            .thenReturn('Account Created');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('accountCreatedSubject', 'emailContent'),
+        ).thenReturn('Account Created');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
       test('sends emails to registered email and existing addresses', () async {
@@ -314,8 +327,9 @@ void main() {
       });
 
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
         await emailService.sendAccountCreationNotifications(
           '123',
@@ -327,8 +341,9 @@ void main() {
       });
 
       test('handles email sending errors gracefully', () async {
-        when(mockHttpClient.get('FindeMailadressen/123'))
-            .thenThrow(Exception('API Error'));
+        when(
+          mockHttpClient.get('FindeMailadressen/123'),
+        ).thenThrow(Exception('API Error'));
 
         // Should not throw exception
         await emailService.sendAccountCreationNotifications(
@@ -340,23 +355,21 @@ void main() {
 
     group('sendPasswordResetNotifications', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
-        when(mockConfigService.getString(
-                'passwordResetSubject', 'emailContent',),)
-            .thenReturn('Password Reset');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('passwordResetSubject', 'emailContent'),
+        ).thenReturn('Password Reset');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
       test('sends password reset emails with personalized content', () async {
-        final passData = {
-          'TITEL': 'Dr.',
-          'VORNAME': 'John',
-          'NAMEN': 'Doe',
-        };
+        final passData = {'TITEL': 'Dr.', 'VORNAME': 'John', 'NAMEN': 'Doe'};
         final emailAddresses = ['user@example.com'];
 
         await emailService.sendPasswordResetNotifications(
@@ -369,14 +382,13 @@ void main() {
       });
 
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
-        await emailService.sendPasswordResetNotifications(
-          {},
-          ['user@example.com'],
-          'https://example.com/reset?token=123',
-        );
+        await emailService.sendPasswordResetNotifications({}, [
+          'user@example.com',
+        ], 'https://example.com/reset?token=123');
 
         // Method should complete without error even with missing config
       });
@@ -384,15 +396,20 @@ void main() {
 
     group('sendSchulungAbmeldungEmail', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
-        when(mockConfigService.getString(
-                'schulungAbmeldungSubject', 'emailContent',),)
-            .thenReturn('Training Unregistration');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString(
+            'schulungAbmeldungSubject',
+            'emailContent',
+          ),
+        ).thenReturn('Training Unregistration');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
       test('sends training unregistration emails', () async {
@@ -415,8 +432,9 @@ void main() {
       });
 
       test('handles no email addresses found', () async {
-        when(mockHttpClient.get('FindeMailadressen/123'))
-            .thenAnswer((_) async => []);
+        when(
+          mockHttpClient.get('FindeMailadressen/123'),
+        ).thenAnswer((_) async => []);
 
         await emailService.sendSchulungAbmeldungEmail(
           personId: '123',
@@ -432,14 +450,17 @@ void main() {
 
     group('sendRegistrationEmail', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
-        when(mockConfigService.getString('registrationSubject', 'emailContent'))
-            .thenReturn('Registration');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('registrationSubject', 'emailContent'),
+        ).thenReturn('Registration');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
       test('sends registration email with personalized content', () async {
@@ -456,8 +477,9 @@ void main() {
       });
 
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
         await emailService.sendRegistrationEmail(
           email: 'user@example.com',
@@ -472,43 +494,50 @@ void main() {
 
     group('sendSchulungAnmeldungEmail', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
-        when(mockConfigService.getString(
-                'schulungAnmeldungSubject', 'emailContent',),)
-            .thenReturn('Training Registration');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString(
+            'schulungAnmeldungSubject',
+            'emailContent',
+          ),
+        ).thenReturn('Training Registration');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
-      test('sends training registration email without calendar service',
-          () async {
-        // Create email service without calendar service
-        final emailServiceWithoutCalendar = EmailService(
-          emailSender: mockEmailSender,
-          configService: mockConfigService,
-          httpClient: mockHttpClient,
-          calendarService: null,
-        );
+      test(
+        'sends training registration email without calendar service',
+        () async {
+          // Create email service without calendar service
+          final emailServiceWithoutCalendar = EmailService(
+            emailSender: mockEmailSender,
+            configService: mockConfigService,
+            httpClient: mockHttpClient,
+            calendarService: null,
+          );
 
-        // HTTP post calls are made directly via http package, not mockHttpClient
+          // HTTP post calls are made directly via http package, not mockHttpClient
 
-        await emailServiceWithoutCalendar.sendSchulungAnmeldungEmail(
-          personId: '123',
-          schulungName: 'Test Training',
-          schulungDate: '2024-01-01',
-          firstName: 'John',
-          lastName: 'Doe',
-          passnumber: '12345',
-          email: 'user@example.com',
-          schulungRegistered: 5,
-          schulungTotal: 20,
-        );
+          await emailServiceWithoutCalendar.sendSchulungAnmeldungEmail(
+            personId: '123',
+            schulungName: 'Test Training',
+            schulungDate: '2024-01-01',
+            firstName: 'John',
+            lastName: 'Doe',
+            passnumber: '12345',
+            email: 'user@example.com',
+            schulungRegistered: 5,
+            schulungTotal: 20,
+          );
 
-        // Method should complete without error
-      });
+          // Method should complete without error
+        },
+      );
       test('handles calendar service error gracefully', () async {
         when(
           mockCalendarService.generateCalendarLink(
@@ -541,35 +570,40 @@ void main() {
 
     group('sendEmailValidationNotifications', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
         when(mockConfigService.getString('web')).thenReturn('web.example.com');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
-      test('sends email validation notification with verification link',
-          () async {
-        // HTTP post calls are made directly via http package, not mockHttpClient
+      test(
+        'sends email validation notification with verification link',
+        () async {
+          // HTTP post calls are made directly via http package, not mockHttpClient
 
-        await emailService.sendEmailValidationNotifications(
-          personId: '123',
-          email: 'user@example.com',
-          firstName: 'John',
-          lastName: 'Doe',
-          title: 'Dr.',
-          emailType: 'private',
-          verificationToken: 'token123',
-        );
+          await emailService.sendEmailValidationNotifications(
+            personId: '123',
+            email: 'user@example.com',
+            firstName: 'John',
+            lastName: 'Doe',
+            title: 'Dr.',
+            emailType: 'private',
+            verificationToken: 'token123',
+          );
 
-        // Method should complete without error
-      });
+          // Method should complete without error
+        },
+      );
 
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
         await emailService.sendEmailValidationNotifications(
           personId: '123',
@@ -587,12 +621,14 @@ void main() {
 
     group('sendStartingRightsChangeNotifications', () {
       setUp(() {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('noreply@example.com');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('noreply@example.com');
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
       });
 
       test('sends notifications to user and club email addresses', () async {
@@ -652,8 +688,9 @@ void main() {
       });
 
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
         await emailService.sendStartingRightsChangeNotifications(
           personId: 123,
@@ -691,63 +728,81 @@ void main() {
       });
     });
 
-    group('EmailService Additional Email Template Methods - Missing Coverage',
-        () {
-      test('getRegistrationContent returns null in test environment', () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getRegistrationContent();
-        expect(result, isNull);
-      });
-
-      test('getAccountCreatedContent returns null in test environment',
+    group(
+      'EmailService Additional Email Template Methods - Missing Coverage',
+      () {
+        test(
+          'getRegistrationContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getAccountCreatedContent();
-        expect(result, isNull);
-      });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getRegistrationContent();
+            expect(result, isNull);
+          },
+        );
 
-      test('getPasswordResetContent returns null in test environment',
+        test(
+          'getAccountCreatedContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getPasswordResetContent();
-        expect(result, isNull);
-      });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getAccountCreatedContent();
+            expect(result, isNull);
+          },
+        );
 
-      test('getSchulungAbmeldungContent returns null in test environment',
+        test(
+          'getPasswordResetContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getSchulungAbmeldungContent();
-        expect(result, isNull);
-      });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getPasswordResetContent();
+            expect(result, isNull);
+          },
+        );
 
-      test('getSchulungAnmeldungContent returns null in test environment',
+        test(
+          'getSchulungAbmeldungContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getSchulungAnmeldungContent();
-        expect(result, isNull);
-      });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getSchulungAbmeldungContent();
+            expect(result, isNull);
+          },
+        );
 
-      test('getEmailValidationContent returns null in test environment',
+        test(
+          'getSchulungAnmeldungContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getEmailValidationContent();
-        expect(result, isNull);
-      });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getSchulungAnmeldungContent();
+            expect(result, isNull);
+          },
+        );
 
-      test('getStartingRightsChangeContent returns null in test environment',
+        test(
+          'getEmailValidationContent returns null in test environment',
           () async {
-        // rootBundle.loadString is not available in unit tests
-        final result = await emailService.getStartingRightsChangeContent();
-        expect(result, isNull);
-      });
-    });
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getEmailValidationContent();
+            expect(result, isNull);
+          },
+        );
+
+        test(
+          'getStartingRightsChangeContent returns null in test environment',
+          () async {
+            // rootBundle.loadString is not available in unit tests
+            final result = await emailService.getStartingRightsChangeContent();
+            expect(result, isNull);
+          },
+        );
+      },
+    );
 
     group('EmailService Edge Cases and Error Handling', () {
       test('sendEmail handles null htmlBody gracefully', () async {
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
 
         final result = await emailService.sendEmail(
           sender: 'test@example.com',
@@ -764,8 +819,9 @@ void main() {
       test('sendEmail handles empty strings gracefully', () async {
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
 
         final result = await emailService.sendEmail(
           sender: '',
@@ -779,53 +835,60 @@ void main() {
         expect(result['ResultMessage'], contains('Error sending email'));
       });
 
-      test('getEmailAddressesByPersonId handles malformed response data',
-          () async {
-        final mockResponse = [
-          {'INVALID_KEY': 'email1@example.com'},
-          {'MAILADRESSEN': 'valid@example.com', 'EXTRA_KEY': 'value'},
-          'invalid_data_structure',
-          null,
-        ];
-        when(mockHttpClient.get(any)).thenAnswer((_) async => mockResponse);
+      test(
+        'getEmailAddressesByPersonId handles malformed response data',
+        () async {
+          final mockResponse = [
+            {'INVALID_KEY': 'email1@example.com'},
+            {'MAILADRESSEN': 'valid@example.com', 'EXTRA_KEY': 'value'},
+            'invalid_data_structure',
+            null,
+          ];
+          when(mockHttpClient.get(any)).thenAnswer((_) async => mockResponse);
 
-        final result = await emailService.getEmailAddressesByPersonId('123');
+          final result = await emailService.getEmailAddressesByPersonId('123');
 
-        expect(result, equals(['valid@example.com']));
-      });
+          expect(result, equals(['valid@example.com']));
+        },
+      );
 
       test('getEmailAddressesByPersonId handles network timeout', () async {
-        when(mockHttpClient.get(any))
-            .thenThrow(const SocketException('Network timeout'));
+        when(
+          mockHttpClient.get(any),
+        ).thenThrow(const SocketException('Network timeout'));
 
         final result = await emailService.getEmailAddressesByPersonId('123');
 
         expect(result, isEmpty);
       });
 
-      test('_getAppropriateRecipient uses original when testEmails is null',
-          () async {
-        when(mockConfigService.getBool('testEmails')).thenReturn(null);
-        when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+      test(
+        '_getAppropriateRecipient uses original when testEmails is null',
+        () async {
+          when(mockConfigService.getBool('testEmails')).thenReturn(null);
+          when(mockConfigService.getString('webProtocol')).thenReturn('https');
+          when(
+            mockConfigService.getString('email'),
+          ).thenReturn('email.example.com');
 
-        await emailService.sendEmail(
-          sender: 'test@example.com',
-          recipient: 'original@example.com',
-          subject: 'Test Subject',
-          htmlBody: '<p>Test Body</p>',
-        );
+          await emailService.sendEmail(
+            sender: 'test@example.com',
+            recipient: 'original@example.com',
+            subject: 'Test Subject',
+            htmlBody: '<p>Test Body</p>',
+          );
 
-        // Since testEmails is null, should use original recipient
-        // HTTP call will still fail but we've tested the configuration logic
-      });
+          // Since testEmails is null, should use original recipient
+          // HTTP call will still fail but we've tested the configuration logic
+        },
+      );
 
       test('sendEmail returns error for network timeout', () async {
         when(mockConfigService.getBool('testEmails')).thenReturn(false);
         when(mockConfigService.getString('webProtocol')).thenReturn('https');
-        when(mockConfigService.getString('email'))
-            .thenReturn('email.example.com');
+        when(
+          mockConfigService.getString('email'),
+        ).thenReturn('email.example.com');
 
         final result = await emailService.sendEmail(
           sender: 'test@example.com',
@@ -857,8 +920,9 @@ void main() {
 
     group('EmailService sendSchulungAnmeldungEmail - Enhanced Coverage', () {
       test('handles missing email configuration gracefully', () async {
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn(null);
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn(null);
 
         await emailService.sendSchulungAnmeldungEmail(
           personId: '123',
@@ -877,8 +941,9 @@ void main() {
 
       test('handles empty email addresses list gracefully', () async {
         when(mockHttpClient.get(any)).thenAnswer((_) async => []);
-        when(mockConfigService.getString('fromEmail', 'smtpSettings'))
-            .thenReturn('from@example.com');
+        when(
+          mockConfigService.getString('fromEmail', 'smtpSettings'),
+        ).thenReturn('from@example.com');
 
         await emailService.sendSchulungAnmeldungEmail(
           personId: '123',
@@ -902,32 +967,39 @@ void main() {
         expect(result, equals('E-Mail-Adresse bestätigen'));
       });
 
-      test('getStartingRightsChangeSubject returns hardcoded subject',
-          () async {
-        final result = await emailService.getStartingRightsChangeSubject();
-        expect(result,
-            equals('Anfrage zur Änderung des Schützenausweises eingegangen'),);
-      });
+      test(
+        'getStartingRightsChangeSubject returns hardcoded subject',
+        () async {
+          final result = await emailService.getStartingRightsChangeSubject();
+          expect(
+            result,
+            equals('Anfrage zur Änderung des Schützenausweises eingegangen'),
+          );
+        },
+      );
 
       test('getVerificationBaseUrl returns configured URL', () async {
-        when(mockConfigService.getString('verificationBaseUrl', 'smtpSettings'))
-            .thenReturn('https://verification.example.com');
+        when(
+          mockConfigService.getString('verificationBaseUrl', 'smtpSettings'),
+        ).thenReturn('https://verification.example.com');
 
         final result = await emailService.getVerificationBaseUrl();
         expect(result, equals('https://verification.example.com'));
       });
 
       test('getWelcomeSubject returns configured subject', () async {
-        when(mockConfigService.getString('welcomeSubject', 'smtpSettings'))
-            .thenReturn('Welcome to BSSB');
+        when(
+          mockConfigService.getString('welcomeSubject', 'smtpSettings'),
+        ).thenReturn('Welcome to BSSB');
 
         final result = await emailService.getWelcomeSubject();
         expect(result, equals('Welcome to BSSB'));
       });
 
       test('getWelcomeContent returns configured content', () async {
-        when(mockConfigService.getString('welcomeContent', 'smtpSettings'))
-            .thenReturn('Welcome message content');
+        when(
+          mockConfigService.getString('welcomeContent', 'smtpSettings'),
+        ).thenReturn('Welcome message content');
 
         final result = await emailService.getWelcomeContent();
         expect(result, equals('Welcome message content'));

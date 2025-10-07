@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: email_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
@@ -16,6 +12,8 @@ import 'config_service.dart';
 import 'logger_service.dart';
 import 'http_client.dart';
 import 'calendar_service.dart';
+// ignore: depend_on_referenced_packages
+import 'package:meta/meta.dart';
 
 abstract class EmailSender {
   Future<mailer.SendReport> send(
@@ -40,9 +38,9 @@ class EmailService {
     required ConfigService configService,
     required HttpClient httpClient,
     CalendarService? calendarService,
-  })  : _configService = configService,
-        _httpClient = httpClient,
-        _calendarService = calendarService;
+  }) : _configService = configService,
+       _httpClient = httpClient,
+       _calendarService = calendarService;
 
   final ConfigService _configService; // Inject ConfigService
   final HttpClient _httpClient;
@@ -55,7 +53,8 @@ class EmailService {
       final testRecipient = _configService.getString('testRecipient');
       if (testRecipient != null && testRecipient.isNotEmpty) {
         LoggerService.logInfo(
-            'Test emails enabled: redirecting from $originalRecipient to $testRecipient',);
+          'Test emails enabled: redirecting from $originalRecipient to $testRecipient',
+        );
         return testRecipient;
       }
     }
@@ -79,9 +78,7 @@ class EmailService {
       );
       final response = await http.post(
         Uri.parse(emailUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'to': appropriateRecipient,
           'subject': subject,
@@ -141,8 +138,9 @@ class EmailService {
 
   Future<String?> getAccountCreatedContent() async {
     try {
-      return await rootBundle
-          .loadString('assets/html/accountCreatedEmail.html');
+      return await rootBundle.loadString(
+        'assets/html/accountCreatedEmail.html',
+      );
     } catch (e) {
       LoggerService.logError('Error reading accountCreatedEmail.html: $e');
       return null;
@@ -168,8 +166,9 @@ class EmailService {
 
   Future<String?> getSchulungAbmeldungContent() async {
     try {
-      return await rootBundle
-          .loadString('assets/html/schulungAbmeldungEmail.html');
+      return await rootBundle.loadString(
+        'assets/html/schulungAbmeldungEmail.html',
+      );
     } catch (e) {
       LoggerService.logError('Error reading schulungAbmeldungEmail.html: $e');
       return null;
@@ -182,8 +181,9 @@ class EmailService {
 
   Future<String?> getSchulungAnmeldungContent() async {
     try {
-      return await rootBundle
-          .loadString('assets/html/schulungAnmeldungEmail.html');
+      return await rootBundle.loadString(
+        'assets/html/schulungAnmeldungEmail.html',
+      );
     } catch (e) {
       LoggerService.logError('Error reading schulungAnmeldungEmail.html: $e');
       return null;
@@ -196,7 +196,9 @@ class EmailService {
 
   Future<String?> getEmailValidationContent() async {
     try {
-      return await rootBundle.loadString('assets/html/email-address-validation.html');
+      return await rootBundle.loadString(
+        'assets/html/email-address-validation.html',
+      );
     } catch (e) {
       LoggerService.logError('Error reading email-address-validation.html: $e');
       return null;
@@ -209,9 +211,13 @@ class EmailService {
 
   Future<String?> getStartingRightsChangeContent() async {
     try {
-      return await rootBundle.loadString('assets/html/startingRightsChangeEmail.html');
+      return await rootBundle.loadString(
+        'assets/html/startingRightsChangeEmail.html',
+      );
     } catch (e) {
-      LoggerService.logError('Error reading startingRightsChangeEmail.html: $e');
+      LoggerService.logError(
+        'Error reading startingRightsChangeEmail.html: $e',
+      );
       return null;
     }
   }
@@ -546,7 +552,9 @@ class EmailService {
       final emailContent = await getEmailValidationContent();
 
       if (from == null || subject == null || emailContent == null) {
-        LoggerService.logError('Missing email configuration for email validation');
+        LoggerService.logError(
+          'Missing email configuration for email validation',
+        );
         return;
       }
 
@@ -564,8 +572,11 @@ class EmailService {
           .replaceAll('{lastName}', lastName)
           .replaceAll('{title}', title)
           .replaceAll('{email}', email)
-          .replaceAll('{emailType}', emailType == 'private' ? 'Privat' : 'Geschäftlich')
-          .replaceAll('{verificationLink}', verificationLink,);
+          .replaceAll(
+            '{emailType}',
+            emailType == 'private' ? 'Privat' : 'Geschäftlich',
+          )
+          .replaceAll('{verificationLink}', verificationLink);
 
       await sendEmail(
         sender: from,
@@ -595,7 +606,9 @@ class EmailService {
       final emailContent = await getStartingRightsChangeContent();
 
       if (from == null || subject == null || emailContent == null) {
-        LoggerService.logError('Missing email configuration for starting rights change');
+        LoggerService.logError(
+          'Missing email configuration for starting rights change',
+        );
         return;
       }
 
@@ -632,8 +645,10 @@ class EmailService {
             subject: subject,
             htmlBody: personalizedContent,
           );
-          
-          LoggerService.logInfo('Starting rights change notification sent to user email: $email');
+
+          LoggerService.logInfo(
+            'Starting rights change notification sent to user email: $email',
+          );
         }
       }
 
@@ -658,14 +673,20 @@ class EmailService {
             subject: subject,
             htmlBody: personalizedContent,
           );
-          
-          LoggerService.logInfo('Starting rights change notification sent to club email: $email');
+
+          LoggerService.logInfo(
+            'Starting rights change notification sent to club email: $email',
+          );
         }
       }
 
-      LoggerService.logInfo('Starting rights change notifications sent successfully');
+      LoggerService.logInfo(
+        'Starting rights change notifications sent successfully',
+      );
     } catch (e) {
-      LoggerService.logError('Error sending starting rights change notifications: $e');
+      LoggerService.logError(
+        'Error sending starting rights change notifications: $e',
+      );
     }
   }
 
@@ -687,15 +708,19 @@ class EmailService {
     }
 
     final StringBuffer buffer = StringBuffer();
-    buffer.writeln('<h3 style="color: #0B4B10; margin-top: 20px;">Zweitvereine:</h3>');
+    buffer.writeln(
+      '<h3 style="color: #0B4B10; margin-top: 20px;">Zweitvereine:</h3>',
+    );
 
     for (final membership in zweitmitgliedschaften) {
       final vereinNr = membership.vereinNr;
       final vereinName = membership.vereinName;
-      
+
       if (vereinName.isNotEmpty) {
-        buffer.writeln('<p style="margin: 5px 0; font-weight: bold;">$vereinName</p>');
-        
+        buffer.writeln(
+          '<p style="margin: 5px 0; font-weight: bold;">$vereinName</p>',
+        );
+
         // Check if this Verein has disciplines in ZVE data
         if (zveByVerein.containsKey(vereinNr)) {
           final disciplines = zveByVerein[vereinNr]!;
@@ -703,7 +728,9 @@ class EmailService {
             final disziplinNr = discipline.disziplinNr ?? '';
             final disziplin = discipline.disziplin ?? '';
             if (disziplinNr.isNotEmpty && disziplin.isNotEmpty) {
-              buffer.writeln('<p style="margin: 5px 0; margin-left: 20px;">$disziplinNr $disziplin</p>');
+              buffer.writeln(
+                '<p style="margin: 5px 0; margin-left: 20px;">$disziplinNr $disziplin</p>',
+              );
             }
           }
         }
@@ -712,4 +739,10 @@ class EmailService {
 
     return buffer.toString();
   }
+
+  @visibleForTesting
+  String formatZweitvereineForTest(
+    List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    PassdatenAkzeptOrAktiv zveData,
+  ) => _formatZweitvereine(zweitmitgliedschaften, zveData);
 }
