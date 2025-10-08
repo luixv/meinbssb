@@ -79,7 +79,7 @@ jobs:
         run: |
           # Disable file watchers and hot reload for CI/CD
           export FLUTTER_WEB=false
-          flutter build apk --release --ofuscation --split-debug-info=build/app/outputs/symbols 
+          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols 
       - name: Create versioned APK archive
         run: |
           mkdir -p release_artifacts
@@ -188,7 +188,7 @@ jobs:
           cp assets/config.test.json assets/config.json
           echo "Config file replaced successfully"
       - name: Build Web
-        run: flutter build web --ofuscation --split-debug-info=build/app/outputs/symbols 
+        run: flutter build web --obfuscate --split-debug-info=build/app/outputs/symbols 
       - name: Create versioned Web archive
         run: |
           mkdir -p release_artifacts
