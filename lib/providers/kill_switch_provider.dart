@@ -5,6 +5,7 @@ class KillSwitchProvider with ChangeNotifier {
   KillSwitchProvider(this._service);
 
   final KillSwitchService _service;
+
   bool _enabled = true;
   String _title = '';
   String _body = '';
