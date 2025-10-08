@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-
-import 'services/kill_switch/kill_switch_service.dart';
-import 'providers/kill_switch_provider.dart';
-import 'widgets/kill_switch_banner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
 
 import 'app.dart';
 import 'services/api/auth_service.dart';
@@ -32,8 +30,11 @@ import 'screens/schulungen/schulungen_search_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
 import 'services/core/postgrest_service.dart';
+import 'providers/kill_switch_provider.dart';
+import 'services/kill_switch/kill_switch_service.dart';
+import 'widgets/kill_switch_banner.dart';
 
-Future<void> main() async {
+void main() async {
   // Global error handler for all uncaught errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -338,23 +339,4 @@ class AppInitializer {
   static late Provider<CalendarService> calendarServiceProvider;
   static late Provider<StartingRightsService> startingRightsServiceProvider;
   static late Provider<OktoberfestService> oktoberfestServiceProvider;
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mein BSSB',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      // keep your existing home / routes / navigator settings (do NOT change them)
-      home:
-          const Placeholder(), // or keep your real existing home if already set elsewhere
-      builder: (context, child) {
-        // child is the normal app content (home / Navigator)
-        return KillSwitchGate(child: child ?? const SizedBox.shrink());
-      },
-    );
-  }
 }

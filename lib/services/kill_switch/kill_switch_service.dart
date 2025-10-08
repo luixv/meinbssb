@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class KillSwitchService {
-  KillSwitchService(this._rc);
+  KillSwitchService(this._remoteConfig);
 
-  final FirebaseRemoteConfig _rc;
+  final FirebaseRemoteConfig _remoteConfig;
 
   static Future<KillSwitchService> create() async {
     final rc = FirebaseRemoteConfig.instance;
@@ -20,19 +20,20 @@ class KillSwitchService {
       'kill_message_body':
           'Die Anwendung ist vorübergehend deaktiviert. Bitte später erneut versuchen.',
     });
+    // Initial fetch (failures ignored -> defaults)
     try {
       await rc.fetchAndActivate();
     } catch (_) {}
     return KillSwitchService(rc);
   }
 
-  bool get isEnabled => _rc.getBool('app_enabled');
-  String get title => _rc.getString('kill_message_title');
-  String get body => _rc.getString('kill_message_body');
+  bool get isEnabled => _remoteConfig.getBool('app_enabled');
+  String get title => _remoteConfig.getString('kill_message_title');
+  String get body => _remoteConfig.getString('kill_message_body');
 
   Future<void> refresh() async {
     try {
-      await _rc.fetchAndActivate();
+      await _remoteConfig.fetchAndActivate();
     } catch (_) {}
   }
 }
