@@ -59,6 +59,8 @@ dependencies:
   image_picker: ^1.2.0
   web: ^1.1.1
   package_info_plus: ^9.0.0
+  firebase_core: ^3.4.0
+  firebase_remote_config: ^5.0.0
   
   flutter_localizations:
     sdk: flutter
@@ -148,6 +150,7 @@ flutter:
     - assets/html/schulungAnmeldungEmail.html
     - assets/html/email-address-validation.html
     - assets/html/startingRightsChangeEmail.html
+    - assets/config/remote_config_defaults.json
 
 
 
