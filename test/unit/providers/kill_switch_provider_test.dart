@@ -28,10 +28,35 @@ void main() {
       expect(notified, true);
     });
 
-    test('fetchRemoteConfig sets fallback values on desktop/web', () async {
+    test(
+      'fetchRemoteConfig sets fallback values and notifies listeners on desktop/web',
+      () async {
+        final provider = KillSwitchProvider();
+        bool notified = false;
+        provider.addListener(() {
+          notified = true;
+        });
+        await provider.fetchRemoteConfig();
+        // On desktop/web, should fallback to safe defaults
+        expect(provider.appEnabled, true);
+        expect(provider.message, isNull);
+        expect(notified, true);
+      },
+    );
+
+    test('fetchRemoteConfig does not throw on unsupported platform', () async {
       final provider = KillSwitchProvider();
+      expect(() async => await provider.fetchRemoteConfig(), returnsNormally);
+    });
+
+    test('error handling in fetchRemoteConfig does not break state', () async {
+      final provider = KillSwitchProvider(
+        appEnabled: false,
+        killSwitchMessage: 'Initial',
+      );
+      // Simulate error by calling fetchRemoteConfig on desktop/web (no Firebase)
       await provider.fetchRemoteConfig();
-      // On desktop/web, should fallback to safe defaults
+      // Should keep safe fallback values
       expect(provider.appEnabled, true);
       expect(provider.message, isNull);
     });

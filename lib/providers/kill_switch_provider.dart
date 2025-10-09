@@ -16,13 +16,10 @@ class KillSwitchProvider extends ChangeNotifier {
   /// Fetch and activate remote config safely.
   /// Uses Firebase Remote Config on mobile, fallback values on desktop.
   Future<void> fetchRemoteConfig() async {
-    debugPrint('✅ KillSwitchProvider.fetchRemoteConfig() STARTING...');
-
     // ----------------------------
     // Fallback for non-mobile platforms
     // ----------------------------
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
-      debugPrint('⚠️ Remote Config disabled on this platform (desktop/web).');
       _appEnabled = true; // safe default
       _killSwitchMessage = null;
       notifyListeners();
