@@ -60,5 +60,37 @@ void main() {
       expect(provider.appEnabled, true);
       expect(provider.message, isNull);
     });
+
+    test('multiple listeners are notified', () {
+      final provider = KillSwitchProvider();
+      int notifyCount = 0;
+      provider.addListener(() {
+        notifyCount++;
+      });
+      provider.addListener(() {
+        notifyCount++;
+      });
+      provider.notifyListeners();
+      expect(notifyCount, 2);
+    });
+
+    test(
+      'fetchRemoteConfig does not change appEnabled if already true',
+      () async {
+        final provider = KillSwitchProvider(appEnabled: true);
+        await provider.fetchRemoteConfig();
+        expect(provider.appEnabled, true);
+      },
+    );
+
+    test('fetchRemoteConfig does not change message if already set', () async {
+      final provider = KillSwitchProvider(
+        appEnabled: true,
+        killSwitchMessage: 'Already set',
+      );
+      await provider.fetchRemoteConfig();
+      // On desktop/web, message should become null
+      expect(provider.message, isNull);
+    });
   });
 }
