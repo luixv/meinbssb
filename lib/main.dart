@@ -48,11 +48,19 @@ void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp(
-        options:
-            DefaultFirebaseOptions
-                .currentPlatform, // Use this if you have firebase_options.dart
-      );
+
+      try {
+        await Firebase.initializeApp(
+          options:
+              DefaultFirebaseOptions
+                  .currentPlatform, // Use this if you have firebase_options.dart
+        );
+      } catch (e) {
+        debugPrint('❌ Firebase Initialization Failed: $e');
+        // You cannot proceed if this fails
+        return;
+      }
+
       await AppInitializer.init();
 
       final fragment = Uri.base.fragment;
