@@ -55,6 +55,7 @@ void main() async {
               DefaultFirebaseOptions
                   .currentPlatform, // Use this if you have firebase_options.dart
         );
+        printFirebaseProjectId();
       } catch (e) {
         debugPrint('❌ Firebase Initialization Failed: $e');
         // You cannot proceed if this fails
@@ -123,6 +124,12 @@ void main() async {
   );
 }
 
+void printFirebaseProjectId() async {
+  final app = Firebase.app(); // Access the default app
+  final options = app.options;
+  debugPrint('Connected to Firebase project: ${options.projectId}');
+}
+
 class AppInitializer {
   static late ConfigService configService;
   static late ApiService apiService;
@@ -146,13 +153,14 @@ class AppInitializer {
   static bool _disposed = false;
 
   static Future<void> initializeKillSwitch(KillSwitchProvider provider) async {
-    // In AppInitializer class (in main.dart)
     debugPrint('Initializing KillSwitchProvider and fetching Remote Config...');
 
+    // 🔥 Do NOT re-initialize Firebase here — it's already done in main()
     try {
       await provider.fetchRemoteConfig();
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('❌ Failed to fetch KillSwitch Remote Config: $e');
+      debugPrint('STACK TRACE: $st');
     }
   }
 

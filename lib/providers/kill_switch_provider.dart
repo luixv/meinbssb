@@ -1,89 +1,97 @@
-import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class KillSwitchProvider extends ChangeNotifier {
-  // Constructor only sets initial values, no async calls here
-  KillSwitchProvider({bool appEnabled = true, String? message})
+  KillSwitchProvider({bool appEnabled = true, String? killSwitchMessage})
     : _appEnabled = appEnabled,
-      _message = message;
+      _killSwitchMessage = killSwitchMessage;
 
   bool _appEnabled;
-  String? _message;
+  String? _killSwitchMessage;
+
   bool get appEnabled => _appEnabled;
-  String? get message => _message;
+  String? get message => _killSwitchMessage;
 
-  // Made public so AppInitializer can call it explicitly
+  /// Fetch and activate remote config safely.
+  /// Uses Firebase Remote Config on mobile, fallback values on desktop.
   Future<void> fetchRemoteConfig() async {
-    debugPrint(
-      '✅ KillSwitchProvider.fetchRemoteConfig() STARTING... Again and again',
-    );
+    debugPrint('✅ KillSwitchProvider.fetchRemoteConfig() STARTING...');
 
-    final remoteConfig = FirebaseRemoteConfig.instance;
-
-    // 1. Set Defaults immediately. This guarantees local values are available.
-    await remoteConfig.setDefaults(const <String, dynamic>{
-      'app_enabled': true,
-      'kill_switch_message': 'App temporarily disabled.',
-    });
-
-    // *** CRITICAL FIX: Aggressive 1-second delay for full native settling ***
-    // This delay is strategically placed BEFORE the error-prone setConfigSettings
-    // to give the native Firebase environment ample time to initialize.
-    await Future<void>.delayed(const Duration(milliseconds: 1000));
-
-    const int maxRetries = 5;
-    const Duration retryDelay = Duration(milliseconds: 150);
-
-    // 2. Retry Loop for setConfigSettings
-    // This handles residual, less severe race conditions for the settings application.
-    for (int i = 0; i < maxRetries; i++) {
-      try {
-        await remoteConfig.setConfigSettings(
-          RemoteConfigSettings(
-            fetchTimeout: const Duration(seconds: 30),
-            // Setting minimumFetchInterval to Duration.zero is ideal for a kill switch check on startup.
-            minimumFetchInterval: Duration.zero,
-          ),
-        );
-        debugPrint(
-          '✅ Remote Config settings successfully applied on attempt ${i + 1}.',
-        );
-        // Success! Break the loop and proceed to fetch.
-        break;
-      } on TypeError catch (e) {
-        if (i < maxRetries - 1) {
-          debugPrint(
-            '⚠️ Set Config Settings failed with known TypeError ($e). Retrying in ${retryDelay.inMilliseconds}ms...',
-          );
-          await Future<void>.delayed(retryDelay);
-        } else {
-          // Last attempt failed, log a critical error and continue without new settings
-          debugPrint(
-            '❌ CRITICAL: Set Config Settings failed after $maxRetries attempts. Proceeding with defaults for fetch.',
-          );
-        }
-      } catch (e) {
-        // Handle any other unexpected error during settings (non-TypeError)
-        debugPrint('❌ Unexpected error during setConfigSettings: $e');
-        break;
-      }
+    // ----------------------------
+    // Fallback for non-mobile platforms
+    // ----------------------------
+    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
+      debugPrint('⚠️ Remote Config disabled on this platform (desktop/web).');
+      _appEnabled = true; // safe default
+      _killSwitchMessage = null;
+      notifyListeners();
+      return;
     }
 
-    // 3. Fetch and Activate
+    // ----------------------------
+    // Mobile: initialize Remote Config
+    // ----------------------------
+    final remoteConfig = FirebaseRemoteConfig.instance;
+
+    // Force platform initialization (avoids null integer crash)
     try {
-      await remoteConfig.fetchAndActivate();
+      remoteConfig.getAll();
+    } catch (e, st) {
+      debugPrint('⚠️ Warning: getAll() initialization failed: $e');
+      debugPrint('$st');
+    }
 
-      // 4. Read Values and Notify
-      _appEnabled = remoteConfig.getBool('app_enabled');
-      _message = remoteConfig.getString('kill_switch_message');
+    // Set defaults
+    try {
+      await remoteConfig.setDefaults(<String, dynamic>{
+        'app_enabled': true,
+        'kill_switch_message': 'App temporarily disabled.',
+      });
+      debugPrint('Defaults applied.');
+    } catch (e, st) {
+      debugPrint('❌ Error setting defaults: $e');
+      debugPrint('$st');
+    }
 
-      debugPrint('✅ Remote Config fetch success. App Enabled: $_appEnabled');
-      notifyListeners();
-    } catch (e) {
-      debugPrint(
-        '❌ Exception during fetchAndActivate (Config not updated): $e',
+    // Set safe RemoteConfigSettings
+    try {
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 30),
+          minimumFetchInterval: const Duration(
+            seconds: 10,
+          ), // short for testing
+        ),
       );
-      // If fetch fails, the app continues to run with the defaults set in step 1.
+      debugPrint('RemoteConfigSettings applied.');
+    } catch (e, st) {
+      debugPrint('❌ Error setting config settings: $e');
+      debugPrint('$st');
+    }
+
+    // Fetch and activate remote values
+    try {
+      final activated = await remoteConfig.fetchAndActivate();
+      debugPrint(
+        'Remote Config fetchAndActivate completed. Activated: $activated',
+      );
+
+      _appEnabled = remoteConfig.getBool('app_enabled');
+      _killSwitchMessage = remoteConfig.getString('kill_switch_message');
+
+      debugPrint(
+        '✅ Remote Config fetch success: appEnabled=$_appEnabled, message=$_killSwitchMessage',
+      );
+      notifyListeners();
+    } catch (e, st) {
+      debugPrint('❌ Exception during fetchAndActivate: $e');
+      debugPrint('$st');
+
+      // Keep existing values as fallback
+      _appEnabled = _appEnabled;
+      _killSwitchMessage = _killSwitchMessage;
+      notifyListeners();
     }
   }
 }
