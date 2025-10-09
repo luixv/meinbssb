@@ -72,7 +72,7 @@ jobs:
           echo "--- Original config.json (first 10 lines) ---"
           head -10 assets/config.json || echo "No original config.json found"
           cp assets/config.test.json assets/config.json
-          echo "--- New config.json (first 10 lines) ---"
+          echo "--- New config.json (first 30 lines) ---"
           head -30 assets/config.json
           echo "Config file replaced successfully"
       - name: Build APK
