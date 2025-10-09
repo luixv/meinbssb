@@ -62,6 +62,9 @@ void main() async {
       }
 
       await AppInitializer.init();
+      final killSwitchProvider = KillSwitchProvider();
+
+      await AppInitializer.initializeKillSwitch(killSwitchProvider);
 
       final fragment = Uri.base.fragment;
       final path = Uri.base.path;
@@ -85,8 +88,9 @@ void main() async {
         AppInitializer.tokenServiceProvider,
         AppInitializer.fontSizeProvider,
         AppInitializer.oktoberfestServiceProvider,
-        ChangeNotifierProvider<KillSwitchProvider>(
-          create: (_) => KillSwitchProvider(),
+
+        ChangeNotifierProvider<KillSwitchProvider>.value(
+          value: killSwitchProvider,
         ),
       ];
 
@@ -140,6 +144,17 @@ class AppInitializer {
   static late StartingRightsService startingRightsService;
   static late http.Client baseHttpClient;
   static bool _disposed = false;
+
+  static Future<void> initializeKillSwitch(KillSwitchProvider provider) async {
+    // In AppInitializer class (in main.dart)
+    debugPrint('Initializing KillSwitchProvider and fetching Remote Config...');
+
+    try {
+      await provider.fetchRemoteConfig();
+    } catch (e) {
+      debugPrint('❌ Failed to fetch KillSwitch Remote Config: $e');
+    }
+  }
 
   static Future<void> init() async {
     LoggerService.init();
