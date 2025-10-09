@@ -46,7 +46,7 @@ class KillSwitchProvider extends ChangeNotifier {
     try {
       await remoteConfig.setDefaults(<String, dynamic>{
         'app_enabled': true,
-        'kill_switch_message': 'App temporarily disabled.',
+        'kill_switch_message': 'Die App ist vorübergehend deaktiviert.',
       });
       debugPrint('Defaults applied.');
     } catch (e, st) {
