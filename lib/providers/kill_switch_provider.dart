@@ -59,45 +59,6 @@ class KillSwitchProvider extends ChangeNotifier {
       debugPrint('Remote Config key: $key, value: ${rcValue.asString()}');
     });
 
-    final defaults = <String, dynamic>{
-      'app_enabled': false,
-      'for_testing': 'bye bye',
-    };
-    // Log all keys and values before setting defaults
-    defaults.forEach((key, value) {
-      debugPrint('Default Config value for $key: $value');
-    });
-    try {
-      await remoteConfig.setDefaults(defaults);
-    } catch (e, stack) {
-      debugPrint('Remote Config setDefaults error: $e');
-      debugPrint('Defaults map: $defaults');
-      debugPrint('Stack trace: $stack');
-      rethrow;
-    }
-    debugPrint('fetchTimeout: ${Duration(minutes: 1).inMilliseconds}');
-    debugPrint('minimumFetchInterval: ${Duration(hours: 1).inMilliseconds}');
-
-    await remoteConfig.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: Duration(seconds: 10),
-        minimumFetchInterval: Duration(seconds: 0),
-      ),
-    );
-    try {
-      await remoteConfig.fetchAndActivate();
-      await remoteConfig.activate();
-    } catch (e, stack) {
-      debugPrint('Remote Config fetchAndActivate/activate error: $e');
-      debugPrint('Stack trace: $stack');
-      rethrow;
-    }
-
-    // Log all remote config values after activation
-    remoteConfig.getAll().forEach((key, rcValue) {
-      debugPrint('Remote Config key: $key, value: ${rcValue.asString()}');
-    });
-
     _appEnabled = remoteConfig.getBool('app_enabled');
     debugPrint('Remote Config value for app_enabled: $_appEnabled');
     _message = remoteConfig.getString('kill_switch_message');
