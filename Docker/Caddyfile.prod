@@ -1,0 +1,42 @@
+# Redirect HTTP to HTTPS
+http://meinprod.bssb.de {
+  redir https://meinprod.bssb.de{uri}
+}
+
+# Serve Flutter Web App (HTTPS)
+https://meinprod.bssb.de {
+  root * /web
+  file_server
+  try_files {path} /index.html
+}
+
+# Serve PostgREST API (HTTPS) on port 8081 for any host
+https://meinprod.bssb.de:8081 {
+  @cors_preflight {
+    method OPTIONS
+  }
+
+  handle @cors_preflight {
+    respond "" 204
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
+  }
+
+  handle {
+    reverse_proxy postgrest:3000
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
+  }
+}
+
+https://meinprod.bssb.de:8080 {
+    reverse_proxy email-service:3001
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+}
