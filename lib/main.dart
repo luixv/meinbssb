@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,97 +32,101 @@ import 'services/core/postgrest_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'providers/kill_switch_provider.dart';
+import 'providers/compulsory_update_provider.dart';
 import 'widgets/kill_switch_gate.dart';
+import 'widgets/compulsory_update_gate.dart';
 
-void main() async {
-  // Global error handler for all uncaught errors
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint(
       'GLOBAL FLUTTER ERROR: \n \u001b[31m${details.exceptionAsString()}\u001b[0m',
     );
-    if (details.stack != null) {
-      debugPrint('STACK TRACE: \n${details.stack}');
-    }
   };
 
-  runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await AppInitializer.init();
 
-      try {
-        await Firebase.initializeApp(
-          options:
-              DefaultFirebaseOptions
-                  .currentPlatform, // Use this if you have firebase_options.dart
-        );
-        printFirebaseProjectId();
-      } catch (e) {
-        debugPrint('❌ Firebase Initialization Failed: $e');
-        // You cannot proceed if this fails
-        return;
-      }
+    // Fetch Remote Config only once
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.setDefaults(<String, dynamic>{
+      'minimum_required_version': '',
+      'update_message':
+          'Um fortzufahren, müssen Sie das neue Update installieren.',
+      'kill_switch_enabled': false,
+      'kill_switch_message': '',
+    });
+    await remoteConfig.setConfigSettings(
+      RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 30),
+        minimumFetchInterval: const Duration(seconds: 10),
+      ),
+    );
+    await remoteConfig.fetchAndActivate();
 
-      await AppInitializer.init();
-      final killSwitchProvider = KillSwitchProvider();
+    final compulsoryUpdateProvider = CompulsoryUpdateProvider(
+      remoteConfig: remoteConfig,
+    );
+    await compulsoryUpdateProvider.processRemoteConfig();
 
-      await AppInitializer.initializeKillSwitch(killSwitchProvider);
+    final fragment = Uri.base.fragment;
+    final path = Uri.base.path;
 
-      final fragment = Uri.base.fragment;
-      final path = Uri.base.path;
+    final bool isDirectSchulungenSearch =
+        fragment == '/schulungen_search' ||
+        fragment == 'schulungen_search' ||
+        path == '/schulungen_search' ||
+        path == 'schulungen_search';
 
-      final bool isDirectSchulungenSearch =
-          fragment == '/schulungen_search' ||
-          fragment == 'schulungen_search' ||
-          path == '/schulungen_search' ||
-          path == 'schulungen_search';
+    final providers = [
+      AppInitializer.configServiceProvider,
+      AppInitializer.emailSenderProvider,
+      AppInitializer.emailServiceProvider,
+      AppInitializer.authServiceProvider,
+      AppInitializer.apiServiceProvider,
+      AppInitializer.networkServiceProvider,
+      AppInitializer.cacheServiceProvider,
+      AppInitializer.trainingServiceProvider,
+      AppInitializer.userServiceProvider,
+      AppInitializer.tokenServiceProvider,
+      AppInitializer.fontSizeProvider,
+      AppInitializer.oktoberfestServiceProvider,
+      ChangeNotifierProvider(
+        create: (_) => KillSwitchProvider(remoteConfig: remoteConfig),
+      ),
+      ChangeNotifierProvider(create: (_) => compulsoryUpdateProvider),
+    ];
 
-      final providers = [
-        AppInitializer.configServiceProvider,
-        AppInitializer.emailSenderProvider,
-        AppInitializer.emailServiceProvider,
-        AppInitializer.authServiceProvider,
-        AppInitializer.apiServiceProvider,
-        AppInitializer.networkServiceProvider,
-        AppInitializer.cacheServiceProvider,
-        AppInitializer.trainingServiceProvider,
-        AppInitializer.userServiceProvider,
-        AppInitializer.tokenServiceProvider,
-        AppInitializer.fontSizeProvider,
-        AppInitializer.oktoberfestServiceProvider,
-
-        ChangeNotifierProvider<KillSwitchProvider>.value(
-          value: killSwitchProvider,
-        ),
-      ];
-
-      Widget appWidget;
-      if (isDirectSchulungenSearch) {
-        appWidget = MyAppWrapper(
-          initialScreen: SchulungenSearchScreen(
-            userData: null,
-            isLoggedIn: false,
-            onLogout: () {},
-            showMenu: false,
-            showConnectivityIcon: false,
-          ),
-        );
-      } else {
-        appWidget = const MyAppWrapper();
-      }
-
-      runApp(
-        MultiProvider(
-          providers: providers,
-          child: KillSwitchGate(child: appWidget),
+    Widget appWidget;
+    if (isDirectSchulungenSearch) {
+      appWidget = MyAppWrapper(
+        initialScreen: SchulungenSearchScreen(
+          userData: null,
+          isLoggedIn: false,
+          onLogout: () {},
+          showMenu: false,
+          showConnectivityIcon: false,
         ),
       );
-    },
-    (error, stack) {
-      debugPrint('GLOBAL ZONED ERROR: \n \u001b[31m$error\u001b[0m');
-      debugPrint('STACK TRACE: \n$stack');
-    },
-  );
+    } else {
+      appWidget = const MyAppWrapper();
+    }
+
+    runApp(
+      MultiProvider(
+        providers: providers,
+        child: KillSwitchGate(child: CompulsoryUpdateGate(child: appWidget)),
+      ),
+    );
+  } catch (e, stack) {
+    debugPrint('❌ Firebase Initialization Failed: $e');
+    debugPrint('STACK TRACE: \n$stack');
+    // You cannot proceed if this fails
+    return;
+  }
 }
 
 void printFirebaseProjectId() async {

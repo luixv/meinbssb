@@ -1,16 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/providers/kill_switch_provider.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+
+class FakeRemoteConfig implements FirebaseRemoteConfig {
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   group('KillSwitchProvider', () {
     test('default constructor sets appEnabled true and message null', () {
-      final provider = KillSwitchProvider();
+      final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
       expect(provider.appEnabled, true);
       expect(provider.message, isNull);
     });
 
     test('constructor sets custom values', () {
       final provider = KillSwitchProvider(
+        remoteConfig: FakeRemoteConfig(),
         appEnabled: false,
         killSwitchMessage: 'Test message',
       );
@@ -19,7 +26,7 @@ void main() {
     });
 
     test('notifies listeners when notifyListeners is called', () {
-      final provider = KillSwitchProvider();
+      final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
       bool notified = false;
       provider.addListener(() {
         notified = true;
@@ -31,7 +38,7 @@ void main() {
     test(
       'fetchRemoteConfig sets fallback values and notifies listeners on desktop/web',
       () async {
-        final provider = KillSwitchProvider();
+        final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
         bool notified = false;
         provider.addListener(() {
           notified = true;
@@ -45,12 +52,13 @@ void main() {
     );
 
     test('fetchRemoteConfig does not throw on unsupported platform', () async {
-      final provider = KillSwitchProvider();
+      final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
       expect(() async => await provider.fetchRemoteConfig(), returnsNormally);
     });
 
     test('error handling in fetchRemoteConfig does not break state', () async {
       final provider = KillSwitchProvider(
+        remoteConfig: FakeRemoteConfig(),
         appEnabled: false,
         killSwitchMessage: 'Initial',
       );
@@ -62,7 +70,7 @@ void main() {
     });
 
     test('multiple listeners are notified', () {
-      final provider = KillSwitchProvider();
+      final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
       int notifyCount = 0;
       provider.addListener(() {
         notifyCount++;
@@ -77,7 +85,10 @@ void main() {
     test(
       'fetchRemoteConfig does not change appEnabled if already true',
       () async {
-        final provider = KillSwitchProvider(appEnabled: true);
+        final provider = KillSwitchProvider(
+          remoteConfig: FakeRemoteConfig(),
+          appEnabled: true,
+        );
         await provider.fetchRemoteConfig();
         expect(provider.appEnabled, true);
       },
@@ -85,6 +96,7 @@ void main() {
 
     test('fetchRemoteConfig does not change message if already set', () async {
       final provider = KillSwitchProvider(
+        remoteConfig: FakeRemoteConfig(),
         appEnabled: true,
         killSwitchMessage: 'Already set',
       );
