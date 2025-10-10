@@ -23,30 +23,30 @@ class KillSwitchProvider extends ChangeNotifier {
   /// Uses Firebase Remote Config on mobile, fallback values on desktop.
   Future<void> fetchRemoteConfig() async {
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
-      await _handleNonMobilePlatform();
+      await handleNonMobilePlatform();
       return;
     }
     if (Platform.isWindows) {
-      await _handleWindowsPlatform();
+      await handleWindowsPlatform();
       return;
     }
-    await _handleMobilePlatform();
+    await handleMobilePlatform();
   }
 
-  Future<void> _handleNonMobilePlatform() async {
+  Future<void> handleNonMobilePlatform() async {
     _appEnabled = true; // safe default
     _killSwitchMessage = null;
     notifyListeners();
   }
 
-  Future<void> _handleWindowsPlatform() async {
+  Future<void> handleWindowsPlatform() async {
     // You can customize Windows-specific logic here
     _appEnabled = true; // or false, depending on your requirements
     _killSwitchMessage = 'Die App ist auf Windows nicht verfügbar.';
     notifyListeners();
   }
 
-  Future<void> _handleMobilePlatform() async {
+  Future<void> handleMobilePlatform() async {
     // Use the injected remoteConfig instance
     try {
       remoteConfig.getAll();
