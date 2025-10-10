@@ -1,6 +1,34 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/providers/kill_switch_provider.dart';
+
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+
+// Helper class for mobile platform test
+// Simulates RemoteConfig returning expected values
+
+class TestRemoteConfig implements FirebaseRemoteConfig {
+  @override
+  bool getBool(String key) => true;
+  @override
+  String getString(String key) {
+    if (key == 'kill_switch_message') {
+      return 'Die App ist vorübergehend deaktiviert.';
+    }
+    if (key == 'minimum_required_version') return '1.2.3';
+    return '';
+  }
+
+  @override
+  Future<void> setDefaults(Map<String, dynamic> defaults) async {}
+  @override
+  Future<void> setConfigSettings(RemoteConfigSettings settings) async {}
+  @override
+  Future<bool> fetchAndActivate() async => true;
+  @override
+  Map<String, RemoteConfigValue> getAll() => <String, RemoteConfigValue>{};
+  @override
+  noSuchMethod(Invocation invocation) => null;
+}
 
 class FakeRemoteConfig implements FirebaseRemoteConfig {
   @override
@@ -65,10 +93,34 @@ void main() {
       },
     );
 
-    test('minimumRequiredVersion is null by default', () {
+    test('handleWindowsPlatform sets correct values and notifies', () async {
       final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
-      expect(provider.minimumRequiredVersion, isNull);
+      bool notified = false;
+      provider.addListener(() {
+        notified = true;
+      });
+      await provider.handleWindowsPlatform();
+      expect(provider.appEnabled, true);
+      expect(provider.message, 'Die App ist auf Windows nicht verfügbar.');
+      expect(notified, true);
     });
+
+    test(
+      'handleMobilePlatform sets values from remoteConfig and notifies',
+      () async {
+        final fakeRemoteConfig = TestRemoteConfig();
+        final provider = KillSwitchProvider(remoteConfig: fakeRemoteConfig);
+        bool notified = false;
+        provider.addListener(() {
+          notified = true;
+        });
+        await provider.handleMobilePlatform();
+        expect(provider.appEnabled, true);
+        expect(provider.message, 'Die App ist vorübergehend deaktiviert.');
+        expect(provider.minimumRequiredVersion, '1.2.3');
+        expect(notified, true);
+      },
+    );
 
     test('fetchRemoteConfig does not throw on unsupported platform', () async {
       final provider = KillSwitchProvider(remoteConfig: FakeRemoteConfig());
