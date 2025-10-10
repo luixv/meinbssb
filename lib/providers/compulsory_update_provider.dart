@@ -60,8 +60,10 @@ class CompulsoryUpdateProvider extends ChangeNotifier {
 
     final cv = currentVersion.split(RegExp(r'[^0-9.]')).first;
     final mv = minimumRequiredVersion.split(RegExp(r'[^0-9.]')).first;
+
     final cvParts = cv.split('.').map(int.tryParse).toList();
     final mvParts = mv.split('.').map(int.tryParse).toList();
+
     for (int i = 0; i < mvParts.length; i++) {
       final c = (i < cvParts.length && cvParts[i] != null) ? cvParts[i]! : 0;
       final m = mvParts[i] ?? 0;
