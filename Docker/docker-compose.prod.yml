@@ -37,4 +37,4 @@ services:
       - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web
     depends_on:
-      - Postgrest
+      - postgrest
