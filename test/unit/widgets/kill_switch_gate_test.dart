@@ -3,12 +3,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/widgets/kill_switch_gate.dart';
 import 'package:meinbssb/providers/kill_switch_provider.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+
+class FakeRemoteConfig implements FirebaseRemoteConfig {
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   testWidgets('KillSwitchGate shows child when appEnabled is true', (
     WidgetTester tester,
   ) async {
-    final provider = KillSwitchProvider(appEnabled: true);
+    final provider = KillSwitchProvider(
+      remoteConfig: FakeRemoteConfig(),
+      appEnabled: true,
+    );
     await tester.pumpWidget(
       ChangeNotifierProvider<KillSwitchProvider>.value(
         value: provider,
@@ -25,6 +34,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final provider = KillSwitchProvider(
+      remoteConfig: FakeRemoteConfig(),
       appEnabled: false,
       killSwitchMessage: 'App is disabled for testing',
     );

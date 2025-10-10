@@ -3,35 +3,51 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class KillSwitchProvider extends ChangeNotifier {
-  KillSwitchProvider({bool appEnabled = true, String? killSwitchMessage})
-    : _appEnabled = appEnabled,
-      _killSwitchMessage = killSwitchMessage;
+  KillSwitchProvider({
+    required this.remoteConfig,
+    bool appEnabled = true,
+    String? killSwitchMessage,
+  }) : _appEnabled = appEnabled,
+       _killSwitchMessage = killSwitchMessage;
+  final FirebaseRemoteConfig remoteConfig;
 
   bool _appEnabled;
   String? _killSwitchMessage;
+  String? _minimumRequiredVersion;
 
   bool get appEnabled => _appEnabled;
   String? get message => _killSwitchMessage;
+  String? get minimumRequiredVersion => _minimumRequiredVersion;
 
   /// Fetch and activate remote config safely.
   /// Uses Firebase Remote Config on mobile, fallback values on desktop.
   Future<void> fetchRemoteConfig() async {
-    // ----------------------------
-    // Fallback for non-mobile platforms
-    // ----------------------------
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
-      _appEnabled = true; // safe default
-      _killSwitchMessage = null;
-      notifyListeners();
+      await _handleNonMobilePlatform();
       return;
     }
+    if (Platform.isWindows) {
+      await _handleWindowsPlatform();
+      return;
+    }
+    await _handleMobilePlatform();
+  }
 
-    // ----------------------------
-    // Mobile: initialize Remote Config
-    // ----------------------------
-    final remoteConfig = FirebaseRemoteConfig.instance;
+  Future<void> _handleNonMobilePlatform() async {
+    _appEnabled = true; // safe default
+    _killSwitchMessage = null;
+    notifyListeners();
+  }
 
-    // Force platform initialization (avoids null integer crash)
+  Future<void> _handleWindowsPlatform() async {
+    // You can customize Windows-specific logic here
+    _appEnabled = true; // or false, depending on your requirements
+    _killSwitchMessage = 'Die App ist auf Windows nicht verfügbar.';
+    notifyListeners();
+  }
+
+  Future<void> _handleMobilePlatform() async {
+    // Use the injected remoteConfig instance
     try {
       remoteConfig.getAll();
     } catch (e, st) {
@@ -39,7 +55,6 @@ class KillSwitchProvider extends ChangeNotifier {
       debugPrint('$st');
     }
 
-    // Set defaults
     try {
       await remoteConfig.setDefaults(<String, dynamic>{
         'app_enabled': true,
@@ -51,14 +66,11 @@ class KillSwitchProvider extends ChangeNotifier {
       debugPrint('$st');
     }
 
-    // Set safe RemoteConfigSettings
     try {
       await remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 30),
-          minimumFetchInterval: const Duration(
-            seconds: 10,
-          ), // short for testing
+          minimumFetchInterval: const Duration(seconds: 10),
         ),
       );
       debugPrint('RemoteConfigSettings applied.');
@@ -67,7 +79,6 @@ class KillSwitchProvider extends ChangeNotifier {
       debugPrint('$st');
     }
 
-    // Fetch and activate remote values
     try {
       final activated = await remoteConfig.fetchAndActivate();
       debugPrint(
@@ -76,6 +87,10 @@ class KillSwitchProvider extends ChangeNotifier {
 
       _appEnabled = remoteConfig.getBool('app_enabled');
       _killSwitchMessage = remoteConfig.getString('kill_switch_message');
+      _minimumRequiredVersion = remoteConfig.getString(
+        'minimum_required_version',
+      );
+      debugPrint('Fetched minimum_required_version: $_minimumRequiredVersion');
 
       debugPrint(
         '✅ Remote Config fetch success: appEnabled=$_appEnabled, message=$_killSwitchMessage',
@@ -84,7 +99,6 @@ class KillSwitchProvider extends ChangeNotifier {
     } catch (e, st) {
       debugPrint('❌ Exception during fetchAndActivate: $e');
       debugPrint('$st');
-
       // Keep existing values as fallback
       _appEnabled = _appEnabled;
       _killSwitchMessage = _killSwitchMessage;

@@ -9,6 +9,7 @@ class KillSwitchGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final killSwitch = Provider.of<KillSwitchProvider>(context);
+
     if (!killSwitch.appEnabled) {
       return MaterialApp(
         home: Scaffold(
@@ -30,6 +31,7 @@ class KillSwitchGate extends StatelessWidget {
         ),
       );
     }
+
     return child;
   }
 }
