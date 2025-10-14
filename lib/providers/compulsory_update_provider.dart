@@ -28,6 +28,7 @@ class CompulsoryUpdateProvider extends ChangeNotifier {
       return;
     }
     try {
+      remoteConfig.getAll();
       final minVer = remoteConfig.getString('minimum_required_version');
       final updMsg = remoteConfig.getString('update_message');
 
@@ -45,9 +46,7 @@ class CompulsoryUpdateProvider extends ChangeNotifier {
         _minimumRequiredVersion,
       );
       notifyListeners();
-    } catch (e, st) {
-      debugPrint('❌ CompulsoryUpdateProvider error: $e');
-      debugPrint('$st');
+    } catch (e) {
       _updateRequired = false;
       notifyListeners();
     }

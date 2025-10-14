@@ -48,19 +48,12 @@ class KillSwitchProvider extends ChangeNotifier {
 
   Future<void> handleMobilePlatform() async {
     // Use the injected remoteConfig instance
-    try {
-      remoteConfig.getAll();
-    } catch (e, st) {
-      debugPrint('⚠️ Warning: getAll() initialization failed: $e');
-      debugPrint('$st');
-    }
 
     try {
       await remoteConfig.setDefaults(<String, dynamic>{
         'app_enabled': true,
         'kill_switch_message': 'Die App ist vorübergehend deaktiviert.',
       });
-      debugPrint('Defaults applied.');
     } catch (e, st) {
       debugPrint('❌ Error setting defaults: $e');
       debugPrint('$st');
@@ -73,28 +66,18 @@ class KillSwitchProvider extends ChangeNotifier {
           minimumFetchInterval: const Duration(seconds: 10),
         ),
       );
-      debugPrint('RemoteConfigSettings applied.');
     } catch (e, st) {
       debugPrint('❌ Error setting config settings: $e');
       debugPrint('$st');
     }
 
     try {
-      final activated = await remoteConfig.fetchAndActivate();
-      debugPrint(
-        'Remote Config fetchAndActivate completed. Activated: $activated',
-      );
-
       _appEnabled = remoteConfig.getBool('app_enabled');
       _killSwitchMessage = remoteConfig.getString('kill_switch_message');
       _minimumRequiredVersion = remoteConfig.getString(
         'minimum_required_version',
       );
-      debugPrint('Fetched minimum_required_version: $_minimumRequiredVersion');
 
-      debugPrint(
-        '✅ Remote Config fetch success: appEnabled=$_appEnabled, message=$_killSwitchMessage',
-      );
       notifyListeners();
     } catch (e, st) {
       debugPrint('❌ Exception during fetchAndActivate: $e');

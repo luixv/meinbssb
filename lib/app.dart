@@ -54,16 +54,18 @@ class MyAppWrapper extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         Provider<HttpClient>(create: (_) => AppInitializer.httpClient),
       ],
-      child: initialScreen != null
-          ? Consumer<ThemeProvider>(
-              builder: (context, themeProvider, _) => MaterialApp(
-                home: initialScreen,
-                theme: themeProvider.getTheme(false),
-                darkTheme: themeProvider.getTheme(true),
-                themeMode: ThemeMode.system,
-              ),
-            )
-          : const MyApp(),
+      child:
+          initialScreen != null
+              ? Consumer<ThemeProvider>(
+                builder:
+                    (context, themeProvider, _) => MaterialApp(
+                      home: initialScreen,
+                      theme: themeProvider.getTheme(false),
+                      darkTheme: themeProvider.getTheme(true),
+                      themeMode: ThemeMode.system,
+                    ),
+              )
+              : const MyApp(),
     );
   }
 }
@@ -184,7 +186,7 @@ class _MyAppState extends State<MyApp> {
         _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     } catch (e) {
-      debugPrint('Error during logout: $e');
+      // debugPrint('Error during logout: $e');
       // Even if there's an error, still update state and navigate
       setState(() {
         _isLoggedIn = false;
@@ -205,13 +207,17 @@ class _MyAppState extends State<MyApp> {
     String initialRoute;
     if (kIsWeb) {
       // Robust logic for web: handle Schulungen-only and login systems
-      bool isSchulungenUrl = fragment.startsWith('schulungen_search') ||
+      bool isSchulungenUrl =
+          fragment.startsWith('schulungen_search') ||
           path.startsWith('/schulungen_search');
-      bool isSetPasswordUrl = fragment.startsWith('set-password') ||
+      bool isSetPasswordUrl =
+          fragment.startsWith('set-password') ||
           path.startsWith('/set-password');
-      bool isResetPasswordUrl = fragment.startsWith('reset-password') ||
+      bool isResetPasswordUrl =
+          fragment.startsWith('reset-password') ||
           path.startsWith('/reset-password');
-      bool isVerifyEmailUrl = fragment.startsWith('verify-email') ||
+      bool isVerifyEmailUrl =
+          fragment.startsWith('verify-email') ||
           path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
@@ -296,9 +302,9 @@ class _MyAppState extends State<MyApp> {
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(
-                textTheme: Theme.of(context).textTheme.apply(
-                      fontSizeFactor: fontSizeProvider.scaleFactor,
-                    ),
+                textTheme: Theme.of(
+                  context,
+                ).textTheme.apply(fontSizeFactor: fontSizeProvider.scaleFactor),
                 textSelectionTheme: const TextSelectionThemeData(
                   selectionColor: UIConstants.selectionColor,
                   cursorColor: UIConstants.cursorColor,
@@ -318,9 +324,10 @@ class _MyAppState extends State<MyApp> {
           onGenerateRoute: (settings) {
             if (_loading) {
               return MaterialPageRoute(
-                builder: (_) => const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                ),
+                builder:
+                    (_) => const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    ),
                 settings: settings,
               );
             }
@@ -329,11 +336,15 @@ class _MyAppState extends State<MyApp> {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
               return MaterialPageRoute(
-                builder: (context) => SetPasswordScreen(
-                  token: token,
-                  authService: Provider.of<ApiService>(context, listen: false)
-                      .authService,
-                ),
+                builder:
+                    (context) => SetPasswordScreen(
+                      token: token,
+                      authService:
+                          Provider.of<ApiService>(
+                            context,
+                            listen: false,
+                          ).authService,
+                    ),
                 settings: settings,
               );
             }
@@ -342,11 +353,15 @@ class _MyAppState extends State<MyApp> {
               final token = uri.queryParameters['token'] ?? '';
               final personId = uri.queryParameters['personId'] ?? '';
               return MaterialPageRoute(
-                builder: (context) => ResetPasswordScreen(
-                  token: token,
-                  personId: personId,
-                  apiService: Provider.of<ApiService>(context, listen: false),
-                ),
+                builder:
+                    (context) => ResetPasswordScreen(
+                      token: token,
+                      personId: personId,
+                      apiService: Provider.of<ApiService>(
+                        context,
+                        listen: false,
+                      ),
+                    ),
                 settings: settings,
               );
             }
@@ -357,10 +372,11 @@ class _MyAppState extends State<MyApp> {
               final personId = uri.queryParameters['personId'] ?? '';
               LoggerService.logInfo('Token: $token, PersonId: $personId');
               return MaterialPageRoute(
-                builder: (context) => EmailVerificationScreen(
-                  verificationToken: token,
-                  personId: personId,
-                ),
+                builder:
+                    (context) => EmailVerificationScreen(
+                      verificationToken: token,
+                      personId: personId,
+                    ),
                 settings: settings,
               );
             }
@@ -368,14 +384,15 @@ class _MyAppState extends State<MyApp> {
             if (settings.name != null &&
                 settings.name!.startsWith('/schulungen_search')) {
               return MaterialPageRoute(
-                builder: (_) => SchulungenSearchScreen(
-                  userData: _userData,
-                  isLoggedIn: _isLoggedIn,
-                  onLogout: _handleLogout,
-                  showMenu: false,
-                  showConnectivityIcon:
-                      false, // Hide connectivity icon for Schulungen-only system
-                ),
+                builder:
+                    (_) => SchulungenSearchScreen(
+                      userData: _userData,
+                      isLoggedIn: _isLoggedIn,
+                      onLogout: _handleLogout,
+                      showMenu: false,
+                      showConnectivityIcon:
+                          false, // Hide connectivity icon for Schulungen-only system
+                    ),
                 settings: settings,
               );
             }
@@ -390,11 +407,12 @@ class _MyAppState extends State<MyApp> {
             if (!_isLoggedIn || _userData == null) {
               if (settings.name == '/help') {
                 return MaterialPageRoute(
-                  builder: (_) => HelpScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => HelpScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               }
@@ -407,59 +425,65 @@ class _MyAppState extends State<MyApp> {
             switch (settings.name) {
               case '/home':
                 return MaterialPageRoute(
-                  builder: (_) => SafeStartScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => SafeStartScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               case '/help':
                 return MaterialPageRoute(
-                  builder: (_) => HelpScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => HelpScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               case '/impressum':
                 return MaterialPageRoute(
-                  builder: (_) => ImpressumScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => ImpressumScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               case '/settings':
                 return MaterialPageRoute(
-                  builder: (_) => SettingsScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => SettingsScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               case '/profile':
                 return MaterialPageRoute(
-                  builder: (_) => ProfileScreen(
-                    userData: _userData,
-                    isLoggedIn: _isLoggedIn,
-                    onLogout: _handleLogout,
-                  ),
+                  builder:
+                      (_) => ProfileScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
                   settings: settings,
                 );
               case '/splash':
               default:
                 return MaterialPageRoute(
-                  builder: (_) => SplashScreen(
-                    onFinish: () {
-                      _navigatorKey.currentState!.pushReplacementNamed(
-                        _isLoggedIn ? '/home' : '/login',
-                      );
-                    },
-                  ),
+                  builder:
+                      (_) => SplashScreen(
+                        onFinish: () {
+                          _navigatorKey.currentState!.pushReplacementNamed(
+                            _isLoggedIn ? '/home' : '/login',
+                          );
+                        },
+                      ),
                   settings: settings,
                 );
             }
@@ -513,10 +537,6 @@ class SafeStartScreen extends StatelessWidget {
       });
       return const SizedBox.shrink();
     }
-    return StartScreen(
-      userData,
-      isLoggedIn: isLoggedIn,
-      onLogout: onLogout,
-    );
+    return StartScreen(userData, isLoggedIn: isLoggedIn, onLogout: onLogout);
   }
 }

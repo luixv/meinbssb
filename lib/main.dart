@@ -81,6 +81,10 @@ Future<void> main() async {
         remoteConfig: remoteConfig,
       );
       await compulsoryUpdateProvider.processRemoteConfig();
+
+      // Also call KillSwitchProvider.fetchRemoteConfig() to ensure debug output
+      final killSwitchProvider = KillSwitchProvider(remoteConfig: remoteConfig);
+      await killSwitchProvider.fetchRemoteConfig();
     }
 
     final fragment = Uri.base.fragment;
@@ -91,6 +95,16 @@ Future<void> main() async {
         fragment == 'schulungen_search' ||
         path == '/schulungen_search' ||
         path == 'schulungen_search';
+
+    // Declare killSwitchProvider in outer scope so it is available for providers
+    ChangeNotifierProvider<KillSwitchProvider>? killSwitchProviderInstance;
+    if (!isWindows && remoteConfig != null) {
+      final killSwitchProvider = KillSwitchProvider(remoteConfig: remoteConfig);
+      await killSwitchProvider.fetchRemoteConfig();
+      killSwitchProviderInstance = ChangeNotifierProvider(
+        create: (_) => killSwitchProvider,
+      );
+    }
 
     final providers = [
       AppInitializer.configServiceProvider,
@@ -107,10 +121,9 @@ Future<void> main() async {
       AppInitializer.oktoberfestServiceProvider,
       if (!isWindows &&
           remoteConfig != null &&
-          compulsoryUpdateProvider != null) ...[
-        ChangeNotifierProvider(
-          create: (_) => KillSwitchProvider(remoteConfig: remoteConfig!),
-        ),
+          compulsoryUpdateProvider != null &&
+          killSwitchProviderInstance != null) ...[
+        killSwitchProviderInstance,
         ChangeNotifierProvider(create: (_) => compulsoryUpdateProvider!),
       ],
     ];
@@ -148,12 +161,6 @@ Future<void> main() async {
   }
 }
 
-void printFirebaseProjectId() async {
-  final app = Firebase.app(); // Access the default app
-  final options = app.options;
-  debugPrint('Connected to Firebase project: ${options.projectId}');
-}
-
 class AppInitializer {
   static late ConfigService configService;
   static late ApiService apiService;
@@ -177,9 +184,6 @@ class AppInitializer {
   static bool _disposed = false;
 
   static Future<void> initializeKillSwitch(KillSwitchProvider provider) async {
-    debugPrint('Initializing KillSwitchProvider and fetching Remote Config...');
-
-    // 🔥 Do NOT re-initialize Firebase here — it's already done in main()
     try {
       await provider.fetchRemoteConfig();
     } catch (e, st) {
