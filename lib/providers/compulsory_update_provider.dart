@@ -41,6 +41,7 @@ class CompulsoryUpdateProvider extends ChangeNotifier {
         final info = await PackageInfo.fromPlatform();
         currentVersion = info.version;
       }
+
       _updateRequired = isUpdateRequired(
         currentVersion,
         _minimumRequiredVersion,
