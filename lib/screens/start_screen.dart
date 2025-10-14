@@ -156,9 +156,7 @@ class StartScreenState extends State<StartScreen> {
                 ),
                 TextSpan(
                   text: bezeichnung,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const TextSpan(text: '\n\nabmelden möchten?'),
               ],
@@ -227,8 +225,9 @@ class StartScreenState extends State<StartScreen> {
 
     try {
       setState(() => isLoading = true);
-      final success =
-          await apiService.unregisterFromSchulung(schulungenTeilnehmerID);
+      final success = await apiService.unregisterFromSchulung(
+        schulungenTeilnehmerID,
+      );
 
       if (mounted) {
         if (success) {
@@ -298,59 +297,60 @@ class StartScreenState extends State<StartScreen> {
                   const LogoWidget(),
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
-                    child: _profilePictureBytes != null &&
-                            _profilePictureBytes!.isNotEmpty
-                        ? GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PersonalPictUploadScreen(
-                                    userData: userData,
-                                    isLoggedIn: widget.isLoggedIn,
-                                    onLogout: widget.onLogout,
+                    child:
+                        _profilePictureBytes != null &&
+                                _profilePictureBytes!.isNotEmpty
+                            ? GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => PersonalPictUploadScreen(
+                                          userData: userData,
+                                          isLoggedIn: widget.isLoggedIn,
+                                          onLogout: widget.onLogout,
+                                        ),
                                   ),
+                                );
+                              },
+                              child: ClipOval(
+                                child: Image.memory(
+                                  _profilePictureBytes!,
+                                  width: UIConstants.profilePictureSize,
+                                  height: UIConstants.profilePictureSize,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    LoggerService.logError(
+                                      'Error displaying profile picture: $error',
+                                    );
+                                    return const Icon(
+                                      Icons.person,
+                                      size: UIConstants.profilePictureSize,
+                                      color: UIConstants.defaultAppColor,
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                            child: ClipOval(
-                              child: Image.memory(
-                                _profilePictureBytes!,
-                                width: UIConstants.profilePictureSize,
-                                height: UIConstants.profilePictureSize,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  LoggerService.logError(
-                                    'Error displaying profile picture: $error',
-                                  );
-                                  return const Icon(
-                                    Icons.person,
-                                    size: UIConstants.profilePictureSize,
-                                    color: UIConstants.defaultAppColor,
-                                  );
-                                },
+                              ),
+                            )
+                            : GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => PersonalPictUploadScreen(
+                                          userData: userData,
+                                          isLoggedIn: widget.isLoggedIn,
+                                          onLogout: widget.onLogout,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: const Icon(
+                                Icons.person,
+                                size: UIConstants.profilePictureSize,
+                                color: UIConstants.defaultAppColor,
                               ),
                             ),
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PersonalPictUploadScreen(
-                                    userData: userData,
-                                    isLoggedIn: widget.isLoggedIn,
-                                    onLogout: widget.onLogout,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: const Icon(
-                              Icons.person,
-                              size: UIConstants.profilePictureSize,
-                              color: UIConstants.defaultAppColor,
-                            ),
-                          ),
                   ),
                 ],
               ),
@@ -362,41 +362,32 @@ class StartScreenState extends State<StartScreen> {
               const SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 userData?.passnummer ?? '',
-                style: UIStyles.bodyStyle
-                    .copyWith(fontSize: UIConstants.subtitleFontSize),
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIConstants.subtitleFontSize,
+                ),
               ),
               ScaledText(
                 'Schützenpassnummer',
-                style: UIStyles.bodyStyle
-                    .copyWith(color: UIConstants.greySubtitleTextColor),
+                style: UIStyles.bodyStyle.copyWith(
+                  color: UIConstants.greySubtitleTextColor,
+                ),
               ),
               const SizedBox(height: UIConstants.spacingS),
               ScaledText(
                 userData?.vereinName ?? '',
-                style: UIStyles.bodyStyle
-                    .copyWith(fontSize: UIConstants.subtitleFontSize),
+                style: UIStyles.bodyStyle.copyWith(
+                  fontSize: UIConstants.subtitleFontSize,
+                ),
               ),
               ScaledText(
                 'Erstverein',
-                style: UIStyles.bodyStyle
-                    .copyWith(color: UIConstants.greySubtitleTextColor),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              Container(
-                height: UIConstants.newsContainerHeight,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: UIConstants.news,
-                  borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-                ),
-                child: const Center(
-                  child: ScaledText(
-                    'Hier könnten News stehen',
-                    style: UIStyles.newsStyle,
-                  ),
+                style: UIStyles.bodyStyle.copyWith(
+                  color: UIConstants.greySubtitleTextColor,
                 ),
               ),
               const SizedBox(height: UIConstants.spacingM),
+              // Remove news container and message, replace with a smaller blank space
+              const SizedBox(height: UIConstants.spacingXXL),
               const ScaledText(
                 'Angemeldete Schulungen:',
                 style: UIStyles.titleStyle,
@@ -413,12 +404,14 @@ class StartScreenState extends State<StartScreen> {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding:
-                      const EdgeInsets.only(bottom: UIConstants.helpSpacing),
-                  itemCount: schulungen.length,
-                  separatorBuilder: (_, _) => const SizedBox(
-                    height: UIConstants.defaultSeparatorHeight,
+                  padding: const EdgeInsets.only(
+                    bottom: UIConstants.helpSpacing,
                   ),
+                  itemCount: schulungen.length,
+                  separatorBuilder:
+                      (_, _) => const SizedBox(
+                        height: UIConstants.defaultSeparatorHeight,
+                      ),
                   itemBuilder: (context, index) {
                     final schulung = schulungen[index];
                     final date = schulung.datum;
@@ -427,8 +420,9 @@ class StartScreenState extends State<StartScreen> {
                     return ListTile(
                       tileColor: UIConstants.tileColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(UIConstants.cornerRadius),
+                        borderRadius: BorderRadius.circular(
+                          UIConstants.cornerRadius,
+                        ),
                       ),
                       leading: const Column(
                         mainAxisAlignment: UIConstants.listItemLeadingAlignment,
@@ -469,37 +463,42 @@ class StartScreenState extends State<StartScreen> {
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (context) => const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
+                                builder:
+                                    (context) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                               );
                               final apiService = Provider.of<ApiService>(
                                 context,
                                 listen: false,
                               );
-                              final termin =
-                                  await apiService.fetchSchulungstermin(
-                                schulung.schulungsterminId.toString(),
-                              );
+                              final termin = await apiService
+                                  .fetchSchulungstermin(
+                                    schulung.schulungsterminId.toString(),
+                                  );
                               if (!context.mounted) return;
-                              Navigator.of(context, rootNavigator: true)
-                                  .pop(); // Remove spinner
+                              Navigator.of(
+                                context,
+                                rootNavigator: true,
+                              ).pop(); // Remove spinner
                               if (termin == null) {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Fehler'),
-                                    content: const Text(
-                                      'Details konnten nicht geladen werden.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('OK'),
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text('Fehler'),
+                                        content: const Text(
+                                          'Details konnten nicht geladen werden.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
                                 );
                                 return;
                               }
@@ -514,7 +513,7 @@ class StartScreenState extends State<StartScreen> {
                                       constraints: BoxConstraints(
                                         maxHeight:
                                             MediaQuery.of(context).size.height *
-                                                0.8,
+                                            0.8,
                                         minWidth: 300,
                                       ),
                                       child: Stack(
@@ -527,18 +526,19 @@ class StartScreenState extends State<StartScreen> {
                                               children: [
                                                 Container(
                                                   width: double.infinity,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 28,
-                                                    horizontal: 0,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 28,
+                                                        horizontal: 0,
+                                                      ),
                                                   decoration: BoxDecoration(
                                                     color:
                                                         UIConstants.whiteColor,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                      UIConstants.cornerRadius,
-                                                    ),
+                                                          UIConstants
+                                                              .cornerRadius,
+                                                        ),
                                                   ),
                                                   child: Column(
                                                     mainAxisSize:
@@ -546,52 +546,56 @@ class StartScreenState extends State<StartScreen> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal:
-                                                              UIConstants
-                                                                  .spacingL,
-                                                        ),
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  UIConstants
+                                                                      .spacingL,
+                                                            ),
                                                         child: Text(
-                                                          termin.bezeichnung
+                                                          termin
+                                                                  .bezeichnung
                                                                   .isNotEmpty
                                                               ? termin
                                                                   .bezeichnung
                                                               : schulung
                                                                   .bezeichnung,
-                                                          style: UIStyles
-                                                              .dialogTitleStyle,
+                                                          style:
+                                                              UIStyles
+                                                                  .dialogTitleStyle,
                                                           textAlign:
                                                               TextAlign.center,
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingM,
+                                                        height:
+                                                            UIConstants
+                                                                .spacingM,
                                                       ),
                                                       Text(
                                                         'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
                                                         style: UIStyles
                                                             .bodyStyle
                                                             .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
                                                       const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingM,
+                                                        height:
+                                                            UIConstants
+                                                                .spacingM,
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 32,
-                                                          vertical: UIConstants
-                                                              .spacingS,
-                                                        ),
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 32,
+                                                              vertical:
+                                                                  UIConstants
+                                                                      .spacingS,
+                                                            ),
                                                         child: Table(
                                                           columnWidths: const {
                                                             0: IntrinsicColumnWidth(),
@@ -623,8 +627,9 @@ class StartScreenState extends State<StartScreen> {
                                                                         UIConstants
                                                                             .horizontalSpacingS,
                                                                         Text(
-                                                                          DateFormat('dd.MM.yyyy')
-                                                                              .format(
+                                                                          DateFormat(
+                                                                            'dd.MM.yyyy',
+                                                                          ).format(
                                                                             termin.datum,
                                                                           ),
                                                                           style:
@@ -633,8 +638,9 @@ class StartScreenState extends State<StartScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                      height: UIConstants
-                                                                          .spacingXS,
+                                                                      height:
+                                                                          UIConstants
+                                                                              .spacingXS,
                                                                     ),
                                                                     Row(
                                                                       mainAxisSize:
@@ -695,8 +701,9 @@ class StartScreenState extends State<StartScreen> {
                                                                       ],
                                                                     ),
                                                                     const SizedBox(
-                                                                      height: UIConstants
-                                                                          .spacingXS,
+                                                                      height:
+                                                                          UIConstants
+                                                                              .spacingXS,
                                                                     ),
                                                                     Row(
                                                                       mainAxisSize:
@@ -726,17 +733,17 @@ class StartScreenState extends State<StartScreen> {
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                        height: UIConstants
-                                                            .spacingS,
+                                                        height:
+                                                            UIConstants
+                                                                .spacingS,
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal:
-                                                              UIConstants
-                                                                  .spacingL,
-                                                        ),
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  UIConstants
+                                                                      .spacingL,
+                                                            ),
                                                         child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -747,14 +754,15 @@ class StartScreenState extends State<StartScreen> {
                                                               style: UIStyles
                                                                   .bodyStyle
                                                                   .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
                                                             ),
                                                             const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXS,
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingXS,
                                                             ),
                                                             Row(
                                                               mainAxisSize:
@@ -763,16 +771,18 @@ class StartScreenState extends State<StartScreen> {
                                                               children: [
                                                                 const Icon(
                                                                   Icons.email,
-                                                                  size: UIConstants
-                                                                      .defaultIconSize,
+                                                                  size:
+                                                                      UIConstants
+                                                                          .defaultIconSize,
                                                                 ),
                                                                 UIConstants
                                                                     .horizontalSpacingS,
                                                                 Text(
                                                                   termin
                                                                       .lehrgangsleiterMail,
-                                                                  style: UIStyles
-                                                                      .bodyStyle,
+                                                                  style:
+                                                                      UIStyles
+                                                                          .bodyStyle,
                                                                   overflow:
                                                                       TextOverflow
                                                                           .ellipsis,
@@ -781,8 +791,9 @@ class StartScreenState extends State<StartScreen> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                              height: UIConstants
-                                                                  .spacingXXS,
+                                                              height:
+                                                                  UIConstants
+                                                                      .spacingXXS,
                                                             ),
                                                             Row(
                                                               mainAxisSize:
@@ -791,16 +802,18 @@ class StartScreenState extends State<StartScreen> {
                                                               children: [
                                                                 const Icon(
                                                                   Icons.phone,
-                                                                  size: UIConstants
-                                                                      .defaultIconSize,
+                                                                  size:
+                                                                      UIConstants
+                                                                          .defaultIconSize,
                                                                 ),
                                                                 UIConstants
                                                                     .horizontalSpacingS,
                                                                 Text(
                                                                   termin
                                                                       .lehrgangsleiterTel,
-                                                                  style: UIStyles
-                                                                      .bodyStyle,
+                                                                  style:
+                                                                      UIStyles
+                                                                          .bodyStyle,
                                                                 ),
                                                               ],
                                                             ),
@@ -811,35 +824,39 @@ class StartScreenState extends State<StartScreen> {
                                                   ),
                                                 ),
                                                 const Divider(
-                                                  height: UIConstants
-                                                      .defaultStrokeWidth,
+                                                  height:
+                                                      UIConstants
+                                                          .defaultStrokeWidth,
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets.all(
                                                     UIConstants.spacingM,
                                                   ),
-                                                  child: termin
-                                                          .lehrgangsinhaltHtml
-                                                          .isNotEmpty
-                                                      ? Html(
-                                                          data: termin
-                                                              .lehrgangsinhaltHtml,
-                                                        )
-                                                      : termin.lehrgangsinhalt
+                                                  child:
+                                                      termin
+                                                              .lehrgangsinhaltHtml
+                                                              .isNotEmpty
+                                                          ? Html(
+                                                            data:
+                                                                termin
+                                                                    .lehrgangsinhaltHtml,
+                                                          )
+                                                          : termin
+                                                              .lehrgangsinhalt
                                                               .isNotEmpty
                                                           ? Text(
-                                                              termin
-                                                                  .lehrgangsinhalt,
-                                                            )
-                                                          : termin.bemerkung
-                                                                  .isNotEmpty
-                                                              ? Text(
-                                                                  termin
-                                                                      .bemerkung,
-                                                                )
-                                                              : const Text(
-                                                                  'Keine Beschreibung verfügbar.',
-                                                                ),
+                                                            termin
+                                                                .lehrgangsinhalt,
+                                                          )
+                                                          : termin
+                                                              .bemerkung
+                                                              .isNotEmpty
+                                                          ? Text(
+                                                            termin.bemerkung,
+                                                          )
+                                                          : const Text(
+                                                            'Keine Beschreibung verfügbar.',
+                                                          ),
                                                 ),
                                               ],
                                             ),
@@ -857,8 +874,9 @@ class StartScreenState extends State<StartScreen> {
                                                       'descDialogDeleteFab$index',
                                                   mini: true,
                                                   tooltip: 'Löschen',
-                                                  backgroundColor: UIConstants
-                                                      .defaultAppColor,
+                                                  backgroundColor:
+                                                      UIConstants
+                                                          .defaultAppColor,
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                     _handleDeleteSchulung(
@@ -883,11 +901,14 @@ class StartScreenState extends State<StartScreen> {
                                                       'descDialogCloseFab$index',
                                                   mini: true,
                                                   tooltip: 'Schließen',
-                                                  backgroundColor: UIConstants
-                                                      .defaultAppColor,
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
+                                                  backgroundColor:
+                                                      UIConstants
+                                                          .defaultAppColor,
+                                                  onPressed:
+                                                      () =>
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop(),
                                                   child: const Icon(
                                                     Icons.close,
                                                     color:
