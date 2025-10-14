@@ -65,7 +65,7 @@ Future<void> main() async {
       await remoteConfig.setDefaults(<String, dynamic>{
         'minimum_required_version': '',
         'update_message':
-            'Hallo, es ist eine neue Version von MeinBSSB verfügbar. \nBitte installieren Sie die neue Version. \nIhr MeinBSSB Support.',
+            'Hallo, es ist eine neue Version von MeinBSSB verfügbar. Bitte installieren Sie die neue Version. Ihr MeinBSSB Support.',
         'kill_switch_enabled': false,
         'kill_switch_message': '',
       });
