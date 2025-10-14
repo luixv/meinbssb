@@ -36,7 +36,14 @@ import 'providers/compulsory_update_provider.dart';
 import 'widgets/kill_switch_gate.dart';
 import 'widgets/compulsory_update_gate.dart';
 
+import 'dart:io';
+
 Future<void> main() async {
+  bool isWindows = false;
+  try {
+    isWindows = Platform.isWindows;
+  } catch (_) {}
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -48,29 +55,33 @@ Future<void> main() async {
   };
 
   try {
-    await AppInitializer.init();
+    await AppInitializer.init(isWindows: isWindows);
 
-    // Fetch Remote Config only once
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setDefaults(<String, dynamic>{
-      'minimum_required_version': '',
-      'update_message':
-          'Hallo, es ist eine neue Version von MeinBSSB verfügbar. \nBitte installieren Sie die neue Version. \nIhr MeinBSSB Support.',
-      'kill_switch_enabled': false,
-      'kill_switch_message': '',
-    });
-    await remoteConfig.setConfigSettings(
-      RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 30),
-        minimumFetchInterval: const Duration(seconds: 10),
-      ),
-    );
-    await remoteConfig.fetchAndActivate();
+    FirebaseRemoteConfig? remoteConfig;
+    CompulsoryUpdateProvider? compulsoryUpdateProvider;
+    if (!isWindows) {
+      // Fetch Remote Config only once
+      remoteConfig = FirebaseRemoteConfig.instance;
+      await remoteConfig.setDefaults(<String, dynamic>{
+        'minimum_required_version': '',
+        'update_message':
+            'Hallo, es ist eine neue Version von MeinBSSB verfügbar. \nBitte installieren Sie die neue Version. \nIhr MeinBSSB Support.',
+        'kill_switch_enabled': false,
+        'kill_switch_message': '',
+      });
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 30),
+          minimumFetchInterval: const Duration(seconds: 10),
+        ),
+      );
+      await remoteConfig.fetchAndActivate();
 
-    final compulsoryUpdateProvider = CompulsoryUpdateProvider(
-      remoteConfig: remoteConfig,
-    );
-    await compulsoryUpdateProvider.processRemoteConfig();
+      compulsoryUpdateProvider = CompulsoryUpdateProvider(
+        remoteConfig: remoteConfig,
+      );
+      await compulsoryUpdateProvider.processRemoteConfig();
+    }
 
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
@@ -94,10 +105,14 @@ Future<void> main() async {
       AppInitializer.tokenServiceProvider,
       AppInitializer.fontSizeProvider,
       AppInitializer.oktoberfestServiceProvider,
-      ChangeNotifierProvider(
-        create: (_) => KillSwitchProvider(remoteConfig: remoteConfig),
-      ),
-      ChangeNotifierProvider(create: (_) => compulsoryUpdateProvider),
+      if (!isWindows &&
+          remoteConfig != null &&
+          compulsoryUpdateProvider != null) ...[
+        ChangeNotifierProvider(
+          create: (_) => KillSwitchProvider(remoteConfig: remoteConfig!),
+        ),
+        ChangeNotifierProvider(create: (_) => compulsoryUpdateProvider!),
+      ],
     ];
 
     Widget appWidget;
@@ -115,12 +130,16 @@ Future<void> main() async {
       appWidget = const MyAppWrapper();
     }
 
-    runApp(
-      MultiProvider(
-        providers: providers,
-        child: KillSwitchGate(child: CompulsoryUpdateGate(child: appWidget)),
-      ),
-    );
+    Widget wrappedApp;
+    if (!isWindows) {
+      wrappedApp = KillSwitchGate(
+        child: CompulsoryUpdateGate(child: appWidget),
+      );
+    } else {
+      wrappedApp = appWidget;
+    }
+
+    runApp(MultiProvider(providers: providers, child: wrappedApp));
   } catch (e, stack) {
     debugPrint('❌ Firebase Initialization Failed: $e');
     debugPrint('STACK TRACE: \n$stack');
@@ -169,7 +188,7 @@ class AppInitializer {
     }
   }
 
-  static Future<void> init() async {
+  static Future<void> init({bool isWindows = false}) async {
     LoggerService.init();
     configService = await ConfigService.load('assets/config.json');
 
