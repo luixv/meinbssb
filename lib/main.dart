@@ -36,7 +36,14 @@ import 'providers/compulsory_update_provider.dart';
 import 'widgets/kill_switch_gate.dart';
 import 'widgets/compulsory_update_gate.dart';
 
+import 'dart:io';
+
 Future<void> main() async {
+  bool isWindows = false;
+  try {
+    isWindows = Platform.isWindows;
+  } catch (_) {}
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
