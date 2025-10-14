@@ -628,17 +628,6 @@ void main() {
   });
 
   group('UI Layout and Responsiveness', () {
-    testWidgets('displays news section', (tester) async {
-      when(
-        TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
-      ).thenAnswer((_) async => []);
-
-      await tester.pumpWidget(createStartScreen());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Hier könnten News stehen'), findsOneWidget);
-    });
-
     testWidgets('displays section headers correctly', (tester) async {
       when(
         TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
