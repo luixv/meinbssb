@@ -4,19 +4,19 @@
 
   "apiProtocol": "https",
   
-  "emailProtocol": "",
-  "emailServer": "relay-cluster-eu01.hornetsecurity.com",
-  "emailPort": "25",
-  "emailPath": "",
+  "emailProtocol": "https",
+  "emailServer": "meintest.bssb.de",
+  "emailPort": "8080",
+  "emailPath": "send-email",
   
-  "postgrestProtocol": "http",
-  "postgrestServer": "localhost",
+  "postgrestProtocol": "https",
+  "postgrestServer": "meintest.bssb.de",
   "postgrestPort": "8081",
   "postgrestPath": "",
   
-  "webProtocol": "http",
-  "webServer": "localhost",
-  "webPort": "8080",
+  "webProtocol": "https",
+  "webServer": "meintest.bssb.de",
+  "webPort": "443",
   "webPath": "",
   
   "oktoberFestBaseServer": "webintern.bssb.bayern",
@@ -35,7 +35,7 @@
   
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
-  "testEmails": false,
+  "testEmails": true,
   "testRecipient": "bssb@reile.net",
   "smtpSettings": {
     "emailProtocol": "",

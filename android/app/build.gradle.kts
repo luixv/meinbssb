@@ -1,4 +1,18 @@
 import org.gradle.api.tasks.compile.JavaCompile
+import java.io.File
+import java.util.Properties
+
+// === 1. LOAD THE PROPERTIES FILE ===
+// This block reads the key.properties file located in the 'android' directory.
+// We use 'project.rootDir' (which is the 'android' directory) for the base path.
+val localPropertiesFile = File(project.rootDir, "key.properties")
+val localProperties = Properties()
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { input ->
+        localProperties.load(input)
+    }
+}
 
 plugins {
     id("com.android.application")
@@ -30,6 +44,17 @@ android {
         options.compilerArgs.addAll(listOf("-Xlint:-options"))
     }
 
+    // === 2. DEFINE THE SIGNING CONFIGURATION ===
+    signingConfigs {
+        create("release") {
+            // Retrieve values from the localProperties variable loaded above
+            storeFile = file(localProperties.get("storeFile") as String)
+            storePassword = localProperties.get("storePassword") as String
+            keyAlias = localProperties.get("keyAlias") as String
+            keyPassword = localProperties.get("keyPassword") as String
+        }
+    }
+    
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "de.bssb.meinbssb"
@@ -43,11 +68,18 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build. Not now :-)
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // === 3. APPLY THE RELEASE CONFIG (MODIFIED LINE) ===
+            // This tells the release build process to use our defined 'release' signing credentials.
+            signingConfig = signingConfigs.getByName("release")
+            
+            // Standard settings for release builds (recommended):
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
+    
+    // Note: The redundant 'signingConfigs' and 'buildTypes' blocks you had at the end were removed.
+
 }
 
 flutter {
