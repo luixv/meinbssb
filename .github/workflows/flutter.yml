@@ -43,7 +43,7 @@ jobs:
           fail_ci_if_error: true
 
   build-android:
-    name: Build Android
+    name: Build Android (APK / AAB)
     needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -139,15 +139,34 @@ jobs:
           # Disable file watchers and hot reload for CI/CD
           export FLUTTER_WEB=false
           mkdir -p release_artifacts
-          # Rename APK to include version
-          
-          cp build/app/outputs/flutter-apk/app-release.apk release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
-          cd release_artifacts
-          zip release-${{ steps.version.outputs.version }}-apk.zip meinbssb-${{ steps.version.outputs.version }}.apk
 
+          # ---------------------------
+          # APK
+          # ---------------------------
+          APK_PATH=build/app/outputs/flutter-apk/app-release.apk
+          if [ -f "$APK_PATH" ]; then
+            cp "$APK_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+            cd release_artifacts
+            zip release-${{ steps.version.outputs.version }}-apk.zip meinbssb-${{ steps.version.outputs.version }}.apk
+            cd ..
+          else
+            echo "::warning::APK not found at $APK_PATH"
+          fi
+
+          # ---------------------------
           # AAB
-          cp build/app/outputs/bundle/release/app-release.aab release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
-          zip release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+          # ---------------------------
+          AAB_PATH=build/app/outputs/bundle/release/app-release.aab
+          if [ -f "$AAB_PATH" ]; then
+            cp "$AAB_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+            cd release_artifacts
+            zip release-${{ steps.version.outputs.version }}-aab.zip meinbssb-${{ steps.version.outputs.version }}.aab
+            cd ..
+          else
+            echo "::warning::AAB not found at $AAB_PATH"
+          fi
+
+
 
 
       - name: Upload APK
