@@ -94,7 +94,7 @@ jobs:
           # Disable file watchers and hot reload for CI/CD
           export FLUTTER_WEB=false
           # The path to the file created in the 'Decode' step above
-          export KEY_STORE_FILE=android/app/upload-keystore.jks
+          export KEY_STORE_FILE=upload-keystore.jks
           export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           export KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}
