@@ -4,7 +4,6 @@ import java.util.Properties
 
 // === 1. LOAD THE PROPERTIES FILE ===
 // This block reads the key.properties file located in the 'android' directory.
-// We use 'project.rootDir' (which is the 'android' directory) for the base path.
 val localPropertiesFile = File(project.rootDir, "key.properties")
 val localProperties = Properties()
 
@@ -12,6 +11,23 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { input ->
         localProperties.load(input)
     }
+}
+
+// === HELPER FUNCTION TO GET PROPERTY OR ENV VARIABLE ===
+// This function prioritizes localProperties (for dev) then environment variables (for CI/CD).
+fun getSecret(key: String, envVar: String): String {
+    // 1. Check local key.properties
+    val value = localProperties.getProperty(key)
+    
+    // 2. If null, check environment variables (used by GitHub Actions)
+    if (value.isNullOrEmpty()) {
+        val envValue = System.getenv(envVar)
+        if (envValue.isNullOrEmpty()) {
+            throw GradleException("Missing required signing property: '$key'. Please ensure it's in key.properties (local) or set as the environment variable '$envVar' (CI/CD).")
+        }
+        return envValue
+    }
+    return value
 }
 
 plugins {
@@ -27,7 +43,6 @@ plugins {
 android {
     namespace = "de.bssb.meinbssb"
     compileSdk = flutter.compileSdkVersion
-    // ndkVersion = flutter.ndkVersion
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -44,22 +59,20 @@ android {
         options.compilerArgs.addAll(listOf("-Xlint:-options"))
     }
 
-    // === 2. DEFINE THE SIGNING CONFIGURATION ===
+    // === 2. DEFINE THE SIGNING CONFIGURATION (FIXED) ===
     signingConfigs {
         create("release") {
-            // Retrieve values from the localProperties variable loaded above
-            storeFile = file(localProperties.get("storeFile") as String)
-            storePassword = localProperties.get("storePassword") as String
-            keyAlias = localProperties.get("keyAlias") as String
-            keyPassword = localProperties.get("keyPassword") as String
+            // NOTE: The file path must be accessible in CI/CD. Often, the keystore file needs 
+            // to be uploaded and saved as a file inside the workflow before this step runs.
+            storeFile = file(getSecret("storeFile", "KEY_STORE_FILE"))
+            storePassword = getSecret("storePassword", "KEY_STORE_PASSWORD")
+            keyAlias = getSecret("keyAlias", "KEY_ALIAS")
+            keyPassword = getSecret("keyPassword", "KEY_KEY_PASSWORD")
         }
     }
     
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "de.bssb.meinbssb"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -68,8 +81,7 @@ android {
 
     buildTypes {
         release {
-            // === 3. APPLY THE RELEASE CONFIG (MODIFIED LINE) ===
-            // This tells the release build process to use our defined 'release' signing credentials.
+            // === 3. APPLY THE RELEASE CONFIG ===
             signingConfig = signingConfigs.getByName("release")
             
             // Standard settings for release builds (recommended):
@@ -77,9 +89,6 @@ android {
             isShrinkResources = true
         }
     }
-    
-    // Note: The redundant 'signingConfigs' and 'buildTypes' blocks you had at the end were removed.
-
 }
 
 flutter {
