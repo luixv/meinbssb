@@ -131,6 +131,14 @@ jobs:
           # Build AAB
           flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
 
+- name: Validate Android App Bundle
+  run: |
+    # Install bundletool if not already present
+    curl -L -o bundletool.jar https://github.com/google/bundletool/releases/download/1.14.1/bundletool-all-1.14.1.jar
+
+    # Validate the AAB
+    java -jar bundletool.jar validate --bundle=build/app/outputs/bundle/release/app-release.aab
+
       # --------------------------------------------------
       # Upload APK and AAB artifacts
       # --------------------------------------------------
