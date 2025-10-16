@@ -37,23 +37,21 @@ class OktoberfestGewinnScreen extends StatefulWidget {
 class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
   int _selectedYear = 2025;
   bool _loading = false;
-  bool _hasFetchedData = false; // Guard to fetch data only once
+  // Removed _hasFetchedData, no auto-fetch
   final List<Gewinn> _gewinne = [];
   _BankDataResult? _bankDataResult;
 
   @override
   void initState() {
     super.initState();
-    _selectedYear = DateTime.now().year - 1;
+    // Ensure 2025 is preselected
+    _selectedYear = 2025;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_hasFetchedData) {
-      _hasFetchedData = true;
-      _fetchGewinne();
-    }
+    // No automatic fetch
   }
 
   bool _bankDialogLoading = false;
@@ -140,50 +138,68 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Meine Gewinne für das Jahr',
+                    'Meine Gewinne für das Jahr:',
                     style: TextStyle(fontSize: UIConstants.titleFontSize),
                   ),
                   const SizedBox(height: UIConstants.spacingL),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: DropdownButtonFormField<int>(
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Jahr',
-                        labelStyle: UIStyles.formInputDecoration.labelStyle,
-                        floatingLabelStyle:
-                            UIStyles.formInputDecoration.floatingLabelStyle,
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  Center(
+                    child: SizedBox(
+                      width: 320, // Match the title width (adjust as needed)
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          DropdownButtonFormField<int>(
+                            decoration: UIStyles.formInputDecoration.copyWith(
+                              labelText: 'Jahr',
+                              labelStyle:
+                                  UIStyles.formInputDecoration.labelStyle,
+                              floatingLabelStyle:
+                                  UIStyles
+                                      .formInputDecoration
+                                      .floatingLabelStyle,
+                              floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            ),
+                            value: _selectedYear,
+                            isExpanded: true,
+                            items: const [
+                              DropdownMenuItem<int>(
+                                value: 2024,
+                                child: Text(
+                                  '2024',
+                                  style: TextStyle(
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
+                                ),
+                              ),
+                              DropdownMenuItem<int>(
+                                value: 2025,
+                                child: Text(
+                                  '2025',
+                                  style: TextStyle(
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            onChanged: (int? year) {
+                              if (year != null && year != _selectedYear) {
+                                setState(() {
+                                  _selectedYear = year;
+                                });
+                                _fetchGewinne();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          ElevatedButton(
+                            onPressed:
+                                (_loading || _gewinne.isEmpty)
+                                    ? null
+                                    : _fetchGewinne,
+                            child: const Text('Gewinne abrufen'),
+                          ),
+                        ],
                       ),
-                      value: _selectedYear,
-                      isExpanded: true,
-                      items: const [
-                        DropdownMenuItem<int>(
-                          value: 2024,
-                          child: Text(
-                            '2024',
-                            style: TextStyle(
-                              fontSize: UIConstants.subtitleFontSize,
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem<int>(
-                          value: 2025,
-                          child: Text(
-                            '2025',
-                            style: TextStyle(
-                              fontSize: UIConstants.subtitleFontSize,
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (int? year) {
-                        if (year != null && year != _selectedYear) {
-                          setState(() {
-                            _selectedYear = year;
-                          });
-                          _fetchGewinne();
-                        }
-                      },
                     ),
                   ),
                   if (_loading) ...[
