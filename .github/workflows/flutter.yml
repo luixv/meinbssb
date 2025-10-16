@@ -52,6 +52,17 @@ jobs:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+
+        # ==========================================================
+        # NEW STEP 1: Decode the Base64 Keystore Secret into a file
+        # The file must be placed where the Gradle script expects it.
+        # We assume the path is 'android/app/upload-keystore.jks'
+      - name: Decode and Setup Keystore File
+        run: |
+              echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+              echo "Keystore file created at android/app/upload-keystore.jks"
+              ls -la android/app/upload-keystore.jks        
+      # ==========================================================    
       - name: Extract version from pubspec.yaml
         id: version
         run: |
@@ -76,12 +87,22 @@ jobs:
           head -30 assets/config.json
           echo "Config file replaced successfully"
       - name: Build APK
+        # ==========================================================
+        #  NEW STEP 2: Inject all signing secrets as Environment Variables
+        # These match the lookup variables in the corrected build.gradle.kts
         run: |
           # Disable file watchers and hot reload for CI/CD
           export FLUTTER_WEB=false
+          # The path to the file created in the 'Decode' step above
+          KEY_STORE_FILE: android/app/upload-keystore.jks
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_KEY_PASSWORD: ${{ secrets.KEY_KEY_PASSWORD }}
           flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols 
       - name: Create versioned APK archive
         run: |
+          # Disable file watchers and hot reload for CI/CD
+          export FLUTTER_WEB=false
           mkdir -p release_artifacts
           # Rename APK to include version
           cp build/app/outputs/flutter-apk/app-release.apk release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
@@ -94,6 +115,10 @@ jobs:
           path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
           if-no-files-found: error
 
+
+
+
+          
   build-ios:
     name: Build iOS
     needs: test
