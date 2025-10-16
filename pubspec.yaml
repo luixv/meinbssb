@@ -144,6 +144,8 @@ flutter:
     - assets/images/BSSB_Wappen.png
     - assets/images/BSSB_Wappen_dimmed.png
     - assets/config.json
+    - assets/config.test.json
+    - assets/config.prod.json
     - assets/html/accountCreatedEmail.html
     - assets/html/passwordReset.html
     - assets/html/registrationEmail.html
