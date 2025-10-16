@@ -32,7 +32,8 @@ jobs:
         run: flutter pub get
       - name: Run tests
           # flutter test ./test/unit --coverage        COMMENTED FOR THE TIME BEING
-        run: echo "Skipping unit tests for now"
+          # echo "Skipping unit tests for now"
+        run: flutter test ./test/unit --coverage
  
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -144,6 +145,10 @@ jobs:
           cd release_artifacts
           zip release-${{ steps.version.outputs.version }}-apk.zip meinbssb-${{ steps.version.outputs.version }}.apk
 
+          # AAB
+          cp build/app/outputs/bundle/release/app-release.aab release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+          zip release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -158,7 +163,6 @@ jobs:
           name: release-${{ steps.version.outputs.version }}-aab
           path: release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip
           if-no-files-found: error   
-
           
   build-ios:
     name: Build iOS
