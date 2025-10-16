@@ -38,26 +38,32 @@ END:VCALENDAR''';
     return icsContent;
   }
 
-  /// Saves the .ics content to a file and returns the file path
+  /// Saves the .ics content to a file and returns a data URI for email compatibility
   Future<String> saveIcsFile({
     required String icsContent,
     required String fileName,
   }) async {
     try {
-      if (kIsWeb) {
-        // For web, we'll return a data URI that can be used as a download link
-        final encodedContent = base64Encode(utf8.encode(icsContent));
-        return 'data:text/calendar;charset=utf8;base64,$encodedContent';
-      } else {
-        // For mobile/desktop, save to app documents directory
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/$fileName');
-        await file.writeAsString(icsContent);
-        LoggerService.logInfo('ICS file saved to: ${file.path}');
-        return file.path;
+      // Always return a data URI for email compatibility
+      // This works across all platforms and email clients
+      final encodedContent = base64Encode(utf8.encode(icsContent));
+      final dataUri = 'data:text/calendar;charset=utf8;base64,$encodedContent';
+      
+      // Optionally save to file for non-web platforms (for local access)
+      if (!kIsWeb) {
+        try {
+          final directory = await getApplicationDocumentsDirectory();
+          final file = File('${directory.path}/$fileName');
+          await file.writeAsString(icsContent);
+          LoggerService.logInfo('ICS file also saved locally to: ${file.path}');
+        } catch (e) {
+          LoggerService.logWarning('Could not save ICS file locally: $e');
+        }
       }
+      
+      return dataUri;
     } catch (e) {
-      LoggerService.logError('Error saving ICS file: $e');
+      LoggerService.logError('Error creating ICS data URI: $e');
       rethrow;
     }
   }
