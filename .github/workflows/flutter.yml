@@ -111,11 +111,11 @@ jobs:
           export FLUTTER_WEB=false
 
           # Pass full path to keystore and passwords via environment variables
-          export KEY_STORE_FILE=app/upload-keystore.jks
+          export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
           export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
           export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           export KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}
-
+        
           # Sanity check for keystore file
           if [ ! -f "$KEY_STORE_FILE" ]; then
             echo "::error::Keystore file not found at $KEY_STORE_FILE"
