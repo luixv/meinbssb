@@ -146,6 +146,73 @@ jobs:
           path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
           if-no-files-found: error
 
+  build-android-aab:
+    name: Build Android AAB
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Decode and Setup Keystore File
+        run: |
+          mkdir -p android/app
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+          echo "Keystore file created at android/app/upload-keystore.jks"
+          ls -la android/app/upload-keystore.jks  
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Clean previous builds
+        run: |
+          flutter clean
+          cd android && ./gradlew --stop || true
+          cd ..
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Replace config for deployment
+        run: cp assets/config.test.json assets/config.json
+
+      - name: Build AAB
+        run: |
+          export FLUTTER_WEB=false
+          export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
+          export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
+          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          export KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}
+
+          if [ ! -f "$KEY_STORE_FILE" ]; then
+            echo "::error::Keystore file not found at $KEY_STORE_FILE"
+            exit 1
+          fi
+
+          flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+
+      - name: Create versioned AAB archive
+        run: |
+          mkdir -p release_artifacts
+          cp build/app/outputs/bundle/release/app-release.aab release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+          cd release_artifacts
+          zip release-${{ steps.version.outputs.version }}-aab.zip meinbssb-${{ steps.version.outputs.version }}.aab
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.version.outputs.version }}-aab
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip
+          if-no-files-found: error
 
   
 
