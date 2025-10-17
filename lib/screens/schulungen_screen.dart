@@ -83,12 +83,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final abDatum = _formatDate(widget.searchDate);
-      final webGruppe = (widget.webGruppe != null && widget.webGruppe != 0)
-          ? widget.webGruppe.toString()
-          : '*';
-      final bezirk = (widget.bezirkId != null && widget.bezirkId != 0)
-          ? widget.bezirkId.toString()
-          : '*';
+      final webGruppe =
+          (widget.webGruppe != null && widget.webGruppe != 0)
+              ? widget.webGruppe.toString()
+              : '*';
+      final bezirk =
+          (widget.bezirkId != null && widget.bezirkId != 0)
+              ? widget.bezirkId.toString()
+              : '*';
       final fuerVerlaengerung =
           (widget.fuerVerlaengerungen == true) ? 'true' : '*';
       final fuerVuelVerlaengerung =
@@ -101,33 +103,41 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         fuerVerlaengerung,
         fuerVuelVerlaengerung,
       );
+
+      // Filter out all entries where geloescht == true
+      var filteredResults = result.where((s) => s.geloescht != true).toList();
+
       setState(() {
-        var filteredResults = result;
         if (widget.webGruppe != null && widget.webGruppe != 0) {
-          filteredResults = filteredResults
-              .where((s) => s.webGruppe == widget.webGruppe)
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where((s) => s.webGruppe == widget.webGruppe)
+                  .toList();
         }
         if (widget.bezirkId != null && widget.bezirkId != 0) {
-          filteredResults = filteredResults
-              .where((s) => s.veranstaltungsBezirk == widget.bezirkId)
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where((s) => s.veranstaltungsBezirk == widget.bezirkId)
+                  .toList();
         }
         if (widget.ort != null && widget.ort!.isNotEmpty) {
-          filteredResults = filteredResults
-              .where(
-                (s) => s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),
-              )
-              .toList();
+          filteredResults =
+              filteredResults
+                  .where(
+                    (s) =>
+                        s.ort.toLowerCase().contains(widget.ort!.toLowerCase()),
+                  )
+                  .toList();
         }
         if (widget.titel != null && widget.titel!.isNotEmpty) {
-          filteredResults = filteredResults
-              .where(
-                (s) => s.bezeichnung.toLowerCase().contains(
+          filteredResults =
+              filteredResults
+                  .where(
+                    (s) => s.bezeichnung.toLowerCase().contains(
                       widget.titel!.toLowerCase(),
                     ),
-              )
-              .toList();
+                  )
+                  .toList();
         }
         if (widget.fuerVerlaengerungen == true) {
           filteredResults =
@@ -181,12 +191,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
 
     // Fetch bank data and contacts in parallel
-    final Future<List<BankData>> bankDataFuture =
-        apiService.fetchBankdatenMyBSSB(
-      user.webLoginId,
-    );
-    final Future<List<Map<String, dynamic>>> contactsFuture =
-        apiService.fetchKontakte(user.personId);
+    final Future<List<BankData>> bankDataFuture = apiService
+        .fetchBankdatenMyBSSB(user.webLoginId);
+    final Future<List<Map<String, dynamic>>> contactsFuture = apiService
+        .fetchKontakte(user.personId);
 
     final List<BankData> bankDataList = await bankDataFuture;
     if (!mounted) return;
@@ -195,10 +203,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     // Get phone number from contacts
     String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
-      final privateContacts = contacts.firstWhere(
-        (category) => category['category'] == 'Privat',
-        orElse: () => {'contacts': []},
-      )['contacts'] as List<dynamic>;
+      final privateContacts =
+          contacts.firstWhere(
+                (category) => category['category'] == 'Privat',
+                orElse: () => {'contacts': []},
+              )['contacts']
+              as List<dynamic>;
       var phoneContact = privateContacts
           .cast<Map<String, dynamic>>()
           .firstWhere(
@@ -207,16 +217,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             orElse: () => {'value': ''},
           );
       if (phoneContact['value'] == '') {
-        final businessContacts = contacts.firstWhere(
-          (category) => category['category'] == 'Geschäftlich',
-          orElse: () => {'contacts': []},
-        )['contacts'] as List<dynamic>;
+        final businessContacts =
+            contacts.firstWhere(
+                  (category) => category['category'] == 'Geschäftlich',
+                  orElse: () => {'contacts': []},
+                )['contacts']
+                as List<dynamic>;
         phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
-              (contact) =>
-                  contact['rawKontaktTyp'] == 5 ||
-                  contact['rawKontaktTyp'] == 6,
-              orElse: () => {'value': ''},
-            );
+          (contact) =>
+              contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
+          orElse: () => {'value': ''},
+        );
       }
       return phoneContact['value'] as String;
     }
@@ -245,9 +256,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         final ibanController = TextEditingController(
           text: bankData?.iban ?? '',
         );
-        final bicController = TextEditingController(
-          text: bankData?.bic ?? '',
-        );
+        final bicController = TextEditingController(text: bankData?.bic ?? '');
 
         return StatefulBuilder(
           builder: (context, setState) {
@@ -278,10 +287,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     children: [
                       SizedBox(
                         // force the AlertDialog to respect max width
-                        width: MediaQuery.of(context)
-                            .size
-                            .width
-                            .clamp(0, UIConstants.dialogMaxWidth.toDouble()),
+                        width: MediaQuery.of(context).size.width.clamp(
+                          0,
+                          UIConstants.dialogMaxWidth.toDouble(),
+                        ),
                         child: AlertDialog(
                           backgroundColor: UIConstants.backgroundColor,
                           insetPadding:
@@ -296,8 +305,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           content: Stack(
                             children: [
                               SizedBox(
-                                width: double
-                                    .maxFinite, // 👈 stretch form inside dialog
+                                width:
+                                    double
+                                        .maxFinite, // 👈 stretch form inside dialog
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                     top: UIConstants.spacingM,
@@ -321,8 +331,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                UIConstants.cornerRadius,
-                                              ),
+                                                    UIConstants.cornerRadius,
+                                                  ),
                                             ),
                                             padding: UIConstants.defaultPadding,
                                             child: Column(
@@ -342,8 +352,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   decoration: UIStyles
                                                       .formInputDecoration
                                                       .copyWith(
-                                                    labelText: 'Kontoinhaber',
-                                                  ),
+                                                        labelText:
+                                                            'Kontoinhaber',
+                                                      ),
                                                   validator: (value) {
                                                     if (value == null ||
                                                         value.isEmpty) {
@@ -360,14 +371,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   decoration: UIStyles
                                                       .formInputDecoration
                                                       .copyWith(
-                                                    labelText: 'IBAN',
-                                                  ),
+                                                        labelText: 'IBAN',
+                                                      ),
                                                   validator: (value) {
                                                     final apiService =
                                                         Provider.of<ApiService>(
-                                                      context,
-                                                      listen: false,
-                                                    );
+                                                          context,
+                                                          listen: false,
+                                                        );
                                                     if (value == null ||
                                                         value.isEmpty) {
                                                       return 'IBAN ist erforderlich';
@@ -387,25 +398,28 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   decoration: UIStyles
                                                       .formInputDecoration
                                                       .copyWith(
-                                                    labelText: _isBicRequired(
-                                                      ibanController.text
-                                                          .trim(),
-                                                    )
-                                                        ? 'BIC *'
-                                                        : 'BIC (optional)',
-                                                  ),
+                                                        labelText:
+                                                            _isBicRequired(
+                                                                  ibanController
+                                                                      .text
+                                                                      .trim(),
+                                                                )
+                                                                ? 'BIC *'
+                                                                : 'BIC (optional)',
+                                                      ),
                                                   validator: (value) {
                                                     final apiService =
                                                         Provider.of<ApiService>(
-                                                      context,
-                                                      listen: false,
-                                                    );
-                                                    final iban = ibanController
-                                                        .text
-                                                        .trim()
-                                                        .toUpperCase();
-                                                    if (!iban
-                                                            .startsWith('DE') &&
+                                                          context,
+                                                          listen: false,
+                                                        );
+                                                    final iban =
+                                                        ibanController.text
+                                                            .trim()
+                                                            .toUpperCase();
+                                                    if (!iban.startsWith(
+                                                          'DE',
+                                                        ) &&
                                                         (value == null ||
                                                             value
                                                                 .trim()
@@ -419,8 +433,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                       final bicError =
                                                           apiService
                                                               .validateBIC(
-                                                        value,
-                                                      );
+                                                                value,
+                                                              );
                                                       if (bicError != null) {
                                                         return bicError;
                                                       }
@@ -446,8 +460,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   value: agbChecked,
                                                   onChanged: (val) {
                                                     setState(
-                                                      () => agbChecked =
-                                                          val ?? false,
+                                                      () =>
+                                                          agbChecked =
+                                                              val ?? false,
                                                     );
                                                   },
                                                   title: Row(
@@ -456,11 +471,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Navigator.of(context)
-                                                              .push(
+                                                          Navigator.of(
+                                                            context,
+                                                          ).push(
                                                             MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  const AgbScreen(),
+                                                              builder:
+                                                                  (_) =>
+                                                                      const AgbScreen(),
                                                             ),
                                                           );
                                                         },
@@ -469,22 +486,25 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           style: UIStyles
                                                               .linkStyle
                                                               .copyWith(
-                                                            color: UIConstants
-                                                                .linkColor,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline,
-                                                          ),
+                                                                color:
+                                                                    UIConstants
+                                                                        .linkColor,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .underline,
+                                                              ),
                                                         ),
                                                       ),
                                                       const SizedBox(
-                                                        width: UIConstants
-                                                            .spacingS,
+                                                        width:
+                                                            UIConstants
+                                                                .spacingS,
                                                       ),
                                                       const Text('akzeptieren'),
                                                       const SizedBox(
-                                                        width: UIConstants
-                                                            .spacingS,
+                                                        width:
+                                                            UIConstants
+                                                                .spacingS,
                                                       ),
                                                       const Tooltip(
                                                         message:
@@ -494,10 +514,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                                 .tap,
                                                         child: Icon(
                                                           Icons.info_outline,
-                                                          color: UIConstants
-                                                              .defaultAppColor,
-                                                          size: UIConstants
-                                                              .tooltipIconSize,
+                                                          color:
+                                                              UIConstants
+                                                                  .defaultAppColor,
+                                                          size:
+                                                              UIConstants
+                                                                  .tooltipIconSize,
                                                         ),
                                                       ),
                                                     ],
@@ -512,8 +534,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   value: lastschriftChecked,
                                                   onChanged: (val) {
                                                     setState(
-                                                      () => lastschriftChecked =
-                                                          val ?? false,
+                                                      () =>
+                                                          lastschriftChecked =
+                                                              val ?? false,
                                                     );
                                                   },
                                                   title: const Row(
@@ -525,8 +548,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           crossAxisAlignment:
                                                               WrapCrossAlignment
                                                                   .center,
-                                                          spacing: UIConstants
-                                                              .spacingS,
+                                                          spacing:
+                                                              UIConstants
+                                                                  .spacingS,
                                                           children: [
                                                             Text(
                                                               'Bestätigung des\nLastschrifteinzugs',
@@ -540,10 +564,12 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               child: Icon(
                                                                 Icons
                                                                     .info_outline,
-                                                                color: UIConstants
-                                                                    .defaultAppColor,
-                                                                size: UIConstants
-                                                                    .tooltipIconSize,
+                                                                color:
+                                                                    UIConstants
+                                                                        .defaultAppColor,
+                                                                size:
+                                                                    UIConstants
+                                                                        .tooltipIconSize,
                                                               ),
                                                             ),
                                                           ],
@@ -580,8 +606,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       tooltip: 'Abbrechen',
                                       backgroundColor:
                                           UIConstants.defaultAppColor,
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
                                       child: const Icon(
                                         Icons.close,
                                         color: UIConstants.whiteColor,
@@ -591,80 +617,86 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       heroTag: 'submitBookingFab',
                                       mini: true,
                                       tooltip: 'Buchen',
-                                      backgroundColor: (agbChecked &&
-                                              lastschriftChecked &&
-                                              kontoinhaberController.text
-                                                  .trim()
-                                                  .isNotEmpty &&
-                                              ibanController.text
-                                                  .trim()
-                                                  .isNotEmpty &&
-                                              (!_isBicRequired(
-                                                    ibanController.text.trim(),
-                                                  ) ||
-                                                  bicController.text
+                                      backgroundColor:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
                                                       .trim()
-                                                      .isNotEmpty))
-                                          ? UIConstants.defaultAppColor
-                                          : UIConstants.cancelButtonBackground,
-                                      onPressed: (agbChecked &&
-                                              lastschriftChecked &&
-                                              kontoinhaberController.text
-                                                  .trim()
-                                                  .isNotEmpty &&
-                                              ibanController.text
-                                                  .trim()
-                                                  .isNotEmpty &&
-                                              (!_isBicRequired(
-                                                    ibanController.text.trim(),
-                                                  ) ||
-                                                  bicController.text
+                                                      .isNotEmpty &&
+                                                  ibanController.text
                                                       .trim()
-                                                      .isNotEmpty))
-                                          ? () async {
-                                              if (formKey.currentState !=
-                                                      null &&
-                                                  formKey.currentState!
-                                                      .validate()) {
-                                                Navigator.of(context).pop();
-                                                final apiService =
-                                                    Provider.of<ApiService>(
-                                                  context,
-                                                  listen: false,
-                                                );
-                                                final String email =
-                                                    await apiService
-                                                            .getCachedUsername() ??
-                                                        '';
-                                                final BankData safeBankData =
-                                                    bankData ??
-                                                        BankData(
-                                                          id: 0,
-                                                          webloginId:
-                                                              user.webLoginId,
-                                                          kontoinhaber: '',
-                                                          iban: '',
-                                                          bic: '',
-                                                          mandatSeq: 2,
-                                                          bankName: '',
-                                                          mandatNr: '',
-                                                          mandatName: '',
-                                                        );
-                                                await registerPersonAndShowDialog(
-                                                  schulungsTermin:
-                                                      schulungsTermin,
-                                                  registeredPersons:
-                                                      registeredPersons,
-                                                  bankData: safeBankData,
-                                                  prefillUser: user.copyWith(
-                                                    telefon:
-                                                        telefonController.text,
-                                                  ),
-                                                  prefillEmail: email,
-                                                );
+                                                      .isNotEmpty &&
+                                                  (!_isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? UIConstants.defaultAppColor
+                                              : UIConstants
+                                                  .cancelButtonBackground,
+                                      onPressed:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!_isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? () async {
+                                                if (formKey.currentState !=
+                                                        null &&
+                                                    formKey.currentState!
+                                                        .validate()) {
+                                                  Navigator.of(context).pop();
+                                                  final apiService =
+                                                      Provider.of<ApiService>(
+                                                        context,
+                                                        listen: false,
+                                                      );
+                                                  final String email =
+                                                      await apiService
+                                                          .getCachedUsername() ??
+                                                      '';
+                                                  final BankData safeBankData =
+                                                      bankData ??
+                                                      BankData(
+                                                        id: 0,
+                                                        webloginId:
+                                                            user.webLoginId,
+                                                        kontoinhaber: '',
+                                                        iban: '',
+                                                        bic: '',
+                                                        mandatSeq: 2,
+                                                        bankName: '',
+                                                        mandatNr: '',
+                                                        mandatName: '',
+                                                      );
+                                                  await registerPersonAndShowDialog(
+                                                    schulungsTermin:
+                                                        schulungsTermin,
+                                                    registeredPersons:
+                                                        registeredPersons,
+                                                    bankData: safeBankData,
+                                                    prefillUser: user.copyWith(
+                                                      telefon:
+                                                          telefonController
+                                                              .text,
+                                                    ),
+                                                    prefillEmail: email,
+                                                  );
+                                                }
                                               }
-                                            }
-                                          : null,
+                                              : null,
                                       child: const Icon(
                                         Icons.check,
                                         color: UIConstants.whiteColor,
@@ -786,13 +818,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     Navigator.of(parentContext).pop(); // Close the dialog
                     Navigator.of(parentContext).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (context) => SchulungenSearchScreen(
-                          userData: widget.userData,
-                          isLoggedIn: widget.isLoggedIn,
-                          onLogout: widget.onLogout,
-                          showMenu: widget.isLoggedIn,
-                          showConnectivityIcon: widget.isLoggedIn,
-                        ),
+                        builder:
+                            (context) => SchulungenSearchScreen(
+                              userData: widget.userData,
+                              isLoggedIn: widget.isLoggedIn,
+                              onLogout: widget.onLogout,
+                              showMenu: widget.isLoggedIn,
+                              showConnectivityIcon: widget.isLoggedIn,
+                            ),
                       ),
                       (route) => false, // Remove all previous routes
                     );
@@ -853,164 +886,181 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       automaticallyImplyLeading: widget.showMenu,
       showMenu: widget.showMenu,
       showConnectivityIcon: widget.showConnectivityIcon,
-      leading: !widget.showMenu
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SchulungenSearchScreen(
-                      userData: widget.userData,
-                      isLoggedIn: widget.isLoggedIn,
-                      onLogout: widget.onLogout,
-                      showMenu: widget.showMenu,
-                      showConnectivityIcon: widget.showConnectivityIcon,
+      leading:
+          !widget.showMenu
+              ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: UIConstants.textColor,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => SchulungenSearchScreen(
+                            userData: widget.userData,
+                            isLoggedIn: widget.isLoggedIn,
+                            onLogout: widget.onLogout,
+                            showMenu: widget.showMenu,
+                            showConnectivityIcon: widget.showConnectivityIcon,
+                          ),
                     ),
-                  ),
-                );
-              },
-            )
-          : null,
+                  );
+                },
+              )
+              : null,
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    UIConstants.defaultAppColor,
+        child:
+            _isLoading
+                ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.defaultAppColor,
+                    ),
                   ),
-                ),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const ScaledText(
-                    'Verfügbare Aus- und Weiterbildungen',
-                    style: UIStyles.headerStyle,
-                  ),
-                  const SizedBox(height: UIConstants.spacingM),
-                  if (_errorMessage != null)
-                    ScaledText(_errorMessage!, style: UIStyles.errorStyle),
-                  if (!_isLoading &&
-                      _errorMessage == null &&
-                      _results.isNotEmpty)
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: _results.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(height: UIConstants.spacingS),
-                        itemBuilder: (context, index) {
-                          final schulungsTermin = _results[index];
-                          return SchulungenListItem(
-                            schulungsTermin: schulungsTermin,
-                            index: index,
-                            onDetailsPressed: () async {
-                              // Show loading spinner
-                              showDialog(
-                                context: context,
-                                builder: (context) => const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      UIConstants.defaultAppColor,
-                                    ),
-                                  ),
-                                ),
-                                barrierDismissible: false,
-                              );
-
-                              final apiService = Provider.of<ApiService>(
-                                context,
-                                listen: false,
-                              );
-                              final termin =
-                                  await apiService.fetchSchulungstermin(
-                                schulungsTermin.schulungsterminId.toString(),
-                              );
-                              if (!context.mounted) return;
-
-                              Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(); // Remove spinner
-
-                              if (termin == null) {
+                )
+                : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ScaledText(
+                      'Verfügbare Aus- und Weiterbildungen',
+                      style: UIStyles.headerStyle,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    if (_errorMessage != null)
+                      ScaledText(_errorMessage!, style: UIStyles.errorStyle),
+                    if (!_isLoading &&
+                        _errorMessage == null &&
+                        _results.isNotEmpty)
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: _results.length,
+                          separatorBuilder:
+                              (_, _) =>
+                                  const SizedBox(height: UIConstants.spacingS),
+                          itemBuilder: (context, index) {
+                            final schulungsTermin = _results[index];
+                            return SchulungenListItem(
+                              schulungsTermin: schulungsTermin,
+                              index: index,
+                              onDetailsPressed: () async {
+                                // Show loading spinner
                                 showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Fehler'),
-                                    content: const Text(
-                                      'Details konnten nicht geladen werden.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('OK'),
+                                  builder:
+                                      (context) => const Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                UIConstants.defaultAppColor,
+                                              ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
+                                  barrierDismissible: false,
                                 );
-                                return;
-                              }
 
-                              // Fallback for lehrgangsleiterMail and lehrgangsleiterTel
-                              final lehrgangsleiterMail =
-                                  (termin.lehrgangsleiterMail.isNotEmpty)
-                                      ? termin.lehrgangsleiterMail
-                                      : schulungsTermin.lehrgangsleiterMail;
-                              final lehrgangsleiterTel =
-                                  (termin.lehrgangsleiterTel.isNotEmpty)
-                                      ? termin.lehrgangsleiterTel
-                                      : schulungsTermin.lehrgangsleiterTel;
+                                final apiService = Provider.of<ApiService>(
+                                  context,
+                                  listen: false,
+                                );
+                                final termin = await apiService
+                                    .fetchSchulungstermin(
+                                      schulungsTermin.schulungsterminId
+                                          .toString(),
+                                    );
+                                if (!context.mounted) return;
 
-                              // Show the extracted details dialog
-                              await SchulungenDetailsDialog.show(
-                                context,
-                                termin,
-                                schulungsTermin,
-                                lehrgangsleiterMail: lehrgangsleiterMail,
-                                lehrgangsleiterTel: lehrgangsleiterTel,
-                                isUserLoggedIn: _userData != null,
-                                personId: _userData?.personId,
-                                onBookingPressed: () {
-                                  if (_userData == null) {
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (dialogContext) => LoginDialog(
-                                        onLoginSuccess: (userData) {
-                                          setState(() {
-                                            _userData = userData;
-                                          });
-                                          _showBookingDialog(
-                                            termin,
-                                            registeredPersons: [],
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  } else {
-                                    _showBookingDialog(
-                                      termin,
-                                      registeredPersons: [],
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          );
-                        },
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pop(); // Remove spinner
+
+                                if (termin == null) {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: const Text('Fehler'),
+                                          content: const Text(
+                                            'Details konnten nicht geladen werden.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed:
+                                                  () =>
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                  return;
+                                }
+
+                                // Fallback for lehrgangsleiterMail and lehrgangsleiterTel
+                                final lehrgangsleiterMail =
+                                    (termin.lehrgangsleiterMail.isNotEmpty)
+                                        ? termin.lehrgangsleiterMail
+                                        : schulungsTermin.lehrgangsleiterMail;
+                                final lehrgangsleiterTel =
+                                    (termin.lehrgangsleiterTel.isNotEmpty)
+                                        ? termin.lehrgangsleiterTel
+                                        : schulungsTermin.lehrgangsleiterTel;
+
+                                // Show the extracted details dialog
+                                await SchulungenDetailsDialog.show(
+                                  context,
+                                  termin,
+                                  schulungsTermin,
+                                  lehrgangsleiterMail: lehrgangsleiterMail,
+                                  lehrgangsleiterTel: lehrgangsleiterTel,
+                                  isUserLoggedIn: _userData != null,
+                                  personId: _userData?.personId,
+                                  onBookingPressed: () {
+                                    if (_userData == null) {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder:
+                                            (dialogContext) => LoginDialog(
+                                              onLoginSuccess: (userData) {
+                                                setState(() {
+                                                  _userData = userData;
+                                                });
+                                                _showBookingDialog(
+                                                  termin,
+                                                  registeredPersons: [],
+                                                );
+                                              },
+                                            ),
+                                      );
+                                    } else {
+                                      _showBookingDialog(
+                                        termin,
+                                        registeredPersons: [],
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  if (!_isLoading && _errorMessage == null && _results.isEmpty)
-                    const ScaledText(
-                      'Keine Schulungen gefunden.',
-                      style: UIStyles.bodyStyle,
-                    ),
-                  const SizedBox(height: UIConstants.helpSpacing),
-                ],
-              ),
+                    if (!_isLoading &&
+                        _errorMessage == null &&
+                        _results.isEmpty)
+                      const ScaledText(
+                        'Keine Schulungen gefunden.',
+                        style: UIStyles.bodyStyle,
+                      ),
+                    const SizedBox(height: UIConstants.helpSpacing),
+                  ],
+                ),
       ),
     );
   }
@@ -1039,15 +1089,15 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       },
     );
     if (newPerson == null) return; // User cancelled
-    final updatedRegisteredPersons =
-        List<_RegisteredPerson>.from(registeredPersons)
-          ..add(
-            _RegisteredPerson(
-              newPerson.vorname,
-              newPerson.nachname,
-              newPerson.passnummer,
-            ),
-          );
+    final updatedRegisteredPersons = List<_RegisteredPerson>.from(
+      registeredPersons,
+    )..add(
+      _RegisteredPerson(
+        newPerson.vorname,
+        newPerson.nachname,
+        newPerson.passnummer,
+      ),
+    );
 
     // After registration, show the 'register another' dialog
     final bool? registerAnother = await showDialog<bool>(
@@ -1083,13 +1133,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => SchulungenSearchScreen(
-            userData: widget.userData,
-            isLoggedIn: widget.isLoggedIn,
-            onLogout: widget.onLogout,
-            showMenu: widget.isLoggedIn,
-            showConnectivityIcon: widget.isLoggedIn,
-          ),
+          builder:
+              (context) => SchulungenSearchScreen(
+                userData: widget.userData,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+                showMenu: widget.isLoggedIn,
+                showConnectivityIcon: widget.isLoggedIn,
+              ),
         ),
         (route) => false,
       );
@@ -1152,8 +1203,9 @@ class _LoginDialogState extends State<LoginDialog> {
         }
       } else {
         setState(
-          () => _errorMessage =
-              response['ResultMessage'] ?? 'Login fehlgeschlagen.',
+          () =>
+              _errorMessage =
+                  response['ResultMessage'] ?? 'Login fehlgeschlagen.',
         );
       }
     } catch (e) {
@@ -1163,7 +1215,7 @@ class _LoginDialogState extends State<LoginDialog> {
     }
   }
 
-// ...existing code...
+  // ...existing code...
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -1178,18 +1230,22 @@ class _LoginDialogState extends State<LoginDialog> {
         width: double.maxFinite,
         child: SingleChildScrollView(
           child: Padding(
-            padding: UIConstants.dialogPadding
-                .copyWith(bottom: UIConstants.spacingS),
+            padding: UIConstants.dialogPadding.copyWith(
+              bottom: UIConstants.spacingS,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_errorMessage.isNotEmpty)
                   Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: UIConstants.spacingS),
-                    child:
-                        ScaledText(_errorMessage, style: UIStyles.errorStyle),
+                    padding: const EdgeInsets.only(
+                      bottom: UIConstants.spacingS,
+                    ),
+                    child: ScaledText(
+                      _errorMessage,
+                      style: UIStyles.errorStyle,
+                    ),
                   ),
                 TextField(
                   controller: _emailController,
@@ -1230,12 +1286,7 @@ class _LoginDialogState extends State<LoginDialog> {
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(
-            16,
-            4,
-            16,
-            12,
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
           child: Row(
             mainAxisAlignment: UIConstants.spaceBetweenAlignment,
             children: [
@@ -1271,20 +1322,20 @@ class _LoginDialogState extends State<LoginDialog> {
                       const SizedBox(width: UIConstants.spacingS),
                       _isLoading
                           ? const SizedBox(
-                              width: UIConstants.loadingIndicatorSize,
-                              height: UIConstants.loadingIndicatorSize,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.defaultAppColor,
-                                ),
-                              ),
-                            )
-                          : ScaledText(
-                              'Login',
-                              style: UIStyles.dialogButtonTextStyle.copyWith(
-                                color: UIConstants.submitButtonText,
+                            width: UIConstants.loadingIndicatorSize,
+                            height: UIConstants.loadingIndicatorSize,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.defaultAppColor,
                               ),
                             ),
+                          )
+                          : ScaledText(
+                            'Login',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.submitButtonText,
+                            ),
+                          ),
                     ],
                   ),
                 ),
@@ -1295,5 +1346,6 @@ class _LoginDialogState extends State<LoginDialog> {
       ],
     );
   }
-// ...existing code...
+
+  // ...existing code...
 }
