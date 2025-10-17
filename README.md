@@ -229,6 +229,7 @@ docker exec zmi_monitor tail -5 /var/www/html/data/https_monitor.csv
 | Mail SMTP    | localhost:1025                   |
 | PostgreSQL   | localhost:5432 (external tools)  |
 
+
 ## How to deploy and create a new APK
 
 First get a VPN connection to BSSB-Server.
@@ -271,10 +272,32 @@ Note: The version number is incremented automatically. DO NOT MAKE IT MANUALLY
 
 
 
+## How to create a Release
+This has to be done ONLY ONCE, and it is already done. Therefore, it is 
+- Generating the upload-keystore.jks
 
+cd C:\projekte\BSSB\meinbssb\android\app
+keytool -genkey -v -keystore upload-keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+$path = (Resolve-Path .\upload-keystore.jks).Path
+[Convert]::ToBase64String([IO.File]::ReadAllBytes($path)) > .\upload-keystore.jks.b64
+Write-Output "Wrote .\upload-keystore.jks.b64 (size: $(Get-Item .\upload-keystore.jks.b64).Length bytes)"
 
+- Verifying
 
+$base64 = (Get-Content ".\upload-keystore.jks.b64" | ForEach-Object { $_.Trim() }) -join ''
+$keystorePath = Join-Path (Get-Location) "upload-keystore-decoded.jks"
+[System.IO.File]::WriteAllBytes($keystorePath, [Convert]::FromBase64String($base64))
+Write-Host "Keystore written to: $keystorePath"
+if (Test-Path $keystorePath) { Write-Host "✅ Keystore exists and is ready!" } else { Write-Host "❌ Keystore NOT found!" }
 
+keytool -list -v -keystore ".\test-upload-keystore.jks" -alias upload
+
+- Try Locally
+
+flutter clean
+flutter pub get
+flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+apksigner verify --verbose build/app/outputs/flutter-apk/app-release.apk
 
 
 
