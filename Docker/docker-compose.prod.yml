@@ -33,6 +33,8 @@ services:
     container_name: caddy
     ports:
       - "443:443" #Flutter Web HTTPS
+      - "8081:8081" #Postgrest API
+      - "8080:8080" #Email API
     volumes:
       - ./Caddyfile.prod:/etc/caddy/Caddyfile
       - ../build/web:/web
