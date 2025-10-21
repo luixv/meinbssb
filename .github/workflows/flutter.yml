@@ -98,8 +98,8 @@ jobs:
       - name: Replace config for deployment
         run: |
           echo "🧩 Replacing config for deployment"
-          cp assets/config.test.json assets/config.json
-          head -20 assets/config.json || echo "No config.json found!"
+          cp assets/config.prod.json assets/config.json
+          head -20 assets/prod.json || echo "No config.json found!"
 
       # --------------------------------------------------
       # Build APK / AAB with signing + validate AAB
@@ -198,8 +198,8 @@ jobs:
         run: |
           echo "Original config (first 30 lines):"
           head -30 assets/config.json
-          echo "Copying config.test.json to config.json for deployment"
-          cp assets/config.test.json assets/config.json
+          echo "Copying config.prod.json to config.json for deployment"
+          cp assets/config.prod.json assets/config.json
           echo "New config (first 30 lines):"
           head -30 assets/config.json
           echo "Config file replaced successfully"
@@ -261,8 +261,8 @@ jobs:
         run: flutter pub get
       - name: Replace config for deployment
         run: |
-          echo "Copying config.test.json to config.json for deployment"
-          cp assets/config.test.json assets/config.json
+          echo "Copying config.prod.json to config.json for deployment"
+          cp assets/config.prod.json assets/config.json
           echo "Config file replaced successfully"
       - name: Build Web
         run: flutter build web 
@@ -302,8 +302,8 @@ jobs:
         run: flutter pub get
       - name: Replace config for deployment
         run: |
-          echo "Copying config.test.json to config.json for deployment"
-          copy assets\config.test.json assets\config.json
+          echo "Copying config.prod.json to config.json for deployment"
+          copy assets\config.prod.json assets\config.json
           echo "Config file replaced successfully"
       - name: Build Windows
         run: flutter build windows
