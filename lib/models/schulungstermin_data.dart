@@ -98,9 +98,31 @@ class Schulungstermin {
 
   static DateTime _parseDate(dynamic value) {
     if (value is String && value.isNotEmpty) {
-      try {
-        return DateTime.parse(value);
-      } catch (_) {}
+      // Match: yyyy-MM-ddTHH:mm:ss.SSS (ignore offset)
+      final match = RegExp(
+        r'^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})',
+      ).firstMatch(value);
+      if (match != null) {
+        return DateTime(
+          int.parse(match.group(1)!),
+          int.parse(match.group(2)!),
+          int.parse(match.group(3)!),
+          int.parse(match.group(4)!),
+          int.parse(match.group(5)!),
+          int.parse(match.group(6)!),
+          int.parse(match.group(7)!),
+        );
+      }
+      // Fallback: just the date part
+      final dateOnly = value.split('T').first;
+      final parts = dateOnly.split('-');
+      if (parts.length == 3) {
+        return DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+      }
     }
     return DateTime(1970, 1, 1);
   }

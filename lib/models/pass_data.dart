@@ -7,9 +7,10 @@ class PassData {
       vereinName: json['VEREINNAME'] as String?,
       passdatenId: json['PASSDATENID'] as int?,
       mitgliedschaftId: json['MITGLIEDSCHAFTID'] as int?,
-      geburtsdatum: json['GEBURTSDATUM'] != null
-          ? DateTime.parse(json['GEBURTSDATUM']).toUtc()
-          : null,
+      geburtsdatum:
+          json['GEBURTSDATUM'] != null
+              ? DateTime.parse(json['GEBURTSDATUM'])
+              : null,
       titel: json['TITEL'] as String?,
       vorname: json['VORNAME'] as String?,
       namen: json['NAMEN'] as String?,

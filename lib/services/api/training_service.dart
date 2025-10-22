@@ -21,10 +21,10 @@ class TrainingService {
     required CacheService cacheService,
     required NetworkService networkService,
     required ConfigService configService,
-  })  : _httpClient = httpClient,
-        _cacheService = cacheService,
-        _networkService = networkService,
-        _configService = configService;
+  }) : _httpClient = httpClient,
+       _cacheService = cacheService,
+       _networkService = networkService,
+       _configService = configService;
 
   final HttpClient _httpClient;
   final CacheService _cacheService;
@@ -44,9 +44,7 @@ class TrainingService {
         cacheKey,
         cacheDuration,
         () async {
-          final response = await _httpClient.get(
-            endpoint,
-          );
+          final response = await _httpClient.get(endpoint);
           final mapped = _mapAngemeldeteSchulungenResponse(response);
           // Only cache minimal fields
           return mapped
@@ -121,7 +119,7 @@ class TrainingService {
         .toList();
   }
 
-/* 
+  /* 
 /Schulungstermine/{AbDatum}/{Ort}/{Webgruppe}/{Veranstaltungsbezirk}/{FuerVerlaengerung}/{Bezeichnung}/{FuerVuelVerlaengerung}
 */
   Future<List<Schulungstermin>> fetchSchulungstermine(
@@ -135,38 +133,43 @@ class TrainingService {
       String endpoint =
           'Schulungstermine/$abDatum/*/$webGruppe/$bezirk/$fuerVerlaengerung/*/$fuerVuelVerlaengerung';
 
-      LoggerService.logInfo(
-        'endpoint $endpoint',
+      LoggerService.logInfo('endpoint $endpoint');
+
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
       );
 
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
-
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
 
       final mappedTermine = _mapSchulungstermineResponseToTermine(response);
       LoggerService.logInfo(
         'Mapped ${mappedTermine.length} termine from response',
       );
 
-      final termine = mappedTermine.where((t) {
-        // Status darf NICHT 2 sein!
-        if (t.status == 2) {
-          return false;
-        }
-        // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
-        if (t.webVeroeffentlichenAm.isEmpty) {
-          return true;
-        }
-        try {
-          final veroeff = DateTime.parse(t.webVeroeffentlichenAm);
-          final shouldInclude = DateTime.now().isAfter(veroeff);
-          return shouldInclude;
-        } catch (e) {
-          return false;
-        }
-      }).toList();
+      final termine =
+          mappedTermine.where((t) {
+            // Status darf NICHT 2 sein!
+            if (t.status == 2) {
+              return false;
+            }
+            // webVeroeffentlichenAm ist leer ODER jetzt > Veröffentlichungsdatum (stundengenau)
+            if (t.webVeroeffentlichenAm.isEmpty) {
+              return true;
+            }
+            try {
+              final datePart = t.webVeroeffentlichenAm.split('T').first;
+
+              final veroeff = DateTime.parse(datePart);
+              final shouldInclude = DateTime.now().isAfter(veroeff);
+              return shouldInclude;
+            } catch (e) {
+              return false;
+            }
+          }).toList();
 
       LoggerService.logInfo(
         'After filtering: ${termine.length} termine remaining',
@@ -266,9 +269,7 @@ class TrainingService {
   ) async {
     String endpoint = 'SchulungstermineZusatzfelder/$schulungsTerminId';
 
-    LoggerService.logInfo(
-      'endpoint $endpoint',
-    );
+    LoggerService.logInfo('endpoint $endpoint');
 
     final response = await _httpClient.get(endpoint);
 
@@ -363,14 +364,12 @@ class TrainingService {
     final abDatum =
         "${today.day.toString().padLeft(2, '0')}.${today.month.toString().padLeft(2, '0')}.${today.year}";
     try {
-      final result = fetchAngemeldeteSchulungen(
-        personId,
-        abDatum,
-      );
+      final result = fetchAngemeldeteSchulungen(personId, abDatum);
 
       return result.then((schulungen) {
-        final exists =
-            schulungen.any((s) => s.schulungsterminId == schulungsterminId);
+        final exists = schulungen.any(
+          (s) => s.schulungsterminId == schulungsterminId,
+        );
 
         return exists;
       });
@@ -403,10 +402,7 @@ class TrainingService {
     try {
       final endpoint = 'SchulungenTeilnehmer/$schulungenTeilnehmerId';
 
-      final response = await _httpClient.delete(
-        endpoint,
-        body: {},
-      );
+      final response = await _httpClient.delete(endpoint, body: {});
       final success = response['result'] == true;
       if (success) {
         // Clear the schulungen cache after successful unregistration
@@ -560,10 +556,7 @@ class TrainingService {
     const endpoint = 'SchulungenTeilnehmer';
 
     try {
-      final response = await _httpClient.post(
-        endpoint,
-        body,
-      );
+      final response = await _httpClient.post(endpoint, body);
       final result = RegisterSchulungenTeilnehmerResponse.fromJson(response);
 
       // Clear the schulungen cache after successful registration
@@ -584,12 +577,16 @@ class TrainingService {
     String schulungenTerminId,
   ) async {
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
 
       final endpoint = 'Schulungstermin/$schulungenTerminId';
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
 
       Map<String, dynamic>? data;
       if (response is Map<String, dynamic>) {

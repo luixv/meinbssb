@@ -13,15 +13,17 @@ class PassdatenAkzeptOrAktiv {
       evVereinNr: json['EVVEREINNR'] as int,
       evVereinName: json['EVVEREINNAME'] as String?,
       passNummer: json['PASSNUMMER'] as String?,
-      erstelltAm: json['ERSTELLTAM'] != null
-          ? DateTime.parse(json['ERSTELLTAM']).toUtc()
-          : null,
+      erstelltAm:
+          json['ERSTELLTAM'] != null
+              ? DateTime.parse(json['ERSTELLTAM'])
+              : null,
       erstelltVon: json['ERSTELLTVON'] as String?,
-      zves: (json['ZVEs'] is List)
-          ? (json['ZVEs'] as List)
-              .map((e) => ZVE.fromJson(e as Map<String, dynamic>))
-              .toList()
-          : [],
+      zves:
+          (json['ZVEs'] is List)
+              ? (json['ZVEs'] as List)
+                  .map((e) => ZVE.fromJson(e as Map<String, dynamic>))
+                  .toList()
+              : [],
     );
   }
 

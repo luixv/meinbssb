@@ -14,8 +14,9 @@ class CalendarService {
     required String organizerEmail,
   }) async {
     final startDateTime = eventDate;
-    final endDateTime =
-        eventDate.add(const Duration(hours: 8)); // Default 8-hour duration
+    final endDateTime = eventDate.add(
+      const Duration(hours: 8),
+    ); // Default 8-hour duration
 
     final icsContent = '''BEGIN:VCALENDAR
 VERSION:2.0
@@ -48,7 +49,7 @@ END:VCALENDAR''';
       // This works across all platforms and email clients
       final encodedContent = base64Encode(utf8.encode(icsContent));
       final dataUri = 'data:text/calendar;charset=utf8;base64,$encodedContent';
-      
+
       // Optionally save to file for non-web platforms (for local access)
       if (!kIsWeb) {
         try {
@@ -60,7 +61,7 @@ END:VCALENDAR''';
           LoggerService.logWarning('Could not save ICS file locally: $e');
         }
       }
-      
+
       return dataUri;
     } catch (e) {
       LoggerService.logError('Error creating ICS data URI: $e');
@@ -86,10 +87,7 @@ END:VCALENDAR''';
 
     final fileName =
         '${sanitizeFileName(eventTitle)}_${formatDateForFileName(eventDate)}.ics';
-    return await saveIcsFile(
-      icsContent: icsContent,
-      fileName: fileName,
-    );
+    return await saveIcsFile(icsContent: icsContent, fileName: fileName);
   }
 
   /// Generates a unique identifier for the event
@@ -101,7 +99,7 @@ END:VCALENDAR''';
 
   /// Formats DateTime to iCalendar format (YYYYMMDDTHHMMSSZ)
   String formatDateTime(DateTime dateTime) {
-    final utc = dateTime.toUtc();
+    final utc = dateTime;
     return '${utc.year.toString().padLeft(4, '0')}'
         '${utc.month.toString().padLeft(2, '0')}'
         '${utc.day.toString().padLeft(2, '0')}'
