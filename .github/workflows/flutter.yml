@@ -140,7 +140,7 @@ jobs:
 
           if [ -f "$APK_PATH" ]; then
             cp "$APK_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
-            // zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
@@ -148,7 +148,7 @@ jobs:
 
           if [ -f "$AAB_PATH" ]; then
             cp "$AAB_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
-            // zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
             echo "✅ AAB packaged successfully"
           else
             echo "::warning::AAB not found at $AAB_PATH"
@@ -161,14 +161,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-apk
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
+          path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
           if-no-files-found: error
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-aab
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip
+          path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
           if-no-files-found: error
                   
   build-ios:
