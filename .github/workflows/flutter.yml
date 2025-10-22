@@ -99,7 +99,7 @@ jobs:
         run: |
           echo "🧩 Replacing config for deployment"
           cp assets/config.prod.json assets/config.json
-          head -20 assets/prod.json || echo "No config.json found!"
+          head -20 assets/config.prod.json || echo "No config.json found!"
 
       # --------------------------------------------------
       # Build APK / AAB with signing + validate AAB
@@ -140,7 +140,7 @@ jobs:
 
           if [ -f "$APK_PATH" ]; then
             cp "$APK_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+            // zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
@@ -148,7 +148,7 @@ jobs:
 
           if [ -f "$AAB_PATH" ]; then
             cp "$AAB_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+            // zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
             echo "✅ AAB packaged successfully"
           else
             echo "::warning::AAB not found at $AAB_PATH"
