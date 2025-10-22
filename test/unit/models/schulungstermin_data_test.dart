@@ -53,10 +53,7 @@ void main() {
       expect(schulungstermin.schulungsterminId, 1012);
       expect(schulungstermin.schulungsartId, 15);
       expect(schulungstermin.schulungsTeilnehmerId, 12345);
-      expect(
-        schulungstermin.datum,
-        DateTime.parse('2022-12-11T00:00:00.000+01:00'),
-      );
+      expect(schulungstermin.datum, DateTime(2022, 12, 11, 0, 0, 0, 0, 0));
       expect(schulungstermin.bemerkung, '');
       expect(schulungstermin.kosten, 40);
       expect(schulungstermin.ort, 'Garching-Hochbrück');
@@ -106,7 +103,7 @@ void main() {
         schulungsterminId: 1012,
         schulungsartId: 15,
         schulungsTeilnehmerId: 12345,
-        datum: DateTime.parse('2022-12-11T00:00:00.000+01:00'),
+        datum: DateTime(2022, 12, 11, 0, 0, 0, 0, 0),
         bemerkung: '',
         kosten: 40,
         ort: 'Garching-Hochbrück',
@@ -152,7 +149,7 @@ void main() {
       expect(json['SCHULUNGENTERMINID'], 1012);
       expect(json['SCHULUNGSARTID'], 15);
       expect(json['SCHULUNGENTEILNEHMERID'], 12345);
-      expect(json['DATUM'], '2022-12-10T23:00:00.000Z');
+      expect(json['DATUM'], '2022-12-11T00:00:00.000');
       expect(json['BEMERKUNG'], '');
       expect(json['KOSTEN'], 40);
       expect(json['ORT'], 'Garching-Hochbrück');
@@ -202,7 +199,7 @@ void main() {
         schulungsterminId: 1012,
         schulungsartId: 15,
         schulungsTeilnehmerId: 12345,
-        datum: DateTime.parse('2022-12-11T00:00:00.000+01:00'),
+        datum: DateTime(2022, 12, 11, 0, 0, 0, 0, 0),
         bemerkung: '',
         kosten: 40,
         ort: 'Garching-Hochbrück',
@@ -248,7 +245,7 @@ void main() {
         'Schulungstermin(schulungsterminId: 1012, '
         'schulungsartId: 15, '
         'schulungsTeilnehmerId: 12345, '
-        'datum: 2022-12-10 23:00:00.000Z, '
+        'datum: 2022-12-11 00:00:00.000, '
         'bezeichnung: Der Sportleiter im Verein / Kugeldisziplinen, '
         'ort: Garching-Hochbrück, '
         'status: 1)',
