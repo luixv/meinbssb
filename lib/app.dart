@@ -61,7 +61,7 @@ class MyAppWrapper extends StatelessWidget {
                     (context, themeProvider, _) => MaterialApp(
                       home: initialScreen,
                       theme: themeProvider.getTheme(false),
-                      darkTheme: themeProvider.getTheme(true),
+                      darkTheme: themeProvider.getTheme(false),
                       themeMode: ThemeMode.system,
                     ),
               )
@@ -281,6 +281,9 @@ class _MyAppState extends State<MyApp> {
         home: SplashScreen(
           onFinish: () {}, // No-op, we control timing in _MyAppState
         ),
+        theme: ThemeProvider().getTheme(false),
+        darkTheme: ThemeProvider().getTheme(false),
+        themeMode: ThemeMode.system,
       );
     }
     // Only now build the MaterialApp with all routes
@@ -290,7 +293,7 @@ class _MyAppState extends State<MyApp> {
           navigatorKey: _navigatorKey,
           title: 'Mein BSSB',
           theme: themeProvider.getTheme(false),
-          darkTheme: themeProvider.getTheme(true),
+          darkTheme: themeProvider.getTheme(false),
           themeMode: ThemeMode.system,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
