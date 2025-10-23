@@ -2494,9 +2494,9 @@ void main() {
       ).thenAnswer((_) async => {'result': true});
 
       final result = await userService.bssbAppPassantrag(
-        {
-          1: {'Disziplin 1': 10},
-        },
+        [
+          {'VEREINID': 1, 'DISZIPLINID': 10},
+        ],
         123,
         456,
         789,
@@ -2517,9 +2517,9 @@ void main() {
       ).thenAnswer((_) async => {'result': false});
 
       final result = await userService.bssbAppPassantrag(
-        {
-          1: {'Disziplin 1': 10},
-        },
+        [
+          {'VEREINID': 1, 'DISZIPLINID': 10},
+        ],
         123,
         456,
         789,
@@ -2540,7 +2540,7 @@ void main() {
       ).thenAnswer((_) async => {'unexpected': true});
 
       final result = await userService.bssbAppPassantrag(
-        {},
+        [],
         null,
         null,
         null,
@@ -2561,7 +2561,7 @@ void main() {
       ).thenThrow(Exception('API error'));
 
       final result = await userService.bssbAppPassantrag(
-        {},
+        [],
         null,
         null,
         null,
@@ -2582,10 +2582,10 @@ void main() {
       ).thenAnswer((_) async => {'result': true});
 
       final result = await userService.bssbAppPassantrag(
-        {
-          1: {'Disziplin 1': 10, 'Disziplin 2': null},
-          2: {'Disziplin 3': 20},
-        },
+        [
+          {'VEREINID': 1, 'DISZIPLINID': 10},
+          {'VEREINID': 2, 'DISZIPLINID': 20},
+        ],
         123,
         456,
         789,

@@ -18,24 +18,28 @@ class UserService {
     required CacheService cacheService,
     required NetworkService networkService,
     required ConfigService configService,
-  })  : _httpClient = httpClient,
-        _cacheService = cacheService,
-        _networkService = networkService,
-        _configService = configService;
+  }) : _httpClient = httpClient,
+       _cacheService = cacheService,
+       _networkService = networkService,
+       _configService = configService;
 
   /// Fetches the accepted or active pass data for a given personId (int).
   Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
-    int personId,
+    int? personId,
   ) async {
     try {
       String personIdStr = personId.toString();
 
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
 
       final endpoint = 'PassdatenAkzeptierterOderAktiverPass/$personIdStr';
-      final response =
-          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
 
       if (response == null || (response is Map && response.isEmpty)) {
         return null;
@@ -84,8 +88,8 @@ class UserService {
 
   Future<UserData?> _fetchPassdatenInternal(int personId) async {
     try {
-      final Map<String, dynamic> result =
-          await _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
+      final Map<String, dynamic>
+      result = await _cacheService.cacheAndRetrieveData<Map<String, dynamic>>(
         'passdaten_$personId',
         _networkService.getCacheExpirationDuration(),
         () async {
@@ -243,18 +247,17 @@ class UserService {
   ) async {
     // PassStatus darf 1=aktiv und 4=akzeptiert sein. Alle andere Stati werden nicht akzeptiert.
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
 
       final endpoint = 'ZweitmitgliedschaftenZVE/$personId/$passStatus';
-      final List<dynamic> result =
-          await _cacheService.cacheAndRetrieveData<List<dynamic>>(
+      final List<dynamic>
+      result = await _cacheService.cacheAndRetrieveData<List<dynamic>>(
         'zweitmitgliedschaftenzve_$personId',
         _networkService.getCacheExpirationDuration(),
-        () async => await _httpClient.get(
-          endpoint,
-          overrideBaseUrl: baseUrl,
-        ),
+        () async => await _httpClient.get(endpoint, overrideBaseUrl: baseUrl),
         (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
       );
       return result
@@ -271,13 +274,14 @@ class UserService {
   ) async {
     try {
       final endpoint = 'Zweitmitgliedschaften/$personId';
-      final List<dynamic> result =
-          await _cacheService.cacheAndRetrieveData<List<dynamic>>(
-        'zweitmitgliedschaften_$personId',
-        _networkService.getCacheExpirationDuration(),
-        () async => await _httpClient.get(endpoint),
-        (dynamic rawResponse) => _mapZweitmitgliedschaftenResponse(rawResponse),
-      );
+      final List<dynamic> result = await _cacheService
+          .cacheAndRetrieveData<List<dynamic>>(
+            'zweitmitgliedschaften_$personId',
+            _networkService.getCacheExpirationDuration(),
+            () async => await _httpClient.get(endpoint),
+            (dynamic rawResponse) =>
+                _mapZweitmitgliedschaftenResponse(rawResponse),
+          );
       return result
           .map((json) => ZweitmitgliedschaftData.fromJson(json))
           .toList();
@@ -317,13 +321,13 @@ class UserService {
   ) async {
     try {
       final endpoint = 'PassdatenZVE/$passdatenId/$personId';
-      final List<dynamic> result =
-          await _cacheService.cacheAndRetrieveData<List<dynamic>>(
-        'passdaten_zve_$passdatenId',
-        _networkService.getCacheExpirationDuration(),
-        () async => await _httpClient.get(endpoint),
-        (dynamic rawResponse) => _mapPassdatenZVEResponse(rawResponse),
-      );
+      final List<dynamic> result = await _cacheService
+          .cacheAndRetrieveData<List<dynamic>>(
+            'passdaten_zve_$passdatenId',
+            _networkService.getCacheExpirationDuration(),
+            () async => await _httpClient.get(endpoint),
+            (dynamic rawResponse) => _mapPassdatenZVEResponse(rawResponse),
+          );
       return result.map((json) => PassDataZVE.fromJson(json)).toList();
     } catch (e) {
       LoggerService.logError('Error fetching PassdatenZVE: $e');
@@ -370,61 +374,64 @@ class UserService {
 
       if (data is List) {
         // Convert to Contact objects and filter out empty values and invalid entries
-        final List<Contact> contactList = data
-            .map((item) {
-              try {
-                if (item is! Map<String, dynamic>) {
-                  LoggerService.logWarning(
-                    'Contact item is not a Map: ${item.runtimeType}',
-                  );
-                  return null;
-                }
+        final List<Contact> contactList =
+            data
+                .map((item) {
+                  try {
+                    if (item is! Map<String, dynamic>) {
+                      LoggerService.logWarning(
+                        'Contact item is not a Map: ${item.runtimeType}',
+                      );
+                      return null;
+                    }
 
-                final contact = Contact.fromJson(item);
-                return contact;
-              } catch (e) {
-                LoggerService.logWarning(
-                  'Failed to parse contact: $e. Item: $item',
-                );
-                return null;
-              }
-            })
-            .where((contact) {
-              final isValid = contact != null && contact.value.isNotEmpty;
-              return isValid;
-            })
-            .cast<Contact>()
-            .toList();
+                    final contact = Contact.fromJson(item);
+                    return contact;
+                  } catch (e) {
+                    LoggerService.logWarning(
+                      'Failed to parse contact: $e. Item: $item',
+                    );
+                    return null;
+                  }
+                })
+                .where((contact) {
+                  final isValid = contact != null && contact.value.isNotEmpty;
+                  return isValid;
+                })
+                .cast<Contact>()
+                .toList();
 
         // Categorize contacts
         final List<Map<String, dynamic>> categorizedContacts = [
           {
             'category': 'Privat',
-            'contacts': contactList
-                .where((contact) => contact.isPrivate)
-                .map(
-                  (contact) => {
-                    'kontaktId': contact.id,
-                    'type': contact.typeLabel,
-                    'value': contact.value,
-                    'rawKontaktTyp': contact.type,
-                  },
-                )
-                .toList(),
+            'contacts':
+                contactList
+                    .where((contact) => contact.isPrivate)
+                    .map(
+                      (contact) => {
+                        'kontaktId': contact.id,
+                        'type': contact.typeLabel,
+                        'value': contact.value,
+                        'rawKontaktTyp': contact.type,
+                      },
+                    )
+                    .toList(),
           },
           {
             'category': 'Geschäftlich',
-            'contacts': contactList
-                .where((contact) => contact.isBusiness)
-                .map(
-                  (contact) => {
-                    'kontaktId': contact.id,
-                    'type': contact.typeLabel,
-                    'value': contact.value,
-                    'rawKontaktTyp': contact.type,
-                  },
-                )
-                .toList(),
+            'contacts':
+                contactList
+                    .where((contact) => contact.isBusiness)
+                    .map(
+                      (contact) => {
+                        'kontaktId': contact.id,
+                        'type': contact.typeLabel,
+                        'value': contact.value,
+                        'rawKontaktTyp': contact.type,
+                      },
+                    )
+                    .toList(),
           },
         ];
 
@@ -454,14 +461,11 @@ class UserService {
       }
 
       const endpoint = 'KontaktHinzufuegen';
-      final response = await _httpClient.post(
-        endpoint,
-        {
-          'PersonID': contact.personId,
-          'KontaktTyp': contact.type,
-          'Kontakt': contact.value,
-        },
-      );
+      final response = await _httpClient.post(endpoint, {
+        'PersonID': contact.personId,
+        'KontaktTyp': contact.type,
+        'Kontakt': contact.value,
+      });
 
       LoggerService.logInfo('addKontakt API response: $response');
 
@@ -481,7 +485,7 @@ class UserService {
   }
 
   Future<bool> bssbAppPassantrag(
-    Map<int, Map<String, int?>> secondColumns,
+    List<Map<String, dynamic>> zves,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
@@ -489,25 +493,12 @@ class UserService {
     int antragsTyp,
   ) async {
     try {
-      final baseUrl =
-          ConfigService.buildBaseUrlForServer(_configService, name: 'api1Base');
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
 
-      final List<Map<String, dynamic>> zveList = [];
-      secondColumns.forEach((vereinId, secondColumn) {
-        secondColumn.forEach((key, value) {
-          LoggerService.logInfo(
-            'Saving ZVE: Verein ID: $vereinId, Key: $key, Value: $value',
-          );
-          if (value != null) {
-            zveList.add({
-              'VEREINID': vereinId,
-              'DISZIPLINID': value,
-            });
-          }
-        });
-      });
-
-// Digitalerpass 1/0.
+      // Digitalerpass 1/0.
 
       final Map<String, dynamic> fullJson = {
         'PASSDATENID': passdatenId,
@@ -515,12 +506,10 @@ class UserService {
         'PERSONID': personId,
         'ERSTVEREINID': erstVereinId,
         'DIGITALERPASS': digitalerPass,
-        'ZVEs': zveList,
+        'ZVEs': zves,
       };
 
-      LoggerService.logInfo(
-        'Adding BSSBAppPassantrag : $fullJson',
-      );
+      LoggerService.logInfo('Adding BSSBAppPassantrag : $fullJson');
       const endpoint = 'BSSBAppPassantrag';
       final response = await _httpClient.post(
         endpoint,
@@ -546,15 +535,12 @@ class UserService {
   Future<bool> deleteKontakt(Contact contact) async {
     try {
       const endpoint = 'KontaktAendern';
-      final response = await _httpClient.put(
-        endpoint,
-        {
-          'PersonID': contact.personId,
-          'KontaktID': contact.id,
-          'KontaktTyp': contact.type,
-          'Kontakt': '', // Empty contact value to indicate deletion
-        },
-      );
+      final response = await _httpClient.put(endpoint, {
+        'PersonID': contact.personId,
+        'KontaktID': contact.id,
+        'KontaktTyp': contact.type,
+        'Kontakt': '', // Empty contact value to indicate deletion
+      });
 
       if (response is Map<String, dynamic>) {
         if (response.containsKey('error') || response['result'] == false) {
@@ -585,10 +571,7 @@ class UserService {
       }
 
       const endpoint = 'KontaktAendern';
-      final response = await _httpClient.put(
-        endpoint,
-        contact.toJson(),
-      );
+      final response = await _httpClient.put(endpoint, contact.toJson());
 
       LoggerService.logInfo('Update contact response: $response');
 

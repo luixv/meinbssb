@@ -283,7 +283,7 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
 
   @override
   _i9.Future<bool> bssbAppPassantrag(
-    Map<int, Map<String, int?>>? secondColumns,
+    List<Map<String, dynamic>>? zves,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
@@ -292,7 +292,7 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#bssbAppPassantrag, [
-              secondColumns,
+              zves,
               passdatenId,
               personId,
               erstVereinId,
