@@ -165,8 +165,6 @@ void main() {
   testWidgets('shows save FAB and success snackbar when saving', (
     tester,
   ) async {
-    // We need to trigger _hasUnsavedChanges = true.
-    // The easiest way is to tap the checkbox for "zusätzlicher physikalischer Ausweis"
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
@@ -180,8 +178,18 @@ void main() {
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
 
-    // Tap the FAB to save
+    // Tap the FAB to open the confirmation dialog
     await tester.tap(fabFinder);
+    await tester.pumpAndSettle();
+
+    // The confirmation dialog should appear
+    // The confirmation dialog should appear (check for the 'Ändern' button)
+    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
+
+    // Tap the 'Ändern' button in the dialog
+    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
+    expect(aendernButtonFinder, findsOneWidget);
+    await tester.tap(aendernButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.textContaining('erfolgreich gespeichert'), findsOneWidget);
@@ -202,8 +210,18 @@ void main() {
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
 
-    // Tap the FAB to save
+    // Tap the FAB to open the confirmation dialog
     await tester.tap(fabFinder);
+    await tester.pumpAndSettle();
+
+    // The confirmation dialog should appear
+    // The confirmation dialog should appear (check for the 'Ändern' button)
+    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
+
+    // Tap the 'Ändern' button in the dialog
+    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
+    expect(aendernButtonFinder, findsOneWidget);
+    await tester.tap(aendernButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Fehler beim Speichern'), findsOneWidget);
