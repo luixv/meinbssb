@@ -50,7 +50,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   bool _hasUnsavedChanges = false;
 
-  Future<void> _onSave() async {
+  Future<void> _onSaveConfirmed() async {
     setState(() {
       _isLoading = true;
       _hasUnsavedChanges = false;
@@ -108,6 +108,92 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         backgroundColor:
             success ? UIConstants.successColor : UIConstants.errorColor,
       ),
+    );
+  }
+
+  void _onSave() {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          ),
+          title: const Center(
+            child: ScaledText(
+              'Startrechte ändern',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                const TextSpan(
+                  text:
+                      'Sind Sie sicher, dass Sie die Startrechte ändern möchten?',
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingM,
+                        Flexible(
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await _onSaveConfirmed();
+                    },
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        Flexible(
+                          child: ScaledText(
+                            'Ändern',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
