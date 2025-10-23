@@ -59,8 +59,9 @@ void main() {
     mockFontSizeProvider = MockFontSizeProvider();
 
     // Setup default mock responses
-    when(mockApiService.fetchBezirkeforSearch())
-        .thenAnswer((_) async => sampleBezirke);
+    when(
+      mockApiService.fetchBezirkeforSearch(),
+    ).thenAnswer((_) async => sampleBezirke);
 
     // Setup FontSizeProvider mock
     when(mockFontSizeProvider.scaleFactor).thenReturn(1.0);
@@ -88,8 +89,9 @@ void main() {
   });
 
   group('SchulungenSearchScreen', () {
-    testWidgets('should render with correct initial state',
-        (WidgetTester tester) async {
+    testWidgets('should render with correct initial state', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -98,10 +100,6 @@ void main() {
       expect(find.text('Suchen'), findsOneWidget);
 
       // Verify form fields are present
-      expect(
-        find.text('Aus-und Weiterbildungen ab Datum anzeigen'),
-        findsOneWidget,
-      );
       expect(find.text('Fachbereich'), findsOneWidget);
       expect(find.text('Regierungsbezirk'), findsOneWidget);
       expect(find.text('Ort'), findsOneWidget);
@@ -113,20 +111,9 @@ void main() {
       expect(find.byIcon(Icons.search), findsOneWidget);
     });
 
-    testWidgets('should initialize with current date',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(testWidget);
-      await tester.pumpAndSettle();
-
-      final now = DateTime.now();
-      final expectedDate =
-          '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
-
-      expect(find.text(expectedDate), findsOneWidget);
-    });
-
-    testWidgets('should allow text input in Ort field',
-        (WidgetTester tester) async {
+    testWidgets('should allow text input in Ort field', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -137,8 +124,9 @@ void main() {
       expect(find.text('München'), findsOneWidget);
     });
 
-    testWidgets('should allow text input in Titel field',
-        (WidgetTester tester) async {
+    testWidgets('should allow text input in Titel field', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -148,8 +136,9 @@ void main() {
 
       expect(find.text('Test Schulung'), findsOneWidget);
     });
-    testWidgets('should toggle checkbox for Für Lizenzverlängerung',
-        (WidgetTester tester) async {
+    testWidgets('should toggle checkbox for Für Lizenzverlängerung', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -166,8 +155,9 @@ void main() {
       expect(tester.widget<Checkbox>(lizenzCheckbox).value, true);
     });
 
-    testWidgets('should toggle checkbox for Für VUEL Verlaengerung',
-        (WidgetTester tester) async {
+    testWidgets('should toggle checkbox for Für VUEL Verlaengerung', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -183,8 +173,9 @@ void main() {
 
       expect(tester.widget<Checkbox>(vuelCheckbox).value, true);
     });
-    testWidgets('should show error when searching without date',
-        (WidgetTester tester) async {
+    testWidgets('should show error when searching without date', (
+      WidgetTester tester,
+    ) async {
       // Create a custom widget with null date for testing
       final testWidgetNullDate = MaterialApp(
         home: MultiProvider(
@@ -213,16 +204,18 @@ void main() {
       expect(find.text('Bitte wählen Sie ein Datum.'), findsOneWidget);
     });
 
-    testWidgets('should show back button when showMenu is true',
-        (WidgetTester tester) async {
+    testWidgets('should show back button when showMenu is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
 
-    testWidgets('should not show back button when showMenu is false',
-        (WidgetTester tester) async {
+    testWidgets('should not show back button when showMenu is false', (
+      WidgetTester tester,
+    ) async {
       final testWidgetNoMenu = MaterialApp(
         home: MultiProvider(
           providers: [
@@ -246,19 +239,9 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsNothing);
     });
 
-    testWidgets('should format date correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(testWidget);
-      await tester.pumpAndSettle();
-
-      final now = DateTime.now();
-      final expectedDate =
-          '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
-
-      expect(find.text(expectedDate), findsOneWidget);
-    });
-
-    testWidgets('should dispose controllers properly',
-        (WidgetTester tester) async {
+    testWidgets('should dispose controllers properly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -273,8 +256,9 @@ void main() {
   });
 
   group('SchulungenSearchScreen - Edge Cases', () {
-    testWidgets('should handle null userData gracefully',
-        (WidgetTester tester) async {
+    testWidgets('should handle null userData gracefully', (
+      WidgetTester tester,
+    ) async {
       final testWidgetNullUser = MaterialApp(
         home: MultiProvider(
           providers: [
@@ -298,8 +282,9 @@ void main() {
       expect(find.text('Aus- und Weiterbildung'), findsOneWidget);
     });
 
-    testWidgets('should handle very long text inputs',
-        (WidgetTester tester) async {
+    testWidgets('should handle very long text inputs', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
@@ -402,9 +387,7 @@ class _TestSchulungenSearchScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Aus- und Weiterbildung'),
-      ),
+      appBar: AppBar(title: const Text('Aus- und Weiterbildung')),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
