@@ -136,8 +136,9 @@ class SchulungenDetailsDialog {
                                                       children: [
                                                         const Icon(
                                                           Icons.calendar_today,
-                                                          size: UIConstants
-                                                              .defaultIconSize,
+                                                          size:
+                                                              UIConstants
+                                                                  .defaultIconSize,
                                                         ),
                                                         UIConstants
                                                             .horizontalSpacingS,
@@ -149,8 +150,9 @@ class SchulungenDetailsDialog {
                                                             ).format(
                                                               termin.datum,
                                                             ),
-                                                            style: UIStyles
-                                                                .bodyStyle,
+                                                            style:
+                                                                UIStyles
+                                                                    .bodyStyle,
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
@@ -167,16 +169,18 @@ class SchulungenDetailsDialog {
                                                       children: [
                                                         const Icon(
                                                           Icons.location_on,
-                                                          size: UIConstants
-                                                              .defaultIconSize,
+                                                          size:
+                                                              UIConstants
+                                                                  .defaultIconSize,
                                                         ),
                                                         UIConstants
                                                             .horizontalSpacingS,
                                                         Flexible(
                                                           child: Text(
                                                             termin.ort,
-                                                            style: UIStyles
-                                                                .bodyStyle,
+                                                            style:
+                                                                UIStyles
+                                                                    .bodyStyle,
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
@@ -202,8 +206,9 @@ class SchulungenDetailsDialog {
                                                       children: [
                                                         const Icon(
                                                           Icons.group,
-                                                          size: UIConstants
-                                                              .defaultIconSize,
+                                                          size:
+                                                              UIConstants
+                                                                  .defaultIconSize,
                                                         ),
                                                         UIConstants
                                                             .horizontalSpacingS,
@@ -211,8 +216,9 @@ class SchulungenDetailsDialog {
                                                           child: Text(
                                                             termin
                                                                 .webGruppeLabel,
-                                                            style: UIStyles
-                                                                .bodyStyle,
+                                                            style:
+                                                                UIStyles
+                                                                    .bodyStyle,
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
@@ -229,16 +235,18 @@ class SchulungenDetailsDialog {
                                                       children: [
                                                         const Icon(
                                                           Icons.request_quote,
-                                                          size: UIConstants
-                                                              .defaultIconSize,
+                                                          size:
+                                                              UIConstants
+                                                                  .defaultIconSize,
                                                         ),
                                                         UIConstants
                                                             .horizontalSpacingS,
                                                         Flexible(
                                                           child: Text(
                                                             '${termin.kosten.toStringAsFixed(2)} €',
-                                                            style: UIStyles
-                                                                .bodyStyle,
+                                                            style:
+                                                                UIStyles
+                                                                    .bodyStyle,
                                                             overflow:
                                                                 TextOverflow
                                                                     .ellipsis,
@@ -267,10 +275,11 @@ class SchulungenDetailsDialog {
                                             children: [
                                               Text(
                                                 'Lehrgangsleiter:',
-                                                style:
-                                                    UIStyles.bodyStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                                style: UIStyles.bodyStyle
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingXS,
@@ -281,8 +290,9 @@ class SchulungenDetailsDialog {
                                                 children: [
                                                   const Icon(
                                                     Icons.email,
-                                                    size: UIConstants
-                                                        .defaultIconSize,
+                                                    size:
+                                                        UIConstants
+                                                            .defaultIconSize,
                                                   ),
                                                   UIConstants
                                                       .horizontalSpacingS,
@@ -306,8 +316,9 @@ class SchulungenDetailsDialog {
                                                 children: [
                                                   const Icon(
                                                     Icons.phone,
-                                                    size: UIConstants
-                                                        .defaultIconSize,
+                                                    size:
+                                                        UIConstants
+                                                            .defaultIconSize,
                                                   ),
                                                   UIConstants
                                                       .horizontalSpacingS,
@@ -336,25 +347,27 @@ class SchulungenDetailsDialog {
                                     padding: const EdgeInsets.all(
                                       UIConstants.spacingM,
                                     ),
-                                    child: termin.lehrgangsinhaltHtml.isNotEmpty
-                                        ? Html(
-                                            data: termin.lehrgangsinhaltHtml,
-                                          )
-                                        : termin.lehrgangsinhalt.isNotEmpty
-                                            ? Text(
-                                                termin.lehrgangsinhalt,
-                                              )
+                                    child:
+                                        termin.lehrgangsinhaltHtml.isNotEmpty
+                                            ? Html(
+                                              data: termin.lehrgangsinhaltHtml,
+                                              style: {
+                                                'body': Style(
+                                                  fontSize: FontSize(
+                                                    16.0,
+                                                  ), // Increase font size as needed
+                                                ),
+                                              },
+                                            )
+                                            : termin.lehrgangsinhalt.isNotEmpty
+                                            ? Text(termin.lehrgangsinhalt)
                                             : termin.bemerkung.isNotEmpty
-                                                ? Text(
-                                                    termin.bemerkung,
-                                                  )
-                                                : const Text(
-                                                    'Keine Beschreibung verfügbar.',
-                                                  ),
+                                            ? Text(termin.bemerkung)
+                                            : const Text(
+                                              'Keine Beschreibung verfügbar.',
+                                            ),
                                   ),
-                                  const SizedBox(
-                                    height: UIConstants.spacingXL,
-                                  ),
+                                  const SizedBox(height: UIConstants.spacingXL),
                                 ],
                               ),
                             ),
@@ -378,25 +391,25 @@ class SchulungenDetailsDialog {
                                     color: UIConstants.whiteColor,
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: UIConstants.spacingM,
-                                ),
+                                const SizedBox(height: UIConstants.spacingM),
                                 // "Buchen" FAB below
                                 FloatingActionButton(
                                   heroTag: 'dialogBookFab',
                                   tooltip:
                                       cannotBook ? 'Nicht buchbar' : 'Buchen',
-                                  backgroundColor: cannotBook
-                                      ? UIConstants.cancelButtonBackground
-                                      : UIConstants.defaultAppColor,
-                                  onPressed: cannotBook
-                                      ? null
-                                      : () {
-                                          Navigator.of(context).pop();
-                                          if (onBookingPressed != null) {
-                                            onBookingPressed();
-                                          }
-                                        },
+                                  backgroundColor:
+                                      cannotBook
+                                          ? UIConstants.cancelButtonBackground
+                                          : UIConstants.defaultAppColor,
+                                  onPressed:
+                                      cannotBook
+                                          ? null
+                                          : () {
+                                            Navigator.of(context).pop();
+                                            if (onBookingPressed != null) {
+                                              onBookingPressed();
+                                            }
+                                          },
                                   child: const Icon(
                                     Icons.event_available,
                                     color: UIConstants.whiteColor,

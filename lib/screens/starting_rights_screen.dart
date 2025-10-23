@@ -50,7 +50,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   bool _hasUnsavedChanges = false;
 
-  Future<void> _onSave() async {
+  Future<void> _onSaveConfirmed() async {
     setState(() {
       _isLoading = true;
       _hasUnsavedChanges = false;
@@ -61,14 +61,21 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     final int? personId = widget.userData?.personId;
     final int? erstVereinId = widget.userData?.erstVereinId;
 
+    List<Map<String, dynamic>> zves = [];
+    secondColumns.forEach((zvVereinId, columnData) {
+      columnData.forEach((key, disziplinId) {
+        zves.add({'VEREINID': zvVereinId, 'DISZIPLINID': disziplinId});
+      });
+    });
+
     const antragsTyp = 3;
     final apiService = Provider.of<ApiService>(context, listen: false);
     final bool success = await apiService.bssbAppPassantrag(
-      secondColumns,
+      zves,
       passdatenId,
       personId,
       erstVereinId,
-      _digitalerPass ? 1 : 0,
+      _digitalerPass ? 0 : 1,
       antragsTyp,
     );
 
@@ -104,9 +111,94 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     );
   }
 
+  void _onSave() {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          ),
+          title: const Center(
+            child: ScaledText(
+              'Startrechte ändern',
+              style: UIStyles.dialogTitleStyle,
+            ),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                const TextSpan(
+                  text:
+                      'Sind Sie sicher, dass Sie die Startrechte ändern möchten?',
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingM,
+                        Flexible(
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await _onSaveConfirmed();
+                    },
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        Flexible(
+                          child: ScaledText(
+                            'Ändern',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   List<dynamic> _zweitmitgliedschaften = [];
   List<Disziplin> _disciplines = [];
-  //List<FremdeVerband> _fremdeVerbaende = [];
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -185,7 +277,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       fetchedPassdatenAkzeptierterOderAktiverPassData = await apiService
           .fetchPassdatenAkzeptierterOderAktiverPass(personId);
 
-      int passStatus = 4;
+      int passStatus = 4; // PassStatus darf 1=aktiv und 4=akzeptiert sein.
       final fetchedZweitmitgliedschaften = await apiService
           .fetchZweitmitgliedschaftenZVE(personId, passStatus);
 

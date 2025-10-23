@@ -23,13 +23,14 @@ class FakeApiService implements ApiService {
 
   @override
   Future<bool> bssbAppPassantrag(
-    Map<int, Map<String, int?>> secondColumns,
+    List<Map<String, dynamic>> zves,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
     int digitalerPass,
     int antragsTyp,
   ) async {
+    // Optionally check zves for test logic
     return passantragShouldSucceed;
   }
 
@@ -40,54 +41,51 @@ class FakeApiService implements ApiService {
 
   @override
   Future<List<Disziplin>> fetchDisziplinen() async => [
-        const Disziplin(
-          disziplinId: 1,
-          disziplinNr: '1',
-          disziplin: 'Test Disziplin',
-        ),
-      ];
+    const Disziplin(
+      disziplinId: 1,
+      disziplinNr: '1',
+      disziplin: 'Test Disziplin',
+    ),
+  ];
 
   @override
   Future<List<PassDataZVE>> fetchPassdatenZVE(
     int passdatenId,
     int personId,
-  ) async =>
-      [
-        PassDataZVE(
-          passdatenZvId: 1,
-          zvVereinId: 1,
-          vVereinNr: 123,
-          disziplinNr: '1',
-          gauId: 1,
-          bezirkId: 1,
-          disziAusblenden: 0,
-          ersaetzendurchId: 0,
-          zvMitgliedschaftId: 1,
-          vereinName: 'Test ZVE Verein',
-          disziplin: 'Test Disziplin',
-          disziplinId: 1,
-        ),
-      ];
+  ) async => [
+    PassDataZVE(
+      passdatenZvId: 1,
+      zvVereinId: 1,
+      vVereinNr: 123,
+      disziplinNr: '1',
+      gauId: 1,
+      bezirkId: 1,
+      disziAusblenden: 0,
+      ersaetzendurchId: 0,
+      zvMitgliedschaftId: 1,
+      vereinName: 'Test ZVE Verein',
+      disziplin: 'Test Disziplin',
+      disziplinId: 1,
+    ),
+  ];
 
   @override
   Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
-    int personId,
-  ) async =>
-      PassdatenAkzeptOrAktiv(
-        passdatenId: 1,
-        personId: personId,
-        passStatus: 1,
-        digitalerPass: 0,
-        erstVereinId: 1,
-        evVereinNr: 123,
-      );
+    int? personId,
+  ) async => PassdatenAkzeptOrAktiv(
+    passdatenId: 1,
+    personId: personId ?? 1,
+    passStatus: 1,
+    digitalerPass: 0,
+    erstVereinId: 1,
+    evVereinNr: 123,
+  );
 
   @override
   Future<List<ZweitmitgliedschaftData>> fetchZweitmitgliedschaftenZVE(
     int personId,
     int passStatus,
-  ) async =>
-      [];
+  ) async => [];
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
@@ -164,10 +162,9 @@ void main() {
     expect(find.textContaining('Startrechte'), findsWidgets);
   });
 
-  testWidgets('shows save FAB and success snackbar when saving',
-      (tester) async {
-    // We need to trigger _hasUnsavedChanges = true.
-    // The easiest way is to tap the checkbox for "zusätzlicher physikalischer Ausweis"
+  testWidgets('shows save FAB and success snackbar when saving', (
+    tester,
+  ) async {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
@@ -181,8 +178,18 @@ void main() {
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
 
-    // Tap the FAB to save
+    // Tap the FAB to open the confirmation dialog
     await tester.tap(fabFinder);
+    await tester.pumpAndSettle();
+
+    // The confirmation dialog should appear
+    // The confirmation dialog should appear (check for the 'Ändern' button)
+    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
+
+    // Tap the 'Ändern' button in the dialog
+    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
+    expect(aendernButtonFinder, findsOneWidget);
+    await tester.tap(aendernButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.textContaining('erfolgreich gespeichert'), findsOneWidget);
@@ -203,8 +210,18 @@ void main() {
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
 
-    // Tap the FAB to save
+    // Tap the FAB to open the confirmation dialog
     await tester.tap(fabFinder);
+    await tester.pumpAndSettle();
+
+    // The confirmation dialog should appear
+    // The confirmation dialog should appear (check for the 'Ändern' button)
+    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
+
+    // Tap the 'Ändern' button in the dialog
+    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
+    expect(aendernButtonFinder, findsOneWidget);
+    await tester.tap(aendernButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Fehler beim Speichern'), findsOneWidget);

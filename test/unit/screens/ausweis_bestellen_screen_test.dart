@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
 import 'package:meinbssb/screens/ausweis_bestellen_screen.dart';
 import 'package:meinbssb/screens/ausweis_bestellen_success_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -12,8 +13,15 @@ class FakeApiService implements ApiService {
   bool shouldSucceed = true;
 
   @override
+  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+    int? personId,
+  ) async {
+    return null;
+  }
+
+  @override
   Future<bool> bssbAppPassantrag(
-    Map<int, Map<String, int?>> secondColumns,
+    List<Map<String, dynamic>> zves,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
@@ -21,6 +29,7 @@ class FakeApiService implements ApiService {
     int antragsTyp,
   ) async {
     called = true;
+    // Optionally check zves for test logic
     return shouldSucceed;
   }
 
@@ -58,13 +67,16 @@ void main() {
     await tester.pumpWidget(buildTestWidget(apiService: apiService));
     expect(find.byType(ElevatedButton), findsOneWidget);
     expect(
-        find.text(
-            'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen? \nKlicken Sie auf den Button unten, um fortzufahren.',),
-        findsOneWidget,);
+      find.text(
+        'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen? \nKlicken Sie auf den Button unten, um fortzufahren.',
+      ),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('calls apiService.bssbAppPassantrag and navigates on success',
-      (WidgetTester tester) async {
+  testWidgets('calls apiService.bssbAppPassantrag and navigates on success', (
+    WidgetTester tester,
+  ) async {
     final apiService = FakeApiService();
     await tester.pumpWidget(buildTestWidget(apiService: apiService));
     await tester.tap(find.byType(ElevatedButton));
