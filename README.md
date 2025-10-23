@@ -85,7 +85,7 @@ For building the project:
 
 
 For generating mocks and testing:
-    flutter pub run build_runner build --delete-conflicting-outputs
+    flutter pub run build_runner build -delete-conflicting-outputs
 
     flutter test .\test\unit
 

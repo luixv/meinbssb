@@ -61,14 +61,21 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
     final int? personId = widget.userData?.personId;
     final int? erstVereinId = widget.userData?.erstVereinId;
 
+    List<Map<String, dynamic>> zves = [];
+    secondColumns.forEach((zvVereinId, columnData) {
+      columnData.forEach((key, disziplinId) {
+        zves.add({'VEREINID': zvVereinId, 'DISZIPLINID': disziplinId});
+      });
+    });
+
     const antragsTyp = 3;
     final apiService = Provider.of<ApiService>(context, listen: false);
     final bool success = await apiService.bssbAppPassantrag(
-      secondColumns,
+      zves,
       passdatenId,
       personId,
       erstVereinId,
-      _digitalerPass ? 1 : 0,
+      _digitalerPass ? 0 : 1,
       antragsTyp,
     );
 
@@ -106,7 +113,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
   List<dynamic> _zweitmitgliedschaften = [];
   List<Disziplin> _disciplines = [];
-  //List<FremdeVerband> _fremdeVerbaende = [];
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -185,7 +191,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       fetchedPassdatenAkzeptierterOderAktiverPassData = await apiService
           .fetchPassdatenAkzeptierterOderAktiverPass(personId);
 
-      int passStatus = 4;
+      int passStatus = 4; // PassStatus darf 1=aktiv und 4=akzeptiert sein.
       final fetchedZweitmitgliedschaften = await apiService
           .fetchZweitmitgliedschaftenZVE(personId, passStatus);
 

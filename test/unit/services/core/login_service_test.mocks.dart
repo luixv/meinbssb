@@ -1338,7 +1338,7 @@ class MockUserService extends _i1.Mock implements _i24.UserService {
 
   @override
   _i2.Future<bool> bssbAppPassantrag(
-    Map<int, Map<String, int?>>? secondColumns,
+    List<Map<String, dynamic>>? zves,
     int? passdatenId,
     int? personId,
     int? erstVereinId,
@@ -1347,7 +1347,7 @@ class MockUserService extends _i1.Mock implements _i24.UserService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#bssbAppPassantrag, [
-              secondColumns,
+              zves,
               passdatenId,
               personId,
               erstVereinId,
