@@ -9,7 +9,7 @@ import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 import '/screens/oktoberfest_results_screen.dart';
 import '/screens/oktoberfest_gewinn_screen.dart';
-import 'oktoberfest_eintritt_festzelt_screen.dart';
+//import 'oktoberfest_eintritt_festzelt_screen.dart';
 
 import '/services/api_service.dart';
 
@@ -39,51 +39,45 @@ class OktoberfestScreen extends StatelessWidget {
           children: [
             const LogoWidget(),
             const SizedBox(height: UIConstants.spacingS),
-            const ScaledText(
-              'Oktoberfest',
-              style: UIStyles.headerStyle,
-            ),
+            const ScaledText('Oktoberfest', style: UIStyles.headerStyle),
             const SizedBox(height: UIConstants.spacingM),
-            _buildMenuItem(
-              context,
-              'Meine Ergebnisse',
-              Icons.bar_chart,
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OktoberfestResultsScreen(
-                      passnummer: userData?.passnummer ?? '',
-                      apiService:
-                          Provider.of<ApiService>(context, listen: false),
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Meine Gewinne',
-              Icons.emoji_events,
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OktoberfestGewinnScreen(
-                      passnummer: userData?.passnummer ?? '',
-                      apiService:
-                          Provider.of<ApiService>(context, listen: false),
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
+            _buildMenuItem(context, 'Meine Ergebnisse', Icons.bar_chart, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => OktoberfestResultsScreen(
+                        passnummer: userData?.passnummer ?? '',
+                        apiService: Provider.of<ApiService>(
+                          context,
+                          listen: false,
+                        ),
+                        userData: userData,
+                        isLoggedIn: isLoggedIn,
+                        onLogout: onLogout,
+                      ),
+                ),
+              );
+            }),
+            _buildMenuItem(context, 'Meine Gewinne', Icons.emoji_events, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => OktoberfestGewinnScreen(
+                        passnummer: userData?.passnummer ?? '',
+                        apiService: Provider.of<ApiService>(
+                          context,
+                          listen: false,
+                        ),
+                        userData: userData,
+                        isLoggedIn: isLoggedIn,
+                        onLogout: onLogout,
+                      ),
+                ),
+              );
+            }),
+            /*
             _buildMenuItem(
               context,
               'Eintritt Festzelt',
@@ -111,6 +105,7 @@ class OktoberfestScreen extends StatelessWidget {
                 );
               },
             ),
+         */
           ],
         ),
       ),
@@ -140,10 +135,7 @@ class OktoberfestScreen extends StatelessWidget {
             color: UIConstants.textColor,
           ),
         ),
-        trailing: const Icon(
-          Icons.chevron_right,
-          semanticLabel: 'Weiter',
-        ),
+        trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
         onTap: onTap,
         minLeadingWidth: UIConstants.defaultIconWidth,
         contentPadding: const EdgeInsets.symmetric(
