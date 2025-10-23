@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 
@@ -24,7 +23,6 @@ class SchulungenSearchScreen extends StatefulWidget {
     super.key,
   });
 
-  
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
@@ -36,7 +34,7 @@ class SchulungenSearchScreen extends StatefulWidget {
 }
 
 class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
-  DateTime? selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   int? selectedWebGruppe = 0;
   int? selectedBezirkId = 0;
   final TextEditingController _ortController = TextEditingController();
@@ -92,101 +90,27 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) =>
-      DateFormat('dd.MM.yyyy', 'de_DE').format(date);
-
-  Future<void> _pickDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
-      locale: const Locale('de', 'DE'),
-      helpText: 'Aus-und Weiterbildungen ab Datum anzeigen',
-      cancelText: 'Abbrechen',
-      confirmText: 'Auswählen',
-      fieldLabelText: 'Datum eingeben',
-      fieldHintText: 'TT.MM.JJJJ',
-      errorFormatText: 'Ungültiges Datumsformat.',
-      errorInvalidText: 'Ungültiges Datum.',
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: UIConstants.defaultAppColor,
-                  onPrimary: UIConstants.whiteColor,
-                  surface: UIConstants.calendarBackgroundColor,
-                  onSurface: UIConstants.textColor,
-                ),
-            textButtonTheme: const TextButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  UIConstants.cancelButtonBackground,
-                ),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingSM,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
-              ),
-            ),
-            datePickerTheme: const DatePickerThemeData(
-              headerBackgroundColor: UIConstants.calendarBackgroundColor,
-              backgroundColor: UIConstants.calendarBackgroundColor,
-              headerForegroundColor: UIConstants.textColor,
-              dayStyle: TextStyle(color: UIConstants.textColor),
-              yearStyle: TextStyle(color: UIConstants.textColor),
-              weekdayStyle: TextStyle(color: UIConstants.textColor),
-              confirmButtonStyle: ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(UIConstants.primaryColor),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingSM,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
-
   void _navigateToResults() {
-    final date = selectedDate ?? DateTime.now();
+    final date = selectedDate;
     final userData = widget.userData;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SchulungenScreen(
-          userData,
-          isLoggedIn: widget.isLoggedIn,
-          onLogout: widget.onLogout,
-          searchDate: date,
-          webGruppe: selectedWebGruppe,
-          bezirkId: selectedBezirkId,
-          ort: _ortController.text,
-          titel: _titelController.text,
-          fuerVerlaengerungen: fuerVerlaengerungen,
-          fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
-          showMenu: widget.showMenu,
-          showConnectivityIcon: widget.showConnectivityIcon,
-        ),
+        builder:
+            (context) => SchulungenScreen(
+              userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+              searchDate: date,
+              webGruppe: selectedWebGruppe,
+              bezirkId: selectedBezirkId,
+              ort: _ortController.text,
+              titel: _titelController.text,
+              fuerVerlaengerungen: fuerVerlaengerungen,
+              fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
+              showMenu: widget.showMenu,
+              showConnectivityIcon: widget.showConnectivityIcon,
+            ),
       ),
     );
   }
@@ -201,14 +125,18 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
       automaticallyImplyLeading: true,
       showMenu: widget.showMenu,
       showConnectivityIcon: widget.showConnectivityIcon,
-      leading: widget.showMenu
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
-              onPressed: () {
-                Navigator.of(context).maybePop();
-              },
-            )
-          : null,
+      leading:
+          widget.showMenu
+              ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: UIConstants.textColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).maybePop();
+                },
+              )
+              : null,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -246,36 +174,16 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const ScaledText(
-                'Suchen',
-                style: UIStyles.headerStyle,
-              ),
+              const ScaledText('Suchen', style: UIStyles.headerStyle),
               const SizedBox(height: UIConstants.spacingM),
-              InkWell(
-                onTap: _pickDate,
-                child: InputDecorator(
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Aus-und Weiterbildungen ab Datum anzeigen',
-                    floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    suffixIcon: const Icon(Icons.calendar_today),
-                  ),
-                  child: ScaledText(
-                    _formatDate(selectedDate ?? DateTime.now()),
-                    style: UIStyles.bodyStyle,
-                  ),
-                ),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
+              // Date field removed
               DropdownButtonFormField<int>(
                 value: selectedWebGruppe,
                 decoration: UIStyles.formInputDecoration.copyWith(
                   labelText: 'Fachbereich',
                 ),
                 items: [
-                  const DropdownMenuItem<int>(
-                    value: 0,
-                    child: Text('Alle'),
-                  ),
+                  const DropdownMenuItem<int>(value: 0, child: Text('Alle')),
                   ...Schulungstermin.webGruppeMap.entries
                       .where((entry) => entry.key != 0)
                       .map(
@@ -295,24 +203,25 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               isLoadingBezirke
                   ? const CircularProgressIndicator()
                   : DropdownButtonFormField<int>(
-                      value: selectedBezirkId,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Regierungsbezirk',
-                      ),
-                      items: _bezirke
-                          .map(
-                            (bezirk) => DropdownMenuItem<int>(
-                              value: bezirk.bezirkId,
-                              child: Text(bezirk.bezirkName),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedBezirkId = value;
-                        });
-                      },
+                    value: selectedBezirkId,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Regierungsbezirk',
                     ),
+                    items:
+                        _bezirke
+                            .map(
+                              (bezirk) => DropdownMenuItem<int>(
+                                value: bezirk.bezirkId,
+                                child: Text(bezirk.bezirkName),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedBezirkId = value;
+                      });
+                    },
+                  ),
               const SizedBox(height: UIConstants.spacingM),
               TextFormField(
                 key: const Key('Ort'),

@@ -354,7 +354,7 @@ class SchulungenDetailsDialog {
                                               style: {
                                                 'body': Style(
                                                   fontSize: FontSize(
-                                                    16.0,
+                                                    15.0,
                                                   ), // Increase font size as needed
                                                 ),
                                               },
