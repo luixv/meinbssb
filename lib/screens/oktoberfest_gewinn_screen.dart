@@ -10,7 +10,7 @@ import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/constants/ui_constants.dart';
 
-import 'agb_screen.dart';
+// import 'agb_screen.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
 
@@ -215,15 +215,62 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
                         final gewinn = _gewinne[index];
+                        String abgerufenAmText;
+                        final abgerufenAm = gewinn.abgerufenAm;
+                        if (abgerufenAm.isEmpty) {
+                          abgerufenAmText = 'noch nicht abgerufen';
+                        } else {
+                          DateTime? parsed;
+                          try {
+                            parsed = DateTime.tryParse(abgerufenAm);
+                          } catch (_) {
+                            parsed = null;
+                          }
+                          if (parsed != null) {
+                            final day = parsed.day.toString().padLeft(2, '0');
+                            final month = parsed.month.toString().padLeft(
+                              2,
+                              '0',
+                            );
+                            final year = parsed.year.toString();
+                            abgerufenAmText = '$day.$month.$year';
+                          } else {
+                            abgerufenAmText = abgerufenAm;
+                          }
+                        }
                         return ListTile(
                           title: Text(
-                            gewinn.wettbewerb +
-                                (gewinn.isSachpreis
-                                    ? ' - ${gewinn.sachpreis}'
-                                    : ' - ${gewinn.geldpreis}€'),
+                            gewinn.isSachpreis
+                                ? '${gewinn.wettbewerb}: ${gewinn.sachpreis}'
+                                : '${gewinn.wettbewerb}: ${gewinn.geldpreis}€',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: UIConstants.subtitleFontSize,
+                            ),
                           ),
-                          subtitle: Text(
-                            'Abrufdatum: ${gewinn.abgerufenAm.isEmpty ? "noch nicht abgerufen" : gewinn.abgerufenAm}',
+                          subtitle: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: UIConstants.subtitleFontSize,
+                                color: DefaultTextStyle.of(context).style.color,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'Abrufdatum: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: abgerufenAmText,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: UIConstants.subtitleFontSize,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -406,7 +453,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
   late final TextEditingController _kontoinhaberController;
   late final TextEditingController _ibanController;
   late final TextEditingController _bicController;
-  bool _agbChecked = false;
+  // Removed _agbChecked and AGB checkbox
 
   bool _isBicRequired(String iban) {
     return !iban.toUpperCase().startsWith('DE');
@@ -561,52 +608,21 @@ class _BankDataDialogState extends State<BankDataDialog> {
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingL),
-                      CheckboxListTile(
-                        value: _agbChecked,
-                        onChanged: (val) {
-                          setState(() => _agbChecked = val ?? false);
-                        },
-                        title: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const AgbScreen(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'AGB',
-                                style: UIStyles.linkStyle.copyWith(
-                                  color: UIConstants.linkColor,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: UIConstants.spacingS),
-                            const Text('akzeptieren'),
-                            const SizedBox(width: UIConstants.spacingS),
-                            const Tooltip(
-                              message: 'Ich bin mit den AGB einverstanden.',
-                              triggerMode: TooltipTriggerMode.tap,
-                              child: Icon(
-                                Icons.info_outline,
-                                color: UIConstants.defaultAppColor,
-                                size: UIConstants.tooltipIconSize,
-                              ),
-                            ),
-                          ],
-                        ),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                      ),
+                      // ...existing code...
+                      const SizedBox(
+                        height: 84,
+                      ), // Increased space at the bottom of the dialog
                     ],
                   ),
                 ),
               ),
             ),
+          ),
+          // Increased extra space at the bottom of the dialog
+          const Positioned(
+            bottom: UIConstants.dialogFabTightBottom + 64,
+            right: UIConstants.dialogFabTightRight,
+            child: SizedBox(height: 64),
           ),
           Positioned(
             bottom: UIConstants.dialogFabTightBottom,
@@ -627,8 +643,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                   mini: true,
                   tooltip: 'OK',
                   backgroundColor:
-                      (_agbChecked &&
-                              _kontoinhaberController.text.trim().isNotEmpty &&
+                      (_kontoinhaberController.text.trim().isNotEmpty &&
                               _ibanController.text.trim().isNotEmpty &&
                               (_isBicRequired(_ibanController.text.trim())
                                   ? _bicController.text.trim().isNotEmpty
@@ -636,8 +651,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                           ? UIConstants.defaultAppColor
                           : UIConstants.cancelButtonBackground,
                   onPressed:
-                      (_agbChecked &&
-                              _kontoinhaberController.text.trim().isNotEmpty &&
+                      (_kontoinhaberController.text.trim().isNotEmpty &&
                               _ibanController.text.trim().isNotEmpty &&
                               (_isBicRequired(_ibanController.text.trim())
                                   ? _bicController.text.trim().isNotEmpty
