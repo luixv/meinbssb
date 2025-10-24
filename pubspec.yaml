@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 #DO NOT TOUCH THE VERSION NUMBER
 #DO NOT TOUCH THE VERSION NUMBER
-version: 1.1.0+16
+version: 1.1.0+17
 #DO NOT TOUCH THE VERSION NUMBER
 #DO NOT TOUCH THE VERSION NUMBER
 
@@ -143,6 +143,7 @@ flutter:
     - assets/images/myBSSB-logo.png
     - assets/images/BSSB_Wappen.png
     - assets/images/BSSB_Wappen_dimmed.png
+    - assets/images/stop_sign_48_padded.svg
     - assets/config.json
     - assets/config.test.json
     - assets/config.prod.json

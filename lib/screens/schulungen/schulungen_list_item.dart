@@ -5,6 +5,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin_data.dart';
 import '/providers/font_size_provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SchulungenListItem extends StatelessWidget {
   const SchulungenListItem({
@@ -22,8 +23,10 @@ class SchulungenListItem extends StatelessWidget {
     // Access FontSizeProvider
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        String formattedDate =
-            DateFormat('dd.MM.yyyy', 'de_DE').format(schulungsTermin.datum);
+        String formattedDate = DateFormat(
+          'dd.MM.yyyy',
+          'de_DE',
+        ).format(schulungsTermin.datum);
 
         // Determine the background color for the FloatingActionButton based on webGruppeLabel
         Color fabBackgroundColor;
@@ -35,8 +38,15 @@ class SchulungenListItem extends StatelessWidget {
           fabBackgroundColor = UIConstants.schulungenNormalColor;
         }
 
+        // If gesperrt, change FAB color and icon
+        Widget fabIconWidget = const Icon(Icons.description);
         if (schulungsTermin.anmeldungenGesperrt) {
           fabBackgroundColor = UIConstants.schulungenGesperrtColor;
+          fabIconWidget = SvgPicture.asset(
+            'assets/images/stop_sign_48_padded.svg',
+            width: 40,
+            height: 40,
+          );
         }
 
         return Column(
@@ -66,7 +76,8 @@ class SchulungenListItem extends StatelessWidget {
                               child: Text(
                                 formattedDate,
                                 style: UIStyles.bodyStyle.copyWith(
-                                  fontSize: UIStyles.bodyStyle.fontSize! *
+                                  fontSize:
+                                      UIStyles.bodyStyle.fontSize! *
                                       fontSizeProvider.scaleFactor,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -86,7 +97,8 @@ class SchulungenListItem extends StatelessWidget {
                               child: Text(
                                 schulungsTermin.webGruppeLabel,
                                 style: UIStyles.bodyStyle.copyWith(
-                                  fontSize: UIStyles.bodyStyle.fontSize! *
+                                  fontSize:
+                                      UIStyles.bodyStyle.fontSize! *
                                       fontSizeProvider.scaleFactor,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -106,7 +118,8 @@ class SchulungenListItem extends StatelessWidget {
                               child: Text(
                                 schulungsTermin.ort,
                                 style: UIStyles.bodyStyle.copyWith(
-                                  fontSize: UIStyles.bodyStyle.fontSize! *
+                                  fontSize:
+                                      UIStyles.bodyStyle.fontSize! *
                                       fontSizeProvider.scaleFactor,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -127,7 +140,8 @@ class SchulungenListItem extends StatelessWidget {
                       child: Text(
                         schulungsTermin.bezeichnung,
                         style: UIStyles.subtitleStyle.copyWith(
-                          fontSize: UIStyles.subtitleStyle.fontSize! *
+                          fontSize:
+                              UIStyles.subtitleStyle.fontSize! *
                               fontSizeProvider.scaleFactor,
                         ),
                         textAlign: TextAlign.left,
@@ -139,10 +153,9 @@ class SchulungenListItem extends StatelessWidget {
                   // Right: description icon
                   FloatingActionButton(
                     heroTag: 'schulungenContentFab$index',
-                    backgroundColor:
-                        fabBackgroundColor, // Apply the new color logic
+                    backgroundColor: fabBackgroundColor,
                     onPressed: onDetailsPressed,
-                    child: const Icon(Icons.description),
+                    child: fabIconWidget,
                   ),
                 ],
               ),

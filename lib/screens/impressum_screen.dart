@@ -27,8 +27,9 @@ class ImpressumScreen extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            constraints:
-                const BoxConstraints(maxWidth: UIConstants.maxContentWidth),
+            constraints: const BoxConstraints(
+              maxWidth: UIConstants.maxContentWidth,
+            ),
             margin: const EdgeInsets.symmetric(
               vertical: UIConstants.spacingL,
               horizontal: UIConstants.spacingM,
@@ -42,10 +43,7 @@ class ImpressumScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Impressum',
-                  style: UIStyles.headerStyle,
-                ),
+                const Text('Impressum', style: UIStyles.headerStyle),
                 UIConstants.verticalSpacingM,
                 const Divider(),
                 UIConstants.verticalSpacingM,
@@ -56,8 +54,9 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingS,
                 Text(
                   'Bayerischer Sportschützenbund e.V.',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Text(
                   '1. Landesschützenmeister: Christian Kühn',
@@ -95,8 +94,9 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingXS,
                 Text(
                   'Telefon-Sprechstunde für BSSB-Mitglieder:',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Text(
                   'jeder erste Donnerstag im Monat, 16 bis 18 Uhr',
@@ -172,8 +172,9 @@ class ImpressumScreen extends StatelessWidget {
                 ),
                 Text(
                   'Für den Inhalt der Unterseiten von Gauen, Bezirken und Vereinen sind diese selbst verantwortlich.',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 UIConstants.verticalSpacingM,
                 const Text(
@@ -207,15 +208,17 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingXS,
                 Text(
                   'Geschäftsführer',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Text('Alexander Heidel', style: UIStyles.bodyStyle),
                 UIConstants.verticalSpacingXS,
                 Text(
                   'Vorstand i.S. §26 BGB',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 _bulletList([
                   '1. Landesschützenmeister: Christian Kühn',
@@ -227,8 +230,9 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingXS,
                 Text(
                   'Bankverbindung',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 _addressBlock([
                   'HypoVereinsbank Gauting, Kontonummer: 840 000, Bankleitzahl: 700 202 70',
@@ -237,10 +241,12 @@ class ImpressumScreen extends StatelessWidget {
                 UIConstants.verticalSpacingXS,
                 Text(
                   'Umsatzsteueridentifikationsnummer',
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                  style: UIStyles.bodyStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Text('DE 129514004', style: UIStyles.bodyStyle),
+                const SizedBox(height: UIConstants.helpSpacing),
               ],
             ),
           ),
@@ -249,10 +255,7 @@ class ImpressumScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).pop(),
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.close,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.close, color: Colors.white),
       ),
     );
   }
@@ -303,8 +306,9 @@ Widget _contactRow({String? phone, String? email, String? web}) {
           ),
         if (email != null)
           Row(
-            mainAxisSize: MainAxisSize
-                .min, // Corrected from MainAxisSize.inc to MainAxisSize.min
+            mainAxisSize:
+                MainAxisSize
+                    .min, // Corrected from MainAxisSize.inc to MainAxisSize.min
             children: [
               const Icon(
                 Icons.email,

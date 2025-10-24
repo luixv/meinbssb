@@ -32,8 +32,9 @@ void main() {
 
     setUp(() {});
 
-    testWidgets('\n\n\nTEST_1. Access the Passwort vergessen?\n\n\n',
-        (tester) async {
+    testWidgets('\n\n\nTEST_1. Access the Passwort vergessen?\n\n\n', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
           create: (context) => networkService,
@@ -67,7 +68,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
 
-      await tester.tap(find.text('Hilfe'));
+      await tester.tap(find.text('Hilfe (FAQ)'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.text('FAQ'), findsOneWidget);
 
@@ -78,8 +79,9 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('\n\n\nTEST_3. Access the Registration page\n\n\n',
-        (tester) async {
+    testWidgets('\n\n\nTEST_3. Access the Registration page\n\n\n', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
           create: (context) => networkService, // Use the real networkService
@@ -102,89 +104,91 @@ void main() {
     });
 
     testWidgets(
-        '\n\n\nTEST_4. Complete user flow from login to accessing data\n\n\n',
-        (tester) async {
-      await tester.pumpWidget(
-        Provider<NetworkService>(
-          create: (context) => networkService, // Use the real networkService
-          child: const MyAppWrapper(), // Use the real services for basic flow
-        ),
-      );
-      await tester.pumpAndSettle(const Duration(seconds: 1)); // Initial pump
+      '\n\n\nTEST_4. Complete user flow from login to accessing data\n\n\n',
+      (tester) async {
+        await tester.pumpWidget(
+          Provider<NetworkService>(
+            create: (context) => networkService, // Use the real networkService
+            child: const MyAppWrapper(), // Use the real services for basic flow
+          ),
+        );
+        await tester.pumpAndSettle(const Duration(seconds: 1)); // Initial pump
 
-      // Login
-      await tester.enterText(
-        find.byKey(const Key('usernameField')),
-        'kostas@rizoudis1.de',
-      );
-      await tester.enterText(find.byKey(const Key('passwordField')), 'a');
-      await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.byType(StartScreen), findsOneWidget);
+        // Login
+        await tester.enterText(
+          find.byKey(const Key('usernameField')),
+          'kostas@rizoudis1.de',
+        );
+        await tester.enterText(find.byKey(const Key('passwordField')), 'a');
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.byType(StartScreen), findsOneWidget);
 
-      // Verify user data is displayed
-      expect(find.text('Kostas Rizoudis'), findsOneWidget);
-      expect(find.text('40100709'), findsOneWidget);
+        // Verify user data is displayed
+        expect(find.text('Kostas Rizoudis'), findsOneWidget);
+        expect(find.text('40100709'), findsOneWidget);
 
-      // Access Absolvierte Schulungen
-      debugPrint('Test 4 Access Absolvierte Schulungen!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Absolvierte Schulungen'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Absolvierte Schulungen').first, findsOneWidget);
+        // Access Absolvierte Schulungen
+        debugPrint('Test 4 Access Absolvierte Schulungen!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Absolvierte Schulungen'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Absolvierte Schulungen').first, findsOneWidget);
 
-      // Access Schützenausweis
-      debugPrint('Test 4 Access Schützenausweis!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Schützenausweis'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Schützenausweis').first, findsOneWidget);
+        // Access Schützenausweis
+        debugPrint('Test 4 Access Schützenausweis!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Schützenausweis'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Schützenausweis').first, findsOneWidget);
 
-      // Access Persönliche Daten (Stammdaten)
-      debugPrint('Test 4 Access Persönliche Daten!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Persönliche Daten'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Persönliche Daten').first, findsOneWidget);
+        // Access Persönliche Daten (Stammdaten)
+        debugPrint('Test 4 Access Persönliche Daten!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Persönliche Daten'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Persönliche Daten').first, findsOneWidget);
 
-      // Access Kontaktdaten
-      debugPrint('Test 4 Access Kontaktdaten!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Kontaktdaten'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Kontaktdaten').first, findsOneWidget);
+        // Access Kontaktdaten
+        debugPrint('Test 4 Access Kontaktdaten!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Kontaktdaten'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Kontaktdaten').first, findsOneWidget);
 
-      // Access Zahlungsart (Bankdaten)
-      debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Zahlungsart'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Zahlungsart').first, findsOneWidget);
+        // Access Zahlungsart (Bankdaten)
+        debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Zahlungsart'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Zahlungsart').first, findsOneWidget);
 
-      // Access Impressum
-      debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Impressum'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('Impressum').first, findsOneWidget);
+        // Access Impressum
+        debugPrint('Test 4 Access Zahlungsart (Bankdaten)!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Impressum'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.text('Impressum').first, findsOneWidget);
 
-      // Test logout
-      debugPrint('Test 4 Access Abmelden!\n\n\n');
-      await tester.tap(find.byIcon(Icons.menu));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      await tester.tap(find.text('Abmelden'));
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.byType(LoginScreen), findsOneWidget);
-    });
+        // Test logout
+        debugPrint('Test 4 Access Abmelden!\n\n\n');
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        await tester.tap(find.text('Abmelden'));
+        await tester.pumpAndSettle(const Duration(seconds: 1));
+        expect(find.byType(LoginScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('\n\n\nTEST_5. Error handling during login\n\n\n',
-        (tester) async {
+    testWidgets('\n\n\nTEST_5. Error handling during login\n\n\n', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         Provider<NetworkService>(
           create: (context) => networkService, // Use the real networkService
@@ -216,7 +220,7 @@ void main() {
       );
     });
 
-/*
+    /*
     group('BankDataScreen', () {
       final Map<String, dynamic> testUserData = {
         'PERSONID': 123,
