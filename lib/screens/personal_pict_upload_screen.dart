@@ -119,7 +119,11 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       final err =
           (validation['error'] ?? 'Nicht unterstütztes Dateiformat').toString();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(err, style: TextStyle(color: UIConstants.errorColor)),
+        ),
+      );
       return;
     }
 
@@ -270,8 +274,11 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
         widget.testOnUploadComplete?.call(); // fire early
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profilbild erfolgreich hochgeladen!'),
+            SnackBar(
+              content: Text(
+                'Profilbild erfolgreich hochgeladen!',
+                style: TextStyle(color: UIConstants.successColor),
+              ),
               backgroundColor: Colors.green,
             ),
           );
