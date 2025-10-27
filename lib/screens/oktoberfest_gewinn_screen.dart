@@ -211,9 +211,19 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _gewinne.length,
-                      separatorBuilder: (context, index) => const Divider(),
+                      itemCount: _gewinne.length + 1,
+                      separatorBuilder: (context, index) {
+                        if (index < _gewinne.length - 1) {
+                          return const Divider();
+                        }
+                        return const SizedBox.shrink();
+                      },
                       itemBuilder: (context, index) {
+                        if (index == _gewinne.length) {
+                          return const SizedBox(
+                            height: UIConstants.helpSpacing,
+                          );
+                        }
                         final gewinn = _gewinne[index];
                         String abgerufenAmText;
                         final abgerufenAm = gewinn.abgerufenAm;
@@ -242,7 +252,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                           title: Text(
                             gewinn.isSachpreis
                                 ? '${gewinn.wettbewerb}: ${gewinn.sachpreis}'
-                                : '${gewinn.wettbewerb}: ${gewinn.geldpreis}€',
+                                : '${gewinn.wettbewerb}: ${gewinn.geldpreis}\u20ac',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: UIConstants.subtitleFontSize,
