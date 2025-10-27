@@ -143,7 +143,7 @@ flutter:
     - assets/images/myBSSB-logo.png
     - assets/images/BSSB_Wappen.png
     - assets/images/BSSB_Wappen_dimmed.png
-    - assets/images/vector-white-hand-stop.png
+    - assets/images/stopHand.png
     - assets/config.json
     - assets/config.test.json
     - assets/config.prod.json

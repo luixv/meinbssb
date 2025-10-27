@@ -43,7 +43,7 @@ class SchulungenListItem extends StatelessWidget {
         if (schulungsTermin.anmeldungenGesperrt) {
           fabBackgroundColor = UIConstants.schulungenGesperrtColor;
           fabIconWidget = Image.asset(
-            'assets/images/vector-white-hand-stop.png',
+            'assets/images/stopHand.png',
             width: 40,
             height: 40,
           );
