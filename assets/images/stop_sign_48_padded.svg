@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="Stop sign icon">
-  <!-- White border (thicker stroke) around the octagon -->
-  <polygon points="16,4 32,4 44,16 44,32 32,44 16,44 4,32 4,16"
-           fill="#D32F2F" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>
-  <!-- White STOP text, centered with padding from the border -->
-  <text x="24" y="30" font-family="Highway Gothic, Roadgeek 2000, Arial Black, sans-serif"
-        font-size="14" font-weight="700" text-anchor="middle" fill="#FFFFFF" letter-spacing="1">STOP</text>
-</svg>

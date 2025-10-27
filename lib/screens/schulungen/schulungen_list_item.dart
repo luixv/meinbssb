@@ -5,7 +5,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin_data.dart';
 import '/providers/font_size_provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class SchulungenListItem extends StatelessWidget {
   const SchulungenListItem({
@@ -42,8 +42,8 @@ class SchulungenListItem extends StatelessWidget {
         Widget fabIconWidget = const Icon(Icons.description);
         if (schulungsTermin.anmeldungenGesperrt) {
           fabBackgroundColor = UIConstants.schulungenGesperrtColor;
-          fabIconWidget = SvgPicture.asset(
-            'assets/images/stop_sign_48_padded.svg',
+          fabIconWidget = Image.asset(
+            'assets/images/vector-white-hand-stop.png',
             width: 40,
             height: 40,
           );
