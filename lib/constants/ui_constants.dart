@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 class UIConstants {
   // Colors
-  static const Color primaryColor =
-      Color.fromARGB(255, 11, 75, 16); // Main green color 0xFF006400
+  static const Color primaryColor = Color.fromARGB(
+    255,
+    11,
+    75,
+    16,
+  ); // Main green color 0xFF006400
   static const Color backgroundColor = Color(0xFFe2f0d9);
   static const Color foregroundColor = Colors.lightGreen;
   static const Color textColor = Colors.black;
@@ -60,8 +64,12 @@ class UIConstants {
   static const Color selectionHandleColor = Colors.transparent;
   static const Color highlightColor = Colors.transparent;
   static const Color splashColor = Colors.transparent;
-  static const Color overlayColor =
-      Color.fromRGBO(0, 0, 0, 0.3); // Semi-transparent black overlay
+  static const Color overlayColor = Color.fromRGBO(
+    0,
+    0,
+    0,
+    0.3,
+  ); // Semi-transparent black overlay
 
   //Colors for Schulungen
   static const Color sportColor = Color.fromRGBO(0, 93, 218, 1); //#005dda
@@ -148,13 +156,19 @@ class UIConstants {
 
   // Padding
   static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
-  static const EdgeInsets defaultHorizontalPadding =
-      EdgeInsets.symmetric(horizontal: 16.0);
-  static const EdgeInsets defaultVerticalPadding =
-      EdgeInsets.symmetric(vertical: 16.0);
+  static const EdgeInsets defaultHorizontalPadding = EdgeInsets.symmetric(
+    horizontal: 16.0,
+  );
+  static const EdgeInsets defaultVerticalPadding = EdgeInsets.symmetric(
+    vertical: 16.0,
+  );
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 16.0);
-  static const EdgeInsets screenPadding =
-      EdgeInsets.fromLTRB(16.0, 60.0, 16.0, 16.0);
+  static const EdgeInsets screenPadding = EdgeInsets.fromLTRB(
+    16.0,
+    60.0,
+    16.0,
+    16.0,
+  );
   static const EdgeInsets appBarRightPadding = EdgeInsets.only(right: 16.0);
   static const EdgeInsets dialogPadding = EdgeInsets.all(16.0);
 
@@ -344,7 +358,7 @@ class UIConstants {
 
   // Schulungen (Course Registration) Colors
   static const Color schulungenGesperrtColor =
-      Colors.red; // For gesperrt/locked state
+      Colors.white; // For gesperrt/locked state
   static const Color schulungenNormalColor =
       defaultAppColor; // For normal state
 

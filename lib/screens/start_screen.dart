@@ -392,7 +392,7 @@ class StartScreenState extends State<StartScreen> {
                 'Angemeldete Schulungen:',
                 style: UIStyles.titleStyle,
               ),
-              const SizedBox(height: UIConstants.spacingS),
+              const SizedBox(height: UIConstants.spacingXL),
               if (isLoading)
                 const Center(child: CircularProgressIndicator())
               else if (schulungen.isEmpty)
