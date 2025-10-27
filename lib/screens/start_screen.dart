@@ -407,12 +407,20 @@ class StartScreenState extends State<StartScreen> {
                   padding: const EdgeInsets.only(
                     bottom: UIConstants.helpSpacing,
                   ),
-                  itemCount: schulungen.length,
-                  separatorBuilder:
-                      (_, _) => const SizedBox(
+                  itemCount: schulungen.length + 1,
+                  separatorBuilder: (context, index) {
+                    if (index < schulungen.length - 1) {
+                      return const SizedBox(
                         height: UIConstants.defaultSeparatorHeight,
-                      ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                   itemBuilder: (context, index) {
+                    if (index == schulungen.length) {
+                      // Extra space after last item
+                      return const SizedBox(height: UIConstants.helpSpacing);
+                    }
                     final schulung = schulungen[index];
                     final date = schulung.datum;
                     final formattedDate =

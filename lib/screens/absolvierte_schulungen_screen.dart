@@ -51,33 +51,34 @@ class AbsolvierteSchulungenScreenState
       if (mounted) {
         setState(() {
           // Sort the results by ausgestelltAm in descending order (oldest first)
-          absolvierteSchulungen = result
-            ..sort((a, b) {
-              // Get dates, handling all possible cases
-              DateTime? dateA;
-              DateTime? dateB;
+          absolvierteSchulungen =
+              result..sort((a, b) {
+                // Get dates, handling all possible cases
+                DateTime? dateA;
+                DateTime? dateB;
 
-              if (a.ausgestelltAm.isNotEmpty && a.ausgestelltAm != '-') {
-                dateA = DateTime.tryParse(a.ausgestelltAm);
-              }
+                if (a.ausgestelltAm.isNotEmpty && a.ausgestelltAm != '-') {
+                  dateA = DateTime.tryParse(a.ausgestelltAm);
+                }
 
-              if (b.ausgestelltAm.isNotEmpty && b.ausgestelltAm != '-') {
-                dateB = DateTime.tryParse(b.ausgestelltAm);
-              }
+                if (b.ausgestelltAm.isNotEmpty && b.ausgestelltAm != '-') {
+                  dateB = DateTime.tryParse(b.ausgestelltAm);
+                }
 
-              // If both dates are valid, compare them
-              if (dateA != null && dateB != null) {
-                return dateB
-                    .compareTo(dateA); // Descending order (oldest first)
-              }
+                // If both dates are valid, compare them
+                if (dateA != null && dateB != null) {
+                  return dateB.compareTo(
+                    dateA,
+                  ); // Descending order (oldest first)
+                }
 
-              // If only one date is valid, prioritize it
-              if (dateA != null) return -1; // Valid date comes first
-              if (dateB != null) return 1; // Valid date comes first
+                // If only one date is valid, prioritize it
+                if (dateA != null) return -1; // Valid date comes first
+                if (dateB != null) return 1; // Valid date comes first
 
-              // If neither date is valid, maintain original order
-              return 0;
-            });
+                // If neither date is valid, maintain original order
+                return 0;
+              });
           isLoading = false;
         });
       }
@@ -171,33 +172,48 @@ class AbsolvierteSchulungenScreenState
                 else
                   Expanded(
                     child: ListView.separated(
-                      itemCount: absolvierteSchulungen.length,
-                      separatorBuilder: (_, _) => const SizedBox(
-                        height: UIConstants.defaultSeparatorHeight,
-                      ),
+                      itemCount: absolvierteSchulungen.length + 1,
+                      separatorBuilder: (context, index) {
+                        if (index < absolvierteSchulungen.length - 1) {
+                          return const SizedBox(
+                            height: UIConstants.defaultSeparatorHeight,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                       itemBuilder: (context, index) {
+                        if (index == absolvierteSchulungen.length) {
+                          return const SizedBox(
+                            height: UIConstants.helpSpacing,
+                          );
+                        }
                         final seminar = absolvierteSchulungen[index];
-                        final ausgestelltAm =
-                            DateTime.tryParse(seminar.ausgestelltAm);
-                        final formattedAusgestelltAm = ausgestelltAm == null ||
-                                seminar.ausgestelltAm.isEmpty ||
-                                seminar.ausgestelltAm == '-'
-                            ? 'Unbekannt'
-                            : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
+                        final ausgestelltAm = DateTime.tryParse(
+                          seminar.ausgestelltAm,
+                        );
+                        final formattedAusgestelltAm =
+                            ausgestelltAm == null ||
+                                    seminar.ausgestelltAm.isEmpty ||
+                                    seminar.ausgestelltAm == '-'
+                                ? 'Unbekannt'
+                                : '${ausgestelltAm.day.toString().padLeft(2, '0')}.${ausgestelltAm.month.toString().padLeft(2, '0')}.${ausgestelltAm.year}';
 
-                        final gueltigBis =
-                            DateTime.tryParse(seminar.gueltigBis);
-                        final formattedGueltigBis = gueltigBis == null ||
-                                seminar.gueltigBis.isEmpty ||
-                                seminar.gueltigBis == '-'
-                            ? 'Unbekannt'
-                            : '${gueltigBis.day.toString().padLeft(2, '0')}.${gueltigBis.month.toString().padLeft(2, '0')}.${gueltigBis.year}';
+                        final gueltigBis = DateTime.tryParse(
+                          seminar.gueltigBis,
+                        );
+                        final formattedGueltigBis =
+                            gueltigBis == null ||
+                                    seminar.gueltigBis.isEmpty ||
+                                    seminar.gueltigBis == '-'
+                                ? 'Unbekannt'
+                                : '${gueltigBis.day.toString().padLeft(2, '0')}.${gueltigBis.month.toString().padLeft(2, '0')}.${gueltigBis.year}';
 
                         return ListTile(
                           tileColor: UIConstants.tileColor,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(UIConstants.cornerRadius),
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.cornerRadius,
+                            ),
                           ),
                           leading: const Column(
                             mainAxisAlignment:
@@ -253,10 +269,7 @@ class AbsolvierteSchulungenScreenState
               );
             },
             backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(
-              Icons.person,
-              color: UIConstants.whiteColor,
-            ),
+            child: const Icon(Icons.person, color: UIConstants.whiteColor),
           );
         },
       ),

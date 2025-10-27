@@ -936,11 +936,23 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         _results.isNotEmpty)
                       Expanded(
                         child: ListView.separated(
-                          itemCount: _results.length,
-                          separatorBuilder:
-                              (_, _) =>
-                                  const SizedBox(height: UIConstants.spacingS),
+                          itemCount: _results.length + 1,
+                          separatorBuilder: (context, index) {
+                            // Only add separator between real items
+                            if (index < _results.length - 1) {
+                              return const SizedBox(
+                                height: UIConstants.spacingS,
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
                           itemBuilder: (context, index) {
+                            if (index == _results.length) {
+                              // Extra space after last item
+                              return const SizedBox(
+                                height: UIConstants.helpSpacing,
+                              );
+                            }
                             final schulungsTermin = _results[index];
                             return SchulungenListItem(
                               schulungsTermin: schulungsTermin,
