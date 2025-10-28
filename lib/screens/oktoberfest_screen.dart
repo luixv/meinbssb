@@ -26,58 +26,65 @@ class OktoberfestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Oktoberfest',
-      userData: userData,
-      isLoggedIn: isLoggedIn,
-      onLogout: onLogout,
-      automaticallyImplyLeading: true,
-      body: SingleChildScrollView(
-        padding: UIConstants.defaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            const ScaledText('Oktoberfest', style: UIStyles.headerStyle),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildMenuItem(context, 'Meine Ergebnisse', Icons.bar_chart, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => OktoberfestResultsScreen(
-                        passnummer: userData?.passnummer ?? '',
-                        apiService: Provider.of<ApiService>(
-                          context,
-                          listen: false,
+    return Semantics(
+      label:
+          'Oktoberfest Bereich. Wählen Sie zwischen Meine Ergebnisse und Meine Gewinne.',
+      child: BaseScreenLayout(
+        title: 'Oktoberfest',
+        userData: userData,
+        isLoggedIn: isLoggedIn,
+        onLogout: onLogout,
+        automaticallyImplyLeading: true,
+        body: SingleChildScrollView(
+          padding: UIConstants.defaultPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const LogoWidget(),
+              const SizedBox(height: UIConstants.spacingS),
+              Semantics(
+                header: true,
+                label: 'Oktoberfest',
+                child: ScaledText('Oktoberfest', style: UIStyles.headerStyle),
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              _buildMenuItem(context, 'Meine Ergebnisse', Icons.bar_chart, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => OktoberfestResultsScreen(
+                          passnummer: userData?.passnummer ?? '',
+                          apiService: Provider.of<ApiService>(
+                            context,
+                            listen: false,
+                          ),
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
                         ),
-                        userData: userData,
-                        isLoggedIn: isLoggedIn,
-                        onLogout: onLogout,
-                      ),
-                ),
-              );
-            }),
-            _buildMenuItem(context, 'Meine Gewinne', Icons.emoji_events, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => OktoberfestGewinnScreen(
-                        passnummer: userData?.passnummer ?? '',
-                        apiService: Provider.of<ApiService>(
-                          context,
-                          listen: false,
+                  ),
+                );
+              }),
+              _buildMenuItem(context, 'Meine Gewinne', Icons.emoji_events, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => OktoberfestGewinnScreen(
+                          passnummer: userData?.passnummer ?? '',
+                          apiService: Provider.of<ApiService>(
+                            context,
+                            listen: false,
+                          ),
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
                         ),
-                        userData: userData,
-                        isLoggedIn: isLoggedIn,
-                        onLogout: onLogout,
-                      ),
-                ),
-              );
-            }),
-            /*
+                  ),
+                );
+              }),
+              /*
             _buildMenuItem(
               context,
               'Eintritt Festzelt',
@@ -106,10 +113,11 @@ class OktoberfestScreen extends StatelessWidget {
               },
             ),
          */
-          ],
-        ),
-      ),
-    );
+            ],
+          ), // Column
+        ), // SingleChildScrollView
+      ), // BaseScreenLayout
+    ); // Semantics
   }
 
   Widget _buildMenuItem(
@@ -118,29 +126,34 @@ class OktoberfestScreen extends StatelessWidget {
     IconData icon,
     VoidCallback onTap,
   ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: UIStyles.profileIconColor,
-          semanticLabel: title,
-        ),
-        title: ScaledText(
-          title,
-          style: const TextStyle(
-            fontSize: UIConstants.titleFontSize,
-            fontFamily: UIConstants.defaultFontFamily,
-            fontWeight: FontWeight.w500,
-            color: UIConstants.textColor,
+    return Semantics(
+      button: true,
+      label: title,
+      hint: 'Doppelt tippen, um $title zu öffnen',
+      child: Card(
+        margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
+        child: ListTile(
+          leading: Icon(
+            icon,
+            color: UIStyles.profileIconColor,
+            semanticLabel: title,
           ),
-        ),
-        trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
-        onTap: onTap,
-        minLeadingWidth: UIConstants.defaultIconWidth,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: UIConstants.spacingM,
-          vertical: UIConstants.spacingS,
+          title: ScaledText(
+            title,
+            style: const TextStyle(
+              fontSize: UIConstants.titleFontSize,
+              fontFamily: UIConstants.defaultFontFamily,
+              fontWeight: FontWeight.w500,
+              color: UIConstants.textColor,
+            ),
+          ),
+          trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
+          onTap: onTap,
+          minLeadingWidth: UIConstants.defaultIconWidth,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingM,
+            vertical: UIConstants.spacingS,
+          ),
         ),
       ),
     );

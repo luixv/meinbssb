@@ -17,10 +17,14 @@ class StartingRightsHeader extends StatelessWidget {
         Padding(
           padding:
               UIConstants.screenPadding.copyWith(top: UIConstants.spacingS),
-          child: ScaledText(
-            'Startrechte ändern',
-            style: UIStyles.headerStyle.copyWith(
-              color: UIConstants.defaultAppColor,
+          child: Semantics(
+            header: true,
+            label: 'Startrechte ändern',
+            child: ScaledText(
+              'Startrechte ändern',
+              style: UIStyles.headerStyle.copyWith(
+                color: UIConstants.defaultAppColor,
+              ),
             ),
           ),
         ),
@@ -54,13 +58,17 @@ class StartingRightsHeader extends StatelessWidget {
                       color: UIConstants.greySubtitleTextColor,
                     ),
                   ),
-                  const Tooltip(
-                    message: Messages.startingRightsHeaderTooltip,
-                    triggerMode: TooltipTriggerMode.tap,
-                    child: Icon(
-                      Icons.info_outline,
-                      color: UIConstants.defaultAppColor,
-                      size: UIConstants.tooltipIconSize,
+                  Semantics(
+                    label: 'Information',
+                    hint: Messages.startingRightsHeaderTooltip,
+                    child: const Tooltip(
+                      message: Messages.startingRightsHeaderTooltip,
+                      triggerMode: TooltipTriggerMode.tap,
+                      child: Icon(
+                        Icons.info_outline,
+                        color: UIConstants.defaultAppColor,
+                        size: UIConstants.tooltipIconSize,
+                      ),
                     ),
                   ),
                 ],
