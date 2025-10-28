@@ -33,140 +33,128 @@ class ProfileScreen extends StatelessWidget {
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       automaticallyImplyLeading: true,
-      body: SingleChildScrollView(
-        padding: UIConstants.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            const ScaledText(
-              'Profil',
-              style: UIStyles.headerStyle,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            _buildMenuItem(
-              context,
-              'Profilbild',
-              Icons.add_a_photo_outlined,
-              () {
+      body: Semantics(
+        label:
+            'Profilbereich mit Zugriff auf Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Passwortänderung und Schützenausweisbestellung.',
+        child: SingleChildScrollView(
+          padding: UIConstants.screenPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const LogoWidget(),
+              const SizedBox(height: UIConstants.spacingS),
+              const ScaledText('Profil', style: UIStyles.headerStyle),
+              const SizedBox(height: UIConstants.spacingM),
+              _buildMenuItem(
+                context,
+                'Profilbild',
+                Icons.add_a_photo_outlined,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PersonalPictUploadScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuItem(context, 'Persönliche Daten', Icons.person, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonalPictUploadScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
+                    builder:
+                        (context) => PersonDataScreen(
+                          userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
                   ),
                 );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Persönliche Daten',
-              Icons.person,
-              () {
+              }),
+              _buildMenuItem(context, 'Kontaktdaten', Icons.contact_mail, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
+                    builder:
+                        (context) => ContactDataScreen(
+                          userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
                   ),
                 );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Kontaktdaten',
-              Icons.contact_mail,
-              () {
+              }),
+              _buildMenuItem(context, 'Bankdaten', Icons.account_balance, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ContactDataScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
+                    builder:
+                        (context) => BankDataScreen(
+                          userData,
+                          webloginId: userData?.webLoginId ?? 0,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
                   ),
                 );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Bankdaten',
-              Icons.account_balance,
-              () {
+              }),
+              _buildMenuItem(
+                context,
+                'Absolvierte Schulungen',
+                Icons.task_alt,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => AbsolvierteSchulungenScreen(
+                            userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+              ),
+              _buildMenuItem(context, 'Passwort ändern', Icons.lock, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BankDataScreen(
-                      userData,
-                      webloginId: userData?.webLoginId ?? 0,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
+                    builder:
+                        (context) => ChangePasswordScreen(
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
                   ),
                 );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Absolvierte Schulungen',
-              Icons.task_alt,
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AbsolvierteSchulungenScreen(
-                      userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
+              }),
+              _buildMenuItem(
+                context,
+                'Schützenausweis bestellen',
+                Icons.search_off,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => AusweisBestellenScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
                     ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Passwort ändern',
-              Icons.lock,
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChangePasswordScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            _buildMenuItem(
-              context,
-              'Schützenausweis bestellen',
-              Icons.search_off,
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AusweisBestellenScreen(
-                      userData: userData,
-                      isLoggedIn: isLoggedIn,
-                      onLogout: onLogout,
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: UIConstants.helpSpacing),
-          ],
+                  );
+                },
+              ),
+              const SizedBox(height: UIConstants.helpSpacing),
+            ],
+          ),
         ),
       ),
     );
@@ -195,10 +183,7 @@ class ProfileScreen extends StatelessWidget {
             color: UIConstants.textColor,
           ),
         ),
-        trailing: const Icon(
-          Icons.chevron_right,
-          semanticLabel: 'Weiter',
-        ),
+        trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
         onTap: onTap,
         minLeadingWidth: UIConstants.defaultIconWidth,
         contentPadding: const EdgeInsets.symmetric(
