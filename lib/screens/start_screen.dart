@@ -280,15 +280,15 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     final userData = widget.userData;
 
-    return BaseScreenLayout(
-      title: 'Home',
-      userData: userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: _handleLogout,
-      body: Semantics(
-        label:
-            'Startbildschirm mit Profilinformationen, Schützenpassnummer, Vereinsname und angemeldeten Schulungen. Aktionen wie Profilbild ändern und Schulungen verwalten sind möglich.',
-        child: Padding(
+    return Semantics(
+      label:
+          'Startbildschirm mit Profilinformationen, Schützenpassnummer, Vereinsname und angemeldeten Schulungen. Aktionen wie Profilbild ändern und Schulungen verwalten sind möglich.',
+      child: BaseScreenLayout(
+        title: 'Home',
+        userData: userData,
+        isLoggedIn: widget.isLoggedIn,
+        onLogout: _handleLogout,
+        body: Padding(
           padding: const EdgeInsets.all(UIConstants.spacingM),
           child: SingleChildScrollView(
             child: Column(

@@ -117,151 +117,208 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Aus- und Weiterbildung',
-      userData: widget.userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: widget.onLogout,
-      automaticallyImplyLeading: true,
-      showMenu: widget.showMenu,
-      showConnectivityIcon: widget.showConnectivityIcon,
-      leading:
-          widget.showMenu
-              ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: UIConstants.textColor,
-                ),
-                onPressed: () {
-                  Navigator.of(context).maybePop();
-                },
-              )
-              : null,
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: 'resetFab',
-            onPressed: () {
-              setState(() {
-                selectedDate = DateTime.now();
-                selectedWebGruppe = 0;
-                selectedBezirkId = 0;
-                _ortController.clear();
-                _titelController.clear();
-                fuerVerlaengerungen = false;
-                fuerVuelVerlaengerungen = false;
-              });
-            },
-            backgroundColor: UIConstants.defaultAppColor,
-            tooltip: 'Formular zurücksetzen',
-            child: const Icon(Icons.refresh),
-          ),
-          const SizedBox(height: UIConstants.spacingS),
-          FloatingActionButton(
-            heroTag: 'searchFab',
-            onPressed: _navigateToResults,
-            backgroundColor: UIConstants.defaultAppColor,
-            tooltip: 'Suchen',
-            child: const Icon(Icons.search),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(UIConstants.spacingM),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const ScaledText('Suchen', style: UIStyles.headerStyle),
-              const SizedBox(height: UIConstants.spacingM),
-              // Date field removed
-              DropdownButtonFormField<int>(
-                value: selectedWebGruppe,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Fachbereich',
-                ),
-                items: [
-                  const DropdownMenuItem<int>(value: 0, child: Text('Alle')),
-                  ...Schulungstermin.webGruppeMap.entries
-                      .where((entry) => entry.key != 0)
-                      .map(
-                        (entry) => DropdownMenuItem<int>(
-                          value: entry.key,
-                          child: Text(entry.value),
-                        ),
+    return Semantics(
+      label:
+          'Suchmaske für Aus- und Weiterbildung. Wählen Sie Fachbereich, Regierungsbezirk, Ort, Titel und Optionen für Lizenz- oder VÜL-Verlängerung. Starten Sie die Suche mit dem Button unten rechts.',
+      child: BaseScreenLayout(
+        title: 'Aus- und Weiterbildung',
+        userData: widget.userData,
+        isLoggedIn: widget.isLoggedIn,
+        onLogout: widget.onLogout,
+        automaticallyImplyLeading: true,
+        showMenu: widget.showMenu,
+        showConnectivityIcon: widget.showConnectivityIcon,
+        leading:
+            widget.showMenu
+                ? Semantics(
+                    button: true,
+                    label: 'Zurück',
+                    hint: 'Zur vorherigen Seite wechseln',
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: UIConstants.textColor,
                       ),
-                ],
-                onChanged: (value) {
+                      tooltip: 'Zurück',
+                      onPressed: () {
+                        Navigator.of(context).maybePop();
+                      },
+                    ),
+                  )
+                : null,
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Semantics(
+              label: 'Formular zurücksetzen',
+              button: true,
+              hint: 'Alle Filter werden auf Standardwerte zurückgesetzt',
+              child: FloatingActionButton(
+                heroTag: 'resetFab',
+                onPressed: () {
                   setState(() {
-                    selectedWebGruppe = value;
+                    selectedDate = DateTime.now();
+                    selectedWebGruppe = 0;
+                    selectedBezirkId = 0;
+                    _ortController.clear();
+                    _titelController.clear();
+                    fuerVerlaengerungen = false;
+                    fuerVuelVerlaengerungen = false;
                   });
                 },
+                backgroundColor: UIConstants.defaultAppColor,
+                tooltip: 'Formular zurücksetzen',
+                child: const Icon(Icons.refresh),
               ),
-              const SizedBox(height: UIConstants.spacingM),
-              isLoadingBezirke
-                  ? const CircularProgressIndicator()
-                  : DropdownButtonFormField<int>(
-                    value: selectedBezirkId,
+            ),
+            const SizedBox(height: UIConstants.spacingS),
+            Semantics(
+              label: 'Suche starten',
+              button: true,
+              hint: 'Aktuelle Filter anwenden und Suchergebnisse anzeigen',
+              child: FloatingActionButton(
+                heroTag: 'searchFab',
+                onPressed: _navigateToResults,
+                backgroundColor: UIConstants.defaultAppColor,
+                tooltip: 'Suchen',
+                child: const Icon(Icons.search),
+              ),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(UIConstants.spacingM),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  header: true,
+                  label: 'Suchen',
+                  child: const ScaledText('Suchen', style: UIStyles.headerStyle),
+                ),
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Fachbereich auswählen',
+                  hint: 'Doppelt tippen zum Auswählen',
+                  child: DropdownButtonFormField<int>(
+                    value: selectedWebGruppe,
                     decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Regierungsbezirk',
+                      labelText: 'Fachbereich',
                     ),
-                    items:
-                        _bezirke
-                            .map(
-                              (bezirk) => DropdownMenuItem<int>(
-                                value: bezirk.bezirkId,
-                                child: Text(bezirk.bezirkName),
-                              ),
-                            )
-                            .toList(),
+                    items: [
+                      const DropdownMenuItem<int>(
+                        value: 0,
+                        child: Text('Alle'),
+                      ),
+                      ...Schulungstermin.webGruppeMap.entries
+                          .where((entry) => entry.key != 0)
+                          .map(
+                            (entry) => DropdownMenuItem<int>(
+                              value: entry.key,
+                              child: Text(entry.value),
+                            ),
+                          ),
+                    ],
                     onChanged: (value) {
                       setState(() {
-                        selectedBezirkId = value;
+                        selectedWebGruppe = value;
                       });
                     },
                   ),
-              const SizedBox(height: UIConstants.spacingM),
-              TextFormField(
-                key: const Key('Ort'),
-                controller: _ortController,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Ort',
                 ),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              TextFormField(
-                key: const Key('Titel'),
-                controller: _titelController,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Titel',
+                const SizedBox(height: UIConstants.spacingM),
+                isLoadingBezirke
+                    ?  Semantics(
+                        label: 'Regierungsbezirke werden geladen',
+                        child: CircularProgressIndicator(),
+                      )
+                    : Semantics(
+                      label: 'Regierungsbezirk auswählen',
+                      hint: 'Doppelt tippen zum Auswählen',
+                      child: DropdownButtonFormField<int>(
+                        value: selectedBezirkId,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'Regierungsbezirk',
+                        ),
+                        items:
+                            _bezirke
+                                .map(
+                                  (bezirk) => DropdownMenuItem<int>(
+                                    value: bezirk.bezirkId,
+                                    child: Text(bezirk.bezirkName),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBezirkId = value;
+                          });
+                        },
+                      ),
+                    ),
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Ort eingeben',
+                  hint: 'Wohn- oder Veranstaltungsort als Text eingeben',
+                  textField: true,
+                  child: TextFormField(
+                    key: const Key('Ort'),
+                    controller: _ortController,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Ort',
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              CheckboxListTile(
-                title: const Text('Für Lizenzverlängerung'),
-                value: fuerVerlaengerungen,
-                onChanged: (bool? value) {
-                  setState(() {
-                    fuerVerlaengerungen = value ?? false;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-              ),
-              CheckboxListTile(
-                title: const Text('Für VÜL Verlängerung'),
-                value: fuerVuelVerlaengerungen,
-                onChanged: (bool? value) {
-                  setState(() {
-                    fuerVuelVerlaengerungen = value ?? false;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ],
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Titel eingeben',
+                  hint: 'Titel der Schulung als Text eingeben',
+                  textField: true,
+                  child: TextFormField(
+                    key: const Key('Titel'),
+                    controller: _titelController,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Titel',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Für Lizenzverlängerung auswählen',
+                  hint: 'Aktivieren, um nur Schulungen für Lizenzverlängerungen zu zeigen',
+                  toggled: fuerVerlaengerungen,
+                  child: CheckboxListTile(
+                    title: const Text('Für Lizenzverlängerung'),
+                    value: fuerVerlaengerungen,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        fuerVerlaengerungen = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                Semantics(
+                  label: 'Für VÜL Verlängerung auswählen',
+                  hint: 'Aktivieren, um nur Schulungen für VÜL-Verlängerungen zu zeigen',
+                  toggled: fuerVuelVerlaengerungen,
+                  child: CheckboxListTile(
+                    title: const Text('Für VÜL Verlängerung'),
+                    value: fuerVuelVerlaengerungen,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        fuerVuelVerlaengerungen = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
