@@ -14,6 +14,7 @@ import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({required this.onLoginSuccess, this.logoWidget, super.key});
@@ -398,38 +399,51 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             child: Padding(
               padding: UIConstants.screenPadding,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.logoWidget ?? const LogoWidget(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  ScaledText(
-                    Messages.loginTitle,
-                    style: UIStyles.headerStyle.copyWith(color: _appColor),
-                  ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  if (_errorMessage.isNotEmpty)
-                    ScaledText(_errorMessage, style: UIStyles.errorStyle),
-                  const SizedBox(height: UIConstants.spacingM),
-                  _buildEmailField(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildPasswordField(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildRememberMeCheckbox(),
-                  const SizedBox(height: UIConstants.spacingM),
-                  _buildLoginButton(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildForgotPasswordButton(),
-                      _buildHelpButton(),
-                    ],
-                  ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Center(child: _buildRegisterButton()),
-                ],
+              child: Focus(
+                autofocus: true,
+                onKey: (node, event) {
+                  // Only handle Enter key for Windows and Web
+                  if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                          event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) &&
+                      !_isLoading) {
+                    _handleLogin();
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    widget.logoWidget ?? const LogoWidget(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    ScaledText(
+                      Messages.loginTitle,
+                      style: UIStyles.headerStyle.copyWith(color: _appColor),
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    if (_errorMessage.isNotEmpty)
+                      ScaledText(_errorMessage, style: UIStyles.errorStyle),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildEmailField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildPasswordField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildRememberMeCheckbox(),
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildLoginButton(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildForgotPasswordButton(),
+                        _buildHelpButton(),
+                      ],
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    Center(child: _buildRegisterButton()),
+                  ],
+                ),
               ),
             ),
           ),
