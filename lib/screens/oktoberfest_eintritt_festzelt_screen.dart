@@ -97,39 +97,43 @@ class OktoberfestEintrittFestzeltState
       userData: null,
       isLoggedIn: true,
       onLogout: () {},
-      body: Stack(
-        children: [
-          // Background image
-          Container(
-            width: size.width,
-            height: size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/BSSB_Wappen_dimmed.png'),
-                fit: BoxFit.fitHeight, // Changed from BoxFit.cover
-                alignment: Alignment.topCenter,
+      body: Semantics(
+        label:
+            'Oktoberfest Eintritt Festzelt. Zeigt Eintrittsdaten, aktuelle Uhrzeit, Netzwerkstatus und persönliche Informationen für das Festzelt beim Oktoberfest.',
+        child: Stack(
+          children: [
+            // Background image
+            Container(
+              width: size.width,
+              height: size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/BSSB_Wappen_dimmed.png'),
+                  fit: BoxFit.fitHeight, // Changed from BoxFit.cover
+                  alignment: Alignment.topCenter,
+                ),
               ),
             ),
-          ),
-          // Center all info vertically and horizontally
-          Center(
-            child: SingleChildScrollView(
-              padding: UIConstants.defaultPadding,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildNetworkStatus(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildDatumWithTime(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildInfoTable(),
-                ],
+            // Center all info vertically and horizontally
+            Center(
+              child: SingleChildScrollView(
+                padding: UIConstants.defaultPadding,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildNetworkStatus(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildDatumWithTime(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildInfoTable(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -195,19 +199,19 @@ class OktoberfestEintrittFestzeltState
         Text(
           widget.date,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: UIConstants.titleFontSize,
-                color: UIConstants.textColor,
-              ),
+            fontWeight: FontWeight.bold,
+            fontSize: UIConstants.titleFontSize,
+            color: UIConstants.textColor,
+          ),
         ),
         const SizedBox(height: UIConstants.spacingS),
         Text(
           _currentTime,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: UIConstants.titleFontSize,
-                fontWeight: FontWeight.bold,
-                color: UIConstants.textColor,
-              ),
+            fontSize: UIConstants.titleFontSize,
+            fontWeight: FontWeight.bold,
+            color: UIConstants.textColor,
+          ),
         ),
       ],
     );

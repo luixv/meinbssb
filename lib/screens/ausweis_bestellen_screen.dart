@@ -109,38 +109,42 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
       automaticallyImplyLeading: true,
-      body: Consumer<FontSizeProvider>(
-        builder: (context, fontSizeProvider, child) {
-          return Padding(
-            padding: UIConstants.screenPadding,
-            child: Column(
-              crossAxisAlignment: UIConstants.startCrossAlignment,
-              children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
-                UIConstants.verticalSpacingS,
-                const ScaledText(
-                  Messages.ausweisBestellenDescription,
-                  style: UIStyles.bodyStyle,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                if (isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _onSave,
-                      child: const Text(
-                        'Schützenausweis kostenpflichtig  bestellen',
+      body: Semantics(
+        label:
+            'Schützenausweis bestellen. Hier können Sie einen neuen Schützenausweis beantragen und die Beschreibung sowie den Bestellbutton sehen.',
+        child: Consumer<FontSizeProvider>(
+          builder: (context, fontSizeProvider, child) {
+            return Padding(
+              padding: UIConstants.screenPadding,
+              child: Column(
+                crossAxisAlignment: UIConstants.startCrossAlignment,
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  UIConstants.verticalSpacingS,
+                  const ScaledText(
+                    Messages.ausweisBestellenDescription,
+                    style: UIStyles.bodyStyle,
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  if (isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _onSave,
+                        child: const Text(
+                          'Schützenausweis kostenpflichtig  bestellen',
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

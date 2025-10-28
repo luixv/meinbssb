@@ -44,10 +44,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => PasswordResetFailScreen(
-          message: message,
-          userData: null,
-        ),
+        builder:
+            (_) => PasswordResetFailScreen(message: message, userData: null),
       ),
     );
   }
@@ -58,16 +56,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (entry != null) {
       // Check if personId matches
       final dynamic entryPersonId = entry['person_id'];
-      if (entryPersonId == null || entryPersonId.toString() != widget.personId) {
+      if (entryPersonId == null ||
+          entryPersonId.toString() != widget.personId) {
         _failAndExit('Ungültiger Link: PersonID stimmt nicht überein.');
         return;
       }
-      
+
       // Check if already verified
       if (entry['is_used'] == true) {
         _failAndExit(
-            // ignore: require_trailing_commas
-            'Dieser Link wurde bereits verwendet. Bitte versuchen Sie erneut.');
+          // ignore: require_trailing_commas
+          'Dieser Link wurde bereits verwendet. Bitte versuchen Sie erneut.',
+        );
         return;
       }
       // Check if verified_at is older than 24 hours
@@ -147,10 +147,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         // Success case
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => const PasswordResetSuccessScreen(
-              message: 'Passwort wurde erfolgreich zurückgesetzt.',
-              userData: null,
-            ),
+            builder:
+                (_) => const PasswordResetSuccessScreen(
+                  message: 'Passwort wurde erfolgreich zurückgesetzt.',
+                  userData: null,
+                ),
           ),
         );
       } else {
@@ -179,120 +180,135 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       userData: null,
       isLoggedIn: false,
       onLogout: () {},
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-                  child: ScaledText(
-                    _error!,
-                    style: UIStyles.errorStyle
-                        .copyWith(color: UIConstants.errorColor),
-                  ),
-                ),
-              if (_success != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-                  child: ScaledText(
-                    _success!,
-                    style: UIStyles.successStyle
-                        .copyWith(color: UIConstants.successColor),
-                  ),
-                ),
-              const ScaledText(
-                'Bitte vergeben Sie ein neues sicheres Passwort:',
-                style: UIStyles.bodyStyle,
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: !_showPassword,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Neues Passwort',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showPassword ? Icons.visibility_off : Icons.visibility,
+      body: Semantics(
+        label:
+            'Passwort zurücksetzen Formular. Bitte vergeben Sie ein neues sicheres Passwort und bestätigen Sie es, um Ihr Passwort zurückzusetzen.',
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: UIConstants.spacingM,
                     ),
-                    onPressed: () =>
-                        setState(() => _showPassword = !_showPassword),
-                  ),
-                ),
-                style: UIStyles.formValueStyle,
-                validator: _validatePassword,
-                onChanged: _checkStrength,
-              ),
-              const Padding(
-                padding:
-                    EdgeInsets.only(top: 4.0, bottom: UIConstants.spacingS),
-                child: ScaledText(
-                  'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
-                  style: UIStyles.formLabelStyle,
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: _strength,
-                      minHeight: 6,
-                      backgroundColor: UIConstants.greySubtitleTextColor,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _strengthColor(_strength),
+                    child: ScaledText(
+                      _error!,
+                      style: UIStyles.errorStyle.copyWith(
+                        color: UIConstants.errorColor,
                       ),
                     ),
                   ),
-                  const SizedBox(width: UIConstants.spacingS),
-                  ScaledText(
-                    _strengthLabel(_strength),
-                    style: UIStyles.bodyStyle
-                        .copyWith(color: _strengthColor(_strength)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              TextFormField(
-                controller: _confirmController,
-                obscureText: !_showConfirm,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Passwort wiederholen',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showConfirm ? Icons.visibility_off : Icons.visibility,
+                if (_success != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: UIConstants.spacingM,
                     ),
-                    onPressed: () =>
-                        setState(() => _showConfirm = !_showConfirm),
-                  ),
-                ),
-                style: UIStyles.formValueStyle,
-                validator: (v) => v != _passwordController.text
-                    ? 'Passwörter stimmen nicht überein'
-                    : null,
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  style: UIStyles.defaultButtonStyle,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.lock_reset, color: Colors.white),
-                      SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        'Passwort zurücksetzen',
-                        style: UIStyles.buttonStyle,
+                    child: ScaledText(
+                      _success!,
+                      style: UIStyles.successStyle.copyWith(
+                        color: UIConstants.successColor,
                       ),
-                    ],
+                    ),
+                  ),
+                const ScaledText(
+                  'Bitte vergeben Sie ein neues sicheres Passwort:',
+                  style: UIStyles.bodyStyle,
+                ),
+                const SizedBox(height: UIConstants.spacingS),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: !_showPassword,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Neues Passwort',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showPassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed:
+                          () => setState(() => _showPassword = !_showPassword),
+                    ),
+                  ),
+                  style: UIStyles.formValueStyle,
+                  validator: _validatePassword,
+                  onChanged: _checkStrength,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(
+                    top: 4.0,
+                    bottom: UIConstants.spacingS,
+                  ),
+                  child: ScaledText(
+                    'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                    style: UIStyles.formLabelStyle,
                   ),
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: LinearProgressIndicator(
+                        value: _strength,
+                        minHeight: 6,
+                        backgroundColor: UIConstants.greySubtitleTextColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          _strengthColor(_strength),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: UIConstants.spacingS),
+                    ScaledText(
+                      _strengthLabel(_strength),
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: _strengthColor(_strength),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: UIConstants.spacingM),
+                TextFormField(
+                  controller: _confirmController,
+                  obscureText: !_showConfirm,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Passwort wiederholen',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showConfirm ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed:
+                          () => setState(() => _showConfirm = !_showConfirm),
+                    ),
+                  ),
+                  style: UIStyles.formValueStyle,
+                  validator:
+                      (v) =>
+                          v != _passwordController.text
+                              ? 'Passwörter stimmen nicht überein'
+                              : null,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    style: UIStyles.defaultButtonStyle,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.lock_reset, color: Colors.white),
+                        SizedBox(width: UIConstants.spacingS),
+                        ScaledText(
+                          'Passwort zurücksetzen',
+                          style: UIStyles.buttonStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

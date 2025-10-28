@@ -84,76 +84,78 @@ Stand: 01.12.2022
         elevation: UIConstants.appBarElevation,
         iconTheme: const IconThemeData(color: UIConstants.textColor),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.symmetric(
-              vertical: UIConstants.spacingL,
-              horizontal: UIConstants.spacingM,
-            ),
-            padding: UIConstants.defaultPadding,
-            decoration: BoxDecoration(
-              color: UIConstants.cardColor,
-              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-              boxShadow: UIStyles.cardDecoration.boxShadow,
-            ),
-            child: Builder(
-              builder: (context) {
-                // Remove the last line if it starts with 'Stand:' and treat as footer
-                final List<_AgbSection> mainSections = List.from(sections);
-                String? footer;
-                if (mainSections.isNotEmpty &&
-                    mainSections.last.paragraphs.isNotEmpty) {
-                  final lastParas = mainSections.last.paragraphs;
-                  final lastLine = lastParas.last.trim();
-                  if (lastLine.startsWith('Stand:')) {
-                    footer = lastLine;
-                    lastParas.removeLast();
-                    // If the last section is now empty, remove it
-                    if (lastParas.isEmpty) {
-                      mainSections.removeLast();
+      body: Semantics(
+        label:
+            'Allgemeine Geschäftsbedingungen des Bayerischen Sportschützenbundes. Enthält alle relevanten Vertragsbedingungen, Widerrufsbelehrungen und Zahlungsinformationen für Seminare und Schulungen.',
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.symmetric(
+                vertical: UIConstants.spacingL,
+                horizontal: UIConstants.spacingM,
+              ),
+              padding: UIConstants.defaultPadding,
+              decoration: BoxDecoration(
+                color: UIConstants.cardColor,
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+                boxShadow: UIStyles.cardDecoration.boxShadow,
+              ),
+              child: Builder(
+                builder: (context) {
+                  // Remove the last line if it starts with 'Stand:' and treat as footer
+                  final List<_AgbSection> mainSections = List.from(sections);
+                  String? footer;
+                  if (mainSections.isNotEmpty &&
+                      mainSections.last.paragraphs.isNotEmpty) {
+                    final lastParas = mainSections.last.paragraphs;
+                    final lastLine = lastParas.last.trim();
+                    if (lastLine.startsWith('Stand:')) {
+                      footer = lastLine;
+                      lastParas.removeLast();
+                      // If the last section is now empty, remove it
+                      if (lastParas.isEmpty) {
+                        mainSections.removeLast();
+                      }
                     }
                   }
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final section in mainSections) ...[
-                      if (section.title != null) ...[
-                        Text(
-                          section.title!,
-                          style: UIStyles.sectionTitleStyle,
-                        ),
-                        UIConstants.verticalSpacingS,
-                      ],
-                      for (final para in section.paragraphs) ...[
-                        if (RegExp(r'^\d+(?:\.\d+)*\.\s*').hasMatch(para) &&
-                            !para.startsWith('Stand:'))
-                          _buildNumberedParagraph(para)
-                        else
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final section in mainSections) ...[
+                        if (section.title != null) ...[
                           Text(
-                            para,
-                            style: UIStyles.bodyStyle,
+                            section.title!,
+                            style: UIStyles.sectionTitleStyle,
                           ),
-                        UIConstants.verticalSpacingXS,
+                          UIConstants.verticalSpacingS,
+                        ],
+                        for (final para in section.paragraphs) ...[
+                          if (RegExp(r'^\d+(?:\.\d+)*\.\s*').hasMatch(para) &&
+                              !para.startsWith('Stand:'))
+                            _buildNumberedParagraph(para)
+                          else
+                            Text(para, style: UIStyles.bodyStyle),
+                          UIConstants.verticalSpacingXS,
+                        ],
+                        UIConstants.verticalSpacingM,
                       ],
-                      UIConstants.verticalSpacingM,
-                    ],
-                    if (footer != null)
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: UIConstants.spacingS),
-                        child: Text(
-                          footer,
-                          style: UIStyles.bodyStyle.copyWith(
-                            fontStyle: FontStyle.italic,
+                      if (footer != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: UIConstants.spacingS,
                           ),
-                          textAlign: TextAlign.right,
+                          child: Text(
+                            footer,
+                            style: UIStyles.bodyStyle.copyWith(
+                              fontStyle: FontStyle.italic,
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
                         ),
-                      ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -161,10 +163,7 @@ Stand: 01.12.2022
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).pop(),
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.close,
-          color: UIConstants.whiteColor,
-        ),
+        child: const Icon(Icons.close, color: UIConstants.whiteColor),
       ),
     );
   }
@@ -207,8 +206,9 @@ List<_AgbSection> _parseAgbText(String text) {
     }
   }
   if (currentParagraphs.isNotEmpty || currentTitle != null) {
-    sections
-        .add(_AgbSection(title: currentTitle, paragraphs: currentParagraphs));
+    sections.add(
+      _AgbSection(title: currentTitle, paragraphs: currentParagraphs),
+    );
   }
   return sections;
 }
@@ -248,8 +248,5 @@ Widget _buildNumberedParagraph(String para) {
   }
 
   // Fallback for any other numbered paragraphs
-  return Text(
-    para,
-    style: UIStyles.bodyStyle,
-  );
+  return Text(para, style: UIStyles.bodyStyle);
 }

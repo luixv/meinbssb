@@ -53,22 +53,24 @@ class BankDataScreenState extends State<BankDataScreen> {
 
     if (widget.webloginId == 0) {
       setState(() {
-        _bankDataFuture =
-            Future.error('WebLoginID is required to fetch bank data');
+        _bankDataFuture = Future.error(
+          'WebLoginID is required to fetch bank data',
+        );
       });
       return;
     }
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      _bankDataFuture =
-          apiService.fetchBankdatenMyBSSB(widget.webloginId).then((list) {
-        final hasData = list.isNotEmpty;
-        if (mounted) {
-          setState(() {});
-        }
-        return hasData ? list.first : null;
-      });
+      _bankDataFuture = apiService.fetchBankdatenMyBSSB(widget.webloginId).then(
+        (list) {
+          final hasData = list.isNotEmpty;
+          if (mounted) {
+            setState(() {});
+          }
+          return hasData ? list.first : null;
+        },
+      );
       LoggerService.logInfo('BankDataScreen: Initiating bank data fetch.');
     } catch (e) {
       LoggerService.logError('Error setting up bank data fetch: $e');
@@ -122,12 +124,13 @@ class BankDataScreenState extends State<BankDataScreen> {
         if (!mounted) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => BankDataSuccessScreen(
-              success: true,
-              userData: widget.userData,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-            ),
+            builder:
+                (context) => BankDataSuccessScreen(
+                  success: true,
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
           ),
         );
       } else {
@@ -168,10 +171,7 @@ class BankDataScreenState extends State<BankDataScreen> {
         return AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
           title: const Center(
-            child: Text(
-              'Bankdaten löschen',
-              style: UIStyles.dialogTitleStyle,
-            ),
+            child: Text('Bankdaten löschen', style: UIStyles.dialogTitleStyle),
           ),
           content: RichText(
             textAlign: TextAlign.center,
@@ -187,8 +187,9 @@ class BankDataScreenState extends State<BankDataScreen> {
           ),
           actions: <Widget>[
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: UIConstants.spacingM),
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -197,9 +198,10 @@ class BankDataScreenState extends State<BankDataScreen> {
                       minHeight: UIConstants.defaultButtonHeight,
                     ),
                     child: ElevatedButton(
-                      onPressed: _isSaving
-                          ? null
-                          : () => Navigator.of(dialogContext).pop(false),
+                      onPressed:
+                          _isSaving
+                              ? null
+                              : () => Navigator.of(dialogContext).pop(false),
                       style: UIStyles.dialogCancelButtonStyle.copyWith(
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
@@ -233,9 +235,10 @@ class BankDataScreenState extends State<BankDataScreen> {
                       minHeight: UIConstants.defaultButtonHeight,
                     ),
                     child: ElevatedButton(
-                      onPressed: _isSaving
-                          ? null
-                          : () => Navigator.of(dialogContext).pop(true),
+                      onPressed:
+                          _isSaving
+                              ? null
+                              : () => Navigator.of(dialogContext).pop(true),
                       style: UIStyles.dialogAcceptButtonStyle.copyWith(
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
@@ -305,12 +308,13 @@ class BankDataScreenState extends State<BankDataScreen> {
           if (!mounted) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => BankDataSuccessScreen(
-                success: true,
-                userData: widget.userData,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
-              ),
+              builder:
+                  (context) => BankDataSuccessScreen(
+                    success: true,
+                    userData: widget.userData,
+                    isLoggedIn: widget.isLoggedIn,
+                    onLogout: widget.onLogout,
+                  ),
             ),
           );
         } else {
@@ -368,27 +372,22 @@ class BankDataScreenState extends State<BankDataScreen> {
               });
             },
             backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(
-              Icons.close,
-              color: UIConstants.whiteColor,
-            ),
+            child: const Icon(Icons.close, color: UIConstants.whiteColor),
           ),
           const SizedBox(height: UIConstants.spacingM),
           FloatingActionButton(
             heroTag: 'bankDataSaveFab',
             onPressed: _isSaving ? null : _onSaveBankData,
             backgroundColor: UIConstants.defaultAppColor,
-            child: _isSaving
-                ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      UIConstants.circularProgressIndicator,
-                    ),
-                    strokeWidth: UIConstants.defaultStrokeWidth,
-                  )
-                : const Icon(
-                    Icons.save,
-                    color: UIConstants.whiteColor,
-                  ),
+            child:
+                _isSaving
+                    ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        UIConstants.circularProgressIndicator,
+                      ),
+                      strokeWidth: UIConstants.defaultStrokeWidth,
+                    )
+                    : const Icon(Icons.save, color: UIConstants.whiteColor),
           ),
         ],
       );
@@ -400,16 +399,18 @@ class BankDataScreenState extends State<BankDataScreen> {
             heroTag: 'bankDataDeleteFab',
             onPressed: _isSaving ? null : _onDeleteBankData,
             backgroundColor: UIConstants.defaultAppColor,
-            child: _isSaving
-                ? const CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(UIConstants.whiteColor),
-                    strokeWidth: UIConstants.defaultStrokeWidth,
-                  )
-                : const Icon(
-                    Icons.delete_outline,
-                    color: UIConstants.whiteColor,
-                  ),
+            child:
+                _isSaving
+                    ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        UIConstants.whiteColor,
+                      ),
+                      strokeWidth: UIConstants.defaultStrokeWidth,
+                    )
+                    : const Icon(
+                      Icons.delete_outline,
+                      color: UIConstants.whiteColor,
+                    ),
           ),
           const SizedBox(height: UIConstants.spacingM),
           FloatingActionButton(
@@ -420,10 +421,7 @@ class BankDataScreenState extends State<BankDataScreen> {
               });
             },
             backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(
-              Icons.edit,
-              color: UIConstants.whiteColor,
-            ),
+            child: const Icon(Icons.edit, color: UIConstants.whiteColor),
           ),
         ],
       );
@@ -440,82 +438,91 @@ class BankDataScreenState extends State<BankDataScreen> {
           userData: widget.userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
-          body: widget.webloginId == 0
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: UIConstants.errorColor,
-                        size: UIConstants.iconSizeL,
+          body: Semantics(
+            label:
+                'Bankdatenbereich. Hier können Sie Ihre Kontoinformationen wie Kontoinhaber, IBAN und BIC einsehen und bearbeiten.',
+            child:
+                widget.webloginId == 0
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: UIConstants.errorColor,
+                            size: UIConstants.iconSizeL,
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          const ScaledText(
+                            'Fehler beim Laden der Bankdaten',
+                            style: UIStyles.headerStyle,
+                          ),
+                          const SizedBox(height: UIConstants.spacingS),
+                          const ScaledText(
+                            'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
+                            textAlign: TextAlign.center,
+                            style: UIStyles.bodyStyle,
+                          ),
+                          const SizedBox(height: UIConstants.spacingM),
+                          ElevatedButton(
+                            onPressed: () {
+                              widget.onLogout();
+                              Navigator.pushReplacementNamed(context, '/login');
+                            },
+                            child: const ScaledText('Zurück zum Login'),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      const ScaledText(
-                        'Fehler beim Laden der Bankdaten',
-                        style: UIStyles.headerStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      const ScaledText(
-                        'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
-                        textAlign: TextAlign.center,
-                        style: UIStyles.bodyStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      ElevatedButton(
-                        onPressed: () {
-                          widget.onLogout();
-                          Navigator.pushReplacementNamed(context, '/login');
-                        },
-                        child: const ScaledText('Zurück zum Login'),
-                      ),
-                    ],
-                  ),
-                )
-              : FutureBuilder<BankData?>(
-                  future: _bankDataFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: UIConstants.errorColor,
-                              size: UIConstants.iconSizeL,
+                    )
+                    : FutureBuilder<BankData?>(
+                      future: _bankDataFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: UIConstants.errorColor,
+                                  size: UIConstants.iconSizeL,
+                                ),
+                                const SizedBox(height: UIConstants.spacingM),
+                                const ScaledText(
+                                  'Fehler beim Laden der Bankdaten',
+                                  style: UIStyles.headerStyle,
+                                ),
+                                const SizedBox(height: UIConstants.spacingS),
+                                ScaledText(
+                                  snapshot.error.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: UIStyles.bodyStyle,
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            const ScaledText(
-                              'Fehler beim Laden der Bankdaten',
-                              style: UIStyles.headerStyle,
-                            ),
-                            const SizedBox(height: UIConstants.spacingS),
-                            ScaledText(
-                              snapshot.error.toString(),
-                              textAlign: TextAlign.center,
-                              style: UIStyles.bodyStyle,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    if (snapshot.hasData && snapshot.data != null) {
-                      final bankData = snapshot.data!;
-                      if (!_isEditing) {
-                        _kontoinhaberController.text = bankData.kontoinhaber;
-                        _ibanController.text = bankData.iban;
-                        _bicController.text = bankData.bic;
-                      }
-                      return _buildBankDataForm();
-                    } else {
-                      return _buildBankDataForm();
-                    }
-                  },
-                ),
+                          );
+                        }
+                        if (snapshot.hasData && snapshot.data != null) {
+                          final bankData = snapshot.data!;
+                          if (!_isEditing) {
+                            _kontoinhaberController.text =
+                                bankData.kontoinhaber;
+                            _ibanController.text = bankData.iban;
+                            _bicController.text = bankData.bic;
+                          }
+                          return _buildBankDataForm();
+                        } else {
+                          return _buildBankDataForm();
+                        }
+                      },
+                    ),
+          ),
           floatingActionButton: _buildFABs(),
         ),
         // Whole-screen overlay spinner
@@ -543,8 +550,9 @@ class BankDataScreenState extends State<BankDataScreen> {
           padding: const EdgeInsets.all(UIConstants.spacingM),
           child: Form(
             key: _formKey,
-            autovalidateMode: AutovalidateMode
-                .onUserInteraction, // Enable real-time validation
+            autovalidateMode:
+                AutovalidateMode
+                    .onUserInteraction, // Enable real-time validation
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,31 +626,41 @@ class BankDataScreenState extends State<BankDataScreen> {
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
           child: TextFormField(
             controller: controller,
-            style: isReadOnly
-                ? UIStyles.formValueBoldStyle.copyWith(
-                    fontSize: UIStyles.formValueBoldStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  )
-                : UIStyles.formValueStyle.copyWith(
-                    fontSize: UIStyles.formValueStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
+            style:
+                isReadOnly
+                    ? UIStyles.formValueBoldStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueBoldStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    )
+                    : UIStyles.formValueStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: label,
               labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                fontSize:
+                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              floatingLabelStyle:
-                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+              floatingLabelStyle: UIStyles
+                  .formInputDecoration
+                  .floatingLabelStyle
+                  ?.copyWith(
+                    fontSize:
+                        UIStyles
+                            .formInputDecoration
+                            .floatingLabelStyle!
+                            .fontSize! *
                         fontSizeProvider.scaleFactor,
-              ),
+                  ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText: isReadOnly ? null : label,
               hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                fontSize:
+                    UIStyles.formInputDecoration.hintStyle!.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
               filled: true,

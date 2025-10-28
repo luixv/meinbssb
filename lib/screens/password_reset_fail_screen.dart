@@ -21,22 +21,26 @@ class PasswordResetFailScreen extends StatelessWidget {
       onLogout: () {
         Navigator.pushReplacementNamed(context, '/login');
       },
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(
-              Icons.error,
-              color: Colors.red,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Text(
-              message,
-              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      body: Semantics(
+        label:
+            'Passwort-Reset fehlgeschlagen. Ihr Passwort konnte nicht zurückgesetzt werden. Fehlermeldung und Rückkehr zur Login-Seite.',
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+                size: UIConstants.iconSizeXL,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              Text(
+                message,
+                style: const TextStyle(fontSize: UIConstants.dialogFontSize),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -48,10 +52,7 @@ class PasswordResetFailScreen extends StatelessWidget {
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.login,
-          color: UIConstants.whiteColor,
-        ),
+        child: const Icon(Icons.login, color: UIConstants.whiteColor),
       ),
     );
   }

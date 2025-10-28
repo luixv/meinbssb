@@ -33,49 +33,56 @@ class PasswordResetSuccessScreen extends StatelessWidget {
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingL),
-            const Icon(
-              Icons.check_circle_outline,
-              size: UIConstants.defaultIconSize,
-              color: UIConstants.successColor,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            const Text(
-              Messages.passwordResetSuccessTitle,
-              style: UIStyles.titleStyle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            const Text(
-              Messages.passwordResetSuccessMessage,
-              style: UIStyles.bodyStyle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: UIConstants.spacingL),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(
-                      onLoginSuccess: (userData) {
-                        Navigator.of(context).pushReplacementNamed('/home');
-                      },
-                    ),
-                  ),
-                );
-              },
-              style: UIStyles.defaultButtonStyle,
-              child: const Text(
-                Messages.backToLoginButtonLabel,
-                style: UIStyles.buttonStyle,
+      body: Semantics(
+        label:
+            'Passwort erfolgreich zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden. Bestätigung und Rückkehr zur Login-Seite.',
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const LogoWidget(),
+              const SizedBox(height: UIConstants.spacingL),
+              const Icon(
+                Icons.check_circle_outline,
+                size: UIConstants.defaultIconSize,
+                color: UIConstants.successColor,
               ),
-            ),
-          ],
+              const SizedBox(height: UIConstants.spacingM),
+              const Text(
+                Messages.passwordResetSuccessTitle,
+                style: UIStyles.titleStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              const Text(
+                Messages.passwordResetSuccessMessage,
+                style: UIStyles.bodyStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: UIConstants.spacingL),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => LoginScreen(
+                            onLoginSuccess: (userData) {
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed('/home');
+                            },
+                          ),
+                    ),
+                  );
+                },
+                style: UIStyles.defaultButtonStyle,
+                child: const Text(
+                  Messages.backToLoginButtonLabel,
+                  style: UIStyles.buttonStyle,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

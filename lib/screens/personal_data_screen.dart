@@ -141,12 +141,11 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         data['GEBURTSDATUM'].toString().isNotEmpty) {
       try {
         final parsedDate = DateTime.parse(data['GEBURTSDATUM'].toString());
-        _geburtsdatumController.text =
-            DateFormat('dd.MM.yyyy').format(parsedDate);
+        _geburtsdatumController.text = DateFormat(
+          'dd.MM.yyyy',
+        ).format(parsedDate);
       } catch (e) {
-        LoggerService.logError(
-          'Error parsing date: ${data['GEBURTSDATUM']}',
-        );
+        LoggerService.logError('Error parsing date: ${data['GEBURTSDATUM']}');
         _geburtsdatumController.text = 'Invalid Date';
       }
     } else {
@@ -180,14 +179,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           titel: _titelController.text,
           geburtsdatum:
               widget.userData?.geburtsdatum, // Geburtsdatum not editable
-          geschlecht: _currentPassData?['GESCHLECHT'] is int
-              ? _currentPassData!['GESCHLECHT'] as int
-              : 0, // Geschlecht not editable from this screen
+          geschlecht:
+              _currentPassData?['GESCHLECHT'] is int
+                  ? _currentPassData!['GESCHLECHT'] as int
+                  : 0, // Geschlecht not editable from this screen
           vereinName:
               widget.userData?.vereinName ?? '', // VereinName not editable
           passdatenId:
               widget.userData?.passdatenId ?? 0, // PassdatenId not editable
-          mitgliedschaftId: widget.userData?.mitgliedschaftId ??
+          mitgliedschaftId:
+              widget.userData?.mitgliedschaftId ??
               0, // MitgliedschaftId not editable
           strasse: _strasseHausnummerController.text,
           plz: _postleitzahlController.text,
@@ -196,20 +197,22 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               widget.userData?.isOnline ?? false, // isOnline from initial fetch
         );
 
-        final success =
-            await apiService.updateKritischeFelderUndAdresse(userDataToUpdate);
+        final success = await apiService.updateKritischeFelderUndAdresse(
+          userDataToUpdate,
+        );
 
         if (mounted) {
           if (success) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => PersonalDataSuccessScreen(
-                  success: true,
-                  userData: widget.userData,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                ),
+                builder:
+                    (context) => PersonalDataSuccessScreen(
+                      success: true,
+                      userData: widget.userData,
+                      isLoggedIn: widget.isLoggedIn,
+                      onLogout: widget.onLogout,
+                    ),
               ),
             );
           } else {
@@ -245,9 +248,14 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: _isLoading && _currentPassData == null
-          ? const Center(child: CircularProgressIndicator())
-          : _buildPersonalDataForm(fontSizeProvider), // Pass the provider
+      body: Semantics(
+        label:
+            'Persönliche Daten. Anzeige und Bearbeitung Ihrer persönlichen Informationen wie Name, Adresse, Geburtsdatum und Passnummer. Pflichtfelder und Hinweise werden angezeigt.',
+        child:
+            _isLoading && _currentPassData == null
+                ? const Center(child: CircularProgressIndicator())
+                : _buildPersonalDataForm(fontSizeProvider),
+      ),
       floatingActionButton: FutureBuilder<bool>(
         future: _isOffline(),
         builder: (context, offlineSnapshot) {
@@ -258,47 +266,38 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
           return _isEditing
               ? Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FloatingActionButton(
-                      heroTag: 'personalDataCancelFab',
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = false;
-                          _populateFields(_currentPassData!);
-                        });
-                      },
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FloatingActionButton(
-                      heroTag: 'personalDataSaveFab',
-                      onPressed: _handleSave,
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(
-                        Icons.save,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                )
-              : FloatingActionButton(
-                  heroTag: 'personalDataEditFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(
-                    Icons.edit,
-                    color: Colors.white,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'personalDataCancelFab',
+                    onPressed: () {
+                      setState(() {
+                        _isEditing = false;
+                        _populateFields(_currentPassData!);
+                      });
+                    },
+                    backgroundColor: UIConstants.defaultAppColor,
+                    child: const Icon(Icons.close, color: Colors.white),
                   ),
-                );
+                  const SizedBox(height: 16),
+                  FloatingActionButton(
+                    heroTag: 'personalDataSaveFab',
+                    onPressed: _handleSave,
+                    backgroundColor: UIConstants.defaultAppColor,
+                    child: const Icon(Icons.save, color: Colors.white),
+                  ),
+                ],
+              )
+              : FloatingActionButton(
+                heroTag: 'personalDataEditFab',
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
+                backgroundColor: UIConstants.defaultAppColor,
+                child: const Icon(Icons.edit, color: Colors.white),
+              );
         },
       ),
     );
@@ -311,56 +310,69 @@ class PersonDataScreenState extends State<PersonDataScreen> {
         return Padding(
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
           child: DropdownButtonFormField<String>(
-            value: titelOptions.contains(_titelController.text)
-                ? _titelController.text
-                : '',
+            value:
+                titelOptions.contains(_titelController.text)
+                    ? _titelController.text
+                    : '',
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: 'Titel',
               labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                fontSize:
+                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              floatingLabelStyle:
-                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+              floatingLabelStyle: UIStyles
+                  .formInputDecoration
+                  .floatingLabelStyle
+                  ?.copyWith(
+                    fontSize:
+                        UIStyles
+                            .formInputDecoration
+                            .floatingLabelStyle!
+                            .fontSize! *
                         fontSizeProvider.scaleFactor,
-              ),
+                  ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
               filled: true,
             ),
-            items: titelOptions
-                .map(
-                  (titel) => DropdownMenuItem<String>(
-                    value: titel,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 0.0,
-                      ), // Minimum space
-                      child: Text(
-                        titel.isEmpty ? '(Kein Titel)' : titel,
-                        style: _isEditing
-                            ? UIStyles.formValueStyle.copyWith(
-                                fontSize: UIStyles.formValueStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              )
-                            : UIStyles.formValueBoldStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formValueBoldStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
-                              ),
+            items:
+                titelOptions
+                    .map(
+                      (titel) => DropdownMenuItem<String>(
+                        value: titel,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 0.0,
+                          ), // Minimum space
+                          child: Text(
+                            titel.isEmpty ? '(Kein Titel)' : titel,
+                            style:
+                                _isEditing
+                                    ? UIStyles.formValueStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.formValueStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    )
+                                    : UIStyles.formValueBoldStyle.copyWith(
+                                      fontSize:
+                                          UIStyles
+                                              .formValueBoldStyle
+                                              .fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                )
-                .toList(),
-            onChanged: _isEditing
-                ? (value) {
-                    setState(() {
-                      _titelController.text = value ?? '';
-                    });
-                  }
-                : null,
+                    )
+                    .toList(),
+            onChanged:
+                _isEditing
+                    ? (value) {
+                      setState(() {
+                        _titelController.text = value ?? '';
+                      });
+                    }
+                    : null,
             validator: (value) => null,
           ),
         );
@@ -382,31 +394,41 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
           child: TextFormField(
             controller: controller,
-            style: isReadOnly
-                ? UIStyles.formValueBoldStyle.copyWith(
-                    fontSize: UIStyles.formValueBoldStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  )
-                : UIStyles.formValueStyle.copyWith(
-                    fontSize: UIStyles.formValueStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
+            style:
+                isReadOnly
+                    ? UIStyles.formValueBoldStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueBoldStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    )
+                    : UIStyles.formValueStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: label,
               labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                fontSize:
+                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              floatingLabelStyle:
-                  UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+              floatingLabelStyle: UIStyles
+                  .formInputDecoration
+                  .floatingLabelStyle
+                  ?.copyWith(
+                    fontSize:
+                        UIStyles
+                            .formInputDecoration
+                            .floatingLabelStyle!
+                            .fontSize! *
                         fontSizeProvider.scaleFactor,
-              ),
+                  ),
               floatingLabelBehavior: floatingLabelBehavior,
               hintText: isReadOnly ? null : label,
               hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize: UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                fontSize:
+                    UIStyles.formInputDecoration.hintStyle!.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
               filled: true,
@@ -428,115 +450,109 @@ class PersonDataScreenState extends State<PersonDataScreen> {
 
     return _errorMessage != null
         ? Center(
-            child: ScaledText(
-              _errorMessage!,
-              style:
-                  UIStyles.errorStyle.copyWith(fontSize: scaledErrorFontSize),
-            ),
-          )
+          child: ScaledText(
+            _errorMessage!,
+            style: UIStyles.errorStyle.copyWith(fontSize: scaledErrorFontSize),
+          ),
+        )
         : _currentPassData == null && !_isLoading
-            ? Center(
-                child: ScaledText(
-                  Messages.noPersonalDataAvailable,
-                  style:
-                      UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
-                ),
-              )
-            : Padding(
-                padding: UIConstants.defaultPadding,
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const SizedBox(
-                          height: UIConstants.spacingS,
-                        ),
-                        _buildTextField(
-                          label: 'Passnummer',
-                          controller: _passnummerController,
-                          isReadOnly: true,
-                        ),
-                        _buildTextField(
-                          label: 'Geburtsdatum',
-                          controller: _geburtsdatumController,
-                          isReadOnly: true,
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          suffixIcon: const Tooltip(
-                            message:
-                                'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                            triggerMode: TooltipTriggerMode.tap,
-                            preferBelow: false,
-                            child: Icon(
-                              Icons.info_outline,
-                              size: UIConstants.tooltipIconSize,
-                            ),
-                          ),
-                        ),
-                        _buildTitelDropdown(fontSizeProvider),
-                        _buildTextField(
-                          label: 'Vorname',
-                          controller: _vornameController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Vorname ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        _buildTextField(
-                          label: 'Nachname',
-                          controller: _nachnameController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Nachname ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        _buildTextField(
-                          label: 'Straße und Hausnummer',
-                          controller: _strasseHausnummerController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Straße und Hausnummer sind erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        _buildTextField(
-                          label: 'Postleitzahl',
-                          controller: _postleitzahlController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Postleitzahl ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        _buildTextField(
-                          label: 'Ort',
-                          controller: _ortController,
-                          isReadOnly: !_isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Ort ist erforderlich';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: UIConstants.spacingS,
-                        ),
-                      ],
+        ? Center(
+          child: ScaledText(
+            Messages.noPersonalDataAvailable,
+            style: UIStyles.bodyStyle.copyWith(fontSize: scaledBodyFontSize),
+          ),
+        )
+        : Padding(
+          padding: UIConstants.defaultPadding,
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: UIConstants.spacingS),
+                  _buildTextField(
+                    label: 'Passnummer',
+                    controller: _passnummerController,
+                    isReadOnly: true,
+                  ),
+                  _buildTextField(
+                    label: 'Geburtsdatum',
+                    controller: _geburtsdatumController,
+                    isReadOnly: true,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    suffixIcon: const Tooltip(
+                      message:
+                          'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                      triggerMode: TooltipTriggerMode.tap,
+                      preferBelow: false,
+                      child: Icon(
+                        Icons.info_outline,
+                        size: UIConstants.tooltipIconSize,
+                      ),
                     ),
                   ),
-                ),
-              );
+                  _buildTitelDropdown(fontSizeProvider),
+                  _buildTextField(
+                    label: 'Vorname',
+                    controller: _vornameController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vorname ist erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'Nachname',
+                    controller: _nachnameController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nachname ist erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'Straße und Hausnummer',
+                    controller: _strasseHausnummerController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Straße und Hausnummer sind erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'Postleitzahl',
+                    controller: _postleitzahlController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Postleitzahl ist erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  _buildTextField(
+                    label: 'Ort',
+                    controller: _ortController,
+                    isReadOnly: !_isEditing,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ort ist erforderlich';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: UIConstants.spacingS),
+                ],
+              ),
+            ),
+          ),
+        );
   }
 }

@@ -47,84 +47,95 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: SingleChildScrollView(
-        padding: UIConstants.defaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const LogoWidget(),
-            const SizedBox(height: UIConstants.spacingS),
-            FutureBuilder<Uint8List>(
-              future: _schuetzenausweisFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: UIConstants.defaultAppColor,
-                      strokeWidth: UIConstants.defaultStrokeWidth,
-                    ),
-                  );
-                }
-                if (snapshot.hasError) {
-                  String errorMessage = snapshot.error.toString();
-                  if (errorMessage.startsWith('Exception: ')) {
-                    errorMessage = errorMessage.substring('Exception: '.length);
+      body: Semantics(
+        label:
+            'Schützenausweis anzeigen. Hier sehen Sie Ihren digitalen Schützenausweis und das Datum des letzten Updates. Bei Fehlern wird eine entsprechende Meldung angezeigt.',
+        child: SingleChildScrollView(
+          padding: UIConstants.defaultPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const LogoWidget(),
+              const SizedBox(height: UIConstants.spacingS),
+              FutureBuilder<Uint8List>(
+                future: _schuetzenausweisFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: UIConstants.defaultAppColor,
+                        strokeWidth: UIConstants.defaultStrokeWidth,
+                      ),
+                    );
                   }
-                  return Center(
+                  if (snapshot.hasError) {
+                    String errorMessage = snapshot.error.toString();
+                    if (errorMessage.startsWith('Exception: ')) {
+                      errorMessage = errorMessage.substring(
+                        'Exception: '.length,
+                      );
+                    }
+                    return Center(
+                      child: Text(
+                        'Error beim Laden des Schützenausweises: $errorMessage',
+                        style: UIStyles.errorStyle,
+                      ),
+                    );
+                  }
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return Column(
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            key: const ValueKey<String>('schuetzenausweis'),
+                            child: Image.memory(snapshot.data!),
+                          ),
+                        ),
+                        FutureBuilder<String?>(
+                          future: Provider.of<ApiService>(
+                            context,
+                            listen: false,
+                          ).imageService.getSchuetzenausweisCacheDate(
+                            widget.personId,
+                          ),
+                          builder: (context, dateSnapshot) {
+                            if (dateSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const SizedBox.shrink();
+                            }
+                            if (dateSnapshot.hasData &&
+                                dateSnapshot.data != null) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  top: UIConstants.spacingS,
+                                ),
+                                child: Text(
+                                  'Stand: ${dateSnapshot.data}',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                  return const Center(
                     child: Text(
-                      'Error beim Laden des Schützenausweises: $errorMessage',
-                      style: UIStyles.errorStyle,
+                      'Kein Schützenausweis verfügbar',
+                      style: UIStyles.bodyStyle,
                     ),
                   );
-                }
-                if (snapshot.hasData && snapshot.data != null) {
-                  return Column(
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          key: const ValueKey<String>('schuetzenausweis'),
-                          child: Image.memory(snapshot.data!),
-                        ),
-                      ),
-                      FutureBuilder<String?>(
-                        future: Provider.of<ApiService>(context, listen: false)
-                            .imageService
-                            .getSchuetzenausweisCacheDate(widget.personId),
-                        builder: (context, dateSnapshot) {
-                          if (dateSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox.shrink();
-                          }
-                          if (dateSnapshot.hasData &&
-                              dateSnapshot.data != null) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                top: UIConstants.spacingS,
-                              ),
-                              child: Text(
-                                'Stand: ${dateSnapshot.data}',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
-                  );
-                }
-                return const Center(
-                  child: Text(
-                    'Kein Schützenausweis verfügbar',
-                    style: UIStyles.bodyStyle,
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: UIConstants.helpSpacing),
-          ],
+                },
+              ),
+              const SizedBox(height: UIConstants.helpSpacing),
+            ],
+          ),
         ),
       ),
+      
+      
       floatingActionButton: FloatingActionButton(
         heroTag: 'schuetzenausweisFab',
         onPressed: () {
@@ -134,10 +145,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
-        ),
+        child: const Icon(Icons.home, color: UIConstants.whiteColor),
       ),
     );
   }
