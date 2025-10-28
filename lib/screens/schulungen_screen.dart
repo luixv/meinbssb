@@ -456,139 +456,151 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                             ),
                                             child: Column(
                                               children: [
-                                                CheckboxListTile(
-                                                  value: agbChecked,
-                                                  onChanged: (val) {
-                                                    setState(
-                                                      () =>
-                                                          agbChecked =
-                                                              val ?? false,
-                                                    );
-                                                  },
-                                                  title: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.of(
-                                                            context,
-                                                          ).push(
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (_) =>
-                                                                      const AgbScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          'AGB',
-                                                          style: UIStyles
-                                                              .linkStyle
-                                                              .copyWith(
-                                                                color:
-                                                                    UIConstants
-                                                                        .linkColor,
-                                                                decoration:
-                                                                    TextDecoration
-                                                                        .underline,
+                                                Semantics(
+                                                  label:
+                                                      'Checkbox zum Akzeptieren der AGB',
+                                                  child: CheckboxListTile(
+                                                    value: agbChecked,
+                                                    onChanged: (val) {
+                                                      setState(
+                                                        () =>
+                                                            agbChecked =
+                                                                val ?? false,
+                                                      );
+                                                    },
+                                                    title: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).push(
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (_) =>
+                                                                        const AgbScreen(),
                                                               ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            'AGB',
+                                                            style: UIStyles
+                                                                .linkStyle
+                                                                .copyWith(
+                                                                  color:
+                                                                      UIConstants
+                                                                          .linkColor,
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .underline,
+                                                                ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width:
-                                                            UIConstants
-                                                                .spacingS,
-                                                      ),
-                                                      const Text('akzeptieren'),
-                                                      const SizedBox(
-                                                        width:
-                                                            UIConstants
-                                                                .spacingS,
-                                                      ),
-                                                      const Tooltip(
-                                                        message:
-                                                            'Ich bin mit den AGB einverstanden.',
-                                                        triggerMode:
-                                                            TooltipTriggerMode
-                                                                .tap,
-                                                        child: Icon(
-                                                          Icons.info_outline,
-                                                          color:
-                                                              UIConstants
-                                                                  .defaultAppColor,
-                                                          size:
-                                                              UIConstants
-                                                                  .tooltipIconSize,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                ),
-                                                CheckboxListTile(
-                                                  value: lastschriftChecked,
-                                                  onChanged: (val) {
-                                                    setState(
-                                                      () =>
-                                                          lastschriftChecked =
-                                                              val ?? false,
-                                                    );
-                                                  },
-                                                  title: const Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Wrap(
-                                                          crossAxisAlignment:
-                                                              WrapCrossAlignment
-                                                                  .center,
-                                                          spacing:
+                                                        const SizedBox(
+                                                          width:
                                                               UIConstants
                                                                   .spacingS,
-                                                          children: [
-                                                            Text(
-                                                              'Bestätigung des\nLastschrifteinzugs',
-                                                            ),
-                                                            Tooltip(
-                                                              message:
-                                                                  'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                                              triggerMode:
-                                                                  TooltipTriggerMode
-                                                                      .tap,
-                                                              child: Icon(
-                                                                Icons
-                                                                    .info_outline,
-                                                                color:
-                                                                    UIConstants
-                                                                        .defaultAppColor,
-                                                                size:
-                                                                    UIConstants
-                                                                        .tooltipIconSize,
-                                                              ),
-                                                            ),
-                                                          ],
                                                         ),
-                                                      ),
-                                                    ],
+                                                        const Text(
+                                                          'akzeptieren',
+                                                        ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        const Tooltip(
+                                                          message:
+                                                              'Ich bin mit den AGB einverstanden.',
+                                                          triggerMode:
+                                                              TooltipTriggerMode
+                                                                  .tap,
+                                                          child: Icon(
+                                                            Icons.info_outline,
+                                                            color:
+                                                                UIConstants
+                                                                    .defaultAppColor,
+                                                            size:
+                                                                UIConstants
+                                                                    .tooltipIconSize,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
                                                   ),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
                                                 ),
+                                                Semantics(
+                                                  label:
+                                                      'Checkbox zur Bestätigung des Lastschrifteinzugs',
+                                                  child: CheckboxListTile(
+                                                    value: lastschriftChecked,
+                                                    onChanged: (val) {
+                                                      setState(
+                                                        () =>
+                                                            lastschriftChecked =
+                                                                val ?? false,
+                                                      );
+                                                    },
+                                                    title: const Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Wrap(
+                                                            crossAxisAlignment:
+                                                                WrapCrossAlignment
+                                                                    .center,
+                                                            spacing:
+                                                                UIConstants
+                                                                    .spacingS,
+                                                            children: [
+                                                              Text(
+                                                                'Bestätigung des\nLastschrifteinzugs',
+                                                              ),
+                                                              Tooltip(
+                                                                message:
+                                                                    'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                                triggerMode:
+                                                                    TooltipTriggerMode
+                                                                        .tap,
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .info_outline,
+                                                                  color:
+                                                                      UIConstants
+                                                                          .defaultAppColor,
+                                                                  size:
+                                                                      UIConstants
+                                                                          .tooltipIconSize,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                  ),
+                                                ),
+
                                                 const SizedBox(
                                                   height: UIConstants.spacingM,
                                                 ),
                                               ],
                                             ),
                                           ),
+                                        
                                         ],
                                       ),
                                     ),
@@ -613,93 +625,97 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         color: UIConstants.whiteColor,
                                       ),
                                     ),
-                                    FloatingActionButton(
-                                      heroTag: 'submitBookingFab',
-                                      mini: true,
-                                      tooltip: 'Buchen',
-                                      backgroundColor:
-                                          (agbChecked &&
-                                                  lastschriftChecked &&
-                                                  kontoinhaberController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  ibanController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  (!_isBicRequired(
-                                                        ibanController.text
-                                                            .trim(),
-                                                      ) ||
-                                                      bicController.text
-                                                          .trim()
-                                                          .isNotEmpty))
-                                              ? UIConstants.defaultAppColor
-                                              : UIConstants
-                                                  .cancelButtonBackground,
-                                      onPressed:
-                                          (agbChecked &&
-                                                  lastschriftChecked &&
-                                                  kontoinhaberController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  ibanController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  (!_isBicRequired(
-                                                        ibanController.text
-                                                            .trim(),
-                                                      ) ||
-                                                      bicController.text
-                                                          .trim()
-                                                          .isNotEmpty))
-                                              ? () async {
-                                                if (formKey.currentState !=
-                                                        null &&
-                                                    formKey.currentState!
-                                                        .validate()) {
-                                                  Navigator.of(context).pop();
-                                                  final apiService =
-                                                      Provider.of<ApiService>(
-                                                        context,
-                                                        listen: false,
-                                                      );
-                                                  final String email =
-                                                      await apiService
-                                                          .getCachedUsername() ??
-                                                      '';
-                                                  final BankData safeBankData =
-                                                      bankData ??
-                                                      BankData(
-                                                        id: 0,
-                                                        webloginId:
-                                                            user.webLoginId,
-                                                        kontoinhaber: '',
-                                                        iban: '',
-                                                        bic: '',
-                                                        mandatSeq: 2,
-                                                        bankName: '',
-                                                        mandatNr: '',
-                                                        mandatName: '',
-                                                      );
-                                                  await registerPersonAndShowDialog(
-                                                    schulungsTermin:
-                                                        schulungsTermin,
-                                                    registeredPersons:
-                                                        registeredPersons,
-                                                    bankData: safeBankData,
-                                                    prefillUser: user.copyWith(
-                                                      telefon:
-                                                          telefonController
-                                                              .text,
-                                                    ),
-                                                    prefillEmail: email,
-                                                  );
+                                    Semantics(
+                                      label: 'Button zum Buchen der Buchung',
+                                      child: FloatingActionButton(
+                                        heroTag: 'submitBookingFab',
+                                        mini: true,
+                                        tooltip: 'Buchen',
+                                        backgroundColor:
+                                            (agbChecked &&
+                                                    lastschriftChecked &&
+                                                    kontoinhaberController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    ibanController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    (!_isBicRequired(
+                                                          ibanController.text
+                                                              .trim(),
+                                                        ) ||
+                                                        bicController.text
+                                                            .trim()
+                                                            .isNotEmpty))
+                                                ? UIConstants.defaultAppColor
+                                                : UIConstants
+                                                    .cancelButtonBackground,
+                                        onPressed:
+                                            (agbChecked &&
+                                                    lastschriftChecked &&
+                                                    kontoinhaberController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    ibanController.text
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    (!_isBicRequired(
+                                                          ibanController.text
+                                                              .trim(),
+                                                        ) ||
+                                                        bicController.text
+                                                            .trim()
+                                                            .isNotEmpty))
+                                                ? () async {
+                                                  if (formKey.currentState !=
+                                                          null &&
+                                                      formKey.currentState!
+                                                          .validate()) {
+                                                    Navigator.of(context).pop();
+                                                    final apiService =
+                                                        Provider.of<ApiService>(
+                                                          context,
+                                                          listen: false,
+                                                        );
+                                                    final String email =
+                                                        await apiService
+                                                            .getCachedUsername() ??
+                                                        '';
+                                                    final BankData
+                                                    safeBankData =
+                                                        bankData ??
+                                                        BankData(
+                                                          id: 0,
+                                                          webloginId:
+                                                              user.webLoginId,
+                                                          kontoinhaber: '',
+                                                          iban: '',
+                                                          bic: '',
+                                                          mandatSeq: 2,
+                                                          bankName: '',
+                                                          mandatNr: '',
+                                                          mandatName: '',
+                                                        );
+                                                    await registerPersonAndShowDialog(
+                                                      schulungsTermin:
+                                                          schulungsTermin,
+                                                      registeredPersons:
+                                                          registeredPersons,
+                                                      bankData: safeBankData,
+                                                      prefillUser: user.copyWith(
+                                                        telefon:
+                                                            telefonController
+                                                                .text,
+                                                      ),
+                                                      prefillEmail: email,
+                                                    );
+                                                  }
                                                 }
-                                              }
-                                              : null,
-                                      child: const Icon(
-                                        Icons.check,
-                                        color: UIConstants.whiteColor,
+                                                : null,
+                                        child: const Icon(
+                                          Icons.check,
+                                          color: UIConstants.whiteColor,
+                                        ),
                                       ),
                                     ),
                                   ],
