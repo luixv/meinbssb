@@ -401,7 +401,7 @@ class LoginScreenState extends State<LoginScreen> {
               padding: UIConstants.screenPadding,
               child: Semantics(
                 label:
-                    'Login screen. Please enter your email and password to sign in.',
+                    'Login-Bereich. Bitte geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein, um sich anzumelden.',
                 child: Focus(
                   autofocus: true,
                   onKey: (node, event) {
