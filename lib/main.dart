@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:http/http.dart' as http;
 import 'app.dart';
 import 'services/api/auth_service.dart';
@@ -143,6 +144,12 @@ Future<void> main() async {
       appWidget = const MyAppWrapper();
     }
 
+    final theme = ThemeData(
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: UIConstants.defaultAppColor,
+      ),
+    );
+
     Widget wrappedApp;
     if (!isWindows) {
       wrappedApp = KillSwitchGate(
@@ -152,7 +159,12 @@ Future<void> main() async {
       wrappedApp = appWidget;
     }
 
-    runApp(MultiProvider(providers: providers, child: wrappedApp));
+    runApp(
+      MultiProvider(
+        providers: providers,
+        child: MaterialApp(theme: theme, home: wrappedApp),
+      ),
+    );
   } catch (e, stack) {
     debugPrint('❌ Firebase Initialization Failed: $e');
     debugPrint('STACK TRACE: \n$stack');
