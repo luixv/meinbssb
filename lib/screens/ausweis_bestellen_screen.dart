@@ -4,6 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
+import '/screens/agb_screen.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
@@ -72,6 +73,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
 
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -81,6 +83,12 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
               ),
+              title: const Center(
+                child: ScaledText(
+                  'Bankdaten Erfassen',
+                  style: UIStyles.dialogTitleStyle,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Form(
                   key: formKey,
@@ -88,19 +96,28 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Center(
-                        child: ScaledText(
-                          'Bankdaten für Bestellung',
-                          style: UIStyles.dialogTitleStyle,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
                       Container(
                         padding: const EdgeInsets.all(UIConstants.spacingM),
                         decoration: BoxDecoration(
-                          color: UIConstants.backgroundColor,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(
                             UIConstants.cornerRadius,
+                          ),
+                          border: Border.all(
+                            color:
+                                UIStyles
+                                    .formInputDecoration
+                                    .enabledBorder
+                                    ?.borderSide
+                                    .color ??
+                                Colors.grey,
+                            width:
+                                UIStyles
+                                    .formInputDecoration
+                                    .enabledBorder
+                                    ?.borderSide
+                                    .width ??
+                                1.0,
                           ),
                         ),
                         child: Column(
@@ -156,37 +173,96 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      CheckboxListTile(
-                        title: const ScaledText(
-                          'AGB akzeptieren',
-                          style: UIStyles.bodyStyle,
+                      ListTileTheme(
+                        data: const ListTileThemeData(
+                          horizontalTitleGap: UIConstants.spacingXS,
+                          minLeadingWidth: 0,
                         ),
-                        value: agbChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            agbChecked = value ?? false;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      CheckboxListTile(
-                        title: const ScaledText(
-                          'Bestätigung des Lastschrifteinzugs',
-                          style: UIStyles.bodyStyle,
+                        child: Column(
+                          children: [
+                            CheckboxListTile(
+                              value: agbChecked,
+                              onChanged: (val) {
+                                setState(() => agbChecked = val ?? false);
+                              },
+                              title: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => const AgbScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'AGB',
+                                      style: UIStyles.linkStyle.copyWith(
+                                        color: UIConstants.linkColor,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingS),
+                                  const Text('akzeptieren'),
+                                  const SizedBox(width: UIConstants.spacingS),
+                                  const Tooltip(
+                                    message:
+                                        'Ich bin mit den AGB einverstanden.',
+                                    triggerMode: TooltipTriggerMode.tap,
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: UIConstants.defaultAppColor,
+                                      size: UIConstants.tooltipIconSize,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                            CheckboxListTile(
+                              value: lastschriftChecked,
+                              onChanged: (val) {
+                                setState(
+                                  () => lastschriftChecked = val ?? false,
+                                );
+                              },
+                              title: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    child: Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: UIConstants.spacingS,
+                                      children: [
+                                        Text(
+                                          'Bestätigung des\nLastschrifteinzugs',
+                                        ),
+                                        Tooltip(
+                                          message:
+                                              'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                          triggerMode: TooltipTriggerMode.tap,
+                                          child: Icon(
+                                            Icons.info_outline,
+                                            color: UIConstants.defaultAppColor,
+                                            size: UIConstants.tooltipIconSize,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                          ],
                         ),
-                        value: lastschriftChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            lastschriftChecked = value ?? false;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
