@@ -268,35 +268,50 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  FloatingActionButton(
-                    heroTag: 'personalDataCancelFab',
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = false;
-                        _populateFields(_currentPassData!);
-                      });
-                    },
-                    backgroundColor: UIConstants.defaultAppColor,
-                    child: const Icon(Icons.close, color: Colors.white),
+                  Semantics(
+                    label: 'Abbrechen Button',
+                    hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+                    button: true,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataCancelFab',
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = false;
+                          _populateFields(_currentPassData!);
+                        });
+                      },
+                      backgroundColor: UIConstants.defaultAppColor,
+                      child: const Icon(Icons.close, color: Colors.white),
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  FloatingActionButton(
-                    heroTag: 'personalDataSaveFab',
-                    onPressed: _handleSave,
-                    backgroundColor: UIConstants.defaultAppColor,
-                    child: const Icon(Icons.save, color: Colors.white),
+                  Semantics(
+                    label: 'Speichern Button',
+                    hint: 'Änderungen speichern',
+                    button: true,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataSaveFab',
+                      onPressed: _handleSave,
+                      backgroundColor: UIConstants.defaultAppColor,
+                      child: const Icon(Icons.save, color: Colors.white),
+                    ),
                   ),
                 ],
               )
-              : FloatingActionButton(
-                heroTag: 'personalDataEditFab',
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true;
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.edit, color: Colors.white),
+              : Semantics(
+                label: 'Bearbeiten Button',
+                hint: 'Persönliche Daten bearbeiten',
+                button: true,
+                child: FloatingActionButton(
+                  heroTag: 'personalDataEditFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.edit, color: Colors.white),
+                ),
               );
         },
       ),
@@ -471,82 +486,122 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const SizedBox(height: UIConstants.spacingS),
-                  _buildTextField(
-                    label: 'Passnummer',
-                    controller: _passnummerController,
-                    isReadOnly: true,
+                  Semantics(
+                    label: 'Passnummer Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Passnummer',
+                      controller: _passnummerController,
+                      isReadOnly: true,
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'Geburtsdatum',
-                    controller: _geburtsdatumController,
-                    isReadOnly: true,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    suffixIcon: const Tooltip(
-                      message:
-                          'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                      triggerMode: TooltipTriggerMode.tap,
-                      preferBelow: false,
-                      child: Icon(
-                        Icons.info_outline,
-                        size: UIConstants.tooltipIconSize,
+                  Semantics(
+                    label: 'Geburtsdatum Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Geburtsdatum',
+                      controller: _geburtsdatumController,
+                      isReadOnly: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      suffixIcon: const Tooltip(
+                        message:
+                            'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                        triggerMode: TooltipTriggerMode.tap,
+                        preferBelow: false,
+                        child: Icon(
+                          Icons.info_outline,
+                          size: UIConstants.tooltipIconSize,
+                        ),
                       ),
                     ),
                   ),
-                  _buildTitelDropdown(fontSizeProvider),
-                  _buildTextField(
-                    label: 'Vorname',
-                    controller: _vornameController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vorname ist erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Titel Auswahlfeld',
+                    hint: 'Bitte wählen Sie Ihren Titel aus',
+                    textField: true,
+                    child: _buildTitelDropdown(fontSizeProvider),
                   ),
-                  _buildTextField(
-                    label: 'Nachname',
-                    controller: _nachnameController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Nachname ist erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Vorname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Vornamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Vorname',
+                      controller: _vornameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vorname ist erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'Straße und Hausnummer',
-                    controller: _strasseHausnummerController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Straße und Hausnummer sind erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Nachname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Nachnamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Nachname',
+                      controller: _nachnameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Nachname ist erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'Postleitzahl',
-                    controller: _postleitzahlController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Postleitzahl ist erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Straße und Hausnummer Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Straße und Hausnummer ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Straße und Hausnummer',
+                      controller: _strasseHausnummerController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Straße und Hausnummer sind erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'Ort',
-                    controller: _ortController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Ort ist erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Postleitzahl Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Postleitzahl ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Postleitzahl',
+                      controller: _postleitzahlController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Postleitzahl ist erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Semantics(
+                    label: 'Ort Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Wohnort ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Ort',
+                      controller: _ortController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ort ist erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
                 ],

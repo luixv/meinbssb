@@ -360,34 +360,44 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            heroTag: 'bankDataCancelFab',
-            onPressed: () {
-              setState(() {
-                _isEditing = false;
-                _kontoinhaberController.clear();
-                _ibanController.clear();
-                _bicController.clear();
-                _loadInitialData();
-              });
-            },
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.close, color: UIConstants.whiteColor),
+          Semantics(
+            label: 'Abbrechen Button',
+            hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+            button: true,
+            child: FloatingActionButton(
+              heroTag: 'bankDataCancelFab',
+              onPressed: () {
+                setState(() {
+                  _isEditing = false;
+                  _kontoinhaberController.clear();
+                  _ibanController.clear();
+                  _bicController.clear();
+                  _loadInitialData();
+                });
+              },
+              backgroundColor: UIConstants.defaultAppColor,
+              child: const Icon(Icons.close, color: UIConstants.whiteColor),
+            ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          FloatingActionButton(
-            heroTag: 'bankDataSaveFab',
-            onPressed: _isSaving ? null : _onSaveBankData,
-            backgroundColor: UIConstants.defaultAppColor,
-            child:
-                _isSaving
-                    ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        UIConstants.circularProgressIndicator,
-                      ),
-                      strokeWidth: UIConstants.defaultStrokeWidth,
-                    )
-                    : const Icon(Icons.save, color: UIConstants.whiteColor),
+          Semantics(
+            label: 'Speichern Button',
+            hint: 'Bankdaten speichern',
+            button: true,
+            child: FloatingActionButton(
+              heroTag: 'bankDataSaveFab',
+              onPressed: _isSaving ? null : _onSaveBankData,
+              backgroundColor: UIConstants.defaultAppColor,
+              child:
+                  _isSaving
+                      ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          UIConstants.circularProgressIndicator,
+                        ),
+                        strokeWidth: UIConstants.defaultStrokeWidth,
+                      )
+                      : const Icon(Icons.save, color: UIConstants.whiteColor),
+            ),
           ),
         ],
       );
@@ -395,33 +405,43 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            heroTag: 'bankDataDeleteFab',
-            onPressed: _isSaving ? null : _onDeleteBankData,
-            backgroundColor: UIConstants.defaultAppColor,
-            child:
-                _isSaving
-                    ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        UIConstants.whiteColor,
+          Semantics(
+            label: 'Löschen Button',
+            hint: 'Bankdaten löschen',
+            button: true,
+            child: FloatingActionButton(
+              heroTag: 'bankDataDeleteFab',
+              onPressed: _isSaving ? null : _onDeleteBankData,
+              backgroundColor: UIConstants.defaultAppColor,
+              child:
+                  _isSaving
+                      ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          UIConstants.whiteColor,
+                        ),
+                        strokeWidth: UIConstants.defaultStrokeWidth,
+                      )
+                      : const Icon(
+                        Icons.delete_outline,
+                        color: UIConstants.whiteColor,
                       ),
-                      strokeWidth: UIConstants.defaultStrokeWidth,
-                    )
-                    : const Icon(
-                      Icons.delete_outline,
-                      color: UIConstants.whiteColor,
-                    ),
+            ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          FloatingActionButton(
-            heroTag: 'bankDataEditFab',
-            onPressed: () {
-              setState(() {
-                _isEditing = true;
-              });
-            },
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+          Semantics(
+            label: 'Bearbeiten Button',
+            hint: 'Bankdaten bearbeiten',
+            button: true,
+            child: FloatingActionButton(
+              heroTag: 'bankDataEditFab',
+              onPressed: () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+              backgroundColor: UIConstants.defaultAppColor,
+              child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+            ),
           ),
         ],
       );
@@ -557,53 +577,77 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTextField(
-                    label: 'Kontoinhaber',
-                    controller: _kontoinhaberController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Kontoinhaber ist erforderlich';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'Kontoinhaber Eingabefeld',
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie den Kontoinhaber ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Kontoinhaber',
+                      controller: _kontoinhaberController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Kontoinhaber ist erforderlich';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'IBAN',
-                    controller: _ibanController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'IBAN ist erforderlich';
-                      }
-                      if (!BankService.validateIBAN(value)) {
-                        return 'Ungültige IBAN';
-                      }
-                      return null;
-                    },
+                  Semantics(
+                    label: 'IBAN Eingabefeld',
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre IBAN ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'IBAN',
+                      controller: _ibanController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'IBAN ist erforderlich';
+                        }
+                        if (!BankService.validateIBAN(value)) {
+                          return 'Ungültige IBAN';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                    label: 'BIC',
-                    controller: _bicController,
-                    isReadOnly: !_isEditing,
-                    validator: (value) {
-                      String ibanText = _ibanController.text.trim();
+                  Semantics(
+                    label: 'BIC Eingabefeld',
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre BIC ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'BIC',
+                      controller: _bicController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        String ibanText = _ibanController.text.trim();
 
-                      // For German IBAN, BIC optional
-                      if (ibanText.startsWith('DE')) {
-                        // BIC optional; validate only if provided
-                        if (value == null || value.isEmpty) {
-                          return null;
+                        // For German IBAN, BIC optional
+                        if (ibanText.startsWith('DE')) {
+                          // BIC optional; validate only if provided
+                          if (value == null || value.isEmpty) {
+                            return null;
+                          }
+                          return BankService.validateBIC(value);
+                        } else {
+                          // For non-German IBAN, BIC required
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte geben Sie die BIC ein';
+                          }
+                          return BankService.validateBIC(value);
                         }
-                        return BankService.validateBIC(value);
-                      } else {
-                        // For non-German IBAN, BIC required
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte geben Sie die BIC ein';
-                        }
-                        return BankService.validateBIC(value);
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ],
               ),
