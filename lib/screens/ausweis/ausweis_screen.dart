@@ -20,22 +20,17 @@ class SchuetzenausweisScreen extends StatefulWidget {
   final int personId;
   final UserData? userData;
   final bool isLoggedIn;
-  final Function() onLogout;
-
+  final VoidCallback onLogout;
   @override
   State<SchuetzenausweisScreen> createState() => _SchuetzenausweisScreenState();
 }
 
 class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
-  late Future<Uint8List> _schuetzenausweisFuture;
+  late Future<Uint8List?> _schuetzenausweisFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
-  }
-
-  void _loadInitialData() {
     final apiService = Provider.of<ApiService>(context, listen: false);
     _schuetzenausweisFuture = apiService.fetchSchuetzenausweis(widget.personId);
   }
@@ -49,69 +44,58 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
       onLogout: widget.onLogout,
       body: Semantics(
         label:
-            'Schützenausweis anzeigen. Hier sehen Sie Ihren digitalen Schützenausweis und das Datum des letzten Updates. Bei Fehlern wird eine entsprechende Meldung angezeigt.',
-        child: Padding(
-          padding: UIConstants.defaultPadding,
+            'Schützenausweis-Bereich. Hier sehen Sie Ihren digitalen Schützenausweis und die wichtigsten Informationen.',
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const LogoWidget(),
-              const SizedBox(height: UIConstants.spacingS),
-              Expanded(
-                child: FutureBuilder<Uint8List>(
-                  future: _schuetzenausweisFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: UIConstants.defaultAppColor,
-                          strokeWidth: UIConstants.defaultStrokeWidth,
-                        ),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      String errorMessage = snapshot.error.toString();
-                      if (errorMessage.startsWith('Exception: ')) {
-                        errorMessage = errorMessage.substring(
-                          'Exception: '.length,
-                        );
-                      }
-                      return Center(
+              FutureBuilder<Uint8List?>(
+                future: _schuetzenausweisFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError || snapshot.data == null) {
+                    return Center(
+                      child: Semantics(
+                        label:
+                            'Fehlermeldung: Fehler beim Laden des Schützenausweises.',
                         child: Text(
-                          'Error beim Laden des Schützenausweises: $errorMessage',
+                          'Fehler beim Laden des Schützenausweises.',
                           style: UIStyles.errorStyle,
                         ),
-                      );
-                    }
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return InteractiveViewer(
-                        panEnabled: true,
-                        minScale: 1,
-                        maxScale: 5,
-                        child: Center(
-                          child: Image.memory(
-                            snapshot.data!,
-                            fit: BoxFit.contain,
-                            key: const ValueKey<String>('schuetzenausweis'),
-                          ),
-                        ),
-                      );
-                    }
-                    return const Center(
-                      child: Text(
-                        'Kein Schützenausweis verfügbar',
-                        style: UIStyles.bodyStyle,
                       ),
                     );
-                  },
-                ),
+                  }
+                  return Semantics(
+                    label: 'Schützenausweis Bild',
+                    child: Card(
+                      key: const ValueKey<String>('schuetzenausweis'),
+                      margin: const EdgeInsets.symmetric(vertical: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: InteractiveViewer(
+                            panEnabled: true,
+                            minScale: 1,
+                            maxScale: 5,
+                            child: Image.memory(
+                              snapshot.data!,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         heroTag: 'schuetzenausweisFab',
         onPressed: () {
@@ -126,3 +110,5 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
     );
   }
 }
+
+// ...existing code...

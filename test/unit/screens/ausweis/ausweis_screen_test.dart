@@ -139,8 +139,9 @@ void main() {
       ],
       child: MaterialApp(
         routes: {
-          '/home': (context) =>
-              const Scaffold(body: Text('Home')), // for navigation test
+          '/home':
+              (context) =>
+                  const Scaffold(body: Text('Home')), // for navigation test
         },
         home: SchuetzenausweisScreen(
           personId: 1,
@@ -152,31 +153,30 @@ void main() {
     );
   }
 
-  testWidgets(
-    'shows loading indicator while waiting',
-    (WidgetTester tester) async {
-      final apiService = MockApiService();
-      await tester.pumpWidget(createTestWidget(apiService: apiService));
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      // Skipped due to pending timer from a widget/provider (see test log)
-      // To fix, refactor providers/widgets to avoid timers, or use a custom FakeAsync zone.
-    },
-    skip: true,
-  );
+  testWidgets('shows loading indicator while waiting', (
+    WidgetTester tester,
+  ) async {
+    final apiService = MockApiService();
+    await tester.pumpWidget(createTestWidget(apiService: apiService));
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // Skipped due to pending timer from a widget/provider (see test log)
+    // To fix, refactor providers/widgets to avoid timers, or use a custom FakeAsync zone.
+  }, skip: true);
 
   testWidgets('shows error message on error', (WidgetTester tester) async {
     final apiService = MockApiService(shouldThrow: true);
     await tester.pumpWidget(createTestWidget(apiService: apiService));
     await tester.pumpAndSettle();
     expect(
-      find.textContaining('Error beim Laden des Schützenausweises'),
+      find.textContaining('Fehler beim Laden des Schützenausweises'),
       findsOneWidget,
     );
   });
 
   testWidgets('shows image on success', (WidgetTester tester) async {
-    final apiService =
-        MockApiService(fetchResult: Uint8List.fromList(validPngBytes));
+    final apiService = MockApiService(
+      fetchResult: Uint8List.fromList(validPngBytes),
+    );
     await tester.pumpWidget(createTestWidget(apiService: apiService));
     await tester.pumpAndSettle();
     final imageWidgets = tester.widgetList<Image>(find.byType(Image)).toList();
@@ -189,8 +189,9 @@ void main() {
   });
 
   testWidgets('FAB navigates to /home', (WidgetTester tester) async {
-    final apiService =
-        MockApiService(fetchResult: Uint8List.fromList(validPngBytes));
+    final apiService = MockApiService(
+      fetchResult: Uint8List.fromList(validPngBytes),
+    );
     await tester.pumpWidget(createTestWidget(apiService: apiService));
     await tester.pumpAndSettle();
     await tester.tap(find.byType(FloatingActionButton));
@@ -251,15 +252,15 @@ class DummyPrefs implements SharedPreferences {
 
 class DummyCacheService extends CacheService {
   DummyCacheService()
-      : super(prefs: DummyPrefs(), configService: ConfigService.instance);
+    : super(prefs: DummyPrefs(), configService: ConfigService.instance);
 }
 
 class DummyTokenService extends TokenService {
   DummyTokenService()
-      : super(
-          configService: ConfigService.instance,
-          cacheService: DummyCacheService(),
-        );
+    : super(
+        configService: ConfigService.instance,
+        cacheService: DummyCacheService(),
+      );
   @override
   Future<String> getAuthToken() async => 'dummy';
   @override
@@ -270,13 +271,13 @@ class DummyTokenService extends TokenService {
 
 class DummyHttpClient extends HttpClient {
   DummyHttpClient()
-      : super(
-          baseUrl: '',
-          serverTimeout: 1,
-          tokenService: DummyTokenService(),
-          configService: ConfigService.instance,
-          cacheService: DummyCacheService(),
-        );
+    : super(
+        baseUrl: '',
+        serverTimeout: 1,
+        tokenService: DummyTokenService(),
+        configService: ConfigService.instance,
+        cacheService: DummyCacheService(),
+      );
 }
 
 class DummyNetworkService extends NetworkService {
@@ -284,30 +285,27 @@ class DummyNetworkService extends NetworkService {
 }
 
 class DummyImageService extends ImageService {
-  DummyImageService()
-      : super(
-          httpClient: DummyHttpClient(),
-        );
+  DummyImageService() : super(httpClient: DummyHttpClient());
 }
 
 class DummyTrainingService extends TrainingService {
   DummyTrainingService()
-      : super(
-          httpClient: DummyHttpClient(),
-          cacheService: DummyCacheService(),
-          networkService: DummyNetworkService(),
-          configService: ConfigService.instance,
-        );
+    : super(
+        httpClient: DummyHttpClient(),
+        cacheService: DummyCacheService(),
+        networkService: DummyNetworkService(),
+        configService: ConfigService.instance,
+      );
 }
 
 class DummyUserService extends UserService {
   DummyUserService()
-      : super(
-          httpClient: DummyHttpClient(),
-          cacheService: DummyCacheService(),
-          networkService: DummyNetworkService(),
-          configService: ConfigService.instance,
-        );
+    : super(
+        httpClient: DummyHttpClient(),
+        cacheService: DummyCacheService(),
+        networkService: DummyNetworkService(),
+        configService: ConfigService.instance,
+      );
 }
 
 class DummyEmailSender implements EmailSender {
@@ -319,11 +317,11 @@ class DummyEmailSender implements EmailSender {
 
 class DummyEmailService extends EmailService {
   DummyEmailService()
-      : super(
-          emailSender: DummyEmailSender(),
-          configService: ConfigService.instance,
-          httpClient: DummyHttpClient(),
-        );
+    : super(
+        emailSender: DummyEmailSender(),
+        configService: ConfigService.instance,
+        httpClient: DummyHttpClient(),
+      );
 
   @override
   Future<Map<String, dynamic>> sendEmail({
@@ -343,16 +341,17 @@ class DummyEmailService extends EmailService {
 )
 class DummyAuthService extends AuthService {
   DummyAuthService()
-      : super(
-          httpClient: DummyHttpClient(),
-          cacheService: DummyCacheService(),
-          networkService: DummyNetworkService(),
+    : super(
+        httpClient: DummyHttpClient(),
+        cacheService: DummyCacheService(),
+        networkService: DummyNetworkService(),
+        configService: ConfigService.instance,
+        secureStorage: null,
+        postgrestService: PostgrestService(
           configService: ConfigService.instance,
-          secureStorage: null,
-          postgrestService:
-              PostgrestService(configService: ConfigService.instance),
-          emailService: DummyEmailService(),
-        );
+        ),
+        emailService: DummyEmailService(),
+      );
 }
 
 class DummyBankService extends BankService {
@@ -371,43 +370,44 @@ class DummyCalendarService extends CalendarService {}
 
 class DummyBezirkService extends BezirkService {
   DummyBezirkService()
-      : super(
-          httpClient: DummyHttpClient(),
-          cacheService: DummyCacheService(),
-          networkService: DummyNetworkService(),
-        );
+    : super(
+        httpClient: DummyHttpClient(),
+        cacheService: DummyCacheService(),
+        networkService: DummyNetworkService(),
+      );
 }
 
 class DummyStartingRightsService extends StartingRightsService {
   DummyStartingRightsService()
-      : super(
-          userService: DummyUserService(),
-          vereinService: DummyVereinService(),
-          emailService: DummyEmailService(),
-        );
+    : super(
+        userService: DummyUserService(),
+        vereinService: DummyVereinService(),
+        emailService: DummyEmailService(),
+      );
 }
 
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
-      : super(
+    : super(
+        configService: ConfigService.instance,
+        httpClient: DummyHttpClient(),
+        imageService: DummyImageService(),
+        cacheService: DummyCacheService(),
+        networkService: DummyNetworkService(),
+        trainingService: DummyTrainingService(),
+        userService: DummyUserService(),
+        authService: DummyAuthService(),
+        bankService: DummyBankService(),
+        vereinService: DummyVereinService(),
+        postgrestService: PostgrestService(
           configService: ConfigService.instance,
-          httpClient: DummyHttpClient(),
-          imageService: DummyImageService(),
-          cacheService: DummyCacheService(),
-          networkService: DummyNetworkService(),
-          trainingService: DummyTrainingService(),
-          userService: DummyUserService(),
-          authService: DummyAuthService(),
-          bankService: DummyBankService(),
-          vereinService: DummyVereinService(),
-          postgrestService:
-              PostgrestService(configService: ConfigService.instance),
-          emailService: DummyEmailService(),
-          oktoberfestService: DummyOktoberfestService(),
-          calendarService: DummyCalendarService(),
-          bezirkService: DummyBezirkService(),
-          startingRightsService: DummyStartingRightsService(),
-        );
+        ),
+        emailService: DummyEmailService(),
+        oktoberfestService: DummyOktoberfestService(),
+        calendarService: DummyCalendarService(),
+        bezirkService: DummyBezirkService(),
+        startingRightsService: DummyStartingRightsService(),
+      );
   final Uint8List? fetchResult;
   final bool shouldThrow;
   @override
