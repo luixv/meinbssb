@@ -551,7 +551,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               vertical: 18.0,
-                              horizontal: 16.0,
+                              horizontal: 4.0,
                             ),
                           ),
                           child: const Center(
