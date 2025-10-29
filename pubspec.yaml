@@ -85,12 +85,10 @@ dev_dependencies:
   
 dependency_overrides:
   collection: ^1.19.0
-  # Updated overrides for Dart 3.9.2 - enable more updates
   petitparser: ^7.0.1
   xml: ^6.6.1
   material_color_utilities: ^0.13.0
   connectivity_plus: ^7.0.0
-  # Additional safe updates
   async: ^2.13.0
   characters: ^1.4.1
   meta: ^1.17.0

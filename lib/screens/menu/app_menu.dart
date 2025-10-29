@@ -6,7 +6,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
 import '/screens/password/password_reset_screen.dart';
-import '/screens/registration_screen.dart';
+import '../registration/registration_screen.dart';
 import '/screens/ausweis/ausweis_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';

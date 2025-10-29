@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart' as intl;
 
 import 'package:meinbssb/screens/menu/app_menu.dart';
-import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:meinbssb/screens/registration/registration_screen.dart';
 import 'package:meinbssb/screens/password/password_reset_screen.dart';
 
 import 'package:meinbssb/services/api_service.dart';

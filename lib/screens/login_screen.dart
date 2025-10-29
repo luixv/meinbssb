@@ -6,7 +6,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 
-import 'package:meinbssb/screens/registration_screen.dart';
+import 'package:meinbssb/screens/registration/registration_screen.dart';
 import 'package:meinbssb/screens/password/password_reset_screen.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api_service.dart';
