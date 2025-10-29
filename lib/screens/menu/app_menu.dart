@@ -1,3 +1,4 @@
+import 'package:meinbssb/screens/menu/ausweis_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,6 @@ import '/constants/ui_styles.dart';
 import '/screens/password/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
 import '/screens/ausweis/ausweis_screen.dart';
-import '/screens/startrechte/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
@@ -23,7 +23,6 @@ abstract class DrawerNavigator {
   void profile(BuildContext context);
   void training(BuildContext context);
   void schuetzenausweis(BuildContext context);
-  void startingRights(BuildContext context);
   void oktoberfest(BuildContext context);
   void impressum(BuildContext context);
   void settings(BuildContext context);
@@ -46,7 +45,6 @@ class RealDrawerNavigator implements DrawerNavigator {
     WidgetBuilder? helpBuilder,
   }) : _schulungenBuilder = schulungenBuilder,
        _schuetzenausweisBuilder = schuetzenausweisBuilder,
-       _startingRightsBuilder = startingRightsBuilder,
        _oktoberfestBuilder = oktoberfestBuilder,
        _impressumBuilder = impressumBuilder,
        _settingsBuilder = settingsBuilder,
@@ -58,7 +56,6 @@ class RealDrawerNavigator implements DrawerNavigator {
 
   final WidgetBuilder? _schulungenBuilder;
   final WidgetBuilder? _schuetzenausweisBuilder;
-  final WidgetBuilder? _startingRightsBuilder;
   final WidgetBuilder? _oktoberfestBuilder;
   final WidgetBuilder? _impressumBuilder;
   final WidgetBuilder? _settingsBuilder;
@@ -116,21 +113,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     );
   }
 
-  @override
-  void startingRights(BuildContext context) {
-    _close(context);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder:
-            _startingRightsBuilder ??
-            (_) => StartingRightsScreen(
-              userData: userData,
-              isLoggedIn: isLoggedIn,
-              onLogout: onLogout,
-            ),
-      ),
-    );
-  }
+  // Removed startingRights method
 
   @override
   void oktoberfest(BuildContext context) {
@@ -317,17 +300,20 @@ class AppDrawer extends StatelessWidget {
                 'Schützenausweis',
                 style: TextStyle(fontSize: UIConstants.menuItemFontSize),
               ),
-              onTap: () => navigator.schuetzenausweis(context),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ProfileScreen(
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
+                  ),
+                );
+              },
             ),
-            ListTile(
-              key: const Key('drawer_starting_rights'),
-              leading: const Icon(Icons.rule, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Startrechte',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () => navigator.startingRights(context),
-            ),
+            // Removed Startrechte ListTile
             ListTile(
               key: const Key('drawer_oktoberfest'),
               leading: const Icon(
