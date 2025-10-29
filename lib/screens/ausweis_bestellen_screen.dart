@@ -107,86 +107,104 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                 ),
                               ),
                               const SizedBox(height: UIConstants.spacingM),
-                              TextFormField(
-                                controller: kontoinhaberController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Kontoinhaber',
-                                  border: OutlineInputBorder(),
+                              Container(
+                                padding: const EdgeInsets.all(
+                                  UIConstants.spacingM,
                                 ),
-                                style: UIStyles.bodyStyle,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Bitte Kontoinhaber angeben';
-                                  }
-                                  return null;
-                                },
+                                decoration: BoxDecoration(
+                                  color: UIConstants.backgroundColor,
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  boxShadow: UIStyles.cardDecoration.boxShadow,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Bankdaten',
+                                      style: UIStyles.subtitleStyle,
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    TextFormField(
+                                      controller: kontoinhaberController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'Kontoinhaber'),
+                                      style: UIStyles.bodyStyle,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Bitte Kontoinhaber angeben';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    TextFormField(
+                                      controller: ibanController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'IBAN'),
+                                      style: UIStyles.bodyStyle,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Bitte IBAN angeben';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    TextFormField(
+                                      controller: bicController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'BIC'),
+                                      style: UIStyles.bodyStyle,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Bitte BIC angeben';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: UIConstants.spacingS),
-                              TextFormField(
-                                controller: ibanController,
-                                decoration: const InputDecoration(
-                                  labelText: 'IBAN',
-                                  border: OutlineInputBorder(),
+                              CheckboxListTile(
+                                title: const ScaledText(
+                                  'AGB akzeptieren',
+                                  style: UIStyles.bodyStyle,
                                 ),
-                                style: UIStyles.bodyStyle,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Bitte IBAN angeben';
-                                  }
-                                  return null;
+                                value: agbChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    agbChecked = value ?? false;
+                                  });
                                 },
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
                               ),
-                              const SizedBox(height: UIConstants.spacingS),
-                              TextFormField(
-                                controller: bicController,
-                                decoration: const InputDecoration(
-                                  labelText: 'BIC',
-                                  border: OutlineInputBorder(),
+                              CheckboxListTile(
+                                title: const ScaledText(
+                                  'Bestätigung des Lastschrifteinzugs',
+                                  style: UIStyles.bodyStyle,
                                 ),
-                                style: UIStyles.bodyStyle,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Bitte BIC angeben';
-                                  }
-                                  return null;
+                                value: lastschriftChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    lastschriftChecked = value ?? false;
+                                  });
                                 },
-                              ),
-                              const SizedBox(height: UIConstants.spacingM),
-                              Semantics(
-                                label:
-                                    'Bitte bestätigen Sie die Allgemeinen Geschäftsbedingungen (AGB).',
-                                child: CheckboxListTile(
-                                  title: const ScaledText(
-                                    'Ich habe die Allgemeinen Geschäftsbedingungen (AGB) gelesen und akzeptiere sie.',
-                                    style: UIStyles.bodyStyle,
-                                  ),
-                                  value: agbChecked,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      agbChecked = value ?? false;
-                                    });
-                                  },
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                ),
-                              ),
-                              Semantics(
-                                label:
-                                    'Bitte bestätigen Sie das SEPA-Lastschriftverfahren.',
-                                child: CheckboxListTile(
-                                  title: const ScaledText(
-                                    'Ich ermächtige den Bayerischen Sportschützenbund e.V., den Betrag per SEPA-Lastschrift einzuziehen.',
-                                    style: UIStyles.bodyStyle,
-                                  ),
-                                  value: lastschriftChecked,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      lastschriftChecked = value ?? false;
-                                    });
-                                  },
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
                               ),
                               const SizedBox(height: UIConstants.spacingM),
                               Row(
