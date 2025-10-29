@@ -423,6 +423,7 @@ class LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
                         label: 'Login Titel',
+                        hint: 'Login-Bereich für registrierte Nutzer',
                         child: ScaledText(
                           Messages.loginTitle,
                           style: UIStyles.headerStyle.copyWith(
@@ -434,6 +435,8 @@ class LoginScreenState extends State<LoginScreen> {
                       if (_errorMessage.isNotEmpty)
                         Semantics(
                           label: 'Fehlermeldung: $_errorMessage',
+                          hint:
+                              'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
                           child: ScaledText(
                             _errorMessage,
                             style: UIStyles.errorStyle,
@@ -442,21 +445,27 @@ class LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: UIConstants.spacingM),
                       Semantics(
                         label: 'E-Mail Eingabefeld',
+                        hint: 'Geben Sie Ihre E-Mail Adresse ein',
                         child: _buildEmailField(),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
                         label: 'Passwort Eingabefeld',
+                        hint:
+                            'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
                         child: _buildPasswordField(),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
                         label: 'Angemeldet bleiben Checkbox',
+                        hint:
+                            'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
                         child: _buildRememberMeCheckbox(),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       Semantics(
                         label: 'Login Button',
+                        hint: 'Tippen, um sich einzuloggen',
                         child: _buildLoginButton(),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
@@ -465,10 +474,13 @@ class LoginScreenState extends State<LoginScreen> {
                         children: [
                           Semantics(
                             label: 'Passwort vergessen Button',
+                            hint: 'Tippen, um das Passwort zurückzusetzen',
                             child: _buildForgotPasswordButton(),
                           ),
                           Semantics(
                             label: 'Hilfe Button',
+                            hint:
+                                'Tippen, um Hilfe und Informationen zu erhalten',
                             child: _buildHelpButton(),
                           ),
                         ],
@@ -477,6 +489,8 @@ class LoginScreenState extends State<LoginScreen> {
                       Center(
                         child: Semantics(
                           label: 'Registrieren Button',
+                          hint:
+                              'Tippen, um ein neues Benutzerkonto zu erstellen',
                           child: _buildRegisterButton(),
                         ),
                       ),

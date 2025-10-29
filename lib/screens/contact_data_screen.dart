@@ -713,11 +713,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         label: 'Kontakt hinzufügen Button',
         hint: 'Neuen Kontakt erfassen',
         button: true,
-        child: FloatingActionButton(
-          heroTag: 'contactDataFab',
-          onPressed: _showAddContactForm,
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.add, color: UIConstants.whiteColor),
+        child: Semantics(
+          label: 'Kontakt hinzufügen',
+          hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
+          button: true,
+          child: FloatingActionButton(
+            heroTag: 'contactDataFab',
+            onPressed: _showAddContactForm,
+            backgroundColor: UIConstants.defaultAppColor,
+            child: const Icon(Icons.add, color: UIConstants.whiteColor),
+          ),
         ),
       ),
     );

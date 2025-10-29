@@ -122,6 +122,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
             return Semantics(
               label:
                   'Passwort zurücksetzen ist offline nicht verfügbar. Bitte stellen Sie eine Internetverbindung her, um Ihr Passwort zurückzusetzen.',
+              hint:
+                  'Sie sind offline. Verbinden Sie sich mit dem Internet, um Ihr Passwort zurückzusetzen.',
               child: Center(
                 child: Padding(
                   padding: UIConstants.screenPadding,
@@ -137,6 +139,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       Semantics(
                         label:
                             'Fehlermeldung: Passwort zurücksetzen ist offline nicht verfügbar',
+                        hint:
+                            'Fehler beim Passwort zurücksetzen. Internetverbindung erforderlich.',
                         child: ScaledText(
                           'Passwort zurücksetzen ist offline nicht verfügbar',
                           style: UIStyles.headerStyle.copyWith(
@@ -149,6 +153,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       Semantics(
                         label:
                             'Hinweis: Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
+                        hint:
+                            'Ohne Internetverbindung ist das Zurücksetzen des Passworts nicht möglich.',
                         child: ScaledText(
                           'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
                           style: UIStyles.bodyStyle.copyWith(
@@ -167,6 +173,8 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
           return Semantics(
             label:
                 'Passwort zurücksetzen. Geben Sie Ihre Schützenpassnummer ein, um Ihr Passwort zurückzusetzen. Bestätigung und Fehlerhinweise werden angezeigt.',
+            hint:
+                'Geben Sie Ihre Schützenpassnummer ein und tippen Sie auf Passwort zurücksetzen.',
             child: Consumer<FontSizeProvider>(
               builder: (context, fontSizeProvider, child) {
                 return SingleChildScrollView(
@@ -178,6 +186,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
                         label: 'Titel: Passwort zurücksetzen',
+                        hint: 'Überschrift für den Passwort-Reset-Bereich',
                         child: ScaledText(
                           Messages.passwordResetTitle,
                           key: const Key('passwordResetTitle'),
@@ -193,6 +202,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       if (_errorMessage.isNotEmpty)
                         Semantics(
                           label: 'Fehlermeldung: $_errorMessage',
+                          hint: 'Fehler beim Zurücksetzen des Passworts',
                           child: ScaledText(
                             _errorMessage,
                             style: UIStyles.errorStyle.copyWith(
@@ -205,6 +215,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       if (_successMessage.isNotEmpty)
                         Semantics(
                           label: 'Erfolgsmeldung: $_successMessage',
+                          hint: 'Ihr Passwort wurde erfolgreich zurückgesetzt',
                           child: ScaledText(
                             _successMessage,
                             style: UIStyles.successStyle.copyWith(
@@ -216,6 +227,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                         ),
                       Semantics(
                         label: 'Schützenausweisnummer Eingabefeld',
+                        hint: 'Geben Sie Ihre Schützenausweisnummer ein',
                         child: TextField(
                           controller: _passNumberController,
                           style: UIStyles.bodyStyle.copyWith(
@@ -247,6 +259,7 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
                         label: 'Passwort zurücksetzen Button',
+                        hint: 'Tippen, um das Passwort zurückzusetzen',
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(

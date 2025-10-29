@@ -299,19 +299,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'save_password',
-        onPressed: _isLoading ? null : _handleSave,
-        backgroundColor: UIConstants.defaultAppColor,
-        child:
-            _isLoading
-                ? const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    UIConstants.whiteColor,
-                  ),
-                  strokeWidth: UIConstants.defaultStrokeWidth,
-                )
-                : const Icon(Icons.save, color: UIConstants.whiteColor),
+      floatingActionButton: Semantics(
+        label: 'Passwort speichern',
+        hint: 'Tippen, um das neue Passwort zu speichern',
+        button: true,
+        child: FloatingActionButton(
+          heroTag: 'save_password',
+          onPressed: _isLoading ? null : _handleSave,
+          backgroundColor: UIConstants.defaultAppColor,
+          child:
+              _isLoading
+                  ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.whiteColor,
+                    ),
+                    strokeWidth: UIConstants.defaultStrokeWidth,
+                  )
+                  : const Icon(Icons.save, color: UIConstants.whiteColor),
+        ),
       ),
     );
   }

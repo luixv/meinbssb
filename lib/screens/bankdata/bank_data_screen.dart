@@ -197,35 +197,40 @@ class BankDataScreenState extends State<BankDataScreen> {
                     constraints: const BoxConstraints(
                       minHeight: UIConstants.defaultButtonHeight,
                     ),
-                    child: ElevatedButton(
-                      onPressed:
-                          _isSaving
-                              ? null
-                              : () => Navigator.of(dialogContext).pop(false),
-                      style: UIStyles.dialogCancelButtonStyle.copyWith(
-                        padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            horizontal: UIConstants.spacingM,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.close,
-                            color: UIConstants.closeIcon,
-                            size: UIConstants.defaultIconSize,
-                          ),
-                          const SizedBox(width: UIConstants.spacingS),
-                          Text(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                              fontSize: UIConstants.buttonFontSize,
+                    child: Semantics(
+                      label: 'Abbrechen Button',
+                      hint: 'Dialog schließen und Bankdaten nicht löschen',
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed:
+                            _isSaving
+                                ? null
+                                : () => Navigator.of(dialogContext).pop(false),
+                        style: UIStyles.dialogCancelButtonStyle.copyWith(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                              horizontal: UIConstants.spacingM,
                             ),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.close,
+                              color: UIConstants.closeIcon,
+                              size: UIConstants.defaultIconSize,
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            Text(
+                              'Abbrechen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.cancelButtonText,
+                                fontSize: UIConstants.buttonFontSize,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -234,35 +239,40 @@ class BankDataScreenState extends State<BankDataScreen> {
                     constraints: const BoxConstraints(
                       minHeight: UIConstants.defaultButtonHeight,
                     ),
-                    child: ElevatedButton(
-                      onPressed:
-                          _isSaving
-                              ? null
-                              : () => Navigator.of(dialogContext).pop(true),
-                      style: UIStyles.dialogAcceptButtonStyle.copyWith(
-                        padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                            vertical: UIConstants.spacingS,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.check,
-                            color: UIConstants.checkIcon,
-                            size: UIConstants.defaultIconSize,
-                          ),
-                          const SizedBox(width: UIConstants.spacingS),
-                          Text(
-                            'Löschen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
-                              fontSize: UIConstants.buttonFontSize,
+                    child: Semantics(
+                      label: 'Löschen Button',
+                      hint: 'Bankdaten unwiderruflich löschen',
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed:
+                            _isSaving
+                                ? null
+                                : () => Navigator.of(dialogContext).pop(true),
+                        style: UIStyles.dialogAcceptButtonStyle.copyWith(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                              vertical: UIConstants.spacingS,
                             ),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.check,
+                              color: UIConstants.checkIcon,
+                              size: UIConstants.defaultIconSize,
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            Text(
+                              'Löschen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.deleteButtonText,
+                                fontSize: UIConstants.buttonFontSize,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
