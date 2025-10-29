@@ -1,6 +1,4 @@
-// Project: Mein BSSB
-// Filename: contact_data_screen.dart
-// Author: Luis Mandel / NTT DATA
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
