@@ -41,7 +41,7 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
             const SizedBox(height: UIConstants.spacingM),
             ScaledText(
               // Using ScaledText
-              'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.\n Ihr neuer Schützenausweis wird nun vom Bayerischen Sportschützenbund e.V. Gedruckt und per Post an Ihre bei uns hinterlegte Adresse versendet.',
+              'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.\n\n Ihr neuer Schützenausweis wird nun vom Bayerischen Sportschützenbund e.V. Gedruckt und per Post an Ihre bei uns hinterlegte Adresse versendet.',
               style: UIStyles.dialogContentStyle.copyWith(
                 // Using UIStyles.dialogTextStyle
                 fontSize:
@@ -68,12 +68,12 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
         heroTag: 'ausweisBestellenSuccessFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/home',
+            '/profile',
             arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.home, color: UIConstants.whiteColor),
+        child: const Icon(Icons.person, color: UIConstants.whiteColor),
       ),
     );
   }

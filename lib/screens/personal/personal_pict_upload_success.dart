@@ -43,7 +43,8 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
               'Ihr Profilbild wurde erfolgreich hochgeladen!', // Updated message
               style: UIStyles.dialogContentStyle.copyWith(
                 // Using UIStyles.dialogTextStyle
-                fontSize: UIStyles.dialogContentStyle.fontSize! *
+                fontSize:
+                    UIStyles.dialogContentStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
               textAlign: TextAlign.center,
@@ -66,15 +67,12 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
         heroTag: 'personalPictUploadSuccessFab',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
-            '/home',
+            '/profile',
             arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
-        ),
+        child: const Icon(Icons.person, color: UIConstants.whiteColor),
       ),
     );
   }
