@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -711,11 +709,16 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'contactDataFab',
-        onPressed: _showAddContactForm,
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.add, color: UIConstants.whiteColor),
+      floatingActionButton: Semantics(
+        label: 'Kontakt hinzufügen Button',
+        hint: 'Neuen Kontakt erfassen',
+        button: true,
+        child: FloatingActionButton(
+          heroTag: 'contactDataFab',
+          onPressed: _showAddContactForm,
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.add, color: UIConstants.whiteColor),
+        ),
       ),
     );
   }
@@ -730,31 +733,36 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: TextFormField(
-            initialValue: displayValue.isNotEmpty ? displayValue : '-',
-            readOnly: true,
-            style: UIStyles.formValueBoldStyle.copyWith(
-              fontSize:
-                  UIStyles.formValueBoldStyle.fontSize! *
-                  fontSizeProvider.scaleFactor,
-            ),
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
+        return Semantics(
+          label: 'Kontaktfeld: $displayLabel',
+          hint: 'Gespeicherter Wert: $displayValue. Löschen mit Button rechts.',
+          textField: true,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+            child: TextFormField(
+              initialValue: displayValue.isNotEmpty ? displayValue : '-',
+              readOnly: true,
+              style: UIStyles.formValueBoldStyle.copyWith(
+                fontSize:
+                    UIStyles.formValueBoldStyle.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
+                  ),
+                  color: UIConstants.deleteIcon,
+                  onPressed:
+                      () => onDelete(
+                        kontaktId,
+                        rawKontaktTyp,
+                        displayValue,
+                        displayLabel,
+                      ),
                 ),
-                color: UIConstants.deleteIcon,
-                onPressed:
-                    () => onDelete(
-                      kontaktId,
-                      rawKontaktTyp,
-                      displayValue,
-                      displayLabel,
-                    ),
               ),
             ),
           ),
