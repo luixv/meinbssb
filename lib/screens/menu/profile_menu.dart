@@ -148,29 +148,34 @@ class ProfileScreen extends StatelessWidget {
     IconData icon,
     VoidCallback onTap,
   ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: UIStyles.profileIconColor,
-          semanticLabel: title,
-        ),
-        title: ScaledText(
-          title,
-          style: const TextStyle(
-            fontSize: UIConstants.titleFontSize,
-            fontFamily: UIConstants.defaultFontFamily,
-            fontWeight: FontWeight.w500,
-            color: UIConstants.textColor,
+    return Semantics(
+      label: '$title Menüpunkt',
+      hint: 'Öffnet den Bereich $title',
+      button: true,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
+        child: ListTile(
+          leading: Icon(
+            icon,
+            color: UIStyles.profileIconColor,
+            semanticLabel: title,
           ),
-        ),
-        trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
-        onTap: onTap,
-        minLeadingWidth: UIConstants.defaultIconWidth,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: UIConstants.spacingM,
-          vertical: UIConstants.spacingS,
+          title: ScaledText(
+            title,
+            style: const TextStyle(
+              fontSize: UIConstants.titleFontSize,
+              fontFamily: UIConstants.defaultFontFamily,
+              fontWeight: FontWeight.w500,
+              color: UIConstants.textColor,
+            ),
+          ),
+          trailing: const Icon(Icons.chevron_right, semanticLabel: 'Weiter'),
+          onTap: onTap,
+          minLeadingWidth: UIConstants.defaultIconWidth,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingM,
+            vertical: UIConstants.spacingS,
+          ),
         ),
       ),
     );
