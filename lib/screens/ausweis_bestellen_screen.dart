@@ -13,9 +13,8 @@ import '/widgets/dialog_fabs.dart';
 
 import 'package:meinbssb/services/api_service.dart';
 
-void _onSave() {
-  // TODO: Implement save logic for bank data dialog
-}
+import '/models/passdaten_akzept_or_aktiv_data.dart';
+import '/screens/ausweis_bestellen_success_screen.dart';
 
 class AusweisBestellenScreen extends StatefulWidget {
   const AusweisBestellenScreen({
@@ -35,6 +34,77 @@ class AusweisBestellenScreen extends StatefulWidget {
 
 class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
   bool isLoading = false;
+
+  Future<void> _onSave() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    const antragsTyp = 5; // 5=Verlust
+    final int? passdatenId = widget.userData?.passdatenId;
+    final int? personId = widget.userData?.personId;
+    final int? erstVereinId = widget.userData?.erstVereinId;
+    int digitalerPass = 0; // 1 for yes, 0 for no
+
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    final PassdatenAkzeptOrAktiv?
+    fetchedPassdatenAkzeptierterOderAktiverPassData = await apiService
+        .fetchPassdatenAkzeptierterOderAktiverPass(personId);
+
+    /* create a list "ZVEs": [
+        {
+            "VEREINID": 2420,
+            "DISZIPLINID": 94
+        },
+        ...
+    ]
+*/
+
+    List<Map<String, dynamic>> zves = [];
+    if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
+      for (final zve in fetchedPassdatenAkzeptierterOderAktiverPassData.zves) {
+        final vereinId = zve.vereinId;
+        final disziplinId = zve.disziplinId;
+
+        zves.add({'VEREINID': vereinId, 'DISZIPLINID': disziplinId});
+      }
+    }
+
+    final bool success = await apiService.bssbAppPassantrag(
+      zves,
+      passdatenId,
+      personId,
+      erstVereinId,
+      digitalerPass,
+      antragsTyp,
+    );
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+
+      if (success) {
+        // Navigate to the success screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => AusweisBestellendSuccessScreen(
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Antrag konnte nicht gesendet werden.')),
+        );
+      }
+    }
+  }
 
   Future<void> _showBankDataDialog() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
@@ -56,7 +126,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
       },
     );
 
-    bool _isBicRequired(String iban) {
+    bool isBicRequired(String iban) {
       return !iban.toUpperCase().startsWith('DE');
     }
 
@@ -89,7 +159,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
               contentPadding: EdgeInsets.zero,
               title: const Center(
                 child: ScaledText(
-                  'Buchungsdaten Erfassen',
+                  'Bankdaten Erfassen',
                   style: UIStyles.dialogTitleStyle,
                 ),
               ),
@@ -139,6 +209,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                             .copyWith(
                                               labelText: 'Kontoinhaber',
                                             ),
+                                        readOnly: true,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'Kontoinhaber ist erforderlich';
@@ -156,6 +227,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                         controller: ibanController,
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(labelText: 'IBAN'),
+                                        readOnly: true,
                                         validator: (value) {
                                           final apiService =
                                               Provider.of<ApiService>(
@@ -183,13 +255,14 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(
                                               labelText:
-                                                  _isBicRequired(
+                                                  isBicRequired(
                                                         ibanController.text
                                                             .trim(),
                                                       )
                                                       ? 'BIC *'
                                                       : 'BIC (optional)',
                                             ),
+                                        readOnly: true,
                                         validator: (value) {
                                           final apiService =
                                               Provider.of<ApiService>(
@@ -388,7 +461,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                             .trim()
                                             .isNotEmpty &&
                                         ibanController.text.trim().isNotEmpty &&
-                                        (!_isBicRequired(
+                                        (!isBicRequired(
                                               ibanController.text.trim(),
                                             ) ||
                                             bicController.text
@@ -403,14 +476,15 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                             .trim()
                                             .isNotEmpty &&
                                         ibanController.text.trim().isNotEmpty &&
-                                        (!_isBicRequired(
+                                        (!isBicRequired(
                                               ibanController.text.trim(),
                                             ) ||
                                             bicController.text
                                                 .trim()
                                                 .isNotEmpty))
-                                    ? () {
-                                      _onSave();
+                                    ? () async {
+                                      Navigator.of(dialogContext).pop();
+                                      await _onSave();
                                     }
                                     : null,
                             child: const Icon(
