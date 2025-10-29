@@ -92,6 +92,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                           child: Image.memory(
                             snapshot.data!,
                             fit: BoxFit.contain,
+                            key: const ValueKey<String>('schuetzenausweis'),
                           ),
                         ),
                       );
