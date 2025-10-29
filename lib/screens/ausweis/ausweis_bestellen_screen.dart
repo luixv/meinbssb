@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
-import '../agb/agb_ausweis_screen.dart';
+import '/screens/agb/agb_ausweis_screen.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
@@ -14,7 +14,7 @@ import '/widgets/dialog_fabs.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import '/models/passdaten_akzept_or_aktiv_data.dart';
-import 'ausweis_bestellen_success_screen.dart';
+import '/screens/ausweis/ausweis_bestellen_success_screen.dart';
 
 class AusweisBestellenScreen extends StatefulWidget {
   const AusweisBestellenScreen({
@@ -528,22 +528,42 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                   UIConstants.verticalSpacingS,
-                  const ScaledText(
-                    Messages.ausweisBestellenDescription,
-                    style: UIStyles.bodyStyle,
+                  const Center(
+                    child: ScaledText(
+                      'Möchten sie ihren Schützenausweiss kostenpflichtig bestellen?',
+                      style: UIStyles.bodyStyle,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   if (isLoading)
                     const Center(child: CircularProgressIndicator())
-                  else
+                  else ...[
+                    const SizedBox(height: UIConstants.spacingXL),
                     Center(
-                      child: ElevatedButton(
-                        onPressed: _showBankDataDialog,
-                        child: const Text(
-                          'Schützenausweis kostenpflichtig  bestellen',
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32.0,
+                          vertical: 16.0,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _showBankDataDialog,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 18.0,
+                              horizontal: 16.0,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Schützenausweis\nkostenpflichtig bestellen',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                  ],
                 ],
               ),
             );

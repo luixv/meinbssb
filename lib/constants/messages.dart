@@ -98,10 +98,10 @@ class Messages {
   static const String saveButtonLabel = 'Speichern';
   static const String savingLabel = 'Wird gespeichert...';
 
-// Help screen
+  // Help screen
   static const String helpTitle = 'FAQ';
 
-// Contact Data Screen
+  // Contact Data Screen
   static const String telefonLabel = 'Telefon';
   static const String telefonRequired =
       'Bitte geben Sie Ihre Telefonnummer ein';
@@ -115,7 +115,7 @@ class Messages {
   static const String deleteContactDataConfirmation =
       'Möchten Sie diese Kontaktdaten wirklich löschen?';
 
-// Password Change Messages
+  // Password Change Messages
   static const String passwordChangeSuccess = 'Passwort erfolgreich geändert';
   static const String passwordChangeError =
       'Fehler beim Ändern des Passworts: ';
@@ -133,7 +133,7 @@ class Messages {
   // Ausweis Bestellen Screen
   static const String ausweisBestellenTitle = 'Schützenausweis bestellen';
   static const String ausweisBestellenDescription =
-      'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen? \nKlicken Sie auf den Button unten, um fortzufahren.';
+      'Möchten sie Ihren Schützenausweis kostenpflichtig bestellen?';
 
   static const String firstNameLabel = 'Vorname';
   static const String lastNameLabel = 'Nachname';
