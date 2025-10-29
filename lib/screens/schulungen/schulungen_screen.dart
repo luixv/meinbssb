@@ -861,20 +861,25 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     label: 'Button zum Abbrechen und Rückkehr zur Übersicht',
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(parentContext).pop(); // Close the dialog
-                        Navigator.of(parentContext).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder:
-                                (context) => SchulungenSearchScreen(
-                                  userData: widget.userData,
-                                  isLoggedIn: widget.isLoggedIn,
-                                  onLogout: widget.onLogout,
-                                  showMenu: widget.isLoggedIn,
-                                  showConnectivityIcon: widget.isLoggedIn,
-                                ),
-                          ),
-                          (route) => false, // Remove all previous routes
-                        );
+                        Navigator.of(
+                          parentContext,
+                          rootNavigator: true,
+                        ).pop(); // Ensure dialog is closed
+                        Future.microtask(() {
+                          Navigator.of(parentContext).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => SchulungenSearchScreen(
+                                    userData: widget.userData,
+                                    isLoggedIn: widget.isLoggedIn,
+                                    onLogout: widget.onLogout,
+                                    showMenu: widget.isLoggedIn,
+                                    showConnectivityIcon: widget.isLoggedIn,
+                                  ),
+                            ),
+                            (route) => false, // Remove all previous routes
+                          );
+                        });
                       },
                       style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
