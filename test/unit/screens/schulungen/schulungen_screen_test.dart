@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:meinbssb/screens/schulungen_screen.dart';
+import 'package:meinbssb/screens/schulungen/schulungen_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:provider/provider.dart';

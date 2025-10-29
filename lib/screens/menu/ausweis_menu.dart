@@ -24,14 +24,14 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
-      title: 'Profil',
+      title: 'Schützenausweis',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       automaticallyImplyLeading: true,
       body: Semantics(
         label:
-            'Profilbereich mit Zugriff auf Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Passwortänderung und Schützenausweisbestellung.',
+            'Menübereich für Schützenausweis: Ausweis anzeigen, Startrechte einsehen, Ausweis bestellen.',
         child: SingleChildScrollView(
           padding: UIConstants.screenPadding,
           child: Column(
@@ -39,9 +39,9 @@ class ProfileScreen extends StatelessWidget {
             children: [
               const LogoWidget(),
               const SizedBox(height: UIConstants.spacingS),
-              const ScaledText('Ausweis', style: UIStyles.headerStyle),
+              const ScaledText('Schützenausweis', style: UIStyles.headerStyle),
               const SizedBox(height: UIConstants.spacingM),
-              _buildMenuItem(context, 'Schützenausweis', Icons.badge, () {
+              _buildMenuItem(context, 'Anzeigen', Icons.badge, () {
                 if (userData != null && userData?.personId != null) {
                   Navigator.push(
                     context,
@@ -70,24 +70,19 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 );
               }),
-              _buildMenuItem(
-                context,
-                'Schützenausweis bestellen',
-                Icons.search_off,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => AusweisBestellenScreen(
-                            userData: userData,
-                            isLoggedIn: isLoggedIn,
-                            onLogout: onLogout,
-                          ),
-                    ),
-                  );
-                },
-              ),
+              _buildMenuItem(context, 'Bestellen', Icons.search_off, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => AusweisBestellenScreen(
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
+                  ),
+                );
+              }),
               const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),

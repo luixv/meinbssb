@@ -9,7 +9,7 @@ import '/models/bezirk_data.dart';
 import '/models/schulungstermin_data.dart';
 
 import '/screens/base_screen_layout.dart';
-import '/screens/schulungen_screen.dart';
+import 'schulungen_screen.dart';
 
 import '/widgets/scaled_text.dart';
 

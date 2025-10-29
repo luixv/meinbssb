@@ -9,7 +9,7 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
-import '../helpers/test_helper.dart';
+import '../../helpers/test_helper.dart';
 
 @GenerateMocks([ApiService, FontSizeProvider, ConfigService])
 void main() {

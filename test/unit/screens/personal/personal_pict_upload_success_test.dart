@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/menu/personal/personal_data_success_screen.dart';
+import 'package:meinbssb/screens/personal/personal_pict_upload_success.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -40,15 +40,14 @@ void main() {
     );
   });
 
-  Widget buildTestWidget({required bool success}) {
+  Widget buildTestWidget() {
     return ChangeNotifierProvider<FontSizeProvider>(
       create: (_) => FontSizeProvider(),
       child: MaterialApp(
         routes: {
-          '/profile': (context) => const Scaffold(body: Text('Profile Screen')),
+          '/home': (context) => const Scaffold(body: Text('Home Screen')),
         },
-        home: PersonalDataSuccessScreen(
-          success: success,
+        home: PersonalPictUploadSuccessScreen(
           userData: userData,
           isLoggedIn: true,
           onLogout: () {},
@@ -57,25 +56,19 @@ void main() {
     );
   }
 
-  testWidgets('shows success icon and message when success is true',
-      (tester) async {
-    await tester.pumpWidget(buildTestWidget(success: true));
+  testWidgets('shows success icon and messages', (tester) async {
+    await tester.pumpWidget(buildTestWidget());
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
-    expect(find.text('Ihre persönlichen Daten wurden erfolgreich gespeichert.'),
+    expect(find.text('Ihr Profilbild wurde erfolgreich hochgeladen!'),
+        findsOneWidget,);
+    expect(find.text('Sie können nun zu Ihrem Profil zurückkehren.'),
         findsOneWidget,);
   });
 
-  testWidgets('shows error icon and message when success is false',
-      (tester) async {
-    await tester.pumpWidget(buildTestWidget(success: false));
-    expect(find.byIcon(Icons.error), findsOneWidget);
-    expect(find.text('Es ist ein Fehler aufgetreten.'), findsOneWidget);
-  });
-
-  testWidgets('FAB navigates to profile screen', (tester) async {
-    await tester.pumpWidget(buildTestWidget(success: true));
+  testWidgets('FAB navigates to home screen', (tester) async {
+    await tester.pumpWidget(buildTestWidget());
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    expect(find.text('Profile Screen'), findsOneWidget);
+    expect(find.text('Home Screen'), findsOneWidget);
   });
 }

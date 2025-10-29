@@ -5,14 +5,13 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
 
-import 'personal/personal_data_screen.dart';
+import '../personal/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
 import '/screens/bankdata/bank_data_screen.dart';
 import '/screens/password/change_password_screen.dart';
 import '/screens/schulungen/absolvierte_schulungen_screen.dart';
 import '/screens/logo_widget.dart';
-import 'personal/personal_pict_upload_screen.dart';
-import '/screens/ausweis/ausweis_bestellen_screen.dart';
+import '../personal/personal_pict_upload_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -35,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
       automaticallyImplyLeading: true,
       body: Semantics(
         label:
-            'Profilbereich mit Zugriff auf Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Passwortänderung und Schützenausweisbestellung.',
+            'Profilmenü: Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Passwort ändern.',
         child: SingleChildScrollView(
           padding: UIConstants.screenPadding,
           child: Column(
@@ -134,24 +133,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 );
               }),
-              _buildMenuItem(
-                context,
-                'Schützenausweis bestellen',
-                Icons.search_off,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => AusweisBestellenScreen(
-                            userData: userData,
-                            isLoggedIn: isLoggedIn,
-                            onLogout: onLogout,
-                          ),
-                    ),
-                  );
-                },
-              ),
+              // Removed 'Schützenausweis bestellen' menu item
               const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),

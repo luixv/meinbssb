@@ -59,25 +59,21 @@ void main() {
     });
 
     Widget createScreen() => MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>(
-              create: (_) => FontSizeProvider(),
-            ),
-            Provider<ConfigService>(
-              create: (_) => MockConfigService(),
-            ),
-            Provider<ApiService>(
-              create: (_) => FakeApiService(),
-            ),
-          ],
-          child: MaterialApp(
-            home: ProfileScreen(
-              userData: userData,
-              isLoggedIn: true,
-              onLogout: () => logoutCalled = true,
-            ),
-          ),
-        );
+      providers: [
+        ChangeNotifierProvider<FontSizeProvider>(
+          create: (_) => FontSizeProvider(),
+        ),
+        Provider<ConfigService>(create: (_) => MockConfigService()),
+        Provider<ApiService>(create: (_) => FakeApiService()),
+      ],
+      child: MaterialApp(
+        home: ProfileScreen(
+          userData: userData,
+          isLoggedIn: true,
+          onLogout: () => logoutCalled = true,
+        ),
+      ),
+    );
 
     testWidgets('renders logo, header, and all menu items', (tester) async {
       await tester.pumpWidget(createScreen());
@@ -88,9 +84,8 @@ void main() {
       expect(find.byIcon(Icons.account_balance), findsOneWidget);
       expect(find.byIcon(Icons.task_alt), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsOneWidget);
-      expect(find.byIcon(Icons.search_off), findsOneWidget);
 
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(7));
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(6));
     });
 
     testWidgets('calls onLogout when triggered', (tester) async {
@@ -129,8 +124,9 @@ void main() {
       expect(find.textContaining('Bankdaten'), findsWidgets);
     });
 
-    testWidgets('navigates to AbsolvierteSchulungenScreen on tap',
-        (tester) async {
+    testWidgets('navigates to AbsolvierteSchulungenScreen on tap', (
+      tester,
+    ) async {
       await tester.pumpWidget(createScreen());
       await tester.ensureVisible(find.text('Absolvierte Schulungen'));
       await tester.tap(find.text('Absolvierte Schulungen'));
@@ -148,23 +144,6 @@ void main() {
       expect(find.textContaining('Passwort'), findsWidgets);
     });
 
-    testWidgets('navigates to AusweisBestellenScreen on tap', (tester) async {
-      await tester.pumpWidget(createScreen());
-
-      final ausweisFinder = find.text('Schützenausweis bestellen');
-
-      // Try to scroll until the item is visible
-      await tester.scrollUntilVisible(
-        ausweisFinder,
-        100.0,
-        scrollable: find.byType(Scrollable).first,
-      );
-
-      await tester.tap(ausweisFinder);
-      await tester.pumpAndSettle();
-
-      // Check for the screen title or button instead of generic text
-      expect(find.byType(ElevatedButton), findsOneWidget);
-    });
+    // Removed test for 'Schützenausweis bestellen' navigation
   });
 }

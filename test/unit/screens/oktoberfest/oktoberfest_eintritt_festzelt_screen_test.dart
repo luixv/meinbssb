@@ -7,7 +7,7 @@ import 'package:meinbssb/screens/oktoberfest/oktoberfest_eintritt_festzelt_scree
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
-import '../helpers/test_helper.dart';
+import '../../helpers/test_helper.dart';
 
 // Generate mocks
 @GenerateMocks([ApiService])

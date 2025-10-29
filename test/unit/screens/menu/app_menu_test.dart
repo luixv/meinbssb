@@ -444,8 +444,8 @@ void main() {
       await ensureVisible(tester, 'Schützenausweis');
       await tester.tap(find.text('Schützenausweis'));
       await tester.pumpAndSettle();
-      // Check for the Ausweis menu header text
-      expect(find.text('Ausweis'), findsOneWidget);
+      // Check for the Schützenausweis menu header text
+      expect(find.text('Schützenausweis'), findsWidgets);
     });
 
     testWidgets('Oktoberfest triggers navigator.oktoberfest', (tester) async {

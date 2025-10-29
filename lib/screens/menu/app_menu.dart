@@ -17,7 +17,7 @@ import 'oktoberfest_menu.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 
-// ADD: Abstraction for navigation so tests can inject a fake and avoid heavy screen builds.
+// Abstraction for navigation so tests can inject a fake and avoid heavy screen builds.
 abstract class DrawerNavigator {
   void home(BuildContext context);
   void profile(BuildContext context);
@@ -30,36 +30,30 @@ abstract class DrawerNavigator {
   void logout(BuildContext context, VoidCallback onLogout);
 }
 
-// Replace RealDrawerNavigator with builder‑injectable version to allow light-weight testing.
 class RealDrawerNavigator implements DrawerNavigator {
-  const RealDrawerNavigator({
+  RealDrawerNavigator({
     required this.userData,
     required this.isLoggedIn,
     required this.onLogout,
-    WidgetBuilder? schulungenBuilder,
-    WidgetBuilder? schuetzenausweisBuilder,
-    WidgetBuilder? startingRightsBuilder,
-    WidgetBuilder? oktoberfestBuilder,
-    WidgetBuilder? impressumBuilder,
-    WidgetBuilder? settingsBuilder,
-    WidgetBuilder? helpBuilder,
-  }) : _schulungenBuilder = schulungenBuilder,
-       _schuetzenausweisBuilder = schuetzenausweisBuilder,
-       _oktoberfestBuilder = oktoberfestBuilder,
-       _impressumBuilder = impressumBuilder,
-       _settingsBuilder = settingsBuilder,
-       _helpBuilder = helpBuilder;
+    this.schulungenBuilder,
+    this.schuetzenausweisBuilder,
+    this.startingRightsBuilder,
+    this.oktoberfestBuilder,
+    this.impressumBuilder,
+    this.settingsBuilder,
+    this.helpBuilder,
+  });
 
   final UserData? userData;
   final bool isLoggedIn;
   final VoidCallback onLogout;
-
-  final WidgetBuilder? _schulungenBuilder;
-  final WidgetBuilder? _schuetzenausweisBuilder;
-  final WidgetBuilder? _oktoberfestBuilder;
-  final WidgetBuilder? _impressumBuilder;
-  final WidgetBuilder? _settingsBuilder;
-  final WidgetBuilder? _helpBuilder;
+  final WidgetBuilder? schulungenBuilder;
+  final WidgetBuilder? schuetzenausweisBuilder;
+  final WidgetBuilder? startingRightsBuilder;
+  final WidgetBuilder? oktoberfestBuilder;
+  final WidgetBuilder? impressumBuilder;
+  final WidgetBuilder? settingsBuilder;
+  final WidgetBuilder? helpBuilder;
 
   void _close(BuildContext context) {
     if (Navigator.of(context).canPop()) {
@@ -85,7 +79,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _schulungenBuilder ??
+            schulungenBuilder ??
             (_) => SchulungenSearchScreen(
               isLoggedIn: isLoggedIn,
               userData: userData,
@@ -102,7 +96,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _schuetzenausweisBuilder ??
+            schuetzenausweisBuilder ??
             (_) => SchuetzenausweisScreen(
               userData: userData!,
               personId: userData!.personId,
@@ -112,8 +106,7 @@ class RealDrawerNavigator implements DrawerNavigator {
       ),
     );
   }
-
-  // Removed startingRights method
+  // startingRightsBuilder is injected for tests, but not used in production.
 
   @override
   void oktoberfest(BuildContext context) {
@@ -121,7 +114,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _oktoberfestBuilder ??
+            oktoberfestBuilder ??
             (_) => OktoberfestScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -137,7 +130,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _impressumBuilder ??
+            impressumBuilder ??
             (_) => ImpressumScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -153,7 +146,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _settingsBuilder ??
+            settingsBuilder ??
             (_) => SettingsScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -169,7 +162,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            _helpBuilder ??
+            helpBuilder ??
             (_) => HelpScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
@@ -234,211 +227,224 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          Container(
-            height: UIConstants.drawerHeaderHeight,
-            decoration: const BoxDecoration(color: UIConstants.defaultAppColor),
-            child: const Padding(
-              padding: EdgeInsets.only(
-                left: UIConstants.drawerHeaderLeftPadding,
-                top: UIConstants.drawerHeaderTopPadding,
-                bottom: UIConstants.drawerHeaderBottomPadding,
+    return Semantics(
+      label:
+          'Navigationsmenü: Home, Profil, Aus- und Weiterbildung, Schützenausweis, Oktoberfest, Impressum, Einstellungen, Hilfe, Abmelden, Anmelden, Registrieren, Passwort zurücksetzen.',
+      child: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: UIConstants.drawerHeaderHeight,
+              decoration: const BoxDecoration(
+                color: UIConstants.defaultAppColor,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ScaledText(
-                    'Mein BSSB',
-                    style: TextStyle(
-                      color: UIConstants.whiteColor,
-                      fontSize: UIConstants.menuTitleFontSize,
-                      fontWeight: FontWeight.bold,
+              child: const Padding(
+                padding: EdgeInsets.only(
+                  left: UIConstants.drawerHeaderLeftPadding,
+                  top: UIConstants.drawerHeaderTopPadding,
+                  bottom: UIConstants.drawerHeaderBottomPadding,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ScaledText(
+                      'Mein BSSB',
+                      style: TextStyle(
+                        color: UIConstants.whiteColor,
+                        fontSize: UIConstants.menuTitleFontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          if (isLoggedIn) ...[
-            ListTile(
-              key: const Key('drawer_home'),
-              leading: const Icon(Icons.home, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Home',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+            if (isLoggedIn) ...[
+              ListTile(
+                key: const Key('drawer_home'),
+                leading: const Icon(Icons.home, color: UIStyles.menuIconColor),
+                title: const ScaledText(
+                  'Home',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.home(context),
               ),
-              onTap: () => navigator.home(context),
-            ),
-            ListTile(
-              key: const Key('drawer_profile'),
-              leading: const Icon(Icons.person, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Profil',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_profile'),
+                leading: const Icon(
+                  Icons.person,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Profil',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.profile(context),
               ),
-              onTap: () => navigator.profile(context),
-            ),
-            ListTile(
-              key: const Key('drawer_training'),
-              leading: const Icon(
-                Icons.school_outlined,
-                color: UIStyles.menuIconColor,
+              ListTile(
+                key: const Key('drawer_training'),
+                leading: const Icon(
+                  Icons.school_outlined,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Aus- und Weiterbildung',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.training(context),
               ),
-              title: const ScaledText(
-                'Aus- und Weiterbildung',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_schuetzenausweis'),
+                leading: const Icon(Icons.badge, color: UIStyles.menuIconColor),
+                title: const ScaledText(
+                  'Schützenausweis',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ProfileScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
               ),
-              onTap: () => navigator.training(context),
-            ),
-            ListTile(
-              key: const Key('drawer_schuetzenausweis'),
-              leading: const Icon(Icons.badge, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Schützenausweis',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              // Removed Startrechte ListTile
+              ListTile(
+                key: const Key('drawer_oktoberfest'),
+                leading: const Icon(
+                  Icons.sports_bar_outlined,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Oktoberfest',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.oktoberfest(context),
               ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ProfileScreen(
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              },
-            ),
-            // Removed Startrechte ListTile
-            ListTile(
-              key: const Key('drawer_oktoberfest'),
-              leading: const Icon(
-                Icons.sports_bar_outlined,
-                color: UIStyles.menuIconColor,
+              const Divider(),
+              ListTile(
+                key: const Key('drawer_impressum'),
+                leading: const Icon(
+                  Icons.info_outline,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Impressum',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.impressum(context),
               ),
-              title: const ScaledText(
-                'Oktoberfest',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_settings'),
+                leading: const Icon(
+                  Icons.settings,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Einstellungen',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.settings(context),
               ),
-              onTap: () => navigator.oktoberfest(context),
-            ),
-            const Divider(),
-            ListTile(
-              key: const Key('drawer_impressum'),
-              leading: const Icon(
-                Icons.info_outline,
-                color: UIStyles.menuIconColor,
+              ListTile(
+                key: const Key('drawer_help'),
+                leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
+                title: const ScaledText(
+                  'Hilfe (FAQ)',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.help(context),
               ),
-              title: const ScaledText(
-                'Impressum',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_logout'),
+                leading: const Icon(
+                  Icons.logout,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Abmelden',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.logout(context, onLogout),
               ),
-              onTap: () => navigator.impressum(context),
-            ),
-            ListTile(
-              key: const Key('drawer_settings'),
-              leading: const Icon(
-                Icons.settings,
-                color: UIStyles.menuIconColor,
+            ] else ...[
+              ListTile(
+                key: const Key('drawer_login'),
+                leading: const Icon(Icons.login, color: UIStyles.menuIconColor),
+                title: const ScaledText(
+                  'Anmelden',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed('/login');
+                },
               ),
-              title: const ScaledText(
-                'Einstellungen',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_register'),
+                leading: const Icon(
+                  Icons.app_registration,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Registrieren',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  final apiService = Provider.of<ApiService>(
+                    context,
+                    listen: false,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              RegistrationScreen(apiService: apiService),
+                    ),
+                  );
+                },
               ),
-              onTap: () => navigator.settings(context),
-            ),
-            ListTile(
-              key: const Key('drawer_help'),
-              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Hilfe (FAQ)',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+              ListTile(
+                key: const Key('drawer_pw_reset'),
+                leading: const Icon(
+                  Icons.lock_reset,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Passwort zurücksetzen',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  final apiService = Provider.of<ApiService>(
+                    context,
+                    listen: false,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PasswordResetScreen(
+                            apiService: apiService,
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
               ),
-              onTap: () => navigator.help(context),
-            ),
-            ListTile(
-              key: const Key('drawer_logout'),
-              leading: const Icon(Icons.logout, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Abmelden',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () => navigator.logout(context, onLogout),
-            ),
-          ] else ...[
-            ListTile(
-              key: const Key('drawer_login'),
-              leading: const Icon(Icons.login, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Anmelden',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushNamed('/login');
-              },
-            ),
-            ListTile(
-              key: const Key('drawer_register'),
-              leading: const Icon(
-                Icons.app_registration,
-                color: UIStyles.menuIconColor,
-              ),
-              title: const ScaledText(
-                'Registrieren',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.of(context).pop();
-                final apiService = Provider.of<ApiService>(
-                  context,
-                  listen: false,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => RegistrationScreen(apiService: apiService),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              key: const Key('drawer_pw_reset'),
-              leading: const Icon(
-                Icons.lock_reset,
-                color: UIStyles.menuIconColor,
-              ),
-              title: const ScaledText(
-                'Passwort zurücksetzen',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () {
-                Navigator.of(context).pop();
-                final apiService = Provider.of<ApiService>(
-                  context,
-                  listen: false,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => PasswordResetScreen(
-                          apiService: apiService,
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              },
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

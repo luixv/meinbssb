@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import 'package:meinbssb/screens/menu/personal/personal_pict_upload_screen.dart';
-import 'package:meinbssb/screens/menu/personal/personal_pict_upload_success.dart';
+import 'package:meinbssb/screens/personal/personal_pict_upload_screen.dart';
+import 'package:meinbssb/screens/personal/personal_pict_upload_success.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';

@@ -7,7 +7,7 @@ import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import '../helpers/test_helper.dart';
+import '../../helpers/test_helper.dart';
 
 @GenerateMocks([AuthService, NetworkService, FontSizeProvider, ConfigService])
 void main() {

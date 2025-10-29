@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:meinbssb/screens/registration/registration_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
-import '../helpers/test_helper.dart';
+import '../../helpers/test_helper.dart';
 
 @GenerateMocks([AuthService, EmailService])
 void main() {

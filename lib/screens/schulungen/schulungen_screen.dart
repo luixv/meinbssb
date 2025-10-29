@@ -13,12 +13,12 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
 
-import 'agb/agb_screen.dart';
+import '../agb/agb_screen.dart';
 
-import 'schulungen/schulungen_search_screen.dart';
-import 'schulungen/schulungen_register_person_dialog.dart';
-import 'schulungen/schulungen_list_item.dart';
-import 'schulungen/schulungen_details_dialog.dart';
+import 'schulungen_search_screen.dart';
+import 'schulungen_register_person_dialog.dart';
+import 'schulungen_list_item.dart';
+import 'schulungen_details_dialog.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
