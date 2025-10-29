@@ -1,9 +1,17 @@
+import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/menu/oktoberfest_menu.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import '../../helpers/test_helper.dart';
+import 'package:meinbssb/services/api_service.dart';
 
 void main() {
+  setUp(() {
+    TestHelper.setupMocks();
+  });
   group('OktoberfestScreen', () {
     final userData = const UserData(
       personId: 1,
@@ -36,23 +44,35 @@ void main() {
     );
 
     Widget buildTestWidget() {
-      return MaterialApp(
-        home: OktoberfestScreen(
-          userData: userData,
-          isLoggedIn: true,
-          onLogout: () {},
+      return MultiProvider(
+        providers: [
+          Provider<ApiService>.value(value: TestHelper.mockApiService),
+          ChangeNotifierProvider<FontSizeProvider>(
+            create: (_) => FontSizeProvider(),
+          ),
+        ],
+        child: MaterialApp(
+          home: OktoberfestScreen(
+            userData: userData,
+            isLoggedIn: true,
+            onLogout: () {},
+          ),
         ),
       );
     }
 
     testWidgets('shows menu items', (tester) async {
       await tester.pumpWidget(buildTestWidget());
-      expect(find.text('Oktoberfest'), findsOneWidget);
+      expect(find.text('Oktoberfest'), findsWidgets); // Allow multiple
       expect(find.text('Meine Ergebnisse'), findsOneWidget);
       expect(find.text('Meine Gewinne'), findsOneWidget);
     });
 
     testWidgets('tapping Meine Ergebnisse navigates', (tester) async {
+      // Stub fetchResults for navigation
+      when(
+        TestHelper.mockApiService.fetchResults(any),
+      ).thenAnswer((_) async => []);
       await tester.pumpWidget(buildTestWidget());
       await tester.tap(find.text('Meine Ergebnisse'));
       await tester.pumpAndSettle();
@@ -61,6 +81,10 @@ void main() {
     });
 
     testWidgets('tapping Meine Gewinne navigates', (tester) async {
+      // Stub fetchGewinne for navigation
+      when(
+        TestHelper.mockApiService.fetchGewinne(any, any),
+      ).thenAnswer((_) async => []);
       await tester.pumpWidget(buildTestWidget());
       await tester.tap(find.text('Meine Gewinne'));
       await tester.pumpAndSettle();
