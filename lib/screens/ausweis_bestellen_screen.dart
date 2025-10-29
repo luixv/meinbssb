@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
-import '/models/passdaten_akzept_or_aktiv_data.dart';
+import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'ausweis_bestellen_success_screen.dart';
+
+void _onSave() {
+  // TODO: Implement save logic for bank data dialog
+}
 
 class AusweisBestellenScreen extends StatefulWidget {
   const AusweisBestellenScreen({
@@ -31,74 +33,186 @@ class AusweisBestellenScreen extends StatefulWidget {
 class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
   bool isLoading = false;
 
-  Future<void> _onSave() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    const antragsTyp = 5; // 5=Verlust
-    final int? passdatenId = widget.userData?.passdatenId;
-    final int? personId = widget.userData?.personId;
-    final int? erstVereinId = widget.userData?.erstVereinId;
-    int digitalerPass = 0; // 1 for yes, 0 for no
-
+  Future<void> _showBankDataDialog() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final user = widget.userData;
+    if (user == null) return;
 
-    final PassdatenAkzeptOrAktiv?
-    fetchedPassdatenAkzeptierterOderAktiverPassData = await apiService
-        .fetchPassdatenAkzeptierterOderAktiverPass(personId);
-
-    /* create a list "ZVEs": [
-        {
-            "VEREINID": 2420,
-            "DISZIPLINID": 94
-        },
-        ...
-    ]
-*/
-    List<Map<String, dynamic>> zves = [];
-    if (fetchedPassdatenAkzeptierterOderAktiverPassData != null) {
-      for (final zve in fetchedPassdatenAkzeptierterOderAktiverPassData.zves) {
-        final vereinId = zve.vereinId;
-        final disziplinId = zve.disziplinId;
-
-        zves.add({'VEREINID': vereinId, 'DISZIPLINID': disziplinId});
-      }
-    }
-
-    final bool success = await apiService.bssbAppPassantrag(
-      zves,
-      passdatenId,
-      personId,
-      erstVereinId,
-      digitalerPass,
-      antragsTyp,
-    );
-
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
-
-      if (success) {
-        // Navigate to the success screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => AusweisBestellendSuccessScreen(
-                  userData: widget.userData,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                ),
+    // Show loading indicator while fetching bank data
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              UIConstants.defaultAppColor,
+            ),
           ),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Antrag konnte nicht gesendet werden.')),
+      },
+    );
+
+    final List<BankData> bankDataList = await apiService.fetchBankdatenMyBSSB(
+      user.webLoginId,
+    );
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
+
+    bool agbChecked = false;
+    bool lastschriftChecked = false;
+    final formKey = GlobalKey<FormState>();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: UIConstants.dialogMaxWidth,
+                    maxHeight: UIConstants.dialogMaxHeight,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: UIConstants.backgroundColor,
+                        borderRadius: BorderRadius.circular(
+                          UIConstants.cornerRadius,
+                        ),
+                        boxShadow: UIStyles.cardDecoration.boxShadow,
+                      ),
+                      padding: UIConstants.dialogPadding,
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Center(
+                                child: ScaledText(
+                                  'Bankdaten für Bestellung',
+                                  style: UIStyles.dialogTitleStyle,
+                                ),
+                              ),
+                              const SizedBox(height: UIConstants.spacingM),
+                              if (bankData != null) ...[
+                                ScaledText(
+                                  'Kontoinhaber: ${bankData.kontoinhaber}',
+                                  style: UIStyles.bodyStyle,
+                                ),
+                                ScaledText(
+                                  'IBAN: ${bankData.iban}',
+                                  style: UIStyles.bodyStyle,
+                                ),
+                                ScaledText(
+                                  'BIC: ${bankData.bic}',
+                                  style: UIStyles.bodyStyle,
+                                ),
+                                const SizedBox(height: UIConstants.spacingM),
+                              ],
+                              Semantics(
+                                label:
+                                    'Bitte bestätigen Sie die Allgemeinen Geschäftsbedingungen (AGB).',
+                                child: CheckboxListTile(
+                                  title: const ScaledText(
+                                    'Ich habe die Allgemeinen Geschäftsbedingungen (AGB) gelesen und akzeptiere sie.',
+                                    style: UIStyles.bodyStyle,
+                                  ),
+                                  value: agbChecked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      agbChecked = value ?? false;
+                                    });
+                                  },
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                ),
+                              ),
+                              Semantics(
+                                label:
+                                    'Bitte bestätigen Sie das SEPA-Lastschriftverfahren.',
+                                child: CheckboxListTile(
+                                  title: const ScaledText(
+                                    'Ich ermächtige den Bayerischen Sportschützenbund e.V., den Betrag per SEPA-Lastschrift einzuziehen.',
+                                    style: UIStyles.bodyStyle,
+                                  ),
+                                  value: lastschriftChecked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      lastschriftChecked = value ?? false;
+                                    });
+                                  },
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                ),
+                              ),
+                              const SizedBox(height: UIConstants.spacingM),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Semantics(
+                                      label:
+                                          'Button zum Abbrechen der Bestellung des Schützenausweises.',
+                                      child: ElevatedButton.icon(
+                                        icon: const Icon(Icons.close),
+                                        label: const ScaledText(
+                                          'Abbrechen',
+                                          style: UIStyles.dialogButtonTextStyle,
+                                        ),
+                                        style: UIStyles.dialogCancelButtonStyle,
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  UIConstants.horizontalSpacingM,
+                                  Expanded(
+                                    child: Semantics(
+                                      label:
+                                          'Button zum kostenpflichtigen Bestellen des Schützenausweises. Aktiviert, wenn AGB und SEPA-Lastschrift bestätigt sind.',
+                                      child: ElevatedButton.icon(
+                                        icon: const Icon(Icons.check),
+                                        label: const ScaledText(
+                                          'Bestellen',
+                                          style: UIStyles.dialogButtonTextStyle,
+                                        ),
+                                        style: UIStyles.dialogAcceptButtonStyle,
+                                        onPressed:
+                                            (agbChecked && lastschriftChecked)
+                                                ? () {
+                                                  Navigator.of(
+                                                    dialogContext,
+                                                  ).pop();
+                                                  _onSave();
+                                                }
+                                                : null,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
         );
-      }
-    }
+      },
+    );
   }
 
   @override
@@ -134,7 +248,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                   else
                     Center(
                       child: ElevatedButton(
-                        onPressed: _onSave,
+                        onPressed: _showBankDataDialog,
                         child: const Text(
                           'Schützenausweis kostenpflichtig  bestellen',
                         ),
