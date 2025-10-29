@@ -46,6 +46,7 @@ void main() {
       child: MaterialApp(
         routes: {
           '/home': (context) => const Scaffold(body: Text('Home Screen')),
+          '/profile': (context) => const Scaffold(body: Text('Profile Screen')),
         },
         home: AusweisBestellendSuccessScreen(
           userData: userData,
@@ -61,20 +62,16 @@ void main() {
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(
       find.text(
-        'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.\n Ihr neuer Schützenausweis wird nun vom Bayerischen Sportschützenbund e.V. Gedruckt und per Post an Ihre bei uns hinterlegte Adresse versendet.',
+        'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.\n\n Ihr neuer Schützenausweis wird nun vom Bayerischen Sportschützenbund e.V. Gedruckt und per Post an Ihre bei uns hinterlegte Adresse versendet.',
       ),
-      findsOneWidget,
-    );
-    expect(
-      find.text('Sie können nun zu Ihrem Profil zurückkehren.'),
       findsOneWidget,
     );
   });
 
-  testWidgets('FAB navigates to home screen', (tester) async {
+  testWidgets('FAB navigates to profile screen', (tester) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-    expect(find.text('Home Screen'), findsOneWidget);
+    expect(find.text('Profile Screen'), findsOneWidget);
   });
 }

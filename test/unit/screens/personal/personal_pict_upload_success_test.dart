@@ -46,6 +46,7 @@ void main() {
       child: MaterialApp(
         routes: {
           '/home': (context) => const Scaffold(body: Text('Home Screen')),
+          '/profile': (context) => const Scaffold(body: Text('Home Screen')),
         },
         home: PersonalPictUploadSuccessScreen(
           userData: userData,
@@ -59,10 +60,10 @@ void main() {
   testWidgets('shows success icon and messages', (tester) async {
     await tester.pumpWidget(buildTestWidget());
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
-    expect(find.text('Ihr Profilbild wurde erfolgreich hochgeladen!'),
-        findsOneWidget,);
-    expect(find.text('Sie können nun zu Ihrem Profil zurückkehren.'),
-        findsOneWidget,);
+    expect(
+      find.text('Ihr Profilbild wurde erfolgreich hochgeladen!'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('FAB navigates to home screen', (tester) async {

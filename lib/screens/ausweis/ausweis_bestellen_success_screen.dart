@@ -50,17 +50,6 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: UIConstants.spacingM),
-            ScaledText(
-              // Using ScaledText for additional message
-              'Sie können nun zu Ihrem Profil zurückkehren.',
-              style: UIStyles.bodyStyle.copyWith(
-                // Using UIStyles.bodyStyle
-                fontSize:
-                    UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
-              ),
-              textAlign: TextAlign.center,
-            ),
           ],
         ),
       ),
