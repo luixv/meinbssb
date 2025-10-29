@@ -61,7 +61,7 @@ void main() {
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
     expect(
       find.text(
-        'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.',
+        'Die Bestellung des Schützenausweises wurde erfolgreich abgeschlossen.\n Ihr neuer Schützenausweis wird nun vom Bayerischen Sportschützenbund e.V. Gedruckt und per Post an Ihre bei uns hinterlegte Adresse versendet.',
       ),
       findsOneWidget,
     );
