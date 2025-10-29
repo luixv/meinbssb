@@ -1,8 +1,8 @@
 // lib/app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:meinbssb/screens/reset_password_screen.dart';
-import 'package:meinbssb/screens/email_verification_screen.dart';
+import 'package:meinbssb/screens/password/reset_password_screen.dart';
+import 'package:meinbssb/screens/email/email_verification_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +20,8 @@ import 'screens/help_screen.dart';
 import 'screens/impressum_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/set_password_screen.dart';
+import 'screens/menu/profile_menu.dart';
+import 'screens/password/set_password_screen.dart';
 import 'screens/cookie_consent_screen.dart';
 import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';

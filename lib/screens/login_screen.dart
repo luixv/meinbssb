@@ -6,14 +6,15 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 
-import 'package:meinbssb/screens/registration_screen.dart';
-import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/screens/registration/registration_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_screen.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({required this.onLoginSuccess, this.logoWidget, super.key});
@@ -398,38 +399,104 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             child: Padding(
               padding: UIConstants.screenPadding,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.logoWidget ?? const LogoWidget(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  ScaledText(
-                    Messages.loginTitle,
-                    style: UIStyles.headerStyle.copyWith(color: _appColor),
-                  ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  if (_errorMessage.isNotEmpty)
-                    ScaledText(_errorMessage, style: UIStyles.errorStyle),
-                  const SizedBox(height: UIConstants.spacingM),
-                  _buildEmailField(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildPasswordField(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  _buildRememberMeCheckbox(),
-                  const SizedBox(height: UIConstants.spacingM),
-                  _buildLoginButton(),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Semantics(
+                label: 'Login-Bereich',
+                child: Focus(
+                  autofocus: true,
+                  onKey: (node, event) {
+                    // Only handle Enter key for Windows and Web
+                    if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                            event.isKeyPressed(
+                              LogicalKeyboardKey.numpadEnter,
+                            )) &&
+                        !_isLoading) {
+                      _handleLogin();
+                      return KeyEventResult.handled;
+                    }
+                    return KeyEventResult.ignored;
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildForgotPasswordButton(),
-                      _buildHelpButton(),
+                      widget.logoWidget ?? const LogoWidget(),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label: 'Login Titel',
+                        hint: 'Login-Bereich für registrierte Nutzer',
+                        child: ScaledText(
+                          Messages.loginTitle,
+                          style: UIStyles.headerStyle.copyWith(
+                            color: _appColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      if (_errorMessage.isNotEmpty)
+                        Semantics(
+                          label: 'Fehlermeldung: $_errorMessage',
+                          hint:
+                              'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
+                          child: ScaledText(
+                            _errorMessage,
+                            style: UIStyles.errorStyle,
+                          ),
+                        ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Semantics(
+                        label: 'E-Mail Eingabefeld',
+                        hint: 'Geben Sie Ihre E-Mail Adresse ein',
+                        child: _buildEmailField(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label: 'Passwort Eingabefeld',
+                        hint:
+                            'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
+                        child: _buildPasswordField(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label: 'Angemeldet bleiben Checkbox',
+                        hint:
+                            'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
+                        child: _buildRememberMeCheckbox(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Semantics(
+                        label: 'Login Button',
+                        hint: 'Tippen, um sich einzuloggen',
+                        child: _buildLoginButton(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Semantics(
+                            label: 'Passwort vergessen Button',
+                            hint: 'Tippen, um das Passwort zurückzusetzen',
+                            child: _buildForgotPasswordButton(),
+                          ),
+                          Semantics(
+                            label: 'Hilfe Button',
+                            hint:
+                                'Tippen, um Hilfe und Informationen zu erhalten',
+                            child: _buildHelpButton(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Center(
+                        child: Semantics(
+                          label: 'Registrieren Button',
+                          hint:
+                              'Tippen, um ein neues Benutzerkonto zu erstellen',
+                          child: _buildRegisterButton(),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Center(child: _buildRegisterButton()),
-                ],
+                ),
               ),
             ),
           ),

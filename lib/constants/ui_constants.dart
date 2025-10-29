@@ -211,7 +211,7 @@ class UIConstants {
   static const double appBarElevation = 2.0;
 
   // Text and Layout
-  static const int maxSectionHeaderLength = 60;
+  static const int maxSectionHeaderLength = 90;
 
   // Search and Filter
   static const int maxFilteredDisziplinen = 5;
