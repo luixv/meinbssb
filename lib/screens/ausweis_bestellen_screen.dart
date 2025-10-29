@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
-import '/screens/agb_screen.dart';
+import '/screens/agb_ausweis_screen.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
