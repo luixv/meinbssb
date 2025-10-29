@@ -75,190 +75,163 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: UIConstants.dialogMaxWidth,
-                    maxHeight: UIConstants.dialogMaxHeight,
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: UIConstants.backgroundColor,
-                        borderRadius: BorderRadius.circular(
-                          UIConstants.cornerRadius,
+            return AlertDialog(
+              backgroundColor: UIConstants.backgroundColor,
+              contentPadding: UIConstants.dialogPadding,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              ),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Center(
+                        child: ScaledText(
+                          'Bankdaten für Bestellung',
+                          style: UIStyles.dialogTitleStyle,
                         ),
-                        boxShadow: UIStyles.cardDecoration.boxShadow,
                       ),
-                      padding: UIConstants.dialogPadding,
-                      child: SingleChildScrollView(
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const Center(
-                                child: ScaledText(
-                                  'Bankdaten für Bestellung',
-                                  style: UIStyles.dialogTitleStyle,
-                                ),
-                              ),
-                              const SizedBox(height: UIConstants.spacingM),
-                              Container(
-                                padding: const EdgeInsets.all(
-                                  UIConstants.spacingM,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: UIConstants.backgroundColor,
-                                  borderRadius: BorderRadius.circular(
-                                    UIConstants.cornerRadius,
-                                  ),
-                                  boxShadow: UIStyles.cardDecoration.boxShadow,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Bankdaten',
-                                      style: UIStyles.subtitleStyle,
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingM,
-                                    ),
-                                    TextFormField(
-                                      controller: kontoinhaberController,
-                                      decoration: UIStyles.formInputDecoration
-                                          .copyWith(labelText: 'Kontoinhaber'),
-                                      style: UIStyles.bodyStyle,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Bitte Kontoinhaber angeben';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingM,
-                                    ),
-                                    TextFormField(
-                                      controller: ibanController,
-                                      decoration: UIStyles.formInputDecoration
-                                          .copyWith(labelText: 'IBAN'),
-                                      style: UIStyles.bodyStyle,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Bitte IBAN angeben';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingM,
-                                    ),
-                                    TextFormField(
-                                      controller: bicController,
-                                      decoration: UIStyles.formInputDecoration
-                                          .copyWith(labelText: 'BIC'),
-                                      style: UIStyles.bodyStyle,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Bitte BIC angeben';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: UIConstants.spacingS),
-                              CheckboxListTile(
-                                title: const ScaledText(
-                                  'AGB akzeptieren',
-                                  style: UIStyles.bodyStyle,
-                                ),
-                                value: agbChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    agbChecked = value ?? false;
-                                  });
-                                },
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                              ),
-                              CheckboxListTile(
-                                title: const ScaledText(
-                                  'Bestätigung des Lastschrifteinzugs',
-                                  style: UIStyles.bodyStyle,
-                                ),
-                                value: lastschriftChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    lastschriftChecked = value ?? false;
-                                  });
-                                },
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                              ),
-                              const SizedBox(height: UIConstants.spacingM),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Semantics(
-                                      label:
-                                          'Button zum Abbrechen der Bestellung des Schützenausweises.',
-                                      child: ElevatedButton.icon(
-                                        icon: const Icon(Icons.close),
-                                        label: const ScaledText(
-                                          'Abbrechen',
-                                          style: UIStyles.dialogButtonTextStyle,
-                                        ),
-                                        style: UIStyles.dialogCancelButtonStyle,
-                                        onPressed: () {
-                                          Navigator.of(dialogContext).pop();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  UIConstants.horizontalSpacingM,
-                                  Expanded(
-                                    child: Semantics(
-                                      label:
-                                          'Button zum kostenpflichtigen Bestellen des Schützenausweises. Aktiviert, wenn AGB und SEPA-Lastschrift bestätigt sind.',
-                                      child: ElevatedButton.icon(
-                                        icon: const Icon(Icons.check),
-                                        label: const ScaledText(
-                                          'Bestellen',
-                                          style: UIStyles.dialogButtonTextStyle,
-                                        ),
-                                        style: UIStyles.dialogAcceptButtonStyle,
-                                        onPressed:
-                                            (agbChecked && lastschriftChecked)
-                                                ? () {
-                                                  Navigator.of(
-                                                    dialogContext,
-                                                  ).pop();
-                                                  _onSave();
-                                                }
-                                                : null,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                      const SizedBox(height: UIConstants.spacingM),
+                      Container(
+                        padding: const EdgeInsets.all(UIConstants.spacingM),
+                        decoration: BoxDecoration(
+                          color: UIConstants.backgroundColor,
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
                           ),
                         ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Bankdaten',
+                              style: UIStyles.subtitleStyle,
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: kontoinhaberController,
+                              decoration: UIStyles.formInputDecoration.copyWith(
+                                labelText: 'Kontoinhaber',
+                              ),
+                              style: UIStyles.bodyStyle,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Bitte Kontoinhaber angeben';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: ibanController,
+                              decoration: UIStyles.formInputDecoration.copyWith(
+                                labelText: 'IBAN',
+                              ),
+                              style: UIStyles.bodyStyle,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Bitte IBAN angeben';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            TextFormField(
+                              controller: bicController,
+                              decoration: UIStyles.formInputDecoration.copyWith(
+                                labelText: 'BIC',
+                              ),
+                              style: UIStyles.bodyStyle,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Bitte BIC angeben';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      CheckboxListTile(
+                        title: const ScaledText(
+                          'AGB akzeptieren',
+                          style: UIStyles.bodyStyle,
+                        ),
+                        value: agbChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            agbChecked = value ?? false;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      CheckboxListTile(
+                        title: const ScaledText(
+                          'Bestätigung des Lastschrifteinzugs',
+                          style: UIStyles.bodyStyle,
+                        ),
+                        value: lastschriftChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            lastschriftChecked = value ?? false;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Semantics(
+                              label:
+                                  'Button zum Abbrechen der Bestellung des Schützenausweises.',
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.close),
+                                label: const ScaledText(
+                                  'Abbrechen',
+                                  style: UIStyles.dialogButtonTextStyle,
+                                ),
+                                style: UIStyles.dialogCancelButtonStyle,
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop();
+                                },
+                              ),
+                            ),
+                          ),
+                          UIConstants.horizontalSpacingM,
+                          Expanded(
+                            child: Semantics(
+                              label:
+                                  'Button zum kostenpflichtigen Bestellen des Schützenausweises. Aktiviert, wenn AGB und SEPA-Lastschrift bestätigt sind.',
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.check),
+                                label: const ScaledText(
+                                  'Bestellen',
+                                  style: UIStyles.dialogButtonTextStyle,
+                                ),
+                                style: UIStyles.dialogAcceptButtonStyle,
+                                onPressed:
+                                    (agbChecked && lastschriftChecked)
+                                        ? () {
+                                          Navigator.of(dialogContext).pop();
+                                          _onSave();
+                                        }
+                                        : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
