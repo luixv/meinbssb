@@ -13,7 +13,7 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
 
-import '../agb/agb_screen.dart';
+import '/screens/agb/agb_screen.dart';
 
 import 'schulungen_search_screen.dart';
 import 'schulungen_register_person_dialog.dart';
@@ -866,18 +866,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           rootNavigator: true,
                         ).pop(); // Ensure dialog is closed
                         Future.microtask(() {
-                          Navigator.of(parentContext).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => SchulungenSearchScreen(
-                                    userData: widget.userData,
-                                    isLoggedIn: widget.isLoggedIn,
-                                    onLogout: widget.onLogout,
-                                    showMenu: widget.isLoggedIn,
-                                    showConnectivityIcon: widget.isLoggedIn,
-                                  ),
-                            ),
-                            (route) => false, // Remove all previous routes
+                          Navigator.of(parentContext).pushNamedAndRemoveUntil(
+                            '/home',
+                            (route) => false,
+                            arguments: {
+                              'userData': widget.userData,
+                              'isLoggedIn': widget.isLoggedIn,
+                              'onLogout': widget.onLogout,
+                              'showMenu': widget.isLoggedIn,
+                              'showConnectivityIcon': widget.isLoggedIn,
+                            },
                           );
                         });
                       },
@@ -1198,20 +1196,18 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         bankData: bankData,
       );
     } else if (registerAnother == false) {
-      // Navigate to search page
+      // Navigate to home screen
       if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder:
-              (context) => SchulungenSearchScreen(
-                userData: widget.userData,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
-                showMenu: widget.isLoggedIn,
-                showConnectivityIcon: widget.isLoggedIn,
-              ),
-        ),
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/home',
         (route) => false,
+        arguments: {
+          'userData': widget.userData,
+          'isLoggedIn': widget.isLoggedIn,
+          'onLogout': widget.onLogout,
+          'showMenu': widget.isLoggedIn,
+          'showConnectivityIcon': widget.isLoggedIn,
+        },
       );
     }
   }
@@ -1415,6 +1411,4 @@ class _LoginDialogState extends State<LoginDialog> {
       ],
     );
   }
-
-  // ...existing code...
 }
