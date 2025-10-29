@@ -64,6 +64,12 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
     bool lastschriftChecked = false;
     final formKey = GlobalKey<FormState>();
 
+    final kontoinhaberController = TextEditingController(
+      text: bankData?.kontoinhaber ?? '',
+    );
+    final ibanController = TextEditingController(text: bankData?.iban ?? '');
+    final bicController = TextEditingController(text: bankData?.bic ?? '');
+
     await showDialog(
       context: context,
       builder: (dialogContext) {
@@ -101,21 +107,51 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                 ),
                               ),
                               const SizedBox(height: UIConstants.spacingM),
-                              if (bankData != null) ...[
-                                ScaledText(
-                                  'Kontoinhaber: ${bankData.kontoinhaber}',
-                                  style: UIStyles.bodyStyle,
+                              TextFormField(
+                                controller: kontoinhaberController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Kontoinhaber',
+                                  border: OutlineInputBorder(),
                                 ),
-                                ScaledText(
-                                  'IBAN: ${bankData.iban}',
-                                  style: UIStyles.bodyStyle,
+                                style: UIStyles.bodyStyle,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Bitte Kontoinhaber angeben';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: UIConstants.spacingS),
+                              TextFormField(
+                                controller: ibanController,
+                                decoration: const InputDecoration(
+                                  labelText: 'IBAN',
+                                  border: OutlineInputBorder(),
                                 ),
-                                ScaledText(
-                                  'BIC: ${bankData.bic}',
-                                  style: UIStyles.bodyStyle,
+                                style: UIStyles.bodyStyle,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Bitte IBAN angeben';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: UIConstants.spacingS),
+                              TextFormField(
+                                controller: bicController,
+                                decoration: const InputDecoration(
+                                  labelText: 'BIC',
+                                  border: OutlineInputBorder(),
                                 ),
-                                const SizedBox(height: UIConstants.spacingM),
-                              ],
+                                style: UIStyles.bodyStyle,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Bitte BIC angeben';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: UIConstants.spacingM),
                               Semantics(
                                 label:
                                     'Bitte bestätigen Sie die Allgemeinen Geschäftsbedingungen (AGB).',
