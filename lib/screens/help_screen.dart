@@ -255,17 +255,23 @@ class _AccordionItemState extends State<_AccordionItem> {
     return Card(
       margin: const EdgeInsets.only(bottom: UIConstants.spacingM),
       child: ExpansionTile(
-        title: ScaledText(
-          widget.question,
-          style: const TextStyle(
-            fontSize: UIConstants.subtitleFontSize,
-            fontWeight: FontWeight.w500,
+        title: Semantics(
+          label: 'Frage: ${widget.question}',
+          child: ScaledText(
+            widget.question,
+            style: const TextStyle(
+              fontSize: UIConstants.subtitleFontSize,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         children: [
           Padding(
             padding: const EdgeInsets.all(UIConstants.spacingM),
-            child: widget.answer,
+            child: Semantics(
+              label: 'Antwort zu: ${widget.question}',
+              child: widget.answer,
+            ),
           ),
         ],
       ),

@@ -101,24 +101,34 @@ class SchulungenDetailsDialog {
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: UIConstants.spacingL,
                                             ),
-                                            child: Text(
-                                              termin.bezeichnung.isNotEmpty
-                                                  ? termin.bezeichnung
-                                                  : originalSchulungsTermin
-                                                      .bezeichnung,
-                                              style: UIStyles.dialogTitleStyle,
-                                              textAlign: TextAlign.center,
+                                            child: Semantics(
+                                              label:
+                                                  'Titel der Schulung: ${termin.bezeichnung.isNotEmpty ? termin.bezeichnung : originalSchulungsTermin.bezeichnung}',
+                                              child: Text(
+                                                termin.bezeichnung.isNotEmpty
+                                                    ? termin.bezeichnung
+                                                    : originalSchulungsTermin
+                                                        .bezeichnung,
+                                                style:
+                                                    UIStyles.dialogTitleStyle,
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(
                                             height: UIConstants.spacingM,
                                           ),
-                                          Text(
-                                            'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
-                                            style: UIStyles.bodyStyle.copyWith(
-                                              fontWeight: FontWeight.bold,
+                                          Semantics(
+                                            label:
+                                                'Freie Plätze: Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
+                                            child: Text(
+                                              'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
+                                              style: UIStyles.bodyStyle
+                                                  .copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                              textAlign: TextAlign.center,
                                             ),
-                                            textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
                                             height: UIConstants.spacingM,
@@ -149,20 +159,24 @@ class SchulungenDetailsDialog {
                                                           UIConstants
                                                               .horizontalSpacingS,
                                                           Flexible(
-                                                            child: Text(
-                                                              DateFormat(
-                                                                'dd.MM.yyyy',
-                                                                'de_DE',
-                                                              ).format(
-                                                                termin.datum,
+                                                            child: Semantics(
+                                                              label:
+                                                                  'Datum der Schulung: ${DateFormat('dd.MM.yyyy', 'de_DE').format(termin.datum)}',
+                                                              child: Text(
+                                                                DateFormat(
+                                                                  'dd.MM.yyyy',
+                                                                  'de_DE',
+                                                                ).format(
+                                                                  termin.datum,
+                                                                ),
+                                                                style:
+                                                                    UIStyles
+                                                                        .bodyStyle,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
                                                               ),
-                                                              style:
-                                                                  UIStyles
-                                                                      .bodyStyle,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
                                                             ),
                                                           ),
                                                         ],
@@ -183,15 +197,19 @@ class SchulungenDetailsDialog {
                                                           UIConstants
                                                               .horizontalSpacingS,
                                                           Flexible(
-                                                            child: Text(
-                                                              termin.ort,
-                                                              style:
-                                                                  UIStyles
-                                                                      .bodyStyle,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
+                                                            child: Semantics(
+                                                              label:
+                                                                  'Ort der Schulung: ${termin.ort}',
+                                                              child: Text(
+                                                                termin.ort,
+                                                                style:
+                                                                    UIStyles
+                                                                        .bodyStyle,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -222,16 +240,20 @@ class SchulungenDetailsDialog {
                                                           UIConstants
                                                               .horizontalSpacingS,
                                                           Flexible(
-                                                            child: Text(
-                                                              termin
-                                                                  .webGruppeLabel,
-                                                              style:
-                                                                  UIStyles
-                                                                      .bodyStyle,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
+                                                            child: Semantics(
+                                                              label:
+                                                                  'Gruppe: ${termin.webGruppeLabel}',
+                                                              child: Text(
+                                                                termin
+                                                                    .webGruppeLabel,
+                                                                style:
+                                                                    UIStyles
+                                                                        .bodyStyle,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -252,15 +274,19 @@ class SchulungenDetailsDialog {
                                                           UIConstants
                                                               .horizontalSpacingS,
                                                           Flexible(
-                                                            child: Text(
-                                                              '${termin.kosten.toStringAsFixed(2)} €',
-                                                              style:
-                                                                  UIStyles
-                                                                      .bodyStyle,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
+                                                            child: Semantics(
+                                                              label:
+                                                                  'Preis: ${termin.kosten.toStringAsFixed(2)} Euro',
+                                                              child: Text(
+                                                                '${termin.kosten.toStringAsFixed(2)} €',
+                                                                style:
+                                                                    UIStyles
+                                                                        .bodyStyle,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -283,13 +309,16 @@ class SchulungenDetailsDialog {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text(
-                                                  'Lehrgangsleiter:',
-                                                  style: UIStyles.bodyStyle
-                                                      .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                Semantics(
+                                                  label: 'Lehrgangsleiter',
+                                                  child: Text(
+                                                    'Lehrgangsleiter:',
+                                                    style: UIStyles.bodyStyle
+                                                        .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                  ),
                                                 ),
                                                 const SizedBox(
                                                   height: UIConstants.spacingXS,
@@ -307,14 +336,19 @@ class SchulungenDetailsDialog {
                                                     UIConstants
                                                         .horizontalSpacingS,
                                                     Flexible(
-                                                      child: Text(
-                                                        lehrgangsleiterMail,
-                                                        style:
-                                                            UIStyles.bodyStyle,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                        maxLines: 1,
+                                                      child: Semantics(
+                                                        label:
+                                                            'E-Mail des Lehrgangsleiters: $lehrgangsleiterMail',
+                                                        child: Text(
+                                                          lehrgangsleiterMail,
+                                                          style:
+                                                              UIStyles
+                                                                  .bodyStyle,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -336,14 +370,19 @@ class SchulungenDetailsDialog {
                                                     UIConstants
                                                         .horizontalSpacingS,
                                                     Flexible(
-                                                      child: Text(
-                                                        lehrgangsleiterTel,
-                                                        style:
-                                                            UIStyles.bodyStyle,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                        maxLines: 1,
+                                                      child: Semantics(
+                                                        label:
+                                                            'Telefon des Lehrgangsleiters: $lehrgangsleiterTel',
+                                                        child: Text(
+                                                          lehrgangsleiterTel,
+                                                          style:
+                                                              UIStyles
+                                                                  .bodyStyle,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -362,28 +401,32 @@ class SchulungenDetailsDialog {
                                       padding: const EdgeInsets.all(
                                         UIConstants.spacingM,
                                       ),
-                                      child:
-                                          termin.lehrgangsinhaltHtml.isNotEmpty
-                                              ? Html(
-                                                data:
-                                                    termin.lehrgangsinhaltHtml,
-                                                style: {
-                                                  'body': Style(
-                                                    fontSize: FontSize(
-                                                      15.0,
-                                                    ), // Increase font size as needed
-                                                  ),
-                                                },
-                                              )
-                                              : termin
-                                                  .lehrgangsinhalt
-                                                  .isNotEmpty
-                                              ? Text(termin.lehrgangsinhalt)
-                                              : termin.bemerkung.isNotEmpty
-                                              ? Text(termin.bemerkung)
-                                              : const Text(
-                                                'Keine Beschreibung verfügbar.',
-                                              ),
+                                      child: Semantics(
+                                        label: 'Beschreibung der Schulung',
+                                        child:
+                                            termin
+                                                    .lehrgangsinhaltHtml
+                                                    .isNotEmpty
+                                                ? Html(
+                                                  data:
+                                                      termin
+                                                          .lehrgangsinhaltHtml,
+                                                  style: {
+                                                    'body': Style(
+                                                      fontSize: FontSize(15.0),
+                                                    ),
+                                                  },
+                                                )
+                                                : termin
+                                                    .lehrgangsinhalt
+                                                    .isNotEmpty
+                                                ? Text(termin.lehrgangsinhalt)
+                                                : termin.bemerkung.isNotEmpty
+                                                ? Text(termin.bemerkung)
+                                                : const Text(
+                                                  'Keine Beschreibung verfügbar.',
+                                                ),
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: UIConstants.spacingXL,
@@ -401,40 +444,52 @@ class SchulungenDetailsDialog {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   // "Schließen" FAB on top
-                                  FloatingActionButton(
-                                    heroTag: 'dialogCloseFab',
-                                    tooltip: 'Schließen',
-                                    backgroundColor:
-                                        UIConstants.defaultAppColor,
-                                    onPressed:
-                                        () => Navigator.of(context).pop(),
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: UIConstants.whiteColor,
+                                  Semantics(
+                                    label: 'Dialog schließen',
+                                    child: FloatingActionButton(
+                                      heroTag: 'dialogCloseFab',
+                                      tooltip: 'Schließen',
+                                      backgroundColor:
+                                          UIConstants.defaultAppColor,
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: UIConstants.whiteColor,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: UIConstants.spacingM),
                                   // "Buchen" FAB below
-                                  FloatingActionButton(
-                                    heroTag: 'dialogBookFab',
-                                    tooltip:
-                                        cannotBook ? 'Nicht buchbar' : 'Buchen',
-                                    backgroundColor:
+                                  Semantics(
+                                    label:
                                         cannotBook
-                                            ? UIConstants.cancelButtonBackground
-                                            : UIConstants.defaultAppColor,
-                                    onPressed:
-                                        cannotBook
-                                            ? null
-                                            : () {
-                                              Navigator.of(context).pop();
-                                              if (onBookingPressed != null) {
-                                                onBookingPressed();
-                                              }
-                                            },
-                                    child: const Icon(
-                                      Icons.event_available,
-                                      color: UIConstants.whiteColor,
+                                            ? 'Nicht buchbar'
+                                            : 'Schulung buchen',
+                                    child: FloatingActionButton(
+                                      heroTag: 'dialogBookFab',
+                                      tooltip:
+                                          cannotBook
+                                              ? 'Nicht buchbar'
+                                              : 'Buchen',
+                                      backgroundColor:
+                                          cannotBook
+                                              ? UIConstants
+                                                  .cancelButtonBackground
+                                              : UIConstants.defaultAppColor,
+                                      onPressed:
+                                          cannotBook
+                                              ? null
+                                              : () {
+                                                Navigator.of(context).pop();
+                                                if (onBookingPressed != null) {
+                                                  onBookingPressed();
+                                                }
+                                              },
+                                      child: const Icon(
+                                        Icons.event_available,
+                                        color: UIConstants.whiteColor,
+                                      ),
                                     ),
                                   ),
                                 ],
