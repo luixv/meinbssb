@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
-import '/screens/app_menu.dart';
+import 'menu/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';

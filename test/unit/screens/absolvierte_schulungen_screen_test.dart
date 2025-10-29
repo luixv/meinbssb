@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:meinbssb/screens/absolvierte_schulungen_screen.dart';
+import 'package:meinbssb/screens/schulungen/absolvierte_schulungen_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';

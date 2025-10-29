@@ -13,7 +13,7 @@ import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
 
-import '/screens/agb_screen.dart';
+import 'agb/agb_screen.dart';
 
 import 'schulungen/schulungen_search_screen.dart';
 import 'schulungen/schulungen_register_person_dialog.dart';

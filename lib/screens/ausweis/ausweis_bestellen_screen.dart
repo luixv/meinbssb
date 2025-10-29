@@ -4,7 +4,7 @@ import '/constants/ui_constants.dart';
 import '/constants/messages.dart';
 import '/constants/ui_styles.dart';
 import '/screens/base_screen_layout.dart';
-import '/screens/agb_ausweis_screen.dart';
+import '../agb/agb_ausweis_screen.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
@@ -14,7 +14,7 @@ import '/widgets/dialog_fabs.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import '/models/passdaten_akzept_or_aktiv_data.dart';
-import '/screens/ausweis_bestellen_success_screen.dart';
+import 'ausweis_bestellen_success_screen.dart';
 
 class AusweisBestellenScreen extends StatefulWidget {
   const AusweisBestellenScreen({

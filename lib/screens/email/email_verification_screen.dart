@@ -4,8 +4,8 @@ import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
-import '/screens/email_verification_success_screen.dart';
-import '/screens/email_verification_fail_screen.dart';
+import 'email_verification_success_screen.dart';
+import 'email_verification_fail_screen.dart';
 import '/models/contact_data.dart';
 
 class EmailVerificationScreen extends StatefulWidget {

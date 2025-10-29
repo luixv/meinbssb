@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '/screens/app_menu.dart';
+import 'menu/app_menu.dart';
 import '/screens/connectivity_icon.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';

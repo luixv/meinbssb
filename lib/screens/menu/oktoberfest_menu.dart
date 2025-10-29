@@ -7,8 +7,8 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import '/screens/logo_widget.dart';
 import '/widgets/scaled_text.dart';
 import '/models/user_data.dart';
-import '/screens/oktoberfest_results_screen.dart';
-import '/screens/oktoberfest_gewinn_screen.dart';
+import '../oktoberfest/oktoberfest_results_screen.dart';
+import '../oktoberfest/oktoberfest_gewinn_screen.dart';
 //import 'oktoberfest_eintritt_festzelt_screen.dart';
 
 import '/services/api_service.dart';

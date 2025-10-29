@@ -7,12 +7,12 @@ import '/models/user_data.dart';
 
 import '/screens/personal_data_screen.dart';
 import '/screens/contact_data_screen.dart';
-import '/screens/bank_data_screen.dart';
+import '../bankdata/bank_data_screen.dart';
 import '/screens/change_password_screen.dart';
-import '/screens/absolvierte_schulungen_screen.dart';
+import '/screens/schulungen/absolvierte_schulungen_screen.dart';
 import '/screens/logo_widget.dart';
 import '/screens/personal_pict_upload_screen.dart';
-import '/screens/ausweis_bestellen_screen.dart';
+import '../ausweis/ausweis_bestellen_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart' as intl;
 
-import 'package:meinbssb/screens/app_menu.dart';
+import 'package:meinbssb/screens/menu/app_menu.dart';
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/screens/password_reset_screen.dart';
 

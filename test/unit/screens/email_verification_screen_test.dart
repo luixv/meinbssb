@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/email_verification_screen.dart';
+import 'package:meinbssb/screens/email/email_verification_screen.dart';
 import '../helpers/test_helper.dart';
 
 void main() {

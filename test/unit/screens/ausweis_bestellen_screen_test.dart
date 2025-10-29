@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
-import 'package:meinbssb/screens/ausweis_bestellen_screen.dart';
+import 'package:meinbssb/screens/ausweis/ausweis_bestellen_screen.dart';
 // ...existing code...
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';

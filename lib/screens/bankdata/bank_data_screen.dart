@@ -9,7 +9,7 @@ import 'package:meinbssb/services/api/bank_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/bank_data_success_screen.dart';
+import 'package:meinbssb/screens/bankdata/bank_data_success_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 
 class BankDataScreen extends StatefulWidget {

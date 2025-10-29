@@ -12,7 +12,7 @@ import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
-import '/screens/oktoberfest_screen.dart';
+import 'oktoberfest_menu.dart';
 
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';

@@ -5,7 +5,7 @@ import '/services/api_service.dart';
 
 import '/models/gewinn_data.dart';
 import '/constants/ui_styles.dart';
-import 'base_screen_layout.dart';
+import '../base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/constants/ui_constants.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/oktoberfest_gewinn_screen.dart';
+import 'package:meinbssb/screens/oktoberfest/oktoberfest_gewinn_screen.dart';
 import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
