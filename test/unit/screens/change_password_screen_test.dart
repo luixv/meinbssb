@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:meinbssb/screens/change_password_screen.dart';
+import 'package:meinbssb/screens/password/change_password_screen.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/user_data.dart';
 import '../helpers/test_helper.dart';

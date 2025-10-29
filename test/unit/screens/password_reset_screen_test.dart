@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 
-import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_screen.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';

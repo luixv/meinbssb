@@ -11,8 +11,8 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/screens/password_reset_success_screen.dart';
-import 'package:meinbssb/screens/password_reset_fail_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_success_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_fail_screen.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({

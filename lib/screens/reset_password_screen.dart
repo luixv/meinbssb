@@ -4,8 +4,8 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/password_reset_fail_screen.dart';
-import 'package:meinbssb/screens/password_reset_success_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_fail_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_success_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({

@@ -5,7 +5,7 @@ import 'package:meinbssb/constants/messages.dart';
 
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/change_password_success_screen.dart';
+import 'package:meinbssb/screens/password/change_password_success_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';

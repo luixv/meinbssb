@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
 import 'package:meinbssb/screens/login_screen.dart';
-import 'package:meinbssb/screens/password_reset_screen.dart';
+import 'package:meinbssb/screens/password/password_reset_screen.dart';
 import 'package:meinbssb/screens/registration_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
