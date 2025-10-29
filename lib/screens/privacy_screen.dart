@@ -37,18 +37,25 @@ class PrivacyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Main Title
-                  const Text(
-                    'Datenschutzerklärung',
-                    style: UIStyles.headerStyle,
+                  Semantics(
+                    header: true,
+                    label: 'Datenschutzerklärung Hauptüberschrift',
+                    child: const Text(
+                      'Datenschutzerklärung',
+                      style: UIStyles.headerStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingM,
                   const Divider(),
                   UIConstants.verticalSpacingM,
-                  // Verantwortlicher
-                  const Text(
-                    'Verantwortlicher und Datenschutzbeauftragter',
-                    style: UIStyles.sectionTitleStyle,
+                  Semantics(
+                    header: true,
+                    label:
+                        'Verantwortlicher und Datenschutzbeauftragter Abschnitt',
+                    child: const Text(
+                      'Verantwortlicher und Datenschutzbeauftragter',
+                      style: UIStyles.sectionTitleStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingS,
                   _addressBlock([
@@ -79,7 +86,14 @@ class PrivacyScreen extends StatelessWidget {
                   ),
                   UIConstants.verticalSpacingM,
                   // Hosting
-                  const Text('Hosting', style: UIStyles.sectionTitleStyle),
+                  Semantics(
+                    header: true,
+                    label: 'Hosting Abschnitt',
+                    child: const Text(
+                      'Hosting',
+                      style: UIStyles.sectionTitleStyle,
+                    ),
+                  ),
                   UIConstants.verticalSpacingXS,
                   _addressBlock([
                     'Unsere in Anspruch genommenen Hosting-Leistungen, um den Betrieb der Homepage sicherzustellen, umfassen folgende Leistungen:',
@@ -91,12 +105,22 @@ class PrivacyScreen extends StatelessWidget {
                   ]),
                   UIConstants.verticalSpacingM,
                   // Welche Daten werden erfasst und wie?
-                  const Text(
-                    'Welche Daten werden erfasst und wie?',
-                    style: UIStyles.sectionTitleStyle,
+                  Semantics(
+                    header: true,
+                    label: 'Welche Daten werden erfasst und wie Abschnitt',
+                    child: const Text(
+                      'Welche Daten werden erfasst und wie?',
+                      style: UIStyles.sectionTitleStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingXS,
-                  const Text('Server-Log-Dateien', style: UIStyles.bodyStyle),
+                  Semantics(
+                    label: 'Server-Log-Dateien',
+                    child: const Text(
+                      'Server-Log-Dateien',
+                      style: UIStyles.bodyStyle,
+                    ),
+                  ),
                   _bulletList([
                     'Browsertyp und Browserversion',
                     'verwendetes Betriebssystem',
@@ -110,10 +134,16 @@ class PrivacyScreen extends StatelessWidget {
                     style: UIStyles.bodyStyle,
                   ),
                   UIConstants.verticalSpacingXS,
-                  const Text('Cookies', style: UIStyles.bodyStyle),
-                  const Text(
-                    'Die Internetseiten verwendet so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren. Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen. Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.',
-                    style: UIStyles.bodyStyle,
+                  Semantics(
+                    label: 'Cookies Abschnitt',
+                    child: const Text('Cookies', style: UIStyles.bodyStyle),
+                  ),
+                  Semantics(
+                    label: 'Informationen zu Cookies',
+                    child: const Text(
+                      'Die Internetseiten verwendet so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren. Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen. Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.',
+                      style: UIStyles.bodyStyle,
+                    ),
                   ),
                   _bulletList([
                     'Session-Cookies: Werden nach Ende Ihres Besuchs automatisch gelöscht.',
@@ -138,14 +168,21 @@ class PrivacyScreen extends StatelessWidget {
                   ),
                   UIConstants.verticalSpacingM,
                   // Wofür werden erhobene Daten genutzt?
-                  const Text(
-                    'Wofür werden erhobene Daten genutzt?',
-                    style: UIStyles.sectionTitleStyle,
+                  Semantics(
+                    header: true,
+                    label: 'Wofür werden erhobene Daten genutzt Abschnitt',
+                    child: const Text(
+                      'Wofür werden erhobene Daten genutzt?',
+                      style: UIStyles.sectionTitleStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingXS,
-                  const Text(
-                    'Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden.',
-                    style: UIStyles.bodyStyle,
+                  Semantics(
+                    label: 'Nutzung der erhobenen Daten',
+                    child: const Text(
+                      'Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden.',
+                      style: UIStyles.bodyStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingXS,
                   const Text(
@@ -183,14 +220,22 @@ class PrivacyScreen extends StatelessWidget {
                   ),
                   UIConstants.verticalSpacingM,
                   // Datenübermittlung an Dritte und Drittstaaten
-                  const Text(
-                    'Datenübermittlung an Dritte und Drittstaaten',
-                    style: UIStyles.sectionTitleStyle,
+                  Semantics(
+                    header: true,
+                    label:
+                        'Datenübermittlung an Dritte und Drittstaaten Abschnitt',
+                    child: const Text(
+                      'Datenübermittlung an Dritte und Drittstaaten',
+                      style: UIStyles.sectionTitleStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingXS,
-                  const Text(
-                    'Eine Übermittlung Ihrer personenbezogenen Daten an Dritte findet nur statt, wenn dies gesetzlich erlaubt ist oder Sie eingewilligt haben. Eine Übermittlung in Drittstaaten außerhalb der EU/des EWR erfolgt nur, wenn dies zur Vertragserfüllung erforderlich ist, gesetzlich vorgeschrieben ist oder Sie uns Ihre Einwilligung erteilt haben.',
-                    style: UIStyles.bodyStyle,
+                  Semantics(
+                    label: 'Informationen zur Datenübermittlung',
+                    child: const Text(
+                      'Eine Übermittlung Ihrer personenbezogenen Daten an Dritte findet nur statt, wenn dies gesetzlich erlaubt ist oder Sie eingewilligt haben. Eine Übermittlung in Drittstaaten außerhalb der EU/des EWR erfolgt nur, wenn dies zur Vertragserfüllung erforderlich ist, gesetzlich vorgeschrieben ist oder Sie uns Ihre Einwilligung erteilt haben.',
+                      style: UIStyles.bodyStyle,
+                    ),
                   ),
                   UIConstants.verticalSpacingM,
                   // Speicherdauer und Datenlöschung
