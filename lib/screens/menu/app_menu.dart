@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
-import '../password/password_reset_screen.dart';
+import '/screens/password/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
-import '../ausweis/ausweis_screen.dart';
-import '../startrechte/starting_rights_screen.dart';
+import '/screens/ausweis/ausweis_screen.dart';
+import '/screens/startrechte/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';

@@ -7,8 +7,8 @@ import '/models/user_data.dart';
 
 import '/screens/logo_widget.dart';
 import '/screens/ausweis/ausweis_bestellen_screen.dart';
-import '../ausweis/ausweis_screen.dart';
-import '../startrechte/starting_rights_screen.dart';
+import '/screens/ausweis/ausweis_screen.dart';
+import '/screens/startrechte/starting_rights_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
