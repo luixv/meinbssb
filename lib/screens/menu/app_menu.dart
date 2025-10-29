@@ -6,8 +6,8 @@ import '/constants/ui_styles.dart';
 
 import '../password/password_reset_screen.dart';
 import '/screens/registration_screen.dart';
-import '/screens/schuetzenausweis_screen.dart';
-import '/screens/starting_rights_screen.dart';
+import '../ausweis/ausweis_screen.dart';
+import '../startrechte/starting_rights_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
 import '/screens/settings_screen.dart';

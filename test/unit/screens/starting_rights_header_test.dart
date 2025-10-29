@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:meinbssb/screens/starting_rights_header.dart';
+import 'package:meinbssb/screens/startrechte/starting_rights_header.dart';
 import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/providers/font_size_provider.dart'; // use real provider
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/starting_rights_screen.dart';
+import 'package:meinbssb/screens/startrechte/starting_rights_screen.dart';
 
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
