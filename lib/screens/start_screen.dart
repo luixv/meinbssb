@@ -183,6 +183,7 @@ class StartScreenState extends State<StartScreen> {
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.cancelButtonText,
+                              fontSize: UIConstants.buttonFontSize,
                             ),
                           ),
                         ),
@@ -205,6 +206,7 @@ class StartScreenState extends State<StartScreen> {
                             'Abmelden',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
+                              fontSize: UIConstants.buttonFontSize,
                             ),
                           ),
                         ),

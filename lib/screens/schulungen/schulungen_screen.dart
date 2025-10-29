@@ -1369,6 +1369,7 @@ class _LoginDialogState extends State<LoginDialog> {
                         'Abbrechen',
                         style: UIStyles.dialogButtonTextStyle.copyWith(
                           color: UIConstants.cancelButtonText,
+                          fontSize: UIConstants.buttonFontSize,
                         ),
                       ),
                     ],
@@ -1399,6 +1400,7 @@ class _LoginDialogState extends State<LoginDialog> {
                             'Login',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.submitButtonText,
+                              fontSize: UIConstants.buttonFontSize,
                             ),
                           ),
                     ],
