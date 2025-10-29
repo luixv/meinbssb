@@ -299,8 +299,6 @@ flutter pub get
 flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
 apksigner verify --verbose build/app/outputs/flutter-apk/app-release.apk
 
-
-
 ## Notes
 
 - Ensure `init-postgrest.sql` creates necessary schema and roles (especially `web_anon`) for PostgREST.
