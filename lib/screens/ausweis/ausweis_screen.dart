@@ -73,6 +73,7 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                     child: Card(
                       key: const ValueKey<String>('schuetzenausweis'),
                       margin: const EdgeInsets.symmetric(vertical: 16),
+                      color: UIConstants.backgroundColor,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Center(
