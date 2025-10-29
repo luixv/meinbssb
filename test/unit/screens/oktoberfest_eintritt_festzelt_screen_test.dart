@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:meinbssb/screens/oktoberfest_eintritt_festzelt_screen.dart';
+import 'package:meinbssb/screens/oktoberfest/oktoberfest_eintritt_festzelt_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';

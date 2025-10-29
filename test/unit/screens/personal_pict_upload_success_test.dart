@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/personal_pict_upload_success.dart';
+import 'package:meinbssb/screens/menu/personal/personal_pict_upload_success.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 

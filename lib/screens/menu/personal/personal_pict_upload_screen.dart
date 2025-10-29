@@ -7,11 +7,11 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
-import 'menu/app_menu.dart';
+import '/screens/menu/app_menu.dart';
 import '/services/api_service.dart';
 import '/services/core/logger_service.dart';
 import '/providers/font_size_provider.dart';
-import '/screens/personal_pict_upload_success.dart';
+import 'personal_pict_upload_success.dart';
 import '/screens/connectivity_icon.dart';
 
 class PersonalPictUploadScreen extends StatefulWidget {

@@ -152,7 +152,6 @@ class FakeDrawerNavigator implements DrawerNavigator {
   bool profileCalled = false;
   bool trainingCalled = false;
   bool schutzAusweisCalled = false;
-  bool startingRightsCalled = false;
   bool oktoberfestCalled = false;
   bool impressumCalled = false;
   bool settingsCalled = false;
@@ -184,12 +183,6 @@ class FakeDrawerNavigator implements DrawerNavigator {
   @override
   void schuetzenausweis(BuildContext context) {
     schutzAusweisCalled = true;
-    _close(context);
-  }
-
-  @override
-  void startingRights(BuildContext context) {
-    startingRightsCalled = true;
     _close(context);
   }
 
@@ -338,7 +331,6 @@ void main() {
         'Profil',
         'Aus- und Weiterbildung',
         'Schützenausweis',
-        'Startrechte',
         'Oktoberfest',
         'Impressum',
         'Einstellungen',
@@ -446,24 +438,14 @@ void main() {
       expect(nav.trainingCalled, isTrue);
     });
 
-    testWidgets('Schützenausweis triggers navigator.schuetzenausweis', (
-      tester,
-    ) async {
-      final nav = await pumpAndOpen(tester);
+    testWidgets('Schützenausweis opens Ausweis menu screen', (tester) async {
+      await tester.pumpWidget(baseLoggedIn());
+      await openDrawer(tester);
       await ensureVisible(tester, 'Schützenausweis');
       await tester.tap(find.text('Schützenausweis'));
       await tester.pumpAndSettle();
-      expect(nav.schutzAusweisCalled, isTrue);
-    });
-
-    testWidgets('Startrechte triggers navigator.startingRights', (
-      tester,
-    ) async {
-      final nav = await pumpAndOpen(tester);
-      await ensureVisible(tester, 'Startrechte');
-      await tester.tap(find.text('Startrechte'));
-      await tester.pumpAndSettle();
-      expect(nav.startingRightsCalled, isTrue);
+      // Check for the Ausweis menu header text
+      expect(find.text('Ausweis'), findsOneWidget);
     });
 
     testWidgets('Oktoberfest triggers navigator.oktoberfest', (tester) async {
@@ -584,13 +566,6 @@ void main() {
     ) async {
       await pumpAndInvoke(tester, (ctx, nav) => nav.schuetzenausweis(ctx));
       expect(find.text('AUSWEIS'), findsOneWidget);
-    });
-
-    testWidgets('startingRights() pushes Startrechte placeholder', (
-      tester,
-    ) async {
-      await pumpAndInvoke(tester, (ctx, nav) => nav.startingRights(ctx));
-      expect(find.text('STARTRECHTE'), findsOneWidget);
     });
 
     testWidgets('oktoberfest() pushes Oktoberfest placeholder', (tester) async {
