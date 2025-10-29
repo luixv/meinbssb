@@ -256,10 +256,16 @@ class ImpressumScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pop(),
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.close, color: Colors.white),
+      floatingActionButton: Semantics(
+        label: 'Impressum schließen',
+        hint:
+            'Tippen, um das Impressum zu schließen und zur vorherigen Seite zurückzukehren',
+        button: true,
+        child: FloatingActionButton(
+          onPressed: () => Navigator.of(context).pop(),
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.close, color: Colors.white),
+        ),
       ),
     );
   }

@@ -192,39 +192,47 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           ),
                         ),
                       ),
-                    _buildPasswordField(
-                      controller: _currentPasswordController,
-                      label: 'Aktuelles Passwort',
-                      isVisible: _isCurrentPasswordVisible,
-                      onToggleVisibility: () {
-                        setState(() {
-                          _isCurrentPasswordVisible =
-                              !_isCurrentPasswordVisible;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte geben Sie Ihr aktuelles Passwort ein';
-                        }
-                        return null;
-                      },
-                      fontSizeProvider: fontSizeProvider,
-                      eyeIconColor: UIConstants.textColor,
+                    Semantics(
+                      label: 'Eingabefeld für aktuelles Passwort',
+                      textField: true,
+                      child: _buildPasswordField(
+                        controller: _currentPasswordController,
+                        label: 'Aktuelles Passwort',
+                        isVisible: _isCurrentPasswordVisible,
+                        onToggleVisibility: () {
+                          setState(() {
+                            _isCurrentPasswordVisible =
+                                !_isCurrentPasswordVisible;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte geben Sie Ihr aktuelles Passwort ein';
+                          }
+                          return null;
+                        },
+                        fontSizeProvider: fontSizeProvider,
+                        eyeIconColor: UIConstants.textColor,
+                      ),
                     ),
                     const SizedBox(height: UIConstants.spacingM),
-                    _buildPasswordField(
-                      controller: _newPasswordController,
-                      label: 'Neues Passwort',
-                      isVisible: _isNewPasswordVisible,
-                      onToggleVisibility: () {
-                        setState(() {
-                          _isNewPasswordVisible = !_isNewPasswordVisible;
-                        });
-                      },
-                      validator: _validatePassword,
-                      fontSizeProvider: fontSizeProvider,
-                      eyeIconColor: UIConstants.textColor,
-                      onChanged: _checkStrength,
+                    Semantics(
+                      label: 'Eingabefeld für neues Passwort',
+                      textField: true,
+                      child: _buildPasswordField(
+                        controller: _newPasswordController,
+                        label: 'Neues Passwort',
+                        isVisible: _isNewPasswordVisible,
+                        onToggleVisibility: () {
+                          setState(() {
+                            _isNewPasswordVisible = !_isNewPasswordVisible;
+                          });
+                        },
+                        validator: _validatePassword,
+                        fontSizeProvider: fontSizeProvider,
+                        eyeIconColor: UIConstants.textColor,
+                        onChanged: _checkStrength,
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(
@@ -258,27 +266,31 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ],
                     ),
                     const SizedBox(height: UIConstants.spacingM),
-                    _buildPasswordField(
-                      controller: _confirmPasswordController,
-                      label: 'Neues Passwort wiederholen',
-                      isVisible: _isConfirmPasswordVisible,
-                      onToggleVisibility: () {
-                        setState(() {
-                          _isConfirmPasswordVisible =
-                              !_isConfirmPasswordVisible;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte wiederholen Sie das neue Passwort';
-                        }
-                        if (value != _newPasswordController.text) {
-                          return 'Die Passwörter stimmen nicht überein';
-                        }
-                        return null;
-                      },
-                      fontSizeProvider: fontSizeProvider,
-                      eyeIconColor: UIConstants.textColor,
+                    Semantics(
+                      label: 'Eingabefeld für Passwort-Wiederholung',
+                      textField: true,
+                      child: _buildPasswordField(
+                        controller: _confirmPasswordController,
+                        label: 'Neues Passwort wiederholen',
+                        isVisible: _isConfirmPasswordVisible,
+                        onToggleVisibility: () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte wiederholen Sie das neue Passwort';
+                          }
+                          if (value != _newPasswordController.text) {
+                            return 'Die Passwörter stimmen nicht überein';
+                          }
+                          return null;
+                        },
+                        fontSizeProvider: fontSizeProvider,
+                        eyeIconColor: UIConstants.textColor,
+                      ),
                     ),
                   ],
                 ),

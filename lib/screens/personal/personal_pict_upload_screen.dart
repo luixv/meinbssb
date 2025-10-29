@@ -613,12 +613,17 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                 ),
               ],
             ),
-            child: const Padding(
-              padding: EdgeInsets.all(UIConstants.spacingXS),
-              child: Icon(
-                Icons.add_a_photo_outlined,
-                size: UIConstants.iconSizeM,
-                color: UIConstants.mydarkGreyColor,
+            child: Semantics(
+              label: 'Profilbild hochladen',
+              hint: 'Tippen, um ein neues Profilbild auszuwählen',
+              image: true,
+              child: const Padding(
+                padding: EdgeInsets.all(UIConstants.spacingXS),
+                child: Icon(
+                  Icons.add_a_photo_outlined,
+                  size: UIConstants.iconSizeM,
+                  color: UIConstants.mydarkGreyColor,
+                ),
               ),
             ),
           ),

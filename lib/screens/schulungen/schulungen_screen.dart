@@ -634,17 +634,21 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 right: UIConstants.spacingM,
                                 child: DialogFABs(
                                   children: [
-                                    FloatingActionButton(
-                                      heroTag: 'cancelBookingFab',
-                                      mini: true,
-                                      tooltip: 'Abbrechen',
-                                      backgroundColor:
-                                          UIConstants.defaultAppColor,
-                                      onPressed:
-                                          () => Navigator.of(context).pop(),
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: UIConstants.whiteColor,
+                                    Semantics(
+                                      button: true,
+                                      label: 'Buchung abbrechen',
+                                      child: FloatingActionButton(
+                                        heroTag: 'cancelBookingFab',
+                                        mini: true,
+                                        tooltip: 'Abbrechen',
+                                        backgroundColor:
+                                            UIConstants.defaultAppColor,
+                                        onPressed:
+                                            () => Navigator.of(context).pop(),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: UIConstants.whiteColor,
+                                        ),
                                       ),
                                     ),
                                     Semantics(

@@ -42,10 +42,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => RegistrationFailScreen(
-          message: message,
-          userData: null,
-        ),
+        builder:
+            (_) => RegistrationFailScreen(message: message, userData: null),
       ),
     );
   }
@@ -158,10 +156,11 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => RegistrationSuccessScreen(
-            message: result['RESULTMESSAGE'],
-            userData: null,
-          ),
+          builder:
+              (_) => RegistrationSuccessScreen(
+                message: result['RESULTMESSAGE'],
+                userData: null,
+              ),
         ),
       );
     } catch (e) {
@@ -197,8 +196,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
                   child: ScaledText(
                     _error!,
-                    style: UIStyles.errorStyle
-                        .copyWith(color: UIConstants.errorColor),
+                    style: UIStyles.errorStyle.copyWith(
+                      color: UIConstants.errorColor,
+                    ),
                   ),
                 ),
               if (_success != null)
@@ -206,8 +206,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
                   child: ScaledText(
                     _success!,
-                    style: UIStyles.successStyle
-                        .copyWith(color: UIConstants.successColor),
+                    style: UIStyles.successStyle.copyWith(
+                      color: UIConstants.successColor,
+                    ),
                   ),
                 ),
               const ScaledText(
@@ -215,26 +216,32 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 style: UIStyles.bodyStyle,
               ),
               const SizedBox(height: UIConstants.spacingS),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: !_showPassword,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Neues Passwort',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showPassword ? Icons.visibility_off : Icons.visibility,
+              Semantics(
+                label: 'Eingabefeld für neues Passwort',
+                textField: true,
+                child: TextFormField(
+                  controller: _passwordController,
+                  obscureText: !_showPassword,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Neues Passwort',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showPassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed:
+                          () => setState(() => _showPassword = !_showPassword),
                     ),
-                    onPressed: () =>
-                        setState(() => _showPassword = !_showPassword),
                   ),
+                  style: UIStyles.formValueStyle,
+                  validator: _validatePassword,
+                  onChanged: _checkStrength,
                 ),
-                style: UIStyles.formValueStyle,
-                validator: _validatePassword,
-                onChanged: _checkStrength,
               ),
               const Padding(
-                padding:
-                    EdgeInsets.only(top: 4.0, bottom: UIConstants.spacingS),
+                padding: EdgeInsets.only(
+                  top: 4.0,
+                  bottom: UIConstants.spacingS,
+                ),
                 child: ScaledText(
                   'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
                   style: UIStyles.formLabelStyle,
@@ -255,29 +262,36 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   const SizedBox(width: UIConstants.spacingS),
                   ScaledText(
                     _strengthLabel(_strength),
-                    style: UIStyles.bodyStyle
-                        .copyWith(color: _strengthColor(_strength)),
+                    style: UIStyles.bodyStyle.copyWith(
+                      color: _strengthColor(_strength),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: UIConstants.spacingM),
-              TextFormField(
-                controller: _confirmController,
-                obscureText: !_showConfirm,
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText: 'Passwort wiederholen',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showConfirm ? Icons.visibility_off : Icons.visibility,
+              Semantics(
+                label: 'Eingabefeld für Passwort-Wiederholung',
+                textField: true,
+                child: TextFormField(
+                  controller: _confirmController,
+                  obscureText: !_showConfirm,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Passwort wiederholen',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showConfirm ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed:
+                          () => setState(() => _showConfirm = !_showConfirm),
                     ),
-                    onPressed: () =>
-                        setState(() => _showConfirm = !_showConfirm),
                   ),
+                  style: UIStyles.formValueStyle,
+                  validator:
+                      (v) =>
+                          v != _passwordController.text
+                              ? 'Passwörter stimmen nicht überein'
+                              : null,
                 ),
-                style: UIStyles.formValueStyle,
-                validator: (v) => v != _passwordController.text
-                    ? 'Passwörter stimmen nicht überein'
-                    : null,
               ),
               const SizedBox(height: 20),
               SizedBox(

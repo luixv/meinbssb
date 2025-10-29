@@ -548,68 +548,85 @@ class _BankDataDialogState extends State<BankDataDialog> {
                               style: UIStyles.subtitleStyle,
                             ),
                             const SizedBox(height: UIConstants.spacingM),
-                            TextFormField(
-                              controller: _kontoinhaberController,
-                              decoration: UIStyles.formInputDecoration.copyWith(
-                                labelText: 'Kontoinhaber',
+                            Semantics(
+                              label: 'Kontoinhaber Eingabefeld',
+                              textField: true,
+                              child: TextFormField(
+                                controller: _kontoinhaberController,
+                                decoration: UIStyles.formInputDecoration
+                                    .copyWith(labelText: 'Kontoinhaber'),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Kontoinhaber ist erforderlich';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Kontoinhaber ist erforderlich';
-                                }
-                                return null;
-                              },
                             ),
                             const SizedBox(height: UIConstants.spacingM),
                             Row(
                               children: [
                                 Expanded(
-                                  child: TextFormField(
-                                    controller: _ibanController,
-                                    decoration: UIStyles.formInputDecoration
-                                        .copyWith(labelText: 'IBAN'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'IBAN ist erforderlich';
-                                      }
-                                      return null;
-                                    },
+                                  child: Semantics(
+                                    label: 'IBAN Eingabefeld',
+                                    textField: true,
+                                    child: TextFormField(
+                                      controller: _ibanController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(labelText: 'IBAN'),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'IBAN ist erforderlich';
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: UIConstants.spacingM),
                                 Expanded(
-                                  child: TextFormField(
-                                    controller: _bicController,
-                                    decoration: UIStyles.formInputDecoration
-                                        .copyWith(
-                                          labelText:
-                                              _isBicRequired(
-                                                    _ibanController.text.trim(),
-                                                  )
-                                                  ? 'BIC *'
-                                                  : 'BIC (optional)',
-                                        ),
-                                    validator: (value) {
-                                      final iban =
-                                          _ibanController.text
-                                              .trim()
-                                              .toUpperCase();
-                                      final bic = value?.trim() ?? '';
-                                      if (_isBicRequired(iban)) {
-                                        if (bic.isEmpty) {
-                                          return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                  child: Semantics(
+                                    label:
+                                        _isBicRequired(
+                                              _ibanController.text.trim(),
+                                            )
+                                            ? 'BIC Eingabefeld, Pflichtfeld für nicht-deutsche IBANs'
+                                            : 'BIC Eingabefeld, optional',
+                                    textField: true,
+                                    child: TextFormField(
+                                      controller: _bicController,
+                                      decoration: UIStyles.formInputDecoration
+                                          .copyWith(
+                                            labelText:
+                                                _isBicRequired(
+                                                      _ibanController.text
+                                                          .trim(),
+                                                    )
+                                                    ? 'BIC *'
+                                                    : 'BIC (optional)',
+                                          ),
+                                      validator: (value) {
+                                        final iban =
+                                            _ibanController.text
+                                                .trim()
+                                                .toUpperCase();
+                                        final bic = value?.trim() ?? '';
+                                        if (_isBicRequired(iban)) {
+                                          if (bic.isEmpty) {
+                                            return 'BIC ist erforderlich für nicht-deutsche IBANs';
+                                          }
+                                          if (!_isBicValid(bic)) {
+                                            return 'BIC ist ungültig.';
+                                          }
+                                        } else {
+                                          if (bic.isNotEmpty &&
+                                              !_isBicValid(bic)) {
+                                            return 'BIC ist ungültig.';
+                                          }
                                         }
-                                        if (!_isBicValid(bic)) {
-                                          return 'BIC ist ungültig.';
-                                        }
-                                      } else {
-                                        if (bic.isNotEmpty &&
-                                            !_isBicValid(bic)) {
-                                          return 'BIC ist ungültig.';
-                                        }
-                                      }
-                                      return null;
-                                    },
+                                        return null;
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],

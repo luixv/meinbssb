@@ -596,6 +596,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'IBAN Eingabefeld',
                     hint:
@@ -618,6 +619,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'BIC Eingabefeld',
                     hint:
@@ -631,7 +633,6 @@ class BankDataScreenState extends State<BankDataScreen> {
                       isReadOnly: !_isEditing,
                       validator: (value) {
                         String ibanText = _ibanController.text.trim();
-
                         // For German IBAN, BIC optional
                         if (ibanText.startsWith('DE')) {
                           // BIC optional; validate only if provided
