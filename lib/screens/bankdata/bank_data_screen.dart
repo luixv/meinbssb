@@ -604,7 +604,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingS),
+                  const SizedBox(height: UIConstants.spacingXXS),
                   Semantics(
                     label: 'IBAN Eingabefeld',
                     hint:
@@ -627,7 +627,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingS),
+                  const SizedBox(height: UIConstants.spacingXXS),
                   Semantics(
                     label: 'BIC Eingabefeld',
                     hint:
