@@ -79,91 +79,63 @@ class HelpScreen extends StatelessWidget {
                     _AccordionItem(
                       question: 'Was ist Mein BSSB?',
                       answer: ScaledText(
-                        'Mein BSSB ist die offizielle App des Bayerischen Sportschützenbundes e.V. Sie bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
+                        'MeinBSSB bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
                       ),
                     ),
-                    
+
                     _AccordionItem(
                       question: 'Wer kann die App nutzen?',
                       answer: ScaledText(
                         'Die App steht allen Mitgliedern des Bayerischen Sportschützenbundes e.V. zur Verfügung.',
                       ),
                     ),
-                    
+
                     _AccordionItem(
                       question: 'Wie erhalte ich meine Zugangsdaten?',
                       answer: ScaledText(
-                        'Ihre Zugangsdaten (Mitgliedsnummer und Passwort) erhalten Sie in der Regel per E-Mail oder über Ihren Verein. Bei Problemen wenden Sie sich bitte an Ihren Verein oder die Geschäftsstelle des BSSB.',
+                        'Ihre Zugangsdaten (Schützenausweisnummer) erhalten Sie von Ihrem Verein.',
                       ),
                     ),
-                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 const _AccordionSection(
                   title: 'Funktionen der App',
                   questions: [
-                    
                     _AccordionItem(
                       question: 'Welche Bereiche gibt es in der App?',
                       answer: ScaledText(
-                        'Die App umfasst verschiedene Bereiche wie News, Termine, Ergebnisse, mein Profil, Dokumente und mehr. Navigieren Sie einfach durch das Menü, um die gewünschten Informationen zu finden.',
+                        'Die App umfasst verschiedene Funktionen wie z.B. Schützenausweis ansehen und verwalten, An- und Abmeldung zu Aus- und Weiterbildungen, Abruf von Geldpreisen wie z.B. Oktoberfestlandesschießen, u.v.m.',
                       ),
                     ),
-                    
+
                     _AccordionItem(
                       question:
                           'Wie kann ich meine persönlichen Daten einsehen und ändern?',
                       answer: ScaledText(
-                        'Im Bereich "mein Profil" können Sie Ihre hinterlegten Daten einsehen. Änderungen können Sie in der Regel über die Webseite des BSSB oder über Ihren Verein vornehmen.',
+                        'Im Bereich „mein Profil“ können Sie Ihre hinterlegten Daten einsehen und ggf. anpassen.',
                       ),
                     ),
-                    
-                    _AccordionItem(
-                      question:
-                          'Wo finde ich aktuelle Termine und Veranstaltungen?',
-                      answer: ScaledText(
-                        'Unter dem Punkt "Termine" finden Sie eine Übersicht über alle wichtigen Veranstaltungen, Wettkämpfe und Schulungen.',
-                      ),
-                    ),
-                    
-                    _AccordionItem(
-                      question: 'Kann ich Ergebnisse von Wettkämpfen einsehen?',
-                      answer: ScaledText(
-                        'Ja, im Bereich "Ergebnisse" werden die Resultate von verschiedenen Wettkämpfen veröffentlicht.',
-                      ),
-                    ),
-                    
-                    _AccordionItem(
-                      question:
-                          'Wo finde ich wichtige Dokumente und Formulare?',
-                      answer: ScaledText(
-                        'Im Bereich "Dokumente" stehen Ihnen wichtige Formulare, Ordnungen und andere Dokumente zum Download zur Verfügung.',
-                      ),
-                    ),
-                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 const _AccordionSection(
                   title: 'Technische Fragen',
                   questions: [
-                    
                     _AccordionItem(
                       question:
                           'Die App funktioniert nicht richtig. Was kann ich tun?',
                       answer: ScaledText(
-                        'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB.',
-                      ),
+                        'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB unter...',
+                      ), // TODO add contact link
                     ),
-                    
+
                     _AccordionItem(
                       question: 'Ich habe mein Passwort vergessen. Was nun?',
                       answer: ScaledText(
-                        'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
-                      ),
+                        'Eine Funktion zum Zurücksetzen des Passworts ist bei MeinBSSB verfügbar. Folgen Sie den dortigen Anweisungen um Ihr Passwort zu ändern. Bei Problemen wenden Sie sich bitte an den Support des BSSB unter...',
+                      ), // TODO add contact link
                     ),
-                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
@@ -176,7 +148,7 @@ class HelpScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ScaledText(
-                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an Ihren Verein oder direkt an die Geschäftsstelle des Bayerischen Sportschützenbundes e.V.',
+                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter...',
                           ),
                           _LinkText(
                             'Zur Webseite des BSSB',
@@ -281,13 +253,46 @@ class _AccordionItemState extends State<_AccordionItem> {
           Padding(
             padding: const EdgeInsets.all(UIConstants.spacingM),
             child: Semantics(
-              label: 'Antwort zu: ${widget.question}',
+              label: 'Antwort: ${_extractAnswerText(widget.answer)}',
               child: widget.answer,
             ),
           ),
         ],
       ),
     );
+  }
+
+  // Helper to extract answer text for semantics label
+  String _extractAnswerText(Widget answer) {
+    if (answer is ScaledText) {
+      // Try to extract text from the constructor argument
+      final text = _getScaledTextString(answer);
+      if (text != null) return text;
+    } else if (answer is Text) {
+      return answer.data ?? '';
+    } else if (answer is Column) {
+      final children = answer.children;
+      for (final child in children) {
+        if (child is ScaledText) {
+          final text = _getScaledTextString(child);
+          if (text != null) return text;
+        } else if (child is Text && child.data != null) {
+          return child.data!;
+        }
+      }
+    }
+    return 'Antwort';
+  }
+
+  // Helper to get the string from ScaledText
+  String? _getScaledTextString(ScaledText scaledText) {
+    // ScaledText usually has a 'text' or similar property, but if not, fallback
+    try {
+      // No reliable way to extract text, so fallback
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 }
 
