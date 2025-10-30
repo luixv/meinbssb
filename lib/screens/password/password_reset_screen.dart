@@ -136,31 +136,35 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                         color: UIConstants.noConnectivityIcon,
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Semantics(
-                        label:
-                            'Fehlermeldung: Passwort zurücksetzen ist offline nicht verfügbar',
-                        hint:
-                            'Fehler beim Passwort zurücksetzen. Internetverbindung erforderlich.',
-                        child: ScaledText(
-                          'Passwort zurücksetzen ist offline nicht verfügbar',
-                          style: UIStyles.headerStyle.copyWith(
-                            color: UIConstants.textColor,
+                      Focus(
+                        child: Semantics(
+                          label:
+                              'Fehlermeldung: Passwort zurücksetzen ist offline nicht verfügbar',
+                          hint:
+                              'Fehler beim Passwort zurücksetzen. Internetverbindung erforderlich.',
+                          child: ScaledText(
+                            'Passwort zurücksetzen ist offline nicht verfügbar',
+                            style: UIStyles.headerStyle.copyWith(
+                              color: UIConstants.textColor,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      Semantics(
-                        label:
-                            'Hinweis: Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
-                        hint:
-                            'Ohne Internetverbindung ist das Zurücksetzen des Passworts nicht möglich.',
-                        child: ScaledText(
-                          'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
-                          style: UIStyles.bodyStyle.copyWith(
-                            color: UIConstants.greySubtitleTextColor,
+                      Focus(
+                        child: Semantics(
+                          label:
+                              'Hinweis: Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
+                          hint:
+                              'Ohne Internetverbindung ist das Zurücksetzen des Passworts nicht möglich.',
+                          child: ScaledText(
+                            'Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind, um Ihr Passwort zurückzusetzen.',
+                            style: UIStyles.bodyStyle.copyWith(
+                              color: UIConstants.greySubtitleTextColor,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
@@ -184,122 +188,135 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                     children: [
                       const LogoWidget(),
                       const SizedBox(height: UIConstants.spacingS),
-                      Semantics(
-                        label: 'Titel: Passwort zurücksetzen',
-                        hint: 'Überschrift für den Passwort-Reset-Bereich',
-                        child: ScaledText(
-                          Messages.passwordResetTitle,
-                          key: const Key('passwordResetTitle'),
-                          style: UIStyles.headerStyle.copyWith(
-                            color: UIConstants.defaultAppColor,
-                            fontSize:
-                                UIStyles.headerStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
+                      Focus(
+                        child: Semantics(
+                          label: 'Titel: Passwort zurücksetzen',
+                          hint: 'Überschrift für den Passwort-Reset-Bereich',
+                          child: ScaledText(
+                            Messages.passwordResetTitle,
+                            key: const Key('passwordResetTitle'),
+                            style: UIStyles.headerStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
+                              fontSize:
+                                  UIStyles.headerStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       if (_errorMessage.isNotEmpty)
-                        Semantics(
-                          label: 'Fehlermeldung: $_errorMessage',
-                          hint: 'Fehler beim Zurücksetzen des Passworts',
-                          child: ScaledText(
-                            _errorMessage,
-                            style: UIStyles.errorStyle.copyWith(
-                              fontSize:
-                                  UIStyles.errorStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                        Focus(
+                          child: Semantics(
+                            label: 'Fehlermeldung: $_errorMessage',
+                            hint: 'Fehler beim Zurücksetzen des Passworts',
+                            child: ScaledText(
+                              _errorMessage,
+                              style: UIStyles.errorStyle.copyWith(
+                                fontSize:
+                                    UIStyles.errorStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
                             ),
                           ),
                         ),
                       if (_successMessage.isNotEmpty)
-                        Semantics(
-                          label: 'Erfolgsmeldung: $_successMessage',
-                          hint: 'Ihr Passwort wurde erfolgreich zurückgesetzt',
-                          child: ScaledText(
-                            _successMessage,
-                            style: UIStyles.successStyle.copyWith(
-                              fontSize:
-                                  UIStyles.successStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                        Focus(
+                          child: Semantics(
+                            label: 'Erfolgsmeldung: $_successMessage',
+                            hint:
+                                'Ihr Passwort wurde erfolgreich zurückgesetzt',
+                            child: ScaledText(
+                              _successMessage,
+                              style: UIStyles.successStyle.copyWith(
+                                fontSize:
+                                    UIStyles.successStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
                             ),
                           ),
                         ),
-                      Semantics(
-                        label: 'Schützenausweisnummer Eingabefeld',
-                        hint: 'Geben Sie Ihre Schützenausweisnummer ein',
-                        child: TextField(
-                          controller: _passNumberController,
-                          style: UIStyles.bodyStyle.copyWith(
-                            fontSize:
-                                UIStyles.bodyStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                          ),
-                          decoration: UIStyles.formInputDecoration.copyWith(
-                            labelText: Messages.passNumberLabel,
-                            labelStyle: UIStyles.formLabelStyle.copyWith(
+                      Focus(
+                        child: Semantics(
+                          label: 'Schützenausweisnummer Eingabefeld',
+                          hint: 'Geben Sie Ihre Schützenausweisnummer ein',
+                          child: TextField(
+                            controller: _passNumberController,
+                            style: UIStyles.bodyStyle.copyWith(
                               fontSize:
-                                  UIStyles.formLabelStyle.fontSize! *
+                                  UIStyles.bodyStyle.fontSize! *
                                   fontSizeProvider.scaleFactor,
                             ),
-                            floatingLabelStyle: UIStyles.formLabelStyle
-                                .copyWith(
-                                  fontSize:
-                                      UIStyles.formLabelStyle.fontSize! *
-                                      fontSizeProvider.scaleFactor,
-                                ),
-                            hintStyle: UIStyles.formLabelStyle.copyWith(
-                              fontSize:
-                                  UIStyles.formLabelStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                            decoration: UIStyles.formInputDecoration.copyWith(
+                              labelText: Messages.passNumberLabel,
+                              labelStyle: UIStyles.formLabelStyle.copyWith(
+                                fontSize:
+                                    UIStyles.formLabelStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
+                              floatingLabelStyle: UIStyles.formLabelStyle
+                                  .copyWith(
+                                    fontSize:
+                                        UIStyles.formLabelStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
+                              hintStyle: UIStyles.formLabelStyle.copyWith(
+                                fontSize:
+                                    UIStyles.formLabelStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      Semantics(
-                        label: 'Passwort zurücksetzen Button',
-                        hint: 'Tippen, um das Passwort zurückzusetzen',
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            key: const Key('forgotPasswordButton'),
-                            onPressed: _isLoading ? null : _resetPassword,
-                            style: UIStyles.defaultButtonStyle,
-                            child: SizedBox(
-                              height: UIConstants.defaultButtonHeight,
-                              child: Center(
-                                child:
-                                    _isLoading
-                                        ? UIConstants.defaultLoadingIndicator
-                                        : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.lock_reset,
-                                              color: Colors.white,
-                                              size:
-                                                  UIConstants.iconSizeM *
-                                                  fontSizeProvider.scaleFactor,
-                                            ),
-                                            const SizedBox(
-                                              width: UIConstants.spacingS,
-                                            ),
-                                            ScaledText(
-                                              Messages.resetPasswordButtonLabel,
-                                              style: UIStyles.buttonStyle
-                                                  .copyWith(
-                                                    fontSize:
-                                                        UIStyles
-                                                            .buttonStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
+                      Focus(
+                        child: Semantics(
+                          label: 'Passwort zurücksetzen Button',
+                          hint: 'Tippen, um das Passwort zurückzusetzen',
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              key: const Key('forgotPasswordButton'),
+                              onPressed: _isLoading ? null : _resetPassword,
+                              style: UIStyles.defaultButtonStyle,
+                              child: SizedBox(
+                                height: UIConstants.defaultButtonHeight,
+                                child: Center(
+                                  child:
+                                      _isLoading
+                                          ? UIConstants.defaultLoadingIndicator
+                                          : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.lock_reset,
+                                                color: Colors.white,
+                                                size:
+                                                    UIConstants.iconSizeM *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                width: UIConstants.spacingS,
+                                              ),
+                                              ScaledText(
+                                                Messages
+                                                    .resetPasswordButtonLabel,
+                                                style: UIStyles.buttonStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .buttonStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                ),
                               ),
                             ),
                           ),

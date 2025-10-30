@@ -236,6 +236,8 @@ First get a VPN connection to BSSB-Server.
 This can be done using OpenVPN Connect (URL = vpn.bssb.bayern)
 (You have to have installed AuthPoint at your phone)
 
+In case the VPN does not work call Gmelch IT +49 89 452217420
+ 
 Get a shell at the BSSB-Server (I use putty for that)
 For this you need the password for the admin user (username: bssb-admin). Ask the project leader.
 
