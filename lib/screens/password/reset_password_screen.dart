@@ -219,28 +219,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   style: UIStyles.bodyStyle,
                 ),
                 const SizedBox(height: UIConstants.spacingS),
-                Semantics(
-                  label: 'Eingabefeld für neues Passwort',
-                  textField: true,
-                  child: TextFormField(
-                    controller: _passwordController,
-                    obscureText: !_showPassword,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Neues Passwort',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _showPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                Focus(
+                  child: Semantics(
+                    label: 'Eingabefeld für neues Passwort',
+                    hint:
+                        'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                    textField: true,
+                    child: TextFormField(
+                      controller: _passwordController,
+                      obscureText: !_showPassword,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Neues Passwort',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed:
+                              () => setState(
+                                () => _showPassword = !_showPassword,
+                              ),
                         ),
-                        onPressed:
-                            () =>
-                                setState(() => _showPassword = !_showPassword),
                       ),
+                      style: UIStyles.formValueStyle,
+                      validator: _validatePassword,
+                      onChanged: _checkStrength,
                     ),
-                    style: UIStyles.formValueStyle,
-                    validator: _validatePassword,
-                    onChanged: _checkStrength,
                   ),
                 ),
                 const Padding(
@@ -275,48 +280,61 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
-                Semantics(
-                  label: 'Eingabefeld für Passwort-Wiederholung',
-                  textField: true,
-                  child: TextFormField(
-                    controller: _confirmController,
-                    obscureText: !_showConfirm,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Passwort wiederholen',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _showConfirm
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                Focus(
+                  child: Semantics(
+                    label: 'Eingabefeld für Passwort-Wiederholung',
+                    hint:
+                        'Bitte wiederholen Sie Ihr neues Passwort zur Bestätigung.',
+                    textField: true,
+                    child: TextFormField(
+                      controller: _confirmController,
+                      obscureText: !_showConfirm,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Passwort wiederholen',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showConfirm
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed:
+                              () =>
+                                  setState(() => _showConfirm = !_showConfirm),
                         ),
-                        onPressed:
-                            () => setState(() => _showConfirm = !_showConfirm),
                       ),
+                      style: UIStyles.formValueStyle,
+                      validator:
+                          (v) =>
+                              v != _passwordController.text
+                                  ? 'Passwörter stimmen nicht überein'
+                                  : null,
                     ),
-                    style: UIStyles.formValueStyle,
-                    validator:
-                        (v) =>
-                            v != _passwordController.text
-                                ? 'Passwörter stimmen nicht überein'
-                                : null,
                   ),
                 ),
                 const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: UIStyles.defaultButtonStyle,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.lock_reset, color: Colors.white),
-                        SizedBox(width: UIConstants.spacingS),
-                        ScaledText(
-                          'Passwort zurücksetzen',
-                          style: UIStyles.buttonStyle,
+                Focus(
+                  child: Semantics(
+                    label: 'Passwort zurücksetzen Button',
+                    hint:
+                        'Tippen, um das neue Passwort zu speichern und den Vorgang abzuschließen.',
+                    button: true,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submit,
+                        style: UIStyles.defaultButtonStyle,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.lock_reset, color: Colors.white),
+                            SizedBox(width: UIConstants.spacingS),
+                            ScaledText(
+                              'Passwort zurücksetzen',
+                              style: UIStyles.buttonStyle,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

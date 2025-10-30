@@ -213,39 +213,47 @@ class AbsolvierteSchulungenScreenState
                                   ? 'Unbekannt'
                                   : '${gueltigBis.day.toString().padLeft(2, '0')}.${gueltigBis.month.toString().padLeft(2, '0')}.${gueltigBis.year}';
 
-                          return ListTile(
-                            tileColor: UIConstants.tileColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
+                          return Semantics(
+                            label:
+                                'Schulung: ${seminar.bezeichnung}, Ausgestellt am: $formattedAusgestelltAm, Gültig bis: $formattedGueltigBis',
+                            child: Focus(
+                              canRequestFocus: true,
+                              descendantsAreFocusable: false,
+                              child: ListTile(
+                                tileColor: UIConstants.tileColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                leading: const Column(
+                                  mainAxisAlignment:
+                                      UIStyles.listItemLeadingAlignment,
+                                  children: [
+                                    Icon(
+                                      Icons.task_alt,
+                                      color: UIConstants.defaultAppColor,
+                                    ),
+                                  ],
+                                ),
+                                title: ScaledText(
+                                  seminar.bezeichnung,
+                                  style: UIStyles.subtitleStyle,
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ScaledText(
+                                      'Ausgestellt am: $formattedAusgestelltAm',
+                                      style: UIStyles.listItemSubtitleStyle,
+                                    ),
+                                    ScaledText(
+                                      'Gültig bis: $formattedGueltigBis',
+                                      style: UIStyles.listItemSubtitleStyle,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            leading: const Column(
-                              mainAxisAlignment:
-                                  UIStyles.listItemLeadingAlignment,
-                              children: [
-                                Icon(
-                                  Icons.task_alt,
-                                  color: UIConstants.defaultAppColor,
-                                ),
-                              ],
-                            ),
-                            title: ScaledText(
-                              seminar.bezeichnung,
-                              style: UIStyles.subtitleStyle,
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ScaledText(
-                                  'Ausgestellt am: $formattedAusgestelltAm',
-                                  style: UIStyles.listItemSubtitleStyle,
-                                ),
-                                ScaledText(
-                                  'Gültig bis: $formattedGueltigBis',
-                                  style: UIStyles.listItemSubtitleStyle,
-                                ),
-                              ],
                             ),
                           );
                         },

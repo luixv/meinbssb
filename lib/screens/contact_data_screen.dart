@@ -738,35 +738,41 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Semantics(
-          label: 'Kontaktfeld: $displayLabel',
-          hint: 'Gespeicherter Wert: $displayValue. Löschen mit Button rechts.',
-          textField: true,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-            child: TextFormField(
-              initialValue: displayValue.isNotEmpty ? displayValue : '-',
-              readOnly: true,
-              style: UIStyles.formValueBoldStyle.copyWith(
-                fontSize:
-                    UIStyles.formValueBoldStyle.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    Icons.delete_outline,
-                    size: UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
+        return Focus(
+          canRequestFocus: true,
+          child: Semantics(
+            label: 'Kontaktfeld: $displayLabel',
+            hint:
+                'Gespeicherter Wert: $displayValue. Löschen mit Button rechts.',
+            textField: true,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+              child: TextFormField(
+                initialValue: displayValue.isNotEmpty ? displayValue : '-',
+                readOnly: true,
+                style: UIStyles.formValueBoldStyle.copyWith(
+                  fontSize:
+                      UIStyles.formValueBoldStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+                decoration: UIStyles.formInputDecoration.copyWith(
+                  labelText:
+                      displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.delete_outline,
+                      size:
+                          UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
+                    ),
+                    color: UIConstants.deleteIcon,
+                    onPressed:
+                        () => onDelete(
+                          kontaktId,
+                          rawKontaktTyp,
+                          displayValue,
+                          displayLabel,
+                        ),
                   ),
-                  color: UIConstants.deleteIcon,
-                  onPressed:
-                      () => onDelete(
-                        kontaktId,
-                        rawKontaktTyp,
-                        displayValue,
-                        displayLabel,
-                      ),
                 ),
               ),
             ),
