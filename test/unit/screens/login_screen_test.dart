@@ -49,7 +49,7 @@ Widget createApp({required Widget child}) {
     child: MaterialApp(
       routes: {
         '/home': (_) => const Placeholder(),
-        '/help': (_) => const Scaffold(body: Text('Hilfe (FAQ)')),
+        '/help': (_) => const Scaffold(body: Text('Hilfe')),
       },
       home: child,
     ),
@@ -284,7 +284,7 @@ void main() {
       await tester.pumpWidget(createLoginScreen());
       await tester.tap(find.byKey(const Key('helpButton')));
       await tester.pumpAndSettle();
-      expect(find.text('Hilfe (FAQ)'), findsOneWidget);
+      expect(find.text('Hilfe'), findsOneWidget);
     });
   });
 

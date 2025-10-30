@@ -99,7 +99,7 @@ class Messages {
   static const String savingLabel = 'Wird gespeichert...';
 
   // Help screen
-  static const String helpTitle = 'FAQ';
+  static const String helpTitle = 'Hilfe';
 
   // Contact Data Screen
   static const String telefonLabel = 'Telefon';

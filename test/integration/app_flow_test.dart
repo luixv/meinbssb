@@ -68,9 +68,9 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 1));
       expect(find.byType(LoginScreen), findsOneWidget);
 
-      await tester.tap(find.text('Hilfe (FAQ)'));
+      await tester.tap(find.text('Hilfe'));
       await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text('FAQ'), findsOneWidget);
+      expect(find.text('Hilfe'), findsOneWidget);
 
       await tester.tap(find.byType(PopupMenuButton<String>));
       await tester.pumpAndSettle(const Duration(seconds: 1));

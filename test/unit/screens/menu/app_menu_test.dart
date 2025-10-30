@@ -334,7 +334,7 @@ void main() {
         'Oktoberfest',
         'Impressum',
         'Einstellungen',
-        'Hilfe (FAQ)',
+        'Hilfe',
         'Abmelden',
       ];
       for (final l in labels) {
@@ -466,8 +466,8 @@ void main() {
 
     testWidgets('Hilfe triggers navigator.help', (tester) async {
       final nav = await pumpAndOpen(tester);
-      await ensureVisible(tester, 'Hilfe (FAQ)');
-      await tester.tap(find.text('Hilfe (FAQ)'));
+      await ensureVisible(tester, 'Hilfe');
+      await tester.tap(find.text('Hilfe'));
       await tester.pumpAndSettle();
       expect(nav.helpCalled, isTrue);
     });

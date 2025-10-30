@@ -1,4 +1,6 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -165,6 +167,9 @@ Future<void> main() async {
         child: MaterialApp(theme: theme, home: wrappedApp),
       ),
     );
+    if (kIsWeb) {
+      SemanticsBinding.instance.ensureSemantics();
+    }
   } catch (e, stack) {
     debugPrint('❌ Firebase Initialization Failed: $e');
     debugPrint('STACK TRACE: \n$stack');

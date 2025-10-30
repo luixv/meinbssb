@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'menu/app_menu.dart';
@@ -66,7 +65,7 @@ class HelpScreen extends StatelessWidget {
               crossAxisAlignment: UIConstants.startCrossAlignment,
               children: [
                 const ScaledText(
-                  'Häufig gestellte Fragen (FAQ)',
+                  'Häufig gestellte Fragen',
                   style: TextStyle(
                     fontSize: UIConstants.headerFontSize,
                     fontWeight: FontWeight.bold,
@@ -113,7 +112,7 @@ class HelpScreen extends StatelessWidget {
                       question:
                           'Wie kann ich meine persönlichen Daten einsehen und ändern?',
                       answer: ScaledText(
-                        'Im Bereich „mein Profil“ können Sie Ihre hinterlegten Daten einsehen und ggf. anpassen.',
+                        'Im Bereich „Profil“ können Sie Ihre hinterlegten Daten einsehen und ggf. anpassen.',
                       ),
                     ),
                   ],
@@ -149,13 +148,6 @@ class HelpScreen extends StatelessWidget {
                         children: [
                           ScaledText(
                             'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter...',
-                          ),
-                          _LinkText(
-                            'Zur Webseite des BSSB',
-                            'https://www.bssb.de/',
-                          ),
-                          ScaledText(
-                            'Kontaktdaten der Geschäftsstelle finden Sie im Impressum der App.',
                           ),
                         ],
                       ),
@@ -293,31 +285,5 @@ class _AccordionItemState extends State<_AccordionItem> {
     } catch (_) {
       return null;
     }
-  }
-}
-
-class _LinkText extends StatelessWidget {
-  const _LinkText(this.text, this.url);
-
-  final String text;
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: ScaledText(
-        text,
-        style: const TextStyle(
-          color: UIConstants.defaultAppColor,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    );
   }
 }

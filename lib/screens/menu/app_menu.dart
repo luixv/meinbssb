@@ -356,7 +356,7 @@ class AppDrawer extends StatelessWidget {
                 key: const Key('drawer_help'),
                 leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
                 title: const ScaledText(
-                  'Hilfe (FAQ)',
+                  'Hilfe',
                   style: TextStyle(fontSize: UIConstants.menuItemFontSize),
                 ),
                 onTap: () => navigator.help(context),
