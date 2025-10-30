@@ -40,7 +40,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   int? _selectedKontaktTyp;
   final TextEditingController _kontaktController = TextEditingController();
-  final RegExp _emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  // Improved email regex: allows subdomains, plus, dash, underscore, etc.
+  final RegExp _emailRegex = RegExp(
+    r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+  );
   final RegExp _phoneFaxMobileRegex = RegExp(r'^[0-9\s\-\+\(\)]+$');
 
   @override
@@ -141,15 +144,22 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       },
     );
 
-    if (!mounted || confirmDelete != true) return;
+    if (!mounted || confirmDelete != true) {
+      LoggerService.logInfo(
+        'Contact deletion cancelled or widget not mounted.',
+      );
+      return;
+    }
 
     // Store the navigator context
-    final navigator = Navigator.of(context);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    LoggerService.logInfo('Showing loading dialog for contact deletion...');
 
     // Show loading dialog and store its reference
     showDialog(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
       builder: (BuildContext context) {
         return const AlertDialog(
           backgroundColor: UIConstants.backgroundColor,
@@ -173,11 +183,21 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     );
 
     try {
+      LoggerService.logInfo(
+        'Checking network status before deleting contact...',
+      );
       // Check network status and get API service
       final apiService = Provider.of<ApiService>(context, listen: false);
       final isOffline = !(await apiService.hasInternet());
-      if (!mounted) return;
+      LoggerService.logInfo(
+        'Network status: ${isOffline ? "offline" : "online"}',
+      );
+      if (!mounted) {
+        LoggerService.logWarning('Widget not mounted after network check.');
+        return;
+      }
       if (isOffline) {
+        LoggerService.logWarning('Cannot delete contact while offline.');
         navigator.pop(); // Close loading dialog
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -190,6 +210,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       }
 
       // Perform deletion
+      LoggerService.logInfo(
+        'Calling deleteKontakt for contactId=$kontaktId, kontaktTyp=$kontaktTyp',
+      );
       final contact = Contact(
         id: kontaktId,
         personId: widget.userData?.personId ?? 0,
@@ -197,11 +220,17 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         value: '',
       );
       final bool success = await apiService.deleteKontakt(contact);
+      LoggerService.logInfo('deleteKontakt result: $success');
 
-      if (!mounted) return;
+      if (!mounted) {
+        LoggerService.logWarning('Widget not mounted after deleteKontakt.');
+        return;
+      }
       navigator.pop(); // Close loading dialog
+      LoggerService.logInfo('Loading dialog closed after contact deletion.');
 
       if (success) {
+        LoggerService.logInfo('Contact deleted successfully.');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Kontaktdaten erfolgreich gelöscht.'),
@@ -210,6 +239,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         );
         _fetchContacts();
       } else {
+        LoggerService.logWarning('Failed to delete contact.');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fehler beim Löschen der Kontaktdaten.'),
@@ -219,8 +249,10 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         );
       }
     } catch (e) {
+      LoggerService.logError('Exception during contact deletion: $e');
       if (mounted) {
         navigator.pop(); // Close loading dialog
+        LoggerService.logInfo('Loading dialog closed after exception.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
@@ -291,6 +323,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             backgroundColor: UIConstants.errorColor,
           ),
         );
+        setState(() {
+          _isAdding = false;
+        });
       }
       return;
     }
@@ -309,6 +344,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             const SnackBar(
               content: Text('Kontaktdaten erfolgreich gespeichert.'),
               duration: UIConstants.snackbarDuration,
+              backgroundColor: UIConstants.successColor,
             ),
           );
           _kontaktController.clear();
@@ -635,7 +671,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                                   color:
                                                       UIConstants
                                                           .submitButtonText,
-                                                  fontSize: 14,
+                                                  fontSize:
+                                                      UIConstants
+                                                          .buttonFontSize,
                                                 ),
                                           ),
                                         ],
