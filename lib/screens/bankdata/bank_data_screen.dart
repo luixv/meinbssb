@@ -577,12 +577,10 @@ class BankDataScreenState extends State<BankDataScreen> {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
         return Padding(
-          padding: const EdgeInsets.all(UIConstants.spacingM),
+          padding: UIConstants.defaultPadding,
           child: Form(
             key: _formKey,
-            autovalidateMode:
-                AutovalidateMode
-                    .onUserInteraction, // Enable real-time validation
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +604,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingM),
+                  const SizedBox(height: UIConstants.spacingS),
                   Semantics(
                     label: 'IBAN Eingabefeld',
                     hint:
@@ -629,7 +627,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingM),
+                  const SizedBox(height: UIConstants.spacingS),
                   Semantics(
                     label: 'BIC Eingabefeld',
                     hint:
