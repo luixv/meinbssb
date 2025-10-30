@@ -82,30 +82,35 @@ class HelpScreen extends StatelessWidget {
                         'Mein BSSB ist die offizielle App des Bayerischen Sportschützenbundes e.V. Sie bietet Mitgliedern einen einfachen Zugang zu wichtigen Informationen, Terminen, Ergebnissen und vielem mehr.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question: 'Wer kann die App nutzen?',
                       answer: ScaledText(
                         'Die App steht allen Mitgliedern des Bayerischen Sportschützenbundes e.V. zur Verfügung.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question: 'Wie erhalte ich meine Zugangsdaten?',
                       answer: ScaledText(
                         'Ihre Zugangsdaten (Mitgliedsnummer und Passwort) erhalten Sie in der Regel per E-Mail oder über Ihren Verein. Bei Problemen wenden Sie sich bitte an Ihren Verein oder die Geschäftsstelle des BSSB.',
                       ),
                     ),
+                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 const _AccordionSection(
                   title: 'Funktionen der App',
                   questions: [
+                    
                     _AccordionItem(
                       question: 'Welche Bereiche gibt es in der App?',
                       answer: ScaledText(
                         'Die App umfasst verschiedene Bereiche wie News, Termine, Ergebnisse, mein Profil, Dokumente und mehr. Navigieren Sie einfach durch das Menü, um die gewünschten Informationen zu finden.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question:
                           'Wie kann ich meine persönlichen Daten einsehen und ändern?',
@@ -113,6 +118,7 @@ class HelpScreen extends StatelessWidget {
                         'Im Bereich "mein Profil" können Sie Ihre hinterlegten Daten einsehen. Änderungen können Sie in der Regel über die Webseite des BSSB oder über Ihren Verein vornehmen.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question:
                           'Wo finde ich aktuelle Termine und Veranstaltungen?',
@@ -120,12 +126,14 @@ class HelpScreen extends StatelessWidget {
                         'Unter dem Punkt "Termine" finden Sie eine Übersicht über alle wichtigen Veranstaltungen, Wettkämpfe und Schulungen.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question: 'Kann ich Ergebnisse von Wettkämpfen einsehen?',
                       answer: ScaledText(
                         'Ja, im Bereich "Ergebnisse" werden die Resultate von verschiedenen Wettkämpfen veröffentlicht.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question:
                           'Wo finde ich wichtige Dokumente und Formulare?',
@@ -133,12 +141,14 @@ class HelpScreen extends StatelessWidget {
                         'Im Bereich "Dokumente" stehen Ihnen wichtige Formulare, Ordnungen und andere Dokumente zum Download zur Verfügung.',
                       ),
                     ),
+                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 const _AccordionSection(
                   title: 'Technische Fragen',
                   questions: [
+                    
                     _AccordionItem(
                       question:
                           'Die App funktioniert nicht richtig. Was kann ich tun?',
@@ -146,12 +156,14 @@ class HelpScreen extends StatelessWidget {
                         'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB.',
                       ),
                     ),
+                    
                     _AccordionItem(
                       question: 'Ich habe mein Passwort vergessen. Was nun?',
                       answer: ScaledText(
                         'Eine Funktion zum Zurücksetzen des Passworts ist in der App oder auf der Webseite des BSSB verfügbar. Folgen Sie den dortigen Anweisungen oder wenden Sie sich an Ihren Verein oder die Geschäftsstelle.',
                       ),
                     ),
+                  
                   ],
                 ),
                 const SizedBox(height: UIConstants.spacingM),
