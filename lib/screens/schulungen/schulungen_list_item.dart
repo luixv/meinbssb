@@ -46,143 +46,171 @@ class SchulungenListItem extends StatelessWidget {
           );
         }
 
-        return Semantics(
-          container: true,
-          label:
-              'Schulungslisten-Eintrag. Enthält Datum, Gruppe, Ort, Titel und Details-Button.',
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: UIConstants.tileColor,
-                  borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-                ),
-                padding: const EdgeInsets.all(UIConstants.spacingM),
-                child: Row(
-                  children: [
-                    // Left: date, group, location
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Semantics(
-                            label: 'Datum der Schulung: $formattedDate',
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.calendar_today,
-                                  size: UIConstants.defaultIconSize,
-                                ),
-                                const SizedBox(width: UIConstants.spacingXS),
-                                Flexible(
-                                  child: Text(
-                                    formattedDate,
-                                    style: UIStyles.bodyStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Semantics(
-                            label: 'Gruppe: ${schulungsTermin.webGruppeLabel}',
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.group,
-                                  size: UIConstants.defaultIconSize,
-                                ),
-                                const SizedBox(width: UIConstants.spacingXS),
-                                Flexible(
-                                  child: Text(
-                                    schulungsTermin.webGruppeLabel,
-                                    style: UIStyles.bodyStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Semantics(
-                            label: 'Ort: ${schulungsTermin.ort}',
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.place,
-                                  size: UIConstants.defaultIconSize,
-                                ),
-                                const SizedBox(width: UIConstants.spacingXS),
-                                Flexible(
-                                  child: Text(
-                                    schulungsTermin.ort,
-                                    style: UIStyles.bodyStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+        final FocusNode focusNode = FocusNode();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!focusNode.hasFocus) {
+            focusNode.requestFocus();
+          }
+        });
+        String summaryLabel =
+            'Schulungstermin: '
+            'Datum $formattedDate. '
+            'Gruppe ${schulungsTermin.webGruppeLabel}. '
+            'Ort ${schulungsTermin.ort}. '
+            'Titel ${schulungsTermin.bezeichnung}. '
+            '${schulungsTermin.anmeldungenGesperrt ? 'Details nicht verfügbar.' : 'Details mit Taste anzeigen.'}';
+
+        return Focus(
+          focusNode: focusNode,
+          child: Semantics(
+            label: summaryLabel,
+            focusable: true,
+            readOnly: true,
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: UIConstants.tileColor,
+                    borderRadius: BorderRadius.circular(
+                      UIConstants.cornerRadius,
                     ),
-                    // Center: title (wrapped horizontally)
-                    const SizedBox(width: UIConstants.spacingM),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Semantics(
-                          label:
-                              'Titel der Schulung: ${schulungsTermin.bezeichnung}',
-                          child: Text(
-                            schulungsTermin.bezeichnung,
-                            style: UIStyles.subtitleStyle.copyWith(
-                              fontSize:
-                                  UIStyles.subtitleStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                  ),
+                  padding: const EdgeInsets.all(UIConstants.spacingM),
+                  child: Row(
+                    children: [
+                      // Left: date, group, location
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Semantics(
+                              label: 'Datum der Schulung: $formattedDate',
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    size: UIConstants.defaultIconSize,
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingXS),
+                                  Flexible(
+                                    child: Text(
+                                      formattedDate,
+                                      style: UIStyles.bodyStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.bodyStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            textAlign: TextAlign.left,
+                            Semantics(
+                              label:
+                                  'Gruppe: ${schulungsTermin.webGruppeLabel}',
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.group,
+                                    size: UIConstants.defaultIconSize,
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingXS),
+                                  Flexible(
+                                    child: Text(
+                                      schulungsTermin.webGruppeLabel,
+                                      style: UIStyles.bodyStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.bodyStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Semantics(
+                              label: 'Ort: ${schulungsTermin.ort}',
+                              explicitChildNodes: true,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.place,
+                                    size: UIConstants.defaultIconSize,
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingXS),
+                                  Flexible(
+                                    child: Semantics(
+                                      label: schulungsTermin.ort,
+                                      child: Text(
+                                        schulungsTermin.ort,
+                                        style: UIStyles.bodyStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Center: title (wrapped horizontally)
+                      const SizedBox(width: UIConstants.spacingM),
+                      Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Semantics(
+                            label:
+                                'Titel der Schulung: ${schulungsTermin.bezeichnung}',
+                            explicitChildNodes: true,
+                            child: Semantics(
+                              label: schulungsTermin.bezeichnung,
+                              child: Text(
+                                schulungsTermin.bezeichnung,
+                                style: UIStyles.subtitleStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.subtitleStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Right: description icon
-                    Semantics(
-                      button: true,
-                      label:
-                          schulungsTermin.anmeldungenGesperrt
-                              ? 'Details nicht verfügbar, Anmeldung gesperrt.'
-                              : 'Details anzeigen',
-                      child: FloatingActionButton(
-                        heroTag: 'schulungenContentFab$index',
-                        backgroundColor: fabBackgroundColor,
-                        onPressed: onDetailsPressed,
-                        child: fabIconWidget,
+                      // Right: description icon
+                      Semantics(
+                        button: true,
+                        label:
+                            schulungsTermin.anmeldungenGesperrt
+                                ? 'Details nicht verfügbar, Anmeldung gesperrt.'
+                                : 'Details anzeigen',
+                        child: FloatingActionButton(
+                          heroTag: 'schulungenContentFab$index',
+                          backgroundColor: fabBackgroundColor,
+                          onPressed: onDetailsPressed,
+                          child: fabIconWidget,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
+              ],
+            ), // End of Column
+          ), // End of Semantics
+        ); // End of Focus
       },
-    );
+    ); // End of Consumer
   }
 }
