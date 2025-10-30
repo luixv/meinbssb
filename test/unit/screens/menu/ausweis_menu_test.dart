@@ -149,7 +149,7 @@ void main() {
       expect(find.text('Anzeigen'), findsOneWidget);
       expect(find.text('Startrechte'), findsOneWidget);
       expect(find.text('Bestellen'), findsOneWidget);
-      expect(find.byIcon(Icons.badge), findsOneWidget);
+      expect(find.byIcon(Icons.visibility), findsOneWidget);
       expect(find.byIcon(Icons.rule), findsOneWidget);
       expect(find.byIcon(Icons.search_off), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
