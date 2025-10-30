@@ -585,77 +585,86 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Semantics(
-                    label: 'Kontoinhaber Eingabefeld',
-                    hint:
-                        !_isEditing
-                            ? 'Dieses Feld ist nicht bearbeitbar.'
-                            : 'Bitte geben Sie den Kontoinhaber ein.',
-                    textField: true,
-                    child: _buildTextField(
-                      label: 'Kontoinhaber',
-                      controller: _kontoinhaberController,
-                      isReadOnly: !_isEditing,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Kontoinhaber ist erforderlich';
-                        }
-                        return null;
-                      },
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'Kontoinhaber Eingabefeld',
+                      hint:
+                          !_isEditing
+                              ? 'Dieses Feld ist nicht bearbeitbar.'
+                              : 'Bitte geben Sie den Kontoinhaber ein.',
+                      textField: true,
+                      child: _buildTextField(
+                        label: 'Kontoinhaber',
+                        controller: _kontoinhaberController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Kontoinhaber ist erforderlich';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingXXS),
-                  Semantics(
-                    label: 'IBAN Eingabefeld',
-                    hint:
-                        !_isEditing
-                            ? 'Dieses Feld ist nicht bearbeitbar.'
-                            : 'Bitte geben Sie Ihre IBAN ein.',
-                    textField: true,
-                    child: _buildTextField(
-                      label: 'IBAN',
-                      controller: _ibanController,
-                      isReadOnly: !_isEditing,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'IBAN ist erforderlich';
-                        }
-                        if (!BankService.validateIBAN(value)) {
-                          return 'Ungültige IBAN';
-                        }
-                        return null;
-                      },
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'IBAN Eingabefeld',
+                      hint:
+                          !_isEditing
+                              ? 'Dieses Feld ist nicht bearbeitbar.'
+                              : 'Bitte geben Sie Ihre IBAN ein.',
+                      textField: true,
+                      child: _buildTextField(
+                        label: 'IBAN',
+                        controller: _ibanController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'IBAN ist erforderlich';
+                          }
+                          if (!BankService.validateIBAN(value)) {
+                            return 'Ungültige IBAN';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingXXS),
-                  Semantics(
-                    label: 'BIC Eingabefeld',
-                    hint:
-                        !_isEditing
-                            ? 'Dieses Feld ist nicht bearbeitbar.'
-                            : 'Bitte geben Sie Ihre BIC ein.',
-                    textField: true,
-                    child: _buildTextField(
-                      label: 'BIC',
-                      controller: _bicController,
-                      isReadOnly: !_isEditing,
-                      validator: (value) {
-                        String ibanText = _ibanController.text.trim();
-                        // For German IBAN, BIC optional
-                        if (ibanText.startsWith('DE')) {
-                          // BIC optional; validate only if provided
-                          if (value == null || value.isEmpty) {
-                            return null;
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'BIC Eingabefeld',
+                      hint:
+                          !_isEditing
+                              ? 'Dieses Feld ist nicht bearbeitbar.'
+                              : 'Bitte geben Sie Ihre BIC ein.',
+                      textField: true,
+                      child: _buildTextField(
+                        label: 'BIC',
+                        controller: _bicController,
+                        isReadOnly: !_isEditing,
+                        validator: (value) {
+                          String ibanText = _ibanController.text.trim();
+                          // For German IBAN, BIC optional
+                          if (ibanText.startsWith('DE')) {
+                            // BIC optional; validate only if provided
+                            if (value == null || value.isEmpty) {
+                              return null;
+                            }
+                            return BankService.validateBIC(value);
+                          } else {
+                            // For non-German IBAN, BIC required
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte geben Sie die BIC ein';
+                            }
+                            return BankService.validateBIC(value);
                           }
-                          return BankService.validateBIC(value);
-                        } else {
-                          // For non-German IBAN, BIC required
-                          if (value == null || value.isEmpty) {
-                            return 'Bitte geben Sie die BIC ein';
-                          }
-                          return BankService.validateBIC(value);
-                        }
-                      },
+                        },
+                      ),
                     ),
                   ),
                 ],
