@@ -416,44 +416,53 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                     ),
-                  Semantics(
-                    label: 'Vorname Eingabefeld',
-                    child: TextField(
-                      controller: _firstNameController,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: Messages.firstNameLabel,
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'Vorname Eingabefeld',
+                      child: TextField(
+                        controller: _firstNameController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: Messages.firstNameLabel,
+                        ),
+                        style: UIStyles.formValueStyle,
                       ),
-                      style: UIStyles.formValueStyle,
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
-                  Semantics(
-                    label: 'Nachname Eingabefeld',
-                    child: TextField(
-                      controller: _lastNameController,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: Messages.lastNameLabel,
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'Nachname Eingabefeld',
+                      child: TextField(
+                        controller: _lastNameController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: Messages.lastNameLabel,
+                        ),
+                        style: UIStyles.formValueStyle,
                       ),
-                      style: UIStyles.formValueStyle,
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
-                  Semantics(
-                    label: 'E-Mail Eingabefeld',
-                    child: TextField(
-                      controller: _emailController,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'E-Mail',
-                        errorText: emailError,
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'E-Mail Eingabefeld',
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'E-Mail',
+                          errorText: emailError,
+                        ),
+                        style: UIStyles.formValueStyle,
+                        keyboardType: TextInputType.emailAddress,
+                        focusNode: _emailFocusNode,
+                        onChanged: (value) {
+                          setState(() {
+                            validateEmail(value);
+                          });
+                        },
                       ),
-                      style: UIStyles.formValueStyle,
-                      keyboardType: TextInputType.emailAddress,
-                      focusNode: _emailFocusNode,
-                      onChanged: (value) {
-                        setState(() {
-                          validateEmail(value);
-                        });
-                      },
                     ),
                   ),
                   if (emailError != null)
@@ -465,21 +474,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                   const SizedBox(height: UIConstants.spacingS),
-                  Semantics(
-                    label: 'Schützenausweisnummer Eingabefeld',
-                    child: TextField(
-                      controller: _passNumberController,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Schützenausweisnummer',
-                        errorText: passNumberError,
+                  Focus(
+                    canRequestFocus: true,
+                    child: Semantics(
+                      label: 'Schützenausweisnummer Eingabefeld',
+                      child: TextField(
+                        controller: _passNumberController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'Schützenausweisnummer',
+                          errorText: passNumberError,
+                        ),
+                        style: UIStyles.formValueStyle,
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {
+                            validatePassNumber(value);
+                          });
+                        },
                       ),
-                      style: UIStyles.formValueStyle,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          validatePassNumber(value);
-                        });
-                      },
                     ),
                   ),
                   if (passNumberError != null)
