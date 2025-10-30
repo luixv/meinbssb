@@ -41,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: UIConstants.spacingS),
               const ScaledText('Schützenausweis', style: UIStyles.headerStyle),
               const SizedBox(height: UIConstants.spacingM),
-              _buildMenuItem(context, 'Anzeigen', Icons.badge, () {
+              _buildMenuItem(context, 'Anzeigen', Icons.visibility, () {
                 if (userData != null && userData?.personId != null) {
                   Navigator.push(
                     context,
