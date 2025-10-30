@@ -236,24 +236,29 @@ class LoginScreenState extends State<LoginScreen> {
   Widget _buildEmailField() {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return TextField(
-          key: const Key('usernameField'),
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          enableInteractiveSelection: true,
-          enableSuggestions: true,
-          autocorrect: false,
-          style: UIStyles.bodyStyle.copyWith(
-            fontSize:
-                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
-          ),
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'E-mail',
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            labelStyle: UIStyles.formLabelStyle.copyWith(
+        return Semantics(
+          label: 'E-Mail Eingabefeld',
+          hint: 'Geben Sie Ihre E-Mail Adresse ein',
+          textField: true,
+          child: TextField(
+            key: const Key('usernameField'),
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            enableInteractiveSelection: true,
+            enableSuggestions: true,
+            autocorrect: false,
+            style: UIStyles.bodyStyle.copyWith(
               fontSize:
-                  UIStyles.formLabelStyle.fontSize! *
-                  fontSizeProvider.scaleFactor,
+                  UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+            ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: 'E-mail',
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              labelStyle: UIStyles.formLabelStyle.copyWith(
+                fontSize:
+                    UIStyles.formLabelStyle.fontSize! *
+                    fontSizeProvider.scaleFactor,
+              ),
             ),
           ),
         );
@@ -264,35 +269,41 @@ class LoginScreenState extends State<LoginScreen> {
   Widget _buildPasswordField() {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return TextField(
-          key: const Key('passwordField'),
-          controller: _passwordController,
-          obscureText: !_isPasswordVisible,
-          style: UIStyles.bodyStyle.copyWith(
-            fontSize:
-                UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
-          ),
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Passwort',
-            labelStyle: UIStyles.formLabelStyle.copyWith(
+        return Semantics(
+          label: 'Passwort Eingabefeld',
+          hint:
+              'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
+          textField: true,
+          child: TextField(
+            key: const Key('passwordField'),
+            controller: _passwordController,
+            obscureText: !_isPasswordVisible,
+            style: UIStyles.bodyStyle.copyWith(
               fontSize:
-                  UIStyles.formLabelStyle.fontSize! *
-                  fontSizeProvider.scaleFactor,
+                  UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
             ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: 'Passwort',
+              labelStyle: UIStyles.formLabelStyle.copyWith(
+                fontSize:
+                    UIStyles.formLabelStyle.fontSize! *
+                    fontSizeProvider.scaleFactor,
               ),
-              onPressed: () {
-                if (mounted) {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                }
-              },
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  if (mounted) {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  }
+                },
+              ),
             ),
+            onSubmitted: (value) => _handleLogin(),
           ),
-          onSubmitted: (value) => _handleLogin(),
         );
       },
     );
@@ -443,55 +454,69 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Semantics(
-                        label: 'E-Mail Eingabefeld',
-                        hint: 'Geben Sie Ihre E-Mail Adresse ein',
-                        child: _buildEmailField(),
+                      Focus(
+                        child: Semantics(
+                          label: 'E-Mail Eingabefeld',
+                          hint: 'Geben Sie Ihre E-Mail Adresse ein',
+                          child: _buildEmailField(),
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      Semantics(
-                        label: 'Passwort Eingabefeld',
-                        hint:
-                            'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
-                        child: _buildPasswordField(),
+                      Focus(
+                        child: Semantics(
+                          label: 'Passwort Eingabefeld',
+                          hint:
+                              'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
+                          child: _buildPasswordField(),
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
-                      Semantics(
-                        label: 'Angemeldet bleiben Checkbox',
-                        hint:
-                            'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
-                        child: _buildRememberMeCheckbox(),
+                      Focus(
+                        child: Semantics(
+                          label: 'Angemeldet bleiben Checkbox',
+                          hint:
+                              'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
+                          child: _buildRememberMeCheckbox(),
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Semantics(
-                        label: 'Login Button',
-                        hint: 'Tippen, um sich einzuloggen',
-                        child: _buildLoginButton(),
+                      Focus(
+                        child: Semantics(
+                          label: 'Login Button',
+                          hint: 'Tippen, um sich einzuloggen',
+                          child: _buildLoginButton(),
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Semantics(
-                            label: 'Passwort vergessen Button',
-                            hint: 'Tippen, um das Passwort zurückzusetzen',
-                            child: _buildForgotPasswordButton(),
+                          Focus(
+                            child: Semantics(
+                              label: 'Passwort vergessen Button',
+                              hint: 'Tippen, um das Passwort zurückzusetzen',
+                              child: _buildForgotPasswordButton(),
+                            ),
                           ),
-                          Semantics(
-                            label: 'Hilfe Button',
-                            hint:
-                                'Tippen, um Hilfe und Informationen zu erhalten',
-                            child: _buildHelpButton(),
+                          Focus(
+                            child: Semantics(
+                              label: 'Hilfe Button',
+                              hint:
+                                  'Tippen, um Hilfe und Informationen zu erhalten',
+                              child: _buildHelpButton(),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       Center(
-                        child: Semantics(
-                          label: 'Registrieren Button',
-                          hint:
-                              'Tippen, um ein neues Benutzerkonto zu erstellen',
-                          child: _buildRegisterButton(),
+                        child: Focus(
+                          child: Semantics(
+                            label: 'Registrieren Button',
+                            hint:
+                                'Tippen, um ein neues Benutzerkonto zu erstellen',
+                            child: _buildRegisterButton(),
+                          ),
                         ),
                       ),
                     ],
