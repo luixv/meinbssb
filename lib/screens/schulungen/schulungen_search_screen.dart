@@ -131,20 +131,20 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
         leading:
             widget.showMenu
                 ? Semantics(
-                    button: true,
-                    label: 'Zurück',
-                    hint: 'Zur vorherigen Seite wechseln',
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: UIConstants.textColor,
-                      ),
-                      tooltip: 'Zurück',
-                      onPressed: () {
-                        Navigator.of(context).maybePop();
-                      },
+                  button: true,
+                  label: 'Zurück',
+                  hint: 'Zur vorherigen Seite wechseln',
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: UIConstants.textColor,
                     ),
-                  )
+                    tooltip: 'Zurück',
+                    onPressed: () {
+                      Navigator.of(context).maybePop();
+                    },
+                  ),
+                )
                 : null,
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
@@ -196,7 +196,10 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 Semantics(
                   header: true,
                   label: 'Suchen',
-                  child: const ScaledText('Suchen', style: UIStyles.headerStyle),
+                  child: const ScaledText(
+                    'Suchen',
+                    style: UIStyles.headerStyle,
+                  ),
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 Semantics(
@@ -230,10 +233,10 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 isLoadingBezirke
-                    ?  Semantics(
-                        label: 'Regierungsbezirke werden geladen',
-                        child: CircularProgressIndicator(),
-                      )
+                    ? Semantics(
+                      label: 'Regierungsbezirke werden geladen',
+                      child: CircularProgressIndicator(),
+                    )
                     : Semantics(
                       label: 'Regierungsbezirk auswählen',
                       hint: 'Doppelt tippen zum Auswählen',
@@ -259,35 +262,42 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       ),
                     ),
                 const SizedBox(height: UIConstants.spacingM),
-                Semantics(
-                  label: 'Ort eingeben',
-                  hint: 'Wohn- oder Veranstaltungsort als Text eingeben',
-                  textField: true,
-                  child: TextFormField(
-                    key: const Key('Ort'),
-                    controller: _ortController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Ort',
+                Focus(
+                  canRequestFocus: true,
+                  child: Semantics(
+                    label: 'Ort eingeben',
+                    hint: 'Wohn- oder Veranstaltungsort als Text eingeben',
+                    textField: true,
+                    child: TextFormField(
+                      key: const Key('Ort'),
+                      controller: _ortController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Ort',
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: UIConstants.spacingM),
-                Semantics(
-                  label: 'Titel eingeben',
-                  hint: 'Titel der Schulung als Text eingeben',
-                  textField: true,
-                  child: TextFormField(
-                    key: const Key('Titel'),
-                    controller: _titelController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Titel',
+                Focus(
+                  canRequestFocus: true,
+                  child: Semantics(
+                    label: 'Titel eingeben',
+                    hint: 'Titel der Schulung als Text eingeben',
+                    textField: true,
+                    child: TextFormField(
+                      key: const Key('Titel'),
+                      controller: _titelController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Titel',
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 Semantics(
                   label: 'Für Lizenzverlängerung auswählen',
-                  hint: 'Aktivieren, um nur Schulungen für Lizenzverlängerungen zu zeigen',
+                  hint:
+                      'Aktivieren, um nur Schulungen für Lizenzverlängerungen zu zeigen',
                   toggled: fuerVerlaengerungen,
                   child: CheckboxListTile(
                     title: const Text('Für Lizenzverlängerung'),
@@ -303,7 +313,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                 ),
                 Semantics(
                   label: 'Für VÜL Verlängerung auswählen',
-                  hint: 'Aktivieren, um nur Schulungen für VÜL-Verlängerungen zu zeigen',
+                  hint:
+                      'Aktivieren, um nur Schulungen für VÜL-Verlängerungen zu zeigen',
                   toggled: fuerVuelVerlaengerungen,
                   child: CheckboxListTile(
                     title: const Text('Für VÜL Verlängerung'),
