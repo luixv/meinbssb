@@ -189,6 +189,7 @@ class StartScreenState extends State<StartScreen> {
                         const Icon(Icons.close, color: UIConstants.closeIcon),
                         UIConstants.horizontalSpacingM,
                         Flexible(
+                          // ...existing code...
                           child: ScaledText(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
@@ -581,6 +582,21 @@ class StartScreenState extends State<StartScreen> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
+                                                        Semantics(
+                                                          label:
+                                                              'Schulungsdetails. '
+                                                              '${termin.bezeichnung.isNotEmpty ? termin.bezeichnung : schulung.bezeichnung}. '
+                                                              'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei. '
+                                                              'Datum: ${DateFormat('dd.MM.yyyy').format(termin.datum)}. '
+                                                              'Ort: ${termin.ort}. '
+                                                              'Gruppe: ${termin.webGruppeLabel}. '
+                                                              'Kosten: ${termin.kosten.toStringAsFixed(2)} Euro. '
+                                                              'Lehrgangsleiter: ${termin.lehrgangsleiterMail}, Tel: ${termin.lehrgangsleiterTel}.',
+                                                          header: true,
+                                                          focusable: true,
+                                                          child:
+                                                              SizedBox.shrink(),
+                                                        ),
                                                         Container(
                                                           width:
                                                               double.infinity,
