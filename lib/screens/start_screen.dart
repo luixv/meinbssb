@@ -626,20 +626,31 @@ class StartScreenState extends State<StartScreen> {
                                                                       UIConstants
                                                                           .spacingL,
                                                                 ),
-                                                                child: Text(
-                                                                  termin
-                                                                          .bezeichnung
-                                                                          .isNotEmpty
-                                                                      ? termin
-                                                                          .bezeichnung
-                                                                      : schulung
-                                                                          .bezeichnung,
-                                                                  style:
-                                                                      UIStyles
-                                                                          .dialogTitleStyle,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
+                                                                child: Semantics(
+                                                                  label:
+                                                                      'Schulungsdetails: ${termin
+                                                                              .bezeichnung
+                                                                              .isNotEmpty
+                                                                          ? termin
+                                                                              .bezeichnung
+                                                                          : schulung
+                                                                              .bezeichnung}',
+                                                                  header: true,
+                                                                  child: Text(
+                                                                    termin
+                                                                            .bezeichnung
+                                                                            .isNotEmpty
+                                                                        ? termin
+                                                                            .bezeichnung
+                                                                        : schulung
+                                                                            .bezeichnung,
+                                                                    style:
+                                                                        UIStyles
+                                                                            .dialogTitleStyle,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
                                                                 ),
                                                               ),
                                                               const SizedBox(
