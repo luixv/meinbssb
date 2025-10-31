@@ -62,6 +62,7 @@ class SchulungenDetailsDialog {
                     Semantics(
                       label:
                           'Schulungsdetails Dialog. Enthält Informationen zur Schulung, wie Titel, freie Plätze, Datum, Ort, Gruppe, Preis, Lehrgangsleiter und Beschreibung.',
+                      liveRegion: true,
                       child: AlertDialog(
                         backgroundColor: UIConstants.backgroundColor,
                         contentPadding: EdgeInsets.zero,
