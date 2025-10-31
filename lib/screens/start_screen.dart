@@ -782,20 +782,14 @@ class StartScreenState extends State<StartScreen> {
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Semantics(
-                                                                    label:
-                                                                        'Lehrgangsleiter Abschnitt',
-                                                                    header:
-                                                                        true,
-                                                                    child: Text(
-                                                                      'Lehrgangsleiter:',
-                                                                      style: UIStyles
-                                                                          .bodyStyle
-                                                                          .copyWith(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                    ),
+                                                                  Text(
+                                                                    'Lehrgangsleiter:',
+                                                                    style: UIStyles
+                                                                        .bodyStyle
+                                                                        .copyWith(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
                                                                   ),
                                                                   const SizedBox(
                                                                     height:
@@ -815,19 +809,15 @@ class StartScreenState extends State<StartScreen> {
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Semantics(
-                                                                        label:
-                                                                            'E-Mail des Lehrgangsleiters: ${termin.lehrgangsleiterMail}',
-                                                                        child: Text(
-                                                                          termin
-                                                                              .lehrgangsleiterMail,
-                                                                          style:
-                                                                              UIStyles.bodyStyle,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        termin
+                                                                            .lehrgangsleiterMail,
+                                                                        style:
+                                                                            UIStyles.bodyStyle,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),

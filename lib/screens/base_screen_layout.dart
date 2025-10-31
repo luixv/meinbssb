@@ -45,10 +45,7 @@ class BaseScreenLayout extends StatelessWidget {
         backgroundColor: UIConstants.backgroundColor,
         iconTheme: const IconThemeData(color: UIConstants.textColor),
         leading: leading,
-        title: ScaledText(
-          title,
-          style: UIStyles.appBarTitleStyle,
-        ),
+        title: ScaledText(title, style: UIStyles.appBarTitleStyle),
         actions: [
           ...actions,
           if (showConnectivityIcon)
@@ -58,22 +55,35 @@ class BaseScreenLayout extends StatelessWidget {
             ),
           if (showMenu)
             Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu, color: UIConstants.textColor),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
+              builder:
+                  (context) => Semantics(
+                    label: 'menu',
+                    button: true,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.menu,
+                        color: UIConstants.textColor,
+                      ),
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),
+                  ),
             ),
         ],
       ),
-      endDrawer: showMenu
-          ? AppDrawer(
-              userData: userData,
-              isLoggedIn: isLoggedIn,
-              onLogout: onLogout,
-            )
-          : null,
+      endDrawer:
+          showMenu
+              ? Semantics(
+                label: 'Navigationsmenü',
+                container: true,
+                child: AppDrawer(
+                  userData: userData,
+                  isLoggedIn: isLoggedIn,
+                  onLogout: onLogout,
+                ),
+              )
+              : null,
       body: Consumer<FontSizeProvider>(
         builder: (context, fontSizeProvider, child) => body,
       ),
