@@ -296,10 +296,14 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           insetPadding:
                               EdgeInsets.zero, // remove default Flutter margins
                           contentPadding: EdgeInsets.zero,
-                          title: const Center(
-                            child: ScaledText(
-                              'Buchungsdaten Erfassen',
-                              style: UIStyles.dialogTitleStyle,
+                          title: Semantics(
+                            header: true,
+                            label: 'Dialog: Buchungsdaten erfassen',
+                            child: const Center(
+                              child: ScaledText(
+                                'Buchungsdaten Erfassen',
+                                style: UIStyles.dialogTitleStyle,
+                              ),
                             ),
                           ),
                           content: Stack(
@@ -314,8 +318,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     left: UIConstants.spacingM,
                                     right: UIConstants.spacingM,
                                   ),
-                                  child: SingleChildScrollView(
-                                    child: Form(
+                                  child: Semantics(
+                                    container: true,
+                                    label: 'Formular zur Erfassung der Buchungsdaten: Bankdaten, AGB und Lastschrifteinzug bestätigen.',
+                                    child: SingleChildScrollView(
+                                      child: Form(
                                       key: formKey,
                                       child: Column(
                                         crossAxisAlignment:
@@ -628,6 +635,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     ),
                                   ),
                                 ),
+                                ),
                               ),
                               Positioned(
                                 bottom: UIConstants.spacingM,
@@ -635,6 +643,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 child: DialogFABs(
                                   children: [
                                     Semantics(
+                                      container: true,
                                       button: true,
                                       label: 'Buchung abbrechen',
                                       child: FloatingActionButton(
@@ -652,6 +661,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       ),
                                     ),
                                     Semantics(
+                                      container: true,
+                                      button: true,
                                       label: 'Button zum Buchen der Buchung',
                                       child: FloatingActionButton(
                                         heroTag: 'submitBookingFab',
