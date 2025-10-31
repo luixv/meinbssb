@@ -148,18 +148,14 @@ class SchulungenDetailsDialog {
                                               const SizedBox(
                                                 height: UIConstants.spacingM,
                                               ),
-                                              Semantics(
-                                                label:
-                                                    'Freie Plätze: Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
-                                                child: Text(
-                                                  'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
-                                                  style: UIStyles.bodyStyle
-                                                      .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                              Text(
+                                                'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
+                                                style: UIStyles.bodyStyle
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                textAlign: TextAlign.center,
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingM,
@@ -348,18 +344,13 @@ class SchulungenDetailsDialog {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    Semantics(
-                                                      label: 'Lehrgangsleiter',
-                                                      child: Text(
-                                                        'Lehrgangsleiter:',
-                                                        style: UIStyles
-                                                            .bodyStyle
-                                                            .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                      ),
+                                                    Text(
+                                                      'Lehrgangsleiter:',
+                                                      style: UIStyles.bodyStyle
+                                                          .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                     ),
                                                     const SizedBox(
                                                       height:
