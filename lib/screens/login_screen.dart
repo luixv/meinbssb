@@ -481,9 +481,21 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       Focus(
+                        onKey: (node, event) {
+                          if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                                  event.isKeyPressed(
+                                    LogicalKeyboardKey.numpadEnter,
+                                  )) &&
+                              !_isLoading) {
+                            _handleLogin();
+                            return KeyEventResult.handled;
+                          }
+                          return KeyEventResult.ignored;
+                        },
                         child: Semantics(
                           label: 'Login Button',
                           hint: 'Tippen, um sich einzuloggen',
+                          button: true,
                           child: _buildLoginButton(),
                         ),
                       ),
