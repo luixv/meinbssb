@@ -448,6 +448,7 @@ class LoginScreenState extends State<LoginScreen> {
                           label: 'Fehlermeldung: $_errorMessage',
                           hint:
                               'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
+                          liveRegion: true,
                           child: ScaledText(
                             _errorMessage,
                             style: UIStyles.errorStyle,
