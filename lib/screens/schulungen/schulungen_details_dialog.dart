@@ -370,19 +370,15 @@ class SchulungenDetailsDialog {
                                                         UIConstants
                                                             .horizontalSpacingS,
                                                         Flexible(
-                                                          child: Semantics(
-                                                            label:
-                                                                'E-Mail des Lehrgangsleiters: $lehrgangsleiterMail',
-                                                            child: Text(
-                                                              lehrgangsleiterMail,
-                                                              style:
-                                                                  UIStyles
-                                                                      .bodyStyle,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
+                                                          child: Text(
+                                                            lehrgangsleiterMail,
+                                                            style:
+                                                                UIStyles
+                                                                    .bodyStyle,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
                                                           ),
                                                         ),
                                                       ],
