@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
@@ -62,6 +63,14 @@ class SchulungenListItem extends StatelessWidget {
 
         return Focus(
           focusNode: focusNode,
+          onKey: (node, event) {
+            if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+              onDetailsPressed();
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
           child: Semantics(
             label: summaryLabel,
             focusable: true,
