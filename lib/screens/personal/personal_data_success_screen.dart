@@ -6,6 +6,10 @@ import 'package:meinbssb/constants/messages.dart';
 
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class PersonalDataSuccessScreen extends StatelessWidget {
   const PersonalDataSuccessScreen({
@@ -23,41 +27,56 @@ class PersonalDataSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Persönliche Daten',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              success ? Icons.check_circle : Icons.error,
-              color: success ? Colors.green : Colors.red,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Text(
-              success ? Messages.personalDataSaved : Messages.errorOccurred,
-              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: Semantics(
+          label:
+              success
+                  ? 'Ihre persönlichen Daten wurden erfolgreich gespeichert.'
+                  : 'Es ist ein Fehler beim Speichern der persönlichen Daten aufgetreten.',
+          liveRegion: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                success ? Icons.check_circle : Icons.error,
+                color: success ? Colors.green : Colors.red,
+                size: UIConstants.iconSizeXL,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              ScaledText(
+                success ? Messages.personalDataSaved : Messages.errorOccurred,
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'personalDataResultFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/profile',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.person,
-          color: UIConstants.whiteColor,
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Zurück zum Profil',
+        child: FloatingActionButton(
+          heroTag: 'personalDataResultFab',
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              '/profile',
+              arguments: {'userData': userData, 'isLoggedIn': true},
+            );
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.person, color: UIConstants.whiteColor),
         ),
       ),
     );

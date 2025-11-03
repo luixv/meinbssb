@@ -59,76 +59,97 @@ class _CookieConsentState extends State<CookieConsent> {
     return Stack(
       children: [
         widget.child, // The main content of your app
-        if (_showConsent) // Only show the overlay if consent is not accepted
+        if (_showConsent)
           Positioned.fill(
             child: GestureDetector(
-              behavior: HitTestBehavior
-                  .opaque, // Ensures taps are caught by this layer
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 LoggerService.logInfo(
                   'CookieConsent: Tap outside dialog detected, but not dismissed.',
                 );
               },
-              child: Container(
-                key: const ValueKey('cookieConsentBackground'),
-                color: const Color.fromARGB(128, 0, 0, 0),
-                alignment: Alignment.center,
-                child: Material(
-                  color: UIConstants.backgroundColor,
-                  borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-                  clipBehavior: Clip.antiAlias,
-                  elevation: 10.0,
-                  child: Container(
-                    margin: const EdgeInsets.all(UIConstants.spacingS),
-                    padding: const EdgeInsets.all(UIConstants.spacingS),
-                    constraints: const BoxConstraints(maxWidth: 400),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          Messages.cookieConsentTitle,
-                          style: UIStyles.dialogTitleStyle,
-                        ),
-                        const SizedBox(height: UIConstants.spacingL),
-                        const Text(
-                          Messages.cookieConsentMessage,
-                          textAlign: TextAlign.center,
-                          style: UIStyles.dialogContentStyle,
-                        ),
-                        const SizedBox(height: UIConstants.spacingS),
-                        Padding(
-                          padding: UIConstants.dialogPadding,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: _acceptConsent,
-                                  style: UIStyles.dialogAcceptButtonStyle,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        UIConstants.centerAlignment,
-                                    children: [
-                                      const Icon(
-                                        Icons.check,
-                                        color: UIConstants.checkIcon,
+              child: Semantics(
+                container: true,
+                label:
+                    'Cookie-Einwilligungsdialog. Bitte stimmen Sie der Verwendung von Cookies zu.',
+                child: Container(
+                  key: const ValueKey('cookieConsentBackground'),
+                  color: const Color.fromARGB(128, 0, 0, 0),
+                  alignment: Alignment.center,
+                  child: Material(
+                    color: UIConstants.backgroundColor,
+                    borderRadius: BorderRadius.circular(
+                      UIConstants.cornerRadius,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    elevation: 10.0,
+                    child: Container(
+                      margin: const EdgeInsets.all(UIConstants.spacingS),
+                      padding: const EdgeInsets.all(UIConstants.spacingS),
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Semantics(
+                            header: true,
+                            label: 'Cookie-Einwilligung Titel',
+                            child: const Text(
+                              Messages.cookieConsentTitle,
+                              style: UIStyles.dialogTitleStyle,
+                            ),
+                          ),
+                          const SizedBox(height: UIConstants.spacingL),
+                          Semantics(
+                            label: 'Cookie-Einwilligung Nachricht',
+                            child: const Text(
+                              Messages.cookieConsentMessage,
+                              textAlign: TextAlign.center,
+                              style: UIStyles.dialogContentStyle,
+                            ),
+                          ),
+                          const SizedBox(height: UIConstants.spacingS),
+                          Padding(
+                            padding: UIConstants.dialogPadding,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Semantics(
+                                    button: true,
+                                    label:
+                                        'Zustimmen Button für Cookie-Einwilligung',
+                                    child: ElevatedButton(
+                                      onPressed: _acceptConsent,
+                                      style: UIStyles.dialogAcceptButtonStyle,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            UIConstants.centerAlignment,
+                                        children: [
+                                          const Icon(
+                                            Icons.check,
+                                            color: UIConstants.checkIcon,
+                                          ),
+                                          UIConstants.horizontalSpacingS,
+                                          Text(
+                                            'Zustimmen',
+                                            style: UIStyles
+                                                .dialogButtonTextStyle
+                                                .copyWith(
+                                                  color:
+                                                      UIConstants
+                                                          .submitButtonText,
+                                                ),
+                                          ),
+                                        ],
                                       ),
-                                      UIConstants.horizontalSpacingS,
-                                      Text(
-                                        'Zustimmen',
-                                        style: UIStyles.dialogButtonTextStyle
-                                            .copyWith(
-                                          color: UIConstants.submitButtonText,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

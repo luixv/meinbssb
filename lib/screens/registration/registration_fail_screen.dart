@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class RegistrationFailScreen extends StatelessWidget {
   const RegistrationFailScreen({
@@ -14,6 +18,8 @@ class RegistrationFailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Registrierung fehlgeschlagen',
       userData: userData,
@@ -21,38 +27,46 @@ class RegistrationFailScreen extends StatelessWidget {
       onLogout: () {
         Navigator.pushReplacementNamed(context, '/login');
       },
-      body: Semantics(
-        label:
-            'Registrierung fehlgeschlagen. Fehlermeldung und Option zur Rückkehr zum Login.',
-        child: Center(
+      body: Center(
+        child: Semantics(
+          label: 'Registrierung fehlgeschlagen. $message',
+          liveRegion: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Icon(
+              Icon(
                 Icons.error,
                 color: Colors.red,
                 size: UIConstants.iconSizeXL,
               ),
               const SizedBox(height: UIConstants.spacingM),
-              Text(
+              ScaledText(
                 message,
-                style: const TextStyle(fontSize: UIConstants.dialogFontSize),
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'registrationFailFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/login',
-            arguments: {'userData': userData, 'isLoggedIn': false},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.login, color: UIConstants.whiteColor),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Zurück zum Login',
+        child: FloatingActionButton(
+          heroTag: 'registrationFailFab',
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              '/login',
+              arguments: {'userData': userData, 'isLoggedIn': false},
+            );
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.login, color: UIConstants.whiteColor),
+        ),
       ),
     );
   }

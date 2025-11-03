@@ -24,44 +24,50 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
 
     return BaseScreenLayout(
-      title: 'Profilbild erfolgreich', // Updated title
+      title: 'Profilbild erfolgreich',
       userData: userData,
-      isLoggedIn: isLoggedIn, // User should be logged in here
+      isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            ScaledText(
-              // Using ScaledText
-              'Ihr Profilbild wurde erfolgreich hochgeladen!', // Updated message
-              style: UIStyles.dialogContentStyle.copyWith(
-                // Using UIStyles.dialogTextStyle
-                fontSize:
-                    UIStyles.dialogContentStyle.fontSize! *
-                    fontSizeProvider.scaleFactor,
+        child: Semantics(
+          label: 'Profilbild erfolgreich hochgeladen!',
+          liveRegion: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: UIConstants.iconSizeXL,
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              const SizedBox(height: UIConstants.spacingM),
+              ScaledText(
+                'Ihr Profilbild wurde erfolgreich hochgeladen!',
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'personalPictUploadSuccessFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/profile',
-            arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.person, color: UIConstants.whiteColor),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Zurück zum Profil',
+        child: FloatingActionButton(
+          heroTag: 'personalPictUploadSuccessFab',
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              '/profile',
+              arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
+            );
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.person, color: UIConstants.whiteColor),
+        ),
       ),
     );
   }

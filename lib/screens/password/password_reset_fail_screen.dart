@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class PasswordResetFailScreen extends StatelessWidget {
   const PasswordResetFailScreen({
@@ -14,6 +18,8 @@ class PasswordResetFailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Passwort-Reset fehlgeschlagen',
       userData: userData,
@@ -34,9 +40,13 @@ class PasswordResetFailScreen extends StatelessWidget {
                 size: UIConstants.iconSizeXL,
               ),
               const SizedBox(height: UIConstants.spacingM),
-              Text(
+              ScaledText(
                 message,
-                style: const TextStyle(fontSize: UIConstants.dialogFontSize),
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

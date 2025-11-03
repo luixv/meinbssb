@@ -374,19 +374,22 @@ class BankDataScreenState extends State<BankDataScreen> {
             label: 'Abbrechen Button',
             hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
             button: true,
-            child: FloatingActionButton(
-              heroTag: 'bankDataCancelFab',
-              onPressed: () {
-                setState(() {
-                  _isEditing = false;
-                  _kontoinhaberController.clear();
-                  _ibanController.clear();
-                  _bicController.clear();
-                  _loadInitialData();
-                });
-              },
-              backgroundColor: UIConstants.defaultAppColor,
-              child: const Icon(Icons.close, color: UIConstants.whiteColor),
+            child: Focus(
+              canRequestFocus: true,
+              child: FloatingActionButton(
+                heroTag: 'bankDataCancelFab',
+                onPressed: () {
+                  setState(() {
+                    _isEditing = false;
+                    _kontoinhaberController.clear();
+                    _ibanController.clear();
+                    _bicController.clear();
+                    _loadInitialData();
+                  });
+                },
+                backgroundColor: UIConstants.defaultAppColor,
+                child: const Icon(Icons.close, color: UIConstants.whiteColor),
+              ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
@@ -394,19 +397,22 @@ class BankDataScreenState extends State<BankDataScreen> {
             label: 'Speichern Button',
             hint: 'Bankdaten speichern',
             button: true,
-            child: FloatingActionButton(
-              heroTag: 'bankDataSaveFab',
-              onPressed: _isSaving ? null : _onSaveBankData,
-              backgroundColor: UIConstants.defaultAppColor,
-              child:
-                  _isSaving
-                      ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.circularProgressIndicator,
-                        ),
-                        strokeWidth: UIConstants.defaultStrokeWidth,
-                      )
-                      : const Icon(Icons.save, color: UIConstants.whiteColor),
+            child: Focus(
+              canRequestFocus: true,
+              child: FloatingActionButton(
+                heroTag: 'bankDataSaveFab',
+                onPressed: _isSaving ? null : _onSaveBankData,
+                backgroundColor: UIConstants.defaultAppColor,
+                child:
+                    _isSaving
+                        ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.circularProgressIndicator,
+                          ),
+                          strokeWidth: UIConstants.defaultStrokeWidth,
+                        )
+                        : const Icon(Icons.save, color: UIConstants.whiteColor),
+              ),
             ),
           ),
         ],
@@ -419,22 +425,25 @@ class BankDataScreenState extends State<BankDataScreen> {
             label: 'Löschen Button',
             hint: 'Bankdaten löschen',
             button: true,
-            child: FloatingActionButton(
-              heroTag: 'bankDataDeleteFab',
-              onPressed: _isSaving ? null : _onDeleteBankData,
-              backgroundColor: UIConstants.defaultAppColor,
-              child:
-                  _isSaving
-                      ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.whiteColor,
+            child: Focus(
+              canRequestFocus: true,
+              child: FloatingActionButton(
+                heroTag: 'bankDataDeleteFab',
+                onPressed: _isSaving ? null : _onDeleteBankData,
+                backgroundColor: UIConstants.defaultAppColor,
+                child:
+                    _isSaving
+                        ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            UIConstants.whiteColor,
+                          ),
+                          strokeWidth: UIConstants.defaultStrokeWidth,
+                        )
+                        : const Icon(
+                          Icons.delete_outline,
+                          color: UIConstants.whiteColor,
                         ),
-                        strokeWidth: UIConstants.defaultStrokeWidth,
-                      )
-                      : const Icon(
-                        Icons.delete_outline,
-                        color: UIConstants.whiteColor,
-                      ),
+              ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
@@ -442,15 +451,18 @@ class BankDataScreenState extends State<BankDataScreen> {
             label: 'Bearbeiten Button',
             hint: 'Bankdaten bearbeiten',
             button: true,
-            child: FloatingActionButton(
-              heroTag: 'bankDataEditFab',
-              onPressed: () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-              backgroundColor: UIConstants.defaultAppColor,
-              child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+            child: Focus(
+              canRequestFocus: true,
+              child: FloatingActionButton(
+                heroTag: 'bankDataEditFab',
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
+                backgroundColor: UIConstants.defaultAppColor,
+                child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+              ),
             ),
           ),
         ],
