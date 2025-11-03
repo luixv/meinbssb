@@ -132,177 +132,196 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
           userData: widget.userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
-          body: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Meine Gewinne für das Jahr:',
-                    style: TextStyle(fontSize: UIConstants.titleFontSize),
-                  ),
-                  const SizedBox(height: UIConstants.spacingL),
-                  Center(
-                    child: SizedBox(
-                      width: 320, // Match the title width (adjust as needed)
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          DropdownButtonFormField<int>(
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: 'Jahr',
-                              labelStyle:
-                                  UIStyles.formInputDecoration.labelStyle,
-                              floatingLabelStyle:
-                                  UIStyles
-                                      .formInputDecoration
-                                      .floatingLabelStyle,
-                              floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            ),
-                            value: _selectedYear,
-                            isExpanded: true,
-                            items: const [
-                              DropdownMenuItem<int>(
-                                value: 2024,
-                                child: Text(
-                                  '2024',
-                                  style: TextStyle(
-                                    fontSize: UIConstants.subtitleFontSize,
+          body: Focus(
+            autofocus: true,
+            child: Semantics(
+              container: true,
+              label:
+                  'Oktoberfest Gewinn Bildschirm. Hier sehen Sie Ihre Gewinne für das Jahr und können Bankdaten bearbeiten.',
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Meine Gewinne für das Jahr:',
+                        style: TextStyle(fontSize: UIConstants.titleFontSize),
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
+                      Center(
+                        child: SizedBox(
+                          width:
+                              320, // Match the title width (adjust as needed)
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              DropdownButtonFormField<int>(
+                                decoration: UIStyles.formInputDecoration
+                                    .copyWith(
+                                      labelText: 'Jahr',
+                                      labelStyle:
+                                          UIStyles
+                                              .formInputDecoration
+                                              .labelStyle,
+                                      floatingLabelStyle:
+                                          UIStyles
+                                              .formInputDecoration
+                                              .floatingLabelStyle,
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.auto,
+                                    ),
+                                value: _selectedYear,
+                                isExpanded: true,
+                                items: const [
+                                  DropdownMenuItem<int>(
+                                    value: 2024,
+                                    child: Text(
+                                      '2024',
+                                      style: TextStyle(
+                                        fontSize: UIConstants.subtitleFontSize,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  DropdownMenuItem<int>(
+                                    value: 2025,
+                                    child: Text(
+                                      '2025',
+                                      style: TextStyle(
+                                        fontSize: UIConstants.subtitleFontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (int? year) {
+                                  if (year != null && year != _selectedYear) {
+                                    setState(() {
+                                      _selectedYear = year;
+                                    });
+                                    _fetchGewinne();
+                                  }
+                                },
                               ),
-                              DropdownMenuItem<int>(
-                                value: 2025,
-                                child: Text(
-                                  '2025',
-                                  style: TextStyle(
-                                    fontSize: UIConstants.subtitleFontSize,
-                                  ),
-                                ),
+                              const SizedBox(height: UIConstants.spacingM),
+                              ElevatedButton(
+                                onPressed:
+                                    (_loading || _gewinne.isEmpty)
+                                        ? null
+                                        : _fetchGewinne,
+                                child: const Text('Gewinne abrufen'),
                               ),
                             ],
-                            onChanged: (int? year) {
-                              if (year != null && year != _selectedYear) {
-                                setState(() {
-                                  _selectedYear = year;
-                                });
-                                _fetchGewinne();
-                              }
-                            },
                           ),
-                          const SizedBox(height: UIConstants.spacingM),
+                        ),
+                      ),
+                      if (_loading) ...[
+                        const SizedBox(height: UIConstants.spacingXL),
+                        const CircularProgressIndicator(),
+                      ],
+                      if (_gewinne.isNotEmpty) ...[
+                        const SizedBox(height: UIConstants.spacingXL),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _gewinne.length + 1,
+                          separatorBuilder: (context, index) {
+                            if (index < _gewinne.length - 1) {
+                              return const Divider();
+                            }
+                            return const SizedBox.shrink();
+                          },
+                          itemBuilder: (context, index) {
+                            if (index == _gewinne.length) {
+                              return const SizedBox(
+                                height: UIConstants.helpSpacing,
+                              );
+                            }
+                            final gewinn = _gewinne[index];
+                            String abgerufenAmText;
+                            final abgerufenAm = gewinn.abgerufenAm;
+                            if (abgerufenAm.isEmpty) {
+                              abgerufenAmText = 'noch nicht abgerufen';
+                            } else {
+                              DateTime? parsed;
+                              try {
+                                parsed = DateTime.tryParse(abgerufenAm);
+                              } catch (_) {
+                                parsed = null;
+                              }
+                              if (parsed != null) {
+                                final day = parsed.day.toString().padLeft(
+                                  2,
+                                  '0',
+                                );
+                                final month = parsed.month.toString().padLeft(
+                                  2,
+                                  '0',
+                                );
+                                final year = parsed.year.toString();
+                                abgerufenAmText = '$day.$month.$year';
+                              } else {
+                                abgerufenAmText = abgerufenAm;
+                              }
+                            }
+                            return ListTile(
+                              title: Text(
+                                gewinn.isSachpreis
+                                    ? '${gewinn.wettbewerb}: ${gewinn.sachpreis}'
+                                    : '${gewinn.wettbewerb}: ${gewinn.geldpreis}\u20ac',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: UIConstants.subtitleFontSize,
+                                ),
+                              ),
+                              subtitle: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: UIConstants.subtitleFontSize,
+                                    color:
+                                        DefaultTextStyle.of(
+                                          context,
+                                        ).style.color,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Abrufdatum: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: UIConstants.subtitleFontSize,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: abgerufenAmText,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: UIConstants.subtitleFontSize,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: UIConstants.spacingM),
+                        if (_gewinne.any((g) => g.abgerufenAm.isEmpty))
                           ElevatedButton(
                             onPressed:
-                                (_loading || _gewinne.isEmpty)
-                                    ? null
-                                    : _fetchGewinne,
-                            child: const Text('Gewinne abrufen'),
+                                _bankDialogLoading ? null : _openBankDataDialog,
+                            child:
+                                _bankDialogLoading
+                                    ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : const Text('Bankdaten'),
                           ),
-                        ],
-                      ),
-                    ),
+                      ],
+                    ],
                   ),
-                  if (_loading) ...[
-                    const SizedBox(height: UIConstants.spacingXL),
-                    const CircularProgressIndicator(),
-                  ],
-                  if (_gewinne.isNotEmpty) ...[
-                    const SizedBox(height: UIConstants.spacingXL),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _gewinne.length + 1,
-                      separatorBuilder: (context, index) {
-                        if (index < _gewinne.length - 1) {
-                          return const Divider();
-                        }
-                        return const SizedBox.shrink();
-                      },
-                      itemBuilder: (context, index) {
-                        if (index == _gewinne.length) {
-                          return const SizedBox(
-                            height: UIConstants.helpSpacing,
-                          );
-                        }
-                        final gewinn = _gewinne[index];
-                        String abgerufenAmText;
-                        final abgerufenAm = gewinn.abgerufenAm;
-                        if (abgerufenAm.isEmpty) {
-                          abgerufenAmText = 'noch nicht abgerufen';
-                        } else {
-                          DateTime? parsed;
-                          try {
-                            parsed = DateTime.tryParse(abgerufenAm);
-                          } catch (_) {
-                            parsed = null;
-                          }
-                          if (parsed != null) {
-                            final day = parsed.day.toString().padLeft(2, '0');
-                            final month = parsed.month.toString().padLeft(
-                              2,
-                              '0',
-                            );
-                            final year = parsed.year.toString();
-                            abgerufenAmText = '$day.$month.$year';
-                          } else {
-                            abgerufenAmText = abgerufenAm;
-                          }
-                        }
-                        return ListTile(
-                          title: Text(
-                            gewinn.isSachpreis
-                                ? '${gewinn.wettbewerb}: ${gewinn.sachpreis}'
-                                : '${gewinn.wettbewerb}: ${gewinn.geldpreis}\u20ac',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: UIConstants.subtitleFontSize,
-                            ),
-                          ),
-                          subtitle: RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                fontSize: UIConstants.subtitleFontSize,
-                                color: DefaultTextStyle.of(context).style.color,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'Abrufdatum: ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: UIConstants.subtitleFontSize,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: abgerufenAmText,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: UIConstants.subtitleFontSize,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    if (_gewinne.any((g) => g.abgerufenAm.isEmpty))
-                      ElevatedButton(
-                        onPressed:
-                            _bankDialogLoading ? null : _openBankDataDialog,
-                        child:
-                            _bankDialogLoading
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : const Text('Bankdaten'),
-                      ),
-                  ],
-                ],
+                ),
               ),
             ),
           ),

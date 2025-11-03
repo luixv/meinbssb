@@ -97,55 +97,58 @@ class OktoberfestEintrittFestzeltState
       userData: null,
       isLoggedIn: true,
       onLogout: () {},
-      body: Semantics(
-        container: true,
-        label:
-            'Oktoberfest Eintritt Festzelt. Zeigt Eintrittsdaten, aktuelle Uhrzeit, Netzwerkstatus und persönliche Informationen für das Festzelt beim Oktoberfest.',
-        child: Stack(
-          children: [
-            // Background image
-            Container(
-              width: size.width,
-              height: size.height,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/BSSB_Wappen_dimmed.png'),
-                  fit: BoxFit.fitHeight,
-                  alignment: Alignment.topCenter,
+      body: Focus(
+        autofocus: true,
+        child: Semantics(
+          container: true,
+          label:
+              'Oktoberfest Eintritt Festzelt. Zeigt Eintrittsdaten, aktuelle Uhrzeit, Netzwerkstatus und persönliche Informationen für das Festzelt beim Oktoberfest.',
+          child: Stack(
+            children: [
+              // Background image
+              Container(
+                width: size.width,
+                height: size.height,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/BSSB_Wappen_dimmed.png'),
+                    fit: BoxFit.fitHeight,
+                    alignment: Alignment.topCenter,
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                padding: UIConstants.defaultPadding,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: UIConstants.spacingS),
-                    Semantics(
-                      label:
-                          _checkingConnection
-                              ? 'Netzwerkstatus wird geprüft'
-                              : (_hasInternet ? 'Online' : 'Offline'),
-                      child: _buildNetworkStatus(),
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    Semantics(
-                      label: 'Datum: ${widget.date}, Uhrzeit: $_currentTime',
-                      child: _buildDatumWithTime(),
-                    ),
-                    const SizedBox(height: UIConstants.spacingS),
-                    Semantics(
-                      label:
-                          'Persönliche Daten: Passnummer ${widget.passnummer}, Vorname ${widget.vorname}, Nachname ${widget.nachname}, Geburtsdatum ${widget.geburtsdatum}',
-                      child: _buildInfoTable(),
-                    ),
-                  ],
+              Center(
+                child: SingleChildScrollView(
+                  padding: UIConstants.defaultPadding,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label:
+                            _checkingConnection
+                                ? 'Netzwerkstatus wird geprüft'
+                                : (_hasInternet ? 'Online' : 'Offline'),
+                        child: _buildNetworkStatus(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label: 'Datum: ${widget.date}, Uhrzeit: $_currentTime',
+                        child: _buildDatumWithTime(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Semantics(
+                        label:
+                            'Persönliche Daten: Passnummer ${widget.passnummer}, Vorname ${widget.vorname}, Nachname ${widget.nachname}, Geburtsdatum ${widget.geburtsdatum}',
+                        child: _buildInfoTable(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
