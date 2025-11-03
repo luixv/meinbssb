@@ -190,6 +190,14 @@ class MockUserService extends _i1.Mock implements _i2.UserService {
             returnValue: _i3.Future<List<_i9.Person>>.value(<_i9.Person>[]),
           )
           as _i3.Future<List<_i9.Person>>);
+
+  @override
+  _i3.Future<bool> deleteMeinBSSBLogin(int? webloginId, String? email) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteMeinBSSBLogin, [webloginId, email]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 }
 
 /// A class which mocks [VereinService].

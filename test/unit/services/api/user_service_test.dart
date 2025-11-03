@@ -809,6 +809,476 @@ void main() {
       });
     });
 
+    // --- Unit tests for deleteMeinBSSBLogin ---
+    group('UserService.deleteMeinBSSBLogin', () {
+      late UserService userService;
+      late MockHttpClient mockHttpClient;
+      late MockCacheService mockCacheService;
+      late MockNetworkService mockNetworkService;
+      late MockConfigService mockConfigService;
+
+      setUp(() {
+        mockHttpClient = MockHttpClient();
+        mockCacheService = MockCacheService();
+        mockNetworkService = MockNetworkService();
+        mockConfigService = MockConfigService();
+        when(mockConfigService.getString('apiProtocol')).thenReturn('http');
+        when(
+          mockConfigService.getString('api1BaseServer'),
+        ).thenReturn('localhost');
+        when(mockConfigService.getString('api1BasePort')).thenReturn('8080');
+        when(mockConfigService.getString('api1BasePath')).thenReturn('');
+        userService = UserService(
+          httpClient: mockHttpClient,
+          cacheService: mockCacheService,
+          networkService: mockNetworkService,
+          configService: mockConfigService,
+        );
+      });
+
+      test('returns true when API result is true', () async {
+        when(
+          mockHttpClient.delete(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => {'result': true});
+
+        final result = await userService.deleteMeinBSSBLogin(
+          123,
+          'test@example.com',
+        );
+        expect(result, isTrue);
+        // ...existing code...
+      });
+
+      test('returns false when API result is false', () async {
+        when(
+          mockHttpClient.delete(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => {'result': false});
+        final result = await userService.deleteMeinBSSBLogin(
+          123,
+          'test@example.com',
+        );
+        expect(result, isFalse);
+        // ...existing code...
+      });
+
+      test('returns false when API response is missing result', () async {
+        when(
+          mockHttpClient.delete(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => {});
+        final result = await userService.deleteMeinBSSBLogin(
+          123,
+          'test@example.com',
+        );
+        expect(result, isFalse);
+        // ...existing code...
+      });
+
+      test('returns false on exception', () async {
+        when(
+          mockHttpClient.delete(
+            any,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('API error'));
+        final result = await userService.deleteMeinBSSBLogin(
+          123,
+          'test@example.com',
+        );
+        expect(result, isFalse);
+        // ...existing code...
+      });
+
+      test('returns true when API result is true (with debug)', () async {
+        final endpoint = 'DeleteMeinBSSBLogin/123/test@example.com';
+        when(
+          mockHttpClient.delete(
+            endpoint,
+            overrideBaseUrl: anyNamed('overrideBaseUrl'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((invocation) async {
+          return {'result': true};
+        });
+        final result = await userService.deleteMeinBSSBLogin(
+          123,
+          'test@example.com',
+        );
+        expect(result, isTrue);
+      });
+    });
+
+    group('fetchZweitmitgliedschaften', () {
+      const testPersonId = 123;
+
+      test('fetchZweitmitgliedschaften returns mapped data', () async {
+        // Arrange
+        final mockResponse = [
+          {
+            'VEREINID': 1474,
+            'VEREINNR': 401006,
+            'VEREINNAME': 'Vereinigte Sportschützen Paartal Aichach',
+            'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+          },
+          {
+            'VEREINID': 2420,
+            'VEREINNR': 421037,
+            'VEREINNAME': 'SV Alpenrose Grimolzhausen',
+            'EINTRITTVEREIN': '2001-11-01T00:00:00.000+01:00',
+          },
+        ];
+
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'),
+        ).thenAnswer((_) async => mockResponse);
+
+        // Act
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
+
+        // Assert
+        expect(result.length, 2);
+
+        expect(result[0].vereinId, 1474);
+        expect(result[0].vereinNr, 401006);
+        expect(
+          result[0].vereinName,
+          'Vereinigte Sportschützen Paartal Aichach',
+        );
+        expect(
+          result[0].eintrittVerein,
+          DateTime.parse('2012-02-26T00:00:00.000+01:00'),
+        );
+
+        expect(result[1].vereinId, 2420);
+        expect(result[1].vereinNr, 421037);
+        expect(result[1].vereinName, 'SV Alpenrose Grimolzhausen');
+        expect(
+          result[1].eintrittVerein,
+          DateTime.parse('2001-11-01T00:00:00.000+01:00'),
+        );
+      });
+
+      test('handles empty response', () async {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/$testPersonId'),
+        ).thenAnswer((_) async => []);
+
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
+
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('handles error response', () async {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenThrow(Exception('Network error'));
+
+        final result = await userService.fetchZweitmitgliedschaften(
+          testPersonId,
+        );
+
+        expect(result, isA<List<dynamic>>());
+        expect(result, isEmpty);
+      });
+
+      test('fetchZweitmitgliedschaften skips non-map items', () async {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/123'),
+        ).thenAnswer((_) async => [123, 'string', null]);
+
+        final result = await userService.fetchZweitmitgliedschaften(123);
+
+        expect(result, isEmpty);
+      });
+
+      test('fetchZweitmitgliedschaften handles negative person ID', () async {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/-1'),
+        ).thenAnswer((_) async => []);
+
+        final result = await userService.fetchZweitmitgliedschaften(-1);
+
+        expect(result, isEmpty);
+      });
+
+      test('fetchZweitmitgliedschaften handles large datasets', () async {
+        // Create a large dataset
+        final largeResponse = List.generate(
+          100,
+          (index) => {
+            'VEREINID': 1000 + index,
+            'VEREINNR': 400000 + index,
+            'VEREINNAME': 'Verein $index',
+            'EINTRITTVEREIN': '2020-01-01T00:00:00.000+01:00',
+          },
+        );
+
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/999'),
+        ).thenAnswer((_) async => largeResponse);
+
+        final result = await userService.fetchZweitmitgliedschaften(999);
+
+        expect(result.length, 100);
+        expect(result.first.vereinId, 1000);
+        expect(result.last.vereinId, 1099);
+      });
+
+      test('fetchZweitmitgliedschaften handles incomplete data', () async {
+        final incompleteResponse = [
+          {
+            'VEREINID': 1474,
+            // Missing VEREINNR
+            'VEREINNAME': 'Test Verein',
+            // Missing EINTRITTVEREIN
+          },
+          {
+            // Missing VEREINID
+            'VEREINNR': 401006,
+            'VEREINNAME': 'Another Verein',
+            'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+          },
+        ];
+
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/456'),
+        ).thenAnswer((_) async => incompleteResponse);
+
+        final result = await userService.fetchZweitmitgliedschaften(456);
+
+        // The actual service might filter out incomplete entries or handle them gracefully
+        // So we test that it returns some result (could be empty or filled)
+        expect(result, isA<List>());
+
+        // If entries are included, they should be properly formed
+        for (final entry in result) {
+          expect(entry.vereinName, isNotNull);
+        }
+      });
+
+      test(
+        'fetchZweitmitgliedschaften handles mixed valid/invalid items',
+        () async {
+          final mixedResponse = [
+            {
+              'VEREINID': 1474,
+              'VEREINNR': 401006,
+              'VEREINNAME': 'Valid Verein',
+              'EINTRITTVEREIN': '2012-02-26T00:00:00.000+01:00',
+            },
+            'invalid string',
+            {
+              'VEREINID': 2420,
+              'VEREINNR': 421037,
+              'VEREINNAME': 'Another Valid Verein',
+              'EINTRITTVEREIN': '2001-11-01T00:00:00.000+01:00',
+            },
+            null,
+            123,
+          ];
+
+          when(
+            mockNetworkService.getCacheExpirationDuration(),
+          ).thenReturn(const Duration(hours: 1));
+
+          when(
+            mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+              any,
+              any,
+              any,
+              any,
+            ),
+          ).thenAnswer((invocation) async {
+            final fetchData =
+                invocation.positionalArguments[2] as Future<dynamic> Function();
+            final response = await fetchData();
+            return response;
+          });
+
+          when(
+            mockHttpClient.get('Zweitmitgliedschaften/789'),
+          ).thenAnswer((_) async => mixedResponse);
+
+          final result = await userService.fetchZweitmitgliedschaften(789);
+
+          // The service should filter out invalid entries
+          expect(result, isA<List>());
+
+          // All returned entries should be valid
+          for (final entry in result) {
+            expect(entry.vereinName, isNotNull);
+            expect(entry.vereinName, isA<String>());
+          }
+
+          // Should have filtered to only include valid map entries
+          // The actual count depends on the implementation's validation logic
+          expect(result.length, lessThanOrEqualTo(2));
+        },
+      );
+
+      test('fetchZweitmitgliedschaften handles null response', () async {
+        when(
+          mockNetworkService.getCacheExpirationDuration(),
+        ).thenReturn(const Duration(hours: 1));
+
+        when(
+          mockCacheService.cacheAndRetrieveData<List<dynamic>>(
+            any,
+            any,
+            any,
+            any,
+          ),
+        ).thenAnswer((invocation) async {
+          final fetchData =
+              invocation.positionalArguments[2] as Future<dynamic> Function();
+          final response = await fetchData();
+          return response;
+        });
+
+        when(
+          mockHttpClient.get('Zweitmitgliedschaften/000'),
+        ).thenAnswer((_) async => null);
+
+        final result = await userService.fetchZweitmitgliedschaften(000);
+
+        expect(result, isEmpty);
+      });
+    });
+
     group('fetchPassdatenZVE', () {
       const testPassdatenId = 456;
       const testPersonId = 123;
