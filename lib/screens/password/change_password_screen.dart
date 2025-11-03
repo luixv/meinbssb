@@ -166,146 +166,147 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
       automaticallyImplyLeading: true,
-      body: Semantics(
-        label:
-            'Passwort ändern Bereich. Hier können Sie Ihr aktuelles Passwort eingeben und ein neues Passwort festlegen.',
-        child: Consumer<FontSizeProvider>(
-          builder: (context, fontSizeProvider, child) {
-            return SingleChildScrollView(
-              padding: UIConstants.defaultPadding,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_errorMessage != null)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: UIConstants.spacingM,
-                        ),
-                        child: ScaledText(
-                          _errorMessage!,
-                          style: UIStyles.errorStyle.copyWith(
-                            fontSize:
-                                UIStyles.errorStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
+      body: Focus(
+        autofocus: true,
+        child: Semantics(
+          label:
+              'Passwort ändern Bereich. Hier können Sie Ihr aktuelles Passwort eingeben und ein neues Passwort festlegen.',
+          child: Consumer<FontSizeProvider>(
+            builder: (context, fontSizeProvider, child) {
+              return SingleChildScrollView(
+                padding: UIConstants.defaultPadding,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: UIConstants.spacingM,
                           ),
-                        ),
-                      ),
-                    Focus(
-                      canRequestFocus: true,
-                      child: Semantics(
-                        label: 'Eingabefeld für aktuelles Passwort',
-                        textField: true,
-                        child: _buildPasswordField(
-                          controller: _currentPasswordController,
-                          label: 'Aktuelles Passwort',
-                          isVisible: _isCurrentPasswordVisible,
-                          onToggleVisibility: () {
-                            setState(() {
-                              _isCurrentPasswordVisible =
-                                  !_isCurrentPasswordVisible;
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Bitte geben Sie Ihr aktuelles Passwort ein';
-                            }
-                            return null;
-                          },
-                          fontSizeProvider: fontSizeProvider,
-                          eyeIconColor: UIConstants.textColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    Focus(
-                      canRequestFocus: true,
-                      child: Semantics(
-                        label: 'Eingabefeld für neues Passwort',
-                        textField: true,
-                        child: _buildPasswordField(
-                          controller: _newPasswordController,
-                          label: 'Neues Passwort',
-                          isVisible: _isNewPasswordVisible,
-                          onToggleVisibility: () {
-                            setState(() {
-                              _isNewPasswordVisible = !_isNewPasswordVisible;
-                            });
-                          },
-                          validator: _validatePassword,
-                          fontSizeProvider: fontSizeProvider,
-                          eyeIconColor: UIConstants.textColor,
-                          onChanged: _checkStrength,
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(
-                        top: 4.0,
-                        bottom: UIConstants.spacingS,
-                      ),
-                      child: ScaledText(
-                        'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
-                        style: UIStyles.formLabelStyle,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            value: _strength,
-                            minHeight: 6,
-                            backgroundColor: UIConstants.greySubtitleTextColor,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              _strengthColor(_strength),
+                          child: ScaledText(
+                            _errorMessage!,
+                            style: UIStyles.errorStyle.copyWith(
+                              fontSize:
+                                  UIStyles.errorStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
                             ),
                           ),
                         ),
-                        const SizedBox(width: UIConstants.spacingS),
-                        ScaledText(
-                          _strengthLabel(_strength),
-                          style: UIStyles.bodyStyle.copyWith(
-                            color: _strengthColor(_strength),
+                      Focus(
+                        canRequestFocus: true,
+                        child: Semantics(
+                          label: 'Eingabefeld für aktuelles Passwort',
+                          child: _buildPasswordField(
+                            controller: _currentPasswordController,
+                            label: 'Aktuelles Passwort',
+                            isVisible: _isCurrentPasswordVisible,
+                            onToggleVisibility: () {
+                              setState(() {
+                                _isCurrentPasswordVisible =
+                                    !_isCurrentPasswordVisible;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Bitte geben Sie Ihr aktuelles Passwort ein';
+                              }
+                              return null;
+                            },
+                            fontSizeProvider: fontSizeProvider,
+                            eyeIconColor: UIConstants.textColor,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    Focus(
-                      canRequestFocus: true,
-                      child: Semantics(
-                        label: 'Eingabefeld für Passwort-Wiederholung',
-                        textField: true,
-                        child: _buildPasswordField(
-                          controller: _confirmPasswordController,
-                          label: 'Neues Passwort wiederholen',
-                          isVisible: _isConfirmPasswordVisible,
-                          onToggleVisibility: () {
-                            setState(() {
-                              _isConfirmPasswordVisible =
-                                  !_isConfirmPasswordVisible;
-                            });
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Bitte wiederholen Sie das neue Passwort';
-                            }
-                            if (value != _newPasswordController.text) {
-                              return 'Die Passwörter stimmen nicht überein';
-                            }
-                            return null;
-                          },
-                          fontSizeProvider: fontSizeProvider,
-                          eyeIconColor: UIConstants.textColor,
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Focus(
+                        canRequestFocus: true,
+                        child: Semantics(
+                          label: 'Eingabefeld für neues Passwort',
+                          child: _buildPasswordField(
+                            controller: _newPasswordController,
+                            label: 'Neues Passwort',
+                            isVisible: _isNewPasswordVisible,
+                            onToggleVisibility: () {
+                              setState(() {
+                                _isNewPasswordVisible = !_isNewPasswordVisible;
+                              });
+                            },
+                            validator: _validatePassword,
+                            fontSizeProvider: fontSizeProvider,
+                            eyeIconColor: UIConstants.textColor,
+                            onChanged: _checkStrength,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 4.0,
+                          bottom: UIConstants.spacingS,
+                        ),
+                        child: ScaledText(
+                          'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                          style: UIStyles.formLabelStyle,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              value: _strength,
+                              minHeight: 6,
+                              backgroundColor:
+                                  UIConstants.greySubtitleTextColor,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _strengthColor(_strength),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ScaledText(
+                            _strengthLabel(_strength),
+                            style: UIStyles.bodyStyle.copyWith(
+                              color: _strengthColor(_strength),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      Focus(
+                        canRequestFocus: true,
+                        child: Semantics(
+                          label: 'Eingabefeld für Passwort-Wiederholung',
+                          child: _buildPasswordField(
+                            controller: _confirmPasswordController,
+                            label: 'Neues Passwort wiederholen',
+                            isVisible: _isConfirmPasswordVisible,
+                            onToggleVisibility: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Bitte wiederholen Sie das neue Passwort';
+                              }
+                              if (value != _newPasswordController.text) {
+                                return 'Die Passwörter stimmen nicht überein';
+                              }
+                              return null;
+                            },
+                            fontSizeProvider: fontSizeProvider,
+                            eyeIconColor: UIConstants.textColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: Semantics(
