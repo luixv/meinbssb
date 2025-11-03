@@ -143,7 +143,7 @@ class SchulungenListItem extends StatelessWidget {
                                   size: UIConstants.defaultIconSize,
                                 ),
                                 const SizedBox(width: UIConstants.spacingXS),
-                                /*
+
                                 Flexible(
                                   child: Text(
                                     schulungsTermin.ort,
@@ -156,7 +156,6 @@ class SchulungenListItem extends StatelessWidget {
                                     maxLines: 1,
                                   ),
                                 ),
-                                */
                               ],
                             ),
                           ],
