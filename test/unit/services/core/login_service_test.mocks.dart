@@ -1381,6 +1381,14 @@ class MockUserService extends _i1.Mock implements _i24.UserService {
             returnValue: _i2.Future<List<_i29.Person>>.value(<_i29.Person>[]),
           )
           as _i2.Future<List<_i29.Person>>);
+
+  @override
+  _i2.Future<bool> deleteMeinBSSBLogin(int? webloginId, String? email) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteMeinBSSBLogin, [webloginId, email]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
 }
 
 /// A class which mocks [BankService].

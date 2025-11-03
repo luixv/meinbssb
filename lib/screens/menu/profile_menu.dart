@@ -137,7 +137,7 @@ class ProfileScreen extends StatelessWidget {
               // Removed 'Schützenausweis bestellen' menu item
               _buildMenuItem(
                 context,
-                'Konto Löschen',
+                'Benutzerkonto Löschen',
                 Icons.delete_forever,
                 () {
                   Navigator.push(

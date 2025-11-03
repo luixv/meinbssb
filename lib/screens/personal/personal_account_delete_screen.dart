@@ -42,14 +42,14 @@ class _PersonalAccountDeleteScreenState
           backgroundColor: UIConstants.backgroundColor,
           title: Center(
             child: ScaledText(
-              'Konto löschen',
+              'Benutzerkonto löschen',
               style: UIStyles.dialogTitleStyle.copyWith(
                 fontSize: fontSizeProvider.getScaledFontSize(20),
               ),
             ),
           ),
           content: Text(
-            'Sind Sie sicher, dass Sie Ihr Konto unwiderruflich löschen möchten?\n\n (Login, Bankdaten und Zugriffsrechte werden entfernt.)',
+            'Sind Sie sicher, dass Sie Ihr Benutzerkonto unwiderruflich löschen möchten?\n\n (Login, Bankdaten und Zugriffsrechte werden entfernt.)',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: fontSizeProvider.getScaledFontSize(16)),
           ),
@@ -156,14 +156,14 @@ class _PersonalAccountDeleteScreenState
     return Consumer<FontSizeProvider>(
       builder:
           (context, fontSizeProvider, _) => BaseScreenLayout(
-            title: 'Konto löschen',
+            title: 'Benutzerkonto löschen',
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
             automaticallyImplyLeading: true,
             body: Semantics(
               label:
-                  'Konto löschen Bildschirm. Hier können Sie Ihr Konto unwiderruflich löschen.',
+                  'Benutzerkonto löschen Bildschirm. Hier können Sie Ihr Benutzerkonto unwiderruflich löschen.',
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -172,10 +172,10 @@ class _PersonalAccountDeleteScreenState
                     const SizedBox(height: 32),
                     Semantics(
                       label:
-                          'Warnungstext: Möchten Sie Ihr Konto unwiderruflich löschen?',
+                          'Warnungstext: Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
                       child: Center(
                         child: Text(
-                          'Möchten Sie Ihr Konto unwiderruflich löschen?',
+                          'Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
                           style: TextStyle(
                             fontSize: fontSizeProvider.getScaledFontSize(20),
                             fontWeight: FontWeight.w500,
@@ -187,12 +187,13 @@ class _PersonalAccountDeleteScreenState
                     const SizedBox(height: 32),
                     if (isLoading)
                       Semantics(
-                        label: 'Ladeindikator: Konto wird gelöscht',
+                        label: 'Ladeindikator: Benutzerkonto wird gelöscht',
                         child: const Center(child: CircularProgressIndicator()),
                       )
                     else ...[
                       Semantics(
-                        label: 'Button zum unwiderruflichen Löschen des Kontos',
+                        label:
+                            'Button zum unwiderruflichen Löschen des Benutzerkontos',
                         button: true,
                         child: Center(
                           child: Padding(
@@ -211,7 +212,7 @@ class _PersonalAccountDeleteScreenState
                               ),
                               child: Center(
                                 child: Text(
-                                  'Konto Löschen',
+                                  'Benutzerkonto Löschen',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: fontSizeProvider

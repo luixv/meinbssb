@@ -285,6 +285,79 @@ void main() {
     });
 
     group('User Service Tests', () {
+      group('deleteMeinBSSBLogin', () {
+        late ApiService apiService;
+        late MockUserService mockUserService;
+        late MockCacheService mockCacheService;
+        late MockConfigService mockConfigService;
+        setUp(() {
+          mockUserService = MockUserService();
+          mockCacheService = MockCacheService();
+          mockConfigService = MockConfigService();
+          apiService = ApiService(
+            authService: MockAuthService(),
+            configService: mockConfigService,
+            cacheService: mockCacheService,
+            networkService: MockNetworkService(),
+            imageService: MockImageService(),
+            userService: mockUserService,
+            trainingService: MockTrainingService(),
+            bankService: MockBankService(),
+            vereinService: MockVereinService(),
+            httpClient: MockHttpClient(),
+            postgrestService: MockPostgrestService(),
+            emailService: MockEmailService(),
+            oktoberfestService: MockOktoberfestService(),
+            calendarService: MockCalendarService(),
+            bezirkService: MockBezirkService(),
+            startingRightsService: MockStartingRightsService(),
+          );
+        });
+
+        test(
+          'returns true when UserService.deleteMeinBSSBLogin returns true',
+          () async {
+            when(
+              mockCacheService.getString('username'),
+            ).thenAnswer((_) async => 'test@example.com');
+            when(
+              mockUserService.deleteMeinBSSBLogin(123, 'test@example.com'),
+            ).thenAnswer((_) async => true);
+            final result = await apiService.deleteMeinBSSBLogin(123);
+            expect(result, isTrue);
+            verify(
+              mockUserService.deleteMeinBSSBLogin(123, 'test@example.com'),
+            ).called(1);
+          },
+        );
+
+        test(
+          'returns false when UserService.deleteMeinBSSBLogin returns false',
+          () async {
+            when(
+              mockCacheService.getString('username'),
+            ).thenAnswer((_) async => 'test@example.com');
+            when(
+              mockUserService.deleteMeinBSSBLogin(123, 'test@example.com'),
+            ).thenAnswer((_) async => false);
+            final result = await apiService.deleteMeinBSSBLogin(123);
+            expect(result, isFalse);
+            verify(
+              mockUserService.deleteMeinBSSBLogin(123, 'test@example.com'),
+            ).called(1);
+          },
+        );
+
+        test('throws ArgumentError when cached username is null', () async {
+          when(
+            mockCacheService.getString('username'),
+          ).thenAnswer((_) async => null);
+          expect(
+            () => apiService.deleteMeinBSSBLogin(123),
+            throwsA(isA<ArgumentError>()),
+          );
+        });
+      });
       test('fetchPassdaten returns UserData on successful API call', () async {
         const testUserData = UserData(
           personId: 439287,

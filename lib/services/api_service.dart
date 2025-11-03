@@ -166,7 +166,7 @@ class ApiService {
     return _authService.resetPasswordStep1(passNumber);
   }
 
-  Future<Map<String, dynamic>> finalizeResetPassword(
+ Future<Map<String, dynamic>> finalizeResetPassword(
     String token,
     String personId,
     String newPassword,
@@ -174,7 +174,7 @@ class ApiService {
     return _authService.resetPasswordStep2(token, personId, newPassword);
   }
 
-  Future<Map<String, dynamic>> myBSSBPasswortAendern(
+ Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int personId,
     String newPassword,
   ) async {
@@ -184,17 +184,17 @@ class ApiService {
   //
   // --- User Service Methods ---
   //
-  Future<UserData?> fetchPassdaten(int personId) async {
+ Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
   }
 
-  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+ Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
     int? personId,
   ) async {
     return _userService.fetchPassdatenAkzeptierterOderAktiverPass(personId);
   }
 
-  Future<bool> bssbAppPassantrag(
+ Future<bool> bssbAppPassantrag(
     List<Map<String, dynamic>> zves,
     int? passdatenId,
     int? personId,
@@ -212,15 +212,14 @@ class ApiService {
     );
   }
 
-  Future<List<PassDataZVE>> fetchPassdatenZVE(
+ Future<List<PassDataZVE>> fetchPassdatenZVE(
     int passdatenId,
     int personId,
   ) async {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
-  // https://webintern.bssb.bayern:56400/rest/zmi/api1/DeleteMeinBSSBLogin/13914/r@r.rrrg
-  Future<bool> deleteMeinBSSBLogin(int webloginId) async {
+ Future<bool> deleteMeinBSSBLogin(int webloginId) async {
     final email = await getCachedUsername();
     if (email == null) {
       throw ArgumentError('Cached username (email) must not be null');

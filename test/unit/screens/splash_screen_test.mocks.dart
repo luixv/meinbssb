@@ -317,6 +317,14 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
           as _i9.Future<List<_i13.PassDataZVE>>);
 
   @override
+  _i9.Future<bool> deleteMeinBSSBLogin(int? webloginId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteMeinBSSBLogin, [webloginId]),
+            returnValue: _i9.Future<bool>.value(false),
+          )
+          as _i9.Future<bool>);
+
+  @override
   _i9.Future<bool> updateKritischeFelderUndAdresse(_i11.UserData? userData) =>
       (super.noSuchMethod(
             Invocation.method(#updateKritischeFelderUndAdresse, [userData]),
