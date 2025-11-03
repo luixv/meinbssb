@@ -161,73 +161,78 @@ class _PersonalAccountDeleteScreenState
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
             automaticallyImplyLeading: true,
-            body: Semantics(
-              label:
-                  'Benutzerkonto löschen Bildschirm. Hier können Sie Ihr Benutzerkonto unwiderruflich löschen.',
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 32),
-                    Semantics(
-                      label:
-                          'Warnungstext: Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
-                      child: Center(
-                        child: Text(
-                          'Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
-                          style: TextStyle(
-                            fontSize: fontSizeProvider.getScaledFontSize(20),
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    if (isLoading)
-                      Semantics(
-                        label: 'Ladeindikator: Benutzerkonto wird gelöscht',
-                        child: const Center(child: CircularProgressIndicator()),
-                      )
-                    else ...[
+            body: Focus(
+              autofocus: true,
+              child: Semantics(
+                label:
+                    'Benutzerkonto löschen Bildschirm. Hier können Sie Ihr Benutzerkonto unwiderruflich löschen.',
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 32),
                       Semantics(
                         label:
-                            'Button zum unwiderruflichen Löschen des Benutzerkontos',
-                        button: true,
+                            'Warnungstext: Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
                         child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32.0,
-                              vertical: 16.0,
+                          child: Text(
+                            'Möchten Sie Ihr Benutzerkonto unwiderruflich löschen?',
+                            style: TextStyle(
+                              fontSize: fontSizeProvider.getScaledFontSize(20),
+                              fontWeight: FontWeight.w500,
                             ),
-                            child: ElevatedButton(
-                              onPressed: _onDelete,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 18.0,
-                                  horizontal: 4.0,
-                                ),
-                                backgroundColor: UIConstants.defaultAppColor,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      if (isLoading)
+                        Semantics(
+                          label: 'Ladeindikator: Benutzerkonto wird gelöscht',
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else ...[
+                        Semantics(
+                          label:
+                              'Button zum unwiderruflichen Löschen des Benutzerkontos',
+                          button: true,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32.0,
+                                vertical: 16.0,
                               ),
-                              child: Center(
-                                child: Text(
-                                  'Benutzerkonto Löschen',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: fontSizeProvider
-                                        .getScaledFontSize(18),
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                              child: ElevatedButton(
+                                onPressed: _onDelete,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 18.0,
+                                    horizontal: 4.0,
+                                  ),
+                                  backgroundColor: UIConstants.defaultAppColor,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Benutzerkonto Löschen',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: fontSizeProvider
+                                          .getScaledFontSize(18),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),

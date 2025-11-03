@@ -448,6 +448,7 @@ class LoginScreenState extends State<LoginScreen> {
                           label: 'Fehlermeldung: $_errorMessage',
                           hint:
                               'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
+                          liveRegion: true,
                           child: ScaledText(
                             _errorMessage,
                             style: UIStyles.errorStyle,
@@ -481,9 +482,21 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       Focus(
+                        onKey: (node, event) {
+                          if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                                  event.isKeyPressed(
+                                    LogicalKeyboardKey.numpadEnter,
+                                  )) &&
+                              !_isLoading) {
+                            _handleLogin();
+                            return KeyEventResult.handled;
+                          }
+                          return KeyEventResult.ignored;
+                        },
                         child: Semantics(
                           label: 'Login Button',
                           hint: 'Tippen, um sich einzuloggen',
+                          button: true,
                           child: _buildLoginButton(),
                         ),
                       ),

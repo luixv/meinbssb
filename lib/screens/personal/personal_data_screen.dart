@@ -248,14 +248,18 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: Semantics(
-        label:
-            'Persönliche Daten. Anzeige und Bearbeitung Ihrer persönlichen Informationen wie Name, Adresse, Geburtsdatum und Passnummer. Pflichtfelder und Hinweise werden angezeigt.',
-        child:
-            _isLoading && _currentPassData == null
-                ? const Center(child: CircularProgressIndicator())
-                : _buildPersonalDataForm(fontSizeProvider),
-      ),
+      body:
+          _isLoading && _currentPassData == null
+              ? const Center(child: CircularProgressIndicator())
+              : Semantics(
+                label:
+                    'Persönliche Daten Bildschirm. Anzeige und Bearbeitung Ihrer persönlichen Informationen wie Name, Adresse, Geburtsdatum und Passnummer.',
+                liveRegion: true,
+                child: Focus(
+                  autofocus: true,
+                  child: _buildPersonalDataForm(fontSizeProvider),
+                ),
+              ),
       floatingActionButton: FutureBuilder<bool>(
         future: _isOffline(),
         builder: (context, offlineSnapshot) {

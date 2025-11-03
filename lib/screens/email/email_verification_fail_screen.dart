@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class EmailVerificationFailScreen extends StatelessWidget {
   const EmailVerificationFailScreen({
@@ -14,6 +18,8 @@ class EmailVerificationFailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'E-Mail-Bestätigung fehlgeschlagen',
       userData: userData,
@@ -22,42 +28,60 @@ class EmailVerificationFailScreen extends StatelessWidget {
         Navigator.pushReplacementNamed(context, '/login');
       },
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(
-              Icons.error,
-              color: Colors.red,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Text(
-              message,
-              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: Semantics(
+          container: true,
+          label: 'E-Mail-Bestätigung fehlgeschlagen. $message',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Semantics(
+                label: 'Fehler-Icon: E-Mail Bestätigung fehlgeschlagen',
+                child: const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                  size: UIConstants.iconSizeXL,
+                ),
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              Semantics(
+                label: message,
+                child: ScaledText(
+                  message,
+                  style: UIStyles.dialogContentStyle.copyWith(
+                    fontSize:
+                        UIStyles.dialogContentStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'emailVerificationFailFab',
-        onPressed: () {
-          if (userData != null) {
-            Navigator.of(context).pushReplacementNamed(
-              '/contact-data',
-              arguments: {'userData': userData, 'isLoggedIn': true},
-            );
-          } else {
-            Navigator.of(context).pushReplacementNamed(
-              '/login',
-              arguments: {'userData': userData, 'isLoggedIn': false},
-            );
-          }
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: Icon(
-          userData != null ? Icons.contacts : Icons.login,
-          color: UIConstants.whiteColor,
+      floatingActionButton: Semantics(
+        button: true,
+        label: userData != null ? 'Weiter zu Kontaktdaten' : 'Zurück zum Login',
+        child: FloatingActionButton(
+          heroTag: 'emailVerificationFailFab',
+          onPressed: () {
+            if (userData != null) {
+              Navigator.of(context).pushReplacementNamed(
+                '/contact-data',
+                arguments: {'userData': userData, 'isLoggedIn': true},
+              );
+            } else {
+              Navigator.of(context).pushReplacementNamed(
+                '/login',
+                arguments: {'userData': userData, 'isLoggedIn': false},
+              );
+            }
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: Icon(
+            userData != null ? Icons.contacts : Icons.login,
+            color: UIConstants.whiteColor,
+          ),
         ),
       ),
     );

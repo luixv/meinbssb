@@ -33,10 +33,11 @@ class PasswordResetSuccessScreen extends StatelessWidget {
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
-      body: Semantics(
-        label:
-            'Passwort erfolgreich zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden. Bestätigung und Rückkehr zur Login-Seite.',
-        child: Center(
+      body: Center(
+        child: Semantics(
+          label:
+              'Passwort erfolgreich zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden. Bestätigung und Rückkehr zur Login-Seite.',
+          liveRegion: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -60,25 +61,29 @@ class PasswordResetSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: UIConstants.spacingL),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder:
-                          (context) => LoginScreen(
-                            onLoginSuccess: (userData) {
-                              Navigator.of(
-                                context,
-                              ).pushReplacementNamed('/home');
-                            },
-                          ),
-                    ),
-                  );
-                },
-                style: UIStyles.defaultButtonStyle,
-                child: const Text(
-                  Messages.backToLoginButtonLabel,
-                  style: UIStyles.buttonStyle,
+              Semantics(
+                button: true,
+                label: Messages.backToLoginButtonLabel,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => LoginScreen(
+                              onLoginSuccess: (userData) {
+                                Navigator.of(
+                                  context,
+                                ).pushReplacementNamed('/home');
+                              },
+                            ),
+                      ),
+                    );
+                  },
+                  style: UIStyles.defaultButtonStyle,
+                  child: const Text(
+                    Messages.backToLoginButtonLabel,
+                    style: UIStyles.buttonStyle,
+                  ),
                 ),
               ),
             ],

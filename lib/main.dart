@@ -1,5 +1,5 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/semantics.dart';
+
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -38,8 +38,9 @@ import 'providers/kill_switch_provider.dart';
 import 'providers/compulsory_update_provider.dart';
 import 'widgets/kill_switch_gate.dart';
 import 'widgets/compulsory_update_gate.dart';
-
 import 'dart:io';
+
+import 'package:flutter/rendering.dart';
 
 Future<void> main() async {
   bool isWindows = false;
@@ -160,13 +161,28 @@ Future<void> main() async {
     } else {
       wrappedApp = appWidget;
     }
-
+    /*
     runApp(
       MultiProvider(
         providers: providers,
         child: MaterialApp(theme: theme, home: wrappedApp),
       ),
     );
+  */
+
+    runApp(
+      MultiProvider(    
+        providers: providers,
+        child:
+            kDebugMode && kIsWeb
+                ? SemanticsDebugger(
+                  // ✅ overlay to visualize accessibility
+                  child: MaterialApp(theme: theme, home: wrappedApp),
+                )
+                : MaterialApp(theme: theme, home: wrappedApp),
+      ),
+    );
+
     if (kIsWeb) {
       SemanticsBinding.instance.ensureSemantics();
     }

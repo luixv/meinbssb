@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
@@ -62,10 +63,19 @@ class SchulungenListItem extends StatelessWidget {
 
         return Focus(
           focusNode: focusNode,
+          onKey: (node, event) {
+            if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+              onDetailsPressed();
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
           child: Semantics(
             label: summaryLabel,
             focusable: true,
             readOnly: true,
+            excludeSemantics: true,
             child: Column(
               children: [
                 Container(
@@ -84,82 +94,69 @@ class SchulungenListItem extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Semantics(
-                              label: 'Datum der Schulung: $formattedDate',
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.calendar_today,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingXS),
-                                  Flexible(
-                                    child: Text(
-                                      formattedDate,
-                                      style: UIStyles.bodyStyle.copyWith(
-                                        fontSize:
-                                            UIStyles.bodyStyle.fontSize! *
-                                            fontSizeProvider.scaleFactor,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today,
+                                  size: UIConstants.defaultIconSize,
+                                ),
+                                const SizedBox(width: UIConstants.spacingXS),
+                                Flexible(
+                                  child: Text(
+                                    formattedDate,
+                                    style: UIStyles.bodyStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            Semantics(
-                              label:
-                                  'Gruppe: ${schulungsTermin.webGruppeLabel}',
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.group,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingXS),
-                                  Flexible(
-                                    child: Text(
-                                      schulungsTermin.webGruppeLabel,
-                                      style: UIStyles.bodyStyle.copyWith(
-                                        fontSize:
-                                            UIStyles.bodyStyle.fontSize! *
-                                            fontSizeProvider.scaleFactor,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.group,
+                                  size: UIConstants.defaultIconSize,
+                                ),
+                                const SizedBox(width: UIConstants.spacingXS),
+                                Flexible(
+                                  child: Text(
+                                    schulungsTermin.webGruppeLabel,
+                                    style: UIStyles.bodyStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            Semantics(
-                              label: 'Ort: ${schulungsTermin.ort}',
-                              explicitChildNodes: true,
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.place,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingXS),
-                                  Flexible(
-                                    child: Semantics(
-                                      label: schulungsTermin.ort,
-                                      child: Text(
-                                        schulungsTermin.ort,
-                                        style: UIStyles.bodyStyle.copyWith(
-                                          fontSize:
-                                              UIStyles.bodyStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.place,
+                                  size: UIConstants.defaultIconSize,
+                                ),
+                                const SizedBox(width: UIConstants.spacingXS),
+
+                                Flexible(
+                                  child: Text(
+                                    schulungsTermin.ort,
+                                    style: UIStyles.bodyStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -170,22 +167,14 @@ class SchulungenListItem extends StatelessWidget {
                         flex: 2,
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Semantics(
-                            label:
-                                'Titel der Schulung: ${schulungsTermin.bezeichnung}',
-                            explicitChildNodes: true,
-                            child: Semantics(
-                              label: schulungsTermin.bezeichnung,
-                              child: Text(
-                                schulungsTermin.bezeichnung,
-                                style: UIStyles.subtitleStyle.copyWith(
-                                  fontSize:
-                                      UIStyles.subtitleStyle.fontSize! *
-                                      fontSizeProvider.scaleFactor,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
+                          child: Text(
+                            schulungsTermin.bezeichnung,
+                            style: UIStyles.subtitleStyle.copyWith(
+                              fontSize:
+                                  UIStyles.subtitleStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
                             ),
+                            textAlign: TextAlign.left,
                           ),
                         ),
                       ),
