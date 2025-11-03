@@ -618,4 +618,36 @@ class UserService {
       return [];
     }
   }
+
+  Future<bool> deleteMeinBSSBLogin(int webloginId, String email) async {
+    try {
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
+
+      final endpoint = 'DeleteMeinBSSBLogin/$webloginId/$email';
+      final response = await _httpClient.delete(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+        body: {},
+      );
+
+      if (response['result'] == true) {
+        LoggerService.logInfo(
+          'account data deleted successfully for webloginId: $webloginId',
+        );
+
+        return true;
+      } else {
+        LoggerService.logWarning(
+          'DeleteMeinBSSBLogin: API indicated failure or unexpected response. Response: $response',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting account: $e');
+      return false;
+    }
+  }
 }

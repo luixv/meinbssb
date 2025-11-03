@@ -1,3 +1,4 @@
+import '../personal/personal_account_delete_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -134,6 +135,24 @@ class ProfileScreen extends StatelessWidget {
                 );
               }),
               // Removed 'Schützenausweis bestellen' menu item
+              _buildMenuItem(
+                context,
+                'Konto Löschen',
+                Icons.delete_forever,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PersonalAccountDeleteScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),

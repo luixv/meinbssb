@@ -219,6 +219,15 @@ class ApiService {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
+  // https://webintern.bssb.bayern:56400/rest/zmi/api1/DeleteMeinBSSBLogin/13914/r@r.rrrg
+  Future<bool> deleteMeinBSSBLogin(int webloginId) async {
+    final email = await getCachedUsername();
+    if (email == null) {
+      throw ArgumentError('Cached username (email) must not be null');
+    }
+    return _userService.deleteMeinBSSBLogin(webloginId, email);
+  }
+
   Future<bool> updateKritischeFelderUndAdresse(UserData userData) async {
     return _userService.updateKritischeFelderUndAdresse(userData);
   }
