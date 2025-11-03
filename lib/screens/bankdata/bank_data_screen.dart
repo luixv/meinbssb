@@ -475,97 +475,111 @@ class BankDataScreenState extends State<BankDataScreen> {
     // Wrap entire content in a Stack
     return Stack(
       children: [
-        BaseScreenLayout(
-          title: 'Bankdaten',
-          userData: widget.userData,
-          isLoggedIn: widget.isLoggedIn,
-          onLogout: widget.onLogout,
-          body: Semantics(
-            label:
-                'Bankdatenbereich. Hier können Sie Ihre Kontoinformationen wie Kontoinhaber, IBAN und BIC einsehen und bearbeiten.',
-            child:
-                widget.webloginId == 0
-                    ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: UIConstants.errorColor,
-                            size: UIConstants.iconSizeL,
+        Semantics(
+          container: true,
+          liveRegion: true,
+          child: BaseScreenLayout(
+            title: 'Bankdaten',
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
+            body: Focus(
+              autofocus: true,
+              child: Semantics(
+                label:
+                    'Bankdatenbereich. Hier können Sie Ihre Kontoinformationen wie Kontoinhaber, IBAN und BIC einsehen und bearbeiten.',
+                child:
+                    widget.webloginId == 0
+                        ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: UIConstants.errorColor,
+                                size: UIConstants.iconSizeL,
+                              ),
+                              const SizedBox(height: UIConstants.spacingM),
+                              const ScaledText(
+                                'Fehler beim Laden der Bankdaten',
+                                style: UIStyles.headerStyle,
+                              ),
+                              const SizedBox(height: UIConstants.spacingS),
+                              const ScaledText(
+                                'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
+                                textAlign: TextAlign.center,
+                                style: UIStyles.bodyStyle,
+                              ),
+                              const SizedBox(height: UIConstants.spacingM),
+                              ElevatedButton(
+                                onPressed: () {
+                                  widget.onLogout();
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/login',
+                                  );
+                                },
+                                child: const ScaledText('Zurück zum Login'),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: UIConstants.spacingM),
-                          const ScaledText(
-                            'Fehler beim Laden der Bankdaten',
-                            style: UIStyles.headerStyle,
-                          ),
-                          const SizedBox(height: UIConstants.spacingS),
-                          const ScaledText(
-                            'Bitte melden Sie sich erneut an, um auf Ihre Bankdaten zuzugreifen.',
-                            textAlign: TextAlign.center,
-                            style: UIStyles.bodyStyle,
-                          ),
-                          const SizedBox(height: UIConstants.spacingM),
-                          ElevatedButton(
-                            onPressed: () {
-                              widget.onLogout();
-                              Navigator.pushReplacementNamed(context, '/login');
-                            },
-                            child: const ScaledText('Zurück zum Login'),
-                          ),
-                        ],
-                      ),
-                    )
-                    : FutureBuilder<BankData?>(
-                      future: _bankDataFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.error_outline,
-                                  color: UIConstants.errorColor,
-                                  size: UIConstants.iconSizeL,
+                        )
+                        : FutureBuilder<BankData?>(
+                          future: _bankDataFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.error_outline,
+                                      color: UIConstants.errorColor,
+                                      size: UIConstants.iconSizeL,
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingM,
+                                    ),
+                                    const ScaledText(
+                                      'Fehler beim Laden der Bankdaten',
+                                      style: UIStyles.headerStyle,
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingS,
+                                    ),
+                                    ScaledText(
+                                      snapshot.error.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: UIStyles.bodyStyle,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: UIConstants.spacingM),
-                                const ScaledText(
-                                  'Fehler beim Laden der Bankdaten',
-                                  style: UIStyles.headerStyle,
-                                ),
-                                const SizedBox(height: UIConstants.spacingS),
-                                ScaledText(
-                                  snapshot.error.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: UIStyles.bodyStyle,
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        if (snapshot.hasData && snapshot.data != null) {
-                          final bankData = snapshot.data!;
-                          if (!_isEditing) {
-                            _kontoinhaberController.text =
-                                bankData.kontoinhaber;
-                            _ibanController.text = bankData.iban;
-                            _bicController.text = bankData.bic;
-                          }
-                          return _buildBankDataForm();
-                        } else {
-                          return _buildBankDataForm();
-                        }
-                      },
-                    ),
+                              );
+                            }
+                            if (snapshot.hasData && snapshot.data != null) {
+                              final bankData = snapshot.data!;
+                              if (!_isEditing) {
+                                _kontoinhaberController.text =
+                                    bankData.kontoinhaber;
+                                _ibanController.text = bankData.iban;
+                                _bicController.text = bankData.bic;
+                              }
+                              return _buildBankDataForm();
+                            } else {
+                              return _buildBankDataForm();
+                            }
+                          },
+                        ),
+              ),
+            ),
+            floatingActionButton: _buildFABs(),
           ),
-          floatingActionButton: _buildFABs(),
         ),
         // Whole-screen overlay spinner
         if (_isSaving)
