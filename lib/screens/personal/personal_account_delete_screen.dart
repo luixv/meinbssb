@@ -34,84 +34,74 @@ class _PersonalAccountDeleteScreenState
     final confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return Consumer<FontSizeProvider>(
-          builder:
-              (context, fontSizeProvider, _) => AlertDialog(
-                backgroundColor: UIConstants.backgroundColor,
-                title: Center(
-                  child: ScaledText(
-                    'Konto löschen',
-                    style: UIStyles.dialogTitleStyle.copyWith(
-                      fontSize: fontSizeProvider.getScaledFontSize(20),
-                    ),
-                  ),
-                ),
-                content: Text(
-                  'Sind Sie sicher, dass Sie Ihr Konto unwiderruflich löschen möchten?\n\n (Login, Bankdaten und Zugriffsrechte werden entfernt.)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: fontSizeProvider.getScaledFontSize(16),
-                  ),
-                ),
-                actions: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+        final fontSizeProvider = Provider.of<FontSizeProvider>(
+          context,
+          listen: false,
+        );
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: Center(
+            child: ScaledText(
+              'Konto löschen',
+              style: UIStyles.dialogTitleStyle.copyWith(
+                fontSize: fontSizeProvider.getScaledFontSize(20),
+              ),
+            ),
+          ),
+          content: Text(
+            'Sind Sie sicher, dass Sie Ihr Konto unwiderruflich löschen möchten?\n\n (Login, Bankdaten und Zugriffsrechte werden entfernt.)',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: fontSizeProvider.getScaledFontSize(16)),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(false);
+                    },
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop(false);
-                          },
-                          style: UIStyles.dialogCancelButtonStyle,
-                          child: Row(
-                            mainAxisAlignment: UIConstants.centerAlignment,
-                            children: [
-                              const Icon(
-                                Icons.close,
-                                color: UIConstants.closeIcon,
-                              ),
-                              UIConstants.horizontalSpacingM,
-                              Flexible(
-                                child: ScaledText(
-                                  'Abbrechen',
-                                  style: UIStyles.dialogButtonTextStyle
-                                      .copyWith(
-                                        color: UIConstants.cancelButtonText,
-                                        fontSize: fontSizeProvider
-                                            .getScaledFontSize(16),
-                                      ),
-                                ),
-                              ),
-                            ],
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingM,
+                        Flexible(
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                              fontSize: fontSizeProvider.getScaledFontSize(16),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: UIConstants.spacingM),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop(true);
-                          },
-                          style: UIStyles.dialogAcceptButtonStyle,
-                          child: Row(
-                            mainAxisAlignment: UIConstants.centerAlignment,
-                            children: [
-                              const Icon(
-                                Icons.delete_forever,
-                                color: UIConstants.deleteIcon,
-                              ),
-                              UIConstants.horizontalSpacingS,
-                              Flexible(
-                                child: ScaledText(
-                                  'Löschen',
-                                  style: UIStyles.dialogButtonTextStyle
-                                      .copyWith(
-                                        color: UIConstants.deleteButtonText,
-                                        fontSize: fontSizeProvider
-                                            .getScaledFontSize(16),
-                                      ),
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(true);
+                    },
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(
+                          Icons.delete_forever,
+                          color: UIConstants.deleteIcon,
+                        ),
+                        UIConstants.horizontalSpacingS,
+                        Flexible(
+                          child: ScaledText(
+                            'Löschen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                              fontSize: fontSizeProvider.getScaledFontSize(16),
+                            ),
                           ),
                         ),
                       ],
@@ -119,6 +109,8 @@ class _PersonalAccountDeleteScreenState
                   ),
                 ],
               ),
+            ),
+          ],
         );
       },
     );
