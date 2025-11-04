@@ -6,6 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'dart:typed_data';
+import 'package:meinbssb/services/core/image_service.dart';
+import 'package:meinbssb/services/core/http_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:meinbssb/services/core/cache_service.dart';
+import 'package:meinbssb/services/core/token_service.dart';
 
 // Minimal fake ConfigService for ApiService
 import 'package:meinbssb/services/core/config_service.dart';
@@ -21,7 +26,50 @@ class FakeConfigService implements ConfigService {
   bool? getBool(String key, [String? section]) => null;
 }
 
+class FakeHttpClient extends HttpClient {
+  FakeHttpClient()
+    : super(
+        baseUrl: '',
+        serverTimeout: 0,
+        tokenService: _FakeTokenService(), // Provide a minimal fake
+        configService: FakeConfigService(),
+        cacheService: FakeCacheService(),
+      );
+}
+
+class _FakeTokenService extends TokenService {
+  _FakeTokenService()
+    : super(
+        configService: FakeConfigService(),
+        cacheService: FakeCacheService(),
+      );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+class FakeCacheService extends CacheService {
+  FakeCacheService()
+    : super(prefs: FakeSharedPreferences(), configService: FakeConfigService());
+}
+
+class FakeSharedPreferences implements SharedPreferences {
+  // Implement only required methods for test, or use noSuchMethod
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+class FakeImageService extends ImageService {
+  FakeImageService() : super(httpClient: FakeHttpClient());
+  @override
+  Future<String?> getSchuetzenausweisCacheDate(int personId) async {
+    return '01.01.2025';
+  }
+}
+
 class FakeApiService implements ApiService {
+  FakeApiService();
+
   @override
   Future<Uint8List> fetchSchuetzenausweis(
     int personId, {
@@ -102,6 +150,9 @@ class FakeApiService implements ApiService {
   final _configService = FakeConfigService();
   @override
   ConfigService get configService => _configService;
+  // Provide a fake imageService for tests
+  @override
+  ImageService get imageService => FakeImageService();
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
 }
