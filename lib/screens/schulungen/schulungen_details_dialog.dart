@@ -401,7 +401,10 @@ class SchulungenDetailsDialog {
                                                           .lehrgangsinhaltHtml,
                                                   style: {
                                                     'body': Style(
-                                                      fontSize: FontSize(15.0),
+                                                      fontSize: FontSize(
+                                                        UIConstants
+                                                            .bodyFontSize,
+                                                      ),
                                                     ),
                                                   },
                                                 )
