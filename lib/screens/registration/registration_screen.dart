@@ -5,7 +5,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
 import 'package:meinbssb/screens/logo_widget.dart';
-import 'package:meinbssb/screens/privacy_screen.dart';
+import 'package:meinbssb/screens/datenschutz_screen.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/registration/registration_success_screen.dart';
 import 'package:meinbssb/screens/registration/registration_fail_screen.dart';
@@ -510,7 +510,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                             MaterialPageRoute(
                               builder:
                                   (context) =>
-                                      PrivacyScreen(userData: userData),
+                                      DatenschutzScreen(
+                                        userData: userData,
+                                        isLoggedIn: false,
+                                        onLogout: () {},
+                                      ),
                             ),
                           );
                         },

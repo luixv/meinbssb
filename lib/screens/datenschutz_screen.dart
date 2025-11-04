@@ -332,6 +332,21 @@ class DatenschutzScreen extends StatelessWidget {
                     'Ihre WebLoginID für die API-Authentifizierung.',
                   ),
                   _buildDataItem(
+                    'cache_bezirke_search',
+                    'JSON String',
+                    'Zwischengespeicherte Bezirkssuchdaten für schnelleren Zugriff.',
+                  ),
+                  _buildDataItem(
+                    'cache_bezirke_search_timestamp',
+                    'Integer',
+                    'Zeitstempel für die Bezirkssuchdaten-Validierung.',
+                  ),
+                  _buildDataItem(
+                    'cache_schulungen',
+                    'JSON String',
+                    'Zwischengespeicherte Schulungsdaten zur Offline-Verfügbarkeit.',
+                  ),
+                  _buildDataItem(
                     'cache_timestamp_*',
                     'Integer',
                     'Zeitstempel für Cache-Validierung. Bestimmt, wann gecachte Daten erneuert werden müssen.',
