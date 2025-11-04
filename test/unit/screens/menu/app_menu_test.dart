@@ -85,6 +85,7 @@ Future<void> ensureVisible(WidgetTester tester, String label) async {
     'Schützenausweis': Key('drawer_schuetzenausweis'),
     'Oktoberfest': Key('drawer_oktoberfest'),
     'Impressum': Key('drawer_impressum'),
+    'Datenschutz': Key('drawer_datenschutz'),
     'Einstellungen': Key('drawer_settings'),
     'Hilfe': Key('drawer_help'),
     'Abmelden': Key('drawer_logout'),
@@ -148,6 +149,7 @@ class FakeDrawerNavigator implements DrawerNavigator {
   bool schutzAusweisCalled = false;
   bool oktoberfestCalled = false;
   bool impressumCalled = false;
+  bool datenschutzCalled = false;
   bool settingsCalled = false;
   bool helpCalled = false;
   bool logoutCalled = false;
@@ -189,6 +191,12 @@ class FakeDrawerNavigator implements DrawerNavigator {
   @override
   void impressum(BuildContext context) {
     impressumCalled = true;
+    _close(context);
+  }
+
+  @override
+  void datenschutz(BuildContext context) {
+    datenschutzCalled = true;
     _close(context);
   }
 
@@ -322,6 +330,7 @@ void main() {
       'drawer_schuetzenausweis',
       'drawer_oktoberfest',
       'drawer_impressum',
+      'drawer_datenschutz',
       'drawer_settings',
       'drawer_help',
       'drawer_logout',
@@ -332,11 +341,23 @@ void main() {
       await openDrawer(tester);
       for (final key in menuKeys) {
         // Ensure visibility for each menu item before asserting
-        final finder = find.byKey(Key(key));
-        if (key == 'drawer_logout') {
-          // Scroll to logout if needed
-          await ensureVisible(tester, 'Abmelden');
+        final labelMap = {
+          'drawer_home': 'Home',
+          'drawer_profile': 'Profil',
+          'drawer_training': 'Aus- und Weiterbildung',
+          'drawer_schuetzenausweis': 'Schützenausweis',
+          'drawer_oktoberfest': 'Oktoberfest',
+          'drawer_impressum': 'Impressum',
+          'drawer_datenschutz': 'Datenschutz',
+          'drawer_settings': 'Einstellungen',
+          'drawer_help': 'Hilfe',
+          'drawer_logout': 'Abmelden',
+        };
+        // Scroll to item if it's not on the initial screen
+        if (labelMap.containsKey(key)) {
+          await ensureVisible(tester, labelMap[key]!);
         }
+        final finder = find.byKey(Key(key));
         expect(
           finder,
           findsWidgets,
@@ -471,6 +492,14 @@ void main() {
       expect(nav.impressumCalled, isTrue);
     });
 
+    testWidgets('Datenschutz triggers navigator.datenschutz', (tester) async {
+      final nav = await pumpAndOpen(tester);
+      await ensureVisible(tester, 'Datenschutz');
+      await tester.tap(find.text('Datenschutz'));
+      await tester.pumpAndSettle();
+      expect(nav.datenschutzCalled, isTrue);
+    });
+
     testWidgets('Hilfe triggers navigator.help', (tester) async {
       final nav = await pumpAndOpen(tester);
       await ensureVisible(tester, 'Hilfe');
@@ -526,6 +555,7 @@ void main() {
         startingRightsBuilder: placeholder('STARTRECHTE'),
         oktoberfestBuilder: placeholder('OKTOBERFEST'),
         impressumBuilder: placeholder('IMPRESSUM'),
+        datenschutzBuilder: placeholder('DATENSCHUTZ'),
         settingsBuilder: placeholder('SETTINGS'),
         helpBuilder: placeholder('HELP'),
       );
@@ -583,6 +613,11 @@ void main() {
     testWidgets('impressum() pushes Impressum placeholder', (tester) async {
       await pumpAndInvoke(tester, (ctx, nav) => nav.impressum(ctx));
       expect(find.text('IMPRESSUM'), findsOneWidget);
+    });
+
+    testWidgets('datenschutz() pushes Datenschutz placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.datenschutz(ctx));
+      expect(find.text('DATENSCHUTZ'), findsOneWidget);
     });
 
     testWidgets('settings() pushes Settings placeholder', (tester) async {

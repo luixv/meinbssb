@@ -63,8 +63,6 @@ class AuthService {
     required String lastName,
     required String passNumber,
     required String email,
-    required String birthDate,
-    required String zipCode,
     required String personId,
   }) async {
     try {
@@ -396,10 +394,31 @@ class AuthService {
   }
 
   /// Looks up a person by Nachname and Passnummer. Returns the PERSONID as a String if found, or an empty string otherwise.
-  Future<int> findePersonID2(String nachname, String passnummer) async {
+  Future<int> findePersonID2(String name, String passnummer) async {
     try {
-      final endpoint = 'FindePersonID2/$nachname/$passnummer';
+      final endpoint = 'FindePersonID2/$name/$passnummer';
       final response = await _httpClient.get(endpoint);
+      if (response is List && response.isNotEmpty) {
+        final person = response[0];
+        if (person is Map<String, dynamic> && person['PERSONID'] != null) {
+          return person['PERSONID'];
+        }
+      }
+      return 0;
+    } catch (e) {
+      LoggerService.logError('findePersonID2 error: $e');
+      return 0;
+    }
+  }
+
+  Future<int> findePersonIDSimple(String name, String nachname, String passnummer) async {
+    try {
+      final endpoint = 'FindePersonID/$nachname/$name/$passnummer';
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'api1Base',
+      );
+      final response = await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List && response.isNotEmpty) {
         final person = response[0];
         if (person is Map<String, dynamic> && person['PERSONID'] != null) {

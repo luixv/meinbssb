@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -24,6 +25,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  final _zipCodeController = TextEditingController();
   bool _tokenValid = false;
   bool _loading = true;
   String? _error;
@@ -31,6 +33,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   double _strength = 0;
   bool _showPassword = false;
   bool _showConfirm = false;
+  DateTime? _selectedDate;
 
   @override
   void initState() {
@@ -88,6 +91,34 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     return null;
   }
 
+  String? _validateZipCode(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Bitte Postleitzahl eingeben';
+    }
+    if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+      return 'Postleitzahl muss 5 Ziffern haben';
+    }
+    return null;
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      locale: const Locale('de', 'DE'),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        if (_error != null) {
+          _error = null;
+        }
+      });
+    }
+  }
+
   void _checkStrength(String value) {
     double strength = 0;
     if (value.length >= 8) strength += 0.25;
@@ -116,6 +147,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       setState(() => _error = 'Passwörter stimmen nicht überein');
       return;
     }
+    if (_selectedDate == null) {
+      setState(() => _error = 'Bitte Geburtsdatum auswählen');
+      return;
+    }
     setState(() => _loading = true);
 
     // Get user data from database
@@ -132,6 +167,55 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
 
     if (personId == null || email == null) {
       _failAndExit('Ungültige Benutzerdaten.');
+      return;
+    }
+
+    // Validate PLZ and GEBURTSDATUM against API
+    try {
+      final passDaten = await widget.authService.getPassDatenByPersonId(
+        personId.toString(),
+      );
+      
+      if (passDaten.isEmpty) {
+        _failAndExit('Passdaten nicht gefunden.');
+        return;
+      }
+
+      // Check PLZ
+      final apiPlz = passDaten['PLZ']?.toString().trim();
+      final enteredPlz = _zipCodeController.text.trim();
+      if (apiPlz != enteredPlz) {
+        setState(() {
+          _loading = false;
+          _error = 'Postleitzahl stimmt nicht überein.';
+        });
+        return;
+      }
+
+      // Check GEBURTSDATUM
+      final apiGeburtsdatum = passDaten['GEBURTSDATUM']?.toString();
+      if (apiGeburtsdatum != null && apiGeburtsdatum.isNotEmpty) {
+        // Parse API date format: "1973-08-07T00:00:00.000+02:00"
+        final apiDate = DateTime.tryParse(apiGeburtsdatum);
+        if (apiDate != null) {
+          // Compare only date part (ignore time)
+          final apiDateOnly = DateTime(apiDate.year, apiDate.month, apiDate.day);
+          final selectedDateOnly = DateTime(
+            _selectedDate!.year,
+            _selectedDate!.month,
+            _selectedDate!.day,
+          );
+          if (apiDateOnly != selectedDateOnly) {
+            setState(() {
+              _loading = false;
+              _error = 'Geburtsdatum stimmt nicht überein.';
+            });
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      _failAndExit('Fehler beim Überprüfen der Daten: $e');
       return;
     }
 
@@ -211,6 +295,64 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                     ),
                   ),
                 ),
+              const ScaledText(
+                'Bitte geben Sie Ihre Postleitzahl und Ihr Geburtsdatum ein, um Ihre Identität zu bestätigen:',
+                style: UIStyles.bodyStyle,
+              ),
+              const SizedBox(height: UIConstants.spacingS),
+              Semantics(
+                label: 'Eingabefeld für Postleitzahl',
+                textField: true,
+                child: TextFormField(
+                  controller: _zipCodeController,
+                  keyboardType: TextInputType.number,
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'PLZ',
+                  ),
+                  style: UIStyles.formValueStyle,
+                  validator: _validateZipCode,
+                  maxLength: 5,
+                  onChanged: (_) {
+                    if (_error != null) {
+                      setState(() => _error = null);
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              Semantics(
+                label: 'Eingabefeld für Geburtsdatum',
+                textField: true,
+                child: InkWell(
+                  onTap: () => _selectDate(context),
+                  child: InputDecorator(
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Geburtsdatum',
+                      suffixIcon: const Icon(Icons.calendar_today),
+                    ),
+                    child: Text(
+                      _selectedDate == null
+                          ? 'Geburtsdatum auswählen'
+                          : DateFormat('dd.MM.yyyy', 'de').format(_selectedDate!),
+                      style: UIStyles.formValueStyle,
+                    ),
+                  ),
+                ),
+              ),
+              if (_selectedDate == null)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 4.0,
+                    bottom: UIConstants.spacingS,
+                  ),
+                  child: ScaledText(
+                    'Bitte Geburtsdatum auswählen',
+                    style: UIStyles.formLabelStyle.copyWith(
+                      color: UIConstants.errorColor,
+                    ),
+                  ),
+                ),
+              const SizedBox(height: UIConstants.spacingM),
               const ScaledText(
                 'Bitte vergeben Sie ein sicheres Passwort:',
                 style: UIStyles.bodyStyle,

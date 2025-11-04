@@ -191,8 +191,6 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
     required String? lastName,
     required String? passNumber,
     required String? email,
-    required String? birthDate,
-    required String? zipCode,
     required String? personId,
   }) =>
       (super.noSuchMethod(
@@ -201,8 +199,6 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
               #lastName: lastName,
               #passNumber: passNumber,
               #email: email,
-              #birthDate: birthDate,
-              #zipCode: zipCode,
               #personId: personId,
             }),
             returnValue: _i9.Future<Map<String, dynamic>>.value(
@@ -474,9 +470,25 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
           as _i9.Future<List<_i20.SchulungstermineZusatzfelder>>);
 
   @override
-  _i9.Future<int> findePersonID2(String? nachname, String? passnummer) =>
+  _i9.Future<int> findePersonID2(String? name, String? passnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#findePersonID2, [nachname, passnummer]),
+            Invocation.method(#findePersonID2, [name, passnummer]),
+            returnValue: _i9.Future<int>.value(0),
+          )
+          as _i9.Future<int>);
+
+  @override
+  _i9.Future<int> findePersonIDSimple(
+    String? name,
+    String? nachname,
+    String? passnummer,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#findePersonIDSimple, [
+              name,
+              nachname,
+              passnummer,
+            ]),
             returnValue: _i9.Future<int>.value(0),
           )
           as _i9.Future<int>);

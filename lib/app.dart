@@ -18,6 +18,7 @@ import 'screens/login_screen.dart';
 import 'screens/start_screen.dart';
 import 'screens/help_screen.dart';
 import 'screens/impressum_screen.dart';
+import 'screens/datenschutz_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/menu/profile_menu.dart';
@@ -450,6 +451,16 @@ class _MyAppState extends State<MyApp> {
                 return MaterialPageRoute(
                   builder:
                       (_) => ImpressumScreen(
+                        userData: _userData,
+                        isLoggedIn: _isLoggedIn,
+                        onLogout: _handleLogout,
+                      ),
+                  settings: settings,
+                );
+              case '/datenschutz':
+                return MaterialPageRoute(
+                  builder:
+                      (_) => DatenschutzScreen(
                         userData: _userData,
                         isLoggedIn: _isLoggedIn,
                         onLogout: _handleLogout,

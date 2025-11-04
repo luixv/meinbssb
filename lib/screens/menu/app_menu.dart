@@ -10,6 +10,7 @@ import '../registration/registration_screen.dart';
 import '/screens/ausweis/ausweis_screen.dart';
 import '/screens/help_screen.dart';
 import '/screens/impressum_screen.dart';
+import '/screens/datenschutz_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
 import 'oktoberfest_menu.dart';
@@ -25,6 +26,7 @@ abstract class DrawerNavigator {
   void schuetzenausweis(BuildContext context);
   void oktoberfest(BuildContext context);
   void impressum(BuildContext context);
+  void datenschutz(BuildContext context);
   void settings(BuildContext context);
   void help(BuildContext context);
   void logout(BuildContext context, VoidCallback onLogout);
@@ -40,6 +42,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     this.startingRightsBuilder,
     this.oktoberfestBuilder,
     this.impressumBuilder,
+    this.datenschutzBuilder,
     this.settingsBuilder,
     this.helpBuilder,
   });
@@ -52,6 +55,7 @@ class RealDrawerNavigator implements DrawerNavigator {
   final WidgetBuilder? startingRightsBuilder;
   final WidgetBuilder? oktoberfestBuilder;
   final WidgetBuilder? impressumBuilder;
+  final WidgetBuilder? datenschutzBuilder;
   final WidgetBuilder? settingsBuilder;
   final WidgetBuilder? helpBuilder;
 
@@ -132,6 +136,22 @@ class RealDrawerNavigator implements DrawerNavigator {
         builder:
             impressumBuilder ??
             (_) => ImpressumScreen(
+              userData: userData,
+              isLoggedIn: isLoggedIn,
+              onLogout: onLogout,
+            ),
+      ),
+    );
+  }
+
+  @override
+  void datenschutz(BuildContext context) {
+    _close(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            datenschutzBuilder ??
+            (_) => DatenschutzScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
               onLogout: onLogout,
@@ -229,7 +249,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label:
-          'Navigationsmenü: Home, Profil, Aus- und Weiterbildung, Schützenausweis, Oktoberfest, Impressum, Einstellungen, Hilfe, Abmelden, Anmelden, Registrieren, Passwort zurücksetzen.',
+          'Navigationsmenü: Home, Profil, Aus- und Weiterbildung, Schützenausweis, Oktoberfest, Impressum, Datenschutz, Einstellungen, Hilfe, Abmelden, Anmelden, Registrieren, Passwort zurücksetzen.',
       child: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -339,6 +359,18 @@ class AppDrawer extends StatelessWidget {
                   style: TextStyle(fontSize: UIConstants.menuItemFontSize),
                 ),
                 onTap: () => navigator.impressum(context),
+              ),
+              ListTile(
+                key: const Key('drawer_datenschutz'),
+                leading: const Icon(
+                  Icons.security_outlined,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Datenschutz',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () => navigator.datenschutz(context),
               ),
               ListTile(
                 key: const Key('drawer_settings'),

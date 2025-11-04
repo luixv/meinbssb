@@ -139,8 +139,6 @@ void main() {
         const lastName = 'Doe';
         const passNumber = '12345';
         const email = 'john.doe@example.com';
-        const birthDate = '1990-01-01';
-        const zipCode = '10001';
         const personId = '439287';
 
         when(
@@ -176,8 +174,6 @@ void main() {
           lastName: lastName,
           passNumber: passNumber,
           email: email,
-          birthDate: birthDate,
-          zipCode: zipCode,
           personId: personId,
         );
 
@@ -202,8 +198,6 @@ void main() {
           const lastName = 'Doe';
           const passNumber = '12345';
           const email = 'john.doe@example.com';
-          const birthDate = '1990-01-01';
-          const zipCode = '10001';
           const personId = '439287';
 
           when(
@@ -230,8 +224,6 @@ void main() {
             lastName: lastName,
             passNumber: passNumber,
             email: email,
-            birthDate: birthDate,
-            zipCode: zipCode,
             personId: personId,
           );
 
@@ -245,8 +237,6 @@ void main() {
         const lastName = 'Doe';
         const passNumber = '12345';
         const email = 'john.doe@example.com';
-        const birthDate = '1990-01-01';
-        const zipCode = '10001';
         const personId = '439287';
 
         when(mockPostgrestService.getUserByPassNumber(passNumber)).thenAnswer(
@@ -273,8 +263,6 @@ void main() {
           lastName: lastName,
           passNumber: passNumber,
           email: email,
-          birthDate: birthDate,
-          zipCode: zipCode,
           personId: personId,
         );
 
@@ -669,26 +657,43 @@ void main() {
     });
 
     group('FindePersonID2', () {
-      test('returns true if list is not empty', () async {
-        when(mockHttpClient.get('FindePersonID2/Rizoudis/40101205')).thenAnswer(
+      setUp(() {
+        when(
+          mockConfigService.getString('apiProtocol', any),
+        ).thenReturn('https');
+        when(
+          mockConfigService.getString('api1BaseServer', any),
+        ).thenReturn('webintern.bssb.bayern');
+        when(
+          mockConfigService.getString('api1BasePort', any),
+        ).thenReturn('56400');
+        when(
+          mockConfigService.getString('api1BasePath', any),
+        ).thenReturn('rest/zmi/api1');
+      });
+
+      test('returns PERSONID if person is found', () async {
+        when(
+          mockHttpClient.get('FindePersonID2/John/40101205'),
+        ).thenAnswer(
           (_) async => [
             {
-              'NAMEN': 'Rizoudis',
-              'VORNAME': 'Konstantinos',
+              'NAMEN': 'Doe',
+              'VORNAME': 'John',
               'PERSONID': 439287,
               'TITEL': '',
               'GESCHLECHT': true,
-              'STRASSE': 'Aichacher',
-              'PLZ': '86574',
-              'ORT': 'Alsmoos',
+              'STRASSE': 'Test Street',
+              'PLZ': '12345',
+              'ORT': 'Test City',
             },
           ],
         );
-        final result = await authService.findePersonID2('Rizoudis', '40101205');
+        final result = await authService.findePersonID2('John', '40101205');
         expect(result, 439287);
       });
 
-      test('returns false if list is empty', () async {
+      test('returns 0 if list is empty', () async {
         when(
           mockHttpClient.get('FindePersonID2/NoName/00000000'),
         ).thenAnswer((_) async => []);
@@ -696,11 +701,67 @@ void main() {
         expect(result, 0);
       });
 
-      test('returns false on exception', () async {
+      test('returns 0 if PERSONID is null', () async {
+        when(
+          mockHttpClient.get('FindePersonID2/John/40101205'),
+        ).thenAnswer(
+          (_) async => [
+            {
+              'NAMEN': 'Doe',
+              'VORNAME': 'John',
+              'PERSONID': null,
+            },
+          ],
+        );
+        final result = await authService.findePersonID2('John', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if PERSONID is 0', () async {
+        when(
+          mockHttpClient.get('FindePersonID2/John/40101205'),
+        ).thenAnswer(
+          (_) async => [
+            {
+              'NAMEN': 'Doe',
+              'VORNAME': 'John',
+              'PERSONID': 0,
+            },
+          ],
+        );
+        final result = await authService.findePersonID2('John', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if response is not a List', () async {
+        when(
+          mockHttpClient.get('FindePersonID2/John/40101205'),
+        ).thenAnswer((_) async => {'PERSONID': 439287});
+        final result = await authService.findePersonID2('John', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if person is not a Map', () async {
+        when(
+          mockHttpClient.get('FindePersonID2/John/40101205'),
+        ).thenAnswer((_) async => ['invalid']);
+        final result = await authService.findePersonID2('John', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 on exception', () async {
         when(
           mockHttpClient.get('FindePersonID2/Error/99999999'),
         ).thenThrow(Exception('fail'));
         final result = await authService.findePersonID2('Error', '99999999');
+        expect(result, 0);
+      });
+
+      test('handles empty strings correctly', () async {
+        when(
+          mockHttpClient.get('FindePersonID2//'),
+        ).thenAnswer((_) async => []);
+        final result = await authService.findePersonID2('', '');
         expect(result, 0);
       });
     });

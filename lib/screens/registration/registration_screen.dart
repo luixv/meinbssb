@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/constants/messages.dart';
@@ -11,9 +11,8 @@ import 'package:meinbssb/screens/registration/registration_success_screen.dart';
 import 'package:meinbssb/screens/registration/registration_fail_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({required this.apiService, super.key});
@@ -28,10 +27,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _zipCodeController = TextEditingController();
-  DateTime? _selectedDate;
   bool _privacyAccepted = false;
-  String? zipCodeError;
   String? passNumberError;
   String? emailError;
   final String _successMessage = '';
@@ -45,14 +41,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController get lastNameController => _lastNameController;
   TextEditingController get passNumberController => _passNumberController;
   TextEditingController get emailController => _emailController;
-  TextEditingController get zipCodeController => _zipCodeController;
-  DateTime? get selectedDate => _selectedDate;
   bool get privacyAccepted => _privacyAccepted;
 
   @override
   void initState() {
     super.initState();
-    zipCodeError = null;
     passNumberError = null;
     emailError = null;
     _emailFieldTouched = false;
@@ -77,78 +70,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      locale: const Locale('de', 'DE'),
-      helpText: 'Geburtsdatum',
-      cancelText: 'Abbrechen',
-      confirmText: 'Auswählen',
-      fieldLabelText: 'Geburtsdatum eingeben',
-      fieldHintText: 'TT.MM.JJJJ',
-      errorFormatText: 'Ungültiges Datumsformat.',
-      errorInvalidText: 'Ungültiges Datum.',
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: UIConstants.defaultAppColor,
-              onPrimary: UIConstants.whiteColor,
-              surface: UIConstants.calendarBackgroundColor,
-              onSurface: UIConstants.textColor,
-            ),
-            textButtonTheme: const TextButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  UIConstants.cancelButtonBackground,
-                ),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingSM,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
-              ),
-            ),
-            datePickerTheme: const DatePickerThemeData(
-              headerBackgroundColor: UIConstants.calendarBackgroundColor,
-              backgroundColor: UIConstants.calendarBackgroundColor,
-              headerForegroundColor: UIConstants.textColor,
-              dayStyle: TextStyle(color: UIConstants.textColor),
-              yearStyle: TextStyle(color: UIConstants.textColor),
-              weekdayStyle: TextStyle(color: UIConstants.textColor),
-              confirmButtonStyle: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  UIConstants.primaryColor,
-                ),
-                foregroundColor: WidgetStatePropertyAll(UIConstants.whiteColor),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingL,
-                    vertical: UIConstants.spacingSM,
-                  ),
-                ),
-                textStyle: WidgetStatePropertyAll(UIStyles.buttonStyle),
-                minimumSize: WidgetStatePropertyAll(Size(120, 48)),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
 
   bool validateEmail(String value) {
     if (!_emailFieldTouched && value.isEmpty) {
@@ -168,16 +89,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     return true;
   }
 
-  bool validateZipCode(String value) {
-    if (value.isEmpty) {
-      zipCodeError = Messages.zipCodeRequired;
-    } else if (!RegExp(r'^\d{5}$').hasMatch(value)) {
-      zipCodeError = Messages.invalidZipCode;
-    } else {
-      zipCodeError = null;
-    }
-    return zipCodeError == null;
-  }
 
   bool validatePassNumber(String value) {
     if (value.isEmpty) {
@@ -191,24 +102,16 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   bool isFormValid() {
-    final isZipValid =
-        _zipCodeController.text.isNotEmpty
-            ? validateZipCode(_zipCodeController.text)
-            : true;
     final isPassValid =
         _passNumberController.text.isNotEmpty
             ? validatePassNumber(_passNumberController.text)
             : true;
-    final isDateValid =
-        _selectedDate != null && _selectedDate!.isBefore(DateTime.now());
     final isEmailValid = validateEmail(_emailController.text);
 
     return _firstNameController.text.isNotEmpty &&
         _lastNameController.text.isNotEmpty &&
         isEmailValid &&
-        isZipValid &&
         isPassValid &&
-        isDateValid &&
         _privacyAccepted;
   }
 
@@ -248,15 +151,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
     try {
       // First find PersonID
-      final personId = await widget.apiService.authService.findePersonID(
-        _lastNameController.text,
+      final personIdInt = await widget.apiService.authService.findePersonIDSimple(
         _firstNameController.text,
-        _selectedDate!.toString(),
+        _lastNameController.text,
         _passNumberController.text,
-        _zipCodeController.text,
       );
 
-      if (personId == '0') {
+      if (personIdInt == 0) {
         setState(() {
           _isRegistering = false;
         });
@@ -332,9 +233,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         lastName: _lastNameController.text,
         passNumber: _passNumberController.text,
         email: _emailController.text,
-        birthDate: DateFormat('yyyy-MM-dd').format(_selectedDate!),
-        zipCode: _zipCodeController.text,
-        personId: personId,
+        personId: personIdInt.toString(),
       );
 
       setState(() {
@@ -560,89 +459,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                     ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Semantics(
-                    label: 'Postleitzahl Eingabefeld',
-                    child: TextField(
-                      controller: _zipCodeController,
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Postleitzahl',
-                        errorText: zipCodeError,
-                        labelStyle: UIStyles.formLabelStyle.copyWith(
-                          fontSize:
-                              UIStyles.formLabelStyle.fontSize != null
-                                  ? UIStyles.formLabelStyle.fontSize! *
-                                      fontSizeProvider.scaleFactor
-                                  : null,
-                        ),
-                      ),
-                      style: UIStyles.formValueStyle.copyWith(
-                        fontSize:
-                            UIStyles.formValueStyle.fontSize != null
-                                ? UIStyles.formValueStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor
-                                : null,
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          validateZipCode(value);
-                        });
-                      },
-                    ),
-                  ),
-                  if (zipCodeError != null)
-                    Semantics(
-                      label: 'Fehlermeldung: $zipCodeError',
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(zipCodeError!, style: UIStyles.errorStyle),
-                      ),
-                    ),
-                  const SizedBox(height: UIConstants.spacingS),
-                  Semantics(
-                    label: 'Geburtsdatum Auswahlfeld',
-                    child: InkWell(
-                      onTap: () => _selectDate(context),
-                      child: InputDecorator(
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'Geburtsdatum',
-                          labelStyle: UIStyles.formLabelStyle.copyWith(
-                            fontSize:
-                                UIStyles.formLabelStyle.fontSize != null
-                                    ? UIStyles.formLabelStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor
-                                    : null,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              _selectedDate == null
-                                  ? 'Wählen Sie Ihr Geburtsdatum'
-                                  : DateFormat(
-                                    'dd.MM.yyyy',
-                                    'de_DE',
-                                  ).format(_selectedDate!),
-                              style: UIStyles.formValueStyle.copyWith(
-                                color:
-                                    _selectedDate != null
-                                        ? UIConstants.textColor
-                                        : UIConstants.greySubtitleTextColor,
-                                fontSize:
-                                    UIStyles.formValueStyle.fontSize != null
-                                        ? UIStyles.formValueStyle.fontSize! *
-                                            fontSizeProvider.scaleFactor
-                                        : null,
-                              ),
-                            ),
-                            const Icon(Icons.calendar_today),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'Datenschutzbestimmungen akzeptieren Checkbox',
