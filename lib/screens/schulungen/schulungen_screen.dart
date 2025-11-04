@@ -784,17 +784,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
   }
 
   Widget buildRegisterAnotherDialog(
-    BuildContext parentContext,
+    BuildContext context,
     Schulungstermin schulungsTermin,
     List<_RegisteredPerson> registeredPersons,
-    BankData bankData, {
-    required Future<void> Function() onRegisterAnother,
-  }) {
+    BankData bankData,
+  ) {
     return Semantics(
       label: 'Dialog zur Anmeldung weiterer Personen für die Schulung.',
       child: AlertDialog(
         backgroundColor: UIConstants.backgroundColor,
-        title: const Center(
+        title: Center(
           child: ScaledText(
             'Bereits angemeldete Personen',
             style: UIStyles.dialogTitleStyle,
@@ -871,7 +870,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
             ),
           ),
         ),
-        actions: <Widget>[
+        actions: [
           Padding(
             padding: UIConstants.dialogPadding,
             child: Row(
@@ -883,22 +882,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(
-                          parentContext,
+                          context,
                           rootNavigator: true,
-                        ).pop(); // Ensure dialog is closed
-                        Future.microtask(() {
-                          Navigator.of(parentContext).pushNamedAndRemoveUntil(
-                            '/home',
-                            (route) => false,
-                            arguments: {
-                              'userData': widget.userData,
-                              'isLoggedIn': widget.isLoggedIn,
-                              'onLogout': widget.onLogout,
-                              'showMenu': widget.isLoggedIn,
-                              'showConnectivityIcon': widget.isLoggedIn,
-                            },
-                          );
-                        });
+                        ).pop('goHome');
                       },
                       style: UIStyles.dialogCancelButtonStyle,
                       child: Row(
@@ -923,9 +909,11 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                     label:
                         'Button zum Hinzufügen einer weiteren Person zur Schulung',
                     child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(parentContext).pop();
-                        await onRegisterAnother();
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).pop('registerAnother');
                       },
                       style: UIStyles.dialogAcceptButtonStyle,
                       child: Row(
@@ -1188,8 +1176,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     );
 
     // After registration, show the 'register another' dialog
-    final bool? registerAnother = await showDialog<bool>(
-      // ignore: use_build_context_synchronously
+    final String? registerAnother = await showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
@@ -1198,25 +1185,18 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
           schulungsTermin,
           updatedRegisteredPersons,
           bankData,
-          onRegisterAnother: () async {
-            await registerPersonAndShowDialog(
-              schulungsTermin: schulungsTermin,
-              registeredPersons: updatedRegisteredPersons,
-              bankData: bankData,
-            );
-          },
         );
       },
     );
     if (!mounted) return;
-    if (registerAnother == true) {
+    if (registerAnother == 'registerAnother') {
       // Call the method again for the next person
       await registerPersonAndShowDialog(
         schulungsTermin: schulungsTermin,
         registeredPersons: updatedRegisteredPersons,
         bankData: bankData,
       );
-    } else if (registerAnother == false) {
+    } else if (registerAnother == 'goHome') {
       // Navigate to home screen
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(
