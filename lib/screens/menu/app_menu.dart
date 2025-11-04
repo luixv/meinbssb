@@ -446,30 +446,8 @@ class AppDrawer extends StatelessWidget {
                 },
               ),
             ],
-            const Divider(),
-            // Preferences / Einstellungen
-            ListTile(
-              key: const Key('drawer_settings'),
-              leading: const Icon(
-                Icons.settings,
-                color: UIStyles.menuIconColor,
-              ),
-              title: const ScaledText(
-                'Einstellungen',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () => navigator.settings(context),
-            ),
+
             // Hilfe
-            ListTile(
-              key: const Key('drawer_help'),
-              leading: const Icon(Icons.help, color: UIStyles.menuIconColor),
-              title: const ScaledText(
-                'Hilfe',
-                style: TextStyle(fontSize: UIConstants.menuItemFontSize),
-              ),
-              onTap: () => navigator.help(context),
-            ),
           ],
         ),
       ),
