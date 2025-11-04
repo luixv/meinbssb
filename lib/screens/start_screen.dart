@@ -873,10 +873,10 @@ class StartScreenState extends State<StartScreen> {
                                                                           .lehrgangsinhaltHtml,
                                                                   style: {
                                                                     'body': Style(
-                                                                      fontSize:
-                                                                          FontSize(
-                                                                            14.0,
-                                                                          ),
+                                                                      fontSize: FontSize(
+                                                                        UIConstants
+                                                                            .bodyFontSize,
+                                                                      ),
                                                                     ),
                                                                   },
                                                                 )
