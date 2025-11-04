@@ -276,6 +276,16 @@ void main() {
         expect(result, equals(439287));
         verify(mockAuthService.findePersonID2('Doe', '12345678')).called(1);
       });
+
+      test('findePersonIDSimple delegates to auth service', () async {
+        when(
+          mockAuthService.findePersonIDSimple(any, any, any),
+        ).thenAnswer((_) async => 439287);
+
+        final result = await apiService.findePersonIDSimple('Max', 'Mustermann', '12345678');
+        expect(result, equals(439287));
+        verify(mockAuthService.findePersonIDSimple('Max', 'Mustermann', '12345678')).called(1);
+      });
     });
 
     group('User Service Tests', () {

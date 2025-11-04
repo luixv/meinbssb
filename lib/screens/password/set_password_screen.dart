@@ -447,7 +447,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       Icon(Icons.lock_open, color: Colors.white),
                       SizedBox(width: UIConstants.spacingS),
                       ScaledText(
-                        'Passwort setzen',
+                        'Registrieren abschließen',
                         style: UIStyles.buttonStyle,
                       ),
                     ],

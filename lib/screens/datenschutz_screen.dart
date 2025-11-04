@@ -63,7 +63,7 @@ class DatenschutzScreen extends StatelessWidget {
                   ),
                   UIConstants.verticalSpacingM,
                   const ScaledText(
-                    'Datenschutzrichtlinie des Bayerischen Sportschützenbundes MeinBSSB(Download)',
+                    'Datenschutzrichtlinie des Bayerischen Sportschützenbundes MeinBSSB',
                     style: UIStyles.bodyStyle,
                   ),
                   UIConstants.verticalSpacingM,

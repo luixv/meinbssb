@@ -766,6 +766,172 @@ void main() {
       });
     });
 
+    group('findePersonIDSimple', () {
+      setUp(() {
+        when(
+          mockConfigService.getString('apiProtocol', any),
+        ).thenReturn('https');
+        when(
+          mockConfigService.getString('api1BaseServer', any),
+        ).thenReturn('webintern.bssb.bayern');
+        when(
+          mockConfigService.getString('api1BasePort', any),
+        ).thenReturn('56400');
+        when(
+          mockConfigService.getString('api1BasePath', any),
+        ).thenReturn('rest/zmi/api1');
+      });
+
+      test('returns PERSONID if person is found', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Mustermann/Max/40101205',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {
+              'NAMEN': 'Mustermann',
+              'VORNAME': 'Max',
+              'PERSONID': 439287,
+              'TITEL': '',
+              'GESCHLECHT': true,
+              'STRASSE': 'Test Street',
+              'PLZ': '12345',
+              'ORT': 'Test City',
+            },
+          ],
+        );
+        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        expect(result, 439287);
+      });
+
+      test('returns 0 if list is empty', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/NoName/NoFirst/00000000',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => []);
+        final result = await authService.findePersonIDSimple('NoFirst', 'NoName', '00000000');
+        expect(result, 0);
+      });
+
+      test('returns 0 if PERSONID is null', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Mustermann/Max/40101205',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {
+              'NAMEN': 'Mustermann',
+              'VORNAME': 'Max',
+              'PERSONID': null,
+            },
+          ],
+        );
+        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if PERSONID is 0', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Mustermann/Max/40101205',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {
+              'NAMEN': 'Mustermann',
+              'VORNAME': 'Max',
+              'PERSONID': 0,
+            },
+          ],
+        );
+        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if response is not a List', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Mustermann/Max/40101205',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => {'PERSONID': 439287});
+        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 if person is not a Map', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Mustermann/Max/40101205',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => ['invalid']);
+        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        expect(result, 0);
+      });
+
+      test('returns 0 on exception', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID/Error/Error/99999999',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenThrow(Exception('fail'));
+        final result = await authService.findePersonIDSimple('Error', 'Error', '99999999');
+        expect(result, 0);
+      });
+
+      test('handles empty strings correctly', () async {
+        final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
+          mockConfigService,
+          name: 'api1Base',
+        );
+        when(
+          mockHttpClient.get(
+            'FindePersonID///',
+            overrideBaseUrl: expectedBaseUrl,
+          ),
+        ).thenAnswer((_) async => []);
+        final result = await authService.findePersonIDSimple('', '', '');
+        expect(result, 0);
+      });
+    });
+
     group('fetchLoginEmail', () {
       setUp(() async {
         TestWidgetsFlutterBinding.ensureInitialized();

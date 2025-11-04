@@ -32,8 +32,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
   String? emailError;
   final String _successMessage = '';
   UserData? userData;
-  final FocusNode _emailFocusNode = FocusNode(); // Add a FocusNode
-  bool _emailFieldTouched = false; // New flag
+  bool _formSubmitted = false; // Track if form was submitted
 
   bool _isRegistering = false; // Loading state for registration
 
@@ -48,41 +47,31 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     super.initState();
     passNumberError = null;
     emailError = null;
-    _emailFieldTouched = false;
-    _emailFocusNode.addListener(
-      _onEmailFocusChanged,
-    ); // Listen for focus changes
+    _formSubmitted = false;
   }
 
   @override
   void dispose() {
-    _emailFocusNode.removeListener(_onEmailFocusChanged);
-    _emailFocusNode.dispose(); // Dispose of the FocusNode
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _passNumberController.dispose();
+    _emailController.dispose();
     super.dispose();
-  }
-
-  void _onEmailFocusChanged() {
-    if (!_emailFocusNode.hasFocus) {
-      setState(() {
-        _emailFieldTouched = true;
-        validateEmail(_emailController.text);
-      });
-    }
   }
 
 
   bool validateEmail(String value) {
-    if (!_emailFieldTouched && value.isEmpty) {
-      emailError = null;
-      return true;
-    }
     if (value.isEmpty) {
-      emailError = Messages.emailRequired;
+      if (_formSubmitted) {
+        emailError = Messages.emailRequired;
+      }
       return false;
     }
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      emailError = Messages.invalidEmail;
+      if (_formSubmitted) {
+        emailError = Messages.invalidEmail;
+      }
       return false;
     }
     emailError = null;
@@ -121,6 +110,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   Future<void> _register() async {
     setState(() {
+      _formSubmitted = true;
       _isRegistering = true;
     });
     // Check for offline before proceeding
@@ -397,7 +387,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                   : null,
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        focusNode: _emailFocusNode,
                         onChanged: (value) {
                           setState(() {
                             validateEmail(value);
@@ -406,14 +395,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                   ),
-                  if (emailError != null)
-                    Semantics(
-                      label: 'Fehlermeldung: $emailError',
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(emailError!, style: UIStyles.errorStyle),
-                      ),
-                    ),
                   const SizedBox(height: UIConstants.spacingS),
                   Focus(
                     canRequestFocus: true,
