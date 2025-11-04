@@ -130,8 +130,6 @@ class ApiService {
     required String lastName,
     required String passNumber,
     required String email,
-    required String birthDate,
-    required String zipCode,
     required String personId,
   }) async {
     return _authService.register(
@@ -139,8 +137,6 @@ class ApiService {
       lastName: lastName,
       passNumber: passNumber,
       email: email,
-      birthDate: birthDate,
-      zipCode: zipCode,
       personId: personId,
     );
   }
@@ -306,8 +302,12 @@ class ApiService {
     );
   }
 
-  Future<int> findePersonID2(String nachname, String passnummer) async {
-    return _authService.findePersonID2(nachname, passnummer);
+    Future<int> findePersonID2(String name, String passnummer) async {
+    return _authService.findePersonID2(name, passnummer);
+  }
+
+  Future<int> findePersonIDSimple(String name, String nachname, String passnummer) async {
+    return _authService.findePersonIDSimple(name, nachname, passnummer);
   }
 
   Future<List<Schulungstermin>> fetchSchulungstermine(

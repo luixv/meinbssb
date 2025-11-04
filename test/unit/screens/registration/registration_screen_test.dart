@@ -33,7 +33,6 @@ void main() {
       expect(find.text('Nachname'), findsOneWidget);
       expect(find.text('Schützenausweisnummer'), findsOneWidget);
       expect(find.text('E-Mail'), findsOneWidget);
-      expect(find.text('Postleitzahl'), findsOneWidget);
     });
 
     testWidgets('renders privacy checkbox', (WidgetTester tester) async {
