@@ -12,6 +12,7 @@ import '/screens/base_screen_layout.dart';
 import 'schulungen_screen.dart';
 
 import '/widgets/scaled_text.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class SchulungenSearchScreen extends StatefulWidget {
   const SchulungenSearchScreen({
@@ -273,6 +274,18 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       controller: _ortController,
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Ort',
+                        labelStyle: UIStyles.formInputDecoration.labelStyle
+                            ?.copyWith(
+                              fontSize: Provider.of<FontSizeProvider>(
+                                context,
+                              ).getScaledFontSize(UIConstants.bodyFontSize),
+                            ),
+                        hintStyle: UIStyles.formInputDecoration.hintStyle
+                            ?.copyWith(
+                              fontSize: Provider.of<FontSizeProvider>(
+                                context,
+                              ).getScaledFontSize(UIConstants.bodyFontSize),
+                            ),
                       ),
                     ),
                   ),
@@ -289,6 +302,18 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       controller: _titelController,
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Titel',
+                        labelStyle: UIStyles.formInputDecoration.labelStyle
+                            ?.copyWith(
+                              fontSize: Provider.of<FontSizeProvider>(
+                                context,
+                              ).getScaledFontSize(UIConstants.bodyFontSize),
+                            ),
+                        hintStyle: UIStyles.formInputDecoration.hintStyle
+                            ?.copyWith(
+                              fontSize: Provider.of<FontSizeProvider>(
+                                context,
+                              ).getScaledFontSize(UIConstants.bodyFontSize),
+                            ),
                       ),
                     ),
                   ),

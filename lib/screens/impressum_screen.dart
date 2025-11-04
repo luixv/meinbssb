@@ -54,13 +54,17 @@ class ImpressumScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ScaledText(
-                      'Impressum',
-                      style: UIStyles.dialogContentStyle.copyWith(
-                        fontSize:
-                            UIStyles.headerStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                        fontWeight: FontWeight.bold,
+                    Semantics(
+                      label:
+                          'Impressum. Rechtliche Informationen, Verantwortlichkeiten und Kontaktangaben des Bayerischen Sportschützenbundes e.V. für diese App.',
+                      child: ScaledText(
+                        'Impressum',
+                        style: UIStyles.dialogContentStyle.copyWith(
+                          fontSize:
+                              UIStyles.headerStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     UIConstants.verticalSpacingM,
@@ -154,6 +158,7 @@ class ImpressumScreen extends StatelessWidget {
                         fontSize:
                             UIStyles.sectionTitleStyle.fontSize! *
                             fontSizeProvider.scaleFactor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     UIConstants.verticalSpacingS,
@@ -219,7 +224,7 @@ class ImpressumScreen extends StatelessWidget {
                     UIConstants.verticalSpacingM,
                     ScaledText(
                       'Bezirke / Gaue / Vereine',
-                      style: UIStyles.dialogContentStyle.copyWith(
+                      style: UIStyles.sectionTitleStyle.copyWith(
                         fontSize:
                             UIStyles.sectionTitleStyle.fontSize! *
                             fontSizeProvider.scaleFactor,
