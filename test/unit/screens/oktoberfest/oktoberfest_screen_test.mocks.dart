@@ -186,32 +186,6 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
           as _i9.Future<_i10.Uint8List>);
 
   @override
-  _i9.Future<Map<String, dynamic>> register({
-    required String? firstName,
-    required String? lastName,
-    required String? passNumber,
-    required String? email,
-    required String? birthDate,
-    required String? zipCode,
-    required String? personId,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#register, [], {
-              #firstName: firstName,
-              #lastName: lastName,
-              #passNumber: passNumber,
-              #email: email,
-              #birthDate: birthDate,
-              #zipCode: zipCode,
-              #personId: personId,
-            }),
-            returnValue: _i9.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i9.Future<Map<String, dynamic>>);
-
-  @override
   _i9.Future<Map<String, dynamic>> login(String? username, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#login, [username, password]),

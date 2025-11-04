@@ -363,7 +363,7 @@ class AppDrawer extends StatelessWidget {
               ListTile(
                 key: const Key('drawer_datenschutz'),
                 leading: const Icon(
-                  Icons.privacy_tip_outlined,
+                  Icons.security_outlined,
                   color: UIStyles.menuIconColor,
                 ),
                 title: const ScaledText(
