@@ -778,7 +778,6 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         ),
                       ),
             ),
-            // ...existing code...
             // Add extra space at the bottom
             const SizedBox(height: UIConstants.spacingXXXL),
           ],
